@@ -20,10 +20,9 @@ def run_project():
         orch.add_sim(sim)
         print(f"   {name} ready with goal: {sim.goal}")
 
-        # small pause during setup to avoid bursting API requests
-        time.sleep(12)
+        time.sleep(2)
 
-    orch.run_simulation(max_turns=6)
+    orch.run_simulation(max_turns=15)
 
 
 if __name__ == "__main__":

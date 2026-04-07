@@ -12,7 +12,8 @@ class PersonaManager:
             "style": ["polite", "friendly", "grumpy", "enthusiastic", "serious"],
             "participation": ["active", "reserved", "reactive", "opinionated"],
             "focus": ["saving money", "safety first", "quickest route", "comfort", "fewest layovers"],
-            "length": ["short", "medium"],
+            "length": ["very short", "short", "medium"],
+            "speech_mode": ["chatty", "natural", "direct", "casual"],
             "agreeableness": [0.2, 0.4, 0.6, 0.8],
             "flexibility": [0.2, 0.4, 0.6, 0.8],
             "initiative": [0.2, 0.4, 0.6, 0.8]
@@ -34,6 +35,7 @@ class PersonaManager:
             "agreeableness": random.choice(self.trait_pool["agreeableness"]),
             "flexibility": random.choice(self.trait_pool["flexibility"]),
             "initiative": random.choice(self.trait_pool["initiative"]),
+            "speech_mode": random.choice(self.trait_pool["speech_mode"]),
             "goal": None
         }
 
@@ -43,6 +45,7 @@ class PersonaManager:
             f"In groups, you are {traits['participation']}. "
             f"Your main priority is {traits['focus']}. "
             f"Keep responses {traits['length']}. "
+            f"Your speaking style is {traits['speech_mode']}. "
             f"You can compromise depending on your flexibility ({traits['flexibility']}) "
             f"and agreeableness ({traits['agreeableness']})."
         )
