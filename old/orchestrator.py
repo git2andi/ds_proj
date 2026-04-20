@@ -1,10 +1,9 @@
-import csv
 import datetime
 import os
 import re
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from modules.llm_client import get_llm_client
 from modules.turn_manager import TurnManager
@@ -29,73 +28,40 @@ class DialogueState:
     repetition_pressure: float = 0.0
     important_events: List[str] = field(default_factory=list)
 
+    # Counts consecutive rounds of high repetition after narrowing was asked.
     stall_rounds: int = 0
 
 
 class Orchestrator:
-    # Columns written to the CSV, in order.
-    CSV_COLUMNS = [
-        "dialogue_id",
-        "turn_index",
-        "phase",
-        "speaker",
-        "is_moderator",
-        "text",
-        # Speaker selection signals (empty for Moderator lines)
-        "selected_reason",          # forced | weighted
-        "last_addressed",
-        "pending_question_target",
-        "pending_reply_target",
-        "repetition_pressure",
-        # Persona snapshot (empty for Moderator lines)
-        "role",
-        "is_primary",
-        "friendliness",
-        "assertiveness",
-        "talkativeness",
-        "initiative",
-        "agreeableness",
-        "flexibility",
-        "patience",
-        "response_length",
-        "focus_cost",
-        "focus_comfort",
-        "focus_time",
-        "focus_safety",
-        "focus_flexibility",
-    ]
-
-    def __init__(self, topic: str) -> None:
+    def __init__(self, topic: str):
         self.topic = topic
-        self.sims: List[Any] = []
+        self.sims = []
 
         self.llm = get_llm_client()
         self.turn_manager = TurnManager()
         self.state = DialogueState()
 
-        # Stable ID for this run — shared by log, csv, and persona folder.
-        self.dialogue_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
         self.options, self.opening_question = self._generate_options(topic)
         self.history = self._build_initial_history()
+        self.log_file = self._create_log_file()
 
-        os.makedirs("logs", exist_ok=True)
-        self.log_file = f"logs/{self.dialogue_id}.txt"
-        self.csv_file = f"logs/{self.dialogue_id}.csv"
-
-        # Buffer; flushed to disk at the very end.
-        self._csv_rows: List[Dict[str, Any]] = []
-        # Tracks which sim was "forced" vs "weighted" this round.
-        self._forced_names: set = set()
-
-    def add_sim(self, sim: Any) -> None:
+    def add_sim(self, sim) -> None:
         self.sims.append(sim)
 
     # ------------------------------------------------------------------
     # Setup
     # ------------------------------------------------------------------
 
+    def _create_log_file(self) -> str:
+        os.makedirs("logs", exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        return f"logs/conv_{timestamp}.txt"
+
     def _generate_options(self, topic: str) -> Tuple[List[str], str]:
+        """
+        Generate 4 concrete options with key attributes and a topic-specific
+        opening question. Returns (options_list, opening_question).
+        """
         prompt = f"""
 You are preparing a facilitated group decision discussion.
 
@@ -132,6 +98,7 @@ Return valid JSON only, using exactly this schema:
 }}
 Do not include markdown or explanations outside the JSON.
 """
+
         fallback_options = [
             "Option A - Budget choice: lowest cost, basic features, some trade-offs.",
             "Option B - Convenience choice: faster or easier, moderately priced.",
@@ -173,13 +140,12 @@ Do not include markdown or explanations outside the JSON.
         return history
 
     # ------------------------------------------------------------------
-    # Logging — txt
+    # Logging
     # ------------------------------------------------------------------
 
     def _write_log_header(self) -> None:
         names = [sim.name for sim in self.sims]
         header = (
-            f"Dialogue ID: {self.dialogue_id}\n"
             f"Participants: {', '.join(names)}\n"
             f"Topic: {self.topic}\n"
             + "=" * 40 + "\n"
@@ -190,103 +156,11 @@ Do not include markdown or explanations outside the JSON.
                 f.write(f"{line}\n")
             f.write("\n")
 
-    def _store_line(
-        self,
-        line: str,
-        selected_reason: str = "",
-    ) -> None:
-        """Append to history, print, write to txt, and buffer a CSV row."""
+    def _store_line(self, line: str) -> None:
         self.history.append(line)
         print(f"-> {line}\n")
-
         with open(self.log_file, "a", encoding="utf-8") as f:
             f.write(f"{line}\n\n")
-
-        self._buffer_csv_row(line, selected_reason)
-
-    def _store_moderator(self, text: str) -> None:
-        """Convenience wrapper for Moderator lines (no persona data)."""
-        self._store_line(f"Moderator: {text}", selected_reason="moderator")
-
-    # ------------------------------------------------------------------
-    # Logging — CSV
-    # ------------------------------------------------------------------
-
-    def _sim_by_name(self, name: str) -> Optional[Any]:
-        for sim in self.sims:
-            if sim.name == name:
-                return sim
-        return None
-
-    def _buffer_csv_row(self, line: str, selected_reason: str) -> None:
-        if ":" not in line:
-            return
-
-        speaker, text = line.split(":", 1)
-        speaker = speaker.strip()
-        text = text.strip()
-        is_moderator = speaker == "Moderator"
-
-        row: Dict[str, Any] = {
-            "dialogue_id": self.dialogue_id,
-            "turn_index": self.state.turn_index,
-            "phase": self.state.phase,
-            "speaker": speaker,
-            "is_moderator": is_moderator,
-            "text": text,
-            "selected_reason": selected_reason,
-            "last_addressed": self.state.last_addressed or "",
-            "pending_question_target": self.state.pending_question_target or "",
-            "pending_reply_target": self.state.pending_reply_target or "",
-            "repetition_pressure": round(self.state.repetition_pressure, 3),
-            # Persona fields default to empty for Moderator.
-            "role": "",
-            "is_primary": "",
-            "friendliness": "",
-            "assertiveness": "",
-            "talkativeness": "",
-            "initiative": "",
-            "agreeableness": "",
-            "flexibility": "",
-            "patience": "",
-            "response_length": "",
-            "focus_cost": "",
-            "focus_comfort": "",
-            "focus_time": "",
-            "focus_safety": "",
-            "focus_flexibility": "",
-        }
-
-        if not is_moderator:
-            sim = self._sim_by_name(speaker)
-            if sim:
-                p = sim.persona
-                focus = p.get("focus", {})
-                row.update({
-                    "role": p.get("role", ""),
-                    "is_primary": p.get("is_primary", False),
-                    "friendliness": p.get("friendliness", ""),
-                    "assertiveness": p.get("assertiveness", ""),
-                    "talkativeness": p.get("talkativeness", ""),
-                    "initiative": p.get("initiative", ""),
-                    "agreeableness": p.get("agreeableness", ""),
-                    "flexibility": p.get("flexibility", ""),
-                    "patience": p.get("patience", ""),
-                    "response_length": p.get("response_length", ""),
-                    "focus_cost": focus.get("cost", ""),
-                    "focus_comfort": focus.get("comfort", ""),
-                    "focus_time": focus.get("time", ""),
-                    "focus_safety": focus.get("safety", ""),
-                    "focus_flexibility": focus.get("flexibility_focus", ""),
-                })
-
-        self._csv_rows.append(row)
-
-    def _flush_csv(self) -> None:
-        with open(self.csv_file, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=self.CSV_COLUMNS)
-            writer.writeheader()
-            writer.writerows(self._csv_rows)
 
     # ------------------------------------------------------------------
     # State helpers
@@ -338,8 +212,8 @@ Do not include markdown or explanations outside the JSON.
     def _add_narrowing_prompt(self) -> None:
         self.state.has_asked_narrowing = True
         self.state.phase = "narrowing"
-        self._store_moderator(
-            "Let's narrow this down — which option do you each prefer? "
+        self._store_line(
+            "Moderator: Let's narrow this down — which option do you each prefer? "
             "A backup is fine if you're unsure."
         )
 
@@ -348,6 +222,10 @@ Do not include markdown or explanations outside the JSON.
     # ------------------------------------------------------------------
 
     def _regex_detect_consensus(self) -> Optional[Tuple[str, Optional[str]]]:
+        """
+        Fast regex-based check. Requires a majority of participants to have
+        mentioned the same option in recent lines.
+        """
         recent = []
         for line in reversed(self.history):
             if ":" not in line:
@@ -362,25 +240,34 @@ Do not include markdown or explanations outside the JSON.
         if len(recent) < len(self.sims):
             return None
 
-        latest_vote: Dict[str, str] = {}
+        # Collect the most recent vote per speaker (iterate oldest→newest).
+        latest_vote: dict = {}
         for line in reversed(recent):
             speaker, msg = line.split(":", 1)
             speaker = speaker.strip()
             mentions = self._extract_option_mentions(msg)
-            if mentions:
-                latest_vote[speaker] = mentions[0]
+            if not mentions:
+                continue
+            # Overwrite so the newest mention wins.
+            latest_vote[speaker] = mentions[0]
 
         if len(latest_vote) < len(self.sims):
             return None
 
         counts = Counter(latest_vote.values())
         top_option, top_count = counts.most_common(1)[0]
+
         if top_count < max(2, len(self.sims) - 1):
             return None
 
         return top_option, None
 
     def _llm_detect_consensus(self) -> Optional[Tuple[str, Optional[str]]]:
+        """
+        LLM-based consensus check. More reliable than regex when participants
+        express agreement in natural language without repeating option letters.
+        Only called after narrowing has been requested.
+        """
         names = [sim.name for sim in self.sims]
         recent_dialogue = "\n".join(self.history[-20:])
         n_needed = max(2, len(self.sims) - 1)
@@ -423,6 +310,7 @@ Return valid JSON only:
         return None
 
     def _detect_consensus(self) -> Optional[Tuple[str, Optional[str]]]:
+        """Try regex first; fall back to LLM after narrowing."""
         result = self._regex_detect_consensus()
         if result:
             return result
@@ -440,10 +328,6 @@ Return valid JSON only:
         self._update_phase()
 
         max_speakers = 2 if len(self.sims) <= 3 else 3
-
-        # Ask turn_manager which candidates are forced so we can log the reason.
-        forced_candidates = self.turn_manager.forced_names(self.state)
-
         selected = self.turn_manager.select_speakers(
             self.sims, self.history, self.state, max_speakers=max_speakers,
         )
@@ -452,10 +336,10 @@ Return valid JSON only:
         for sim in selected:
             text = sim.generate_turn(self.history, self.state)
             if text and "[SILENCE]" not in text.upper():
-                reason = "forced" if sim.name in forced_candidates else "weighted"
-                self._store_line(f"{sim.name}: {text}", selected_reason=reason)
+                self._store_line(f"{sim.name}: {text}")
                 active_round = True
 
+        # Re-extract after new lines are added.
         self.turn_manager.extract_events(self.history, self.state, self.sims)
         self._update_leading_option()
         return active_round
@@ -469,26 +353,24 @@ Return valid JSON only:
             return
 
         if backup:
-            self._store_moderator(
-                f"It sounds like Option {preferred} is the preferred choice, "
+            self._store_line(
+                f"Moderator: It sounds like Option {preferred} is the preferred choice, "
                 f"with Option {backup} as a backup. Can everyone confirm briefly?"
             )
         else:
-            self._store_moderator(
-                f"It sounds like Option {preferred} is the preferred choice. "
-                "Can everyone confirm briefly?"
+            self._store_line(
+                f"Moderator: It sounds like Option {preferred} is the preferred choice. "
+                f"Can everyone confirm briefly?"
             )
 
         self.turn_manager.extract_events(self.history, self.state, self.sims)
         selected = self.turn_manager.select_speakers(
             self.sims, self.history, self.state, max_speakers=min(2, len(self.sims)),
         )
-        forced_candidates = self.turn_manager.forced_names(self.state)
         for sim in selected:
             text = sim.generate_turn(self.history, self.state)
             if text and "[SILENCE]" not in text.upper():
-                reason = "forced" if sim.name in forced_candidates else "weighted"
-                self._store_line(f"{sim.name}: {text}", selected_reason=reason)
+                self._store_line(f"{sim.name}: {text}")
 
     def _run_goodbye(self) -> None:
         """Let each participant say a short natural closing remark."""
@@ -500,23 +382,24 @@ Return valid JSON only:
         for sim in selected:
             text = sim.generate_turn(self.history, self.state)
             if text and "[SILENCE]" not in text.upper():
-                self._store_line(f"{sim.name}: {text}", selected_reason="closure")
+                self._store_line(f"{sim.name}: {text}")
 
     def _close(self) -> None:
         preferred = self.state.preferred_option
         backup = self.state.backup_option
 
         if preferred and backup:
-            self._store_moderator(
-                f"Agreed — Option {preferred} is the final choice, "
+            self._store_line(
+                f"Moderator: Agreed — Option {preferred} is the final choice, "
                 f"with Option {backup} as backup. Discussion concluded."
             )
         elif preferred:
-            self._store_moderator(
-                f"Agreed — Option {preferred} is the final choice. Discussion concluded."
+            self._store_line(
+                f"Moderator: Agreed — Option {preferred} is the final choice. "
+                f"Discussion concluded."
             )
         else:
-            self._store_moderator("Discussion concluded.")
+            self._store_line("Moderator: Discussion concluded.")
 
     # ------------------------------------------------------------------
     # Main loop
@@ -525,71 +408,64 @@ Return valid JSON only:
     def run_simulation(self, max_turns: int = 12) -> None:
         self._write_log_header()
 
-        # Buffer initial Moderator setup lines into CSV.
-        for line in self.history:
-            self._buffer_csv_row(line, selected_reason="moderator")
-
         print("\n--- Simulation Started ---")
         for line in self.history:
             print(f"-> {line}")
         print()
 
-        try:
-            for _ in range(max_turns):
-                self.state.turn_index += 1
+        for _ in range(max_turns):
+            self.state.turn_index += 1
 
-                active_round = self._run_participant_round()
+            active_round = self._run_participant_round()
 
-                consensus = self._detect_consensus()
-                if consensus:
-                    self.state.preferred_option, self.state.backup_option = consensus
-                    self.state.agreement_reached = True
-                    self._run_confirmation()
-                    self._run_goodbye()
-                    self._close()
-                    return
+            # Check for agreement after every round — can fire before narrowing too.
+            consensus = self._detect_consensus()
+            if consensus:
+                self.state.preferred_option, self.state.backup_option = consensus
+                self.state.agreement_reached = True
+                self._run_confirmation()
+                self._run_goodbye()
+                self._close()
+                return
 
-                if not active_round:
-                    self._store_moderator("No further progress. Discussion concluded.")
-                    return
+            if not active_round:
+                self._store_line("Moderator: No further progress. Discussion concluded.")
+                return
 
-                if self._should_narrow():
-                    self._add_narrowing_prompt()
-                    continue
+            if self._should_narrow():
+                self._add_narrowing_prompt()
+                continue
 
-                if self.state.has_asked_narrowing:
-                    if self.state.repetition_pressure >= 0.75:
-                        self.state.stall_rounds += 1
+            # Stall detection: if repetition stays high after narrowing, force close.
+            if self.state.has_asked_narrowing:
+                if self.state.repetition_pressure >= 0.75:
+                    self.state.stall_rounds += 1
+                else:
+                    self.state.stall_rounds = 0
+
+                if self.state.stall_rounds >= 2:
+                    # One last LLM consensus attempt before giving up.
+                    forced = self._llm_detect_consensus()
+                    if forced:
+                        self.state.preferred_option, self.state.backup_option = forced
+                        self.state.agreement_reached = True
+                        self._run_confirmation()
+                        self._run_goodbye()
+                        self._close()
                     else:
-                        self.state.stall_rounds = 0
-
-                    if self.state.stall_rounds >= 2:
-                        forced = self._llm_detect_consensus()
-                        if forced:
-                            self.state.preferred_option, self.state.backup_option = forced
-                            self.state.agreement_reached = True
-                            self._run_confirmation()
-                            self._run_goodbye()
-                            self._close()
+                        leading = self.state.current_leading_option
+                        if leading:
+                            self.state.preferred_option = leading
+                            self._store_line(
+                                f"Moderator: We seem to be going in circles. "
+                                f"Based on the discussion, Option {leading} appears to be "
+                                f"the most supported choice. Discussion concluded."
+                            )
                         else:
-                            leading = self.state.current_leading_option
-                            if leading:
-                                self.state.preferred_option = leading
-                                self._store_moderator(
-                                    f"We seem to be going in circles. "
-                                    f"Based on the discussion, Option {leading} appears to be "
-                                    f"the most supported choice. Discussion concluded."
-                                )
-                            else:
-                                self._store_moderator(
-                                    "We were unable to reach a clear agreement. "
-                                    "Discussion concluded."
-                                )
-                        return
+                            self._store_line(
+                                "Moderator: We were unable to reach a clear agreement. "
+                                "Discussion concluded."
+                            )
+                    return
 
-            self._store_moderator("Maximum discussion length reached. Discussion concluded.")
-
-        finally:
-            # Always write the CSV, even if something raises mid-simulation.
-            self._flush_csv()
-            print(f"\n[Logs saved: {self.log_file} | {self.csv_file}]")
+        self._store_line("Moderator: Maximum discussion length reached. Discussion concluded.")

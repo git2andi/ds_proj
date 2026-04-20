@@ -87,25 +87,16 @@ class MultiUserSimulator:
     def _generate_initial_goal(self) -> str:
         prompt = (
             f"Scenario: {self.setting}\n"
-            f"Participant name: {self.name}\n"
-            f"Role in this scenario: {self.role}\n"
+            f"Name: {self.name}\n"
+            f"Role: {self.role}\n"
             f"Is primary participant: {self.is_primary}\n"
-            f"Numeric traits (1-5): {self._numeric_traits_summary()}\n"
-            f"Focus values (1-5): {self._format_focus()}\n\n"
+            f"Numeric traits: {self._numeric_traits_summary()}\n"
+            f"Focus values: {self._format_focus()}\n\n"
             "Task:\n"
-            "Write exactly one short internal goal sentence for this participant.\n"
-            "\n"
-            "Rules:\n"
-            "- The goal must be specific to the scenario domain. "
-            "If the scenario is about booking a restaurant, the goal is about the meal experience, "
-            "cuisine, group dynamics, or atmosphere — not about generic concepts like schedules or budgets "
-            "unless the scenario explicitly involves those.\n"
-            "- Do NOT lift trait names directly into the goal text. "
-            "Traits shape personality and behaviour, not the subject matter of the goal. "
-            "A low-safety focus does not mean the person cares about safety; "
-            "a high-cost focus means they are price-conscious in the context of this scenario.\n"
-            "- Do NOT use filler phrases like 'efficiently', 'seamlessly', or 'in a timely manner'.\n"
-            "- Write in third person. One sentence only. No bullet points, markdown, or quotation marks."
+            "Generate exactly one short internal goal sentence for this participant.\n"
+            "The goal must fit the scenario and reflect the participant's role and traits.\n"
+            "Do not invent a backstory. No bullet points, numbering, markdown, or quotation marks.\n"
+            "Return exactly one sentence only."
         )
         try:
             raw = self._call_llm(prompt).strip()
