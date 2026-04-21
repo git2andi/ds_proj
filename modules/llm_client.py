@@ -1,15 +1,19 @@
 import json
 import os
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
+import requests
 from dotenv import load_dotenv
 from google import genai
 from openai import OpenAI
 
 load_dotenv()
 
-LLM = "groq"  # "groq" or "gemini"
+LLM = "uni"  # "groq", "gemini", or "uni"
+
+UNI_API_URL = "http://ursa.ds.uni-bamberg.de:11434/api/generate"
+UNI_DEFAULT_MODEL = "llama3.3:latest"
 
 
 class LLMClient:
@@ -34,6 +38,10 @@ class LLMClient:
                 base_url="https://api.groq.com/openai/v1",
             )
 
+        if self.provider == "uni":
+            # No client object needed — we use requests directly in generate().
+            return None
+
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
     def _select_model_id(self) -> str:
@@ -41,6 +49,9 @@ class LLMClient:
             return "gemini-2.0-flash-lite"
         if self.provider == "groq":
             return "llama-3.3-70b-versatile"
+        if self.provider == "uni":
+            # Override via UNI_MODEL env var, e.g. "deepseek-r1:70b"
+            return os.environ.get("UNI_MODEL", UNI_DEFAULT_MODEL)
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
     def generate(self, prompt: str) -> str:
@@ -60,6 +71,23 @@ class LLMClient:
                 messages=[{"role": "user", "content": prompt}],
             )
             return (response.choices[0].message.content or "").strip()
+
+        if self.provider == "uni":
+            payload = {
+                "model": self.model_id,
+                "prompt": prompt,
+                "stream": False,
+                # Hyperparameters — adjust as needed for your simulations.
+                "temperature": 0.85,
+                "top_k": 50,
+                "top_p": 0.95,
+            }
+            response = requests.post(UNI_API_URL, data=json.dumps(payload))
+            response.raise_for_status()
+            result = response.json()
+            if "response" not in result:
+                raise ValueError(f"Unexpected uni API response: {result}")
+            return result["response"].strip()
 
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
 

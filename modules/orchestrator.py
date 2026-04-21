@@ -73,7 +73,7 @@ class Orchestrator:
         self.turn_manager = TurnManager()
         self.state = DialogueState()
 
-        # Stable ID for this run — shared by log, csv, and persona folder.
+        # ID for this run
         self.dialogue_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
         self.options, self.opening_question = self._generate_options(topic)
@@ -83,9 +83,8 @@ class Orchestrator:
         self.log_file = f"logs/{self.dialogue_id}.txt"
         self.csv_file = f"logs/{self.dialogue_id}.csv"
 
-        # Buffer; flushed to disk at the very end.
+        # Buffer & flush
         self._csv_rows: List[Dict[str, Any]] = []
-        # Tracks which sim was "forced" vs "weighted" this round.
         self._forced_names: set = set()
 
     def add_sim(self, sim: Any) -> None:
@@ -107,10 +106,7 @@ Task:
 2. Write a short opening question the moderator will ask to kick off discussion.
 
 Requirements for options:
-- Each option must include 2-3 concrete attributes that participants can actually compare
-  (e.g. for travel: approx. price range, travel time, comfort level;
-       for a restaurant choice: cuisine type, price range, distance;
-       for a hiring decision: salary, experience level, availability).
+- Each option must include 2-3 concrete attributes that participants can actually compare and fit to the topic.
 - Infer sensible approximate values from the topic context — do NOT use placeholders like "TBD" or "varies".
 - Keep each option to one concise line.
 - All 4 options must be genuinely different trade-offs.
@@ -399,7 +395,6 @@ Rules:
 - A participant "agrees" if they have clearly expressed support for one option in the recent dialogue.
 - Asking a question about an option does NOT count as agreeing to it.
 - Do not invent votes that are not in the dialogue.
-- preferred_option must be a single letter A, B, C, or D.
 
 Return valid JSON only:
 {{
@@ -408,6 +403,7 @@ Return valid JSON only:
   "backup_option": "A" or "B" or "C" or "D" or null
 }}
 """
+#- preferred_option must be a single letter A, B, C, or D.
         try:
             data = self.llm.generate_json(prompt)
             if not data.get("consensus_reached"):
