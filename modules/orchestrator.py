@@ -1,6 +1,7 @@
 import csv
 import datetime
 import os
+import random
 import re
 from collections import Counter
 from dataclasses import dataclass, field
@@ -42,7 +43,7 @@ class Orchestrator:
         "is_moderator",
         "text",
         # Speaker selection signals (empty for Moderator lines)
-        "selected_reason",          # forced | weighted
+        "selected_reason",
         "last_addressed",
         "pending_question_target",
         "pending_reply_target",
@@ -58,6 +59,7 @@ class Orchestrator:
         "flexibility",
         "patience",
         "response_length",
+        "contrarian_pressure",   # NEW
         "focus_cost",
         "focus_comfort",
         "focus_time",
@@ -73,7 +75,6 @@ class Orchestrator:
         self.turn_manager = TurnManager()
         self.state = DialogueState()
 
-        # ID for this run
         self.dialogue_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
         self.options, self.opening_question = self._generate_options(topic)
@@ -83,7 +84,6 @@ class Orchestrator:
         self.log_file = f"logs/{self.dialogue_id}.txt"
         self.csv_file = f"logs/{self.dialogue_id}.csv"
 
-        # Buffer & flush
         self._csv_rows: List[Dict[str, Any]] = []
         self._forced_names: set = set()
 
@@ -186,11 +186,7 @@ Do not include markdown or explanations outside the JSON.
                 f.write(f"{line}\n")
             f.write("\n")
 
-    def _store_line(
-        self,
-        line: str,
-        selected_reason: str = "",
-    ) -> None:
+    def _store_line(self, line: str, selected_reason: str = "") -> None:
         """Append to history, print, write to txt, and buffer a CSV row."""
         self.history.append(line)
         print(f"-> {line}\n")
@@ -235,7 +231,6 @@ Do not include markdown or explanations outside the JSON.
             "pending_question_target": self.state.pending_question_target or "",
             "pending_reply_target": self.state.pending_reply_target or "",
             "repetition_pressure": round(self.state.repetition_pressure, 3),
-            # Persona fields default to empty for Moderator.
             "role": "",
             "is_primary": "",
             "friendliness": "",
@@ -246,6 +241,7 @@ Do not include markdown or explanations outside the JSON.
             "flexibility": "",
             "patience": "",
             "response_length": "",
+            "contrarian_pressure": "",   # NEW
             "focus_cost": "",
             "focus_comfort": "",
             "focus_time": "",
@@ -269,6 +265,7 @@ Do not include markdown or explanations outside the JSON.
                     "flexibility": p.get("flexibility", ""),
                     "patience": p.get("patience", ""),
                     "response_length": p.get("response_length", ""),
+                    "contrarian_pressure": p.get("contrarian_pressure", ""),  # NEW
                     "focus_cost": focus.get("cost", ""),
                     "focus_comfort": focus.get("comfort", ""),
                     "focus_time": focus.get("time", ""),
@@ -340,6 +337,36 @@ Do not include markdown or explanations outside the JSON.
         )
 
     # ------------------------------------------------------------------
+    # Dynamic max_speakers (Fix #7)
+    # ------------------------------------------------------------------
+
+    def _dynamic_max_speakers(self) -> int:
+        """
+        Vary how many participants speak per round based on phase and
+        repetition pressure, to avoid the robotic fixed-cadence feel.
+        """
+        phase = self.state.phase
+        rep = self.state.repetition_pressure
+        n = len(self.sims)
+
+        # In opening/closure each person gets a single focused turn.
+        if phase in ("opening", "closure"):
+            return 1
+
+        # When the discussion is looping, a single voice breaks the cycle better.
+        if rep >= 0.65:
+            return 1
+
+        # Confirmation: get 1-2 quick answers.
+        if phase == "confirmation":
+            return min(2, n)
+
+        # Normal rounds: stochastic between 1-3, weighted toward 2.
+        weights = [0.25, 0.50, 0.25] if n >= 3 else [0.40, 0.60]
+        choices = list(range(1, min(4, n + 1)))
+        return random.choices(choices, weights=weights[:len(choices)])[0]
+
+    # ------------------------------------------------------------------
     # Consensus detection
     # ------------------------------------------------------------------
 
@@ -403,7 +430,6 @@ Return valid JSON only:
   "backup_option": "A" or "B" or "C" or "D" or null
 }}
 """
-#- preferred_option must be a single letter A, B, C, or D.
         try:
             data = self.llm.generate_json(prompt)
             if not data.get("consensus_reached"):
@@ -435,18 +461,20 @@ Return valid JSON only:
         self._update_leading_option()
         self._update_phase()
 
-        max_speakers = 2 if len(self.sims) <= 3 else 3
+        # Fix #7: dynamic, stochastic speaker count.
+        max_speakers = self._dynamic_max_speakers()
 
-        # Ask turn_manager which candidates are forced so we can log the reason.
         forced_candidates = self.turn_manager.forced_names(self.state)
 
         selected = self.turn_manager.select_speakers(
             self.sims, self.history, self.state, max_speakers=max_speakers,
         )
 
+        all_names = [sim.name for sim in self.sims]
         active_round = False
         for sim in selected:
-            text = sim.generate_turn(self.history, self.state)
+            # Pass all_names so generator can identify quiet participants.
+            text = sim.generate_turn(self.history, self.state, all_names=all_names)
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name in forced_candidates else "weighted"
                 self._store_line(f"{sim.name}: {text}", selected_reason=reason)
@@ -476,12 +504,14 @@ Return valid JSON only:
             )
 
         self.turn_manager.extract_events(self.history, self.state, self.sims)
+        max_speakers = min(2, len(self.sims))
         selected = self.turn_manager.select_speakers(
-            self.sims, self.history, self.state, max_speakers=min(2, len(self.sims)),
+            self.sims, self.history, self.state, max_speakers=max_speakers,
         )
         forced_candidates = self.turn_manager.forced_names(self.state)
+        all_names = [sim.name for sim in self.sims]
         for sim in selected:
-            text = sim.generate_turn(self.history, self.state)
+            text = sim.generate_turn(self.history, self.state, all_names=all_names)
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name in forced_candidates else "weighted"
                 self._store_line(f"{sim.name}: {text}", selected_reason=reason)
@@ -493,8 +523,9 @@ Return valid JSON only:
         selected = self.turn_manager.select_speakers(
             self.sims, self.history, self.state, max_speakers=len(self.sims),
         )
+        all_names = [sim.name for sim in self.sims]
         for sim in selected:
-            text = sim.generate_turn(self.history, self.state)
+            text = sim.generate_turn(self.history, self.state, all_names=all_names)
             if text and "[SILENCE]" not in text.upper():
                 self._store_line(f"{sim.name}: {text}", selected_reason="closure")
 
@@ -521,7 +552,6 @@ Return valid JSON only:
     def run_simulation(self, max_turns: int = 12) -> None:
         self._write_log_header()
 
-        # Buffer initial Moderator setup lines into CSV.
         for line in self.history:
             self._buffer_csv_row(line, selected_reason="moderator")
 
@@ -586,6 +616,5 @@ Return valid JSON only:
             self._store_moderator("Maximum discussion length reached. Discussion concluded.")
 
         finally:
-            # Always write the CSV, even if something raises mid-simulation.
             self._flush_csv()
             print(f"\n[Logs saved: {self.log_file} | {self.csv_file}]")

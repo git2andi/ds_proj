@@ -14,6 +14,7 @@ class PersonaManager:
         "flexibility",
         "patience",
         "response_length",
+        "contrarian_pressure",   # NEW: 1=always goes with group, 5=natural devil's advocate
     ]
 
     FOCUS_DIMENSIONS = [
@@ -75,6 +76,7 @@ class PersonaManager:
         focus: Dict[str, int] = persona["focus"]
         focus_str = ", ".join(f"{k}:{v}" for k, v in focus.items())
 
+        # Tone style
         if persona["friendliness"] <= 2:
             style = "grumpy"
         elif persona["assertiveness"] >= 4:
@@ -84,12 +86,22 @@ class PersonaManager:
         else:
             style = "neutral"
 
+        # Participation level
         if persona["talkativeness"] >= 4:
             participation = "active"
         elif persona["talkativeness"] <= 2:
             participation = "reserved"
         else:
             participation = "balanced"
+
+        # Contrarian tendency
+        contrarian = persona.get("contrarian_pressure", 3)
+        if contrarian >= 4:
+            contrarian_desc = "devil's advocate"
+        elif contrarian <= 2:
+            contrarian_desc = "consensus-seeker"
+        else:
+            contrarian_desc = "moderate"
 
         primary_focus = max(focus, key=lambda k: focus[k])
         traits_str = ", ".join(f"{t} {persona[t]}" for t in self.SCALAR_TRAITS)
@@ -101,6 +113,7 @@ class PersonaManager:
             f"Traits (1-5): {traits_str}. "
             f"Focus: {focus_str}. "
             f"Style: {style}, participation: {participation}, "
+            f"contrarian tendency: {contrarian_desc}, "
             f"primary focus: {primary_focus}. "
             f"Behave consistently with these traits."
         )
