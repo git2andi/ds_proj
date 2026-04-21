@@ -34,7 +34,6 @@ class DialogueState:
 
 
 class Orchestrator:
-    # Columns written to the CSV, in order.
     CSV_COLUMNS = [
         "dialogue_id",
         "turn_index",
@@ -42,13 +41,11 @@ class Orchestrator:
         "speaker",
         "is_moderator",
         "text",
-        # Speaker selection signals (empty for Moderator lines)
         "selected_reason",
         "last_addressed",
         "pending_question_target",
         "pending_reply_target",
         "repetition_pressure",
-        # Persona snapshot (empty for Moderator lines)
         "role",
         "is_primary",
         "friendliness",
@@ -59,7 +56,7 @@ class Orchestrator:
         "flexibility",
         "patience",
         "response_length",
-        "contrarian_pressure",   # NEW
+        "contrarian_pressure",
         "focus_cost",
         "focus_comfort",
         "focus_time",
@@ -67,8 +64,15 @@ class Orchestrator:
         "focus_flexibility",
     ]
 
-    def __init__(self, topic: str) -> None:
+    # ------------------------------------------------------------------
+    # moderator_style controls how actively the moderator intervenes:
+    #   "active"  — intervenes to narrow, confirm, and close (original behaviour)
+    #   "minimal" — only intervenes if the group is genuinely stuck (stall_rounds >= 3)
+    #   "passive" — never intervenes after the opening; participants self-organise
+    # ------------------------------------------------------------------
+    def __init__(self, topic: str, moderator_style: str = "active") -> None:
         self.topic = topic
+        self.moderator_style = moderator_style.lower()
         self.sims: List[Any] = []
 
         self.llm = get_llm_client()
@@ -178,6 +182,7 @@ Do not include markdown or explanations outside the JSON.
             f"Dialogue ID: {self.dialogue_id}\n"
             f"Participants: {', '.join(names)}\n"
             f"Topic: {self.topic}\n"
+            f"Moderator style: {self.moderator_style}\n"
             + "=" * 40 + "\n"
         )
         with open(self.log_file, "w", encoding="utf-8") as f:
@@ -187,17 +192,13 @@ Do not include markdown or explanations outside the JSON.
             f.write("\n")
 
     def _store_line(self, line: str, selected_reason: str = "") -> None:
-        """Append to history, print, write to txt, and buffer a CSV row."""
         self.history.append(line)
         print(f"-> {line}\n")
-
         with open(self.log_file, "a", encoding="utf-8") as f:
             f.write(f"{line}\n\n")
-
         self._buffer_csv_row(line, selected_reason)
 
     def _store_moderator(self, text: str) -> None:
-        """Convenience wrapper for Moderator lines (no persona data)."""
         self._store_line(f"Moderator: {text}", selected_reason="moderator")
 
     # ------------------------------------------------------------------
@@ -241,7 +242,7 @@ Do not include markdown or explanations outside the JSON.
             "flexibility": "",
             "patience": "",
             "response_length": "",
-            "contrarian_pressure": "",   # NEW
+            "contrarian_pressure": "",
             "focus_cost": "",
             "focus_comfort": "",
             "focus_time": "",
@@ -265,7 +266,7 @@ Do not include markdown or explanations outside the JSON.
                     "flexibility": p.get("flexibility", ""),
                     "patience": p.get("patience", ""),
                     "response_length": p.get("response_length", ""),
-                    "contrarian_pressure": p.get("contrarian_pressure", ""),  # NEW
+                    "contrarian_pressure": p.get("contrarian_pressure", ""),
                     "focus_cost": focus.get("cost", ""),
                     "focus_comfort": focus.get("comfort", ""),
                     "focus_time": focus.get("time", ""),
@@ -322,11 +323,45 @@ Do not include markdown or explanations outside the JSON.
         else:
             self.state.phase = "negotiation"
 
+    # ------------------------------------------------------------------
+    # Moderator narrowing — style-aware and organically triggered
+    # ------------------------------------------------------------------
+
     def _should_narrow(self) -> bool:
+        """
+        Decide whether the moderator should prompt participants to narrow down.
+        Behaviour depends on moderator_style:
+
+          passive  — never narrows; participants must converge on their own.
+          minimal  — only narrows as an absolute last resort when severely stalled.
+          active   — narrows when the conversation has genuinely run its course
+                     (not on a fixed turn count, but on stall signals).
+        """
         if self.state.has_asked_narrowing:
             return False
+        if self.moderator_style == "passive":
+            return False
+
         turns = self._participant_turn_count()
-        return turns >= len(self.sims) * 2 or self.state.repetition_pressure >= 0.55
+        n = len(self.sims)
+
+        # Everyone must have spoken at least twice before any narrowing.
+        if turns < n * 2:
+            return False
+
+        genuinely_stalling = (
+            self.state.repetition_pressure >= 0.75
+            and self.state.stall_rounds >= 1
+        )
+        # Absolute ceiling: ~5 full rounds each without resolution.
+        talked_plenty = turns >= n * 5
+
+        if self.moderator_style == "minimal":
+            # Only step in when truly stuck AND talked a lot.
+            return genuinely_stalling and talked_plenty
+
+        # "active": step in on genuine stall OR after plenty of discussion.
+        return genuinely_stalling or talked_plenty
 
     def _add_narrowing_prompt(self) -> None:
         self.state.has_asked_narrowing = True
@@ -337,31 +372,29 @@ Do not include markdown or explanations outside the JSON.
         )
 
     # ------------------------------------------------------------------
-    # Dynamic max_speakers (Fix #7)
+    # Dynamic max_speakers
     # ------------------------------------------------------------------
 
     def _dynamic_max_speakers(self) -> int:
         """
-        Vary how many participants speak per round based on phase and
-        repetition pressure, to avoid the robotic fixed-cadence feel.
+        Vary speaker count per round stochastically based on phase and
+        repetition pressure, so rounds don't feel templated.
         """
         phase = self.state.phase
         rep = self.state.repetition_pressure
         n = len(self.sims)
 
-        # In opening/closure each person gets a single focused turn.
         if phase in ("opening", "closure"):
             return 1
 
-        # When the discussion is looping, a single voice breaks the cycle better.
+        # A single fresh voice breaks a repetitive loop better than more of the same.
         if rep >= 0.65:
             return 1
 
-        # Confirmation: get 1-2 quick answers.
         if phase == "confirmation":
             return min(2, n)
 
-        # Normal rounds: stochastic between 1-3, weighted toward 2.
+        # Normal rounds: weighted random leaning toward 2 speakers.
         weights = [0.25, 0.50, 0.25] if n >= 3 else [0.40, 0.60]
         choices = list(range(1, min(4, n + 1)))
         return random.choices(choices, weights=weights[:len(choices)])[0]
@@ -393,12 +426,21 @@ Do not include markdown or explanations outside the JSON.
             if mentions:
                 latest_vote[speaker] = mentions[0]
 
+        # Require all participants to have voted explicitly.
         if len(latest_vote) < len(self.sims):
             return None
 
         counts = Counter(latest_vote.values())
         top_option, top_count = counts.most_common(1)[0]
-        if top_count < max(2, len(self.sims) - 1):
+
+        # In passive/minimal mode require full unanimity;
+        # in active mode allow one dissenter in larger groups.
+        if self.moderator_style == "active":
+            required = max(2, len(self.sims) - 1)
+        else:
+            required = len(self.sims)
+
+        if top_count < required:
             return None
 
         return top_option, None
@@ -448,7 +490,9 @@ Return valid JSON only:
         result = self._regex_detect_consensus()
         if result:
             return result
-        if self.state.has_asked_narrowing:
+        # LLM consensus check only after narrowing has been asked,
+        # or in passive/minimal mode where participants self-organise.
+        if self.state.has_asked_narrowing or self.moderator_style != "active":
             return self._llm_detect_consensus()
         return None
 
@@ -461,9 +505,7 @@ Return valid JSON only:
         self._update_leading_option()
         self._update_phase()
 
-        # Fix #7: dynamic, stochastic speaker count.
         max_speakers = self._dynamic_max_speakers()
-
         forced_candidates = self.turn_manager.forced_names(self.state)
 
         selected = self.turn_manager.select_speakers(
@@ -473,7 +515,6 @@ Return valid JSON only:
         all_names = [sim.name for sim in self.sims]
         active_round = False
         for sim in selected:
-            # Pass all_names so generator can identify quiet participants.
             text = sim.generate_turn(self.history, self.state, all_names=all_names)
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name in forced_candidates else "weighted"
@@ -485,6 +526,11 @@ Return valid JSON only:
         return active_round
 
     def _run_confirmation(self) -> None:
+        """
+        In active mode the moderator explicitly calls for confirmation.
+        In passive/minimal mode the participants confirm among themselves
+        and the moderator stays silent.
+        """
         self.state.phase = "confirmation"
         preferred = self.state.preferred_option
         backup = self.state.backup_option
@@ -492,17 +538,19 @@ Return valid JSON only:
         if preferred is None:
             return
 
-        if backup:
-            self._store_moderator(
-                f"It sounds like Option {preferred} is the preferred choice, "
-                f"with Option {backup} as a backup. Can everyone confirm briefly?"
-            )
-        else:
-            self._store_moderator(
-                f"It sounds like Option {preferred} is the preferred choice. "
-                "Can everyone confirm briefly?"
-            )
+        if self.moderator_style == "active":
+            if backup:
+                self._store_moderator(
+                    f"It sounds like Option {preferred} is the preferred choice, "
+                    f"with Option {backup} as a backup. Can everyone confirm briefly?"
+                )
+            else:
+                self._store_moderator(
+                    f"It sounds like Option {preferred} is the preferred choice. "
+                    "Can everyone confirm briefly?"
+                )
 
+        # Let participants react to the consensus regardless of style.
         self.turn_manager.extract_events(self.history, self.state, self.sims)
         max_speakers = min(2, len(self.sims))
         selected = self.turn_manager.select_speakers(
@@ -517,7 +565,6 @@ Return valid JSON only:
                 self._store_line(f"{sim.name}: {text}", selected_reason=reason)
 
     def _run_goodbye(self) -> None:
-        """Let each participant say a short natural closing remark."""
         self.state.phase = "closure"
         self.turn_manager.extract_events(self.history, self.state, self.sims)
         selected = self.turn_manager.select_speakers(
@@ -532,6 +579,10 @@ Return valid JSON only:
     def _close(self) -> None:
         preferred = self.state.preferred_option
         backup = self.state.backup_option
+
+        # In passive mode the moderator stays silent at the end too.
+        if self.moderator_style == "passive":
+            return
 
         if preferred and backup:
             self._store_moderator(
@@ -549,13 +600,13 @@ Return valid JSON only:
     # Main loop
     # ------------------------------------------------------------------
 
-    def run_simulation(self, max_turns: int = 12) -> None:
+    def run_simulation(self, max_turns: int = 15) -> None:
         self._write_log_header()
 
         for line in self.history:
             self._buffer_csv_row(line, selected_reason="moderator")
 
-        print("\n--- Simulation Started ---")
+        print(f"\n--- Simulation Started (moderator: {self.moderator_style}) ---")
         for line in self.history:
             print(f"-> {line}")
         print()
@@ -576,7 +627,8 @@ Return valid JSON only:
                     return
 
                 if not active_round:
-                    self._store_moderator("No further progress. Discussion concluded.")
+                    if self.moderator_style != "passive":
+                        self._store_moderator("No further progress. Discussion concluded.")
                     return
 
                 if self._should_narrow():
@@ -589,7 +641,12 @@ Return valid JSON only:
                     else:
                         self.state.stall_rounds = 0
 
-                    if self.state.stall_rounds >= 2:
+                    # Stall threshold: active=2, minimal=3, passive never forces.
+                    stall_limit = {"active": 2, "minimal": 3, "passive": 999}.get(
+                        self.moderator_style, 2
+                    )
+
+                    if self.state.stall_rounds >= stall_limit:
                         forced = self._llm_detect_consensus()
                         if forced:
                             self.state.preferred_option, self.state.backup_option = forced
@@ -599,21 +656,24 @@ Return valid JSON only:
                             self._close()
                         else:
                             leading = self.state.current_leading_option
-                            if leading:
+                            if leading and self.moderator_style != "passive":
                                 self.state.preferred_option = leading
                                 self._store_moderator(
                                     f"We seem to be going in circles. "
                                     f"Based on the discussion, Option {leading} appears to be "
                                     f"the most supported choice. Discussion concluded."
                                 )
-                            else:
+                            elif self.moderator_style != "passive":
                                 self._store_moderator(
                                     "We were unable to reach a clear agreement. "
                                     "Discussion concluded."
                                 )
                         return
 
-            self._store_moderator("Maximum discussion length reached. Discussion concluded.")
+            if self.moderator_style != "passive":
+                self._store_moderator(
+                    "Maximum discussion length reached. Discussion concluded."
+                )
 
         finally:
             self._flush_csv()

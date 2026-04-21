@@ -1,14 +1,42 @@
 import random
 import re
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from constants import EXCLUDED_SPEAKERS
 from modules.llm_client import get_llm_client
 
 
 class MultiUserSimulator:
-    # Maps response_length trait (1-5) to a hard word-count ceiling.
-    _WORD_LIMIT = {1: 15, 2: 25, 3: 35, 4: 50, 5: 80}
+
+    # Numeric response_length (1-5) maps to a (label, behavioral description) pair.
+    # The numeric value is kept in the persona JSON for evaluation;
+    # the label+description is what the LLM actually sees in the prompt.
+    _RESPONSE_STYLE: Dict[int, Tuple[str, str]] = {
+        1: (
+            "brief",
+            "You make short replies. Reactions like 'Yeah, fair point.' "
+            "or 'Not sure about that.' are perfect. Never elaborate unless directly asked.",
+        ),
+        2: (
+            "concise",
+            "You make one short point per turn, cleanly, without elaborating much. "
+            "A sentence at most",
+        ),
+        3: (
+            "balanced",
+            "You give a clear point with a short reason — up to two short sentences. "
+            "You don't pad or over-explain.",
+        ),
+        4: (
+            "talkative",
+            "You tend to elaborate: you give context, your reasoning, and sometimes "
+            "a follow-up thought or question.",
+        ),
+        5: (
+            "detailed",
+            "You think out loud and give thorough, well-reasoned responses. ",
+        ),
+    }
 
     def __init__(self, persona: Dict, setting: str, options: List[str], persona_manager=None):
         self.persona = persona
@@ -42,6 +70,7 @@ class MultiUserSimulator:
         return ", ".join(f"{k}:{focus.get(k, 3)}/5" for k in ordered)
 
     def _numeric_traits_summary(self) -> str:
+        """Used for goal generation only — keeps raw numbers for the LLM context."""
         keys = [
             "friendliness", "assertiveness", "talkativeness", "initiative",
             "agreeableness", "flexibility", "patience", "response_length",
@@ -52,7 +81,8 @@ class MultiUserSimulator:
     def _traits_as_behavior(self) -> str:
         """
         Translate numeric trait values into concrete behavioral instructions
-        so the LLM understands what each score actually means in conversation.
+        so the LLM understands what each score means in conversation.
+        Raw numbers are intentionally NOT shown here — only plain-English cues.
         """
         p = self.persona
         lines = []
@@ -65,13 +95,17 @@ class MultiUserSimulator:
 
         friendliness = p.get("friendliness", 3)
         if friendliness <= 2:
-            lines.append("Your tone is blunt, possibly terse — you don't go out of your way to be warm.")
+            lines.append(
+                "Your tone is blunt, possibly terse — you don't go out of your way to be warm."
+            )
         elif friendliness >= 4:
-            lines.append("You are warm and encouraging; you acknowledge others before adding your own view.")
+            lines.append(
+                "You are warm and encouraging; you acknowledge others before adding your own view."
+            )
 
         talkativeness = p.get("talkativeness", 3)
         if talkativeness <= 2:
-            lines.append("You speak only when you have something specific to add — short replies are fine.")
+            lines.append("You speak only when you have something specific to add.")
         elif talkativeness >= 4:
             lines.append("You tend to elaborate and think out loud.")
 
@@ -79,31 +113,44 @@ class MultiUserSimulator:
         if agreeableness >= 4:
             lines.append("You actively look for common ground and validate others' points.")
         elif agreeableness <= 2:
-            lines.append("You don't rush to agree — you'll challenge a point if it doesn't convince you.")
+            lines.append(
+                "You don't rush to agree — you'll challenge a point if it doesn't convince you."
+            )
 
         patience = p.get("patience", 3)
         if patience <= 2:
-            lines.append("You get frustrated when the discussion goes in circles and want to move on.")
+            lines.append(
+                "You get frustrated when the discussion goes in circles and want to move on."
+            )
         elif patience >= 4:
-            lines.append("You are happy to let others work through their thoughts without rushing them.")
+            lines.append(
+                "You are happy to let others work through their thoughts without rushing them."
+            )
 
         contrarian = p.get("contrarian_pressure", 3)
         if contrarian >= 4:
             lines.append(
                 "You have a natural tendency to question the obvious choice and play devil's advocate. "
-                "When everyone agrees too quickly, you probe for weaknesses."
+                "When everyone agrees too quickly, you probe for weaknesses or raise overlooked trade-offs."
             )
         elif contrarian <= 2:
-            lines.append("You tend to go along with the emerging group consensus once you see it forming.")
+            lines.append(
+                "You tend to go along with the emerging group consensus once you see it forming."
+            )
 
         initiative = p.get("initiative", 3)
         if initiative >= 4:
-            lines.append("You are comfortable directing questions at specific people to move things forward.")
+            lines.append(
+                "You are comfortable directing questions at specific people to move things forward."
+            )
 
         return " ".join(lines) if lines else "You engage in a balanced, neutral manner."
 
-    def _word_limit(self) -> int:
-        return self._WORD_LIMIT.get(int(self.persona.get("response_length", 3)), 40)
+    def _response_style_instruction(self) -> str:
+        """Return the semantic speaking-style label and description for this persona."""
+        level = max(1, min(5, int(self.persona.get("response_length", 3))))
+        label, desc = self._RESPONSE_STYLE[level]
+        return f"Speaking style ({label}): {desc}"
 
     def _format_options(self) -> str:
         return "\n".join(f"  {opt}" for opt in self.options)
@@ -112,7 +159,6 @@ class MultiUserSimulator:
         return "\n".join(history[-max_lines:])
 
     def _format_recent_points(self, history: List[str], max_count: int = 4) -> str:
-        """Last N participant lines (excluding Moderator) as bullet points."""
         points = []
         for line in reversed(history):
             if ":" not in line:
@@ -129,7 +175,7 @@ class MultiUserSimulator:
         return "\n".join(f"- {p}" for p in points)
 
     def _recent_openers(self, history: List[str], n: int = 4) -> str:
-        """Extract first words of recent turns to forbid the model repeating them."""
+        """First words of the last N turns — used to forbid repetitive openers."""
         openers = []
         for line in reversed(history):
             if ":" not in line:
@@ -144,9 +190,11 @@ class MultiUserSimulator:
                 break
         return ", ".join(openers) if openers else ""
 
-    def _who_hasnt_spoken_recently(self, history: List[str], all_names: List[str], n: int = 6) -> List[str]:
-        """Return names of participants who have not spoken in the last n participant lines."""
-        recent_speakers = set()
+    def _who_hasnt_spoken_recently(
+        self, history: List[str], all_names: List[str], n: int = 6
+    ) -> List[str]:
+        """Names of participants who have not appeared in the last n participant lines."""
+        recent_speakers: set = set()
         count = 0
         for line in reversed(history):
             if ":" not in line:
@@ -158,7 +206,7 @@ class MultiUserSimulator:
             count += 1
             if count >= n:
                 break
-        return [n for n in all_names if n not in recent_speakers and n != self.name]
+        return [name for name in all_names if name not in recent_speakers and name != self.name]
 
     def _format_state_summary(self, state) -> str:
         events_text = ", ".join(getattr(state, "important_events", []) or []) or "none"
@@ -173,9 +221,8 @@ class MultiUserSimulator:
 
     def _contrarian_nudge(self, state) -> str:
         """
-        If the group is converging on an option and this persona has high
-        contrarian_pressure or hasn't gotten traction for their focus, return
-        a prompt injection that nudges them to push back or probe.
+        If the group is converging and this persona has a high contrarian_pressure,
+        inject an instruction to push back or probe rather than echo the consensus.
         """
         leading = getattr(state, "current_leading_option", None)
         if not leading:
@@ -184,41 +231,36 @@ class MultiUserSimulator:
         contrarian = self.persona.get("contrarian_pressure", 3)
         assertiveness = self.persona.get("assertiveness", 3)
 
-        # High contrarian trait: actively probe the leading option.
         if contrarian >= 4:
             return (
                 f"\nIMPORTANT: The group is leaning toward Option {leading}. "
-                "Your contrarian streak means you should probe its weaknesses or "
-                "raise a concern — even if you end up agreeing, don't just echo the consensus."
+                "Your contrarian streak means you should probe its weaknesses or raise "
+                "an overlooked concern — even if you end up agreeing, don't just echo the consensus."
             )
-
-        # Medium contrarian + high assertiveness: plant a seed of doubt.
         if contrarian == 3 and assertiveness >= 4:
             return (
-                f"\nNote: Option {leading} seems to be gaining traction. "
-                "If it doesn't fully align with your focus or goal, you may want to "
-                "raise a specific concern or ask a probing question about it."
+                f"\nNote: Option {leading} is gaining traction. "
+                "If it doesn't fully align with your focus or goal, raise a specific concern "
+                "or ask a probing question rather than simply agreeing."
             )
-
         return ""
 
-    def _question_nudge(self, state, all_names: List[str]) -> str:
+    def _question_nudge(self, history: List[str], state, all_names: List[str]) -> str:
         """
         For high-initiative personas when discussion is stalling, suggest
         directing a question at a specific quiet participant.
         """
         if self.persona.get("initiative", 3) < 4:
             return ""
-        rep_pressure = getattr(state, "repetition_pressure", 0.0)
-        if rep_pressure < 0.4:
+        if getattr(state, "repetition_pressure", 0.0) < 0.4:
             return ""
-        quiet = self._who_hasnt_spoken_recently([], all_names)  # placeholder — passed from generate_turn
+        quiet = self._who_hasnt_spoken_recently(history, all_names)
         if not quiet:
             return ""
         target = random.choice(quiet)
         return (
-            f"\nSince the discussion is going in circles, consider directing a specific "
-            f"question at {target} to bring in a fresh perspective."
+            f"\nThe discussion is going in circles. Consider directing a specific question "
+            f"at {target} to bring in a fresh perspective."
         )
 
     # ------------------------------------------------------------------
@@ -242,12 +284,10 @@ class MultiUserSimulator:
             "Rules:\n"
             "- The goal must be specific to the scenario domain. "
             "If the scenario is about booking a restaurant, the goal is about the meal experience, "
-            "cuisine, group dynamics, or atmosphere — not about generic concepts like schedules or budgets "
-            "unless the scenario explicitly involves those.\n"
+            "cuisine, group dynamics, or atmosphere — not about generic concepts like schedules "
+            "or budgets unless the scenario explicitly involves those.\n"
             "- Do NOT lift trait names directly into the goal text. "
-            "Traits shape personality and behaviour, not the subject matter of the goal. "
-            "A low-safety focus does not mean the person cares about safety; "
-            "a high-cost focus means they are price-conscious in the context of this scenario.\n"
+            "Traits shape personality and behaviour, not the subject matter of the goal.\n"
             "- Do NOT use filler phrases like 'efficiently', 'seamlessly', or 'in a timely manner'.\n"
             "- Write in third person. One sentence only. No bullet points, markdown, or quotation marks."
         )
@@ -260,28 +300,16 @@ class MultiUserSimulator:
 
     def generate_turn(self, history: List[str], state, all_names: List[str] = None) -> str:
         all_names = all_names or []
-        word_limit = self._word_limit()
 
-        # Build dynamic forbidden openers from recent history.
+        # Build dynamic injections.
         forbidden_openers = self._recent_openers(history, n=4)
-
-        # Build optional nudges.
-        contrarian_nudge = self._contrarian_nudge(state)
-
-        # Question nudge — pass the actual history here.
-        quiet_names = self._who_hasnt_spoken_recently(history, all_names)
-        question_nudge = ""
-        if self.persona.get("initiative", 3) >= 4 and getattr(state, "repetition_pressure", 0.0) >= 0.4 and quiet_names:
-            target = random.choice(quiet_names)
-            question_nudge = (
-                f"\nSince the discussion is going in circles, consider directing a specific "
-                f"question at {target} to bring in a fresh perspective."
-            )
-
         forbidden_note = (
-            f"\nDo NOT start your reply with any of these words (recently overused): {forbidden_openers}."
+            f"\nDo NOT start your reply with any of these recently overused words: {forbidden_openers}."
             if forbidden_openers else ""
         )
+        contrarian_nudge = self._contrarian_nudge(state)
+        question_nudge = self._question_nudge(history, state, all_names)
+        style_instruction = self._response_style_instruction()
 
         prompt = f"""
 Identity:
@@ -299,6 +327,7 @@ Internal profile:
 - Goal: {self.goal}
 - Behavioral style: {self._traits_as_behavior()}
 - Focus: {self._format_focus()}
+- {style_instruction}
 
 Dialogue state:
 {self._format_state_summary(state)}
@@ -314,27 +343,25 @@ Instructions:
 - Stay in character with your role, goal, and behavioral style at all times.
 - React to what was just said, not just your own preferences.
 - If you were directly addressed or questioned, respond to that first.
-- If the discussion is going in circles, help move it forward.
 - ONLY use information already present in the options or history above.
 - Do NOT ask for prices, confirmation numbers, external data, or any detail not listed in the options.
-- If options are listed, choose only among those listed options.
 - Aim for practical progress toward a shared decision.
-- Keep your reply under {word_limit} words. Short replies are natural and welcome.{contrarian_nudge}{question_nudge}{forbidden_note}
+- Do NOT summarise what others said before making your own point — just make your point.
+- Do NOT use phrases like "As X mentioned..." or "Building on what X said..." as a crutch.{contrarian_nudge}{question_nudge}{forbidden_note}
 
 Phase-specific behavior:
-- opening: briefly introduce your main concern.
+- opening: briefly introduce your main concern or priority.
 - preference_expression: state which option you lean toward and why.
 - negotiation: compare trade-offs, react to others, adjust if reasonable.
 - narrowing: help converge on one option; a backup is optional.
-- confirmation: clearly confirm or reject the emerging agreement with a plain yes/no.
-- closure: say a short, natural goodbye or sign-off that fits your personality and the scenario (e.g. 'Great, looking forward to the trip!' or 'Good call, see you there.'). One sentence only.
+- confirmation: clearly confirm or reject the emerging agreement — a plain yes/no is fine.
+- closure: one short, natural sign-off that fits your personality (e.g. 'Great, see you there!' or 'Works for me.'). One sentence only.
 
 Style:
-- Sound like a real person in a conversation or chat, not an essay writer.
-- Mix short reactive replies ("Yeah, makes sense" / "Hmm, I'm not so sure") with longer points.
-- Vary your opening words — do not repeat the same phrase every turn.{forbidden_note}
+- Sound like a real person in a group chat, not an essay writer.
+- Mix short reactive replies ("Yeah, makes sense." / "Hmm, not so sure about that.") with longer points when you have something real to add.
+- Vary your opening words every turn.{forbidden_note}
 - Do not say goodbye unless the phase is closure.
-- Do not summarize the entire discussion — just make your next point.
 """
         try:
             raw = self._call_llm(prompt).strip()

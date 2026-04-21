@@ -1,10 +1,11 @@
 import os
-import shutil
 
 from configs.template import PersonaManager
 from modules.generator import MultiUserSimulator
 from modules.orchestrator import Orchestrator
 from modules.role_planner import RolePlanner
+
+MODERATOR_STYLES = ("active", "minimal", "passive")
 
 
 def _parse_participant_input(raw: str) -> tuple[str, str | None]:
@@ -16,10 +17,18 @@ def _parse_participant_input(raw: str) -> tuple[str, str | None]:
     """
     stripped = raw.strip()
     if stripped.endswith(".json") and os.path.isfile(stripped):
-        # Use the filename stem as the display name.
         name = os.path.splitext(os.path.basename(stripped))[0].capitalize()
         return name, stripped
     return stripped, None
+
+
+def _ask_moderator_style() -> str:
+    print("\n  Moderator style:")
+    print("    active  — moderator narrows and confirms when needed (default)")
+    print("    minimal — moderator only steps in if the group is genuinely stuck")
+    print("    passive — moderator stays silent after the opening; group self-organises")
+    raw = input("  Choose style [active/minimal/passive, default=active]: ").strip().lower()
+    return raw if raw in MODERATOR_STYLES else "active"
 
 
 def run_project() -> None:
@@ -27,8 +36,7 @@ def run_project() -> None:
     num_sims = int(input("Enter number of participants: ").strip())
 
     print(
-        "\n  Tip: enter a name to create a fresh participant, "
-        "or a path to an existing .json file to reuse one.\n"
+        "Tip: enter a name to create a fresh participant, or a path to an existing .json file to reuse one.\n"
     )
 
     raw_inputs: list[tuple[str, str | None]] = []
@@ -38,11 +46,11 @@ def run_project() -> None:
 
     names = [name for name, _ in raw_inputs]
 
-    # Orchestrator generates options and the dialogue ID.
-    orch = Orchestrator(setting)
+    moderator_style = _ask_moderator_style()
+
+    orch = Orchestrator(setting, moderator_style=moderator_style)
     dialogue_id = orch.dialogue_id
 
-    # PersonaManager scoped to this dialogue's folder.
     pm = PersonaManager(dialogue_id)
     role_planner = RolePlanner()
 
@@ -53,14 +61,11 @@ def run_project() -> None:
         role_info = role_plan[name]
 
         if source_path is not None:
-            # Load from the provided file, copy into this dialogue's folder.
             print(f"  Loading {name} from {source_path}")
             persona = pm.load_from_path(source_path, name)
         else:
-            # Always create fresh — no reuse across dialogues.
             persona = pm.create_fresh(name)
 
-        # Stamp the role assignment onto the persona.
         persona = pm.apply_role(
             persona,
             role=role_info["role"],
@@ -83,7 +88,7 @@ def run_project() -> None:
             f"role: {persona.get('role')} | goal: {sim.goal}"
         )
 
-    orch.run_simulation(max_turns=15)
+    orch.run_simulation(max_turns=30)
 
 
 if __name__ == "__main__":
