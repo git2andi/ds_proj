@@ -1,170 +1,139 @@
+"""
+modules/generator.py
+--------------------
+MultiUserSimulator — generates one dialogue turn for a single participant.
+
+All prompt text lives in prompts.py; this module handles only the logic of
+what context to gather, then delegates rendering to the prompt registry.
+
+Changes:
+- dynamic_forbidden_phrases: extracts repeated n-grams from recent history
+  and passes them to the prompt so the model avoids emergent repetition.
+- prompts.sim_turn now receives dynamic_forbidden_phrases as a separate argument.
+"""
+
+from __future__ import annotations
+
 import random
 import re
-from typing import Dict, List, Tuple
+from collections import Counter
+from typing import TYPE_CHECKING, Optional
 
-from constants import EXCLUDED_SPEAKERS
+import prompts
+from config_loader import cfg
 from modules.llm_client import get_llm_client
+from modules.persona_builder import Persona
+
+if TYPE_CHECKING:
+    from modules.orchestrator import DialogueState
+
+
+# Numeric response_length (1–5) → (label, hard style rule shown in prompt).
+# These are framed as constraints, not suggestions — matching the hard-rule
+# block at the top of the sim_turn prompt.
+_RESPONSE_STYLE: dict[int, tuple[str, str]] = {
+    1: (
+        "brief",
+        "Maximum 1 sentence. Short reactions only — e.g. 'Yeah, fair point.' or "
+        "'Not convinced by that.' Never elaborate unless directly asked a question.",
+    ),
+    2: (
+        "concise",
+        "Maximum 1 sentence. Make one clean point without elaborating. "
+        "No reasoning chains, no follow-up thoughts.",
+    ),
+    3: (
+        "balanced",
+        "Maximum 2 sentences. One point plus a short reason. No padding or repetition.",
+    ),
+    4: (
+        "talkative",
+        "Up to 3 sentences. You elaborate: give context, your reasoning, and optionally "
+        "a follow-up thought or question.",
+    ),
+    5: (
+        "detailed",
+        "Up to 4 sentences. You think out loud with thorough, well-reasoned responses.",
+    ),
+}
 
 
 class MultiUserSimulator:
 
-    # Numeric response_length (1-5) maps to a (label, behavioral description) pair.
-    # The numeric value is kept in the persona JSON for evaluation;
-    # the label+description is what the LLM actually sees in the prompt.
-    _RESPONSE_STYLE: Dict[int, Tuple[str, str]] = {
-        1: (
-            "brief",
-            "You make short replies. Reactions like 'Yeah, fair point.' "
-            "or 'Not sure about that.' are perfect. Never elaborate unless directly asked.",
-        ),
-        2: (
-            "concise",
-            "You make one short point per turn, cleanly, without elaborating much. "
-            "A sentence at most",
-        ),
-        3: (
-            "balanced",
-            "You give a clear point with a short reason — up to two short sentences. "
-            "You don't pad or over-explain.",
-        ),
-        4: (
-            "talkative",
-            "You tend to elaborate: you give context, your reasoning, and sometimes "
-            "a follow-up thought or question.",
-        ),
-        5: (
-            "detailed",
-            "You think out loud and give thorough, well-reasoned responses. ",
-        ),
-    }
-
-    def __init__(self, persona: Dict, setting: str, options: List[str], persona_manager=None):
+    def __init__(self, persona: Persona, topic: str, options: list[str]) -> None:
         self.persona = persona
-        self.name = persona["name"]
-        self.setting = setting
+        self.name = persona.name
+        self.topic = topic
         self.options = options
-        self.persona_manager = persona_manager
-
-        self.role = persona.get("role", "participant")
-        self.is_primary = bool(persona.get("is_primary", False))
-
-        self.llm = get_llm_client()
-
-        if not self.persona.get("goal"):
-            self.goal = self._generate_initial_goal()
-            self.persona["goal"] = self.goal
-            if self.persona_manager:
-                self.persona_manager.save_persona(self.persona)
-        else:
-            self.goal = self.persona["goal"]
+        self._llm = get_llm_client()
 
     # ------------------------------------------------------------------
-    # Formatting helpers
+    # Public interface
     # ------------------------------------------------------------------
 
-    def _format_focus(self) -> str:
-        focus = self.persona.get("focus", {})
-        if not isinstance(focus, dict) or not focus:
-            return "cost:3, comfort:3, time:3, safety:3, flexibility_focus:3"
-        ordered = ["cost", "comfort", "time", "safety", "flexibility_focus"]
-        return ", ".join(f"{k}:{focus.get(k, 3)}/5" for k in ordered)
+    def generate_turn(
+        self,
+        history: list[str],
+        state: "DialogueState",
+        all_names: Optional[list[str]] = None,
+        forced_adaptation: bool = False,
+    ) -> str:
+        all_names = all_names or []
+        prompt = prompts.sim_turn(
+            name=self.name,
+            role=self.persona.role,
+            is_primary=self.persona.is_primary,
+            topic=self.topic,
+            options_text=self._format_options(),
+            goal=self.persona.goal,
+            backstory=self.persona.backstory,
+            behavior_text=self._behavior_text(),
+            focus_text=self._focus_text(),
+            style_instruction=self._style_instruction(),
+            state_summary=self._state_summary(state),
+            recent_points=self._recent_points(history),
+            recent_history=self._recent_history(history),
+            phase=state.phase,
+            contrarian_nudge=self._contrarian_nudge(state),
+            question_nudge=self._question_nudge(history, state, all_names),
+            forbidden_openers=self._recent_openers(history),
+            forbidden_frames=list(cfg.repetition.forbidden_frames),
+            dynamic_forbidden_phrases=self._extract_repeated_phrases(history),
+            forced_adaptation=forced_adaptation,
+        )
 
-    def _numeric_traits_summary(self) -> str:
-        """Used for goal generation only — keeps raw numbers for the LLM context."""
-        keys = [
-            "friendliness", "assertiveness", "talkativeness", "initiative",
-            "agreeableness", "flexibility", "patience", "response_length",
-            "contrarian_pressure",
-        ]
-        return ", ".join(f"{k}={self.persona.get(k, 3)}/5" for k in keys)
+        try:
+            raw = self._llm.generate(prompt).strip()
+        except Exception as exc:
+            print(f"!! Turn generation error for {self.name}: {exc}")
+            return "[SILENCE]"
 
-    def _traits_as_behavior(self) -> str:
-        """
-        Translate numeric trait values into concrete behavioral instructions
-        so the LLM understands what each score means in conversation.
-        Raw numbers are intentionally NOT shown here — only plain-English cues.
-        """
-        p = self.persona
-        lines = []
+        if not raw:
+            return "[SILENCE]"
 
-        assertiveness = p.get("assertiveness", 3)
-        if assertiveness >= 4:
-            lines.append("You state opinions directly and don't soften disagreements.")
-        elif assertiveness <= 2:
-            lines.append("You hedge your opinions and avoid direct confrontation.")
+        # Strip accidental "Name: " prefix the model sometimes adds.
+        if raw.lower().startswith(f"{self.name.lower()}:"):
+            raw = raw.split(":", 1)[1].strip()
 
-        friendliness = p.get("friendliness", 3)
-        if friendliness <= 2:
-            lines.append(
-                "Your tone is blunt, possibly terse — you don't go out of your way to be warm."
-            )
-        elif friendliness >= 4:
-            lines.append(
-                "You are warm and encouraging; you acknowledge others before adding your own view."
-            )
+        return raw or "[SILENCE]"
 
-        talkativeness = p.get("talkativeness", 3)
-        if talkativeness <= 2:
-            lines.append("You speak only when you have something specific to add.")
-        elif talkativeness >= 4:
-            lines.append("You tend to elaborate and think out loud.")
-
-        agreeableness = p.get("agreeableness", 3)
-        if agreeableness >= 4:
-            lines.append("You actively look for common ground and validate others' points.")
-        elif agreeableness <= 2:
-            lines.append(
-                "You don't rush to agree — you'll challenge a point if it doesn't convince you."
-            )
-
-        patience = p.get("patience", 3)
-        if patience <= 2:
-            lines.append(
-                "You get frustrated when the discussion goes in circles and want to move on."
-            )
-        elif patience >= 4:
-            lines.append(
-                "You are happy to let others work through their thoughts without rushing them."
-            )
-
-        contrarian = p.get("contrarian_pressure", 3)
-        if contrarian >= 4:
-            lines.append(
-                "You have a natural tendency to question the obvious choice and play devil's advocate. "
-                "When everyone agrees too quickly, you probe for weaknesses or raise overlooked trade-offs."
-            )
-        elif contrarian <= 2:
-            lines.append(
-                "You tend to go along with the emerging group consensus once you see it forming."
-            )
-
-        initiative = p.get("initiative", 3)
-        if initiative >= 4:
-            lines.append(
-                "You are comfortable directing questions at specific people to move things forward."
-            )
-
-        return " ".join(lines) if lines else "You engage in a balanced, neutral manner."
-
-    def _response_style_instruction(self) -> str:
-        """Return the semantic speaking-style label and description for this persona."""
-        level = max(1, min(5, int(self.persona.get("response_length", 3))))
-        label, desc = self._RESPONSE_STYLE[level]
-        return f"Speaking style ({label}): {desc}"
+    # ------------------------------------------------------------------
+    # Context formatters
+    # ------------------------------------------------------------------
 
     def _format_options(self) -> str:
         return "\n".join(f"  {opt}" for opt in self.options)
 
-    def _format_recent_history(self, history: List[str], max_lines: int = 12) -> str:
+    def _recent_history(self, history: list[str], max_lines: int = 12) -> str:
         return "\n".join(history[-max_lines:])
 
-    def _format_recent_points(self, history: List[str], max_count: int = 4) -> str:
-        points = []
+    def _recent_points(self, history: list[str], max_count: int = 4) -> str:
+        points: list[str] = []
         for line in reversed(history):
             if ":" not in line:
                 continue
             speaker, msg = line.split(":", 1)
-            if speaker.strip() in EXCLUDED_SPEAKERS:
+            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
                 continue
             points.append(f"{speaker.strip()}: {msg.strip()}")
             if len(points) >= max_count:
@@ -174,14 +143,14 @@ class MultiUserSimulator:
         points.reverse()
         return "\n".join(f"- {p}" for p in points)
 
-    def _recent_openers(self, history: List[str], n: int = 4) -> str:
-        """First words of the last N turns — used to forbid repetitive openers."""
-        openers = []
+    def _recent_openers(self, history: list[str], n: int = 4) -> str:
+        """First words of the last N participant turns — used to vary turn openings."""
+        openers: list[str] = []
         for line in reversed(history):
             if ":" not in line:
                 continue
             speaker, msg = line.split(":", 1)
-            if speaker.strip() in EXCLUDED_SPEAKERS:
+            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
                 continue
             first_word = msg.strip().split()[0].rstrip(",.!?") if msg.strip() else ""
             if first_word and first_word not in openers:
@@ -190,187 +159,193 @@ class MultiUserSimulator:
                 break
         return ", ".join(openers) if openers else ""
 
-    def _who_hasnt_spoken_recently(
-        self, history: List[str], all_names: List[str], n: int = 6
-    ) -> List[str]:
-        """Names of participants who have not appeared in the last n participant lines."""
-        recent_speakers: set = set()
+    def _extract_repeated_phrases(
+        self,
+        history: list[str],
+        ngram_size: int = 4,
+        min_count: int = 3,
+        window: int = 16,
+    ) -> list[str]:
+        """
+        Extract n-grams that appear >= min_count times in recent participant turns.
+        These are injected into the prompt as dynamically-forbidden phrases so the
+        model stops echoing emergent repetitions like "potential kid-friendly services".
+
+        Only participant lines within the last `window` lines are scanned.
+        Short/stopword-only n-grams are filtered out.
+        """
+        stopwords = {
+            "the", "a", "an", "and", "or", "but", "so", "to", "of", "in",
+            "is", "it", "i", "we", "you", "that", "this", "for", "with",
+            "at", "on", "be", "as", "by", "if", "do", "not", "no", "yes",
+        }
+
+        texts: list[str] = []
+        for line in reversed(history):
+            if ":" not in line:
+                continue
+            speaker, msg = line.split(":", 1)
+            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
+                continue
+            texts.append(msg.strip().lower())
+            if len(texts) >= window:
+                break
+
+        all_ngrams: list[str] = []
+        for text in texts:
+            words = re.sub(r"[^\w\s]", "", text).split()
+            for i in range(len(words) - ngram_size + 1):
+                gram = words[i : i + ngram_size]
+                # Skip n-grams that are entirely stopwords.
+                if all(w in stopwords for w in gram):
+                    continue
+                all_ngrams.append(" ".join(gram))
+
+        counts = Counter(all_ngrams)
+        return [phrase for phrase, count in counts.items() if count >= min_count]
+
+    def _quiet_participants(
+        self, history: list[str], all_names: list[str], window: int = 6
+    ) -> list[str]:
+        """Names of participants who haven't spoken in the last `window` turns."""
+        recent_speakers: set[str] = set()
         count = 0
         for line in reversed(history):
             if ":" not in line:
                 continue
             speaker = line.split(":", 1)[0].strip()
-            if speaker in EXCLUDED_SPEAKERS:
+            if speaker in cfg.EXCLUDED_SPEAKERS:
                 continue
             recent_speakers.add(speaker)
             count += 1
-            if count >= n:
+            if count >= window:
                 break
-        return [name for name in all_names if name not in recent_speakers and name != self.name]
+        return [n for n in all_names if n not in recent_speakers and n != self.name]
 
-    def _format_state_summary(self, state) -> str:
-        events_text = ", ".join(getattr(state, "important_events", []) or []) or "none"
+    # ------------------------------------------------------------------
+    # Behavior text builders
+    # ------------------------------------------------------------------
+
+    def _behavior_text(self) -> str:
+        """
+        Translate numeric trait values into plain-English behavioral cues.
+        Raw numbers are intentionally not shown — only natural language instructions.
+        """
+        p = self.persona
+        lines: list[str] = []
+
+        assertiveness = p.get("assertiveness", 3)
+        if assertiveness >= 4:
+            lines.append("State opinions directly; don't soften disagreements.")
+        elif assertiveness <= 2:
+            lines.append("Hedge opinions and avoid direct confrontation.")
+
+        friendliness = p.get("friendliness", 3)
+        if friendliness <= 2:
+            lines.append("Your tone is blunt — you don't go out of your way to be warm.")
+        elif friendliness >= 4:
+            lines.append("You are warm; acknowledge others before adding your own view.")
+
+        talkativeness = p.get("talkativeness", 3)
+        if talkativeness <= 2:
+            lines.append("Speak only when you have something specific to add.")
+        elif talkativeness >= 4:
+            lines.append("You tend to elaborate and think out loud.")
+
+        agreeableness = p.get("agreeableness", 3)
+        if agreeableness >= 4:
+            lines.append("Look for common ground and validate others' points.")
+        elif agreeableness <= 2:
+            lines.append("Challenge points that don't convince you.")
+
+        patience = p.get("patience", 3)
+        if patience <= 2:
+            lines.append("You get frustrated when the discussion goes in circles.")
+        elif patience >= 4:
+            lines.append("You are happy to let others work through their thoughts.")
+
+        contrarian = p.get("contrarian_pressure", 3)
+        if contrarian >= 4:
+            lines.append(
+                "You naturally question the obvious choice and probe for weaknesses. "
+                "When everyone agrees too fast, raise overlooked trade-offs."
+            )
+        elif contrarian <= 2:
+            lines.append("You go along with the emerging group consensus once you see it forming.")
+
+        if p.get("initiative", 3) >= 4:
+            lines.append("You direct questions at specific people to move things forward.")
+
+        return " ".join(lines) if lines else "Engage in a balanced, neutral manner."
+
+    def _focus_text(self) -> str:
+        """Format focus values with their topic-contextual notes."""
+        focus: dict = self.persona.focus
+        notes: dict = self.persona.focus_notes or {}
+        parts: list[str] = []
+        for dim in ["cost", "comfort", "time", "safety", "flexibility_focus"]:
+            val = focus.get(dim, 3)
+            note = notes.get(dim, "")
+            entry = f"{dim}: {val}/5"
+            if note:
+                entry += f" ({note})"
+            parts.append(entry)
+        return "; ".join(parts)
+
+    def _style_instruction(self) -> str:
+        level = max(1, min(5, int(self.persona.get("response_length", 3))))
+        label, desc = _RESPONSE_STYLE[level]
+        return f"Speaking style ({label}): {desc}"
+
+    def _state_summary(self, state: "DialogueState") -> str:
+        events = ", ".join(state.important_events or []) or "none"
         return (
-            f"phase={getattr(state, 'phase', 'negotiation')}; "
-            f"last_addressed={getattr(state, 'last_addressed', None)}; "
-            f"pending_question_target={getattr(state, 'pending_question_target', None)}; "
-            f"pending_reply_target={getattr(state, 'pending_reply_target', None)}; "
-            f"repetition_pressure={getattr(state, 'repetition_pressure', 0.0):.2f}; "
-            f"important_events={events_text}"
+            f"phase={state.phase}; "
+            f"last_addressed={state.last_addressed}; "
+            f"pending_question={state.pending_question_target}; "
+            f"pending_reply={state.pending_reply_target}; "
+            f"repetition_pressure={state.repetition_pressure:.2f}; "
+            f"events={events}"
         )
 
-    def _contrarian_nudge(self, state) -> str:
-        """
-        If the group is converging and this persona has a high contrarian_pressure,
-        inject an instruction to push back or probe rather than echo the consensus.
-        """
-        leading = getattr(state, "current_leading_option", None)
+    # ------------------------------------------------------------------
+    # Nudge injections
+    # ------------------------------------------------------------------
+
+    def _contrarian_nudge(self, state: "DialogueState") -> str:
+        leading = state.current_leading_option
         if not leading:
             return ""
-
         contrarian = self.persona.get("contrarian_pressure", 3)
         assertiveness = self.persona.get("assertiveness", 3)
-
         if contrarian >= 4:
             return (
                 f"\nIMPORTANT: The group is leaning toward Option {leading}. "
                 "Your contrarian streak means you should probe its weaknesses or raise "
-                "an overlooked concern — even if you end up agreeing, don't just echo the consensus."
+                "an overlooked concern — even if you end up agreeing, don't echo the consensus."
             )
         if contrarian == 3 and assertiveness >= 4:
             return (
                 f"\nNote: Option {leading} is gaining traction. "
-                "If it doesn't fully align with your focus or goal, raise a specific concern "
-                "or ask a probing question rather than simply agreeing."
+                "If it doesn't fully align with your focus or goal, raise a specific concern."
             )
         return ""
 
-    def _question_nudge(self, history: List[str], state, all_names: List[str]) -> str:
-        """
-        For high-initiative personas when discussion is stalling, suggest
-        directing a question at a specific quiet participant.
-        """
+    def _question_nudge(
+        self,
+        history: list[str],
+        state: "DialogueState",
+        all_names: list[str],
+    ) -> str:
         if self.persona.get("initiative", 3) < 4:
             return ""
-        if getattr(state, "repetition_pressure", 0.0) < 0.4:
+        if state.repetition_pressure < 0.4:
             return ""
-        quiet = self._who_hasnt_spoken_recently(history, all_names)
+        quiet = self._quiet_participants(history, all_names)
         if not quiet:
             return ""
         target = random.choice(quiet)
         return (
-            f"\nThe discussion is going in circles. Consider directing a specific question "
-            f"at {target} to bring in a fresh perspective."
+            f"\nThe discussion is going in circles. "
+            f"Consider directing a specific question at {target} to bring in a fresh perspective."
         )
-
-    # ------------------------------------------------------------------
-    # LLM calls
-    # ------------------------------------------------------------------
-
-    def _call_llm(self, prompt: str) -> str:
-        return self.llm.generate(prompt)
-
-    def _generate_initial_goal(self) -> str:
-        prompt = (
-            f"Scenario: {self.setting}\n"
-            f"Participant name: {self.name}\n"
-            f"Role in this scenario: {self.role}\n"
-            f"Is primary participant: {self.is_primary}\n"
-            f"Numeric traits (1-5): {self._numeric_traits_summary()}\n"
-            f"Focus values (1-5): {self._format_focus()}\n\n"
-            "Task:\n"
-            "Write exactly one short internal goal sentence for this participant.\n"
-            "\n"
-            "Rules:\n"
-            "- The goal must be specific to the scenario domain. "
-            "If the scenario is about booking a restaurant, the goal is about the meal experience, "
-            "cuisine, group dynamics, or atmosphere — not about generic concepts like schedules "
-            "or budgets unless the scenario explicitly involves those.\n"
-            "- Do NOT lift trait names directly into the goal text. "
-            "Traits shape personality and behaviour, not the subject matter of the goal.\n"
-            "- Do NOT use filler phrases like 'efficiently', 'seamlessly', or 'in a timely manner'.\n"
-            "- Write in third person. One sentence only. No bullet points, markdown, or quotation marks."
-        )
-        try:
-            raw = self._call_llm(prompt).strip()
-            return raw if raw else "Support a practical outcome that fits your priorities."
-        except Exception as e:
-            print(f"!! Goal generation error for {self.name}: {e}")
-            return "Support a practical outcome that fits your priorities."
-
-    def generate_turn(self, history: List[str], state, all_names: List[str] = None) -> str:
-        all_names = all_names or []
-
-        # Build dynamic injections.
-        forbidden_openers = self._recent_openers(history, n=4)
-        forbidden_note = (
-            f"\nDo NOT start your reply with any of these recently overused words: {forbidden_openers}."
-            if forbidden_openers else ""
-        )
-        contrarian_nudge = self._contrarian_nudge(state)
-        question_nudge = self._question_nudge(history, state, all_names)
-        style_instruction = self._response_style_instruction()
-
-        prompt = f"""
-Identity:
-- Name: {self.name}
-- Role: {self.role}
-- Primary participant: {self.is_primary}
-
-Scenario:
-{self.setting}
-
-Available options (these are the ONLY facts you have — do not invent any other details):
-{self._format_options()}
-
-Internal profile:
-- Goal: {self.goal}
-- Behavioral style: {self._traits_as_behavior()}
-- Focus: {self._format_focus()}
-- {style_instruction}
-
-Dialogue state:
-{self._format_state_summary(state)}
-
-Recent participant points:
-{self._format_recent_points(history)}
-
-Recent history:
-{self._format_recent_history(history)}
-
-Instructions:
-- Reply with only your next utterance — no speaker label, no stage directions.
-- Stay in character with your role, goal, and behavioral style at all times.
-- React to what was just said, not just your own preferences.
-- If you were directly addressed or questioned, respond to that first.
-- ONLY use information already present in the options or history above.
-- Do NOT ask for prices, confirmation numbers, external data, or any detail not listed in the options.
-- Aim for practical progress toward a shared decision.
-- Do NOT summarise what others said before making your own point — just make your point.
-- Do NOT use phrases like "As X mentioned..." or "Building on what X said..." as a crutch.{contrarian_nudge}{question_nudge}{forbidden_note}
-
-Phase-specific behavior:
-- opening: briefly introduce your main concern or priority.
-- preference_expression: state which option you lean toward and why.
-- negotiation: compare trade-offs, react to others, adjust if reasonable.
-- narrowing: help converge on one option; a backup is optional.
-- confirmation: clearly confirm or reject the emerging agreement — a plain yes/no is fine.
-- closure: one short, natural sign-off that fits your personality (e.g. 'Great, see you there!' or 'Works for me.'). One sentence only.
-
-Style:
-- Sound like a real person in a group chat, not an essay writer.
-- Mix short reactive replies ("Yeah, makes sense." / "Hmm, not so sure about that.") with longer points when you have something real to add.
-- Vary your opening words every turn.{forbidden_note}
-- Do not say goodbye unless the phase is closure.
-"""
-        try:
-            raw = self._call_llm(prompt).strip()
-            if not raw:
-                return "[SILENCE]"
-            # Strip accidental "Name: " prefix the model sometimes adds.
-            if raw.lower().startswith(f"{self.name.lower()}:"):
-                raw = raw.split(":", 1)[1].strip()
-            return raw or "[SILENCE]"
-        except Exception as e:
-            print(f"!! Turn generation error for {self.name}: {e}")
-            return "[SILENCE]"

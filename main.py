@@ -1,19 +1,31 @@
+"""
+main.py
+-------
+Entry point for the dialogue simulator.
+
+Usage:
+    python main.py
+
+All tuneable parameters (turns, participants, moderator style, etc.)
+are set in config.yaml. CLI prompts only ask for what cannot be
+predetermined: the topic and participant names.
+"""
+
+from __future__ import annotations
+
 import os
 
-from configs.template import PersonaManager
+from config_loader import cfg
 from modules.generator import MultiUserSimulator
 from modules.orchestrator import Orchestrator
-from modules.role_planner import RolePlanner
-
-MODERATOR_STYLES = ("active", "minimal", "passive")
+from modules.persona_builder import PersonaBuilder, RolePlanner
 
 
 def _parse_participant_input(raw: str) -> tuple[str, str | None]:
     """
-    Returns (display_name, source_path_or_None).
-
-    If the user typed a path to an existing .json file, use it as the source.
-    Otherwise treat the input as a plain name and create a fresh persona.
+    Returns (display_name, source_json_path_or_None).
+    If the user types a path to an existing .json file, load from it.
+    Otherwise treat the input as a plain name and build fresh.
     """
     stripped = raw.strip()
     if stripped.endswith(".json") and os.path.isfile(stripped):
@@ -22,74 +34,93 @@ def _parse_participant_input(raw: str) -> tuple[str, str | None]:
     return stripped, None
 
 
-def _ask_moderator_style() -> str:
-    print("\n  Moderator style:")
-    print("    active  — moderator narrows and confirms when needed (default)")
-    print("    minimal — moderator only steps in if the group is genuinely stuck")
-    print("    passive — moderator stays silent after the opening; group self-organises")
-    raw = input("  Choose style [active/minimal/passive, default=active]: ").strip().lower()
-    return raw if raw in MODERATOR_STYLES else "active"
+def _ask(prompt: str, default: str = "") -> str:
+    raw = input(prompt).strip()
+    return raw if raw else default
 
 
-def run_project() -> None:
-    setting = input("Enter the dialogue setting: ").strip()
-    num_sims = int(input("Enter number of participants: ").strip())
+def run() -> None:
+    topic = _ask("Enter the dialogue topic: ")
+    if not topic:
+        print("Topic cannot be empty.")
+        return
+
+    num_participants_default = str(cfg.simulation.num_participants)
+    num_raw = _ask(f"Number of participants [{num_participants_default}]: ", num_participants_default)
+    try:
+        num_participants = int(num_raw)
+    except ValueError:
+        print("Invalid number — using default.")
+        num_participants = cfg.simulation.num_participants
 
     print(
-        "Tip: enter a name to create a fresh participant, or a path to an existing .json file to reuse one.\n"
+        "\nTip: enter a name to create a fresh participant, "
+        "or a path to an existing .json file to reuse one.\n"
     )
-
     raw_inputs: list[tuple[str, str | None]] = []
-    for i in range(num_sims):
-        raw = input(f"  Participant {i + 1}: ").strip()
+    for i in range(num_participants):
+        raw = _ask(f"  Participant {i + 1}: ")
         raw_inputs.append(_parse_participant_input(raw))
 
     names = [name for name, _ in raw_inputs]
 
-    moderator_style = _ask_moderator_style()
+    style_default = cfg.simulation.moderator_style
+    moderator_style = _ask(
+        f"Moderator style [active/minimal/passive, default={style_default}]: ",
+        default=style_default,
+    ).lower()
+    if moderator_style not in {"active", "minimal", "passive"}:
+        moderator_style = style_default
 
-    orch = Orchestrator(setting, moderator_style=moderator_style)
-    dialogue_id = orch.dialogue_id
+    # ------------------------------------------------------------------
+    # Build orchestrator (generates options + opening question).
+    # ------------------------------------------------------------------
+    orch = Orchestrator(topic, moderator_style=moderator_style)
 
-    pm = PersonaManager(dialogue_id)
+    # ------------------------------------------------------------------
+    # Build personas: roles → concepts → traits → goals.
+    # ------------------------------------------------------------------
     role_planner = RolePlanner()
+    role_plan = role_planner.plan(topic, names)
 
-    generated_roles = role_planner.plan_roles(setting, names)
-    role_plan = pm.assign_roles(names, generated_roles=generated_roles)
+    builder = PersonaBuilder(topic=topic, dialogue_id=orch.dialogue_id)
 
+    # Separate fresh builds from file loads.
+    file_inputs = {name: path for name, path in raw_inputs if path is not None}
+
+    # Build all fresh personas together so group constraints apply.
+    fresh_names = [name for name, path in raw_inputs if path is None]
+    fresh_role_plan = {n: role_plan[n] for n in fresh_names}
+    fresh_personas = builder.build_all(fresh_names, fresh_role_plan) if fresh_names else []
+    fresh_by_name = {p.name: p for p in fresh_personas}
+
+    print("\nParticipants:")
     for name, source_path in raw_inputs:
         role_info = role_plan[name]
 
         if source_path is not None:
-            print(f"  Loading {name} from {source_path}")
-            persona = pm.load_from_path(source_path, name)
+            persona = builder.load_from_file(
+                path=source_path,
+                name=name,
+                role=role_info["role"],
+                is_primary=role_info["is_primary"],
+            )
         else:
-            persona = pm.create_fresh(name)
+            persona = fresh_by_name[name]
 
-        persona = pm.apply_role(
-            persona,
-            role=role_info["role"],
-            is_primary=role_info["is_primary"],
-        )
-
-        sim = MultiUserSimulator(
-            persona=persona,
-            setting=setting,
-            options=orch.options,
-            persona_manager=pm,
-        )
-
+        sim = MultiUserSimulator(persona=persona, topic=topic, options=orch.options)
         orch.add_sim(sim)
 
         primary_tag = " [PRIMARY]" if persona.get("is_primary") else ""
         source_tag = f" (from {source_path})" if source_path else ""
         print(
-            f"   {name}{primary_tag}{source_tag} | "
-            f"role: {persona.get('role')} | goal: {sim.goal}"
+            f"  {name}{primary_tag}{source_tag} | "
+            f"role: {persona.get('role')} | goal: {persona.goal}"
         )
 
-    orch.run_simulation(max_turns=30)
+    print()
+    orch.run_simulation()
 
 
 if __name__ == "__main__":
-    run_project()
+    run()
