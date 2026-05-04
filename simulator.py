@@ -73,8 +73,18 @@ class Simulator:
             "opening": "Say a quick hello if you like, then share your first instinct or main priority. Keep it natural — you are just joining the conversation.",
             "preference_expression": "State which option you lean toward and the one specific reason that matters most to you.",
             "negotiation": "Compare trade-offs, react directly to what was just said, and adjust your position only if genuinely persuaded.",
-            "narrowing": "Commit to a preferred option. A backup is fine if you are genuinely unsure.",
-            "confirmation": "Clearly confirm or reject the emerging agreement — a plain yes or no is fine.",
+            "narrowing": (
+                "Commit to a preferred option and state it clearly (e.g. 'I prefer Option A'). "
+                "A backup is fine if genuinely unsure. "
+                "Once you have stated a preference, KEEP IT unless someone raises a specific new reason that genuinely changes your view — "
+                "do not switch just because someone repeats their position more forcefully."
+            ),
+            "confirmation": (
+                "The moderator is asking you to confirm or reject the emerging choice. "
+                "Answer with a clear yes or no. "
+                "If you already stated a preference in the narrowing phase, your answer should be consistent with it — "
+                "only say no if you have a genuine objection you have not yet raised."
+            ),
             "closure": "One short, natural sign-off that fits your personality. One sentence only.",
         }
 

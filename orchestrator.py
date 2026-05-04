@@ -263,11 +263,21 @@ class Orchestrator:
         )
 
     def _should_intervene(self) -> Optional[str]:
-        """Return an intervention reason string or None."""
+        """
+        Return an intervention reason string or None. Possible values:
+          "clarify:{keyword}"   — participants speculating about something not in any option
+          "outlier:{name}"      — one sim repeating the same position verbatim
+          "stall"               — generic high-repetition stall
+        """
         if self.moderator_style == "passive":
             return None
         if self._participant_turn_count() < len(self.sims):
             return None
+
+        # Speculative loop: participants keep mentioning something not in the options
+        loop_topic = self._detect_speculative_loop()
+        if loop_topic:
+            return f"clarify:{loop_topic}"
 
         # Outlier: a sim repeating the same position verbatim
         outlier = self._detect_outlier()
@@ -279,6 +289,78 @@ class Orchestrator:
             return "stall"
 
         return None
+
+    def _detect_speculative_loop(self) -> Optional[str]:
+        """
+        Return a content keyword if participants have been speculating about
+        the same topic — one that does not appear in any option description —
+        for 3+ consecutive participant turns.
+
+        Example: sims keep saying "direct flight" when no option mentions it.
+        """
+        hedge_words = {"maybe", "could", "might", "possibly", "perhaps", "wonder"}
+        stopwords = {
+            "the", "and", "for", "that", "this", "with", "have", "they",
+            "are", "was", "but", "not", "all", "can", "its", "our", "you",
+            "we", "it", "in", "of", "to", "a", "is", "be", "at", "on",
+            "do", "if", "or", "so", "as", "by", "option", "think", "also",
+            "good", "great", "like", "just", "more", "about", "some",
+            "would", "should", "there", "something", "anything",
+        }
+
+        # Words already present in the options — never flag these
+        option_words: set[str] = set()
+        for opt in self.options:
+            for w in re.sub(r"[^\w\s]", " ", opt.lower()).split():
+                if len(w) >= 4:
+                    option_words.add(w)
+
+        threshold = 3
+        recent: list[str] = []
+        for line in reversed(self.history):
+            if ":" not in line:
+                continue
+            speaker, msg = line.split(":", 1)
+            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
+                continue
+            recent.append(msg.strip().lower())
+            if len(recent) >= threshold * 3:
+                break
+
+        if len(recent) < threshold:
+            return None
+
+        def is_speculative(msg: str) -> bool:
+            return "?" in msg or any(w in hedge_words for w in msg.split())
+
+        # Find the consecutive speculative run at the head of recent (newest first)
+        run: list[str] = []
+        for msg in recent:
+            if is_speculative(msg):
+                run.append(msg)
+            else:
+                break
+
+        if len(run) < threshold:
+            return None
+
+        # Find the most-repeated content word across the speculative run
+        # that is not in the options and not already clarified
+        from collections import Counter as _Counter
+        all_words: list[str] = []
+        for msg in run:
+            for w in re.sub(r"[^\w]", " ", msg).split():
+                if (len(w) >= 4
+                        and w not in stopwords
+                        and w not in option_words
+                        and w not in self.state.clarification_topics_used):
+                    all_words.append(w)
+
+        if not all_words:
+            return None
+
+        top_word, _ = _Counter(all_words).most_common(1)[0]
+        return top_word
 
     def _detect_outlier(self) -> Optional[str]:
         """Name of a participant whose last 2 turns are >55% identical."""
@@ -311,7 +393,20 @@ class Orchestrator:
         recent = "\n".join(self.history[-10:])
 
         try:
-            if reason.startswith("outlier:"):
+            if reason.startswith("clarify:"):
+                keyword = reason.split(":", 1)[1]
+                self.state.clarification_topics_used.add(keyword)
+                line = self._llm.generate(
+                    prompts.moderator_clarification(
+                        topic=self.topic,
+                        participant_names=names,
+                        options=self.options,
+                        recent_dialogue=recent,
+                        looping_topic=keyword,
+                    )
+                ).strip()
+
+            elif reason.startswith("outlier:"):
                 outlier_name = reason.split(":", 1)[1]
                 self.state.nudged_participants.add(outlier_name)
                 line = self._llm.generate(
@@ -323,6 +418,7 @@ class Orchestrator:
                         target_participant=outlier_name,
                     )
                 ).strip()
+
             else:  # stall
                 line = self._llm.generate(
                     prompts.moderator_intervention(
@@ -453,6 +549,7 @@ class Orchestrator:
             if any(sig in msg.lower() for sig in rejection_signals):
                 self.state.agreement_reached = False
                 self.state.preferred_option = None
+                self.state.stall_rounds = 0      # reset so the same wrong result can't re-fire immediately
                 return
             checked += 1
             if checked >= len(self.sims) * 2:

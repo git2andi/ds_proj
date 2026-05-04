@@ -203,7 +203,7 @@ Instructions:
 Current phase — {phase}:
 {phase_instruction}
 
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person. Do not say goodbye unless the phase is closure."""
+Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person in a chat. Do not say goodbye unless the phase is closure."""
 
 def sim_turn_open(
     name: str,
@@ -289,7 +289,7 @@ Instructions:
 Current phase — {phase}:
 {phase_instruction}
 
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person having an actual opinion."""
+Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person having an actual opinion in a chat."""
 
 
 # =============================================================================

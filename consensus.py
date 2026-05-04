@@ -16,7 +16,7 @@ import re
 from collections import Counter
 from typing import Any, Optional, TYPE_CHECKING
 
-import prompts as prompts
+import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 
@@ -136,39 +136,59 @@ class ConsensusDetector:
     # ------------------------------------------------------------------
 
     def _regex(self, history: list[str]) -> Optional[tuple[str, Optional[str]]]:
+        """
+        Count each participant's MOST RECENT committed vote, then tally unique voters.
+        This prevents a loud minority (e.g. one sim who mentions Option D in every
+        turn) from overriding a silent majority who already committed to Option A.
+
+        A "committed vote" is an explicit option-letter mention.
+        Only the speaker's most recent such mention counts — earlier mentions
+        in the same window are ignored for that speaker.
+        """
         window = max(cfg.consensus.regex_window, len(self.sims) * 3)
         recent = self._recent_participant_lines(history, limit=window)
 
         if len(recent) < len(self.sims):
             return None
 
+        # Walk history newest-first; record each speaker's single most recent vote.
         latest_vote: dict[str, str] = {}
         for line in reversed(recent):
             speaker, msg = line.split(":", 1)
             speaker = speaker.strip()
+            if speaker in latest_vote:
+                continue                        # already have this speaker's latest vote
             mentions = self._extract_option_letters(msg)
-            if mentions and speaker not in latest_vote:
+            if mentions:
                 latest_vote[speaker] = mentions[0]
 
+        # Every sim must have voted
         if len(latest_vote) < len(self.sims):
             return None
 
-        # Primary's vote counts double
+        # Tally unique voters per option (primary counts double)
         primary = self._primary_sim()
-        weighted = list(latest_vote.values())
-        if primary and primary.name in latest_vote:
-            weighted.append(latest_vote[primary.name])
+        vote_counts: Counter = Counter()
+        for speaker, opt in latest_vote.items():
+            weight = 2 if (primary and speaker == primary.name) else 1
+            vote_counts[opt] += weight
 
-        counts = Counter(weighted)
-        top_option, top_count = counts.most_common(1)[0]
+        top_option, top_weighted_count = vote_counts.most_common(1)[0]
 
+        # Threshold: need enough unique human voters, not raw weighted count
+        # Count how many distinct sims voted for the top option
+        unique_voters_for_top = sum(
+            1 for speaker, opt in latest_vote.items() if opt == top_option
+        )
         n = len(self.sims)
         max_dissenters = (
             cfg.consensus.max_dissenters_active
             if self.moderator_style == "active"
             else cfg.consensus.max_dissenters_other
         )
-        if top_count < max(2, n - max_dissenters):
+        required_voters = n - max_dissenters
+
+        if unique_voters_for_top < required_voters:
             return None
 
         return top_option, None

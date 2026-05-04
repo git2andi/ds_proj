@@ -27,7 +27,7 @@ import random
 from dataclasses import dataclass
 from typing import Any
 
-import prompts as prompts
+import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 
