@@ -22,7 +22,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-import prompts
+import prompts as prompts
 from config_loader import cfg
 from modules.consensus_detector import ConsensusDetector
 from modules.dialogue_logger import DialogueLogger

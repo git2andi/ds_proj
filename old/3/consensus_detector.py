@@ -20,7 +20,7 @@ import re
 from collections import Counter
 from typing import Any, Optional, TYPE_CHECKING
 
-import prompts
+import prompts as prompts
 from config_loader import cfg
 from modules.llm_client import get_llm_client
 

@@ -19,7 +19,7 @@ import re
 from collections import Counter
 from typing import TYPE_CHECKING, Optional
 
-import prompts
+import prompts as prompts
 from config_loader import cfg
 from modules.llm_client import get_llm_client
 from modules.persona_builder import Persona

@@ -2,7 +2,6 @@
 config_loader.py
 ----------------
 Loads config.yaml once at import time and exposes a typed `cfg` object.
-All modules import `cfg` from here — no magic numbers elsewhere.
 """
 
 from __future__ import annotations
@@ -11,6 +10,11 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+
+def _load(path: Path) -> dict[str, Any]:
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 
 class _Section:
@@ -25,12 +29,11 @@ class _Section:
 
 
 class Config(_Section):
-    # Speakers never treated as participants in turn logic.
+    # Speakers that are never treated as participants in turn selection.
     EXCLUDED_SPEAKERS: frozenset[str] = frozenset({"Moderator"})
 
     def __init__(self, path: Path) -> None:
-        with open(path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
+        data = _load(path)
         super().__init__(data)
 
 

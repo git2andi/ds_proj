@@ -1,54 +1,14 @@
-2026-03-29 | Tokens: 13123 | Calls: 12
-2026-04-06 | Tokens: 22654 | Calls: 21
-2026-04-07 | Tokens: 104659 | Calls: 161
-2026-04-20 | Tokens: 28441 | Calls: 28
-
-
-Objektive Metriken (Redeanteil)
+2Pbjektive Metriken (Redeanteil)
 config File
 task success - zielorientiert oder beharlich
 passt lösung zur präferenz
 
 
-
-1. Max turns logic
-Problem: Hard ceiling at max_turns with no grace. The dialogue just stops or gets a canned moderator line.
-Fix: Replace the fixed counter with a turn budget that's dynamically allocated by phase. Opening gets a minimum, negotiation gets a range, narrowing gets a tighter window. The hard ceiling becomes a safety valve, not the primary exit. Concretely: a TurnBudget dataclass in config replaces the single max_turns integer.
-2. Ending / conclusion detection
-Problem: The regex detector requires all participants to have explicitly voted. The LLM detector fires too late (only after narrowing). In passive mode nothing forces a conclusion. Result: dialogues either end abruptly or loop.
-Fix: Three-layer approach:
-
-Layer 1: keep regex vote detection but make it phase-aware (only fires in narrowing/confirmation)
-Layer 2: LLM consensus check runs every N turns from negotiation onward, not just after stalling
-Layer 3: A new "soft conclusion" signal — if agreement_reached is true for 2 consecutive rounds without an explicit vote, accept it. This catches natural language agreement ("I think we all know it's Option B") that the regex misses.
-
-3. Repetition detection
-Problem: repetition_pressure only measures vocabulary overlap in 4 recent lines. It catches word-level repetition but misses structural/semantic repetition ("Tom's point about X is well taken" pattern).
-Fix: Add a phrase-pattern blacklist that grows during the dialogue. After any phrase is used, its structural template gets added. Also increase the window from 4 to 6–8 lines. The forbidden_openers mechanism in generate_turn should be extended to forbidden frames, not just opening words.
-4. Moderator behavior
 Problem: In active mode the moderator is still fairly passive — it only narrows and confirms. It never redirects off-track conversations (like Ben's safety obsession), never brings in quiet participants by name, and never challenges weak reasoning.
 Fix: Add a _moderator_intervention() check that runs each round alongside _should_narrow(). It checks for: topic drift (someone is talking about something context-inappropriate), a participant who hasn't spoken in N turns, or a reasoning pattern that's been repeated without new content. The moderator then has targeted intervention prompts for each case rather than one generic narrowing line.
-5. The is_primary / sim privileges question
-Your question: Does having one privileged sim make sense, and should it be implemented differently?
-Current implementation: is_primary adds +0.08 to turn score and one sentence to behavior text. It's basically cosmetic.
-Assessment: The concept is correct and valuable — in "plan Steve's birthday party," Tom should have more weight. But it needs to mean something structurally:
 
-Primary participant's stated preferences should bias the option scoring in consensus detection (if Tom wants comfort and Option A scores highest on comfort, that should count more)
-The moderator should explicitly solicit the primary's opinion if they've been quiet
-Other sims' goals should reference the primary: "help Tom find something he'll enjoy" rather than their own isolated goal
-is_primary should probably not be a random trait but always assigned to the most scenario-relevant participant (which role_planner already does correctly — Tom got birthday_person)
-
-The bigger fix is making the other participants aware of who the primary is and why that matters. Right now they don't reference Tom's role at all.
-6. Focus dimension context-mapping (Ben's safety problem)
 Problem: safety: 4 in a party planning context produces inappropriate behavior because the LLM interprets "safety" literally.
 Fix: Focus dimensions need a scenario-aware translation layer. Either: (a) at goal generation time, rephrase what each high focus dimension means in this specific context, or (b) add a context_note per focus dimension that gets generated once and injected into the sim's prompt. "Safety focus in a party context means: accessible venue, dietary restrictions, no risky activities for the group's age range" — not "risk of hiking injuries."
-7. Backstory / knowledge history (your future idea)
+
+Backstory
 Assessment: High value, very implementable. A one-paragraph generated backstory per sim that includes: their relationship to the primary participant, one relevant personal experience, and one standing preference. This gives the LLM something concrete to express rather than just trait scores. Tom's backstory: "Tom has been friends with Steve since university. He knows Steve loves live music but hates loud crowded bars." Now Option B becomes a bad choice for Tom's character, not just his stats.
-8. The phrase repetition / "well taken" problem
-Fix: Extend the forbidden_openers system to a forbidden_frames list. Add entries like "X's point about Y is well taken", "building on what X said", "as X mentioned." These get populated from the recent history dynamically and injected into the prompt's instruction block.
-9. Closure bloat
-Fix: _run_goodbye() should select at most 1–2 sims (not all), and only if the phase genuinely calls for it. The primary participant should always get the last word if they haven't spoken in closure.
-10. Config file (your stated goal)
-Scope: config.py or config.yaml should cover: LLM provider + model, temperature/sampling params, max_turns (or turn budget), num_sims default, moderator style default, output paths, repetition window size, stall thresholds, consensus thresholds. constants.py dissolves into this.
-11. Prompt registry (your stated goal)
-Scope: prompts.py with named string templates or functions: OPTION_GENERATION_PROMPT, ROLE_PLANNING_PROMPT, GOAL_GENERATION_PROMPT, TURN_GENERATION_PROMPT, CONSENSUS_CHECK_PROMPT, MODERATOR_INTERVENTION_PROMPT. Everything else imports from here. _build_behavior_text() in template.py either moves here or gets deleted (since _traits_as_behavior() in generator.py already does this job better).

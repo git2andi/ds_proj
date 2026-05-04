@@ -1,0 +1,99 @@
+# =============================================================================
+# Dialogue Simulator — Central Configuration
+# All tuneable parameters live here. No magic numbers elsewhere in the code.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# LLM provider
+# ---------------------------------------------------------------------------
+llm:
+  provider: "uni"                          # "uni" | "groq" | "gemini"
+  models:
+    uni: "llama3.3:latest"
+    groq: "llama-3.3-70b-versatile"
+    gemini: "gemini-2.0-flash-lite"
+  endpoints:
+    uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
+  sampling:
+    temperature: 0.85
+    top_k: 50
+    top_p: 0.95
+  gemini_rpm_delay: 12                     # seconds between Gemini calls (free tier = 5 RPM)
+
+# ---------------------------------------------------------------------------
+# Simulation run settings
+# ---------------------------------------------------------------------------
+simulation:
+  num_dialogues: 1                         # how many dialogues to generate per run
+  num_participants: 3                      # default participant count (overridden by CLI)
+  moderator_style: "active"               # "active" | "minimal" | "passive"
+
+# ---------------------------------------------------------------------------
+# Turn budget — replaces the single max_turns integer
+# Each phase gets a window; the hard ceiling is a safety valve only.
+# ---------------------------------------------------------------------------
+turns:
+  hard_ceiling: 40                         # absolute maximum turns before force-close
+  phase_budgets:
+    opening: 2                             # turns before moving past opening
+    preference_expression: 6              # per-participant turns in this phase
+    negotiation: 12                        # total turns in negotiation
+    narrowing: 8                           # turns after narrowing prompt
+    confirmation: 4                        # turns to confirm
+  min_turns_before_narrowing: 6           # safety: never narrow before this many participant turns
+
+# ---------------------------------------------------------------------------
+# Consensus detection
+# ---------------------------------------------------------------------------
+consensus:
+  llm_check_every_n_turns: 5             # run LLM consensus check every N turns (from negotiation onward)
+  regex_window: 8                         # how many recent participant lines to scan
+  stall_rounds_to_force:
+    active: 2
+    minimal: 3
+    passive: 999                           # passive never forces
+  # For groups of n participants, require at least (n - max_dissenters) to agree.
+  # Scales so large groups are not blocked by 1-2 stubborn outliers.
+  max_dissenters_active: 2                 # active mode: allow up to 2 dissenters
+  max_dissenters_other: 0                  # minimal/passive: require unanimity
+
+# ---------------------------------------------------------------------------
+# Repetition / stall detection
+# ---------------------------------------------------------------------------
+repetition:
+  pressure_window: 8                      # lines to include in overlap calculation (was 4)
+  min_word_length: 3                      # ignore short words in overlap
+  forbidden_frames:                        # structural patterns always blacklisted
+    - "point about * is well taken"
+    - "building on what * said"
+    - "as * mentioned"
+    - "to echo what * said"
+    - "I agree with * that"
+
+# ---------------------------------------------------------------------------
+# Persona / trait generation
+# ---------------------------------------------------------------------------
+personas:
+  mode: "guided"                           # "random" | "guided"
+  generate_backstory: true
+  generate_contextual_focus: true
+
+  # Group-level constraints (guided mode only).
+  # These ensure the generated group has useful conversational variety.
+  group_constraints:
+    talkativeness:
+      min_spread: 2                        # max_value - min_value across group >= this
+      no_all_below: 2                      # not all sims may have value <= this
+    agreeableness:
+      min_spread: 2
+    contrarian_pressure:
+      max_count_at_max: 1                  # at most 1 sim with value == 5
+
+# ---------------------------------------------------------------------------
+# Output / logging
+# ---------------------------------------------------------------------------
+output:
+  log_dir: "logs"
+  config_dir: "configs"
+  save_csv: true
+  save_txt: true
