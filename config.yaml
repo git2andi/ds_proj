@@ -26,8 +26,8 @@ llm:
 simulation:
   # How many participants per dialogue.
   # Set to a fixed number, or use "random" to pick from the range below.
-  num_participants: 3
-  num_participants_random: false
+  num_participants: "random"
+  num_participants_random: true
   num_participants_min: 2
   num_participants_max: 5
 
@@ -40,6 +40,16 @@ simulation:
 turns:
   hard_ceiling: 40                         # absolute max turns before force-close
   min_before_narrowing: 6                  # never narrow before this many participant turns
+
+  # Escalation thresholds — rounds after narrowing before the moderator changes strategy.
+  # Level 0 (< level_1):  normal nudges and Socratic questions
+  # Level 1 (< level_2):  direct "name a compromise" ask
+  # Level 2 (< level_3):  firm "we are stuck, something must give"
+  # Level 3 (>= level_3): force-close, moderator picks the winner
+  escalation_level_1: 4
+  escalation_level_2: 8
+  escalation_level_3: 12
+
   phase_budgets:
     opening: 2
     preference_expression: 6

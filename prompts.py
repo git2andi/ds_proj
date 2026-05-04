@@ -289,7 +289,7 @@ Instructions:
 Current phase — {phase}:
 {phase_instruction}
 
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person having an actual opinion in a chat."""
+Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person in a chat having an actual opinion."""
 
 
 # =============================================================================
@@ -335,30 +335,103 @@ def moderator_intervention(
     recent_dialogue: str,
     reason: str,
     target_participant: Optional[str] = None,
+    escalation_level: int = 0,
 ) -> str:
     """
-    General moderator intervention. Used for stalls, silent participants, and outliers.
-    The `reason` string describes what is happening; `target_participant` is optional.
+    General moderator intervention for outliers and silent participants.
+    escalation_level (0-3) controls how direct the moderator is.
     """
     target_note = (
         f"\nFocus your line on drawing {target_participant} into the conversation."
         if target_participant else ""
     )
+
+    escalation_notes = {
+        0: "Ask a Socratic question that invites them to reconsider or add something new.",
+        1: "Ask them directly whether there is a specific compromise they could accept.",
+        2: "Be firm but respectful — tell them the group needs movement and ask them to name one thing that could change their mind.",
+        3: "Be direct — acknowledge the impasse and ask for a final position.",
+    }
+    escalation_note = escalation_notes.get(escalation_level, escalation_notes[0])
+
     return f"""You are a neutral moderator facilitating a group discussion.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
 Situation: {reason}{target_note}
+Moderator approach: {escalation_note}
 
 Recent dialogue:
 {recent_dialogue}
 
 Write a single short moderator line that:
-- Addresses the situation described above.
+- Addresses the situation and uses the approach described above.
 - Is neutral and does not favour any option.
-- Moves the conversation forward constructively.
 - Sounds natural and conversational, not formal.
 - Is one sentence only.
+
+Return only the moderator's line — no label, no markdown."""
+
+
+def moderator_deadlock(
+    topic: str,
+    participant_names: list[str],
+    options: list[str],
+    recent_dialogue: str,
+    current_votes: dict,
+    escalation_level: int = 1,
+) -> str:
+    """
+    Moderator addresses a genuine deadlock where everyone has voted but no majority exists.
+    Escalation level controls how direct the intervention is:
+      1 — ask for compromise
+      2 — name the split explicitly, demand movement
+      3 — announce force-close (used just before _force_conclusion)
+    """
+    options_text = "\n".join(f"  {o}" for o in options)
+    votes_text = ", ".join(f"{name} → Option {opt}" for name, opt in current_votes.items())
+
+    escalation_instructions = {
+        1: (
+            "Ask the group whether anyone can name a specific condition under which "
+            "they could accept a different option. Keep it open and non-pressuring."
+        ),
+        2: (
+            "Acknowledge the split directly and by name. Tell the group that unless "
+            "someone moves, you will have to make a call. Ask for one final round of "
+            "genuine compromise — not restatement."
+        ),
+        3: (
+            "Announce that the group has been unable to reach agreement and that you "
+            "are going to make a final call based on the discussion so far. "
+            "Do not ask another question."
+        ),
+    }
+    instruction = escalation_instructions.get(
+        escalation_level, escalation_instructions[1]
+    )
+
+    return f"""You are a neutral moderator facilitating a group discussion.
+
+Topic: {topic}
+Participants: {", ".join(participant_names)}
+
+Current situation: The group is in a deadlock. Everyone has voted but there is no majority.
+Current votes: {votes_text}
+
+Available options:
+{options_text}
+
+Recent dialogue:
+{recent_dialogue}
+
+Your task: {instruction}
+
+Rules:
+- One or two sentences maximum.
+- Do not favour any option.
+- Sound like a real person, not a formal chair.
+- Do not repeat what was already said.
 
 Return only the moderator's line — no label, no markdown."""
 
