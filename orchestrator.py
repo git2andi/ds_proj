@@ -7,9 +7,10 @@ Responsibilities:
   1. Setup       — generate options + opening history (LLM)
   2. State        — phase, leading option, turn counts
   3. Main loop   — drive rounds, detect consensus, fire moderator lines
-  4. Moderator   — narrowing, escalating interventions, confirmation, closure
+  4. Conclusion  — narrowing, confirmation, closure
 
 Detection  → consensus.py
+Moderation → moderation.py   (escalation, interventions, speculative-loop/outlier detection)
 Turn logic → turn_manager.py
 Logging    → logger.py
 """
@@ -28,6 +29,7 @@ from config_loader import cfg
 from consensus import ConsensusDetector
 from logger import DialogueLogger
 from llm_client import get_llm_client
+from moderation import ModerationEngine
 from turn_manager import TurnManager
 
 
@@ -57,20 +59,13 @@ class DialogueState:
     post_narrowing_rounds: int = 0       # total rounds after narrowing (for escalation)
     llm_check_countdown: int = 0
 
-    # Prevent re-firing the same moderator clarification topic
     clarification_topics_used: set[str] = field(default_factory=set)
-
-    # Sims scheduled for a forced-adaptation instruction on their next turn
     nudged_participants: set[str] = field(default_factory=set)
 
-    # Tracks how many times each sim has changed their stated vote during narrowing.
-    # Key: sim name. Value: number of position changes made.
-    # Used to enforce the one-flip limit: a sim who has already changed once gets
-    # a forced_adaptation flag on their next turn if they try to change again.
+    # Key: sim name. Value: number of position changes made during narrowing.
     vote_changes: dict = field(default_factory=dict)
 
-    # Last recorded vote per sim during narrowing phase.
-    # Key: sim name. Value: option letter (e.g. "A").
+    # Key: sim name. Value: last recorded option letter during narrowing.
     last_known_vote: dict = field(default_factory=dict)
 
 
@@ -104,6 +99,7 @@ class Orchestrator:
 
         self._logger = DialogueLogger(self.dialogue_id, topic, moderator_style)
         self._detector: Optional[ConsensusDetector] = None
+        self._mod: Optional[ModerationEngine] = None
 
     def add_sim(self, sim: Any) -> None:
         self.sims.append(sim)
@@ -167,14 +163,24 @@ class Orchestrator:
     # Logging helpers
     # ------------------------------------------------------------------
 
-    def _store_line(self, line: str, selected_reason: str = "") -> None:
+    def _store_line(
+        self,
+        line: str,
+        selected_reason: str = "",
+        tokens_in: int = 0,
+        tokens_out: int = 0,
+    ) -> None:
         self.history.append(line)
         print(f"-> {line}")
         self._logger.append_line(line)
-        self._logger.buffer(line, selected_reason, self.state, self.sims)
+        self._logger.buffer(line, selected_reason, self.state, self.sims,
+                            tokens_in=tokens_in, tokens_out=tokens_out)
 
-    def _store_moderator(self, text: str) -> None:
-        self._store_line(f"Moderator: {text}", selected_reason="moderator")
+    def _store_moderator(
+        self, text: str, tokens_in: int = 0, tokens_out: int = 0
+    ) -> None:
+        self._store_line(f"Moderator: {text}", selected_reason="moderator",
+                         tokens_in=tokens_in, tokens_out=tokens_out)
 
     # ------------------------------------------------------------------
     # State helpers
@@ -227,11 +233,8 @@ class Orchestrator:
                 self.state.phase = "closing"
             return
 
-        # Decision mode
-        if turns == 0:
+        if turns < n:
             self.state.phase = "opening"
-        elif turns < n:
-            self.state.phase = "preference_expression"
         elif self.state.has_asked_narrowing:
             self.state.phase = "narrowing"
         else:
@@ -247,14 +250,10 @@ class Orchestrator:
         self.state.repetition_pressure = self._turn_mgr.repetition_pressure(self.history)
 
     # ------------------------------------------------------------------
-    # Stall detection helpers
+    # Stall / deadlock helpers (used by main loop and _track_vote_flips)
     # ------------------------------------------------------------------
 
     def _current_votes(self) -> dict[str, str]:
-        """
-        Each sim's most recent explicitly stated option (letter A-D).
-        Only looks at participant lines; newest-first walk, one vote per name.
-        """
         votes: dict[str, str] = {}
         for line in reversed(self.history):
             if ":" not in line:
@@ -271,17 +270,11 @@ class Orchestrator:
         return votes
 
     def _is_split_deadlock(self) -> bool:
-        """
-        True when every sim has voted and no single option has enough supporters
-        to satisfy the consensus threshold — i.e. genuine N-way split.
-        Only meaningful after narrowing has been asked.
-        """
         if not self.state.has_asked_narrowing:
             return False
         votes = self._current_votes()
         if len(votes) < len(self.sims):
-            return False            # not everyone has voted yet
-
+            return False
         n = len(self.sims)
         max_dissenters = (
             cfg.consensus.max_dissenters_active
@@ -291,198 +284,6 @@ class Orchestrator:
         required = n - max_dissenters
         counts = Counter(votes.values())
         return counts.most_common(1)[0][1] < required
-
-    def _sim_vote_is_stuck(self, name: str, window: int = 4) -> bool:
-        """
-        True if this sim has stated the same option in all of their last
-        `window` turns — semantic stall regardless of word overlap.
-        """
-        turns = self._last_n_turns_for(name, n=window)
-        if len(turns) < window:
-            return False
-        options_per_turn = [self._extract_option_letters(t) for t in turns]
-        if not all(opts for opts in options_per_turn):
-            return False
-        first = options_per_turn[0][0]
-        return all(opts[0] == first for opts in options_per_turn)
-
-    def _any_sim_stuck(self) -> bool:
-        return any(self._sim_vote_is_stuck(s.name) for s in self.sims)
-
-    # ------------------------------------------------------------------
-    # Moderator logic
-    # ------------------------------------------------------------------
-
-    def _should_narrow(self) -> bool:
-        if self.state.has_asked_narrowing or self.moderator_style == "passive":
-            return False
-        turns = self._participant_turn_count()
-        n = len(self.sims)
-        if turns < max(n * 2, cfg.turns.min_before_narrowing):
-            return False
-        stalling = self.state.repetition_pressure >= 0.75 and self.state.stall_rounds >= 1
-        talked_plenty = turns >= n * 5
-        if self.moderator_style == "minimal":
-            return stalling and talked_plenty
-        return stalling or talked_plenty
-
-    def _narrowing_prompt(self) -> None:
-        self.state.has_asked_narrowing = True
-        self.state.phase = "narrowing"
-        self._store_moderator(
-            "Let's narrow this down — which option does each of you prefer? "
-            "A backup is fine if you're genuinely unsure."
-        )
-
-    def _escalation_level(self) -> int:
-        """
-        Returns 0, 1, 2, or 3 based on how many post-narrowing rounds have
-        passed without resolution. Controls how aggressively the moderator acts.
-          0 — normal (Socratic questions, nudges)
-          1 — direct (ask for compromise explicitly)
-          2 — firm (name the split, demand movement)
-          3 — force (moderator picks and closes)
-        """
-        r = self.state.post_narrowing_rounds
-        if r < cfg.turns.escalation_level_1:
-            return 0
-        if r < cfg.turns.escalation_level_2:
-            return 1
-        if r < cfg.turns.escalation_level_3:
-            return 2
-        return 3
-
-    def _should_intervene(self) -> Optional[str]:
-        """
-        Return an intervention reason string or None. Possible values:
-          "clarify:{keyword}"   — speculative loop about something not in the options
-          "outlier:{name}"      — one sim repeating the same position verbatim
-          "stall"               — generic high-repetition stall
-        Escalation level is checked by the caller and passed to the prompt.
-        """
-        if self.moderator_style == "passive":
-            return None
-        if self._participant_turn_count() < len(self.sims):
-            return None
-
-        # Speculative loop
-        loop_topic = self._detect_speculative_loop()
-        if loop_topic:
-            return f"clarify:{loop_topic}"
-
-        # Outlier: verbatim repetition
-        outlier = self._detect_outlier()
-        if outlier:
-            return f"outlier:{outlier}"
-
-        # Semantic stall: same vote restated without new reasoning
-        if self.state.has_asked_narrowing and self._any_sim_stuck():
-            return "stall"
-
-        # Generic word-overlap stall
-        if self.state.repetition_pressure >= 0.80 and self.state.stall_rounds >= 2:
-            return "stall"
-
-        return None
-
-    def _detect_speculative_loop(self) -> Optional[str]:
-        """
-        Return a content keyword if participants keep speculating about something
-        not present in any option description for 4+ consecutive turns.
-
-        Returns None immediately in open mode — there are no options to clarify
-        against, so speculative loop detection is meaningless and fires spuriously.
-
-        Excluded words:
-        - Common stopwords
-        - Words from the option descriptions (already known facts)
-        - Words from the topic string itself (appear in every turn by definition)
-        - Words shorter than 5 characters (too generic to be meaningful)
-        - Words already clarified this dialogue
-        """
-        # Guard: open mode has no options — nothing to clarify against
-        if self.mode == "open" or not self.options:
-            return None
-        hedge_words = {"maybe", "could", "might", "possibly", "perhaps", "wonder"}
-        stopwords = {
-            "the", "and", "for", "that", "this", "with", "have", "they",
-            "are", "was", "but", "not", "all", "can", "its", "our", "you",
-            "we", "it", "in", "of", "to", "a", "is", "be", "at", "on",
-            "do", "if", "or", "so", "as", "by", "option", "think", "also",
-            "good", "great", "like", "just", "more", "about", "some",
-            "would", "should", "there", "something", "anything", "might",
-            "steve", "party", "group", "point", "think", "feel", "make",
-        }
-
-        # Exclude words from option descriptions AND from the topic string itself.
-        # Topic words appear in every single turn and must never trigger a clarification.
-        excluded_words: set[str] = set()
-        for opt in self.options:
-            for w in re.sub(r"[^\w\s]", " ", opt.lower()).split():
-                if len(w) >= 5:
-                    excluded_words.add(w)
-        for w in re.sub(r"[^\w\s]", " ", self.topic.lower()).split():
-            if len(w) >= 5:
-                excluded_words.add(w)
-
-        threshold = 4          # raised from 3 — require longer speculative run
-        min_word_len = 5       # raised from 4 — shorter words are too generic
-
-        recent: list[str] = []
-        for line in reversed(self.history):
-            if ":" not in line:
-                continue
-            speaker, msg = line.split(":", 1)
-            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
-                continue
-            recent.append(msg.strip().lower())
-            if len(recent) >= threshold * 4:
-                break
-
-        if len(recent) < threshold:
-            return None
-
-        def is_speculative(msg: str) -> bool:
-            return "?" in msg or any(w in hedge_words for w in msg.split())
-
-        run: list[str] = []
-        for msg in recent:
-            if is_speculative(msg):
-                run.append(msg)
-            else:
-                break
-
-        if len(run) < threshold:
-            return None
-
-        all_words: list[str] = []
-        for msg in run:
-            for w in re.sub(r"[^\w]", " ", msg).split():
-                if (len(w) >= min_word_len
-                        and w not in stopwords
-                        and w not in excluded_words
-                        and w not in self.state.clarification_topics_used):
-                    all_words.append(w)
-
-        if not all_words:
-            return None
-
-        top_word, _ = Counter(all_words).most_common(1)[0]
-        return top_word
-
-    def _detect_outlier(self) -> Optional[str]:
-        """Name of a participant whose last 2 turns are >55% identical in wording."""
-        if not self.state.has_asked_narrowing:
-            return None
-        for sim in self.sims:
-            turns = self._last_n_turns_for(sim.name, n=2)
-            if len(turns) < 2:
-                continue
-            words0 = set(turns[0].split())
-            ratio = len(words0 & set(turns[1].split())) / max(1, len(words0))
-            if ratio >= 0.55:
-                return sim.name
-        return None
 
     def _last_n_turns_for(self, name: str, n: int) -> list[str]:
         turns: list[str] = []
@@ -496,57 +297,18 @@ class Orchestrator:
                     break
         return turns
 
-    def _run_moderator_intervention(self, reason: str) -> None:
-        names = [s.name for s in self.sims]
-        recent = "\n".join(self.history[-10:])
-        level = self._escalation_level()
+    def _sim_vote_is_stuck(self, name: str, window: int = 4) -> bool:
+        turns = self._last_n_turns_for(name, n=window)
+        if len(turns) < window:
+            return False
+        options_per_turn = [self._extract_option_letters(t) for t in turns]
+        if not all(opts for opts in options_per_turn):
+            return False
+        first = options_per_turn[0][0]
+        return all(opts[0] == first for opts in options_per_turn)
 
-        try:
-            if reason.startswith("clarify:"):
-                keyword = reason.split(":", 1)[1]
-                self.state.clarification_topics_used.add(keyword)
-                line = self._llm.generate(
-                    prompts.moderator_clarification(
-                        topic=self.topic,
-                        participant_names=names,
-                        options=self.options,
-                        recent_dialogue=recent,
-                        looping_topic=keyword,
-                    )
-                ).strip()
-
-            elif reason.startswith("outlier:"):
-                outlier_name = reason.split(":", 1)[1]
-                self.state.nudged_participants.add(outlier_name)
-                line = self._llm.generate(
-                    prompts.moderator_intervention(
-                        topic=self.topic,
-                        participant_names=names,
-                        recent_dialogue=recent,
-                        reason=f"{outlier_name} has been repeating the same position without new reasoning",
-                        target_participant=outlier_name,
-                        escalation_level=level,
-                    )
-                ).strip()
-
-            else:  # stall — use escalation level
-                votes = self._current_votes()
-                line = self._llm.generate(
-                    prompts.moderator_deadlock(
-                        topic=self.topic,
-                        participant_names=names,
-                        options=self.options,
-                        recent_dialogue=recent,
-                        current_votes=votes,
-                        escalation_level=level,
-                    )
-                ).strip()
-
-            if line:
-                self._store_moderator(line)
-
-        except Exception as exc:
-            print(f"!! Moderator intervention error ({reason}): {exc}")
+    def _any_sim_stuck(self) -> bool:
+        return any(self._sim_vote_is_stuck(s.name) for s in self.sims)
 
     # ------------------------------------------------------------------
     # Round execution
@@ -581,7 +343,7 @@ class Orchestrator:
 
         for sim in selected:
             forced_adapt = sim.name in self.state.nudged_participants
-            text = sim.generate_turn(
+            text, tok_in, tok_out = sim.generate_turn(
                 self.history,
                 self.state,
                 all_names=all_names,
@@ -589,29 +351,20 @@ class Orchestrator:
             )
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name == self.state.last_addressed else "weighted"
-                self._store_line(f"{sim.name}: {text}", selected_reason=reason)
+                self._store_line(f"{sim.name}: {text}", selected_reason=reason,
+                                 tokens_in=tok_in, tokens_out=tok_out)
                 active = True
                 self.state.nudged_participants.discard(sim.name)
 
         self._update_discourse()
         self._update_repetition()
 
-        # Vote-flip tracking (narrowing phase only).
-        # After each round, check if any sim's latest stated vote differs from
-        # what we last recorded. If they've already flipped once, schedule them
-        # for a forced_adaptation nudge on their next turn.
         if self.state.has_asked_narrowing:
             self._track_vote_flips()
 
         return active
 
     def _track_vote_flips(self) -> None:
-        """
-        For each sim, find their most recent stated option. If it differs from
-        their last recorded vote, increment their flip counter. If they have
-        already flipped once before, add them to nudged_participants so their
-        next turn receives a forced_adaptation instruction telling them to hold.
-        """
         for sim in self.sims:
             turns = self._last_n_turns_for(sim.name, n=1)
             if not turns:
@@ -623,21 +376,26 @@ class Orchestrator:
             previous_vote = self.state.last_known_vote.get(sim.name)
 
             if previous_vote is None:
-                # First time we see a vote from this sim — just record it
                 self.state.last_known_vote[sim.name] = current_vote
             elif current_vote != previous_vote:
-                # Vote changed
                 flips = self.state.vote_changes.get(sim.name, 0) + 1
                 self.state.vote_changes[sim.name] = flips
                 self.state.last_known_vote[sim.name] = current_vote
                 if flips >= 1:
-                    # They've already used their one allowed flip — next turn is forced
                     self.state.nudged_participants.add(sim.name)
                     print(f"[vote-flip] {sim.name} has flipped {flips} time(s) — forcing hold next turn")
 
     # ------------------------------------------------------------------
     # Conclusion helpers
     # ------------------------------------------------------------------
+
+    def _narrowing_prompt(self) -> None:
+        self.state.has_asked_narrowing = True
+        self.state.phase = "narrowing"
+        self._store_moderator(
+            "Let's narrow this down — which option does each of you prefer? "
+            "A backup is fine if you're genuinely unsure."
+        )
 
     def _run_open_closure(self) -> None:
         self.state.phase = "closing"
@@ -647,9 +405,12 @@ class Orchestrator:
         ordered = ([primary] if primary else []) + others
 
         for sim in ordered:
-            text = sim.generate_turn(self.history, self.state, all_names=all_names)
+            text, tok_in, tok_out = sim.generate_turn(
+                self.history, self.state, all_names=all_names
+            )
             if text and "[SILENCE]" not in text.upper():
-                self._store_line(f"{sim.name}: {text}", selected_reason="closure")
+                self._store_line(f"{sim.name}: {text}", selected_reason="closure",
+                                 tokens_in=tok_in, tokens_out=tok_out)
 
         if self.moderator_style != "passive":
             self._store_moderator("Thanks for sharing — good conversation.")
@@ -672,10 +433,28 @@ class Orchestrator:
             self.sims, self.history, self.state, max_speakers=min(2, len(self.sims))
         )
         all_names = [s.name for s in self.sims]
+        confirmation_speakers: set[str] = set()
+
         for sim in selected:
-            text = sim.generate_turn(self.history, self.state, all_names=all_names)
+            text, tok_in, tok_out = sim.generate_turn(
+                self.history, self.state, all_names=all_names
+            )
             if text and "[SILENCE]" not in text.upper():
-                self._store_line(f"{sim.name}: {text}", selected_reason="confirmation")
+                self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
+                                 tokens_in=tok_in, tokens_out=tok_out)
+                confirmation_speakers.add(sim.name)
+
+        # Soft nudge: if active moderator, directly address anyone who didn't get a turn.
+        if self.moderator_style == "active":
+            for sim in self.sims:
+                if sim.name not in confirmation_speakers:
+                    self._store_moderator(f"{sim.name}, anything to add before we wrap up?")
+                    text, tok_in, tok_out = sim.generate_turn(
+                        self.history, self.state, all_names=all_names
+                    )
+                    if text and "[SILENCE]" not in text.upper():
+                        self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
+                                         tokens_in=tok_in, tokens_out=tok_out)
 
         rejection_signals = [
             "no,", "no.", "not quite", "not yet", "still weighing",
@@ -688,7 +467,9 @@ class Orchestrator:
             speaker, msg = line.split(":", 1)
             if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
                 continue
-            if any(sig in msg.lower() for sig in rejection_signals):
+            msg_lower = msg.strip().lower().rstrip("!?.")
+            bare_no = msg_lower in {"no", "nope", "nah"}
+            if bare_no or any(sig in msg.lower() for sig in rejection_signals):
                 self.state.agreement_reached = False
                 self.state.preferred_option = None
                 self.state.stall_rounds = 0
@@ -704,9 +485,12 @@ class Orchestrator:
         candidates = ([primary] if primary else []) + ([random.choice(others)] if others else [])
         all_names = [s.name for s in self.sims]
         for sim in candidates[:2]:
-            text = sim.generate_turn(self.history, self.state, all_names=all_names)
+            text, tok_in, tok_out = sim.generate_turn(
+                self.history, self.state, all_names=all_names
+            )
             if text and "[SILENCE]" not in text.upper():
-                self._store_line(f"{sim.name}: {text}", selected_reason="closure")
+                self._store_line(f"{sim.name}: {text}", selected_reason="closure",
+                                 tokens_in=tok_in, tokens_out=tok_out)
 
     def _conclude(self, option: str, backup: Optional[str] = None) -> None:
         self.state.preferred_option = option
@@ -714,18 +498,14 @@ class Orchestrator:
         self.state.agreement_reached = True
         self._run_confirmation()
         if self.state.agreement_reached:
-            self._run_closure()
             if self.moderator_style != "passive":
                 backup_note = f", with Option {backup} as backup" if backup else ""
                 self._store_moderator(
                     f"Agreed — Option {option} is the final choice{backup_note}. Discussion concluded."
                 )
+            self._run_closure()
 
     def _force_conclusion(self) -> None:
-        """
-        Force-close when stall escalation reaches level 3 and LLM finds no consensus.
-        Priority: primary's preference → leading option → alphabetically first voted option.
-        """
         primary = self._primary_sim()
         primary_pref = None
         if primary:
@@ -756,8 +536,13 @@ class Orchestrator:
     # Main loop
     # ------------------------------------------------------------------
 
-    def run_simulation(self) -> None:
+    def run_simulation(
+        self, setup_tokens_in: int = 0, setup_tokens_out: int = 0
+    ) -> None:
         self._detector = ConsensusDetector(self.sims, self.options, self.moderator_style)
+        self._mod = ModerationEngine(
+            self.topic, self.options, self.mode, self.moderator_style, self.sims
+        )
 
         self._logger.write_header(
             participant_names=[s.name for s in self.sims],
@@ -770,6 +555,12 @@ class Orchestrator:
         for line in self.history:
             print(f"-> {line}")
         print()
+
+        def _intervene(reason: str) -> None:
+            self._mod.run_intervention(
+                reason, self.state, self.history,
+                lambda t, ti, to: self._store_moderator(t, ti, to),
+            )
 
         try:
             for _ in range(cfg.turns.hard_ceiling):
@@ -786,14 +577,16 @@ class Orchestrator:
                     if self.state.phase == "closing":
                         self._run_open_closure()
                         break
-                    intervention = self._should_intervene()
+                    ptc = self._participant_turn_count()
+                    intervention = self._mod.should_intervene(
+                        self.state, self.history, self._any_sim_stuck(), ptc
+                    )
                     if intervention:
-                        self._run_moderator_intervention(intervention)
+                        _intervene(intervention)
                     continue
 
                 # ── Decision mode ──────────────────────────────────────────
 
-                # Track rounds after narrowing for escalation
                 if self.state.has_asked_narrowing:
                     self.state.post_narrowing_rounds += 1
 
@@ -806,22 +599,21 @@ class Orchestrator:
                     continue
 
                 # 2. Prompt for narrowing if not yet done
-                if self._should_narrow():
+                ptc = self._participant_turn_count()
+                if self._mod.should_narrow(self.state, ptc):
                     self._narrowing_prompt()
                     continue
 
                 # 3. Post-narrowing stall and deadlock handling
                 if self.state.has_asked_narrowing:
 
-                    # Stall counter (word-overlap based)
                     if self.state.repetition_pressure >= 0.75:
                         self.state.stall_rounds += 1
                     else:
                         self.state.stall_rounds = 0
 
-                    level = self._escalation_level()
+                    level = self._mod.escalation_level(self.state)
 
-                    # Level 3: force-close immediately
                     if level >= 3:
                         forced = self._detector.llm_check(self.history)
                         if forced:
@@ -830,7 +622,6 @@ class Orchestrator:
                             self._force_conclusion()
                         break
 
-                    # Split deadlock detected + semantic stall: escalate faster
                     if self._is_split_deadlock() and self._any_sim_stuck():
                         stall_limit = max(1, cfg.consensus.stall_rounds_to_force.get(
                             self.moderator_style, 2
@@ -847,16 +638,17 @@ class Orchestrator:
                             if self.state.agreement_reached:
                                 break
                             continue
-                        # LLM found nothing: fire a deadlock intervention instead of
-                        # immediately force-closing (reserve that for level 3)
-                        self._run_moderator_intervention("stall")
+                        _intervene("stall")
                         self.state.stall_rounds = 0
                         continue
 
                 # 4. Regular interventions
-                intervention = self._should_intervene()
+                ptc = self._participant_turn_count()
+                intervention = self._mod.should_intervene(
+                    self.state, self.history, self._any_sim_stuck(), ptc
+                )
                 if intervention:
-                    self._run_moderator_intervention(intervention)
+                    _intervene(intervention)
 
             else:
                 # Hard ceiling hit
@@ -868,6 +660,16 @@ class Orchestrator:
                         self._force_conclusion()
 
         finally:
-            self._logger.flush()
+            dialogue_tokens_in = self._llm.session_tokens_in
+            dialogue_tokens_out = self._llm.session_tokens_out
+            self._logger.flush(
+                setup_tokens_in, setup_tokens_out,
+                dialogue_tokens_in, dialogue_tokens_out,
+            )
             txt, csv_path = self._logger.paths
-            print(f"\n[Saved: {txt} | {csv_path}]")
+            total_in = setup_tokens_in + dialogue_tokens_in
+            total_out = setup_tokens_out + dialogue_tokens_out
+            print(f"\n[Tokens]  setup={setup_tokens_in}/{setup_tokens_out}"
+                  f"  dialogue={dialogue_tokens_in}/{dialogue_tokens_out}"
+                  f"  total={total_in}/{total_out}  (in/out)")
+            print(f"[Saved]   {txt} | {csv_path}")

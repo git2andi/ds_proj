@@ -44,7 +44,8 @@ class Simulator:
         state: "DialogueState",
         all_names: list[str] | None = None,
         forced_adaptation: bool = False,
-    ) -> str:
+    ) -> tuple[str, int, int]:
+        """Returns (text, tokens_in, tokens_out). Tokens are 0 when the LLM call fails."""
         all_names = all_names or []
         is_open = state.mode == "open"
 
@@ -53,14 +54,17 @@ class Simulator:
         else:
             raw = self._generate_decision(history, state, forced_adaptation)
 
+        tok_in = self._llm.last_tokens_in
+        tok_out = self._llm.last_tokens_out
+
         if not raw:
-            return "[SILENCE]"
+            return "[SILENCE]", tok_in, tok_out
 
         # Strip accidental "Name: " prefix the model sometimes adds.
         if raw.lower().startswith(f"{self.name.lower()}:"):
             raw = raw.split(":", 1)[1].strip()
 
-        return raw or "[SILENCE]"
+        return raw or "[SILENCE]", tok_in, tok_out
 
     # ------------------------------------------------------------------
     # Decision mode (options exist)
@@ -108,7 +112,7 @@ class Simulator:
             narrowing_instruction = narrowing_base
 
         phase_instructions = {
-            "opening": "Say a quick hello if you like, then share your first instinct or main priority. Keep it natural — you are just joining the conversation.",
+            "opening": "Greet the group first (hey / hi / yo / what's up) — this is required. Then in the same breath give your first instinct. One or two casual sentences, like dropping into a group chat.",
             "preference_expression": "State which option you lean toward and the one specific reason that matters most to you.",
             "negotiation": "Compare trade-offs, react directly to what was just said, and adjust your position only if genuinely persuaded.",
             "narrowing": narrowing_instruction,
@@ -119,7 +123,7 @@ class Simulator:
                 "If the option being confirmed matches your stated narrowing preference, say yes. "
                 "Only say no if you have a specific objection you have not yet raised."
             ),
-            "closure": "One short, natural sign-off that fits your personality. One sentence only.",
+            "closure": "Say a casual goodbye — 'see ya', 'thanks everyone', 'bye', 'later' — one short line. Like leaving a group chat, not finishing a speech.",
         }
 
         prompt = prompts.sim_turn(

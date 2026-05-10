@@ -101,13 +101,14 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
     },
 }
 
-# Hard speaking length constraint injected into each turn prompt
+# Hard speaking length constraint injected into each turn prompt.
+# Give concrete examples so the LLM calibrates to chat register, not essay register.
 _STYLE_RULE: dict[int, str] = {
-    1: "Maximum a few words. Short reactions only — e.g. 'Yeah, fair point.' Never elaborate.",
-    2: "At most one point without elaborating or follow-up thoughts.",
-    3: "One point plus and short reason. No padding.",
-    4: "Up to 1 sentences. Add some context, reasoning, or optionally a follow-up thought.",
-    5: "Up to 2 sentences. Add some thorough, or create well-reasoned responses.",
+    1: 'One very short reaction, ~5–8 words. e.g. "Nah, too chaotic." / "A, easy choice." / "Home beats a park."',
+    2: 'One casual sentence — can react to someone. e.g. "Park is too risky." / "Drew, home actually makes sense here."',
+    3: 'React + one reason, ~20 words. e.g. "Yeah Option A — home means you control the vibe." / "Fair, but park in rain kills the night."',
+    4: 'Two casual sentences. React to something, then add your own take.',
+    5: 'Two to three casual sentences. Make your argument. Conversational — not a speech.',
 }
 
 
@@ -357,7 +358,18 @@ def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]
 def _random_traits() -> dict[str, int]:
     lo = cfg.personas.trait_min
     hi = cfg.personas.trait_max
-    return {t: random.randint(lo, hi) for t in TRAITS}
+    ranges_cfg = getattr(cfg.personas, "trait_ranges", None)
+
+    result: dict[str, int] = {}
+    for t in TRAITS:
+        override = getattr(ranges_cfg, t, None) if ranges_cfg else None
+        if override is None:
+            result[t] = random.randint(lo, hi)
+        elif isinstance(override, (list, tuple)):
+            result[t] = random.randint(int(override[0]), int(override[1]))
+        else:
+            result[t] = max(1, min(5, int(override)))
+    return result
 
 
 # ---------------------------------------------------------------------------

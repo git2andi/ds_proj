@@ -149,63 +149,42 @@ def sim_turn(
     forbidden_block = ""
     if forbidden_frames:
         listed = "\n".join(f'  - "{f}"' for f in forbidden_frames)
-        forbidden_block = f"\nDo NOT use these overused phrases:\n{listed}"
+        forbidden_block = f"\nAlso never say:\n{listed}"
 
     opener_block = (
-        f"\nDo NOT start your reply with any of these recently overused words: {forbidden_openers}."
+        f"\nDon't open with: {forbidden_openers}."
         if forbidden_openers else ""
     )
 
     forced_block = ""
     if forced_adaptation:
-        forced_block = """
-=== THIS TURN — POSITION DISCIPLINE ===
-You have already changed your preferred option once during the narrowing phase.
-You have used your one allowed position change.
-You MUST hold your current preference this turn.
-Do NOT switch to a different option regardless of what others say.
-If you feel pressure to change, acknowledge the other person's point but reaffirm your current choice.
-You may explain your reasoning more clearly, but the option you name must stay the same.
-========================================"""
+        forced_block = (
+            "\n\nPOSITION HOLD: You already changed your pick once. "
+            "Keep your current option — reaffirm it briefly if challenged."
+        )
 
-    return f"""=== SPEAKING STYLE — HARD RULE ===
+    return f"""SPEAKING STYLE — NON-NEGOTIABLE:
 {style_rule}
-Do not exceed this limit. If you have more than one point, pick the most important one.
-==================================={forced_block}
+This is a casual group chat. React to what's happening — quick agreements, pushbacks, \
+name-checks, "yeah/nah/true/wait" are all fine.
+Avoid: formal summaries ("Name's point about X..."), em dashes (use comma or "but" instead), \
+hollow filler ("great point", "absolutely", "definitely"), \
+AI buzzwords ("potential", "undeniable", "impactful", "seamless", "innovative").{forced_block}
 
-You are {name}.
-Role: {role}. Primary participant: {is_primary}.
-Backstory: {backstory}
+You are {name} ({role}).
+{backstory}
+Goal: {goal}. {personality_summary}
 
-Scenario: {topic}
-
-Options — the ONLY facts that exist in this discussion:
+Deciding: {topic}
+Options (only these facts exist — do not invent details):
 {options_text}
 
-CRITICAL: Do NOT speculate about features not listed above. If an option does not mention something, it does not have it.
-
-Your internal profile:
-- Goal: {goal}
-- Personality: {personality_summary}
-
-Current state: {state_summary}
-
-Recent conversation:
+Recent chat:
 {recent_history}
 
-Instructions:
-- Reply with your next utterance only — no speaker label, no stage directions.
-- Stay in character at all times.
-- React to what was just said before expressing your own view.
-- If you were directly addressed or asked a question, respond to that first.
-- Do NOT summarise what others said — just make your point.
-- Do NOT open with "As X mentioned..." or "Building on what X said...".\
-{forbidden_block}{contrarian_nudge}{opener_block}
+Phase ({phase}): {phase_instruction}{forbidden_block}{contrarian_nudge}{opener_block}
 
-Current phase — {phase}:
-{phase_instruction}
-
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person. Do not say goodbye unless the phase is closure."""
+Write {name}'s next message. No name prefix. No stage directions."""
 
 def sim_turn_open(
     name: str,
@@ -226,72 +205,54 @@ def sim_turn_open(
 ) -> str:
     """
     Turn prompt for open-ended topics (no options, no voting).
-    Used when the scenario is flagged as 'open' mode.
     Sims exchange views freely; the moderator ends on time or natural conclusion.
     """
     all_forbidden = list(forbidden_frames) + list(dynamic_forbidden_phrases)
     forbidden_block = ""
     if all_forbidden:
         listed = "\n".join(f'  - "{f}"' for f in all_forbidden)
-        forbidden_block = f"\nDo NOT use these overused phrases:\n{listed}"
+        forbidden_block = f"\nAlso never say:\n{listed}"
 
     opener_block = (
-        f"\nDo NOT start your reply with any of these recently overused words: {forbidden_openers}."
+        f"\nDon't open with: {forbidden_openers}."
         if forbidden_openers else ""
     )
 
     forced_block = ""
     if forced_adaptation:
-        forced_block = """
-=== THIS TURN: You have been repeating the same point. You MUST do one of: ===
-  (a) Introduce a genuinely new angle or consideration you have not raised before.
-  (b) Ask a specific question to another participant that could change the direction.
-  (c) Acknowledge someone else's point and say clearly whether it shifts your view.
-Simply restating your position without adding anything new is not acceptable.
-============================================================================="""
+        forced_block = (
+            "\n\nYou've been repeating yourself. This turn: introduce a new angle, "
+            "ask a specific question, or say clearly whether your view has shifted."
+        )
 
     phase_instructions = {
-        "opening": "Say hello briefly and introduce your initial take on the topic in your own words. Keep it natural — you are just arriving at a conversation.",
-        "discussion": "React to what was just said and add your own perspective. Take a clear stance.",
-        "deepening": "Push deeper — challenge an assumption, add nuance, or ask a pointed question.",
-        "closing": "Wrap up naturally — say where you landed or what you are taking away from this. One sentence, like you are stepping away from a conversation, not delivering a verdict.",
+        "opening": "Greet the group first (hey / hi / yo) — required. Then give your first honest take in the same breath. Natural — like walking into a group chat.",
+        "discussion": "Add your own angle. Take a clear stance.",
+        "deepening": "Push deeper — challenge something or ask a pointed question.",
+        "closing": "Say a brief goodbye — bye, thanks, later, or similar — and optionally one word on where you landed. One line, low-key.",
     }
-    phase_instruction = phase_instructions.get(phase, "React naturally and honestly to the conversation.")
+    phase_instruction = phase_instructions.get(phase, "React honestly.")
 
-    return f"""=== SPEAKING STYLE — HARD RULE ===
+    return f"""SPEAKING STYLE — NON-NEGOTIABLE:
 {style_rule}
-Do not exceed this limit. If you have more than one point, pick the most important one.
-==================================={forced_block}
+This is a casual group chat. React to what's happening — quick agreements, pushbacks, \
+name-checks, "yeah/nah/true/wait" are all fine.
+Avoid: formal multi-clause summaries. Not "Name's point about X is a valid consideration..." — \
+just react and make your point.{forced_block}
 
-You are {name}.
-Role: {role}. Primary participant: {is_primary}.
-Backstory: {backstory}
+You are {name} ({role}).
+{backstory}
+Goal: {goal}. {personality_summary}
 
-Topic of discussion: {topic}
+Topic: {topic}
+Open discussion — no predefined options. Give your actual opinion.
 
-There are no predefined options. This is an open exchange of views.
-
-Your internal profile:
-- Goal: {goal}
-- Personality: {personality_summary}
-
-Current state: {state_summary}
-
-Recent conversation:
+Recent chat:
 {recent_history}
 
-Instructions:
-- Reply with your next utterance only — no speaker label, no stage directions.
-- Stay in character at all times.
-- React to what was just said before expressing your own view.
-- Take a clear personal stance — vague non-answers are not acceptable.
-- Do NOT open with "As X mentioned..." or "Building on what X said...".\
-{forbidden_block}{opener_block}
+Phase ({phase}): {phase_instruction}{forbidden_block}{opener_block}
 
-Current phase — {phase}:
-{phase_instruction}
-
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person having an actual opinion."""
+Write {name}'s next message. No name prefix. No stage directions. Take a clear stance."""
 
 
 # =============================================================================

@@ -35,6 +35,7 @@ from pathlib import Path
 from typing import Optional
 
 from config_loader import cfg
+from llm_client import get_llm_client
 from orchestrator import Orchestrator
 from persona import Persona, PersonaBuilder, TRAITS, _save_personas
 from simulator import Simulator
@@ -121,11 +122,12 @@ def _personas_from_overrides(
     # Assign roles via LLM (one call) using the names from overrides
     names = []
     for i, ov in enumerate(overrides):
-        if "name" not in ov or not ov["name"].strip():
+        raw_name = ov.get("name") or ""
+        if not str(raw_name).strip():
             name = name_pool[pool_idx % len(name_pool)]
             pool_idx += 1
         else:
-            name = ov["name"].strip()
+            name = str(raw_name).strip()
         names.append(name)
 
     builder = PersonaBuilder(topic=topic, dialogue_id=dialogue_id)
@@ -137,10 +139,16 @@ def _personas_from_overrides(
         role = ov.get("role", role_info["role"])
         is_primary = ov.get("is_primary", role_info["is_primary"])
 
-        # Traits: use override value if present, else random
+        # Traits: fixed int, [min, max] range, or fully random
         lo, hi = cfg.personas.trait_min, cfg.personas.trait_max
+
+        def _resolve(val) -> int:
+            if isinstance(val, (list, tuple)) and len(val) == 2:
+                return random.randint(int(val[0]), int(val[1]))
+            return max(1, min(5, int(val)))
+
         traits = {
-            t: max(1, min(5, int(ov[t]))) if t in ov else random.randint(lo, hi)
+            t: _resolve(ov[t]) if t in ov else random.randint(lo, hi)
             for t in TRAITS
         }
 
@@ -177,6 +185,14 @@ def run_dialogue(
     mode: str = "decision",
     persona_overrides: Optional[list[dict]] = None,
 ) -> None:
+    # Config-based participants (CLI --personas takes priority when already set)
+    if persona_overrides is None:
+        cfg_part = getattr(cfg, "participants", None)
+        if cfg_part and getattr(cfg_part, "from_config", False):
+            entries = list(getattr(cfg_part, "entries", []) or [])
+            if entries:
+                persona_overrides = entries
+
     moderator_style: str = cfg.simulation.moderator_style
 
     n_override = len(persona_overrides) if persona_overrides else None
@@ -200,6 +216,13 @@ def run_dialogue(
         builder = PersonaBuilder(topic=topic, dialogue_id=orch.dialogue_id)
         personas = builder.build_all(names)
 
+    # All setup LLM calls (options, roles, persona concepts) are now done.
+    # Snapshot their token totals, then reset so the dialogue phase is tracked separately.
+    _llm = get_llm_client()
+    setup_tokens_in = _llm.session_tokens_in
+    setup_tokens_out = _llm.session_tokens_out
+    _llm.reset_session()
+
     print("\nParticipants:")
     for persona in personas:
         primary_tag = " [PRIMARY]" if persona.is_primary else ""
@@ -215,7 +238,7 @@ def run_dialogue(
         sim = Simulator(persona=persona, topic=topic, options=orch.options)
         orch.add_sim(sim)
 
-    orch.run_simulation()
+    orch.run_simulation(setup_tokens_in=setup_tokens_in, setup_tokens_out=setup_tokens_out)
 
 
 # ---------------------------------------------------------------------------

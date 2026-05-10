@@ -3,12 +3,19 @@ logger.py
 ---------
 DialogueLogger — handles all output for a single dialogue run.
 Writes a .txt transcript and buffers/flushes a .csv data file.
+
+Token logging
+  flush() receives setup and dialogue token totals and appends one line
+  to token_log.txt in the project root for cross-dialogue tracking.
+  Format: date | dialogue_id | setup=in/out | dialogue=in/out | total=in/out | topic
 """
 
 from __future__ import annotations
 
 import csv
+import datetime
 import os
+from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 from config_loader import cfg
@@ -21,7 +28,7 @@ if TYPE_CHECKING:
 CSV_COLUMNS = [
     "dialogue_id", "turn_index", "phase", "speaker", "is_moderator", "text",
     "selected_reason", "last_addressed", "pending_question_target",
-    "repetition_pressure",
+    "repetition_pressure", "tokens_in", "tokens_out",
     # Persona fields (empty for moderator lines)
     "role", "is_primary",
     "assertiveness", "friendliness", "talkativeness", "agreeableness",
@@ -33,6 +40,8 @@ _PERSONA_FIELDS = [
     "assertiveness", "friendliness", "talkativeness", "agreeableness",
     "patience", "contrarian", "response_length",
 ]
+
+_TOKEN_LOG = Path(__file__).parent / "token_log.txt"
 
 
 class DialogueLogger:
@@ -77,6 +86,8 @@ class DialogueLogger:
         selected_reason: str,
         state: "DialogueState",
         sims: list["Simulator"],
+        tokens_in: int = 0,
+        tokens_out: int = 0,
     ) -> None:
         """Parse a dialogue line and append a CSV row."""
         if ":" not in line:
@@ -96,6 +107,8 @@ class DialogueLogger:
             "last_addressed": state.last_addressed or "",
             "pending_question_target": state.pending_question_target or "",
             "repetition_pressure": round(state.repetition_pressure, 3),
+            "tokens_in": tokens_in,
+            "tokens_out": tokens_out,
             **{col: "" for col in _PERSONA_FIELDS},
         }
 
@@ -107,14 +120,46 @@ class DialogueLogger:
 
         self._csv_rows.append(row)
 
-    def flush(self) -> None:
-        if not cfg.output.save_csv:
-            return
-        with open(self.csv_file, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
-            writer.writeheader()
-            writer.writerows(self._csv_rows)
+    def flush(
+        self,
+        setup_tokens_in: int = 0,
+        setup_tokens_out: int = 0,
+        dialogue_tokens_in: int = 0,
+        dialogue_tokens_out: int = 0,
+    ) -> None:
+        if cfg.output.save_csv:
+            with open(self.csv_file, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+                writer.writeheader()
+                writer.writerows(self._csv_rows)
+
+        self._write_token_log(setup_tokens_in, setup_tokens_out, dialogue_tokens_in, dialogue_tokens_out)
 
     @property
     def paths(self) -> tuple[str, str]:
         return self.log_file, self.csv_file
+
+    # ------------------------------------------------------------------
+    # Internal
+    # ------------------------------------------------------------------
+
+    def _write_token_log(
+        self,
+        setup_in: int,
+        setup_out: int,
+        dialogue_in: int,
+        dialogue_out: int,
+    ) -> None:
+        total_in = setup_in + dialogue_in
+        total_out = setup_out + dialogue_out
+        date_str = datetime.date.today().isoformat()
+        topic_short = self.topic[:60].replace("|", "/")
+        line = (
+            f"{date_str} | {self.dialogue_id} | "
+            f"setup={setup_in}/{setup_out} | "
+            f"dialogue={dialogue_in}/{dialogue_out} | "
+            f"total={total_in}/{total_out} | "
+            f"{topic_short}\n"
+        )
+        with open(_TOKEN_LOG, "a", encoding="utf-8") as f:
+            f.write(line)

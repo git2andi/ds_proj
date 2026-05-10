@@ -3,6 +3,11 @@ llm_client.py
 -------------
 Thin provider abstraction over Gemini, Groq, and a local Ollama endpoint.
 All provider details come from config. Exposes two methods: generate() and generate_json().
+
+Token tracking
+  last_tokens_in / last_tokens_out  — counts for the most recent generate() call
+  session_tokens_in / session_tokens_out — accumulated totals since last reset_session()
+  reset_session() — call between setup phase and dialogue phase to separate the two
 """
 
 from __future__ import annotations
@@ -27,6 +32,11 @@ class LLMClient:
         self.model_id: str = getattr(cfg.llm.models, self.provider)
         self._client: Any = self._build_client()
 
+        self.last_tokens_in: int = 0
+        self.last_tokens_out: int = 0
+        self.session_tokens_in: int = 0
+        self.session_tokens_out: int = 0
+
     def _build_client(self) -> Any:
         if self.provider == "gemini":
             import os
@@ -50,15 +60,38 @@ class LLMClient:
         raise ValueError(f"Unsupported LLM provider: '{self.provider}'")
 
     # ------------------------------------------------------------------
+    # Token helpers
+    # ------------------------------------------------------------------
+
+    def reset_session(self) -> None:
+        """Reset accumulated session totals. Call after setup phase, before dialogue loop."""
+        self.session_tokens_in = 0
+        self.session_tokens_out = 0
+
+    def _record_tokens(self, tokens_in: int, tokens_out: int) -> None:
+        self.last_tokens_in = tokens_in
+        self.last_tokens_out = tokens_out
+        self.session_tokens_in += tokens_in
+        self.session_tokens_out += tokens_out
+
+    # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
 
     def generate(self, prompt: str) -> str:
-        """Send a prompt and return the response text."""
+        """Send a prompt and return the response text. Updates last_tokens_* and session totals."""
+        self.last_tokens_in = 0
+        self.last_tokens_out = 0
+
         if self.provider == "gemini":
             time.sleep(cfg.llm.gemini_rpm_delay)
             response = self._client.models.generate_content(
                 model=self.model_id, contents=prompt
+            )
+            meta = getattr(response, "usage_metadata", None)
+            self._record_tokens(
+                tokens_in=getattr(meta, "prompt_token_count", 0) or 0,
+                tokens_out=getattr(meta, "candidates_token_count", 0) or 0,
             )
             return (response.text or "").strip()
 
@@ -66,6 +99,11 @@ class LLMClient:
             response = self._client.chat.completions.create(
                 model=self.model_id,
                 messages=[{"role": "user", "content": prompt}],
+            )
+            usage = getattr(response, "usage", None)
+            self._record_tokens(
+                tokens_in=getattr(usage, "prompt_tokens", 0) or 0,
+                tokens_out=getattr(usage, "completion_tokens", 0) or 0,
             )
             return (response.choices[0].message.content or "").strip()
 
@@ -87,6 +125,10 @@ class LLMClient:
             result = resp.json()
             if "response" not in result:
                 raise ValueError(f"Unexpected uni API response: {result}")
+            self._record_tokens(
+                tokens_in=result.get("prompt_eval_count", 0) or 0,
+                tokens_out=result.get("eval_count", 0) or 0,
+            )
             return result["response"].strip()
 
         raise ValueError(f"Unsupported provider: '{self.provider}'")
