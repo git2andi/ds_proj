@@ -103,11 +103,11 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
 
 # Hard speaking length constraint injected into each turn prompt
 _STYLE_RULE: dict[int, str] = {
-    1: "Maximum 1 sentence. Short reactions only — e.g. 'Yeah, fair point.' Never elaborate.",
-    2: "Maximum 1 sentence. Make one clean point without elaborating or follow-up thoughts.",
-    3: "Maximum 2 sentences. One point plus a short reason. No padding.",
-    4: "Up to 3 sentences. Elaborate with context, reasoning, and optionally a follow-up thought.",
-    5: "Up to 4 sentences. Think out loud with thorough, well-reasoned responses.",
+    1: "Maximum a few words. Short reactions only — e.g. 'Yeah, fair point.' Never elaborate.",
+    2: "At most one point without elaborating or follow-up thoughts.",
+    3: "One point plus and short reason. No padding.",
+    4: "Up to 1 sentences. Add some context, reasoning, or optionally a follow-up thought.",
+    5: "Up to 2 sentences. Add some thorough, or create well-reasoned responses.",
 }
 
 
@@ -166,10 +166,9 @@ class Persona:
         elif self.friendliness >= 4:
             lines.append("You are warm; acknowledge others before adding your own view.")
 
-        if self.talkativeness <= 2:
-            lines.append("Speak only when you have something specific to add.")
-        elif self.talkativeness >= 4:
-            lines.append("You tend to elaborate and think out loud.")
+        # talkativeness is intentionally omitted here — it controls turn selection
+        # frequency in turn_manager.py, not per-turn verbosity. response_length
+        # already handles how much the sim says when they do speak.
 
         if self.agreeableness >= 4:
             lines.append("Look for common ground and validate others' points.")

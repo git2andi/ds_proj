@@ -66,24 +66,58 @@ class Simulator:
     # Decision mode (options exist)
     # ------------------------------------------------------------------
 
+    def _has_voted(self, history: list[str]) -> bool:
+        """True if this sim has explicitly stated an option letter in any of their turns."""
+        import re as _re
+        for line in reversed(history):
+            if ":" not in line:
+                continue
+            speaker, msg = line.split(":", 1)
+            if speaker.strip() != self.name:
+                continue
+            # Match "option A/B/C/D" only when the letter is NOT followed by an
+            # apostrophe or alphanumeric — rules out "Option B's", "Option A-level" etc.
+            # A genuine vote is "Option B", "Option B.", "option b,", "prefer option c" etc.
+            if _re.search(r"\boption\s+([a-d])(?![\w'\-])", msg.lower()):
+                return True
+        return False
+
     def _generate_decision(
         self, history: list[str], state: "DialogueState", forced_adaptation: bool
     ) -> str:
+        # During the narrowing phase, check if this sim has already stated a vote.
+        # If they have not, prepend an urgent instruction to do so immediately.
+        # This prevents sims from debating endlessly without committing to a choice.
+        narrowing_base = (
+            "Commit to a preferred option and state it clearly (e.g. 'I prefer Option A'). "
+            "A backup is fine if genuinely unsure. "
+            "IMPORTANT — position discipline: once you have stated a preference, you may change it AT MOST ONCE "
+            "during this phase, and only if someone raises a specific new argument you had not considered. "
+            "Do not switch because someone repeats their view more insistently or because you want to agree. "
+            "If you have already changed your position once, hold your current preference and defend it."
+        )
+        if state.phase == "narrowing" and not self._has_voted(history):
+            narrowing_instruction = (
+                "URGENT: You have not yet stated a preferred option. "
+                "Before anything else this turn, name your preferred option explicitly "
+                "(e.g. 'I prefer Option A' or 'My choice is Option C'). "
+                "Do not ask questions or comment on others until you have done this. "
+                + narrowing_base
+            )
+        else:
+            narrowing_instruction = narrowing_base
+
         phase_instructions = {
             "opening": "Say a quick hello if you like, then share your first instinct or main priority. Keep it natural — you are just joining the conversation.",
             "preference_expression": "State which option you lean toward and the one specific reason that matters most to you.",
             "negotiation": "Compare trade-offs, react directly to what was just said, and adjust your position only if genuinely persuaded.",
-            "narrowing": (
-                "Commit to a preferred option and state it clearly (e.g. 'I prefer Option A'). "
-                "A backup is fine if genuinely unsure. "
-                "Once you have stated a preference, KEEP IT unless someone raises a specific new reason that genuinely changes your view — "
-                "do not switch just because someone repeats their position more forcefully."
-            ),
+            "narrowing": narrowing_instruction,
             "confirmation": (
-                "The moderator is asking you to confirm or reject the emerging choice. "
-                "Answer with a clear yes or no. "
-                "If you already stated a preference in the narrowing phase, your answer should be consistent with it — "
-                "only say no if you have a genuine objection you have not yet raised."
+                "The moderator is asking for a final confirmation. "
+                "Reply with an explicit 'yes' or 'no' — nothing else counts as a confirmation. "
+                "A question, a hedge, or silence is treated as a no. "
+                "If the option being confirmed matches your stated narrowing preference, say yes. "
+                "Only say no if you have a specific objection you have not yet raised."
             ),
             "closure": "One short, natural sign-off that fits your personality. One sentence only.",
         }

@@ -159,12 +159,14 @@ def sim_turn(
     forced_block = ""
     if forced_adaptation:
         forced_block = """
-=== THIS TURN: You have been repeating the same position. You MUST do one of: ===
-  (a) Acknowledge a specific point someone else raised and say whether it changes your view.
-  (b) Raise a concrete concern about the leading option you have NOT mentioned before.
-  (c) Propose a genuine compromise or ask a question to break the deadlock.
-Restating your preference without new reasoning is not acceptable.
-================================================================================"""
+=== THIS TURN — POSITION DISCIPLINE ===
+You have already changed your preferred option once during the narrowing phase.
+You have used your one allowed position change.
+You MUST hold your current preference this turn.
+Do NOT switch to a different option regardless of what others say.
+If you feel pressure to change, acknowledge the other person's point but reaffirm your current choice.
+You may explain your reasoning more clearly, but the option you name must stay the same.
+========================================"""
 
     return f"""=== SPEAKING STYLE — HARD RULE ===
 {style_rule}
@@ -203,7 +205,7 @@ Instructions:
 Current phase — {phase}:
 {phase_instruction}
 
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person in a chat. Do not say goodbye unless the phase is closure."""
+Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person. Do not say goodbye unless the phase is closure."""
 
 def sim_turn_open(
     name: str,
@@ -245,7 +247,7 @@ def sim_turn_open(
   (a) Introduce a genuinely new angle or consideration you have not raised before.
   (b) Ask a specific question to another participant that could change the direction.
   (c) Acknowledge someone else's point and say clearly whether it shifts your view.
-Simply restating your position is not acceptable.
+Simply restating your position without adding anything new is not acceptable.
 ============================================================================="""
 
     phase_instructions = {
@@ -289,7 +291,7 @@ Instructions:
 Current phase — {phase}:
 {phase_instruction}
 
-Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person in a chat having an actual opinion."""
+Final reminder: obey the SPEAKING STYLE rule above. Sound like a real person having an actual opinion."""
 
 
 # =============================================================================

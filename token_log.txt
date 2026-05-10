@@ -4,11 +4,19 @@ task success - zielorientiert oder beharlich
 passt lösung zur präferenz
 
 
-Problem: In active mode the moderator is still fairly passive — it only narrows and confirms. It never redirects off-track conversations (like Ben's safety obsession), never brings in quiet participants by name, and never challenges weak reasoning.
-Fix: Add a _moderator_intervention() check that runs each round alongside _should_narrow(). It checks for: topic drift (someone is talking about something context-inappropriate), a participant who hasn't spoken in N turns, or a reasoning pattern that's been repeated without new content. The moderator then has targeted intervention prompts for each case rather than one generic narrowing line.
 
-Problem: safety: 4 in a party planning context produces inappropriate behavior because the LLM interprets "safety" literally.
-Fix: Focus dimensions need a scenario-aware translation layer. Either: (a) at goal generation time, rephrase what each high focus dimension means in this specific context, or (b) add a context_note per focus dimension that gets generated once and injected into the sim's prompt. "Safety focus in a party context means: accessible venue, dietary restrictions, no risky activities for the group's age range" — not "risk of hiking injuries."
+Lunch discussion had nothing changed. 
+Maybe we should let the mod say that if not all agreed the majority voted for X so we trake X?
 
-Backstory
-Assessment: High value, very implementable. A one-paragraph generated backstory per sim that includes: their relationship to the primary participant, one relevant personal experience, and one standing preference. This gives the LLM something concrete to express rather than just trait scores. Tom's backstory: "Tom has been friends with Steve since university. He knows Steve loves live music but hates loud crowded bars." Now Option B becomes a bad choice for Tom's character, not just his stats.
+
+The other dialogue is where I changed:
+# Hard speaking length constraint injected into each turn prompt
+_STYLE_RULE: dict[int, str] = {
+    1: "Maximum a few words. Short reactions only — e.g. 'Yeah, fair point.' Never elaborate.",
+    2: "At most one point without elaborating or follow-up thoughts.",
+    3: "One point plus and short reason. No padding.",
+    4: "Up to 1 sentences. Add some context, reasoning, or optionally a follow-up thought.",
+    5: "Up to 2 sentences. Add some thorough, or create well-reasoned responses.",
+}
+
+Its a chat, so even if the dialogue sounds somewhat good, its all still way too long. Yet now it seems 

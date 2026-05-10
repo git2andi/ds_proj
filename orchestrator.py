@@ -63,6 +63,16 @@ class DialogueState:
     # Sims scheduled for a forced-adaptation instruction on their next turn
     nudged_participants: set[str] = field(default_factory=set)
 
+    # Tracks how many times each sim has changed their stated vote during narrowing.
+    # Key: sim name. Value: number of position changes made.
+    # Used to enforce the one-flip limit: a sim who has already changed once gets
+    # a forced_adaptation flag on their next turn if they try to change again.
+    vote_changes: dict = field(default_factory=dict)
+
+    # Last recorded vote per sim during narrowing phase.
+    # Key: sim name. Value: option letter (e.g. "A").
+    last_known_vote: dict = field(default_factory=dict)
+
 
 # ---------------------------------------------------------------------------
 # Orchestrator
@@ -378,8 +388,21 @@ class Orchestrator:
     def _detect_speculative_loop(self) -> Optional[str]:
         """
         Return a content keyword if participants keep speculating about something
-        not present in any option description for 3+ consecutive turns.
+        not present in any option description for 4+ consecutive turns.
+
+        Returns None immediately in open mode — there are no options to clarify
+        against, so speculative loop detection is meaningless and fires spuriously.
+
+        Excluded words:
+        - Common stopwords
+        - Words from the option descriptions (already known facts)
+        - Words from the topic string itself (appear in every turn by definition)
+        - Words shorter than 5 characters (too generic to be meaningful)
+        - Words already clarified this dialogue
         """
+        # Guard: open mode has no options — nothing to clarify against
+        if self.mode == "open" or not self.options:
+            return None
         hedge_words = {"maybe", "could", "might", "possibly", "perhaps", "wonder"}
         stopwords = {
             "the", "and", "for", "that", "this", "with", "have", "they",
@@ -387,16 +410,24 @@ class Orchestrator:
             "we", "it", "in", "of", "to", "a", "is", "be", "at", "on",
             "do", "if", "or", "so", "as", "by", "option", "think", "also",
             "good", "great", "like", "just", "more", "about", "some",
-            "would", "should", "there", "something", "anything",
+            "would", "should", "there", "something", "anything", "might",
+            "steve", "party", "group", "point", "think", "feel", "make",
         }
 
-        option_words: set[str] = set()
+        # Exclude words from option descriptions AND from the topic string itself.
+        # Topic words appear in every single turn and must never trigger a clarification.
+        excluded_words: set[str] = set()
         for opt in self.options:
             for w in re.sub(r"[^\w\s]", " ", opt.lower()).split():
-                if len(w) >= 4:
-                    option_words.add(w)
+                if len(w) >= 5:
+                    excluded_words.add(w)
+        for w in re.sub(r"[^\w\s]", " ", self.topic.lower()).split():
+            if len(w) >= 5:
+                excluded_words.add(w)
 
-        threshold = 3
+        threshold = 4          # raised from 3 — require longer speculative run
+        min_word_len = 5       # raised from 4 — shorter words are too generic
+
         recent: list[str] = []
         for line in reversed(self.history):
             if ":" not in line:
@@ -405,7 +436,7 @@ class Orchestrator:
             if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
                 continue
             recent.append(msg.strip().lower())
-            if len(recent) >= threshold * 3:
+            if len(recent) >= threshold * 4:
                 break
 
         if len(recent) < threshold:
@@ -427,9 +458,9 @@ class Orchestrator:
         all_words: list[str] = []
         for msg in run:
             for w in re.sub(r"[^\w]", " ", msg).split():
-                if (len(w) >= 4
+                if (len(w) >= min_word_len
                         and w not in stopwords
-                        and w not in option_words
+                        and w not in excluded_words
                         and w not in self.state.clarification_topics_used):
                     all_words.append(w)
 
@@ -564,7 +595,45 @@ class Orchestrator:
 
         self._update_discourse()
         self._update_repetition()
+
+        # Vote-flip tracking (narrowing phase only).
+        # After each round, check if any sim's latest stated vote differs from
+        # what we last recorded. If they've already flipped once, schedule them
+        # for a forced_adaptation nudge on their next turn.
+        if self.state.has_asked_narrowing:
+            self._track_vote_flips()
+
         return active
+
+    def _track_vote_flips(self) -> None:
+        """
+        For each sim, find their most recent stated option. If it differs from
+        their last recorded vote, increment their flip counter. If they have
+        already flipped once before, add them to nudged_participants so their
+        next turn receives a forced_adaptation instruction telling them to hold.
+        """
+        for sim in self.sims:
+            turns = self._last_n_turns_for(sim.name, n=1)
+            if not turns:
+                continue
+            letters = self._extract_option_letters(turns[0])
+            if not letters:
+                continue
+            current_vote = letters[0]
+            previous_vote = self.state.last_known_vote.get(sim.name)
+
+            if previous_vote is None:
+                # First time we see a vote from this sim — just record it
+                self.state.last_known_vote[sim.name] = current_vote
+            elif current_vote != previous_vote:
+                # Vote changed
+                flips = self.state.vote_changes.get(sim.name, 0) + 1
+                self.state.vote_changes[sim.name] = flips
+                self.state.last_known_vote[sim.name] = current_vote
+                if flips >= 1:
+                    # They've already used their one allowed flip — next turn is forced
+                    self.state.nudged_participants.add(sim.name)
+                    print(f"[vote-flip] {sim.name} has flipped {flips} time(s) — forcing hold next turn")
 
     # ------------------------------------------------------------------
     # Conclusion helpers

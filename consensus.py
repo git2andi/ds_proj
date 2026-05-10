@@ -58,7 +58,9 @@ class ConsensusDetector:
         if result:
             return result
 
-        result = self._regex(history)
+        # Pass the currently expected option so stale votes for a different option
+        # don't falsely trigger confirmation of something the group has moved away from.
+        result = self._regex(history, expected_option=state.preferred_option)
         if result:
             return result
 
@@ -135,34 +137,39 @@ class ConsensusDetector:
     # Tier 2 — Regex (explicit option letters)
     # ------------------------------------------------------------------
 
-    def _regex(self, history: list[str]) -> Optional[tuple[str, Optional[str]]]:
+    def _regex(
+        self,
+        history: list[str],
+        expected_option: Optional[str] = None,
+    ) -> Optional[tuple[str, Optional[str]]]:
         """
         Count each participant's MOST RECENT committed vote, then tally unique voters.
-        This prevents a loud minority (e.g. one sim who mentions Option D in every
-        turn) from overriding a silent majority who already committed to Option A.
 
-        A "committed vote" is an explicit option-letter mention.
-        Only the speaker's most recent such mention counts — earlier mentions
-        in the same window are ignored for that speaker.
+        Window scales with group size: max(config_window, n_sims * 4) to ensure
+        at least 4 full rounds per sim are covered even in large groups.
+
+        Cross-check guard: if expected_option is provided (i.e. a preferred_option
+        was already set from a previous confirmation attempt), the regex result must
+        match it — this prevents stale old votes from triggering a confirmation for
+        the wrong option when the group has already moved on.
         """
-        window = max(cfg.consensus.regex_window, len(self.sims) * 3)
+        window = max(cfg.consensus.regex_window, len(self.sims) * 4)
         recent = self._recent_participant_lines(history, limit=window)
 
         if len(recent) < len(self.sims):
             return None
 
-        # Walk history newest-first; record each speaker's single most recent vote.
+        # Walk history newest-first; one vote per speaker (their most recent).
         latest_vote: dict[str, str] = {}
-        for line in reversed(recent):
+        for line in recent:                     # recent is newest-first from _recent_participant_lines
             speaker, msg = line.split(":", 1)
             speaker = speaker.strip()
             if speaker in latest_vote:
-                continue                        # already have this speaker's latest vote
+                continue
             mentions = self._extract_option_letters(msg)
             if mentions:
                 latest_vote[speaker] = mentions[0]
 
-        # Every sim must have voted
         if len(latest_vote) < len(self.sims):
             return None
 
@@ -173,10 +180,13 @@ class ConsensusDetector:
             weight = 2 if (primary and speaker == primary.name) else 1
             vote_counts[opt] += weight
 
-        top_option, top_weighted_count = vote_counts.most_common(1)[0]
+        top_option, _ = vote_counts.most_common(1)[0]
 
-        # Threshold: need enough unique human voters, not raw weighted count
-        # Count how many distinct sims voted for the top option
+        # Cross-check: if an expected option is set, only accept a matching result.
+        # This prevents stale old votes from overriding the current group direction.
+        if expected_option and top_option != expected_option:
+            return None
+
         unique_voters_for_top = sum(
             1 for speaker, opt in latest_vote.items() if opt == top_option
         )
