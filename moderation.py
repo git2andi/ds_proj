@@ -17,8 +17,11 @@ import re
 from collections import Counter
 from typing import Callable, Optional, TYPE_CHECKING
 
+
+
 import prompts
 from config_loader import cfg
+from consensus import extract_preference_vote
 from llm_client import get_llm_client
 
 if TYPE_CHECKING:
@@ -137,12 +140,38 @@ class ModerationEngine:
             elif reason.startswith("outlier:"):
                 outlier_name = reason.split(":", 1)[1]
                 state.nudged_participants.add(outlier_name)
+                # Build a majority-aware reason string so the LLM moderator can
+                # explicitly name who supports what and pressure the outlier toward
+                # the majority option rather than giving a generic nudge.
+                votes = self._current_votes(history)
+                majority_note = ""
+                if votes:
+                    n = len(self.sims)
+                    max_dis = (
+                        cfg.consensus.max_dissenters_active
+                        if self.moderator_style == "active"
+                        else cfg.consensus.max_dissenters_other
+                    )
+                    counts = Counter(votes.values())
+                    top_opt, top_count = counts.most_common(1)[0]
+                    if top_count >= n - max_dis:
+                        supporters = [nm for nm, o in votes.items() if o == top_opt and nm != outlier_name]
+                        if supporters:
+                            majority_note = (
+                                f" {' and '.join(supporters)} "
+                                f"{'both prefer' if len(supporters) > 1 else 'prefers'} "
+                                f"Option {top_opt} — ask {outlier_name} what it would take to accept that."
+                            )
+                outlier_reason = (
+                    f"{outlier_name} has been repeating the same position without new reasoning."
+                    + majority_note
+                )
                 line = self._llm.generate(
                     prompts.moderator_intervention(
                         topic=self.topic,
                         participant_names=names,
                         recent_dialogue=recent,
-                        reason=f"{outlier_name} has been repeating the same position without new reasoning",
+                        reason=outlier_reason,
                         target_participant=outlier_name,
                         escalation_level=level,
                     )
@@ -190,6 +219,12 @@ class ModerationEngine:
             "good", "great", "like", "just", "more", "about", "some",
             "would", "should", "there", "something", "anything", "might",
             "steve", "party", "group", "point", "think", "feel", "make",
+        } | hedge_words | {
+            # Common 5-char fillers that must not surface as clarification topics
+            "still", "going", "other", "first", "their", "after", "right",
+            "every", "since", "which", "while", "where", "again", "those",
+            "these", "never", "start", "being", "often", "under", "given",
+            "doing", "least", "means", "seems", "keeps", "risks", "really",
         }
 
         excluded_words: set[str] = set()
@@ -271,9 +306,9 @@ class ModerationEngine:
             speaker = speaker.strip()
             if speaker in cfg.EXCLUDED_SPEAKERS or speaker in votes:
                 continue
-            letters = self._extract_option_letters(msg)
-            if letters:
-                votes[speaker] = letters[0]
+            vote = extract_preference_vote(msg)
+            if vote:
+                votes[speaker] = vote
             if len(votes) == len(self.sims):
                 break
         return votes

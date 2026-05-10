@@ -159,8 +159,8 @@ def sim_turn(
     forced_block = ""
     if forced_adaptation:
         forced_block = (
-            "\n\nPOSITION HOLD: You already changed your pick once. "
-            "Keep your current option — reaffirm it briefly if challenged."
+            "\n\nPOSITION HOLD: You already switched options once — stick with your current choice. "
+            "If challenged, add one new specific reason rather than repeating what you've already said."
         )
 
     return f"""SPEAKING STYLE — NON-NEGOTIABLE:
@@ -169,7 +169,8 @@ This is a casual group chat. React to what's happening — quick agreements, pus
 name-checks, "yeah/nah/true/wait" are all fine.
 Avoid: formal summaries ("Name's point about X..."), em dashes (use comma or "but" instead), \
 hollow filler ("great point", "absolutely", "definitely"), \
-AI buzzwords ("potential", "undeniable", "impactful", "seamless", "innovative").{forced_block}
+AI buzzwords ("potential", "undeniable", "impactful", "seamless", "innovative"), \
+chained essay arguments (three structured points in one message — make one point, not a paragraph).{forced_block}
 
 You are {name} ({role}).
 {backstory}
@@ -183,6 +184,8 @@ Recent chat:
 {recent_history}
 
 Phase ({phase}): {phase_instruction}{forbidden_block}{contrarian_nudge}{opener_block}
+
+The group needs to land on a decision — it's fine to push back, but aim to move toward something, not just dig in.
 
 Write {name}'s next message. No name prefix. No stage directions."""
 
@@ -427,7 +430,7 @@ regarding "{looping_topic}", based strictly on the option descriptions above.
 Rules:
 - Only reference attributes explicitly listed in the options.
 - Do NOT invent details not in the option descriptions.
-- If none of the options mention "{looping_topic}", say so clearly so the group can move on.
-- One or two sentences maximum. Sound helpful, not robotic.
+- If the options don't explicitly address "{looping_topic}", redirect to what IS listed — never open with "None of the options mention..." as that sounds robotic; instead steer toward the relevant attributes.
+- One or two sentences maximum. Sound like a helpful facilitator, not a fact-checker.
 
 Return only the moderator's line — no label, no markdown."""

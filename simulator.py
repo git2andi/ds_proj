@@ -114,7 +114,7 @@ class Simulator:
         phase_instructions = {
             "opening": "Greet the group first (hey / hi / yo / what's up) — this is required. Then in the same breath give your first instinct. One or two casual sentences, like dropping into a group chat.",
             "preference_expression": "State which option you lean toward and the one specific reason that matters most to you.",
-            "negotiation": "Compare trade-offs, react directly to what was just said, and adjust your position only if genuinely persuaded.",
+            "negotiation": "Compare trade-offs, react directly to what was just said, and adjust your position only if genuinely persuaded. If someone proposes a compromise, engage with the specific part that works or doesn't — don't just acknowledge and reset to your original stance.",
             "narrowing": narrowing_instruction,
             "confirmation": (
                 "The moderator is asking for a final confirmation. "
@@ -123,8 +123,13 @@ class Simulator:
                 "If the option being confirmed matches your stated narrowing preference, say yes. "
                 "Only say no if you have a specific objection you have not yet raised."
             ),
-            "closure": "Say a casual goodbye — 'see ya', 'thanks everyone', 'bye', 'later' — one short line. Like leaving a group chat, not finishing a speech.",
+            "closure": "The discussion is over — the moderator just wrapped it up. Say goodbye and step away: 'bye', 'later', 'see ya', 'thanks'. One line only. Do NOT ask questions or continue the debate.",
         }
+
+        phase_instr = phase_instructions.get(state.phase, "React naturally to the conversation.")
+        if (state.repetition_pressure >= 0.55 or state.post_narrowing_rounds >= 2) \
+                and state.phase not in {"opening", "closure", "confirmation"}:
+            phase_instr += " One or two sentences only — you've made your case, react don't re-explain."
 
         prompt = prompts.sim_turn(
             name=self.name,
@@ -137,11 +142,11 @@ class Simulator:
             personality_summary=self.persona.personality_summary(),
             style_rule=self.persona.style_rule(),
             phase=state.phase,
-            phase_instruction=phase_instructions.get(state.phase, "React naturally to the conversation."),
+            phase_instruction=phase_instr,
             state_summary=self._state_summary(state),
             recent_history=self._recent_history(history),
             forbidden_openers=self._recent_openers(history),
-            forbidden_frames=list(cfg.repetition.forbidden_frames),
+            forbidden_frames=list(cfg.repetition.forbidden_frames) + self._repeated_phrases(history),
             contrarian_nudge=self._contrarian_nudge(state),
             forced_adaptation=forced_adaptation,
         )

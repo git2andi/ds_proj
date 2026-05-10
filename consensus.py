@@ -25,6 +25,55 @@ if TYPE_CHECKING:
     from simulator import Simulator
 
 
+def extract_preference_vote(msg: str) -> Optional[str]:
+    """
+    Return the option letter (A-D) this message votes for, or None if ambiguous.
+
+    Counts:  first-person preference phrases ("I prefer Option B"),
+             option letters in the first 5 words of a non-question message.
+    Ignores: question-starting messages, comparisons ("Option A or B"),
+             option mentions that are references to others' positions.
+    """
+    text = msg.strip().lower()
+    words = text.split()
+
+    # Explicit first-person preference — unambiguous vote
+    fp_patterns = [
+        r"\bi\s+prefer\s+option\s+([a-d])\b",
+        r"\bi(?:'m|\s+am)\s+(?:going\s+with|for)\s+option\s+([a-d])\b",
+        r"\bi(?:'d|\s+would)\s+(?:go\s+with|choose|prefer)\s+option\s+([a-d])\b",
+        r"\bi\s+(?:choose|pick|want|vote\s+for)\s+option\s+([a-d])\b",
+        r"\bmy\s+(?:choice|pick|preference)\s+is\s+(?:option\s+)?([a-d])\b",
+    ]
+    for pat in fp_patterns:
+        m = re.search(pat, text)
+        if m:
+            return m.group(1).upper()
+
+    # Option letter in first 5 words — likely a stated position
+    first5 = " ".join(words[:5])
+    early = re.search(r"\boption\s+([a-d])\b", first5)
+    if early:
+        # Skip question-opening messages ("What about Option A?")
+        lead = words[0].rstrip(",'") if words else ""
+        if lead in {"what", "how", "why", "when", "where", "is", "are", "does", "can", "could"}:
+            return None
+        # Skip comparisons: "Option A or B" — multiple options in first 10 words
+        nearby = " ".join(words[:10])
+        if len(re.findall(r"\boption\s+[a-d]\b", nearby)) > 1:
+            return None
+        # Skip possessive usage: "Option D's limited job opportunities are a red flag…"
+        # The speaker is describing the option's properties, not voting for it.
+        letter = early.group(1)
+        pos = text.find(f"option {letter}")
+        char_after = text[pos + len(f"option {letter}"):].lstrip()[:1]
+        if char_after == "'":
+            return None
+        return letter.upper()
+
+    return None
+
+
 class ConsensusDetector:
 
     def __init__(
@@ -166,9 +215,9 @@ class ConsensusDetector:
             speaker = speaker.strip()
             if speaker in latest_vote:
                 continue
-            mentions = self._extract_option_letters(msg)
-            if mentions:
-                latest_vote[speaker] = mentions[0]
+            vote = extract_preference_vote(msg)
+            if vote:
+                latest_vote[speaker] = vote
 
         if len(latest_vote) < len(self.sims):
             return None

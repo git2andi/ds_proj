@@ -105,7 +105,7 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
 # Give concrete examples so the LLM calibrates to chat register, not essay register.
 _STYLE_RULE: dict[int, str] = {
     1: 'One very short reaction, ~5–8 words. e.g. "Nah, too chaotic." / "A, easy choice." / "Home beats a park."',
-    2: 'One casual sentence — can react to someone. e.g. "Park is too risky." / "Drew, home actually makes sense here."',
+    2: 'One casual sentence — react and make your point. e.g. "Park is too risky." / "Board game cafe sounds way better."',
     3: 'React + one reason, ~20 words. e.g. "Yeah Option A — home means you control the vibe." / "Fair, but park in rain kills the night."',
     4: 'Two casual sentences. React to something, then add your own take.',
     5: 'Two to three casual sentences. Make your argument. Conversational — not a speech.',

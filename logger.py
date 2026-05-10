@@ -126,6 +126,7 @@ class DialogueLogger:
         setup_tokens_out: int = 0,
         dialogue_tokens_in: int = 0,
         dialogue_tokens_out: int = 0,
+        outcome: str = "pending",
     ) -> None:
         if cfg.output.save_csv:
             with open(self.csv_file, "w", newline="", encoding="utf-8") as f:
@@ -133,7 +134,11 @@ class DialogueLogger:
                 writer.writeheader()
                 writer.writerows(self._csv_rows)
 
-        self._write_token_log(setup_tokens_in, setup_tokens_out, dialogue_tokens_in, dialogue_tokens_out)
+        if cfg.output.save_txt:
+            with open(self.log_file, "a", encoding="utf-8") as f:
+                f.write(f"\n--- Outcome: {outcome} ---\n")
+
+        self._write_token_log(setup_tokens_in, setup_tokens_out, dialogue_tokens_in, dialogue_tokens_out, outcome)
 
     @property
     def paths(self) -> tuple[str, str]:
@@ -149,6 +154,7 @@ class DialogueLogger:
         setup_out: int,
         dialogue_in: int,
         dialogue_out: int,
+        outcome: str = "pending",
     ) -> None:
         total_in = setup_in + dialogue_in
         total_out = setup_out + dialogue_out
@@ -159,6 +165,7 @@ class DialogueLogger:
             f"setup={setup_in}/{setup_out} | "
             f"dialogue={dialogue_in}/{dialogue_out} | "
             f"total={total_in}/{total_out} | "
+            f"outcome={outcome} | "
             f"{topic_short}\n"
         )
         with open(_TOKEN_LOG, "a", encoding="utf-8") as f:

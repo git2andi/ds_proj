@@ -26,7 +26,7 @@ from typing import Any, Optional
 
 import prompts
 from config_loader import cfg
-from consensus import ConsensusDetector
+from consensus import ConsensusDetector, extract_preference_vote
 from logger import DialogueLogger
 from llm_client import get_llm_client
 from moderation import ModerationEngine
@@ -59,8 +59,15 @@ class DialogueState:
     post_narrowing_rounds: int = 0       # total rounds after narrowing (for escalation)
     llm_check_countdown: int = 0
 
+    last_rejected_option: Optional[str] = None   # option most recently rejected in confirmation
+    consensus_cooldown: int = 0                  # turns to block re-detection of rejected option
+
     clarification_topics_used: set[str] = field(default_factory=set)
     nudged_participants: set[str] = field(default_factory=set)
+
+    # Set by the main loop when an outlier intervention addresses a specific sim;
+    # consumed at the top of the next _run_participant_round so they speak first.
+    priority_next_speaker: Optional[str] = None
 
     # Key: sim name. Value: number of position changes made during narrowing.
     vote_changes: dict = field(default_factory=dict)
@@ -88,6 +95,7 @@ class Orchestrator:
         self.state.llm_check_countdown = cfg.consensus.llm_check_every_n_turns
 
         self.dialogue_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        self.outcome: str = "pending"   # "success" | "force_close" | "failed"
 
         if mode == "open":
             self.options = []
@@ -163,6 +171,53 @@ class Orchestrator:
     # Logging helpers
     # ------------------------------------------------------------------
 
+    def _speaker_votes(self, speaker: str) -> tuple[Optional[str], Optional[str]]:
+        """
+        Return (primary_vote, backup_vote) for a speaker by scanning history.
+        Primary = most recent stated preference. Backup = most recent *different*
+        stated preference. Both use extract_preference_vote, so they respect the
+        same first-person / early-mention anchoring as consensus detection.
+        Display-only — never written into self.history or LLM prompts.
+        """
+        primary: Optional[str] = None
+        backup: Optional[str] = None
+        for line in reversed(self.history):
+            if ":" not in line:
+                continue
+            spk, msg = line.split(":", 1)
+            if spk.strip() != speaker:
+                continue
+            vote = extract_preference_vote(msg)
+            if vote:
+                if primary is None:
+                    primary = vote
+                elif vote != primary and backup is None:
+                    backup = vote
+            if primary and backup:
+                break
+        return primary, backup
+
+    def _annotate_with_vote(self, line: str) -> str:
+        """
+        Append the speaker's current vote(s) in parentheses for display.
+        Only applies to participant turns in decision mode.
+        Returns the line unchanged for moderator lines or open mode.
+        """
+        if self.state.mode != "decision" or ":" not in line:
+            return line
+        speaker, text = line.split(":", 1)
+        speaker = speaker.strip()
+        if speaker in cfg.EXCLUDED_SPEAKERS:
+            return line
+        primary, backup = self._speaker_votes(speaker)
+        if primary and backup:
+            tag = f"({primary}, {backup})"
+        elif primary:
+            tag = f"({primary})"
+        else:
+            return line
+        return f"{speaker} {tag}:{text}"
+
     def _store_line(
         self,
         line: str,
@@ -170,9 +225,10 @@ class Orchestrator:
         tokens_in: int = 0,
         tokens_out: int = 0,
     ) -> None:
-        self.history.append(line)
-        print(f"-> {line}")
-        self._logger.append_line(line)
+        self.history.append(line)          # clean — feeds LLM prompts
+        display = self._annotate_with_vote(line)
+        print(f"-> {display}")
+        self._logger.append_line(display)  # TXT gets vote annotation
         self._logger.buffer(line, selected_reason, self.state, self.sims,
                             tokens_in=tokens_in, tokens_out=tokens_out)
 
@@ -262,9 +318,9 @@ class Orchestrator:
             speaker = speaker.strip()
             if speaker in cfg.EXCLUDED_SPEAKERS or speaker in votes:
                 continue
-            letters = self._extract_option_letters(msg)
-            if letters:
-                votes[speaker] = letters[0]
+            vote = extract_preference_vote(msg)
+            if vote:
+                votes[speaker] = vote
             if len(votes) == len(self.sims):
                 break
         return votes
@@ -329,6 +385,10 @@ class Orchestrator:
 
     def _run_participant_round(self) -> bool:
         """Run one round of participant turns. Returns True if any sim spoke."""
+        # Consume priority speaker set by the previous moderator intervention.
+        priority_name = self.state.priority_next_speaker
+        self.state.priority_next_speaker = None
+
         self._update_discourse()
         self._update_repetition()
         self._update_phase()
@@ -337,6 +397,13 @@ class Orchestrator:
         selected = self._turn_mgr.select_speakers(
             self.sims, self.history, self.state, max_speakers=self._max_speakers()
         )
+
+        # If the moderator addressed someone directly last turn, they speak first.
+        if priority_name:
+            priority_sim = next((s for s in self.sims if s.name == priority_name), None)
+            if priority_sim:
+                others = [s for s in selected if s.name != priority_name]
+                selected = [priority_sim] + others
 
         all_names = [s.name for s in self.sims]
         active = False
@@ -359,8 +426,7 @@ class Orchestrator:
         self._update_discourse()
         self._update_repetition()
 
-        if self.state.has_asked_narrowing:
-            self._track_vote_flips()
+        self._track_vote_flips()
 
         return active
 
@@ -369,10 +435,9 @@ class Orchestrator:
             turns = self._last_n_turns_for(sim.name, n=1)
             if not turns:
                 continue
-            letters = self._extract_option_letters(turns[0])
-            if not letters:
+            current_vote = extract_preference_vote(turns[0])
+            if not current_vote:
                 continue
-            current_vote = letters[0]
             previous_vote = self.state.last_known_vote.get(sim.name)
 
             if previous_vote is None:
@@ -381,9 +446,12 @@ class Orchestrator:
                 flips = self.state.vote_changes.get(sim.name, 0) + 1
                 self.state.vote_changes[sim.name] = flips
                 self.state.last_known_vote[sim.name] = current_vote
-                if flips >= 1:
+                # Only enforce a hold post-narrowing — pre-narrowing drift is tracked
+                # but not penalised yet (positions are still forming).
+                if flips >= 1 and self.state.has_asked_narrowing:
                     self.state.nudged_participants.add(sim.name)
-                    print(f"[vote-flip] {sim.name} has flipped {flips} time(s) — forcing hold next turn")
+                print(f"[vote-flip] {sim.name} flipped {flips}x"
+                      + (" — hold enforced" if flips >= 1 and self.state.has_asked_narrowing else ""))
 
     # ------------------------------------------------------------------
     # Conclusion helpers
@@ -448,7 +516,7 @@ class Orchestrator:
         if self.moderator_style == "active":
             for sim in self.sims:
                 if sim.name not in confirmation_speakers:
-                    self._store_moderator(f"{sim.name}, anything to add before we wrap up?")
+                    self._store_moderator(f"{sim.name}, does Option {self.state.preferred_option} work for you?")
                     text, tok_in, tok_out = sim.generate_turn(
                         self.history, self.state, all_names=all_names
                     )
@@ -470,6 +538,8 @@ class Orchestrator:
             msg_lower = msg.strip().lower().rstrip("!?.")
             bare_no = msg_lower in {"no", "nope", "nah"}
             if bare_no or any(sig in msg.lower() for sig in rejection_signals):
+                self.state.last_rejected_option = preferred
+                self.state.consensus_cooldown = 4
                 self.state.agreement_reached = False
                 self.state.preferred_option = None
                 self.state.stall_rounds = 0
@@ -482,9 +552,9 @@ class Orchestrator:
         self.state.phase = "closure"
         primary = self._primary_sim()
         others = [s for s in self.sims if s is not primary]
-        candidates = ([primary] if primary else []) + ([random.choice(others)] if others else [])
+        ordered = ([primary] if primary else []) + others
         all_names = [s.name for s in self.sims]
-        for sim in candidates[:2]:
+        for sim in ordered:
             text, tok_in, tok_out = sim.generate_turn(
                 self.history, self.state, all_names=all_names
             )
@@ -498,6 +568,7 @@ class Orchestrator:
         self.state.agreement_reached = True
         self._run_confirmation()
         if self.state.agreement_reached:
+            self.outcome = "success"
             if self.moderator_style != "passive":
                 backup_note = f", with Option {backup} as backup" if backup else ""
                 self._store_moderator(
@@ -506,23 +577,24 @@ class Orchestrator:
             self._run_closure()
 
     def _force_conclusion(self) -> None:
-        primary = self._primary_sim()
-        primary_pref = None
-        if primary:
-            turns = self._last_n_turns_for(primary.name, n=3)
-            for t in turns:
-                letters = self._extract_option_letters(t)
-                if letters:
-                    primary_pref = letters[0]
-                    break
-
+        # Use actual stated votes to pick the plurality winner.
+        # On a tie, prefer the primary sim's choice (they're most affected).
+        # Falls back to leading option if no votes exist.
         votes = self._current_votes()
-        final = (
-            primary_pref
-            or self.state.current_leading_option
-            or (sorted(votes.values())[0] if votes else None)
-        )
+        if votes:
+            counts = Counter(votes.values())
+            top_count = counts.most_common(1)[0][1]
+            top_opts = [opt for opt, cnt in counts.items() if cnt == top_count]
+            primary = self._primary_sim()
+            primary_vote = votes.get(primary.name) if primary else None
+            if primary_vote and primary_vote in top_opts:
+                final = primary_vote
+            else:
+                final = top_opts[0]
+        else:
+            final = self.state.current_leading_option or None
 
+        self.outcome = "force_close"
         if final and self.moderator_style != "passive":
             self.state.preferred_option = final
             self._store_moderator(
@@ -530,7 +602,9 @@ class Orchestrator:
                 f"I'm going to call it — Option {final} is our final choice. Discussion concluded."
             )
         elif self.moderator_style != "passive":
+            self.outcome = "failed"
             self._store_moderator("No clear agreement reached. Discussion concluded.")
+        self._run_closure()
 
     # ------------------------------------------------------------------
     # Main loop
@@ -568,6 +642,7 @@ class Orchestrator:
 
                 active = self._run_participant_round()
                 if not active:
+                    self.outcome = "failed"
                     if self.moderator_style != "passive":
                         self._store_moderator("No further responses. Discussion concluded.")
                     break
@@ -591,7 +666,13 @@ class Orchestrator:
                     self.state.post_narrowing_rounds += 1
 
                 # 1. Check for natural consensus
+                if self.state.consensus_cooldown > 0:
+                    self.state.consensus_cooldown -= 1
                 consensus = self._detector.detect(self.history, self.state)
+                if (consensus
+                        and self.state.consensus_cooldown > 0
+                        and consensus[0] == self.state.last_rejected_option):
+                    consensus = None  # too soon after rejection — wait for genuine shift
                 if consensus:
                     self._conclude(*consensus)
                     if self.state.agreement_reached:
@@ -649,6 +730,10 @@ class Orchestrator:
                 )
                 if intervention:
                     _intervene(intervention)
+                    # Outlier interventions address a participant by name — give them
+                    # the next speaking slot so the exchange feels responsive.
+                    if intervention.startswith("outlier:"):
+                        self.state.priority_next_speaker = intervention.split(":", 1)[1]
 
             else:
                 # Hard ceiling hit
@@ -665,6 +750,7 @@ class Orchestrator:
             self._logger.flush(
                 setup_tokens_in, setup_tokens_out,
                 dialogue_tokens_in, dialogue_tokens_out,
+                outcome=self.outcome,
             )
             txt, csv_path = self._logger.paths
             total_in = setup_tokens_in + dialogue_tokens_in
@@ -672,4 +758,5 @@ class Orchestrator:
             print(f"\n[Tokens]  setup={setup_tokens_in}/{setup_tokens_out}"
                   f"  dialogue={dialogue_tokens_in}/{dialogue_tokens_out}"
                   f"  total={total_in}/{total_out}  (in/out)")
+            print(f"[Outcome] {self.outcome}")
             print(f"[Saved]   {txt} | {csv_path}")
