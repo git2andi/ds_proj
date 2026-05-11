@@ -9,15 +9,13 @@ Two runtime modes:
 
 Optional flags (both modes):
   --personas PATH   Path to a JSON file specifying persona overrides.
-                    See personas_example.json for the format.
 
 Scenario file format (scenarios.txt):
-  One topic per line. Append | open for free discussion (no options).
-  Lines starting with # are ignored.
+  One topic per line. Lines starting with # are ignored.
 
-  Examples:
-    Book a flight to Stockholm          <- decision mode
-    Is God real? | open                 <- open mode
+  Example:
+    Book a flight to Stockholm
+    Where should we hold the team offsite?
 
 Usage:
   python main.py                              # interactive, random personas
@@ -33,6 +31,9 @@ import random
 import sys
 from pathlib import Path
 from typing import Optional
+
+# Make all src/ modules importable without package prefix.
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from config_loader import cfg
 from llm_client import get_llm_client
@@ -60,18 +61,11 @@ def _num_participants(n_override: Optional[int] = None) -> int:
 # Scenario parsing
 # ---------------------------------------------------------------------------
 
-def _parse_scenario(line: str) -> tuple[str, str]:
-    """Returns (topic, mode). Mode is 'open' or 'decision'."""
+def _parse_scenario(line: str) -> str:
+    """Return the topic, stripping any legacy '| mode' suffix."""
     if "|" in line:
-        parts = line.rsplit("|", 1)
-        topic = parts[0].strip()
-        mode = parts[1].strip().lower()
-        if mode not in ("open", "decision"):
-            mode = "decision"
-    else:
-        topic = line.strip()
-        mode = "decision"
-    return topic, mode
+        return line.rsplit("|", 1)[0].strip()
+    return line.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -89,13 +83,6 @@ def _load_persona_overrides(path: str) -> list[dict]:
 
     Unspecified fields get random values (traits) or empty strings (text).
     The number of entries determines the number of participants.
-
-    Example file (personas_example.json):
-    [
-      {"name": "Dana", "friendliness": 1, "agreeableness": 1, "response_length": 1},
-      {"name": "Sam",  "contrarian": 5, "assertiveness": 5},
-      {"name": "Lee",  "agreeableness": 5, "friendliness": 5, "response_length": 1}
-    ]
     """
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(raw, list) or not raw:
@@ -113,15 +100,13 @@ def _personas_from_overrides(
     Traits not specified are sampled randomly.
     Text fields (backstory, goal) not specified trigger an LLM call
     only if cfg.personas.generate_backstory / generate_goal are true.
-    Names not specified get defaults from the pool.
     """
     name_pool = list(_DEFAULT_NAMES)
     random.shuffle(name_pool)
     pool_idx = 0
 
-    # Assign roles via LLM (one call) using the names from overrides
     names = []
-    for i, ov in enumerate(overrides):
+    for ov in overrides:
         raw_name = ov.get("name") or ""
         if not str(raw_name).strip():
             name = name_pool[pool_idx % len(name_pool)]
@@ -139,7 +124,6 @@ def _personas_from_overrides(
         role = ov.get("role", role_info["role"])
         is_primary = ov.get("is_primary", role_info["is_primary"])
 
-        # Traits: fixed int, [min, max] range, or fully random
         lo, hi = cfg.personas.trait_min, cfg.personas.trait_max
 
         def _resolve(val) -> int:
@@ -157,7 +141,6 @@ def _personas_from_overrides(
             goal="", backstory="", **traits
         )
 
-        # Generate backstory/goal via LLM unless already provided in overrides
         if "backstory" in ov and "goal" in ov:
             shell.backstory = str(ov["backstory"])
             shell.goal = str(ov["goal"])
@@ -168,7 +151,6 @@ def _personas_from_overrides(
 
         personas.append(shell)
 
-    # Guarantee exactly one primary
     if not any(p.is_primary for p in personas) and personas:
         personas[0].is_primary = True
 
@@ -182,10 +164,8 @@ def _personas_from_overrides(
 
 def run_dialogue(
     topic: str,
-    mode: str = "decision",
     persona_overrides: Optional[list[dict]] = None,
 ) -> None:
-    # Config-based participants (CLI --personas takes priority when already set)
     if persona_overrides is None:
         cfg_part = getattr(cfg, "participants", None)
         if cfg_part and getattr(cfg_part, "from_config", False):
@@ -200,12 +180,12 @@ def run_dialogue(
 
     print(f"\n{'='*60}")
     print(f"Topic    : {topic}")
-    print(f"Mode     : {mode}  |  Sims: {n}  |  Moderator: {moderator_style}")
+    print(f"Sims: {n}  |  Moderator: {moderator_style}")
     if persona_overrides:
         print(f"Personas : override from file ({len(persona_overrides)} entries)")
     print(f"{'='*60}")
 
-    orch = Orchestrator(topic, moderator_style=moderator_style, mode=mode)
+    orch = Orchestrator(topic, moderator_style=moderator_style)
 
     if persona_overrides:
         personas = _personas_from_overrides(
@@ -216,8 +196,6 @@ def run_dialogue(
         builder = PersonaBuilder(topic=topic, dialogue_id=orch.dialogue_id)
         personas = builder.build_all(names)
 
-    # All setup LLM calls (options, roles, persona concepts) are now done.
-    # Snapshot their token totals, then reset so the dialogue phase is tracked separately.
     _llm = get_llm_client()
     setup_tokens_in = _llm.session_tokens_in
     setup_tokens_out = _llm.session_tokens_out
@@ -276,10 +254,10 @@ def run_batch(path: str, persona_overrides: Optional[list[dict]] = None) -> None
         return
 
     print(f"Batch mode: {len(scenarios)} dialogue(s) from '{path}'")
-    for i, (topic, mode) in enumerate(scenarios, start=1):
+    for i, topic in enumerate(scenarios, start=1):
         print(f"\n[{i}/{len(scenarios)}]")
         try:
-            run_dialogue(topic, mode=mode, persona_overrides=persona_overrides)
+            run_dialogue(topic, persona_overrides=persona_overrides)
         except Exception as exc:
             print(f"!! Dialogue failed for '{topic}': {exc}")
 
@@ -289,12 +267,12 @@ def run_batch(path: str, persona_overrides: Optional[list[dict]] = None) -> None
 # ---------------------------------------------------------------------------
 
 def run_interactive(persona_overrides: Optional[list[dict]] = None) -> None:
-    raw = input("Enter the dialogue topic (append '| open' for free discussion): ").strip()
+    raw = input("Enter the dialogue topic: ").strip()
     if not raw:
         print("Topic cannot be empty.")
         return
-    topic, mode = _parse_scenario(raw)
-    run_dialogue(topic, mode=mode, persona_overrides=persona_overrides)
+    topic = _parse_scenario(raw)
+    run_dialogue(topic, persona_overrides=persona_overrides)
 
 
 # ---------------------------------------------------------------------------
@@ -302,10 +280,7 @@ def run_interactive(persona_overrides: Optional[list[dict]] = None) -> None:
 # ---------------------------------------------------------------------------
 
 def _parse_args() -> tuple[Optional[str], Optional[list[dict]]]:
-    """
-    Returns (scenario_file_or_None, persona_overrides_or_None).
-    Accepts: [scenario_file] [--personas path]
-    """
+    """Returns (scenario_file_or_None, persona_overrides_or_None)."""
     args = sys.argv[1:]
     scenario_file: Optional[str] = None
     persona_path: Optional[str] = None
