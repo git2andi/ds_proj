@@ -123,6 +123,14 @@ class Simulator:
                 "Do not argue both for and against the same option — pick a position and defend it."
             ),
             "narrowing": narrowing_instruction,
+            "emergence": (
+                "The main arguments have been made. This is the moment to soften — not dig in. "
+                "If the option gaining traction is in your acceptable range, reduce your resistance: "
+                "'maybe there's something to that', 'I'm not fully sold but I can see the appeal', "
+                "'if [concern] is addressed, I could live with it'. "
+                "Don't flip your vote yet — just let your resistance ease if it's genuinely easing. "
+                "Only hold firm if you have a brand-new specific objection not yet raised."
+            ),
             "confirmation": (
                 "The moderator is asking for a final confirmation. "
                 "Reply with an explicit 'yes' or 'no' — nothing else counts as a confirmation. "
@@ -199,10 +207,11 @@ class Simulator:
     def _position_discipline(self, state: "DialogueState") -> str:
         """
         Inject a coherence anchor derived from the stable belief state.
-        In negotiation: a soft reminder of their lean.
+        In negotiation: soft reminder of their lean.
         In narrowing/confirmation: escalates with flip count.
+        In emergence: facilitates softening toward the candidate option.
         """
-        if state.phase not in ("negotiation", "narrowing", "confirmation"):
+        if state.phase not in ("negotiation", "narrowing", "emergence", "confirmation"):
             return ""
 
         beliefs = self.persona.beliefs
@@ -213,7 +222,6 @@ class Simulator:
         flips = state.vote_changes.get(self.name, 0)
         current_text_vote = state.last_known_vote.get(self.name)
 
-        # If they've explicitly switched in text, respect that as the new anchor
         if current_text_vote and current_text_vote != preferred and flips >= 1:
             anchor = current_text_vote
             prefix = f"You switched to Option {anchor}."
@@ -221,6 +229,43 @@ class Simulator:
             anchor = preferred
             prefix = f"You lean toward Option {anchor} ({beliefs.key_concern})."
 
+        # Emergence mode: facilitate gradual softening rather than position defense
+        if state.phase == "emergence":
+            candidate = state.candidate_option or state.current_leading_option
+            if candidate and candidate in beliefs.acceptable and candidate != anchor:
+                cond = f" Concession condition: {beliefs.concession}." if beliefs.concession else ""
+                if self.persona.agreeableness >= 4:
+                    return (
+                        f"\n{prefix} Option {candidate} is gaining traction and is in your acceptable range."
+                        f"{cond} You seek consensus — express conditional openness: "
+                        "'I can see why others lean that way', 'if [concern] is sorted, I'm open'."
+                    )
+                elif self.persona.contrarian >= 4:
+                    return (
+                        f"\n{prefix} Option {candidate} is gaining ground and within your acceptable range."
+                        f"{cond} Before softening, name one remaining specific concern — then signal openness."
+                    )
+                else:
+                    return (
+                        f"\n{prefix} Option {candidate} is gaining traction and is in your acceptable range."
+                        f"{cond} Reduce resistance — conditional openness, not a full flip."
+                    )
+            elif candidate and candidate in (beliefs.rejected or []):
+                return (
+                    f"\n{prefix} Option {candidate} is gaining ground but you genuinely oppose it. "
+                    "Acknowledge what others see in it, then state your specific remaining objection."
+                )
+            elif candidate and candidate == anchor:
+                return (
+                    f"\n{prefix} Option {candidate} is gaining ground — it's your preferred choice. "
+                    "Help it land without being heavy-handed."
+                )
+            return (
+                f"\n{prefix} The group is moving toward resolution. "
+                "Let your position soften if it's genuinely softening."
+            )
+
+        # Standard coherence anchor for negotiation / narrowing / confirmation
         coherence = f" Keep your arguments consistent with preferring Option {anchor}."
 
         if state.phase == "negotiation":
@@ -307,6 +352,9 @@ class Simulator:
     # ------------------------------------------------------------------
 
     def _contrarian_nudge(self, state: "DialogueState") -> str:
+        if state.phase == "emergence":
+            # Emergence phase: contrarian softening is handled by _position_discipline
+            return ""
         leading = state.current_leading_option
         if not leading:
             return ""

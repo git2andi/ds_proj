@@ -75,6 +75,10 @@ class DialogueState:
     vote_changes: dict = field(default_factory=dict)
     last_known_vote: dict = field(default_factory=dict)
 
+    has_entered_emergence: bool = False
+    emergence_rounds: int = 0
+    candidate_option: Optional[str] = None
+
 
 # ---------------------------------------------------------------------------
 # Orchestrator
@@ -236,6 +240,12 @@ class Orchestrator:
         if mentions:
             self.state.current_leading_option = Counter(mentions).most_common(1)[0][0]
 
+        # Track candidate_option from actual votes — more reliable than mention frequency
+        votes = current_votes(self.history, self.sims)
+        if votes:
+            vote_counts = Counter(votes.values())
+            self.state.candidate_option = vote_counts.most_common(1)[0][0]
+
     def _update_phase(self) -> None:
         if self.state.agreement_reached:
             self.state.phase = "closure"
@@ -246,11 +256,13 @@ class Orchestrator:
 
         # greeting: first full round (all sims say hello once)
         # opening:  second round (first instincts on the topic)
-        # then negotiation or narrowing
+        # negotiation → narrowing → emergence (all voted, no consensus) → confirmation
         if turns < n:
             self.state.phase = "greeting"
         elif turns < n * 2:
             self.state.phase = "opening"
+        elif self.state.has_entered_emergence:
+            self.state.phase = "emergence"
         elif self.state.has_asked_narrowing:
             self.state.phase = "narrowing"
         else:
@@ -309,7 +321,7 @@ class Orchestrator:
             return 1
         if self.state.repetition_pressure >= 0.65:
             return 1
-        if phase == "confirmation":
+        if phase in ("confirmation", "emergence"):
             return min(2, n)
         weights = [0.30, 0.50, 0.20] if n >= 3 else [0.45, 0.55]
         choices = list(range(1, min(4, n + 1)))
@@ -494,52 +506,58 @@ class Orchestrator:
 
     def _force_conclusion(self) -> None:
         """
-        Select the best option using belief scores (preferred=2pts, acceptable=1pt)
-        then fall back to text votes and discussion evidence.
-        Wording is LLM-generated and honest about the lack of consensus.
+        Select the best option using Fisher's method of residues:
+        the option with the lowest net resistance (acceptance score minus objection score).
+        Primary participant's preference breaks ties among equally-scored options only.
         """
-        option_scores: Counter = Counter()
+        acceptance: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
+        objections: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
 
         for sim in self.sims:
             b = sim.persona.beliefs
-            if b:
-                option_scores[b.preferred] += 2.0
-                for opt in b.acceptable:
-                    if opt != b.preferred:
-                        option_scores[opt] += 1.0
+            if not b:
+                continue
+            acceptance[b.preferred] += 2.0
+            for opt in b.acceptable:
+                if opt != b.preferred:
+                    acceptance[opt] += 1.0
+            for opt in b.rejected:
+                objections[opt] += 2.0
 
-        # Blend in text votes as secondary evidence
         votes = current_votes(self.history, self.sims)
         for opt in votes.values():
-            option_scores[opt] += 0.5
+            acceptance[opt] += 0.5
+
+        net: dict[str, float] = {opt: acceptance[opt] - objections[opt] for opt in ["A", "B", "C", "D"]}
 
         primary = self._primary_sim()
         primary_beliefs_pref = primary.persona.beliefs.preferred if (primary and primary.persona.beliefs) else None
         primary_vote = votes.get(primary.name) if primary else None
 
-        if option_scores:
-            best_score = max(option_scores.values())
-            top_opts = [opt for opt, sc in option_scores.items() if sc >= best_score - 0.5]
-            # Primary's preference is tiebreaker
-            if primary_beliefs_pref and primary_beliefs_pref in top_opts:
-                final = primary_beliefs_pref
-            elif primary_vote and primary_vote in top_opts:
-                final = primary_vote
-            elif self.state.current_leading_option in top_opts:
-                final = self.state.current_leading_option
-            else:
-                final = top_opts[0]
+        best_score = max(net.values())
+        top_opts = [opt for opt, sc in net.items() if sc >= best_score - 0.5]
+
+        # Primary preference is tiebreaker among equally-scored options, not against better ones
+        if primary_beliefs_pref and primary_beliefs_pref in top_opts:
+            final = primary_beliefs_pref
+        elif primary_vote and primary_vote in top_opts:
+            final = primary_vote
+        elif self.state.candidate_option in top_opts:
+            final = self.state.candidate_option
+        elif self.state.current_leading_option in top_opts:
+            final = self.state.current_leading_option
         else:
-            final = self.state.current_leading_option or "A"
+            final = top_opts[0]
 
         self.outcome = "force_close"
         if self.moderator_style != "passive":
             self.state.preferred_option = final
 
             if final == primary_beliefs_pref or final == primary_vote:
-                reason = f"the primary participant's ({primary.name}'s) preference" if primary else "the primary participant's preference"
+                reason = (f"the primary participant's ({primary.name}'s) preference"
+                          if primary else "the primary participant's preference")
             else:
-                reason = "the most widely acceptable option given everyone's priorities"
+                reason = "the option with the broadest group acceptance and fewest active objections"
 
             recent = "\n".join(self.history[-6:])
             try:
@@ -609,6 +627,15 @@ class Orchestrator:
 
                 if self.state.has_asked_narrowing:
                     self.state.post_narrowing_rounds += 1
+
+                # Enter emergence when all participants have voted but no consensus yet
+                if self.state.has_asked_narrowing and not self.state.has_entered_emergence:
+                    _votes = current_votes(self.history, self.sims)
+                    if len(_votes) >= len(self.sims):
+                        self.state.has_entered_emergence = True
+
+                if self.state.has_entered_emergence:
+                    self.state.emergence_rounds += 1
 
                 # 1. Check for natural consensus
                 if self.state.consensus_cooldown > 0:

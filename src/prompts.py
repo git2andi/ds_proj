@@ -433,6 +433,47 @@ Rules:
 Return only the moderator's line — no label, no markdown."""
 
 
+def moderator_emergence(
+    topic: str,
+    participant_names: list[str],
+    options: list[str],
+    recent_dialogue: str,
+    candidate_option: str,
+) -> str:
+    """
+    Moderator facilitates emergence: acknowledges that the discussion is moving,
+    invites conditional openness without pressuring for explicit commitment.
+    Fisher Phase 3 — dissent dissolves via ambiguity, not direct agreement.
+    """
+    options_text = "\n".join(f"  {o}" for o in options)
+    return f"""You are a neutral moderator facilitating the natural emergence of consensus.
+
+Topic: {topic}
+Participants: {", ".join(participant_names)}
+Option gaining traction: Option {candidate_option}
+
+Available options:
+{options_text}
+
+Recent dialogue:
+{recent_dialogue}
+
+The group has made their main arguments. Some movement toward Option {candidate_option} is visible,
+but no one has fully committed yet. This is the moment for gradual convergence — not forced agreement.
+
+Your task: Acknowledge the direction the discussion is heading and invite participants to express
+what conditions or concerns, if addressed, would help them move forward.
+Do NOT ask for a final vote. Do NOT pressure for explicit agreement. Sound like a facilitator
+who sees progress and wants to help it land naturally.
+
+Rules:
+- One or two sentences only.
+- Do not declare a winner.
+- Sound natural and conversational — not formal.
+
+Return only the moderator's line — no label, no markdown."""
+
+
 def moderator_force_close(
     topic: str,
     participant_names: list[str],

@@ -17,6 +17,7 @@ from config_loader import cfg
 from llm_client import get_llm_client
 from utils import (
     extract_preference_vote,
+    last_n_turns_for,
     participant_turn_count,
     recent_participant_lines,
     latest_turn_per_speaker,
@@ -64,14 +65,12 @@ class ConsensusDetector:
         if result:
             return result
 
-        # Belief-acceptance tier: if enough sims accept the leading option and someone
-        # has explicitly preferred it, treat it as a soft consensus signal.
-        if state.has_asked_narrowing and state.current_leading_option:
-            result = self._belief_acceptance(state.current_leading_option, history)
-            if result:
-                return result
+        # Reduced-opposition tier: emergence-phase consensus detected by silence of dissent
+        result = self._reduced_opposition(history, state)
+        if result:
+            return result
 
-        if state.phase in {"negotiation", "narrowing", "confirmation"}:
+        if state.phase in {"negotiation", "narrowing", "emergence", "confirmation"}:
             state.llm_check_countdown -= 1
             if state.llm_check_countdown <= 0:
                 state.llm_check_countdown = cfg.consensus.llm_check_every_n_turns
@@ -203,39 +202,58 @@ class ConsensusDetector:
         return top_option, None
 
     # ------------------------------------------------------------------
-    # Tier 3 — Belief acceptance
+    # Tier 3 — Reduced opposition (emergence-phase consensus)
     # ------------------------------------------------------------------
 
-    def _belief_acceptance(
-        self, option: str, history: list[str]
+    def _reduced_opposition(
+        self, history: list[str], state: "DialogueState"
     ) -> Optional[tuple[str, Optional[str]]]:
         """
-        Check whether enough sims have `option` in their acceptable list AND at least
-        one sim has explicitly preferred it in the recent dialogue.
-        This detects convergence when sims don't all share the same stated vote but
-        their belief states are compatible with a shared option.
+        Fisher's emergence signal: the candidate option has plurality votes AND
+        dissenters' most recent turns show ambiguity rather than active objection.
+        Only runs in the emergence phase.
         """
-        required = (
-            max(2, len(self.sims) - 1)
-            if self.moderator_style == "active"
-            else len(self.sims)
-        )
-        accepting = sum(
-            1 for s in self.sims
-            if s.persona.beliefs and option in s.persona.beliefs.acceptable
-        )
-        if accepting < required:
+        if state.phase != "emergence":
+            return None
+        candidate = state.candidate_option
+        if not candidate:
             return None
 
-        # Also require at least one explicit preference in recent text
-        recent = recent_participant_lines(history, limit=max(cfg.consensus.regex_window, len(self.sims) * 3))
-        for line in recent:
-            _, msg = line.split(":", 1)
-            v = extract_preference_vote(msg)
-            if v == option:
-                return option, None
+        window = max(cfg.consensus.regex_window, len(self.sims) * 4)
+        recent_lines = recent_participant_lines(history, limit=window)
+        votes: dict[str, str] = {}
+        for line in recent_lines:
+            speaker, msg = line.split(":", 1)
+            speaker = speaker.strip()
+            if speaker in votes:
+                continue
+            vote = extract_preference_vote(msg)
+            if vote:
+                votes[speaker] = vote
 
-        return None
+        n = len(self.sims)
+        candidate_voters = sum(1 for v in votes.values() if v == candidate)
+        required = max(2, n - 1) if self.moderator_style == "active" else n
+        if candidate_voters < required:
+            return None
+
+        # Check dissenters have gone ambiguous — no active objection in their last 2 turns
+        dissenters = [name for name, vote in votes.items() if vote != candidate]
+        if not dissenters:
+            return candidate, None
+
+        objection_signals = [
+            "still think", "not convinced", "don't agree", "disagree",
+            "still prefer", "rather have", "not sure about", "still on",
+        ]
+        for dissenter in dissenters:
+            turns = last_n_turns_for(dissenter, history, n=2)
+            if not turns:
+                continue
+            if any(sig in turns[0] for sig in objection_signals):
+                return None
+
+        return candidate, None
 
     # ------------------------------------------------------------------
     # Helpers

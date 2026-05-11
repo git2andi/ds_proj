@@ -171,16 +171,29 @@ class ModerationEngine:
 
             else:  # stall
                 votes = current_votes(history, self.sims)
-                line = self._llm.generate(
-                    prompts.moderator_deadlock(
-                        topic=self.topic,
-                        participant_names=names,
-                        options=self.options,
-                        recent_dialogue=recent,
-                        current_votes=votes,
-                        escalation_level=level,
-                    )
-                ).strip()
+                candidate = getattr(state, "candidate_option", None) or state.current_leading_option
+                if state.phase == "emergence" and level < 2 and candidate:
+                    # Fisher Phase 3: facilitate softening, don't harden positions
+                    line = self._llm.generate(
+                        prompts.moderator_emergence(
+                            topic=self.topic,
+                            participant_names=names,
+                            options=self.options,
+                            recent_dialogue=recent,
+                            candidate_option=candidate,
+                        )
+                    ).strip()
+                else:
+                    line = self._llm.generate(
+                        prompts.moderator_deadlock(
+                            topic=self.topic,
+                            participant_names=names,
+                            options=self.options,
+                            recent_dialogue=recent,
+                            current_votes=votes,
+                            escalation_level=level,
+                        )
+                    ).strip()
 
             if line:
                 store_fn(line, self._llm.last_tokens_in, self._llm.last_tokens_out)
