@@ -64,19 +64,18 @@ Participants: {names_str}
 Assign one role to each participant so the roles fit the topic naturally.
 Exactly one participant must be the primary person most directly affected by the decision.
 
-
 Return valid JSON only — no markdown, no explanation:
 {{
   "roles": {{
-    "{first}": {{"role": "short_role_label", "is_primary": true}},
-    "OTHER_NAME": {{"role": "short_role_label", "is_primary": false}}
+    "{first}": {{"role": "brief natural phrase", "is_primary": true}},
+    "OTHER_NAME": {{"role": "brief natural phrase", "is_primary": false}}
   }}
 }}
 
 Rules:
 - Every listed participant must appear exactly once.
 - Roles must be topic-aligned.
-- Use short labels with underscores, no spaces.
+- Use 2–4 word natural phrases that describe the person, not a job title (e.g. "frequent ski traveller", "budget-focused planner", "group trip organiser"). No underscores.
 - Exactly one participant has "is_primary": true.
 - Role and primary status should be believable and aligned with the topic.
 """
@@ -143,6 +142,8 @@ def sim_turn(
     recent_history: str,
     forbidden_openers: str,
     forbidden_frames: list[str],
+    last_speaker_line: str = "",
+    position_discipline: str = "",
     contrarian_nudge: str = "",
     forced_adaptation: bool = False,
 ) -> str:
@@ -151,7 +152,7 @@ def sim_turn(
     forbidden_block = ""
     if forbidden_frames:
         listed = "\n".join(f'  - "{f}"' for f in forbidden_frames)
-        forbidden_block = f"\nAlso never say:\n{listed}"
+        forbidden_block = f"\nNever say:\n{listed}"
 
     opener_block = (
         f"\nDon't open with: {forbidden_openers}."
@@ -161,33 +162,29 @@ def sim_turn(
     forced_block = ""
     if forced_adaptation:
         forced_block = (
-            "\n\nPOSITION HOLD: You already switched options once — stick with your current choice. "
-            "If challenged, add one new specific reason rather than repeating what you've already said."
+            "\n\nMODERATOR CALLED YOU OUT: Don't repeat your last point. "
+            "Bring one new angle — a trade-off you haven't raised, a concession, or a genuine question."
         )
 
-    return f"""SPEAKING STYLE — NON-NEGOTIABLE:
-{style_rule}
-This is a casual group chat. React to what's happening — quick agreements, pushbacks, \
-name-checks, "yeah/nah/true/wait" are all fine.
-Avoid: formal summaries ("Name's point about X..."), em dashes (use comma or "but" instead), \
-hollow filler ("great point", "absolutely", "definitely"), \
-AI buzzwords ("potential", "undeniable", "impactful", "seamless", "innovative"), \
-chained essay arguments (three structured points in one message - make one point, not a paragraph).{forced_block}
+    last_said_block = ""
+    if last_speaker_line:
+        last_said_block = f"\nJust said — {last_speaker_line}\n"
 
-You are {name} ({role}).
-{backstory}
-Goal: {goal}. {personality_summary}
+    return f"""STYLE (non-negotiable): {style_rule}
+Natural group chat. React to what was just said first, then make your point. "Yeah/nah/true/wait" are fine.
+Never mention your role, job title, or occupation.
+Avoid: formal summaries, em dashes (use "but" or comma), hollow filler ("great point", "absolutely", "definitely"), AI buzzwords ("seamless", "impactful", "innovative").{forced_block}
+
+You are {name} ({role}). {backstory} Goal: {goal}. {personality_summary}
 
 Deciding: {topic}
-Options (only these facts exist — do not invent details):
+Options (only these facts — do not invent details):
 {options_text}
 
-Recent chat:
+Recent conversation:
 {recent_history}
-
-Phase ({phase}): {phase_instruction}{forbidden_block}{contrarian_nudge}{opener_block}
-
-The group needs to land on a decision — it's fine to push back, but aim to move toward something or find a compromise.
+{last_said_block}
+Phase ({phase}): {phase_instruction}{position_discipline}{contrarian_nudge}{forbidden_block}{opener_block}
 
 Write {name}'s next message. No name prefix. No stage directions."""
 
@@ -249,8 +246,8 @@ def moderator_intervention(
     )
 
     escalation_notes = {
-        0: "Ask a Socratic question that invites them to reconsider or add something new.",
-        1: "Ask them directly whether there is a specific compromise they could accept.",
+        0: "Ask one short, specific question directed at the target participant — something that gets them to explain WHY their position matters to them, not just restate it.",
+        1: "Ask the target participant directly: what one specific thing would they need from the majority option to consider it? One sentence, no open-ended 'can anyone' phrasing.",
         2: "Be firm but respectful — tell them the group needs movement and ask them to name one thing that could change their mind.",
         3: "Be direct — acknowledge the impasse and ask for a final position.",
     }
@@ -295,8 +292,9 @@ def moderator_deadlock(
 
     escalation_instructions = {
         1: (
-            "Ask the group whether anyone can name a specific condition under which "
-            "they could accept a different option. Keep it open and non-pressuring."
+            "Name the participant(s) with the minority vote. Ask that person directly: "
+            "what one specific thing about their current choice matters so much that "
+            "they can't accept the majority option? One direct question, no 'can anyone' phrasing."
         ),
         2: (
             "Acknowledge the split directly and by name. Tell the group that unless "

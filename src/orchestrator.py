@@ -374,10 +374,7 @@ class Orchestrator:
                 flips = self.state.vote_changes.get(sim.name, 0) + 1
                 self.state.vote_changes[sim.name] = flips
                 self.state.last_known_vote[sim.name] = current_vote
-                if flips >= 1 and self.state.has_asked_narrowing:
-                    self.state.nudged_participants.add(sim.name)
-                print(f"[vote-flip] {sim.name} flipped {flips}x"
-                      + (" — hold enforced" if flips >= 1 and self.state.has_asked_narrowing else ""))
+                print(f"[vote-flip] {sim.name}: {previous_vote} → {current_vote} (flip #{flips})")
 
     # ------------------------------------------------------------------
     # Conclusion helpers
@@ -450,6 +447,11 @@ class Orchestrator:
                 self.state.agreement_reached = False
                 self.state.preferred_option = None
                 self.state.stall_rounds = 0
+                if self.moderator_style != "passive":
+                    self._store_moderator(
+                        f"Okay, Option {preferred} doesn't have full buy-in yet. "
+                        "Let's keep talking."
+                    )
                 return
             checked += 1
             if checked >= len(self.sims) * 2:
@@ -493,6 +495,9 @@ class Orchestrator:
             primary_vote = votes.get(primary.name) if primary else None
             if primary_vote and primary_vote in top_opts:
                 final = primary_vote
+            elif self.state.current_leading_option in top_opts:
+                # Tiebreak: most-discussed option in the session
+                final = self.state.current_leading_option
             else:
                 final = top_opts[0]
         else:
@@ -612,6 +617,14 @@ class Orchestrator:
                             continue
                         _intervene("stall")
                         self.state.stall_rounds = 0
+                        # Direct the minority voter to respond to the mod's question first
+                        stall_votes = current_votes(self.history, self.sims)
+                        if stall_votes:
+                            top_opt = Counter(stall_votes.values()).most_common(1)[0][0]
+                            for _sim in self.sims:
+                                if stall_votes.get(_sim.name) != top_opt:
+                                    self.state.priority_next_speaker = _sim.name
+                                    break
                         continue
 
                 # 4. Regular interventions
