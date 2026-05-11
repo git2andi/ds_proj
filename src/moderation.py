@@ -134,27 +134,29 @@ class ModerationEngine:
                 outlier_name = reason.split(":", 1)[1]
                 state.nudged_participants.add(outlier_name)
                 votes = current_votes(history, self.sims)
-                majority_note = ""
+                context_note = ""
                 if votes:
                     n = len(self.sims)
-                    max_dis = (
-                        cfg.consensus.max_dissenters_active
-                        if self.moderator_style == "active"
-                        else cfg.consensus.max_dissenters_other
-                    )
                     counts = Counter(votes.values())
                     top_opt, top_count = counts.most_common(1)[0]
-                    if top_count >= n - max_dis:
+                    has_majority = top_count > n / 2
+                    if has_majority:
                         supporters = [nm for nm, o in votes.items() if o == top_opt and nm != outlier_name]
                         if supporters:
-                            majority_note = (
-                                f" {' and '.join(supporters)} "
-                                f"{'both prefer' if len(supporters) > 1 else 'prefers'} "
-                                f"Option {top_opt} — ask {outlier_name} what it would take to accept that."
+                            verb = "both prefer" if len(supporters) > 1 else "prefers"
+                            context_note = (
+                                f" {' and '.join(supporters)} {verb} Option {top_opt} — "
+                                f"ask {outlier_name} what specific trade-off makes their choice worth holding."
                             )
+                    else:
+                        # Multi-way split — no majority exists
+                        context_note = (
+                            f" The group is split with no clear majority — "
+                            f"ask {outlier_name} what one specific thing matters most to them."
+                        )
                 outlier_reason = (
                     f"{outlier_name} has been repeating the same position without new reasoning."
-                    + majority_note
+                    + context_note
                 )
                 line = self._llm.generate(
                     prompts.moderator_intervention(

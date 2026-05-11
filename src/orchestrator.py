@@ -201,9 +201,10 @@ class Orchestrator:
         tokens_out: int = 0,
     ) -> None:
         self.history.append(line)
+        # Annotated version for console only; .txt receives the clean transcript
         display = self._annotate_with_vote(line)
         print(f"-> {display}")
-        self._logger.append_line(display)
+        self._logger.append_line(line)
         self._logger.buffer(line, selected_reason, self.state, self.sims,
                             tokens_in=tokens_in, tokens_out=tokens_out)
 
@@ -366,7 +367,11 @@ class Orchestrator:
             current_vote = extract_preference_vote(turns[0])
             if not current_vote:
                 continue
-            previous_vote = self.state.last_known_vote.get(sim.name)
+
+            # Use belief preferred as the baseline — first text vote that matches belief
+            # is not a flip; first text vote that differs from belief is flip #1.
+            belief_preferred = sim.persona.beliefs.preferred if sim.persona.beliefs else None
+            previous_vote = self.state.last_known_vote.get(sim.name, belief_preferred)
 
             if previous_vote is None:
                 self.state.last_known_vote[sim.name] = current_vote
@@ -375,6 +380,8 @@ class Orchestrator:
                 self.state.vote_changes[sim.name] = flips
                 self.state.last_known_vote[sim.name] = current_vote
                 print(f"[vote-flip] {sim.name}: {previous_vote} → {current_vote} (flip #{flips})")
+            else:
+                self.state.last_known_vote[sim.name] = current_vote
 
     # ------------------------------------------------------------------
     # Conclusion helpers
@@ -486,33 +493,75 @@ class Orchestrator:
             self._run_closure()
 
     def _force_conclusion(self) -> None:
+        """
+        Select the best option using belief scores (preferred=2pts, acceptable=1pt)
+        then fall back to text votes and discussion evidence.
+        Wording is LLM-generated and honest about the lack of consensus.
+        """
+        option_scores: Counter = Counter()
+
+        for sim in self.sims:
+            b = sim.persona.beliefs
+            if b:
+                option_scores[b.preferred] += 2.0
+                for opt in b.acceptable:
+                    if opt != b.preferred:
+                        option_scores[opt] += 1.0
+
+        # Blend in text votes as secondary evidence
         votes = current_votes(self.history, self.sims)
-        if votes:
-            counts = Counter(votes.values())
-            top_count = counts.most_common(1)[0][1]
-            top_opts = [opt for opt, cnt in counts.items() if cnt == top_count]
-            primary = self._primary_sim()
-            primary_vote = votes.get(primary.name) if primary else None
-            if primary_vote and primary_vote in top_opts:
+        for opt in votes.values():
+            option_scores[opt] += 0.5
+
+        primary = self._primary_sim()
+        primary_beliefs_pref = primary.persona.beliefs.preferred if (primary and primary.persona.beliefs) else None
+        primary_vote = votes.get(primary.name) if primary else None
+
+        if option_scores:
+            best_score = max(option_scores.values())
+            top_opts = [opt for opt, sc in option_scores.items() if sc >= best_score - 0.5]
+            # Primary's preference is tiebreaker
+            if primary_beliefs_pref and primary_beliefs_pref in top_opts:
+                final = primary_beliefs_pref
+            elif primary_vote and primary_vote in top_opts:
                 final = primary_vote
             elif self.state.current_leading_option in top_opts:
-                # Tiebreak: most-discussed option in the session
                 final = self.state.current_leading_option
             else:
                 final = top_opts[0]
         else:
-            final = self.state.current_leading_option or None
+            final = self.state.current_leading_option or "A"
 
         self.outcome = "force_close"
-        if final and self.moderator_style != "passive":
+        if self.moderator_style != "passive":
             self.state.preferred_option = final
-            self._store_moderator(
-                f"We've spent a lot of time on this without reaching agreement. "
-                f"I'm going to call it — Option {final} is our final choice. Discussion concluded."
-            )
-        elif self.moderator_style != "passive":
-            self.outcome = "failed"
-            self._store_moderator("No clear agreement reached. Discussion concluded.")
+
+            if final == primary_beliefs_pref or final == primary_vote:
+                reason = f"the primary participant's ({primary.name}'s) preference" if primary else "the primary participant's preference"
+            else:
+                reason = "the most widely acceptable option given everyone's priorities"
+
+            recent = "\n".join(self.history[-6:])
+            try:
+                line = self._llm.generate(
+                    prompts.moderator_force_close(
+                        topic=self.topic,
+                        participant_names=[s.name for s in self.sims],
+                        final_option=final,
+                        reason=reason,
+                        recent_dialogue=recent,
+                    )
+                ).strip()
+                self._store_moderator(
+                    line or f"No consensus reached — I'll call Option {final} as the moderator's choice. Let's wrap up.",
+                    tokens_in=self._llm.last_tokens_in,
+                    tokens_out=self._llm.last_tokens_out,
+                )
+            except Exception:
+                self._store_moderator(
+                    f"We didn't reach agreement, so I'm making the call: Option {final}. Discussion concluded."
+                )
+
         self._run_closure()
 
     # ------------------------------------------------------------------

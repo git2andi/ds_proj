@@ -38,7 +38,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from config_loader import cfg
 from llm_client import get_llm_client
 from orchestrator import Orchestrator
-from persona import Persona, PersonaBuilder, TRAITS, _save_personas
+from persona import Persona, PersonaBuilder, TRAITS
 from simulator import Simulator
 
 
@@ -154,7 +154,6 @@ def _personas_from_overrides(
     if not any(p.is_primary for p in personas) and personas:
         personas[0].is_primary = True
 
-    _save_personas(personas, dialogue_id)
     return personas
 
 
@@ -186,6 +185,7 @@ def run_dialogue(
     print(f"{'='*60}")
 
     orch = Orchestrator(topic, moderator_style=moderator_style)
+    builder = PersonaBuilder(topic=topic, dialogue_id=orch.dialogue_id)
 
     if persona_overrides:
         personas = _personas_from_overrides(
@@ -193,8 +193,12 @@ def run_dialogue(
         )
     else:
         names = _default_names(n)
-        builder = PersonaBuilder(topic=topic, dialogue_id=orch.dialogue_id)
         personas = builder.build_all(names)
+
+    # Assign beliefs after both options (from Orchestrator) and personas are ready.
+    # This is the per-agent preference model that grounds all position discipline.
+    print("\nGenerating belief states...")
+    builder.assign_beliefs(personas, orch.options)
 
     _llm = get_llm_client()
     setup_tokens_in = _llm.session_tokens_in
@@ -210,6 +214,10 @@ def run_dialogue(
         )
         print(f"  {persona.name}{primary_tag} | role: {persona.role} | {trait_str}")
         print(f"    goal: {persona.goal}")
+        if persona.beliefs:
+            b = persona.beliefs
+            accept_str = f", accepts {[x for x in b.acceptable if x != b.preferred]}" if len(b.acceptable) > 1 else ""
+            print(f"    beliefs: prefers {b.preferred}{accept_str} | {b.key_concern}")
     print()
 
     for persona in personas:

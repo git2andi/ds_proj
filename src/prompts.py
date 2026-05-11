@@ -2,17 +2,18 @@
 prompts.py
 ----------
 Single registry for every prompt template in the system.
-All LLM-facing text lives here — nothing is hardcoded in other modules.
+All LLM-facing text lives here.
 
-Organised into four sections:
-  1. Setup prompts       — run once per dialogue (options, roles, personas)
+Sections:
+  1. Setup prompts       — options, role assignment, persona concept, agent beliefs
   2. Turn prompt         — called every time a sim speaks
   3. Consensus prompt    — LLM fallback for agreement detection
-  4. Moderator prompts   — interventions, narrowing, closure
+  4. Moderator prompts   — interventions, narrowing, closure, force-close
 """
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Optional
 
 
@@ -53,7 +54,7 @@ Return valid JSON only — no markdown, no explanation:
 
 
 def role_assignment(topic: str, names: list[str]) -> str:
-    """Assign one topic-aligned role to each participant in a single LLM call."""
+    """Assign one topic-aligned role to each participant."""
     names_str = ", ".join(names)
     first = names[0]
     return f"""You are assigning discussion roles for a group simulation.
@@ -74,11 +75,13 @@ Return valid JSON only — no markdown, no explanation:
 
 Rules:
 - Every listed participant must appear exactly once.
-- Roles must be topic-aligned.
-- Use 2–4 word natural phrases that describe the person, not a job title (e.g. "frequent ski traveller", "budget-focused planner", "group trip organiser"). No underscores.
+- Use 1–3 word natural phrases describing the person, not a job title.
+- No underscores, no camelCase, no title case.
 - Exactly one participant has "is_primary": true.
-- Role and primary status should be believable and aligned with the topic.
+- Role and primary status must be believable and aligned with the topic.
+- Primary and Role must be consistent — the primary person should have a role that makes it natural for them to care deeply about the decision, while others should have supporting roles.
 """
+
 
 def persona_concept(
     topic: str,
@@ -89,8 +92,8 @@ def persona_concept(
 ) -> str:
     """
     Generate backstory and goal for one participant.
-    Traits are pre-sampled and passed in as plain-English descriptions so the
-    LLM writes a character that genuinely fits them — not the other way around.
+    Traits are pre-sampled and passed in so the LLM writes a character
+    that genuinely fits them.
     """
     primary_note = (
         f"{name} is the central person — the decision affects them most directly."
@@ -115,11 +118,56 @@ Return valid JSON only — no markdown, no explanation:
 }}
 
 Rules:
-- Backstory and goal must clearly reflect the personality traits — a warmth-5 person should sound warm, a contrarian-5 person should sound sceptical.
+- Backstory and goal must clearly reflect the personality traits.
 - Backstory must be specific to the topic domain, not generic.
 - Goal must NOT copy trait names or use filler words like "efficiently" or "seamlessly".
 - Do not reference simulation mechanics or numeric scores.
 - Do not return a "personality" field — traits are already fixed."""
+
+
+def agent_beliefs(
+    name: str,
+    role: str,
+    goal: str,
+    backstory: str,
+    personality_summary: str,
+    options_text: str,
+) -> str:
+    """
+    Generate a stable internal belief state for one participant.
+    Called once per participant after options are known, before the dialogue starts.
+    """
+    return f"""You are building the internal preference model for a group discussion participant.
+
+Participant: {name}
+Role: {role}
+Goal: {goal}
+Background: {backstory}
+Personality: {personality_summary}
+
+Options available:
+{options_text}
+
+Based on this person's background, goal, and personality — not on what would be
+"objectively best" — decide which option they would most naturally lean toward,
+what they could genuinely live with as a compromise, and what they'd resist.
+
+Rules:
+- Ground every answer in the backstory and goal. Do not invent new facts.
+- "acceptable" must include the preferred option, plus a genuine compromise (or multiple).
+- "rejected" can be empty if the person is genuinely flexible.
+- key_concern: a short phrase (not a full sentence) — the one thing that matters most.
+- concession: a concrete condition, not vague ("if others strongly want it" is too vague;
+  "if the group is clearly prioritizing budget over convenience" is concrete).
+
+Return valid JSON only — no markdown, no explanation:
+{{
+  "preferred": "A" or "B" or "C" or "D",
+  "acceptable": ["A"] or ["B", "C"] etc,
+  "rejected": [] or ["D"] etc,
+  "key_concern": "short phrase",
+  "concession": "concrete condition under which they'd accept a compromise"
+}}"""
 
 
 # =============================================================================
@@ -128,8 +176,6 @@ Rules:
 
 def sim_turn(
     name: str,
-    role: str,
-    is_primary: bool,
     topic: str,
     options_text: str,
     goal: str,
@@ -138,10 +184,10 @@ def sim_turn(
     style_rule: str,
     phase: str,
     phase_instruction: str,
-    state_summary: str,
     recent_history: str,
     forbidden_openers: str,
     forbidden_frames: list[str],
+    beliefs_block: str = "",
     last_speaker_line: str = "",
     position_discipline: str = "",
     contrarian_nudge: str = "",
@@ -159,34 +205,37 @@ def sim_turn(
         if forbidden_openers else ""
     )
 
-    forced_block = ""
-    if forced_adaptation:
-        forced_block = (
-            "\n\nMODERATOR CALLED YOU OUT: Don't repeat your last point. "
-            "Bring one new angle — a trade-off you haven't raised, a concession, or a genuine question."
-        )
+    forced_block = (
+        "\n\nMODERATOR CALLED YOU OUT: Don't repeat your last point. "
+        "Bring one new angle — a trade-off you haven't raised, a concession, or a genuine question."
+        if forced_adaptation else ""
+    )
 
-    last_said_block = ""
-    if last_speaker_line:
-        last_said_block = f"\nJust said — {last_speaker_line}\n"
+    last_said_block = (
+        f"\nJust said — {last_speaker_line}\n"
+        if last_speaker_line else ""
+    )
+
+    beliefs_section = f"\n{beliefs_block}\n" if beliefs_block else ""
 
     return f"""STYLE (non-negotiable): {style_rule}
-Natural group chat. React to what was just said first, then make your point. "Yeah/nah/true/wait" are fine.
-Never mention your role, job title, or occupation.
-Avoid: formal summaries, em dashes (use "but" or comma), hollow filler ("great point", "absolutely", "definitely"), AI buzzwords ("seamless", "impactful", "innovative").{forced_block}
+React to what was just said, then make your point. "Yeah/nah/true/fair/wait" are fine. No formal summaries, no em dashes.
+Avoid hollow filler ("great point", "absolutely"). No AI buzzwords.{forced_block}
 
-You are {name} ({role}). {backstory} Goal: {goal}. {personality_summary}
-
+You are {name}. {backstory} Goal: {goal}. {personality_summary}{beliefs_section}
 Deciding: {topic}
-Options (only these facts — do not invent details):
+Options — these are the only facts, never invent attributes not listed:
 {options_text}
+
+Your backstory shapes your priorities and the anecdotes you draw on.
+It does NOT give you hidden knowledge about the options — stick to what is listed above.
 
 Recent conversation:
 {recent_history}
 {last_said_block}
-Phase ({phase}): {phase_instruction}{position_discipline}{contrarian_nudge}{forbidden_block}{opener_block}
+[{phase}] {phase_instruction}{position_discipline}{contrarian_nudge}{forbidden_block}{opener_block}
 
-Write {name}'s next message. No name prefix. No stage directions."""
+Write {name}'s next message. One voice. No name prefix. No stage directions."""
 
 
 # =============================================================================
@@ -238,7 +287,7 @@ def moderator_intervention(
 ) -> str:
     """
     General moderator intervention for outliers and silent participants.
-    escalation_level (0-3) controls how direct the moderator is.
+    escalation_level (0–3) controls directness.
     """
     target_note = (
         f"\nFocus your line on drawing {target_participant} into the conversation."
@@ -246,9 +295,15 @@ def moderator_intervention(
     )
 
     escalation_notes = {
-        0: "Ask one short, specific question directed at the target participant — something that gets them to explain WHY their position matters to them, not just restate it.",
-        1: "Ask the target participant directly: what one specific thing would they need from the majority option to consider it? One sentence, no open-ended 'can anyone' phrasing.",
-        2: "Be firm but respectful — tell them the group needs movement and ask them to name one thing that could change their mind.",
+        0: (
+            f"Ask {target_participant or 'them'} one short, specific question — "
+            "something that gets them to explain WHY their position matters to them, not just restate it."
+        ),
+        1: (
+            f"Ask {target_participant or 'them'} directly: what one specific thing would they need "
+            "from the majority option to consider it? One sentence, no open-ended phrasing."
+        ),
+        2: "Be firm but respectful — tell them the group needs movement and ask for one thing that could change their mind.",
         3: "Be direct — acknowledge the impasse and ask for a final position.",
     }
     escalation_note = escalation_notes.get(escalation_level, escalation_notes[0])
@@ -264,7 +319,7 @@ Recent dialogue:
 {recent_dialogue}
 
 Write a single short moderator line that:
-- Addresses the situation and uses the approach described above.
+- Addresses the situation using the approach above.
 - Is neutral and does not favour any option.
 - Sounds natural and conversational, not formal.
 - Is one sentence only.
@@ -282,24 +337,34 @@ def moderator_deadlock(
 ) -> str:
     """
     Moderator addresses a genuine deadlock where everyone has voted but no majority exists.
-    Escalation level controls how direct the intervention is:
-      1 — ask for compromise
-      2 — name the split explicitly, demand movement
-      3 — announce force-close (used just before _force_conclusion)
     """
     options_text = "\n".join(f"  {o}" for o in options)
     votes_text = ", ".join(f"{name} → Option {opt}" for name, opt in current_votes.items())
 
+    # Describe the split honestly
+    counts = Counter(current_votes.values()) if current_votes else Counter()
+    n = len(participant_names)
+    top_count = counts.most_common(1)[0][1] if counts else 0
+    has_majority = top_count > n / 2
+
+    if has_majority and counts:
+        top_opt = counts.most_common(1)[0][0]
+        minority_names = [nm for nm, o in current_votes.items() if o != top_opt]
+        split_desc = f"Most prefer Option {top_opt}, but {' and '.join(minority_names)} have not yet moved."
+    else:
+        split_desc = "The group is split with no clear majority — everyone has voted differently."
+
     escalation_instructions = {
         1: (
-            "Name the participant(s) with the minority vote. Ask that person directly: "
-            "what one specific thing about their current choice matters so much that "
-            "they can't accept the majority option? One direct question, no 'can anyone' phrasing."
+            f"{split_desc} "
+            "Name the participant(s) who are holding a different position. Ask that person directly: "
+            "what one specific thing about their current choice matters so much "
+            "they can't accept the others? One direct question."
         ),
         2: (
-            "Acknowledge the split directly and by name. Tell the group that unless "
-            "someone moves, you will have to make a call. Ask for one final round of "
-            "genuine compromise — not restatement."
+            f"{split_desc} "
+            "Acknowledge the split by name. Tell the group that unless someone moves, "
+            "you will have to make a call. Ask for one final round of genuine compromise — not restatement."
         ),
         3: (
             "Announce that the group has been unable to reach agreement and that you "
@@ -307,16 +372,14 @@ def moderator_deadlock(
             "Do not ask another question."
         ),
     }
-    instruction = escalation_instructions.get(
-        escalation_level, escalation_instructions[1]
-    )
+    instruction = escalation_instructions.get(escalation_level, escalation_instructions[1])
 
     return f"""You are a neutral moderator facilitating a group discussion.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
 
-Current situation: The group is in a deadlock. Everyone has voted but there is no majority.
+Current situation: Everyone has stated a position but there is no consensus.
 Current votes: {votes_text}
 
 Available options:
@@ -358,13 +421,44 @@ The group has been speculating about: "{looping_topic}"
 Recent dialogue:
 {recent_dialogue}
 
-Write a single short moderator line that clarifies what the options include or exclude
-regarding "{looping_topic}", based strictly on the option descriptions above.
+Write a single short moderator line that redirects the group toward what IS listed in the options,
+rather than the speculation. Do not open with "None of the options mention..." — steer toward
+relevant attributes instead.
 
 Rules:
 - Only reference attributes explicitly listed in the options.
 - Do NOT invent details not in the option descriptions.
-- If the options don't explicitly address "{looping_topic}", redirect to what IS listed — never open with "None of the options mention..." as that sounds robotic; instead steer toward the relevant attributes.
-- One or two sentences maximum. Sound like a helpful facilitator, not a fact-checker.
+- One or two sentences maximum. Sound like a helpful facilitator.
+
+Return only the moderator's line — no label, no markdown."""
+
+
+def moderator_force_close(
+    topic: str,
+    participant_names: list[str],
+    final_option: str,
+    reason: str,
+    recent_dialogue: str,
+) -> str:
+    """
+    Moderator ends a discussion that could not reach natural consensus.
+    Honest about the lack of agreement; names a moderator-selected outcome.
+    """
+    return f"""You are a neutral moderator who needs to close a group discussion that did not reach consensus.
+
+Topic: {topic}
+Participants: {", ".join(participant_names)}
+Selected option: Option {final_option}
+Why selected: {reason}
+
+Recent dialogue:
+{recent_dialogue}
+
+Write a single moderator line that:
+- Honestly acknowledges that the group did not reach agreement.
+- States clearly that you are making the call as moderator.
+- Names Option {final_option} and gives a brief, honest reason (use the "Why selected" above).
+- Sounds natural — not a formal announcement.
+- Is one to two sentences maximum.
 
 Return only the moderator's line — no label, no markdown."""

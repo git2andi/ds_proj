@@ -6,6 +6,8 @@ Simulator — wraps a Persona and generates one dialogue turn via LLM.
 Responsibilities:
 - Format the turn prompt (delegates all text to prompts.py)
 - Strip common model artefacts (name prefix, silence)
+- Build the beliefs block injected into every turn
+- Provide position discipline grounded in the stable belief state
 - Track forbidden openers from recent history
 - Detect repeated phrases and add them to the forbidden list
 """
@@ -21,13 +23,14 @@ import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 from persona import Persona
-from utils import extract_preference_vote
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
 
 
 class Simulator:
+
+    _GOODBYES = ["Later!", "See ya!", "Bye!", "Bye everyone!", "See you!", "Cheers!", "Take care!"]
 
     def __init__(self, persona: Persona, topic: str, options: list[str]) -> None:
         self.persona = persona
@@ -40,8 +43,6 @@ class Simulator:
     # Public
     # ------------------------------------------------------------------
 
-    _GOODBYES = ["Later!", "See ya!", "Bye!", "Bye everyone!", "See you!", "Cheers!", "Take care!"]
-
     def generate_turn(
         self,
         history: list[str],
@@ -49,21 +50,19 @@ class Simulator:
         all_names: list[str] | None = None,
         forced_adaptation: bool = False,
     ) -> tuple[str, int, int]:
-        """Returns (text, tokens_in, tokens_out). Tokens are 0 when the LLM call fails."""
+        """Returns (text, tokens_in, tokens_out). Tokens are 0 when skipped."""
         all_names = all_names or []
 
         if state.phase == "closure":
             return random.choice(self._GOODBYES), 0, 0
 
         raw = self._generate_decision(history, state, forced_adaptation)
-
         tok_in = self._llm.last_tokens_in
         tok_out = self._llm.last_tokens_out
 
         if not raw:
             return "[SILENCE]", tok_in, tok_out
 
-        # Strip accidental "Name: " prefix the model sometimes adds.
         if raw.lower().startswith(f"{self.name.lower()}:"):
             raw = raw.split(":", 1)[1].strip()
 
@@ -93,8 +92,7 @@ class Simulator:
             "A backup is fine if genuinely unsure. "
             "IMPORTANT — position discipline: once you have stated a preference, you may change it AT MOST ONCE "
             "during this phase, and only if someone raises a specific new argument you had not considered. "
-            "Do not switch because someone repeats their view more insistently or because you want to agree. "
-            "If you have already changed your position once, hold your current preference and defend it."
+            "Do not switch because someone repeats their view more insistently or because you want to agree."
         )
         if state.phase == "narrowing" and not self._has_voted(history):
             narrowing_instruction = (
@@ -114,14 +112,13 @@ class Simulator:
                 "Do NOT discuss the topic or express any opinions yet."
             ),
             "opening": (
-                "The group just said hello. Now give your first honest take on the topic. "
+                "The group just said hello. Give your first honest take on the topic. "
                 "One or two casual sentences — what's your gut reaction? "
                 "Feel free to briefly mention a relevant personal experience if it fits naturally."
             ),
             "negotiation": (
                 "Compare trade-offs, react directly to what was just said, and adjust your position "
-                "only if genuinely persuaded. If someone proposes a compromise, engage with the specific "
-                "part that works or doesn't — don't just acknowledge and reset to your original stance. "
+                "only if genuinely persuaded. "
                 "Only reference attributes explicitly listed in the options — do not invent details. "
                 "Do not argue both for and against the same option — pick a position and defend it."
             ),
@@ -130,11 +127,11 @@ class Simulator:
                 "The moderator is asking for a final confirmation. "
                 "Reply with an explicit 'yes' or 'no' — nothing else counts as a confirmation. "
                 "A question, a hedge, or silence is treated as a no. "
-                "If the option being confirmed matches your stated narrowing preference, say yes. "
+                "If the option being confirmed matches your preference, say yes. "
                 "Only say no if you have a specific objection you have not yet raised."
             ),
             "closure": (
-                "The discussion is OVER. Write ONE short goodbye only."
+                "The discussion is OVER. Write ONE short goodbye only. "
                 "Nothing about the topic. No opinions. No questions."
             ),
         }
@@ -147,8 +144,6 @@ class Simulator:
         is_closure = state.phase == "closure"
         prompt = prompts.sim_turn(
             name=self.name,
-            role=self.persona.role,
-            is_primary=self.persona.is_primary,
             topic=self.topic,
             options_text=self._format_options(),
             goal=self.persona.goal,
@@ -157,12 +152,12 @@ class Simulator:
             style_rule=self.persona.style_rule(),
             phase=state.phase,
             phase_instruction=phase_instr,
-            state_summary=self._state_summary(state),
             recent_history=self._recent_history(history, max_lines=4 if is_closure else 12),
             forbidden_openers=self._recent_openers(history),
             forbidden_frames=list(cfg.repetition.forbidden_frames) + self._repeated_phrases(history),
+            beliefs_block="" if is_closure else self._beliefs_block(),
             last_speaker_line="" if is_closure else self._last_participant_line(history),
-            position_discipline="" if is_closure else self._position_discipline(history, state),
+            position_discipline="" if is_closure else self._position_discipline(state),
             contrarian_nudge=self._contrarian_nudge(state),
             forced_adaptation=forced_adaptation,
         )
@@ -172,6 +167,78 @@ class Simulator:
         except Exception as exc:
             print(f"!! Turn generation error for {self.name}: {exc}")
             return "[SILENCE]"
+
+    # ------------------------------------------------------------------
+    # Beliefs block
+    # ------------------------------------------------------------------
+
+    def _beliefs_block(self) -> str:
+        """Compact belief-state anchor injected into every non-closure turn."""
+        b = self.persona.beliefs
+        if not b:
+            return ""
+
+        parts = ["Your internal lean (private anchor — don't recite this, stay coherent):"]
+        parts.append(f"  Prefer Option {b.preferred} | Core concern: {b.key_concern}")
+
+        other_acceptable = [x for x in b.acceptable if x != b.preferred]
+        if other_acceptable:
+            opts_str = ", ".join(f"Option {x}" for x in other_acceptable)
+            parts.append(f"  Would compromise on: {opts_str} | Condition: {b.concession}")
+
+        if b.rejected:
+            opts_str = ", ".join(f"Option {x}" for x in b.rejected)
+            parts.append(f"  Opposed to: {opts_str}")
+
+        return "\n".join(parts)
+
+    # ------------------------------------------------------------------
+    # Position discipline
+    # ------------------------------------------------------------------
+
+    def _position_discipline(self, state: "DialogueState") -> str:
+        """
+        Inject a coherence anchor derived from the stable belief state.
+        In negotiation: a soft reminder of their lean.
+        In narrowing/confirmation: escalates with flip count.
+        """
+        if state.phase not in ("negotiation", "narrowing", "confirmation"):
+            return ""
+
+        beliefs = self.persona.beliefs
+        if not beliefs:
+            return ""
+
+        preferred = beliefs.preferred
+        flips = state.vote_changes.get(self.name, 0)
+        current_text_vote = state.last_known_vote.get(self.name)
+
+        # If they've explicitly switched in text, respect that as the new anchor
+        if current_text_vote and current_text_vote != preferred and flips >= 1:
+            anchor = current_text_vote
+            prefix = f"You switched to Option {anchor}."
+        else:
+            anchor = preferred
+            prefix = f"You lean toward Option {anchor} ({beliefs.key_concern})."
+
+        coherence = f" Keep your arguments consistent with preferring Option {anchor}."
+
+        if state.phase == "negotiation":
+            return f"\n{prefix}{coherence}"
+
+        if flips == 0:
+            return (
+                f"\n{prefix}{coherence} "
+                "Only change if someone raises a genuinely new argument you hadn't considered."
+            )
+        if flips == 1:
+            return (
+                f"\n{prefix} Already switched once.{coherence} "
+                "Hold this — defend it with a new reason, not a repeat."
+            )
+        return (
+            f"\n{prefix} Switched {flips} times. Commit now — no more switching.{coherence}"
+        )
 
     # ------------------------------------------------------------------
     # Context formatters
@@ -206,16 +273,12 @@ class Simulator:
         min_count: int = 3,
         window: int = 16,
     ) -> list[str]:
-        """
-        Extract n-grams that appear >= min_count times in recent participant turns.
-        Injected as dynamically-forbidden phrases to stop semantic loops.
-        """
+        """Extract n-grams appearing >= min_count times in recent turns — injected as forbidden."""
         stopwords = {
             "the", "a", "an", "and", "or", "but", "so", "to", "of", "in",
             "is", "it", "i", "we", "you", "that", "this", "for", "with",
             "at", "on", "be", "as", "by", "if", "do", "not", "no", "yes",
         }
-
         texts: list[str] = []
         for line in reversed(history):
             if ":" not in line:
@@ -239,13 +302,6 @@ class Simulator:
         counts = Counter(all_ngrams)
         return [phrase for phrase, count in counts.items() if count >= min_count]
 
-    def _state_summary(self, state: "DialogueState") -> str:
-        return (
-            f"phase={state.phase}; "
-            f"leading_option={state.current_leading_option}; "
-            f"repetition_pressure={state.repetition_pressure:.2f}"
-        )
-
     # ------------------------------------------------------------------
     # Nudges
     # ------------------------------------------------------------------
@@ -257,13 +313,13 @@ class Simulator:
         if self.persona.contrarian >= 4:
             return (
                 f"\nIMPORTANT: The group is leaning toward Option {leading}. "
-                "Probe a weakness or raise an overlooked concern — but if you've already made "
-                "that point in the recent chat, pick a DIFFERENT angle rather than rephrasing the same objection."
+                "Probe a weakness or raise an overlooked concern — "
+                "but pick a DIFFERENT angle if you've already made that point recently."
             )
         return ""
 
     def _last_participant_line(self, history: list[str]) -> str:
-        """Most recent line from someone other than self, for explicit anchoring."""
+        """Most recent line from someone other than self, for soft context."""
         for line in reversed(history):
             if ":" not in line:
                 continue
@@ -271,44 +327,3 @@ class Simulator:
             if speaker.strip() not in cfg.EXCLUDED_SPEAKERS and speaker.strip() != self.name:
                 return f"{speaker.strip()}: {msg.strip()}"
         return ""
-
-    def _position_discipline(self, history: list[str], state: "DialogueState") -> str:
-        """Persistent, context-aware vote-discipline block injected once a vote is on record."""
-        if state.phase not in ("negotiation", "narrowing", "confirmation"):
-            return ""
-
-        votes_seen: list[str] = []
-        for line in history:
-            if ":" not in line:
-                continue
-            speaker, msg = line.split(":", 1)
-            if speaker.strip() != self.name:
-                continue
-            v = extract_preference_vote(msg)
-            if v and (not votes_seen or v != votes_seen[-1]):
-                votes_seen.append(v)
-
-        if not votes_seen:
-            return ""
-
-        current = votes_seen[-1]
-        changes = len(votes_seen) - 1
-        coherence = f" Your arguments should support Option {current}, not undermine it."
-
-        if state.phase == "negotiation":
-            return f"\nYou've stated a preference for Option {current}.{coherence}"
-
-        if changes == 0:
-            return (
-                f"\nYou've stated a preference for Option {current}.{coherence} "
-                "Only change this if someone raises a genuinely new argument you hadn't yet considered."
-            )
-        if changes == 1:
-            return (
-                f"\nYou already switched once and now prefer Option {current}.{coherence} "
-                "Hold this — defend with a new reason rather than switching again."
-            )
-        return (
-            f"\nYou've changed preference {changes} times. "
-            f"Commit to Option {current} — no more switching.{coherence}"
-        )

@@ -64,6 +64,13 @@ class ConsensusDetector:
         if result:
             return result
 
+        # Belief-acceptance tier: if enough sims accept the leading option and someone
+        # has explicitly preferred it, treat it as a soft consensus signal.
+        if state.has_asked_narrowing and state.current_leading_option:
+            result = self._belief_acceptance(state.current_leading_option, history)
+            if result:
+                return result
+
         if state.phase in {"negotiation", "narrowing", "confirmation"}:
             state.llm_check_countdown -= 1
             if state.llm_check_countdown <= 0:
@@ -194,6 +201,41 @@ class ConsensusDetector:
             return None
 
         return top_option, None
+
+    # ------------------------------------------------------------------
+    # Tier 3 — Belief acceptance
+    # ------------------------------------------------------------------
+
+    def _belief_acceptance(
+        self, option: str, history: list[str]
+    ) -> Optional[tuple[str, Optional[str]]]:
+        """
+        Check whether enough sims have `option` in their acceptable list AND at least
+        one sim has explicitly preferred it in the recent dialogue.
+        This detects convergence when sims don't all share the same stated vote but
+        their belief states are compatible with a shared option.
+        """
+        required = (
+            max(2, len(self.sims) - 1)
+            if self.moderator_style == "active"
+            else len(self.sims)
+        )
+        accepting = sum(
+            1 for s in self.sims
+            if s.persona.beliefs and option in s.persona.beliefs.acceptable
+        )
+        if accepting < required:
+            return None
+
+        # Also require at least one explicit preference in recent text
+        recent = recent_participant_lines(history, limit=max(cfg.consensus.regex_window, len(self.sims) * 3))
+        for line in recent:
+            _, msg = line.split(":", 1)
+            v = extract_preference_vote(msg)
+            if v == option:
+                return option, None
+
+        return None
 
     # ------------------------------------------------------------------
     # Helpers

@@ -1,20 +1,17 @@
 """
 persona.py
 ----------
-Persona dataclass and PersonaBuilder.
+Persona dataclass, AgentBeliefs, and PersonaBuilder.
 
-Pipeline per participant:
-  1. Sample numeric traits randomly (1–5) — done locally, no LLM
-  2. Lightweight group diversity check across all sampled trait sets
-  3. One LLM call per participant — receives the numeric traits translated
-     to plain English so backstory and goal are written to match them
-  4. Persona dataclass assembled from sampled traits + LLM-written text
-
-Key design principle: traits are the ground truth. The LLM writes
-*around* them, not the other way around.
+Pipeline per dialogue:
+  1. Sample numeric traits randomly (1–5) — no LLM
+  2. Group diversity check across all sampled trait sets
+  3. One LLM call per participant — writes backstory + goal to match traits
+  4. One LLM call per participant — derives belief state from persona + options
+  5. Persona + AgentBeliefs assembled and saved
 
 LLM calls per dialogue setup:
-  1 (options) + 1 (roles) + N (one persona concept per participant) = N + 2
+  1 (options) + 1 (roles) + N (persona concept) + N (beliefs) = 2N + 2
 """
 
 from __future__ import annotations
@@ -22,8 +19,8 @@ from __future__ import annotations
 import json
 import os
 import random
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import Any, Optional
 
 import prompts
 from config_loader import cfg
@@ -41,7 +38,7 @@ TRAITS = [
     "agreeableness",    # 1=challenging, 5=consensus-seeking
     "patience",         # 1=easily frustrated, 5=lets discussion breathe
     "contrarian",       # 1=goes with the flow, 5=probes weaknesses
-    "response_length",  # 1=brief, 5=detailed (drives speaking style rule)
+    "response_length",  # 1=brief, 5=detailed
 ]
 
 _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
@@ -96,13 +93,39 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
     },
 }
 
+# Style rules: ground even short responses in what was just said
 _STYLE_RULE: dict[int, str] = {
-    1: 'One very short reaction, ~5–8 words. e.g. "Nah, too chaotic." / "A, easy choice." / "Home beats a park."',
-    2: 'One casual sentence — react and make your point. e.g. "Park is too risky." / "Board game cafe sounds way better."',
-    3: 'React + one reason, ~20 words. e.g. "Yeah Option A — home means you control the vibe." / "Fair, but park in rain kills the night."',
-    4: 'Two casual sentences. React to something, then add your own take.',
-    5: 'Two to three casual sentences. Make your argument. Conversational — not a speech.',
+    1: (
+        "One short grounded reaction — ~8–12 words. Anchor it to what was just said. "
+        'e.g. "Yeah but A\'s still cheaper." / "B — walk\'s not that bad." / "Nah, that price is rough."'
+    ),
+    2: (
+        "One sentence — react to something specific, then your take. "
+        'e.g. "Fair about the cost, but Option A\'s location still wins it for me."'
+    ),
+    3: (
+        "React to the last point, then add one reason of your own. ~20–25 words. "
+        "Conversational, not a speech."
+    ),
+    4: "Two casual sentences. Hook onto something just said, then develop your argument. No summaries.",
+    5: (
+        "Two to three sentences. Make your argument with a specific reason. "
+        "Still conversational — not a formal statement."
+    ),
 }
+
+
+# ---------------------------------------------------------------------------
+# Belief state
+# ---------------------------------------------------------------------------
+
+@dataclass
+class AgentBeliefs:
+    preferred: str          # "B" — top choice going into the discussion
+    acceptable: list[str]   # ["B", "C"] — genuine compromise options
+    rejected: list[str]     # ["D"] — strongly opposed
+    key_concern: str        # what drives their preference
+    concession: str         # concrete condition under which they'd accept a non-preferred option
 
 
 # ---------------------------------------------------------------------------
@@ -117,7 +140,6 @@ class Persona:
     goal: str
     backstory: str
 
-    # Numeric traits (1–5)
     assertiveness: int = 3
     friendliness: int = 3
     talkativeness: int = 3
@@ -126,11 +148,13 @@ class Persona:
     contrarian: int = 3
     response_length: int = 3
 
+    beliefs: Optional[AgentBeliefs] = field(default=None, compare=False)
+
     def get(self, key: str, default: Any = None) -> Any:
         return getattr(self, key, default)
 
     def as_dict(self) -> dict[str, Any]:
-        return {
+        d: dict[str, Any] = {
             "name": self.name,
             "role": self.role,
             "is_primary": self.is_primary,
@@ -138,44 +162,59 @@ class Persona:
             "backstory": self.backstory,
             **{t: getattr(self, t) for t in TRAITS},
         }
+        if self.beliefs:
+            d["beliefs"] = {
+                "preferred": self.beliefs.preferred,
+                "acceptable": self.beliefs.acceptable,
+                "rejected": self.beliefs.rejected,
+                "key_concern": self.beliefs.key_concern,
+                "concession": self.beliefs.concession,
+            }
+        return d
 
     def style_rule(self) -> str:
-        level = max(1, min(5, self.response_length))
-        return _STYLE_RULE[level]
+        return _STYLE_RULE[max(1, min(5, self.response_length))]
 
     def personality_summary(self) -> str:
-        """Plain-English summary for the turn prompt."""
+        """Plain-English personality cues injected into every turn prompt."""
         lines: list[str] = []
 
-        if self.assertiveness >= 4:
-            lines.append("State opinions directly; do not soften disagreements.")
-        elif self.assertiveness <= 2:
-            lines.append("Hedge opinions and avoid direct confrontation.")
+        # Conflicting contrarian + agreeableness → a character who probes but stays open
+        if self.contrarian >= 4 and self.agreeableness >= 4:
+            lines.append(
+                "You question assumptions and play devil's advocate, "
+                "but you're genuinely open to being convinced — you push back to understand, not to win."
+            )
+        else:
+            if self.assertiveness >= 4:
+                lines.append("State opinions directly; don't soften disagreements.")
+            elif self.assertiveness <= 2:
+                lines.append("Hedge opinions; avoid direct confrontation.")
+
+            if self.contrarian >= 4:
+                lines.append("You naturally question the obvious choice and probe for weaknesses.")
+            elif self.contrarian <= 2:
+                lines.append("You go along with the group once consensus starts forming.")
+
+            if self.agreeableness >= 4:
+                lines.append("Look for common ground and validate others when they make a fair point.")
+            elif self.agreeableness <= 2:
+                lines.append("Push back on points that don't convince you.")
 
         if self.friendliness <= 2:
             lines.append("Your tone is blunt — not particularly warm.")
         elif self.friendliness >= 4:
-            lines.append("You are warm; acknowledge others before adding your own view.")
-
-        if self.agreeableness >= 4:
-            lines.append("Look for common ground and validate others' points.")
-        elif self.agreeableness <= 2:
-            lines.append("Challenge points that do not convince you.")
+            lines.append("You're warm; a brief acknowledgment before your point is natural for you.")
 
         if self.patience <= 2:
             lines.append("You get frustrated when the discussion goes in circles.")
         elif self.patience >= 4:
-            lines.append("You are happy to let others work through their thoughts.")
+            lines.append("You're patient — happy to let others work through their thinking.")
 
-        if self.contrarian >= 4:
-            lines.append("You naturally question the obvious choice and probe for weaknesses.")
-        elif self.contrarian <= 2:
-            lines.append("You go along with the emerging group consensus once you see it forming.")
-
-        return " ".join(lines) if lines else "Engage in a balanced, neutral manner."
+        return " ".join(lines) if lines else "Engage in a balanced, neutral way."
 
     def trait_description_block(self) -> str:
-        """Full trait descriptions in plain English, passed to the LLM during persona concept generation."""
+        """Full trait descriptions for the persona-concept LLM call."""
         lines: list[str] = []
         for trait in TRAITS:
             val = getattr(self, trait)
@@ -197,12 +236,8 @@ class PersonaBuilder:
 
     def build_all(self, names: list[str]) -> list[Persona]:
         """
-        Full pipeline:
-          1. Assign roles (one LLM call for all names)
-          2. Sample traits per participant
-          3. Diversity check across the group
-          4. One LLM call per participant (traits already fixed, LLM writes text)
-          5. Save personas to disk
+        Build personas without beliefs (options not known yet).
+        Call assign_beliefs() after Orchestrator has generated the options.
         """
         role_map = self._assign_roles(names)
 
@@ -221,14 +256,22 @@ class PersonaBuilder:
             )
             personas.append(persona)
 
-        # Guarantee exactly one primary
         if not any(p.is_primary for p in personas) and personas:
             personas[0].is_primary = True
 
+        return personas
+
+    def assign_beliefs(self, personas: list[Persona], options: list[str]) -> None:
+        """
+        Generate and attach AgentBeliefs to each persona.
+        Called after both personas and options are ready.
+        Saves the final persona JSON (with beliefs) to disk.
+        """
+        for persona in personas:
+            persona.beliefs = self._generate_beliefs(persona, options)
+
         if self.dialogue_id:
             _save_personas(personas, self.dialogue_id)
-
-        return personas
 
     # ------------------------------------------------------------------
     # Internal
@@ -280,7 +323,7 @@ class PersonaBuilder:
         return shell
 
     def _generate_concept(self, persona: Persona) -> tuple[str, str]:
-        """LLM writes backstory and goal informed by the persona's pre-sampled traits."""
+        """LLM writes backstory and goal to match the pre-sampled traits."""
         if not (cfg.personas.generate_backstory or cfg.personas.generate_goal):
             return "", "Support a practical outcome that fits their priorities."
 
@@ -302,13 +345,76 @@ class PersonaBuilder:
             print(f"!! Persona concept error for {persona.name}: {exc}")
             return "", "Support a practical outcome."
 
+    def _generate_beliefs(self, persona: Persona, options: list[str]) -> AgentBeliefs:
+        """
+        One LLM call per participant: given their character and the options,
+        produce a stable internal belief state before the conversation starts.
+        """
+        fallback = AgentBeliefs(
+            preferred="A",
+            acceptable=["A", "B"],
+            rejected=[],
+            key_concern="practical trade-offs",
+            concession="could accept any option the group strongly prefers",
+        )
+        try:
+            data = self._llm.generate_json(
+                prompts.agent_beliefs(
+                    name=persona.name,
+                    role=persona.role,
+                    goal=persona.goal,
+                    backstory=persona.backstory,
+                    personality_summary=persona.personality_summary(),
+                    options_text="\n".join(f"  {o}" for o in options),
+                )
+            )
+
+            preferred_raw = str(data.get("preferred", "A")).strip().upper()
+            if preferred_raw not in {"A", "B", "C", "D"}:
+                preferred_raw = "A"
+
+            acceptable_raw = data.get("acceptable", [preferred_raw])
+            acceptable = [
+                x.strip().upper() for x in (acceptable_raw if isinstance(acceptable_raw, list) else [])
+                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+            ]
+            if preferred_raw not in acceptable:
+                acceptable.insert(0, preferred_raw)
+
+            rejected_raw = data.get("rejected", [])
+            rejected = [
+                x.strip().upper() for x in (rejected_raw if isinstance(rejected_raw, list) else [])
+                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+                and x.strip().upper() not in acceptable
+            ]
+
+            key_concern = str(data.get("key_concern", "practical trade-offs")).strip()
+            concession = str(
+                data.get("concession", "could accept any option the group strongly prefers")
+            ).strip()
+
+            beliefs = AgentBeliefs(
+                preferred=preferred_raw,
+                acceptable=acceptable,
+                rejected=rejected,
+                key_concern=key_concern,
+                concession=concession,
+            )
+            accept_others = [x for x in acceptable if x != preferred_raw]
+            accept_str = f", accepts {accept_others}" if accept_others else ""
+            print(f"  [{persona.name}] prefers {preferred_raw}{accept_str} | {key_concern[:45]}")
+            return beliefs
+
+        except Exception as exc:
+            print(f"!! Belief generation error for {persona.name}: {exc}")
+            return fallback
+
 
 # ---------------------------------------------------------------------------
 # Diversity enforcement
 # ---------------------------------------------------------------------------
 
 def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]:
-    """Two lightweight checks to prevent all-agreeable or no-pushback groups."""
     threshold = cfg.personas.diversity_agree_threshold
     contrarian_min = cfg.personas.diversity_contrarian_min
 
