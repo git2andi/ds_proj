@@ -169,6 +169,22 @@ class ModerationEngine:
                     )
                 ).strip()
 
+            elif reason == "compromise":
+                candidate = getattr(state, "compromise_option", None) or getattr(state, "candidate_option", None)
+                line = self._llm.generate(
+                    prompts.moderator_compromise_test(
+                        topic=self.topic,
+                        participant_names=names,
+                        options=self.options,
+                        recent_dialogue=recent,
+                        compromise_option=candidate or "A",
+                        holdout_names=[
+                            s.name for s in self.sims
+                            if current_votes(history, self.sims).get(s.name) != candidate
+                        ],
+                    )
+                ).strip()
+
             else:  # stall
                 votes = current_votes(history, self.sims)
                 candidate = getattr(state, "candidate_option", None) or state.current_leading_option

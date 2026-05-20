@@ -78,8 +78,8 @@ def _load_persona_overrides(path: str) -> list[dict]:
 
     Each entry can specify any subset of:
       name, role, is_primary, goal, backstory,
-      assertiveness, friendliness, talkativeness, agreeableness,
-      patience, contrarian, response_length
+      openness, conscientiousness, extraversion, agreeableness, neuroticism,
+      response_length
 
     Unspecified fields get random values (traits) or empty strings (text).
     The number of entries determines the number of participants.
@@ -209,8 +209,9 @@ def run_dialogue(
     for persona in personas:
         primary_tag = " [PRIMARY]" if persona.is_primary else ""
         trait_str = (
-            f"friendly={persona.friendliness} agree={persona.agreeableness} "
-            f"contrarian={persona.contrarian} length={persona.response_length}"
+            f"open={persona.openness} consc={persona.conscientiousness} "
+            f"extra={persona.extraversion} agree={persona.agreeableness} "
+            f"neuro={persona.neuroticism} length={persona.response_length}"
         )
         print(f"  {persona.name}{primary_tag} | role: {persona.role} | {trait_str}")
         print(f"    goal: {persona.goal}")

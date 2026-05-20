@@ -31,14 +31,14 @@ CSV_COLUMNS = [
     "repetition_pressure", "tokens_in", "tokens_out",
     # Persona fields (empty for moderator lines)
     "role", "is_primary",
-    "assertiveness", "friendliness", "talkativeness", "agreeableness",
-    "patience", "contrarian", "response_length",
+    "openness", "conscientiousness", "extraversion", "agreeableness",
+    "neuroticism", "response_length",
 ]
 
 _PERSONA_FIELDS = [
     "role", "is_primary",
-    "assertiveness", "friendliness", "talkativeness", "agreeableness",
-    "patience", "contrarian", "response_length",
+    "openness", "conscientiousness", "extraversion", "agreeableness",
+    "neuroticism", "response_length",
 ]
 
 # token_log.txt lives in the project root, one level above src/

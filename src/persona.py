@@ -4,10 +4,10 @@ persona.py
 Persona dataclass, AgentBeliefs, and PersonaBuilder.
 
 Pipeline per dialogue:
-  1. Sample numeric traits randomly (1–5) — no LLM
+  1. Sample Big Five traits randomly (1-5) - no LLM
   2. Group diversity check across all sampled trait sets
-  3. One LLM call per participant — writes backstory + goal to match traits
-  4. One LLM call per participant — derives belief state from persona + options
+  3. One LLM call per participant - writes backstory + goal to match traits
+  4. One LLM call per participant - derives belief state from persona + options
   5. Persona + AgentBeliefs assembled and saved
 
 LLM calls per dialogue setup:
@@ -31,87 +31,72 @@ from llm_client import get_llm_client
 # Trait definitions
 # ---------------------------------------------------------------------------
 
-TRAITS = [
-    "assertiveness",    # 1=hedging, 5=blunt and direct
-    "friendliness",     # 1=cold/blunt, 5=warm and openly supportive
-    "talkativeness",    # 1=terse, 5=elaborate
-    "agreeableness",    # 1=challenging, 5=consensus-seeking
-    "patience",         # 1=easily frustrated, 5=lets discussion breathe
-    "contrarian",       # 1=goes with the flow, 5=probes weaknesses
-    "response_length",  # 1=brief, 5=detailed
+PERSONALITY_TRAITS = [
+    "openness",          # 1=conventional, 5=curious and imaginative
+    "conscientiousness", # 1=spontaneous, 5=careful and structured
+    "extraversion",      # 1=reserved, 5=outgoing and talkative
+    "agreeableness",     # 1=challenging, 5=cooperative and warm
+    "neuroticism",       # 1=calm, 5=emotionally reactive under stress
 ]
 
+COMMUNICATION_FIELDS = [
+    "response_length",   # output control, not a Big Five trait
+]
+
+TRAITS = PERSONALITY_TRAITS + COMMUNICATION_FIELDS
+
 _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
-    "assertiveness": {
-        1: "rarely voices opinions directly, tends to soften or withhold views",
-        2: "cautious about asserting opinions, often hedges",
-        3: "states views when asked, neither pushes hard nor holds back",
-        4: "clearly voices opinions and does not soften disagreements",
-        5: "very direct and outspoken, says exactly what they think",
+    "openness": {
+        1: "prefers familiar, practical choices and dislikes overcomplicating things",
+        2: "leans practical and conventional, but will consider a clearly useful new angle",
+        3: "balances familiar options with some curiosity about alternatives",
+        4: "curious, interested in trade-offs, and willing to explore unusual angles",
+        5: "highly imaginative and novelty-seeking, enjoys reframing the problem",
     },
-    "friendliness": {
-        1: "blunt and detached, not warm or encouraging toward others",
-        2: "somewhat reserved, polite but not particularly warm",
-        3: "friendly in a neutral, unremarkable way",
-        4: "warm and encouraging, acknowledges others before sharing views",
-        5: "extremely warm and openly supportive, values group harmony",
+    "conscientiousness": {
+        1: "loose, spontaneous, and comfortable deciding with incomplete details",
+        2: "somewhat casual about planning and precision",
+        3: "moderately organized and practical",
+        4: "careful, responsible, and attentive to consequences",
+        5: "very structured and planful, wants decisions to be justified clearly",
     },
-    "talkativeness": {
-        1: "very terse, speaks only when necessary",
-        2: "brief, makes one point without elaborating",
-        3: "speaks a moderate amount",
-        4: "tends to elaborate and think out loud",
-        5: "talks a lot, gives detailed well-developed thoughts",
+    "extraversion": {
+        1: "reserved, speaks briefly, and rarely jumps in unprompted",
+        2: "somewhat quiet, contributes when there is a clear reason",
+        3: "moderately sociable and comfortable joining the discussion",
+        4: "outgoing, energetic, and likely to respond quickly",
+        5: "very expressive and talkative, thinks aloud with the group",
     },
     "agreeableness": {
-        1: "strongly challenges points that do not convince them",
-        2: "often pushes back, does not easily validate others",
-        3: "sometimes agrees, sometimes challenges",
-        4: "looks for common ground, tends to validate others",
-        5: "very consensus-seeking, avoids conflict",
+        1: "skeptical, competitive, and comfortable disagreeing directly",
+        2: "somewhat challenging and slow to validate others",
+        3: "balanced between cooperation and disagreement",
+        4: "cooperative, warm, and willing to look for common ground",
+        5: "highly compassionate and harmony-seeking, reluctant to create conflict",
     },
-    "patience": {
-        1: "gets visibly frustrated when discussions repeat or stall",
-        2: "somewhat impatient with circular discussion",
-        3: "patient in a neutral way",
-        4: "calm and willing to let the discussion unfold",
-        5: "very patient, happy to let others work through their thinking",
-    },
-    "contrarian": {
-        1: "naturally goes along with the emerging consensus",
-        2: "rarely challenges the group direction",
-        3: "occasionally questions assumptions",
-        4: "frequently probes weaknesses and raises overlooked trade-offs",
-        5: "instinctively challenges the obvious choice, always seeks counter-arguments",
-    },
-    "response_length": {
-        1: "speaks in very short single reactions",
-        2: "speaks briefly, one clean point at a time",
-        3: "speaks in moderate length turns",
-        4: "gives fairly developed responses with reasoning",
-        5: "gives long, thorough responses",
+    "neuroticism": {
+        1: "calm and emotionally steady even when the discussion gets stuck",
+        2: "usually calm, with mild concern when plans feel shaky",
+        3: "moderately sensitive to risk, conflict, or uncertainty",
+        4: "worries about downsides and reacts strongly to uncertainty",
+        5: "emotionally reactive, easily frustrated or anxious when things feel unresolved",
     },
 }
 
-# Style rules: ground even short responses in what was just said
 _STYLE_RULE: dict[int, str] = {
-    1: (
-        "One short grounded reaction — ~8–12 words. Anchor it to what was just said. "
-        'e.g. "Yeah but A\'s still cheaper." / "B — walk\'s not that bad." / "Nah, that price is rough."'
-    ),
-    2: (
-        "One sentence — react to something specific, then your take. "
-        'e.g. "Fair about the cost, but Option A\'s location still wins it for me."'
-    ),
-    3: (
-        "React to the last point, then add one reason of your own. ~20–25 words. "
-        "Conversational, not a speech."
-    ),
-    4: "Two casual sentences. Hook onto something just said, then develop your argument. No summaries.",
-    5: (
-        "Two to three sentences. Make your argument with a specific reason. "
-        "Still conversational — not a formal statement."
-    ),
+    1: "Terse chat style. One punchy fragment or short sentence. Cut everything non-essential — no filler.",
+    2: "Brief chat style. One clear point, sometimes with a short reason. Stay under two short sentences.",
+    3: "Normal chat style. One or two compact sentences. Explain when needed, not by default.",
+    4: "Chatty style. You can explain a bit and riff on ideas, but keep it breezy and conversational like a group chat.",
+    5: "Verbose-for-chat style. Give useful detail and context, but never write an essay or a formal summary.",
+}
+
+_WORD_BUDGET: dict[int, int] = {
+    1: 14,
+    2: 24,
+    3: 36,
+    4: 48,
+    5: 60,
 }
 
 
@@ -121,11 +106,11 @@ _STYLE_RULE: dict[int, str] = {
 
 @dataclass
 class AgentBeliefs:
-    preferred: str          # "B" — top choice going into the discussion
-    acceptable: list[str]   # ["B", "C"] — genuine compromise options
-    rejected: list[str]     # ["D"] — strongly opposed
-    key_concern: str        # what drives their preference
-    concession: str         # concrete condition under which they'd accept a non-preferred option
+    preferred: str
+    acceptable: list[str]
+    rejected: list[str]
+    key_concern: str
+    concession: str
 
 
 # ---------------------------------------------------------------------------
@@ -140,13 +125,12 @@ class Persona:
     goal: str
     backstory: str
 
-    assertiveness: int = 3
-    friendliness: int = 3
-    talkativeness: int = 3
+    openness: int = 3
+    conscientiousness: int = 3
+    extraversion: int = 3
     agreeableness: int = 3
-    patience: int = 3
-    contrarian: int = 3
-    response_length: int = 3
+    neuroticism: int = 3
+    response_length: int = 2
 
     beliefs: Optional[AgentBeliefs] = field(default=None, compare=False)
 
@@ -172,51 +156,61 @@ class Persona:
             }
         return d
 
+    def response_length_score(self) -> int:
+        """Communication-style control, separate from Big Five personality."""
+        return max(1, min(5, int(self.response_length)))
+
     def style_rule(self) -> str:
-        return _STYLE_RULE[max(1, min(5, self.response_length))]
+        return _STYLE_RULE[self.response_length_score()]
+
+    def max_words(self, phase: str) -> int:
+        """Hard word budget used to make generated turns feel like chat."""
+        base = _WORD_BUDGET[self.response_length_score()]
+        if phase == "greeting":
+            return min(base, 8)
+        if phase == "confirmation":
+            return min(base, 10)
+        if phase == "narrowing":
+            return min(max(base, 18), 40)
+        if phase == "emergence":
+            return min(base, 42)
+        return base
 
     def personality_summary(self) -> str:
         """Plain-English personality cues injected into every turn prompt."""
         lines: list[str] = []
 
-        # Conflicting contrarian + agreeableness → a character who probes but stays open
-        if self.contrarian >= 4 and self.agreeableness >= 4:
-            lines.append(
-                "You question assumptions and play devil's advocate, "
-                "but you're genuinely open to being convinced — you push back to understand, not to win."
-            )
-        else:
-            if self.assertiveness >= 4:
-                lines.append("State opinions directly; don't soften disagreements.")
-            elif self.assertiveness <= 2:
-                lines.append("Hedge opinions; avoid direct confrontation.")
+        if self.openness >= 4:
+            lines.append("You enjoy exploring angles others haven't raised; you might say 'wait, what about...' or flip the framing.")
+        elif self.openness <= 2:
+            lines.append("You prefer familiar, practical choices; you get impatient with speculation — 'let's stick to what's actually on the table'.")
 
-            if self.contrarian >= 4:
-                lines.append("You naturally question the obvious choice and probe for weaknesses.")
-            elif self.contrarian <= 2:
-                lines.append("You go along with the group once consensus starts forming.")
+        if self.conscientiousness >= 4:
+            lines.append("You care about specifics and consequences; you name concrete details rather than vibes.")
+        elif self.conscientiousness <= 2:
+            lines.append("You decide from gut feel and get bored by excessive analysis; 'honestly just pick one' is your vibe.")
 
-            if self.agreeableness >= 4:
-                lines.append("Look for common ground and validate others when they make a fair point.")
-            elif self.agreeableness <= 2:
-                lines.append("Push back on points that don't convince you.")
+        if self.extraversion >= 4:
+            lines.append("You're energetic and warm; you react quickly, use enthusiasm ('oh that's actually a good point'), and think aloud.")
+        elif self.extraversion <= 2:
+            lines.append("You're reserved; you only speak up when you have something specific to say, and you keep it short.")
 
-        if self.friendliness <= 2:
-            lines.append("Your tone is blunt — not particularly warm.")
-        elif self.friendliness >= 4:
-            lines.append("You're warm; a brief acknowledgment before your point is natural for you.")
+        if self.agreeableness >= 4:
+            lines.append("You're cooperative; you naturally acknowledge others before pushing back — 'I get that, but...' is your style.")
+        elif self.agreeableness <= 2:
+            lines.append("You're blunt and skeptical; you push back directly without softening it — 'yeah but that's not actually true' is fine for you.")
 
-        if self.patience <= 2:
-            lines.append("You get frustrated when the discussion goes in circles.")
-        elif self.patience >= 4:
-            lines.append("You're patient — happy to let others work through their thinking.")
+        if self.neuroticism >= 4:
+            lines.append("Uncertainty makes you visibly tense; your worry comes through — 'but what if that doesn't work out?', 'I'm a bit nervous about...'")
+        elif self.neuroticism <= 2:
+            lines.append("You stay calm even when others are anxious or the group goes in circles.")
 
         return " ".join(lines) if lines else "Engage in a balanced, neutral way."
 
     def trait_description_block(self) -> str:
-        """Full trait descriptions for the persona-concept LLM call."""
+        """Full Big Five trait descriptions for the persona-concept LLM call."""
         lines: list[str] = []
-        for trait in TRAITS:
+        for trait in PERSONALITY_TRAITS:
             val = getattr(self, trait)
             desc = _TRAIT_DESCRIPTIONS.get(trait, {}).get(val, f"value {val}/5")
             lines.append(f"- {trait} ({val}/5): {desc}")
@@ -355,7 +349,7 @@ class PersonaBuilder:
             acceptable=["A", "B"],
             rejected=[],
             key_concern="practical trade-offs",
-            concession="could accept any option the group strongly prefers",
+            concession="could accept a different option if it directly addresses their main concern",
         )
         try:
             data = self._llm.generate_json(
@@ -390,7 +384,7 @@ class PersonaBuilder:
 
             key_concern = str(data.get("key_concern", "practical trade-offs")).strip()
             concession = str(
-                data.get("concession", "could accept any option the group strongly prefers")
+                data.get("concession", "could accept a different option if it addresses their main concern")
             ).strip()
 
             beliefs = AgentBeliefs(
@@ -416,17 +410,17 @@ class PersonaBuilder:
 
 def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]:
     threshold = cfg.personas.diversity_agree_threshold
-    contrarian_min = cfg.personas.diversity_contrarian_min
+    extraversion_min = cfg.personas.diversity_extraversion_min
 
     agree_vals = [ts["agreeableness"] for ts in trait_sets]
     if all(v >= threshold for v in agree_vals):
         idx = agree_vals.index(max(agree_vals))
         trait_sets[idx]["agreeableness"] = random.randint(1, 2)
 
-    contrarian_vals = [ts["contrarian"] for ts in trait_sets]
-    if not any(v >= contrarian_min for v in contrarian_vals):
+    extraversion_vals = [ts["extraversion"] for ts in trait_sets]
+    if not any(v >= extraversion_min for v in extraversion_vals):
         idx = random.randrange(len(trait_sets))
-        trait_sets[idx]["contrarian"] = random.randint(contrarian_min, 5)
+        trait_sets[idx]["extraversion"] = random.randint(extraversion_min, 5)
 
     return trait_sets
 

@@ -10,7 +10,7 @@ llm:
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   sampling:
-    temperature: 0.85
+    temperature: 0.9
     top_k: 50
     top_p: 0.95
   gemini_rpm_delay: 12
@@ -19,7 +19,7 @@ llm:
 # Simulation
 # ---------------------------------------------------------------------------
 simulation:
-  num_participants: 3 #"random"
+  num_participants: 3
   num_participants_random: false
   num_participants_min: 2
   num_participants_max: 5
@@ -34,10 +34,6 @@ turns:
   min_before_narrowing: 9   # greeting(n) + opening(n) + at least one negotiation round(n)
 
   # Escalation: rounds after narrowing before the moderator changes strategy.
-  # Level 0 (< level_1):  normal nudges and Socratic questions
-  # Level 1 (< level_2):  direct "name a compromise" ask
-  # Level 2 (< level_3):  firm "we are stuck, something must give"
-  # Level 3 (>= level_3): force-close, moderator picks the winner
   escalation_level_1: 2
   escalation_level_2: 5
   escalation_level_3: 9
@@ -46,83 +42,90 @@ turns:
 # Consensus detection
 # ---------------------------------------------------------------------------
 consensus:
-  llm_check_every_n_turns: 5             
-  regex_window: 8                          
+  llm_check_every_n_turns: 5
+  regex_window: 8
   stall_rounds_to_force:
     active: 2
     minimal: 3
-    passive: 999                           
-  max_dissenters_active: 1                 # active: allow up to N dissenters
-  max_dissenters_other: 0                  # minimal/passive: unanimity
+    passive: 999
+  max_dissenters_active: 1
+  max_dissenters_other: 0
 
 # ---------------------------------------------------------------------------
 # Repetition / stall detection
 # ---------------------------------------------------------------------------
 repetition:
-  pressure_window: 8                       # lines included in overlap calculation
-  min_word_length: 3                       # ignore short words in overlap
-  forbidden_frames:                        # structural patterns always blocked
+  pressure_window: 8
+  min_word_length: 3
+  forbidden_frames:
     - "building on what * said"
     - "as * mentioned"
     - "to echo what * said"
     - "I agree with * that"
+    - "fair about * but"
+    - "maybe there's something to be said"
+    - "I can see the appeal"
+    - "not fully sold but"
 
 # ---------------------------------------------------------------------------
 # Persona generation
 # ---------------------------------------------------------------------------
 personas:
-  generate_backstory: true                 
+  generate_backstory: true
   generate_goal: true
 
-  trait_min: 1      # global lower bound for all traits not listed in trait_ranges
-  trait_max: 5      # global upper bound for all traits not listed in trait_ranges
+  trait_min: 1
+  trait_max: 5
 
-  # Per-trait constraints for random generation. Overrides trait_min/trait_max for that trait.
-  #   fixed int  →  e.g.  response_length: 2        (always exactly 2)
-  #   [min, max] →  e.g.  response_length: [1, 3]   (random within 1–3)
-  # Traits not listed here use the global trait_min/trait_max.
-  # Note: enforce_diversity may still bump agreeableness/contrarian if those are constrained.
+  # Available Big Five traits:
+  # openness, conscientiousness, extraversion, agreeableness, neuroticism
   #
-  # Available traits: assertiveness, friendliness, talkativeness, agreeableness,
-  #                   patience, contrarian, response_length
+  # Communication field:
+  # response_length (output-control only, not a personality trait)
+  #
+  # A fixed int pins a trait. A [min, max] pair samples within that range.
   trait_ranges:
-    response_length: [1, 2]
-    contrarian: [2, 5]
-    agreeableness: [2, 5]
+    openness: [2, 5]
+    conscientiousness: [2, 5]
+    extraversion: [1, 5]
+    agreeableness: [1, 5]
+    neuroticism: [1, 5]
+    response_length: [1, 4]
 
-  # if ALL sims have agreeableness >= diversity_agree_threshold, one is resampled low (1–2)
-  # if NO sim has contrarian >= diversity_contrarian_min, one is bumped to that value
+  # If all sims are very agreeable, one gets lower agreeableness for real disagreement.
+  # If nobody is outgoing, one gets bumped so the chat has social energy.
   enforce_diversity: true
-  diversity_agree_threshold: 4        
-  diversity_contrarian_min: 4             
+  diversity_agree_threshold: 4
+  diversity_extraversion_min: 4
 
 # ---------------------------------------------------------------------------
-# Participants — manual definition (overrides random generation)
+# Participants - manual definition (overrides random generation)
 # ---------------------------------------------------------------------------
 # Set from_config: true and fill entries to use this instead of random generation.
 # CLI flag --personas takes priority over this section.
 #
 # Each entry is a dict. All fields are optional:
-#   name          string  — omit or set null for a random pool name
-#   role          string  — omit to let the LLM assign a topic-relevant role
-#   is_primary    bool    — omit to let the LLM decide
-#   goal          string  — omit to let the LLM generate
-#   backstory     string  — omit to let the LLM generate
-#   <trait>       int     — fixed value 1–5, e.g. assertiveness: 5
-#   <trait>       [min,max] — random within range, e.g. contrarian: [3, 5]
+#   name          string
+#   role          string
+#   is_primary    bool
+#   goal          string
+#   backstory     string
+#   <trait>       int       - fixed value 1-5, e.g. extraversion: 5
+#   <trait>       [min,max] - random within range, e.g. neuroticism: [1, 3]
 #
-# Traits: assertiveness, friendliness, talkativeness, agreeableness,
-#         patience, contrarian, response_length
+# Traits: openness, conscientiousness, extraversion, agreeableness, neuroticism
+# Communication: response_length
 #
-# Examples (remove the leading '#' to activate):
+# Examples:
 # entries:
 #   - name: "Alice"
-#     assertiveness: 5
+#     extraversion: 5
 #     agreeableness: [1, 2]
 #   - name: "Bob"
-#     contrarian: 5
-#     friendliness: 1
-#   - {}                  # fully random participant with a random name
+#     conscientiousness: 5
+#     neuroticism: 2
+#     response_length: 1
+#   - {}
 participants:
   from_config: false
   entries: []

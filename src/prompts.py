@@ -3,12 +3,6 @@ prompts.py
 ----------
 Single registry for every prompt template in the system.
 All LLM-facing text lives here.
-
-Sections:
-  1. Setup prompts       — options, role assignment, persona concept, agent beliefs
-  2. Turn prompt         — called every time a sim speaks
-  3. Consensus prompt    — LLM fallback for agreement detection
-  4. Moderator prompts   — interventions, narrowing, closure, force-close
 """
 
 from __future__ import annotations
@@ -22,32 +16,32 @@ from typing import Optional
 # =============================================================================
 
 def option_generation(topic: str) -> str:
-    """Generate 4 concrete options and an opening question for the topic."""
-    return f"""You are preparing a facilitated group decision discussion.
+    """Generate 4 concrete choice frames and an opening question for the topic."""
+    return f"""You are preparing a realistic small-group chat about a decision.
 
 Topic: {topic}
 
-Tasks:
-1. Generate exactly 4 concrete, comparable decision options for this topic.
-2. Write a short opening question the moderator will use to start discussion.
+Create four distinct options that give the group enough concrete material to discuss.
+The options should be useful conversation anchors, not rigid debate positions.
 
 Option requirements:
-- Each option must include 2–3 concrete attributes participants can compare.
-- Infer sensible values from the topic — do NOT use placeholders like "TBD".
-- Keep each option to one concise line.
-- All 4 options must represent genuinely different trade-offs.
+- Exactly 4 options, A-D.
+- Each option should be one compact line with: a label, what it offers, one trade-off or risk, and who it best fits.
+- Infer sensible details from the topic, but do not use placeholders or unknown facts.
+- Make the options meaningfully different; avoid four versions of the same idea.
+- Include at least one discussable practical detail per option, such as time, effort, cost, difficulty, risk, tone, or fit.
 
 Opening question requirements:
-- One short conversational sentence tailored to this specific topic.
-- Should prompt participants to share what matters most to them personally.
+- One short, natural moderator question.
+- It should invite personal priorities, not a vote yet.
 
-Return valid JSON only — no markdown, no explanation:
+Return valid JSON only - no markdown, no explanation:
 {{
   "options": [
-    "Option A - [label]: [attr1], [attr2], [attr3]",
-    "Option B - [label]: [attr1], [attr2], [attr3]",
-    "Option C - [label]: [attr1], [attr2], [attr3]",
-    "Option D - [label]: [attr1], [attr2], [attr3]"
+    "Option A - [label]: [main upside]; trade-off: [risk/cost]; best for: [priority/person]",
+    "Option B - [label]: [main upside]; trade-off: [risk/cost]; best for: [priority/person]",
+    "Option C - [label]: [main upside]; trade-off: [risk/cost]; best for: [priority/person]",
+    "Option D - [label]: [main upside]; trade-off: [risk/cost]; best for: [priority/person]"
   ],
   "opening_question": "..."
 }}"""
@@ -57,15 +51,14 @@ def role_assignment(topic: str, names: list[str]) -> str:
     """Assign one topic-aligned role to each participant."""
     names_str = ", ".join(names)
     first = names[0]
-    return f"""You are assigning discussion roles for a group simulation.
+    return f"""You are assigning roles for a realistic group chat simulation.
 
 Topic: {topic}
 Participants: {names_str}
 
-Assign one role to each participant so the roles fit the topic naturally.
-Exactly one participant must be the primary person most directly affected by the decision.
+Assign one natural role to each participant. Exactly one participant must be the primary person most directly affected by the decision.
 
-Return valid JSON only — no markdown, no explanation:
+Return valid JSON only - no markdown, no explanation:
 {{
   "roles": {{
     "{first}": {{"role": "brief natural phrase", "is_primary": true}},
@@ -75,12 +68,9 @@ Return valid JSON only — no markdown, no explanation:
 
 Rules:
 - Every listed participant must appear exactly once.
-- Use 1–3 word natural phrases describing the person, not a job title.
-- No underscores, no camelCase, no title case.
+- Use 1-4 words that sound like a real relationship to the decision, not a corporate job title unless the topic requires it.
 - Exactly one participant has "is_primary": true.
-- Role and primary status must be believable and aligned with the topic.
-- Primary and Role must be consistent — the primary person should have a role that makes it natural for them to care deeply about the decision, while others should have supporting roles.
-"""
+- Primary and role must be consistent."""
 
 
 def persona_concept(
@@ -90,39 +80,34 @@ def persona_concept(
     is_primary: bool,
     trait_description_block: str,
 ) -> str:
-    """
-    Generate backstory and goal for one participant.
-    Traits are pre-sampled and passed in so the LLM writes a character
-    that genuinely fits them.
-    """
+    """Generate backstory and goal for one participant."""
     primary_note = (
-        f"{name} is the central person — the decision affects them most directly."
+        f"{name} is the central person - the decision affects them most directly."
         if is_primary
-        else f"{name} is a supporting participant helping reach a good decision."
+        else f"{name} is involved, but not the central person."
     )
-    return f"""You are creating a participant profile for a group discussion simulation.
+    return f"""You are creating a participant profile for a realistic group chat simulation.
 
 Topic: {topic}
 Participant: {name}
 Role: {role}
 {primary_note}
 
-This participant has the following personality traits — these are fixed.
-Write the backstory and goal so they reflect these traits naturally:
+The participant has these Big Five personality traits. Treat them as behavioral tendencies, not stereotypes:
 {trait_description_block}
 
-Return valid JSON only — no markdown, no explanation:
+Return valid JSON only - no markdown, no explanation:
 {{
-  "backstory": "2–3 sentences grounded in the topic. Must be consistent with the traits above. Include one relevant personal preference or past experience.",
-  "goal": "One sentence in third person. What {name} hopes for or values. Must be consistent with the traits above."
+  "backstory": "2-3 grounded sentences. Include one specific preference, past experience, worry, or habit relevant to the topic.",
+  "goal": "One sentence in third person describing what {name} wants from the discussion."
 }}
 
 Rules:
-- Backstory and goal must clearly reflect the personality traits.
-- Backstory must be specific to the topic domain, not generic.
-- Goal must NOT copy trait names or use filler words like "efficiently" or "seamlessly".
-- Do not reference simulation mechanics or numeric scores.
-- Do not return a "personality" field — traits are already fixed."""
+- Make the profile specific to the topic.
+- Reflect the traits subtly through priorities and behavior.
+- Do not mention trait names or numeric scores in the output.
+- Give them one concrete reason they might resist at least one plausible option.
+- Do not write a caricature."""
 
 
 def agent_beliefs(
@@ -133,40 +118,36 @@ def agent_beliefs(
     personality_summary: str,
     options_text: str,
 ) -> str:
-    """
-    Generate a stable internal belief state for one participant.
-    Called once per participant after options are known, before the dialogue starts.
-    """
-    return f"""You are building the internal preference model for a group discussion participant.
+    """Generate a stable internal belief state for one participant."""
+    return f"""You are building a private preference model for a group chat participant.
 
 Participant: {name}
 Role: {role}
 Goal: {goal}
 Background: {backstory}
-Personality: {personality_summary}
+Personality tendencies: {personality_summary}
 
 Options available:
 {options_text}
 
-Based on this person's background, goal, and personality — not on what would be
-"objectively best" — decide which option they would most naturally lean toward,
-what they could genuinely live with as a compromise, and what they'd resist.
+Decide what this person would most naturally prefer before the chat starts.
+Base this on their background, goal, and personality - not on what is objectively best.
 
 Rules:
-- Ground every answer in the backstory and goal. Do not invent new facts.
-- "acceptable" must include the preferred option, plus a genuine compromise (or multiple).
-- "rejected" can be empty if the person is genuinely flexible.
-- key_concern: a short phrase (not a full sentence) — the one thing that matters most.
-- concession: a concrete condition, not vague ("if others strongly want it" is too vague;
-  "if the group is clearly prioritizing budget over convenience" is concrete).
+- "preferred": the single option that best fits this person's goal and key concern.
+- "acceptable": options this person could genuinely live with. Must include the preferred option. Should also include any option that meaningfully addresses the key_concern — for example, if the concern is cost, include cheaper options even if not the top pick; if the concern is atmosphere, include options with a similar feel. Aim for 2-3 acceptable options to represent realistic flexibility. Only exclude an option if it actively conflicts with the key_concern or goal.
+- "rejected": only options the person would actively resist and could not live with even as a compromise.
+- key_concern: short phrase naming what matters most to them. This must be consistent with the preferred option — do not say "budget" if the preferred option is the most expensive one.
+- concession: concrete condition under which they could accept a non-preferred option.
+- Do not invent facts beyond the option lines and profile.
 
-Return valid JSON only — no markdown, no explanation:
+Return valid JSON only - no markdown, no explanation:
 {{
   "preferred": "A" or "B" or "C" or "D",
   "acceptable": ["A"] or ["B", "C"] etc,
   "rejected": [] or ["D"] etc,
   "key_concern": "short phrase",
-  "concession": "concrete condition under which they'd accept a compromise"
+  "concession": "concrete condition"
 }}"""
 
 
@@ -182,60 +163,70 @@ def sim_turn(
     backstory: str,
     personality_summary: str,
     style_rule: str,
+    max_words: int,
     phase: str,
     phase_instruction: str,
+    interaction_instruction: str,
+    own_recent_points: str,
     recent_history: str,
     forbidden_openers: str,
     forbidden_frames: list[str],
     beliefs_block: str = "",
     last_speaker_line: str = "",
     position_discipline: str = "",
-    contrarian_nudge: str = "",
+    skepticism_nudge: str = "",
     forced_adaptation: bool = False,
 ) -> str:
     """Prompt for a single participant turn."""
 
     forbidden_block = ""
     if forbidden_frames:
-        listed = "\n".join(f'  - "{f}"' for f in forbidden_frames)
-        forbidden_block = f"\nNever say:\n{listed}"
+        listed = "; ".join(f'"{f}"' for f in forbidden_frames[:4])
+        forbidden_block = f"\nAvoid canned phrases like {listed}."
 
     opener_block = (
-        f"\nDon't open with: {forbidden_openers}."
+        f"\nAvoid reusing these exact openers: {forbidden_openers}."
         if forbidden_openers else ""
     )
 
     forced_block = (
-        "\n\nMODERATOR CALLED YOU OUT: Don't repeat your last point. "
-        "Bring one new angle — a trade-off you haven't raised, a concession, or a genuine question."
+        "\n\nThe moderator just pushed you to move the conversation forward. "
+        "Do not repeat your last point. Bring a fresh condition, concern, trade-off, or direct answer."
         if forced_adaptation else ""
-    )
-
-    last_said_block = (
-        f"\nJust said — {last_speaker_line}\n"
-        if last_speaker_line else ""
     )
 
     beliefs_section = f"\n{beliefs_block}\n" if beliefs_block else ""
 
-    return f"""STYLE (non-negotiable): {style_rule}
-React to what was just said, then make your point. "Yeah/nah/true/fair/wait" are fine. No formal summaries, no em dashes.
-Avoid hollow filler ("great point", "absolutely"). No AI buzzwords.{forced_block}
+    return f"""Write the next chat message for {name}.
 
-You are {name}. {backstory} Goal: {goal}. {personality_summary}{beliefs_section}
-Deciding: {topic}
-Options — these are the only facts, never invent attributes not listed:
+Voice and style:
+- {style_rule}
+- HARD LIMIT: maximum {max_words} words. Shorter is almost always better.
+- Sound like someone texting their friends — casual, direct, and personal. Not a panelist, analyst, or formal debater.
+- Write in informal, spoken language. Use contractions, drop formality, let your personality come through. Do NOT repeat the same filler opener ("honestly", "hmm yeah", "but what if") across multiple turns.
+- React to the last thing said before adding your own point. A brief reaction is natural, but vary how you open each turn.
+- Vary your move: not every turn is [assessment + reason]. Some turns should be a blunt reaction, a short personal detail, a single direct pushback, or a concession with a condition. Avoid hypothetical "but what if..." questions as a default — make a claim instead.
+- Do not stack questions. Answer something first; you can ask one thing at most.
+- Do not restate your same option-plus-reason. Add a new angle, name a specific drawback, make a concession, or respond to something specific someone just said.
+- Skip hollow validation: no "great point", "absolutely", "I completely agree", "that's a good observation".
+- No name prefix, no stage directions, no markdown, no em dashes.{forced_block}
+
+Participant:
+You are {name}. {backstory}
+Goal: {goal}
+Personality: {personality_summary}{beliefs_section}
+
+Decision topic: {topic}
+Options are the only shared facts. You may discuss implications, but do not invent extra attributes:
 {options_text}
-
-Your backstory shapes your priorities and the anecdotes you draw on.
-It does NOT give you hidden knowledge about the options — stick to what is listed above.
 
 Recent conversation:
 {recent_history}
-{last_said_block}
-[{phase}] {phase_instruction}{position_discipline}{contrarian_nudge}{forbidden_block}{opener_block}
+{own_recent_points}
+Current phase: {phase}
+Instruction for this turn: {phase_instruction}{interaction_instruction}{position_discipline}{skepticism_nudge}{forbidden_block}{opener_block}
 
-Write {name}'s next message. One voice. No name prefix. No stage directions."""
+Write only {name}'s next message."""
 
 
 # =============================================================================
@@ -260,9 +251,9 @@ Recent dialogue:
 Has a clear majority (at least {min_agreeing} out of {total} participants) agreed on one option?
 
 Rules:
-- A participant "agrees" only if they clearly expressed support for one specific option.
-- An option might also be supported by implication or described rather than named directly.
-- Asking a question about an option does NOT count as agreement.
+- A participant counts as agreeing only if their latest position clearly supports one specific option.
+- Conditional acceptance can count if the condition is minor or already addressed.
+- A question, vague openness, or polite acknowledgement does not count as agreement.
 - Do not invent votes not present in the dialogue.
 
 Return valid JSON only:
@@ -285,30 +276,21 @@ def moderator_intervention(
     target_participant: Optional[str] = None,
     escalation_level: int = 0,
 ) -> str:
-    """
-    General moderator intervention for outliers and silent participants.
-    escalation_level (0–3) controls directness.
-    """
+    """General moderator intervention for outliers and silent participants."""
     target_note = (
         f"\nFocus your line on drawing {target_participant} into the conversation."
         if target_participant else ""
     )
 
     escalation_notes = {
-        0: (
-            f"Ask {target_participant or 'them'} one short, specific question — "
-            "something that gets them to explain WHY their position matters to them, not just restate it."
-        ),
-        1: (
-            f"Ask {target_participant or 'them'} directly: what one specific thing would they need "
-            "from the majority option to consider it? One sentence, no open-ended phrasing."
-        ),
-        2: "Be firm but respectful — tell them the group needs movement and ask for one thing that could change their mind.",
-        3: "Be direct — acknowledge the impasse and ask for a final position.",
+        0: f"Point to one unresolved issue and ask {target_participant or 'them'} for an answer or concrete stance.",
+        1: f"Ask {target_participant or 'them'} what one concrete condition would make a compromise workable.",
+        2: "Be firm but still conversational: the group needs a decision-relevant answer, not another loose question.",
+        3: "Ask for a final position, directly and briefly.",
     }
     escalation_note = escalation_notes.get(escalation_level, escalation_notes[0])
 
-    return f"""You are a neutral moderator facilitating a group discussion.
+    return f"""You are a neutral moderator in a small group chat.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
@@ -318,13 +300,15 @@ Moderator approach: {escalation_note}
 Recent dialogue:
 {recent_dialogue}
 
-Write a single short moderator line that:
-- Addresses the situation using the approach above.
-- Is neutral and does not favour any option.
-- Sounds natural and conversational, not formal.
-- Is one sentence only.
+Write one short moderator message.
+Rules:
+- Sound natural and conversational.
+- Do not favor an option.
+- Do not recap the whole discussion.
+- If there is an unanswered question, ask someone to answer it or turn it into a concrete trade-off.
+- One sentence only.
 
-Return only the moderator's line — no label, no markdown."""
+Return only the moderator's line."""
 
 
 def moderator_deadlock(
@@ -335,13 +319,10 @@ def moderator_deadlock(
     current_votes: dict,
     escalation_level: int = 1,
 ) -> str:
-    """
-    Moderator addresses a genuine deadlock where everyone has voted but no majority exists.
-    """
+    """Moderator addresses a genuine deadlock where everyone has voted but no majority exists."""
     options_text = "\n".join(f"  {o}" for o in options)
-    votes_text = ", ".join(f"{name} → Option {opt}" for name, opt in current_votes.items())
+    votes_text = ", ".join(f"{name} -> Option {opt}" for name, opt in current_votes.items())
 
-    # Describe the split honestly
     counts = Counter(current_votes.values()) if current_votes else Counter()
     n = len(participant_names)
     top_count = counts.most_common(1)[0][1] if counts else 0
@@ -350,36 +331,28 @@ def moderator_deadlock(
     if has_majority and counts:
         top_opt = counts.most_common(1)[0][0]
         minority_names = [nm for nm, o in current_votes.items() if o != top_opt]
-        split_desc = f"Most prefer Option {top_opt}, but {' and '.join(minority_names)} have not yet moved."
+        split_desc = f"Most prefer Option {top_opt}, but {' and '.join(minority_names)} have not moved."
     else:
-        split_desc = "The group is split with no clear majority — everyone has voted differently."
+        split_desc = "The group is split with no clear majority."
 
     escalation_instructions = {
         1: (
-            f"{split_desc} "
-            "Name the participant(s) who are holding a different position. Ask that person directly: "
-            "what one specific thing about their current choice matters so much "
-            "they can't accept the others? One direct question."
+            f"{split_desc} Ask the person or people outside the leading option for one concrete condition or objection, "
+            "and tell the others to respond to it."
         ),
         2: (
-            f"{split_desc} "
-            "Acknowledge the split by name. Tell the group that unless someone moves, "
-            "you will have to make a call. Ask for one final round of genuine compromise — not restatement."
+            f"{split_desc} Tell the group you need one final compromise attempt before making a call."
         ),
         3: (
-            "Announce that the group has been unable to reach agreement and that you "
-            "are going to make a final call based on the discussion so far. "
-            "Do not ask another question."
+            "Say the group has not reached agreement and you are going to make a final call. Do not ask a question."
         ),
     }
     instruction = escalation_instructions.get(escalation_level, escalation_instructions[1])
 
-    return f"""You are a neutral moderator facilitating a group discussion.
+    return f"""You are a neutral moderator in a small group chat.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
-
-Current situation: Everyone has stated a position but there is no consensus.
 Current votes: {votes_text}
 
 Available options:
@@ -392,11 +365,11 @@ Your task: {instruction}
 
 Rules:
 - One or two sentences maximum.
-- Do not favour any option.
+- Do not favor an option unless escalation level 3 explicitly requires a final call.
 - Sound like a real person, not a formal chair.
-- Do not repeat what was already said.
+- Do not repeat what participants already said.
 
-Return only the moderator's line — no label, no markdown."""
+Return only the moderator's line."""
 
 
 def moderator_clarification(
@@ -408,12 +381,12 @@ def moderator_clarification(
 ) -> str:
     """Moderator clarifies what the options do or do not include, to stop speculative loops."""
     options_text = "\n".join(f"  {o}" for o in options)
-    return f"""You are a neutral moderator facilitating a group discussion.
+    return f"""You are a neutral moderator in a small group chat.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
 
-The available options (these are the ONLY facts):
+The available options are the only shared facts:
 {options_text}
 
 The group has been speculating about: "{looping_topic}"
@@ -421,16 +394,14 @@ The group has been speculating about: "{looping_topic}"
 Recent dialogue:
 {recent_dialogue}
 
-Write a single short moderator line that redirects the group toward what IS listed in the options,
-rather than the speculation. Do not open with "None of the options mention..." — steer toward
-relevant attributes instead.
+Write one short moderator line that redirects them back to listed option details without sounding scolding.
 
 Rules:
 - Only reference attributes explicitly listed in the options.
-- Do NOT invent details not in the option descriptions.
-- One or two sentences maximum. Sound like a helpful facilitator.
+- Do not invent details.
+- One or two sentences maximum.
 
-Return only the moderator's line — no label, no markdown."""
+Return only the moderator's line."""
 
 
 def moderator_emergence(
@@ -440,13 +411,9 @@ def moderator_emergence(
     recent_dialogue: str,
     candidate_option: str,
 ) -> str:
-    """
-    Moderator facilitates emergence: acknowledges that the discussion is moving,
-    invites conditional openness without pressuring for explicit commitment.
-    Fisher Phase 3 — dissent dissolves via ambiguity, not direct agreement.
-    """
+    """Moderator facilitates gradual convergence without demanding a vote."""
     options_text = "\n".join(f"  {o}" for o in options)
-    return f"""You are a neutral moderator facilitating the natural emergence of consensus.
+    return f"""You are a neutral moderator in a small group chat.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
@@ -458,20 +425,52 @@ Available options:
 Recent dialogue:
 {recent_dialogue}
 
-The group has made their main arguments. Some movement toward Option {candidate_option} is visible,
-but no one has fully committed yet. This is the moment for gradual convergence — not forced agreement.
-
-Your task: Acknowledge the direction the discussion is heading and invite participants to express
-what conditions or concerns, if addressed, would help them move forward.
-Do NOT ask for a final vote. Do NOT pressure for explicit agreement. Sound like a facilitator
-who sees progress and wants to help it land naturally.
+The group seems close, but not fully settled. Invite people to answer the strongest remaining concern or name the condition that would let them move forward.
 
 Rules:
 - One or two sentences only.
 - Do not declare a winner.
-- Sound natural and conversational — not formal.
+- Do not ask for a final vote.
+- Sound natural and conversational.
 
-Return only the moderator's line — no label, no markdown."""
+Return only the moderator's line."""
+
+
+def moderator_compromise_test(
+    topic: str,
+    participant_names: list[str],
+    options: list[str],
+    recent_dialogue: str,
+    compromise_option: str,
+    holdout_names: list[str],
+) -> str:
+    """Moderator tests whether a compromise can be visibly accepted."""
+    options_text = "\n".join(f"  {o}" for o in options)
+    holdout_text = ", ".join(holdout_names) if holdout_names else "the group"
+    return f"""You are a neutral moderator in a small group chat.
+
+Topic: {topic}
+Participants: {", ".join(participant_names)}
+Possible compromise: Option {compromise_option}
+People who need to react clearly: {holdout_text}
+
+Available options:
+{options_text}
+
+Recent dialogue:
+{recent_dialogue}
+
+Write one natural moderator message that tests Option {compromise_option} as a compromise.
+
+Rules:
+- Do not declare it final.
+- Ask whether Option {compromise_option} could work if specific concerns are addressed.
+- Name one concern from the recent dialogue if possible.
+- The concern must be relevant to Option {compromise_option}; do not mix in a condition that only belongs to another option.
+- Ask for a clear yes-with-condition or no-with-objection.
+- One or two sentences maximum.
+
+Return only the moderator's line."""
 
 
 def moderator_force_close(
@@ -481,11 +480,8 @@ def moderator_force_close(
     reason: str,
     recent_dialogue: str,
 ) -> str:
-    """
-    Moderator ends a discussion that could not reach natural consensus.
-    Honest about the lack of agreement; names a moderator-selected outcome.
-    """
-    return f"""You are a neutral moderator who needs to close a group discussion that did not reach consensus.
+    """Moderator ends a discussion that could not reach natural consensus."""
+    return f"""You are a neutral moderator closing a group chat that did not reach consensus.
 
 Topic: {topic}
 Participants: {", ".join(participant_names)}
@@ -495,11 +491,11 @@ Why selected: {reason}
 Recent dialogue:
 {recent_dialogue}
 
-Write a single moderator line that:
-- Honestly acknowledges that the group did not reach agreement.
-- States clearly that you are making the call as moderator.
-- Names Option {final_option} and gives a brief, honest reason (use the "Why selected" above).
-- Sounds natural — not a formal announcement.
+Write one moderator message that:
+- Honestly acknowledges the group did not fully agree.
+- Says you are making the call.
+- Names Option {final_option} and gives the brief reason above.
+- Sounds natural, not ceremonial.
 - Is one to two sentences maximum.
 
-Return only the moderator's line — no label, no markdown."""
+Return only the moderator's line."""

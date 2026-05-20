@@ -33,6 +33,10 @@ class TurnManager:
         if not sims:
             return []
 
+        round_limited = self._phase_round_candidates(sims, history, state)
+        if round_limited:
+            sims = round_limited
+
         forced = self._forced_speakers(sims, state)
         if forced:
             best = max(forced, key=lambda s: self._score(s, history, state))
@@ -44,9 +48,26 @@ class TurnManager:
 
         return self._weighted_pick(sims, history, state, count=max_speakers)
 
+    def _phase_round_candidates(
+        self,
+        sims: list["Simulator"],
+        history: list[str],
+        state: "DialogueState",
+    ) -> list["Simulator"]:
+        """During greeting/opening, prefer people who have not completed that round."""
+        if state.phase == "greeting":
+            missing = [s for s in sims if self._turn_count_for(s.name, history) == 0]
+            return missing or sims
+        if state.phase == "opening":
+            missing = [s for s in sims if self._turn_count_for(s.name, history) < 2]
+            return missing or sims
+        return sims
+
     def _forced_speakers(
         self, sims: list["Simulator"], state: "DialogueState"
     ) -> list["Simulator"]:
+        if state.phase == "greeting":
+            return []
         forced_names = {state.last_addressed, state.pending_question_target}
         forced_names.discard(None)
         return [s for s in sims if s.name in forced_names]
@@ -62,10 +83,20 @@ class TurnManager:
         if state.pending_question_target == sim.name:
             score += 0.90
 
-        # Persona traits
-        score += 0.12 * _norm(sim.persona.talkativeness)
-        score += 0.10 * _norm(sim.persona.assertiveness)
-        score += 0.08 * _norm(sim.persona.agreeableness)
+        # Big Five behavioral effects.
+        score += 0.22 * _norm(sim.persona.extraversion)
+
+        if state.last_addressed == sim.name or state.pending_question_target == sim.name:
+            score += 0.10 * _norm(sim.persona.agreeableness)
+        else:
+            score -= 0.04 * _norm(sim.persona.agreeableness)
+
+        if state.phase in {"negotiation", "emergence"}:
+            score += 0.08 * _norm(sim.persona.openness)
+            score += 0.05 * _norm(sim.persona.conscientiousness)
+
+        if state.phase not in {"greeting", "opening"}:
+            score += 0.10 * _norm(sim.persona.neuroticism) * state.repetition_pressure
 
         if sim.persona.is_primary:
             score += 0.10
@@ -80,7 +111,17 @@ class TurnManager:
 
         # Boost participants who haven't spoken yet
         if not self._has_spoken(sim.name, history):
-            score += 0.20
+            score += 0.35
+
+        if sim.persona.extraversion <= 2 and not (
+            state.last_addressed == sim.name or state.pending_question_target == sim.name
+        ):
+            score -= 0.08
+
+        if self._own_recent_repetition(sim.name, history) and not (
+            state.last_addressed == sim.name or state.pending_question_target == sim.name
+        ):
+            score -= 0.30
 
         return max(0.01, score)
 
@@ -206,6 +247,28 @@ class TurnManager:
 
     def _has_spoken(self, name: str, history: list[str]) -> bool:
         return any(line.startswith(f"{name}:") for line in history)
+
+    def _turn_count_for(self, name: str, history: list[str]) -> int:
+        return sum(1 for line in history if line.startswith(f"{name}:"))
+
+    def _own_recent_repetition(self, name: str, history: list[str]) -> bool:
+        turns: list[str] = []
+        for line in reversed(history):
+            if ":" not in line:
+                continue
+            speaker, msg = line.split(":", 1)
+            if speaker.strip() == name:
+                turns.append(msg.strip().lower())
+                if len(turns) >= 2:
+                    break
+        if len(turns) < 2:
+            return False
+        import re
+        a = set(re.sub(r"[^\w\s]", "", turns[0]).split())
+        b = set(re.sub(r"[^\w\s]", "", turns[1]).split())
+        if not a or not b:
+            return False
+        return len(a & b) / max(1, min(len(a), len(b))) >= 0.45
 
 
 # ---------------------------------------------------------------------------

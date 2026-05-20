@@ -65,6 +65,8 @@ class DialogueState:
     llm_check_countdown: int = 0
 
     last_rejected_option: Optional[str] = None
+    last_rejecting_speaker: Optional[str] = None
+    rejected_options_by_speaker: dict = field(default_factory=dict)
     consensus_cooldown: int = 0
 
     clarification_topics_used: set[str] = field(default_factory=set)
@@ -78,6 +80,11 @@ class DialogueState:
     has_entered_emergence: bool = False
     emergence_rounds: int = 0
     candidate_option: Optional[str] = None
+
+    compromise_option: Optional[str] = None
+    compromise_tested: bool = False
+    compromise_confirmation_tried: bool = False
+    compromise_rounds: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -115,12 +122,12 @@ class Orchestrator:
 
     def _generate_options(self) -> tuple[list[str], str]:
         fallback_options = [
-            "Option A - Budget: lowest cost, basic features.",
-            "Option B - Convenience: faster or easier, moderately priced.",
-            "Option C - Quality: best outcome, higher cost.",
-            "Option D - Flexible: adaptable trade-offs.",
+            "Option A - Budget: lowest cost and simplest path; trade-off: fewer extras; best for: minimizing risk.",
+            "Option B - Convenience: easier or faster to execute; trade-off: moderate cost; best for: reducing friction.",
+            "Option C - Quality: strongest expected outcome; trade-off: higher effort or cost; best for: long-term value.",
+            "Option D - Flexible: adaptable middle ground; trade-off: less specialized; best for: keeping options open.",
         ]
-        fallback_q = "What matters most to you personally among these options?"
+        fallback_q = "Before anyone picks, what matters most to you here?"
 
         try:
             data = self._llm.generate_json(prompts.option_generation(self.topic))
@@ -365,6 +372,12 @@ class Orchestrator:
                 active = True
                 self.state.nudged_participants.discard(sim.name)
 
+            if self.state.phase == "narrowing":
+                votes = current_votes(self.history, self.sims)
+                if len(votes) >= len(self.sims):
+                    self.state.has_entered_emergence = True
+                    break
+
         self._update_discourse()
         self._update_repetition()
         self._track_vote_flips()
@@ -394,6 +407,9 @@ class Orchestrator:
                 print(f"[vote-flip] {sim.name}: {previous_vote} → {current_vote} (flip #{flips})")
             else:
                 self.state.last_known_vote[sim.name] = current_vote
+
+            if self.state.rejected_options_by_speaker.get(sim.name) == current_vote:
+                self.state.rejected_options_by_speaker.pop(sim.name, None)
 
     # ------------------------------------------------------------------
     # Conclusion helpers
@@ -462,6 +478,9 @@ class Orchestrator:
             bare_no = msg_lower in {"no", "nope", "nah"}
             if bare_no or any(sig in msg.lower() for sig in rejection_signals):
                 self.state.last_rejected_option = preferred
+                self.state.last_rejecting_speaker = speaker.strip()
+                self.state.rejected_options_by_speaker[speaker.strip()] = preferred
+                self.state.priority_next_speaker = speaker.strip()
                 self.state.consensus_cooldown = 4
                 self.state.agreement_reached = False
                 self.state.preferred_option = None
@@ -469,12 +488,99 @@ class Orchestrator:
                 if self.moderator_style != "passive":
                     self._store_moderator(
                         f"Okay, Option {preferred} doesn't have full buy-in yet. "
-                        "Let's keep talking."
+                        f"{speaker.strip()}, what is the main blocker for you?"
                     )
                 return
             checked += 1
             if checked >= len(self.sims) * 2:
                 break
+
+    def _best_compromise_option(self) -> Optional[str]:
+        """
+        Pick the option most worth testing aloud before force-close.
+        Uses private acceptability only to choose what to test; the dialogue
+        still has to make that compromise visible.
+        """
+        scores: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
+        votes = current_votes(self.history, self.sims)
+
+        for sim in self.sims:
+            b = sim.persona.beliefs
+            if not b:
+                continue
+            scores[b.preferred] += 2.0
+            for opt in b.acceptable:
+                scores[opt] += 1.0
+            for opt in b.rejected:
+                scores[opt] -= 2.0
+
+        for opt in votes.values():
+            scores[opt] += 0.5
+
+        for opt in self.state.rejected_options_by_speaker.values():
+            scores[opt] -= 4.0
+
+        primary = self._primary_sim()
+        if primary:
+            primary_rejected = self.state.rejected_options_by_speaker.get(primary.name)
+            if primary_rejected:
+                scores[primary_rejected] -= 3.0
+
+        best_score = max(scores.values())
+        rejected_in_dialogue = set(self.state.rejected_options_by_speaker.values())
+        candidates = [
+            opt for opt, score in scores.items()
+            if score == best_score and opt not in rejected_in_dialogue
+        ]
+
+        # Prefer options that received actual votes over those that only scored via private beliefs
+        voted_options = set(votes.values())
+        if voted_options:
+            voted_candidates = [c for c in candidates if c in voted_options]
+            if voted_candidates:
+                candidates = voted_candidates
+
+        if self.state.candidate_option in candidates:
+            return self.state.candidate_option
+        if self.state.current_leading_option in candidates:
+            return self.state.current_leading_option
+        return candidates[0] if candidates else None
+
+    def _test_compromise(self, option: str) -> None:
+        """Ask the group to visibly test a compromise before any forced decision."""
+        self.state.has_entered_emergence = True
+        self.state.phase = "emergence"
+        self.state.candidate_option = option
+        self.state.compromise_option = option
+        self.state.compromise_tested = True
+        self.state.compromise_rounds = 0
+
+        votes = current_votes(self.history, self.sims)
+        holdouts = [s.name for s in self.sims if votes.get(s.name) != option]
+
+        try:
+            line = self._llm.generate(
+                prompts.moderator_compromise_test(
+                    topic=self.topic,
+                    participant_names=[s.name for s in self.sims],
+                    options=self.options,
+                    recent_dialogue="\n".join(self.history[-10:]),
+                    compromise_option=option,
+                    holdout_names=holdouts,
+                )
+            ).strip()
+            self._store_moderator(
+                line or f"Before I make any call, could Option {option} work as a compromise, and what would need to be true?",
+                tokens_in=self._llm.last_tokens_in,
+                tokens_out=self._llm.last_tokens_out,
+            )
+        except Exception:
+            self._store_moderator(
+                f"Before I make any call, could Option {option} work as a compromise, and what would need to be true?"
+            )
+
+        if holdouts:
+            self.state.priority_next_speaker = holdouts[0]
 
     def _run_closure(self) -> None:
         self.state.phase = "closure"
@@ -525,8 +631,16 @@ class Orchestrator:
                 objections[opt] += 2.0
 
         votes = current_votes(self.history, self.sims)
-        for opt in votes.values():
-            acceptance[opt] += 0.5
+        vote_counts = Counter(votes.values())
+
+        # Actual participant votes dominate the scoring — each vote is worth 5 points.
+        # This ensures vote plurality (e.g. 2 votes for A) beats private-belief scoring
+        # even when one participant dialogue-rejected A during confirmation.
+        for opt, count in vote_counts.items():
+            acceptance[opt] += count * 5.0
+
+        for opt in self.state.rejected_options_by_speaker.values():
+            objections[opt] += 3.0
 
         net: dict[str, float] = {opt: acceptance[opt] - objections[opt] for opt in ["A", "B", "C", "D"]}
 
@@ -534,8 +648,23 @@ class Orchestrator:
         primary_beliefs_pref = primary.persona.beliefs.preferred if (primary and primary.persona.beliefs) else None
         primary_vote = votes.get(primary.name) if primary else None
 
-        best_score = max(net.values())
-        top_opts = [opt for opt, sc in net.items() if sc >= best_score - 0.5]
+        # Hard-restrict to options that received actual votes; fall back to
+        # participant-mentioned options; last resort is all options.
+        voted_options = set(votes.values())
+        if voted_options:
+            available_net = {opt: sc for opt, sc in net.items() if opt in voted_options}
+        else:
+            mentioned: set[str] = set()
+            for line in self.history:
+                if ":" not in line:
+                    continue
+                spk, msg = line.split(":", 1)
+                if spk.strip() not in cfg.EXCLUDED_SPEAKERS:
+                    mentioned.update(extract_option_letters(msg))
+            available_net = {opt: sc for opt, sc in net.items() if opt in mentioned} if mentioned else net
+
+        best_score = max(available_net.values())
+        top_opts = [opt for opt, sc in available_net.items() if sc >= best_score - 0.5]
 
         # Primary preference is tiebreaker among equally-scored options, not against better ones
         if primary_beliefs_pref and primary_beliefs_pref in top_opts:
@@ -581,6 +710,26 @@ class Orchestrator:
                 )
 
         self._run_closure()
+
+    def _fresh_unanswered_question(self) -> bool:
+        """True when the latest participant line asks something that deserves air."""
+        for line in reversed(self.history):
+            if ":" not in line:
+                continue
+            speaker, msg = line.split(":", 1)
+            speaker = speaker.strip()
+            if speaker in cfg.EXCLUDED_SPEAKERS:
+                continue
+            if "?" not in msg:
+                return False
+            # If the same speaker already had another turn after this, it is no
+            # longer the fresh thing on the table. Since we scan latest-first,
+            # getting here means the latest participant line is the question.
+            others = [s.name for s in self.sims if s.name != speaker]
+            if others:
+                self.state.priority_next_speaker = random.choice(others)
+            return True
+        return False
 
     # ------------------------------------------------------------------
     # Main loop
@@ -636,6 +785,8 @@ class Orchestrator:
 
                 if self.state.has_entered_emergence:
                     self.state.emergence_rounds += 1
+                if self.state.compromise_option:
+                    self.state.compromise_rounds += 1
 
                 # 1. Check for natural consensus
                 if self.state.consensus_cooldown > 0:
@@ -644,6 +795,8 @@ class Orchestrator:
                 if (consensus
                         and self.state.consensus_cooldown > 0
                         and consensus[0] == self.state.last_rejected_option):
+                    consensus = None
+                if consensus and consensus[0] in set(self.state.rejected_options_by_speaker.values()):
                     consensus = None
                 if consensus:
                     self._conclude(*consensus)
@@ -654,6 +807,8 @@ class Orchestrator:
                 # 2. Prompt for narrowing if not yet done
                 ptc = participant_turn_count(self.history)
                 if self._mod.should_narrow(self.state, ptc):
+                    if self._fresh_unanswered_question():
+                        continue
                     self._narrowing_prompt()
                     continue
 
@@ -668,6 +823,21 @@ class Orchestrator:
                     level = self._mod.escalation_level(self.state)
 
                     if level >= 3:
+                        if not self.state.compromise_tested:
+                            compromise = self._best_compromise_option()
+                            if compromise:
+                                self._test_compromise(compromise)
+                                continue
+                        if self.state.compromise_tested and self.state.compromise_rounds < max(2, len(self.sims) - 1):
+                            _intervene("compromise")
+                            continue
+                        if (self.state.compromise_option
+                                and not self.state.compromise_confirmation_tried):
+                            self.state.compromise_confirmation_tried = True
+                            self._conclude(self.state.compromise_option)
+                            if self.state.agreement_reached:
+                                break
+                            continue
                         forced = self._detector.llm_check(self.history)
                         if forced:
                             self._conclude(*forced)
@@ -685,6 +855,20 @@ class Orchestrator:
                         )
 
                     if self.state.stall_rounds >= stall_limit:
+                        if not self.state.compromise_tested:
+                            compromise = self._best_compromise_option()
+                            if compromise:
+                                self._test_compromise(compromise)
+                                self.state.stall_rounds = 0
+                                continue
+                        if (self.state.compromise_option
+                                and self.state.compromise_rounds >= max(2, len(self.sims) - 1)
+                                and not self.state.compromise_confirmation_tried):
+                            self.state.compromise_confirmation_tried = True
+                            self._conclude(self.state.compromise_option)
+                            if self.state.agreement_reached:
+                                break
+                            continue
                         forced = self._detector.llm_check(self.history)
                         if forced:
                             self._conclude(*forced)
@@ -709,6 +893,8 @@ class Orchestrator:
                     self.state, self.history, self._any_sim_stuck(), ptc
                 )
                 if intervention:
+                    if intervention == "stall" and self._fresh_unanswered_question():
+                        continue
                     _intervene(intervention)
                     if intervention.startswith("outlier:"):
                         self.state.priority_next_speaker = intervention.split(":", 1)[1]
@@ -716,6 +902,10 @@ class Orchestrator:
             else:
                 # Hard ceiling hit
                 if self.moderator_style != "passive":
+                    if not self.state.compromise_tested:
+                        compromise = self._best_compromise_option()
+                        if compromise:
+                            self._test_compromise(compromise)
                     forced = self._detector.llm_check(self.history)
                     if forced:
                         self._conclude(*forced)
