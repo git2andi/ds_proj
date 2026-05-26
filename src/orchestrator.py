@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import datetime
 import random
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -26,10 +27,15 @@ from typing import Any, Optional
 import prompts
 from config_loader import cfg
 from consensus import ConsensusDetector
-from logger import DialogueLogger
+from logger import DialogueLogger, TurnTrace
 from llm_client import get_llm_client
 from moderation import ModerationEngine
 from turn_manager import TurnManager
+from policy.turn_policy import SSJTurnPolicy
+from policy.act_planner import plan_turn as _plan_turn, TurnPlan
+from policy.stubbornness import sample_hard_blockers
+from reasoning.phase_detector import PhaseDetector
+from reasoning.consensus_engine import ConsensusEngine
 from utils import (
     extract_preference_vote,
     extract_option_letters,
@@ -37,6 +43,7 @@ from utils import (
     last_n_turns_for,
     current_votes,
 )
+from state.tracker import StateTracker
 
 
 # ---------------------------------------------------------------------------
@@ -86,6 +93,51 @@ class DialogueState:
     compromise_confirmation_tried: bool = False
     compromise_rounds: int = 0
 
+    # ── Stage 1: Diagnostic fields ─────────────────────────────────────────
+    consensus_tier_last_used: str = "none"
+    last_moderator_intervention: Optional[str] = None
+
+    # Confirmation loop diagnostics
+    confirmation_rejection_count: int = 0
+    same_candidate_retested_count: int = 0
+    reopened_after_confirmation: bool = False
+    force_closed_after_confirmation_failure: bool = False
+
+    # Phase duration tracking (phase → turn count in that phase)
+    phase_turn_counts: dict = field(default_factory=dict)
+    _last_phase: str = field(default="greeting", init=False, repr=False)
+
+
+# ---------------------------------------------------------------------------
+# Dialogue-act estimator (deterministic rules, Stage 1)
+# ---------------------------------------------------------------------------
+
+def _estimate_dialogue_act(text: str, phase: str, is_moderator: bool) -> str:
+    """Lightweight act estimate for JSONL trace. Full classifier arrives in Stage 5."""
+    if is_moderator:
+        return "MODERATOR"
+    lower = text.lower().strip().rstrip(".,!")
+    if phase == "greeting":
+        return "GREET"
+    if phase == "closure":
+        return "GOODBYE"
+    if phase == "confirmation":
+        if re.match(r"^(yes|yeah|sure|ok|okay|yep|absolutely|fine|agreed|sounds good)$", lower):
+            return "CONFIRM"
+        if re.match(r"^(no|nope|nah)$", lower) or lower.startswith("no "):
+            return "REJECT_WITH_REASON"
+    if re.search(r"\bi\s+(prefer|choose|vote\s+for|go\s+with|pick)\s+option\s+[a-d]\b", lower):
+        return "COMMIT_VOTE"
+    if re.search(r"\bmy\s+(choice|preference|pick)\s+is\s+(option\s+)?[a-d]\b", lower):
+        return "COMMIT_VOTE"
+    if "?" in text:
+        return "ASK_CLARIFICATION"
+    if any(s in lower for s in ["i agree", "sounds good", "works for me", "i'm in", "that works", "on board"]):
+        return "CONCEDE"
+    if any(s in lower for s in ["but ", "however", "actually ", "not really", "disagree", "don't think"]):
+        return "ASSERT_OPPOSITION"
+    return "ASSERT_SUPPORT"
+
 
 # ---------------------------------------------------------------------------
 # Orchestrator
@@ -100,6 +152,9 @@ class Orchestrator:
 
         self._llm = get_llm_client()
         self._turn_mgr = TurnManager()
+        self._ssj_policy = SSJTurnPolicy()
+        self._phase_detector: Optional[PhaseDetector] = None   # Stage 9: init in run_simulation
+        self._consensus_engine: Optional[ConsensusEngine] = None  # Stage 9: init in run_simulation
         self.state = DialogueState()
         self.state.llm_check_countdown = cfg.consensus.llm_check_every_n_turns
 
@@ -112,6 +167,7 @@ class Orchestrator:
         self._logger = DialogueLogger(self.dialogue_id, topic, moderator_style)
         self._detector: ConsensusDetector = None  # type: ignore[assignment]
         self._mod: ModerationEngine = None  # type: ignore[assignment]
+        self._tracker: Optional[StateTracker] = None  # Stage 5: initialised in run_simulation
 
     def add_sim(self, sim: Any) -> None:
         self.sims.append(sim)
@@ -204,26 +260,124 @@ class Orchestrator:
             return line
         return f"{speaker} {tag}:{text}"
 
+    def _build_turn_trace(
+        self,
+        line: str,
+        selected_reason: str,
+        tokens_in: int,
+        tokens_out: int,
+        prompt_type: str = "sim_turn",
+    ) -> Optional[TurnTrace]:
+        """Build a lightweight TurnTrace from a raw history line."""
+        if ":" not in line:
+            return None
+        speaker, text = line.split(":", 1)
+        speaker = speaker.strip()
+        text = text.strip()
+        is_moderator = speaker == "Moderator"
+
+        sim_names = [s.name for s in self.sims]
+        addressees = [
+            n for n in sim_names
+            if n != speaker and re.search(rf"\b{re.escape(n)}\b", text, re.IGNORECASE)
+        ]
+        mentioned_options = extract_option_letters(text)
+        is_question = "?" in text
+        act = _estimate_dialogue_act(text, self.state.phase, is_moderator)
+
+        if is_moderator:
+            prompt_type = "moderator"
+
+        return TurnTrace(
+            turn_id=self._logger.next_trace_id(),
+            phase=self.state.phase,
+            speaker=speaker,
+            is_moderator=is_moderator,
+            text=text,
+            selected_reason=selected_reason,
+            addressees=addressees,
+            is_question=is_question,
+            mentioned_options=mentioned_options,
+            dialogue_act_estimated=act,
+            repetition_pressure=round(self.state.repetition_pressure, 3),
+            consensus_tier_used=self.state.consensus_tier_last_used,
+            moderator_intervention_type=(
+                self.state.last_moderator_intervention if is_moderator else None
+            ),
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            prompt_type=prompt_type,
+        )
+
     def _store_line(
         self,
         line: str,
         selected_reason: str = "",
         tokens_in: int = 0,
         tokens_out: int = 0,
+        prompt_type: str = "sim_turn",
     ) -> None:
         self.history.append(line)
+        # Phase duration tracking
+        if self.state.phase != self.state._last_phase:
+            self.state._last_phase = self.state.phase
+        self.state.phase_turn_counts[self.state.phase] = (
+            self.state.phase_turn_counts.get(self.state.phase, 0) + 1
+        )
         # Annotated version for console only; .txt receives the clean transcript
         display = self._annotate_with_vote(line)
         print(f"-> {display}")
         self._logger.append_line(line)
         self._logger.buffer(line, selected_reason, self.state, self.sims,
                             tokens_in=tokens_in, tokens_out=tokens_out)
+        trace = self._build_turn_trace(line, selected_reason, tokens_in, tokens_out, prompt_type)
+        self._logger.trace_turn(trace)
+
+        # Stage 5: update structured state in parallel (no behavior change)
+        if self._tracker is not None:
+            turn_record = self._tracker.update(
+                line, self.state.phase,
+                selected_reason=selected_reason,
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                prompt_type=prompt_type,
+            )
+            self._logger.trace_turn_record(turn_record)
+
+            # Stage 9: update Fisher phase evidence and consensus state (parallel; logged only)
+            if self._phase_detector is not None:
+                participant_turn_count = sum(
+                    ps.turn_count for ps in self._tracker.state.participants.values()
+                )
+                self._tracker.state.phase_evidence = self._phase_detector.update(
+                    self._tracker.state, participant_turn_count
+                )
+            if self._consensus_engine is not None:
+                participant_names = [s.name for s in self.sims]
+                self._tracker.state.consensus_state = self._consensus_engine.compute_state(
+                    self._tracker.state, participant_names
+                )
+                if not self._tracker.state.candidate_option:
+                    self._tracker.state.candidate_option = self._consensus_engine.leading_candidate(
+                        self._tracker.state, participant_names
+                    )
 
     def _store_moderator(
-        self, text: str, tokens_in: int = 0, tokens_out: int = 0
+        self,
+        text: str,
+        tokens_in: int = 0,
+        tokens_out: int = 0,
+        intervention_type: Optional[str] = None,
     ) -> None:
-        self._store_line(f"Moderator: {text}", selected_reason="moderator",
-                         tokens_in=tokens_in, tokens_out=tokens_out)
+        if intervention_type:
+            self.state.last_moderator_intervention = intervention_type
+        self._store_line(
+            f"Moderator: {text}",
+            selected_reason="moderator",
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            prompt_type="moderator",
+        )
 
     # ------------------------------------------------------------------
     # State helpers
@@ -261,9 +415,6 @@ class Orchestrator:
         turns = participant_turn_count(self.history)
         n = len(self.sims)
 
-        # greeting: first full round (all sims say hello once)
-        # opening:  second round (first instincts on the topic)
-        # negotiation → narrowing → emergence (all voted, no consensus) → confirmation
         if turns < n:
             self.state.phase = "greeting"
         elif turns < n * 2:
@@ -326,11 +477,15 @@ class Orchestrator:
         n = len(self.sims)
         if phase in ("greeting", "opening", "closure"):
             return 1
-        if self.state.repetition_pressure >= 0.65:
+        if self.state.repetition_pressure >= cfg.turns.high_repetition_max_speakers_threshold:
             return 1
         if phase in ("confirmation", "emergence"):
             return min(2, n)
-        weights = [0.30, 0.50, 0.20] if n >= 3 else [0.45, 0.55]
+        weights = (
+            cfg.turns.max_speakers_weights
+            if n >= 3
+            else cfg.turns.max_speakers_weights_2
+        )
         choices = list(range(1, min(4, n + 1)))
         return random.choices(choices, weights=weights[: len(choices)])[0]
 
@@ -344,9 +499,16 @@ class Orchestrator:
         self._update_phase()
         self._update_leading_option()
 
-        selected = self._turn_mgr.select_speakers(
-            self.sims, self.history, self.state, max_speakers=self._max_speakers()
-        )
+        if getattr(cfg.turn_policy, "use_legacy", True):
+            selected = self._turn_mgr.select_speakers(
+                self.sims, self.history, self.state, max_speakers=self._max_speakers()
+            )
+        else:
+            discourse = self._tracker.state.discourse if self._tracker else None
+            selected = self._ssj_policy.select_next_speakers(
+                self.sims, self.history, self.state, discourse,
+                max_speakers=self._max_speakers(),
+            )
 
         if priority_name:
             priority_sim = next((s for s in self.sims if s.name == priority_name), None)
@@ -359,11 +521,24 @@ class Orchestrator:
 
         for sim in selected:
             forced_adapt = sim.name in self.state.nudged_participants
+
+            # Stage 7: optionally plan the act before generation (A/B safety gate)
+            turn_plan = None
+            if cfg.act_planner.enabled and self._tracker is not None:
+                turn_plan = _plan_turn(
+                    speaker_name=sim.name,
+                    persona=sim.persona,
+                    structured=self._tracker.state,
+                    legacy_state=self.state,
+                    max_words=sim.persona.max_words(self.state.phase),
+                )
+
             text, tok_in, tok_out = sim.generate_turn(
                 self.history,
                 self.state,
                 all_names=all_names,
                 forced_adaptation=forced_adapt,
+                turn_plan=turn_plan,
             )
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name == self.state.last_addressed else "weighted"
@@ -393,8 +568,6 @@ class Orchestrator:
             if not current_vote:
                 continue
 
-            # Use belief preferred as the baseline — first text vote that matches belief
-            # is not a flip; first text vote that differs from belief is flip #1.
             belief_preferred = sim.persona.beliefs.preferred if sim.persona.beliefs else None
             previous_vote = self.state.last_known_vote.get(sim.name, belief_preferred)
 
@@ -420,7 +593,8 @@ class Orchestrator:
         self.state.phase = "narrowing"
         self._store_moderator(
             "Let's narrow this down — which option does each of you prefer? "
-            "A backup is fine if you're genuinely unsure."
+            "A backup is fine if you're genuinely unsure.",
+            intervention_type="narrowing",
         )
 
     def _run_confirmation(self) -> None:
@@ -429,12 +603,18 @@ class Orchestrator:
         if preferred is None:
             return
 
+        # Track repeated testing of the same candidate
+        if (self.state.consensus_cooldown == 0 and self.state.confirmation_rejection_count > 0
+                and preferred == self.state.last_rejected_option):
+            self.state.same_candidate_retested_count += 1
+
         if self.moderator_style == "active":
             backup = self.state.backup_option
             backup_note = f", with Option {backup} as backup" if backup else ""
             self._store_moderator(
                 f"It sounds like Option {preferred} is the preferred choice{backup_note}. "
-                "Can everyone confirm briefly?"
+                "Can everyone confirm briefly?",
+                intervention_type="confirmation",
             )
 
         selected = self._turn_mgr.select_speakers(
@@ -455,7 +635,10 @@ class Orchestrator:
         if self.moderator_style == "active":
             for sim in self.sims:
                 if sim.name not in confirmation_speakers:
-                    self._store_moderator(f"{sim.name}, does Option {self.state.preferred_option} work for you?")
+                    self._store_moderator(
+                        f"{sim.name}, does Option {self.state.preferred_option} work for you?",
+                        intervention_type="confirmation_prompt",
+                    )
                     text, tok_in, tok_out = sim.generate_turn(
                         self.history, self.state, all_names=all_names
                     )
@@ -477,6 +660,10 @@ class Orchestrator:
             msg_lower = msg.strip().lower().rstrip("!?.")
             bare_no = msg_lower in {"no", "nope", "nah"}
             if bare_no or any(sig in msg.lower() for sig in rejection_signals):
+                # Stage 1: count confirmation rejections
+                self.state.confirmation_rejection_count += 1
+                self.state.reopened_after_confirmation = True
+
                 self.state.last_rejected_option = preferred
                 self.state.last_rejecting_speaker = speaker.strip()
                 self.state.rejected_options_by_speaker[speaker.strip()] = preferred
@@ -488,7 +675,8 @@ class Orchestrator:
                 if self.moderator_style != "passive":
                     self._store_moderator(
                         f"Okay, Option {preferred} doesn't have full buy-in yet. "
-                        f"{speaker.strip()}, what is the main blocker for you?"
+                        f"{speaker.strip()}, what is the main blocker for you?",
+                        intervention_type="confirmation_rejection",
                     )
                 return
             checked += 1
@@ -496,11 +684,8 @@ class Orchestrator:
                 break
 
     def _best_compromise_option(self) -> Optional[str]:
-        """
-        Pick the option most worth testing aloud before force-close.
-        Uses private acceptability only to choose what to test; the dialogue
-        still has to make that compromise visible.
-        """
+        """Pick the option most worth testing aloud before force-close."""
+        sc = cfg.scoring.compromise
         scores: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
         votes = current_votes(self.history, self.sims)
 
@@ -508,23 +693,23 @@ class Orchestrator:
             b = sim.persona.beliefs
             if not b:
                 continue
-            scores[b.preferred] += 2.0
+            scores[b.preferred] += sc.private_preferred_weight
             for opt in b.acceptable:
-                scores[opt] += 1.0
+                scores[opt] += sc.private_acceptable_weight
             for opt in b.rejected:
-                scores[opt] -= 2.0
+                scores[opt] -= sc.private_rejected_penalty
 
         for opt in votes.values():
-            scores[opt] += 0.5
+            scores[opt] += sc.vote_weight
 
         for opt in self.state.rejected_options_by_speaker.values():
-            scores[opt] -= 4.0
+            scores[opt] -= sc.dialogue_rejection_penalty
 
         primary = self._primary_sim()
         if primary:
             primary_rejected = self.state.rejected_options_by_speaker.get(primary.name)
             if primary_rejected:
-                scores[primary_rejected] -= 3.0
+                scores[primary_rejected] -= sc.primary_rejection_extra
 
         best_score = max(scores.values())
         rejected_in_dialogue = set(self.state.rejected_options_by_speaker.values())
@@ -533,7 +718,6 @@ class Orchestrator:
             if score == best_score and opt not in rejected_in_dialogue
         ]
 
-        # Prefer options that received actual votes over those that only scored via private beliefs
         voted_options = set(votes.values())
         if voted_options:
             voted_candidates = [c for c in candidates if c in voted_options]
@@ -573,10 +757,12 @@ class Orchestrator:
                 line or f"Before I make any call, could Option {option} work as a compromise, and what would need to be true?",
                 tokens_in=self._llm.last_tokens_in,
                 tokens_out=self._llm.last_tokens_out,
+                intervention_type="compromise_test",
             )
         except Exception:
             self._store_moderator(
-                f"Before I make any call, could Option {option} work as a compromise, and what would need to be true?"
+                f"Before I make any call, could Option {option} work as a compromise, and what would need to be true?",
+                intervention_type="compromise_test",
             )
 
         if holdouts:
@@ -606,16 +792,18 @@ class Orchestrator:
             if self.moderator_style != "passive":
                 backup_note = f", with Option {backup} as backup" if backup else ""
                 self._store_moderator(
-                    f"Agreed — Option {option} is the final choice{backup_note}. Discussion concluded."
+                    f"Agreed — Option {option} is the final choice{backup_note}. Discussion concluded.",
+                    intervention_type="closure_success",
                 )
             self._run_closure()
 
     def _force_conclusion(self) -> None:
         """
         Select the best option using Fisher's method of residues:
-        the option with the lowest net resistance (acceptance score minus objection score).
-        Primary participant's preference breaks ties among equally-scored options only.
+        the option with the lowest net resistance (acceptance − objection).
+        Vote plurality dominates private-belief scoring.
         """
+        sc = cfg.scoring.force_close
         acceptance: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
         objections: dict[str, float] = {opt: 0.0 for opt in ["A", "B", "C", "D"]}
 
@@ -623,24 +811,21 @@ class Orchestrator:
             b = sim.persona.beliefs
             if not b:
                 continue
-            acceptance[b.preferred] += 2.0
+            acceptance[b.preferred] += sc.private_preferred_weight
             for opt in b.acceptable:
                 if opt != b.preferred:
-                    acceptance[opt] += 1.0
+                    acceptance[opt] += sc.private_acceptable_weight
             for opt in b.rejected:
-                objections[opt] += 2.0
+                objections[opt] += sc.private_rejected_penalty
 
         votes = current_votes(self.history, self.sims)
         vote_counts = Counter(votes.values())
 
-        # Actual participant votes dominate the scoring — each vote is worth 5 points.
-        # This ensures vote plurality (e.g. 2 votes for A) beats private-belief scoring
-        # even when one participant dialogue-rejected A during confirmation.
         for opt, count in vote_counts.items():
-            acceptance[opt] += count * 5.0
+            acceptance[opt] += count * sc.vote_multiplier
 
         for opt in self.state.rejected_options_by_speaker.values():
-            objections[opt] += 3.0
+            objections[opt] += sc.dialogue_rejection_penalty
 
         net: dict[str, float] = {opt: acceptance[opt] - objections[opt] for opt in ["A", "B", "C", "D"]}
 
@@ -648,8 +833,6 @@ class Orchestrator:
         primary_beliefs_pref = primary.persona.beliefs.preferred if (primary and primary.persona.beliefs) else None
         primary_vote = votes.get(primary.name) if primary else None
 
-        # Hard-restrict to options that received actual votes; fall back to
-        # participant-mentioned options; last resort is all options.
         voted_options = set(votes.values())
         if voted_options:
             available_net = {opt: sc for opt, sc in net.items() if opt in voted_options}
@@ -661,12 +844,11 @@ class Orchestrator:
                 spk, msg = line.split(":", 1)
                 if spk.strip() not in cfg.EXCLUDED_SPEAKERS:
                     mentioned.update(extract_option_letters(msg))
-            available_net = {opt: sc for opt, sc in net.items() if opt in mentioned} if mentioned else net
+            available_net = {opt: s for opt, s in net.items() if opt in mentioned} if mentioned else net
 
         best_score = max(available_net.values())
-        top_opts = [opt for opt, sc in available_net.items() if sc >= best_score - 0.5]
+        top_opts = [opt for opt, s in available_net.items() if s >= best_score - 0.5]
 
-        # Primary preference is tiebreaker among equally-scored options, not against better ones
         if primary_beliefs_pref and primary_beliefs_pref in top_opts:
             final = primary_beliefs_pref
         elif primary_vote and primary_vote in top_opts:
@@ -678,7 +860,23 @@ class Orchestrator:
         else:
             final = top_opts[0]
 
-        self.outcome = "force_close"
+        # Stage 9: override with public-stance-only scoring when enabled (no private beliefs)
+        if (getattr(cfg.consensus, "use_structured", False)
+                and self._tracker is not None
+                and self._consensus_engine is not None):
+            structured_final = self._consensus_engine.best_available_decision(
+                self._tracker.state, [s.name for s in self.sims]
+            )
+            if structured_final:
+                final = structured_final
+            self.outcome = "best_available_decision"
+        else:
+            self.outcome = "force_close"
+
+        # Stage 1: track whether this force-close follows a failed confirmation
+        if self.state.confirmation_rejection_count > 0:
+            self.state.force_closed_after_confirmation_failure = True
+
         if self.moderator_style != "passive":
             self.state.preferred_option = final
 
@@ -703,10 +901,12 @@ class Orchestrator:
                     line or f"No consensus reached — I'll call Option {final} as the moderator's choice. Let's wrap up.",
                     tokens_in=self._llm.last_tokens_in,
                     tokens_out=self._llm.last_tokens_out,
+                    intervention_type="force_close",
                 )
             except Exception:
                 self._store_moderator(
-                    f"We didn't reach agreement, so I'm making the call: Option {final}. Discussion concluded."
+                    f"We didn't reach agreement, so I'm making the call: Option {final}. Discussion concluded.",
+                    intervention_type="force_close",
                 )
 
         self._run_closure()
@@ -722,9 +922,6 @@ class Orchestrator:
                 continue
             if "?" not in msg:
                 return False
-            # If the same speaker already had another turn after this, it is no
-            # longer the fresh thing on the table. Since we scan latest-first,
-            # getting here means the latest participant line is the question.
             others = [s.name for s in self.sims if s.name != speaker]
             if others:
                 self.state.priority_next_speaker = random.choice(others)
@@ -743,6 +940,25 @@ class Orchestrator:
             self.topic, self.options, self.moderator_style, self.sims
         )
 
+        # Stage 5: initialise structured state tracker in parallel
+        self._tracker = StateTracker(
+            participant_names=[s.name for s in self.sims],
+            options=self.options,
+        )
+        self._tracker.attach_personas(self.sims)
+        # Seed tracker with opening moderator history (phase="greeting")
+        for line in self.history:
+            self._tracker.update(line, "greeting", selected_reason="moderator")
+
+        # Stage 8: sample hard-blocker flag at dialogue start (rare; default p=0.05)
+        sample_hard_blockers(
+            list(self._tracker.state.participants.values()), cfg
+        )
+
+        # Stage 9: Fisher phase detector and StanceTable consensus engine
+        self._phase_detector = PhaseDetector()
+        self._consensus_engine = ConsensusEngine()
+
         self._logger.write_header(
             participant_names=[s.name for s in self.sims],
             opening_lines=self.history,
@@ -755,10 +971,11 @@ class Orchestrator:
             print(f"-> {line}")
         print()
 
-        def _intervene(reason: str) -> None:
+        def _intervene(reason: str, intervention_type: Optional[str] = None) -> None:
+            self.state.last_moderator_intervention = intervention_type or reason
             self._mod.run_intervention(
                 reason, self.state, self.history,
-                lambda t, ti, to: self._store_moderator(t, ti, to),
+                lambda t, ti, to: self._store_moderator(t, ti, to, intervention_type=reason),
             )
 
         try:
@@ -769,7 +986,8 @@ class Orchestrator:
                 if not active:
                     self.outcome = "failed"
                     if self.moderator_style != "passive":
-                        self._store_moderator("No further responses. Discussion concluded.")
+                        self._store_moderator("No further responses. Discussion concluded.",
+                                              intervention_type="failed")
                     break
 
                 # ── Decision mode ──────────────────────────────────────────
@@ -777,7 +995,6 @@ class Orchestrator:
                 if self.state.has_asked_narrowing:
                     self.state.post_narrowing_rounds += 1
 
-                # Enter emergence when all participants have voted but no consensus yet
                 if self.state.has_asked_narrowing and not self.state.has_entered_emergence:
                     _votes = current_votes(self.history, self.sims)
                     if len(_votes) >= len(self.sims):
@@ -815,7 +1032,8 @@ class Orchestrator:
                 # 3. Post-narrowing stall and deadlock handling
                 if self.state.has_asked_narrowing:
 
-                    if self.state.repetition_pressure >= 0.75:
+                    stall_threshold = cfg.repetition.stall_increment_threshold
+                    if self.state.repetition_pressure >= stall_threshold:
                         self.state.stall_rounds += 1
                     else:
                         self.state.stall_rounds = 0
@@ -829,7 +1047,7 @@ class Orchestrator:
                                 self._test_compromise(compromise)
                                 continue
                         if self.state.compromise_tested and self.state.compromise_rounds < max(2, len(self.sims) - 1):
-                            _intervene("compromise")
+                            _intervene("compromise", "compromise")
                             continue
                         if (self.state.compromise_option
                                 and not self.state.compromise_confirmation_tried):
@@ -875,9 +1093,8 @@ class Orchestrator:
                             if self.state.agreement_reached:
                                 break
                             continue
-                        _intervene("stall")
+                        _intervene("stall", "stall")
                         self.state.stall_rounds = 0
-                        # Direct the minority voter to respond to the mod's question first
                         stall_votes = current_votes(self.history, self.sims)
                         if stall_votes:
                             top_opt = Counter(stall_votes.values()).most_common(1)[0][0]
@@ -919,6 +1136,15 @@ class Orchestrator:
                 setup_tokens_in, setup_tokens_out,
                 dialogue_tokens_in, dialogue_tokens_out,
                 outcome=self.outcome,
+                summary_extras={
+                    "confirmation_rejection_count": self.state.confirmation_rejection_count,
+                    "same_candidate_retested_count": self.state.same_candidate_retested_count,
+                    "reopened_after_confirmation": self.state.reopened_after_confirmation,
+                    "force_closed_after_confirmation_failure": self.state.force_closed_after_confirmation_failure,
+                    "phase_turn_counts": self.state.phase_turn_counts,
+                    "vote_flips_per_speaker": self.state.vote_changes,
+                    "consensus_tier_last_used": self.state.consensus_tier_last_used,
+                },
             )
             txt, csv_path = self._logger.paths
             total_in = setup_tokens_in + dialogue_tokens_in

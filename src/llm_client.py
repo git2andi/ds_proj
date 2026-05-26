@@ -119,7 +119,7 @@ class LLMClient:
             resp = requests.post(
                 cfg.llm.endpoints.uni,
                 data=json.dumps(payload),
-                timeout=120,
+                timeout=cfg.llm.timeouts.request_seconds,
             )
             resp.raise_for_status()
             result = resp.json()

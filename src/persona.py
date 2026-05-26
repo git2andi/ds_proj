@@ -91,14 +91,6 @@ _STYLE_RULE: dict[int, str] = {
     5: "Verbose-for-chat style. Give useful detail and context, but never write an essay or a formal summary.",
 }
 
-_WORD_BUDGET: dict[int, int] = {
-    1: 14,
-    2: 24,
-    3: 36,
-    4: 48,
-    5: 60,
-}
-
 
 # ---------------------------------------------------------------------------
 # Belief state
@@ -165,47 +157,60 @@ class Persona:
 
     def max_words(self, phase: str) -> int:
         """Hard word budget used to make generated turns feel like chat."""
-        base = _WORD_BUDGET[self.response_length_score()]
+        base = cfg.response_length.word_budgets[self.response_length_score() - 1]
+        caps = cfg.response_length.phase_caps
         if phase == "greeting":
-            return min(base, 8)
+            return min(base, caps.greeting)
         if phase == "confirmation":
-            return min(base, 10)
+            return min(base, caps.confirmation)
         if phase == "narrowing":
-            return min(max(base, 18), 40)
+            return min(max(base, caps.narrowing_min), caps.narrowing_max)
         if phase == "emergence":
-            return min(base, 42)
+            return min(base, caps.emergence)
         return base
 
     def personality_summary(self) -> str:
-        """Plain-English personality cues injected into every turn prompt."""
-        lines: list[str] = []
+        """
+        Register descriptors derived from Big Five scores.
+        Describes communication style — never prescribes specific phrases.
+        (MASTERPLAN Stage 8A: caricature phrases removed; register cues only.)
+        """
+        parts: list[str] = []
 
+        # Openness
         if self.openness >= 4:
-            lines.append("You enjoy exploring angles others haven't raised; you might say 'wait, what about...' or flip the framing.")
+            parts.append("considers angles others haven't raised; comfortable reframing the question")
         elif self.openness <= 2:
-            lines.append("You prefer familiar, practical choices; you get impatient with speculation — 'let's stick to what's actually on the table'.")
+            parts.append("prefers concrete options on the table; impatient with speculation")
 
+        # Conscientiousness
         if self.conscientiousness >= 4:
-            lines.append("You care about specifics and consequences; you name concrete details rather than vibes.")
+            parts.append("detail-oriented; names concrete specifics rather than gut impressions")
         elif self.conscientiousness <= 2:
-            lines.append("You decide from gut feel and get bored by excessive analysis; 'honestly just pick one' is your vibe.")
+            parts.append("relies on gut feel; comfortable deciding without exhaustive analysis")
 
+        # Extraversion
         if self.extraversion >= 4:
-            lines.append("You're energetic and warm; you react quickly, use enthusiasm ('oh that's actually a good point'), and think aloud.")
+            parts.append("energetic, quick to react, thinks aloud")
         elif self.extraversion <= 2:
-            lines.append("You're reserved; you only speak up when you have something specific to say, and you keep it short.")
+            parts.append("reserved; speaks up only when there is something specific to add; keeps turns short")
 
+        # Agreeableness
         if self.agreeableness >= 4:
-            lines.append("You're cooperative; you naturally acknowledge others before pushing back — 'I get that, but...' is your style.")
+            parts.append("acknowledges before pushing back; seeks common ground")
         elif self.agreeableness <= 2:
-            lines.append("You're blunt and skeptical; you push back directly without softening it — 'yeah but that's not actually true' is fine for you.")
+            parts.append("direct, skeptical, blunt; states disagreement plainly")
 
+        # Neuroticism
         if self.neuroticism >= 4:
-            lines.append("Uncertainty makes you visibly tense; your worry comes through — 'but what if that doesn't work out?', 'I'm a bit nervous about...'")
+            parts.append("sensitive to uncertainty; concern and caution show through tone")
         elif self.neuroticism <= 2:
-            lines.append("You stay calm even when others are anxious or the group goes in circles.")
+            parts.append("calm and steady even when discussion stalls or others grow anxious")
 
-        return " ".join(lines) if lines else "Engage in a balanced, neutral way."
+        if not parts:
+            return "Balanced, neutral register."
+        summary = "; ".join(parts)
+        return summary[0].upper() + summary[1:] + "."
 
     def trait_description_block(self) -> str:
         """Full Big Five trait descriptions for the persona-concept LLM call."""
@@ -231,6 +236,7 @@ class PersonaBuilder:
     def build_all(self, names: list[str]) -> list[Persona]:
         """
         Build personas without beliefs (options not known yet).
+        Uses a single grouped LLM call (Stage 11) with per-persona fallback.
         Call assign_beliefs() after Orchestrator has generated the options.
         """
         role_map = self._assign_roles(names)
@@ -239,15 +245,28 @@ class PersonaBuilder:
         if cfg.personas.enforce_diversity:
             trait_sets = _enforce_diversity(trait_sets)
 
-        personas: list[Persona] = []
+        shells: list[Persona] = []
         for name, traits in zip(names, trait_sets):
             role_info = role_map.get(name, {"role": "participant", "is_primary": False})
-            persona = self._build_one(
+            shells.append(Persona(
                 name=name,
                 role=role_info["role"],
                 is_primary=role_info["is_primary"],
-                traits=traits,
-            )
+                goal="",
+                backstory="",
+                **traits,
+            ))
+
+        # Stage 11: attempt one grouped call for all personas
+        concepts = self._generate_concepts_group(shells)
+
+        personas: list[Persona] = []
+        for persona in shells:
+            backstory, goal = concepts.get(persona.name, ("", ""))
+            if not backstory and not goal:
+                backstory, goal = self._generate_concept(persona)
+            persona.backstory = backstory
+            persona.goal = goal or "Support a practical outcome that fits their priorities."
             personas.append(persona)
 
         if not any(p.is_primary for p in personas) and personas:
@@ -258,14 +277,144 @@ class PersonaBuilder:
     def assign_beliefs(self, personas: list[Persona], options: list[str]) -> None:
         """
         Generate and attach AgentBeliefs to each persona.
-        Called after both personas and options are ready.
+        Uses a single grouped LLM call (Stage 11) with per-persona fallback.
         Saves the final persona JSON (with beliefs) to disk.
         """
+        # Stage 11: attempt one grouped call for all belief states
+        group_beliefs = self._generate_beliefs_group(personas, options)
+
         for persona in personas:
-            persona.beliefs = self._generate_beliefs(persona, options)
+            if persona.name in group_beliefs:
+                persona.beliefs = group_beliefs[persona.name]
+            else:
+                persona.beliefs = self._generate_beliefs(persona, options)
 
         if self.dialogue_id:
             _save_personas(personas, self.dialogue_id)
+
+    # ------------------------------------------------------------------
+    # Stage 11: grouped LLM calls
+    # ------------------------------------------------------------------
+
+    def _generate_concepts_group(
+        self, shells: list[Persona]
+    ) -> dict[str, tuple[str, str]]:
+        """
+        One LLM call for all N persona backstories + goals.
+        Returns {name: (backstory, goal)}; empty dict on failure (triggers per-persona fallback).
+        """
+        if not (cfg.personas.generate_backstory or cfg.personas.generate_goal):
+            return {}
+        try:
+            entries = [
+                {
+                    "name": p.name,
+                    "role": p.role,
+                    "is_primary": p.is_primary,
+                    "trait_description_block": p.trait_description_block(),
+                }
+                for p in shells
+            ]
+            data = self._llm.generate_json(
+                prompts.persona_group_generation(self.topic, entries)
+            )
+            raw = data.get("personas", {})
+            if not isinstance(raw, dict):
+                return {}
+            result: dict[str, tuple[str, str]] = {}
+            for p in shells:
+                entry = raw.get(p.name)
+                if isinstance(entry, dict):
+                    backstory = str(entry.get("backstory", "")).strip()
+                    goal = str(entry.get("goal", "")).strip()
+                    if backstory or goal:
+                        result[p.name] = (backstory, goal)
+            # Only accept if all personas are present (partial groups fall back)
+            if len(result) == len(shells):
+                return result
+            print(f"  [grouped-concepts] partial result ({len(result)}/{len(shells)}); falling back")
+            return {}
+        except Exception as exc:
+            print(f"  [grouped-concepts] error: {exc}; falling back to per-persona calls")
+            return {}
+
+    def _generate_beliefs_group(
+        self, personas: list[Persona], options: list[str]
+    ) -> dict[str, AgentBeliefs]:
+        """
+        One LLM call for all N belief states.
+        Returns {name: AgentBeliefs}; empty dict on failure (triggers per-persona fallback).
+        """
+        try:
+            personas_text = "\n".join(
+                f"{p.name} ({p.role}): goal={p.goal}  backstory={p.backstory}  "
+                f"personality={p.personality_summary()}"
+                for p in personas
+            )
+            options_text = "\n".join(f"  {o}" for o in options)
+            data = self._llm.generate_json(
+                prompts.agent_beliefs_group(self.topic, personas_text, options_text)
+            )
+            raw = data.get("beliefs", {})
+            if not isinstance(raw, dict):
+                return {}
+            result: dict[str, AgentBeliefs] = {}
+            for persona in personas:
+                entry = raw.get(persona.name)
+                if not isinstance(entry, dict):
+                    continue
+                beliefs = self._parse_beliefs(entry, persona.name)
+                if beliefs:
+                    result[persona.name] = beliefs
+            if len(result) == len(personas):
+                return result
+            print(f"  [grouped-beliefs] partial result ({len(result)}/{len(personas)}); falling back")
+            return {}
+        except Exception as exc:
+            print(f"  [grouped-beliefs] error: {exc}; falling back to per-persona calls")
+            return {}
+
+    def _parse_beliefs(self, data: dict, name: str) -> Optional[AgentBeliefs]:
+        """Parse and validate one raw belief dict; return None if invalid."""
+        try:
+            preferred_raw = str(data.get("preferred", "A")).strip().upper()
+            if preferred_raw not in {"A", "B", "C", "D"}:
+                preferred_raw = "A"
+
+            acceptable_raw = data.get("acceptable", [preferred_raw])
+            acceptable = [
+                x.strip().upper() for x in (acceptable_raw if isinstance(acceptable_raw, list) else [])
+                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+            ]
+            if preferred_raw not in acceptable:
+                acceptable.insert(0, preferred_raw)
+
+            rejected_raw = data.get("rejected", [])
+            rejected = [
+                x.strip().upper() for x in (rejected_raw if isinstance(rejected_raw, list) else [])
+                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+                and x.strip().upper() not in acceptable
+            ]
+
+            key_concern = str(data.get("key_concern", "practical trade-offs")).strip()
+            concession = str(
+                data.get("concession", "could accept a different option if it addresses their main concern")
+            ).strip()
+
+            beliefs = AgentBeliefs(
+                preferred=preferred_raw,
+                acceptable=acceptable,
+                rejected=rejected,
+                key_concern=key_concern,
+                concession=concession,
+            )
+            accept_others = [x for x in acceptable if x != preferred_raw]
+            accept_str = f", accepts {accept_others}" if accept_others else ""
+            print(f"  [{name}] prefers {preferred_raw}{accept_str} | {key_concern[:45]}")
+            return beliefs
+        except Exception as exc:
+            print(f"  [beliefs-parse] error for {name}: {exc}")
+            return None
 
     # ------------------------------------------------------------------
     # Internal
@@ -304,18 +453,6 @@ class PersonaBuilder:
             print(f"!! Role assignment error: {exc}")
             return fallback
 
-    def _build_one(
-        self, name: str, role: str, is_primary: bool, traits: dict[str, int]
-    ) -> Persona:
-        shell = Persona(
-            name=name, role=role, is_primary=is_primary,
-            goal="", backstory="", **traits
-        )
-        backstory, goal = self._generate_concept(shell)
-        shell.backstory = backstory
-        shell.goal = goal
-        return shell
-
     def _generate_concept(self, persona: Persona) -> tuple[str, str]:
         """LLM writes backstory and goal to match the pre-sampled traits."""
         if not (cfg.personas.generate_backstory or cfg.personas.generate_goal):
@@ -343,6 +480,7 @@ class PersonaBuilder:
         """
         One LLM call per participant: given their character and the options,
         produce a stable internal belief state before the conversation starts.
+        Fallback path used when grouped call fails.
         """
         fallback = AgentBeliefs(
             preferred="A",
@@ -362,43 +500,7 @@ class PersonaBuilder:
                     options_text="\n".join(f"  {o}" for o in options),
                 )
             )
-
-            preferred_raw = str(data.get("preferred", "A")).strip().upper()
-            if preferred_raw not in {"A", "B", "C", "D"}:
-                preferred_raw = "A"
-
-            acceptable_raw = data.get("acceptable", [preferred_raw])
-            acceptable = [
-                x.strip().upper() for x in (acceptable_raw if isinstance(acceptable_raw, list) else [])
-                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
-            ]
-            if preferred_raw not in acceptable:
-                acceptable.insert(0, preferred_raw)
-
-            rejected_raw = data.get("rejected", [])
-            rejected = [
-                x.strip().upper() for x in (rejected_raw if isinstance(rejected_raw, list) else [])
-                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
-                and x.strip().upper() not in acceptable
-            ]
-
-            key_concern = str(data.get("key_concern", "practical trade-offs")).strip()
-            concession = str(
-                data.get("concession", "could accept a different option if it addresses their main concern")
-            ).strip()
-
-            beliefs = AgentBeliefs(
-                preferred=preferred_raw,
-                acceptable=acceptable,
-                rejected=rejected,
-                key_concern=key_concern,
-                concession=concession,
-            )
-            accept_others = [x for x in acceptable if x != preferred_raw]
-            accept_str = f", accepts {accept_others}" if accept_others else ""
-            print(f"  [{persona.name}] prefers {preferred_raw}{accept_str} | {key_concern[:45]}")
-            return beliefs
-
+            return self._parse_beliefs(data, persona.name) or fallback
         except Exception as exc:
             print(f"!! Belief generation error for {persona.name}: {exc}")
             return fallback

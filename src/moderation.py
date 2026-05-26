@@ -64,7 +64,7 @@ class ModerationEngine:
         n = len(self.sims)
         if participant_turn_count < max(n * 2, cfg.turns.min_before_narrowing):
             return False
-        stalling = state.repetition_pressure >= 0.75 and state.stall_rounds >= 1
+        stalling = state.repetition_pressure >= cfg.moderation.narrowing.stalling_repetition_threshold and state.stall_rounds >= 1
         talked_plenty = participant_turn_count >= n * 5
         if self.moderator_style == "minimal":
             return stalling and talked_plenty
@@ -99,7 +99,7 @@ class ModerationEngine:
         if state.has_asked_narrowing and any_sim_stuck:
             return "stall"
 
-        if state.repetition_pressure >= 0.80 and state.stall_rounds >= 2:
+        if state.repetition_pressure >= cfg.moderation.interventions.stall_repetition_threshold and state.stall_rounds >= cfg.moderation.interventions.stall_rounds_required:
             return "stall"
 
         return None
@@ -256,8 +256,8 @@ class ModerationEngine:
             if len(w) >= 5:
                 excluded_words.add(w)
 
-        threshold = 4
-        min_word_len = 5
+        threshold = cfg.moderation.interventions.speculative_loop_threshold
+        min_word_len = cfg.moderation.interventions.speculative_loop_min_word_len
 
         recent: list[str] = []
         for line in reversed(history):
@@ -314,6 +314,6 @@ class ModerationEngine:
                 continue
             words0 = set(turns[0].split())
             ratio = len(words0 & set(turns[1].split())) / max(1, len(words0))
-            if ratio >= 0.55:
+            if ratio >= cfg.moderation.interventions.outlier_overlap_threshold:
                 return sim.name
         return None

@@ -101,7 +101,7 @@ def _personas_from_overrides(
     Text fields (backstory, goal) not specified trigger an LLM call
     only if cfg.personas.generate_backstory / generate_goal are true.
     """
-    name_pool = list(_DEFAULT_NAMES)
+    name_pool = list(cfg.simulation.name_pool)
     random.shuffle(name_pool)
     pool_idx = 0
 
@@ -232,14 +232,8 @@ def run_dialogue(
 # Name pool
 # ---------------------------------------------------------------------------
 
-_DEFAULT_NAMES = [
-    "Alex", "Jordan", "Morgan", "Taylor", "Casey",
-    "Riley", "Drew", "Quinn", "Avery", "Blake",
-]
-
-
 def _default_names(n: int) -> list[str]:
-    pool = list(_DEFAULT_NAMES)
+    pool = list(cfg.simulation.name_pool)
     random.shuffle(pool)
     if n <= len(pool):
         return pool[:n]

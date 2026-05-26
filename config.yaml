@@ -14,6 +14,8 @@ llm:
     top_k: 50
     top_p: 0.95
   gemini_rpm_delay: 12
+  timeouts:
+    request_seconds: 120                   # HTTP timeout for uni provider
 
 # ---------------------------------------------------------------------------
 # Simulation
@@ -26,6 +28,18 @@ simulation:
 
   moderator_style: "active"
 
+  name_pool:
+    - "Alex"
+    - "Jordan"
+    - "Morgan"
+    - "Taylor"
+    - "Casey"
+    - "Riley"
+    - "Drew"
+    - "Quinn"
+    - "Avery"
+    - "Blake"
+
 # ---------------------------------------------------------------------------
 # Turn budget
 # ---------------------------------------------------------------------------
@@ -37,6 +51,11 @@ turns:
   escalation_level_1: 2
   escalation_level_2: 5
   escalation_level_3: 9
+
+  # Max speakers per round
+  high_repetition_max_speakers_threshold: 0.65  # above this pressure, cap to 1 speaker
+  max_speakers_weights: [0.30, 0.50, 0.20]      # weights for [1,2,3] speakers when n>=3
+  max_speakers_weights_2: [0.45, 0.55]          # weights for [1,2] speakers when n==2
 
 # ---------------------------------------------------------------------------
 # Consensus detection
@@ -51,12 +70,32 @@ consensus:
   max_dissenters_active: 1
   max_dissenters_other: 0
 
+  # Stage 9: set true to use ConsensusEngine (StanceTable-based, public stances only)
+  # instead of legacy regex scoring for consensus decisions and force-close.
+  use_structured: false
+
+  # Weights used by ConsensusEngine.best_available_decision() — public stances only
+  stance_weights:
+    support: 1.0
+    conditional_support: 0.7
+    ambiguous: 0.2
+    oppose: -1.0
+    blocker: -2.0
+    neutral: 0.0
+
 # ---------------------------------------------------------------------------
 # Repetition / stall detection
 # ---------------------------------------------------------------------------
 repetition:
   pressure_window: 8
   min_word_length: 3
+  jaccard_threshold_self: 0.45              # Jaccard overlap threshold for own-turn repetition
+  stall_increment_threshold: 0.75           # pressure above which stall_rounds increments each round
+  add_brevity_threshold: 0.55              # pressure at which "add only one new useful thing" fires
+  turns_since_rejection_escalation: 3      # turns after a rejection before goalpost instruction escalates
+
+  # NOTE: forbidden_frames are no longer sent to the LLM as of Stage 3.
+  # Kept here for reference / future deterministic detection use only.
   forbidden_frames:
     - "building on what * said"
     - "as * mentioned"
@@ -99,33 +138,113 @@ personas:
   diversity_extraversion_min: 4
 
 # ---------------------------------------------------------------------------
+# Response length word budgets and per-phase caps
+# ---------------------------------------------------------------------------
+response_length:
+  # word_budgets[i] applies to response_length == i+1  (index 0 = length 1)
+  word_budgets: [14, 24, 36, 48, 60]
+  phase_caps:
+    greeting: 8
+    confirmation: 10
+    narrowing_min: 18
+    narrowing_max: 40
+    emergence: 42
+
+# ---------------------------------------------------------------------------
+# Stage 7: Act planner (DialogueAct selection before generation)
+# ---------------------------------------------------------------------------
+act_planner:
+  enabled: false                   # set true to enable; legacy path still runs in parallel
+
+# ---------------------------------------------------------------------------
+# Stage 8: Hard-blocker sampling (McCrae & John — stubbornness as rare latent)
+# ---------------------------------------------------------------------------
+stubbornness:
+  hard_blocker_dialogue_probability: 0.05  # fraction of dialogues that have a true hard blocker
+  max_hard_blockers_per_dialogue: 1        # cap to prevent unrealistic multi-blocker deadlocks
+  allow_softening_if_condition_met: true   # blocker can concede if concession condition is addressed
+
+# ---------------------------------------------------------------------------
+# Stage 9: Fisher phase detection (PhaseDetector thresholds)
+# ---------------------------------------------------------------------------
+phase_policy:
+  window_size: 8                   # stance history window for Fisher ratio computation
+  min_turns_before_conflict: 6     # participant turns before orientation→conflict transition
+  emergence:
+    opposition_decline_threshold: 0.20  # disfavor_rate ≤ this triggers emergence
+    ambiguity_rise_threshold: 0.30      # amb+conditional ≥ this triggers emergence
+  reinforcement:
+    support_rate_threshold: 0.60        # favor_rate ≥ this triggers reinforcement
+
+# ---------------------------------------------------------------------------
+# Prompt budget (Stage 4 — speaker-card compression)
+# ---------------------------------------------------------------------------
+prompt_budget:
+  use_compact_prompt: true          # false = legacy sim_turn(); true = speaker-card
+  recent_turns_short: 4             # turns shown verbatim in compact mode
+  recent_turns_long: 8              # turns shown in legacy mode
+  summarize_after_turn: 12          # build rolling summary for turns older than this index
+
+# ---------------------------------------------------------------------------
+# Turn policy weights (legacy weighted-sum selector and Stage 6 SSJ redesign)
+# ---------------------------------------------------------------------------
+turn_policy:
+  use_legacy: true                  # Stage 6: set false to enable SSJ rule cascade
+  weights:
+    last_addressed: 0.80
+    pending_question: 0.90
+    extraversion: 0.22
+    agreeableness_addressed: 0.10          # when this sim is the addressed party
+    agreeableness_off: 0.04               # penalty when not addressed (subtracted)
+    openness_negotiation: 0.08
+    conscientiousness_negotiation: 0.05
+    neuroticism_pressure: 0.10
+    primary_boost: 0.10
+    unspoken_boost: 0.35
+  penalties:
+    last_speaker: 0.50
+    recent_speaker_per_turn: 0.12
+    own_repetition: 0.30
+    introvert_off_turn: 0.08
+
+# ---------------------------------------------------------------------------
+# Scoring weights for compromise selection and force-close
+# ---------------------------------------------------------------------------
+scoring:
+  force_close:
+    private_preferred_weight: 2.0          # beliefs.preferred → acceptance
+    private_acceptable_weight: 1.0         # beliefs.acceptable → acceptance
+    private_rejected_penalty: 2.0          # beliefs.rejected → objections
+    vote_multiplier: 5.0                   # public vote count × this dominates private beliefs
+    dialogue_rejection_penalty: 3.0        # spoken rejection during confirmation → objections
+  compromise:
+    private_preferred_weight: 2.0
+    private_acceptable_weight: 1.0
+    private_rejected_penalty: 2.0
+    vote_weight: 0.5
+    dialogue_rejection_penalty: 4.0
+    primary_rejection_extra: 3.0          # extra penalty when the primary participant rejected this option
+
+# ---------------------------------------------------------------------------
+# Moderation thresholds
+# ---------------------------------------------------------------------------
+moderation:
+  interventions:
+    outlier_overlap_threshold: 0.55        # word overlap ratio for outlier detection
+    speculative_loop_threshold: 4          # consecutive speculative turns before clarification
+    speculative_loop_min_word_len: 5       # min keyword length for speculative loop detection
+    stall_repetition_threshold: 0.80       # repetition pressure for stall intervention
+    stall_rounds_required: 2              # stall_rounds needed alongside above threshold
+  narrowing:
+    stalling_repetition_threshold: 0.75    # pressure threshold used by should_narrow stall check
+  closure:
+    template_probability: 0.65            # probability of using a template goodbye vs a plain one
+
+# ---------------------------------------------------------------------------
 # Participants - manual definition (overrides random generation)
 # ---------------------------------------------------------------------------
 # Set from_config: true and fill entries to use this instead of random generation.
 # CLI flag --personas takes priority over this section.
-#
-# Each entry is a dict. All fields are optional:
-#   name          string
-#   role          string
-#   is_primary    bool
-#   goal          string
-#   backstory     string
-#   <trait>       int       - fixed value 1-5, e.g. extraversion: 5
-#   <trait>       [min,max] - random within range, e.g. neuroticism: [1, 3]
-#
-# Traits: openness, conscientiousness, extraversion, agreeableness, neuroticism
-# Communication: response_length
-#
-# Examples:
-# entries:
-#   - name: "Alice"
-#     extraversion: 5
-#     agreeableness: [1, 2]
-#   - name: "Bob"
-#     conscientiousness: 5
-#     neuroticism: 2
-#     response_length: 1
-#   - {}
 participants:
   from_config: false
   entries: []
@@ -137,3 +256,25 @@ output:
   log_dir: "logs"
   save_csv: true
   save_txt: true
+
+# ---------------------------------------------------------------------------
+# Structured logging (Stage 1 diagnostics)
+# ---------------------------------------------------------------------------
+logging:
+  write_jsonl_trace: true
+  write_summary_json: true
+  write_token_log: true
+
+# ---------------------------------------------------------------------------
+# Grounding / fact-check (Stage 10)
+# ---------------------------------------------------------------------------
+grounding:
+  enable_fact_check: true
+  repair_attempts: 1                   # regenerate once on flagged turns (0 = disabled)
+
+# ---------------------------------------------------------------------------
+# Evaluation (Stage 12)
+# ---------------------------------------------------------------------------
+evaluation:
+  eval_scenarios_path: "eval/eval_scenarios.txt"
+  seed: 42

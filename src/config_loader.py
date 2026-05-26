@@ -17,11 +17,18 @@ class _Section:
     """Wraps a config dict so keys are accessible as attributes."""
 
     def __init__(self, data: dict[str, Any]) -> None:
+        self._raw = data
         for key, value in data.items():
-            setattr(self, key, _Section(value) if isinstance(value, dict) else value)
+            if isinstance(key, str):
+                setattr(self, key, _Section(value) if isinstance(value, dict) else value)
 
     def __getattr__(self, name: str) -> Any:
         raise AttributeError(name)
+
+    def __getitem__(self, key: Any) -> Any:
+        """Allow integer-keyed access, e.g. cfg.some_section[2]."""
+        val = self._raw[key]
+        return _Section(val) if isinstance(val, dict) else val
 
     def get(self, key: str, default: Any = None) -> Any:
         return getattr(self, key, default)
@@ -40,6 +47,17 @@ class Config(_Section):
     personas: _Section
     participants: _Section
     output: _Section
+    response_length: _Section
+    turn_policy: _Section
+    act_planner: _Section
+    stubbornness: _Section
+    phase_policy: _Section
+    scoring: _Section
+    moderation: _Section
+    logging: _Section
+    grounding: _Section
+    evaluation: _Section
+    prompt_budget: _Section
 
     def __init__(self, path: Path) -> None:
         with open(path, "r", encoding="utf-8") as f:

@@ -1,0 +1,1619 @@
+## 1. Executive Summary
+
+Your current system is already beyond a simple “LLM writes a chat” prototype. It has a meaningful separation between orchestration, persona generation, simulator turns, consensus detection, moderation, turn selection, logging, and LLM access. The current design also correctly recognizes that group decision dialogue needs phases, private belief states, turn-taking, moderation, and explicit narrowing rather than a single unconstrained prompt. This matches the project description in `CLAUDE.md`: the intended system is a controlled decision dialogue where plausible group behavior emerges from state, personas, turn logic, and prompts, not from free-form generation alone. 
+
+The main problem is that the architecture is still heuristic-heavy. Many of the right concepts exist, but they are represented too weakly: phases are mostly procedural labels, consensus is mostly regex/string matching plus LLM fallback, addressee handling is shallow, and the dialogue history is still mainly a `list[str]`. For a scientifically grounded simulator, this is not enough. You need a structured dialogue state with explicit per-turn metadata: speaker, addressee, reply target, dialogue act, option stance, question obligations, phase evidence, and per-option support/opposition/ambiguity.
+
+The largest technical issue is not simply “bad prompting.” It is missing state. Some prompt bloat exists, but many repetitive or stubborn behaviors come from the fact that the simulator often has no precise conversational obligation other than “say another negotiation turn.” `CLAUDE.md` already states the right diagnosis: repetition is usually caused by missing dialogue state, and the correct fix is to create obligations such as answer this person, explain this rejection, test this compromise, or name one drawback of your own option. 
+
+The current architecture should be substantially refactored, not merely patched. The core idea should become:
+
+state tracker → turn/addressee policy → dialogue-act planner → compact LLM realization → stance/phase/consensus update → moderator policy → logging/evaluation.
+
+That means the LLM should mostly realize planned behavior in natural language. It should not be responsible for repeatedly re-inferring the entire dialogue state from a large text prompt.
+
+A likely cause of excessive stubbornness is that low agreeableness, high neuroticism, rejected options, skepticism nudges, and emergence-phase opposition prompts combine into a much higher blocker rate than intended. Low agreeableness should mostly affect disagreement style, not the probability of being a hard blocker. Hard blocking should be an explicit rare dialogue-level variable, capped by config, for example “0–10% of dialogues contain one true blocker,” not an emergent side effect of several independent heuristics.
+
+The most important next step is diagnostics before behavior changes. Add structured traces and run a batch baseline. Measure stubbornness frequency, force-close rate, participation balance, phase progression, addressee/question-answer compliance, stance changes, invented facts, and token usage per component. Without this, every prompt or threshold change will remain guesswork.
+
+---
+
+## 2. Current Architecture Understanding
+
+The current project is a single-topic multi-party decision simulator. For each topic, it generates four concrete options, creates simulated participants with Big Five traits and private beliefs, runs a phased group discussion, checks for consensus, intervenes with a moderator when needed, and logs transcripts plus structured CSV rows. This is directly described in `CLAUDE.md`: `main.py` creates the orchestrator, the orchestrator generates options, `PersonaBuilder` creates personas, `Simulator` produces turns, `TurnManager` selects speakers, `ConsensusDetector` checks agreement, `ModerationEngine` intervenes, and `DialogueLogger` writes outputs. 
+
+The current high-level architecture is:
+
+`main.py`
+Entry point. Handles interactive mode, batch mode, persona override files, participant count, orchestrator creation, persona creation, simulator wrapping, and execution.
+
+`config_loader.py`
+Loads `config.yaml` once and exposes a global `cfg` object. This is the correct direction for your “all numeric parameters in config” requirement, but the current codebase still has many behavior-controlling numbers outside config. 
+
+`orchestrator.py`
+Central runtime coordinator. It owns the `DialogueState`, generates options, builds the opening moderator messages, runs the main loop, updates phase, tracks leading option, calls speaker selection, calls simulators, checks consensus, calls moderation, tests compromise, handles confirmation, and eventually closes or force-closes. The file header itself describes it as coordinating setup, state, main loop, and conclusion. 
+
+`persona.py`
+Defines the Big Five trait names, communication field `response_length`, `Persona`, `AgentBeliefs`, and `PersonaBuilder`. The stated pipeline is: sample Big Five traits, enforce diversity, call the LLM once per participant for backstory/goal, call the LLM once per participant for beliefs, then assemble and save personas. It also documents the setup call count as `1 options + 1 roles + N persona concept + N beliefs = 2N + 2`. 
+
+`simulator.py`
+Wraps a `Persona` and generates one turn by building a prompt and calling the LLM. It injects persona, beliefs, options, recent history, phase instructions, interaction instructions, position discipline, forbidden openers, and repetition controls. The file explicitly states that it formats turn prompts, strips artifacts, builds belief blocks, provides position discipline, and tracks repeated phrases/openers. 
+
+`turn_manager.py`
+Selects speakers. It uses phase coverage, direct address, pending question target, trait-based weights, recent-speaker penalties, primary participant boost, and repetition pressure. Its current addressee detection scans the most recent participant line for name mentions and question marks. 
+
+`consensus.py`
+Implements multi-tier consensus detection: soft agreement language, regex vote extraction, reduced opposition in emergence, and LLM fallback every N turns. The detector only runs after everyone has spoken at least twice. 
+
+`moderation.py`
+Decides when and how the moderator intervenes. It owns narrowing triggers, escalation levels, speculative-loop detection, outlier detection, stall handling, and LLM moderator lines. 
+
+`prompts.py`
+Central registry for many prompt templates: option generation, role assignment, persona concept, agent beliefs, simulator turn, consensus check, and moderator prompts. This is the right target file, but not all LLM-facing prompt text currently lives here. `simulator.py` still constructs important LLM-facing strings such as phase instructions, narrowing instructions, interaction instructions, position-discipline text, and skepticism nudges before passing them into `prompts.sim_turn`. 
+
+`llm_client.py`
+Provider abstraction over Gemini, Groq, and a university/local endpoint. It also tracks last-call and session token usage. The design is useful, but the current token logging is not yet granular enough to identify which prompt component causes most cost. 
+
+`logger.py`
+Writes transcript, CSV rows, persona JSON, and token logs. Current CSV columns include phase, speaker, selected reason, last addressed, pending question target, repetition pressure, tokens, and persona traits. This is a good start but does not yet log dialogue acts, option stances, addressee/reply graph, consensus evidence, phase evidence, or prompt component costs. 
+
+`utils.py`
+Shared regex/string helpers for vote extraction, option mention extraction, current votes, recent participant lines, and related functions. It is useful but still fundamentally text-pattern based. 
+
+---
+
+## 3. End-to-End Generation Workflow
+
+The current workflow is roughly:
+
+1. `main.py` parses user input or a scenario file.
+2. It determines participant count from config or persona override length.
+3. It creates an `Orchestrator(topic, moderator_style)`.
+4. The orchestrator immediately calls `_generate_options()`, which sends an LLM prompt to generate four options and an opening question.
+5. The orchestrator builds the initial moderator history containing topic, options, and opening question.
+6. `PersonaBuilder` creates participant names, roles, Big Five traits, backstories, goals, and private beliefs.
+7. Each `Persona` is wrapped in a `Simulator`.
+8. The orchestrator initializes `ConsensusDetector`, `ModerationEngine`, logger, and dialogue state.
+9. The main loop begins.
+10. `TurnManager.select_speakers()` picks one or more simulators.
+11. Each selected simulator builds a turn prompt and calls the LLM.
+12. The generated turn is appended to `history`.
+13. Orchestrator updates last addressed, pending question target, repetition pressure, current leading option, vote changes, and phase.
+14. `ConsensusDetector.detect()` checks whether agreement has emerged.
+15. `ModerationEngine` may trigger narrowing, clarification, outlier handling, compromise testing, or force-close logic.
+16. If consensus is detected, the system asks for confirmation and then closes.
+17. If the hard ceiling is reached or escalation expires, the system force-closes or logs failure.
+18. Logger writes transcript, CSV, personas, and token totals.
+
+This workflow is coherent as a prototype. The weakness is that most “state” is inferred repeatedly from raw transcript strings. For example, current votes are extracted from recent text; addressee is inferred from name mention in one recent line; consensus is inferred from phrases; phase is updated from procedural counters. This is exactly where the system becomes brittle.
+
+The current system has the correct major objects, but the wrong central data model. A realistic multi-party simulator should not treat the transcript as the primary state. It should treat the transcript as the rendered surface of a structured interaction state.
+
+---
+
+## 4. Module-by-Module Analysis
+
+### `main.py`
+
+`main.py` is mostly fine as an entry point. It supports interactive mode, batch mode, and persona override JSON. It also separates setup token accounting from dialogue token accounting by resetting the LLM session after persona creation. That is useful.
+
+The main weakness is that setup is tightly coupled to orchestrator construction. Creating the `Orchestrator` already triggers option generation. That makes it harder to test setup stages independently. A cleaner design would have an explicit `DialogueFactory` or `SimulationBuilder`:
+
+`topic → options → personas → initial state → orchestrator.run()`.
+
+This is an engineering inference, not a paper claim.
+
+### `config_loader.py`
+
+The config loader is simple and acceptable. It loads YAML once and exposes `cfg`. The project goal says all numeric behavior parameters should live in config; `config_loader.py` supports this direction. 
+
+However, the codebase does not currently satisfy the rule. Many numeric thresholds and weights remain inside `turn_manager.py`, `simulator.py`, `consensus.py`, `moderation.py`, `orchestrator.py`, `utils.py`, and `llm_client.py`.
+
+### `orchestrator.py`
+
+This is currently the central control file. It does too much. It owns option generation, phase transitions, participant rounds, vote tracking, consensus calls, moderator interventions, confirmation, compromise scoring, force-close scoring, and closure. 
+
+The `DialogueState` dataclass is useful but too flat. It stores fields such as phase, preferred option, current leading option, last addressed, pending question target, rejected options, vote changes, emergence flags, and compromise flags. What is missing is more important than what is present:
+
+No structured turn objects.
+No explicit addressee list per turn.
+No explicit reply-to link.
+No dialogue-act label.
+No per-option stance state.
+No unresolved question objects.
+No per-option blocker/condition tracking.
+No phase evidence.
+No distinction between public transcript evidence and private beliefs.
+
+The current orchestrator should be split. Keep it as the high-level runner, but move state updates, turn selection, dialogue-act planning, consensus, phase detection, and moderator policy into separate modules.
+
+### `persona.py`
+
+This is one of the stronger modules conceptually. It correctly separates Big Five traits from `response_length`, and it correctly stores private beliefs separately from public dialogue. `CLAUDE.md` also states that private beliefs guide coherence, but decisions must be visible in the transcript; the moderator cannot select an option purely because hidden beliefs say it is acceptable. 
+
+The biggest problem is distributional. If traits are sampled uniformly from 1–5, extreme low agreeableness and high neuroticism will occur too often. In real use, low agreeableness should not mean “blocks consensus.” It should mostly mean more direct disagreement style, less soft validation, and slower concession. A true hard blocker should be a rare explicit latent variable.
+
+Another issue is belief generation. The prompt asks for 2–3 acceptable options, but the code needs post-hoc validation. A prompt instruction alone is not enough. If a persona gets only one acceptable option and multiple rejected options, later runtime heuristics will naturally create deadlocks. `CLAUDE.md` already notes that belief quality matters more than runtime fixes. 
+
+### `simulator.py`
+
+This module is currently both a realizer and a behavior controller. That is too much responsibility. It should primarily realize a planned dialogue act in a persona voice.
+
+Right now, `simulator.py` contains important behavior logic: phase-specific instructions, narrowing instructions, position discipline, forced adaptation, skepticism nudges, repetition avoidance, and openers. The simulator prompt includes participant identity, backstory, goal, personality summary, private belief block, topic, all options, recent conversation, own recent points, phase, turn instruction, interaction instruction, position discipline, skepticism nudge, forbidden openers, and opener constraints. 
+
+This explains much of the token cost. Every turn resends stable information that should be cached, compressed, or represented as a short speaker card.
+
+Also, some LLM-facing text is not centralized in `prompts.py`. For example, `simulator.py` builds phase instructions and narrowing instructions before passing them into `prompts.sim_turn`. Since these strings are part of the LLM prompt, they violate your hard requirement that all prompts sent to the LLM live in `prompts.py`.
+
+### `turn_manager.py`
+
+The current turn manager is a reasonable heuristic prototype. It captures several important intuitions: direct address should matter, pending questions should matter, extraversion affects speaking probability, recent speakers should be penalized, and repeated speakers should be suppressed. 
+
+But it is not yet theoretically grounded enough. Sacks/Schegloff/Jefferson do not describe turn-taking as “weighted random speaker choice.” Their model gives an ordered mechanism at transition relevance places: if the current speaker selects a next speaker, that selected participant has the right and obligation to speak; if no next speaker is selected, self-selection may occur; if no one self-selects, the current speaker may continue. The current `TurnManager` approximates only the first part and does not explicitly model self-selection, current-speaker continuation, transition points, or unresolved adjacency obligations. 
+
+### `consensus.py`
+
+The current consensus detector has useful tiers, but it is too string-based. It checks agreement language, regex votes, reduced opposition, and LLM fallback. 
+
+The reduced-opposition tier is the closest to Fisher: it treats emergence as plurality support plus dissenters becoming ambiguous rather than actively objecting. 
+
+The problem is that ambiguity is not actually represented as a first-class state. It is inferred by absence of objection strings. That is weaker than Fisher’s model. Fisher distinguishes favorable, unfavorable, and ambiguous units toward decision proposals and describes phase progression as changing proportions of those units over time. 
+
+A stronger implementation would explicitly classify each participant utterance toward each option as `support`, `oppose`, `ambiguous`, `conditional_support`, `neutral`, or `blocker`.
+
+### `moderation.py`
+
+The moderation engine has useful concepts: escalation levels, narrowing, stuck loop detection, outlier handling, compromise testing, and force-close avoidance. It also aligns with the project rule that compromise should be tested before force-close. 
+
+However, it is heavily heuristic and threshold-based. Some thresholds are in config, but others are embedded in code. The module also uses string-level detection for speculative loops and outliers. This should be replaced or supplemented by dialogue-act and stance tracking.
+
+### `prompts.py`
+
+This file is a strong foundation. It contains option generation, role assignment, persona generation, belief generation, simulator turn prompt, consensus check, and moderator prompt functions. 
+
+The main issue is incomplete centralization. Prompt fragments are still built in other modules. You need to define prompt builders that accept structured objects:
+
+`build_sim_turn_prompt(turn_plan, speaker_card, public_state, local_context)`
+`build_stance_classifier_prompt(turn_text, options)`
+`build_moderator_prompt(intervention_plan, public_state)`
+`build_persona_group_prompt(topic, names, options, traits)`.
+
+The prompt text itself should live only in `prompts.py`.
+
+### `llm_client.py`
+
+The provider abstraction is good. Token counters are also useful. 
+
+The next step is component-level token accounting. For each LLM call, log:
+
+prompt type, module, participant, phase, tokens in, tokens out, stable-context tokens, recent-history tokens, options tokens, persona tokens, instruction tokens.
+
+This lets you identify whether token waste comes from persona blocks, full option blocks, repeated recent history, moderator calls, consensus calls, or setup calls.
+
+### `logger.py`
+
+The logger writes useful files, but it should become the backbone of evaluation. Current CSV rows do not capture enough state. 
+
+Add JSONL traces with the full decision record per turn. The human transcript should stay clean, but the machine trace should include everything needed to debug why the system selected a speaker, why a phase changed, why consensus was accepted/rejected, and why force-close happened.
+
+### `utils.py`
+
+Useful helper file, but too much depends on regex extraction. Regex is fine for a first pass, but it cannot carry the scientific model. Use it as a fast deterministic classifier, then only call an LLM classifier for ambiguous cases.
+
+---
+
+## 5. What the Provided Papers Contribute
+
+### Fisher — Decision Emergence
+
+Fisher’s main contribution for your project is not just “four phases.” It is the idea that group decisions emerge from interaction patterns over time. The decision is not merely an endpoint; it is visible in changing verbal evidence toward decision proposals. Fisher explicitly frames the study around interaction process rather than only product/outcome. 
+
+The useful implementation model is:
+
+Orientation: tentative exploration. Clarification and agreement are common, but early agreement may function socially rather than as true decision commitment. Ambiguous comments are frequent. 
+
+Conflict: unfavorable statements rise. Alternatives are challenged, resisted, compared, and refined.
+
+Emergence: unfavorable statements decline and ambiguous statements rise relative to unfavorable ones. This is the important part for your simulator. Softening, conditional acceptance, hedging, and “I could live with that if…” are not noise. They are evidence that dissent is dissipating.
+
+Reinforcement: favorable statements dominate, ambiguous and unfavorable statements decline sharply, and the group reinforces the emerging decision. Fisher describes the final phase as marked by favorable attitudes receiving positive reinforcement and dissent virtually vanishing. 
+
+Implementation implication: do not detect consensus only from explicit votes. Detect a candidate option moving through conflict → emergence → reinforcement. That requires tracking per-option favorable, unfavorable, and ambiguous evidence over a rolling window.
+
+Important caveat: Fisher’s model should not be treated as a deterministic script. Fisher explicitly says the four phases are not necessarily present in all task groups and that phase progression is gradual rather than sharply discrete. 
+
+### Sacks, Schegloff & Jefferson — Turn-Taking
+
+The useful part for your simulator is the ordered turn-allocation mechanism.
+
+At a transition point, the rules are roughly:
+
+If the current speaker selects a next speaker, the selected speaker has priority and obligation to speak next.
+If no next speaker is selected, another participant may self-select.
+If nobody self-selects, the current speaker may continue.
+The rules reapply recursively at subsequent transition points. 
+
+Implementation implication: `TurnManager` should not only compute weighted speaker probabilities. It should first resolve obligations:
+
+direct question to X → X should answer;
+explicit mention of X → X has high response priority;
+open question to group → self-selection among relevant participants;
+no obligation → self-selection based on participation debt, personality, and act utility;
+no self-selection → possible moderator or current-speaker continuation.
+
+This maps directly to your problem: realistic group chat depends on who was selected, who self-selects, who owes an answer, and who has already spoken too much.
+
+### MUCA — Multi-User Chat Assistant
+
+MUCA contributes the cleanest architecture vocabulary: multi-user conversation requires controlling three dimensions, not one: What to say, When to respond, and Who to answer. The paper explicitly contrasts this with single-user chatbots that mainly decide what to answer. 
+
+MUCA’s framework also matters structurally. It uses a Sub-topic Generator, Dialog Analyzer, and Conversational Strategies Arbitrator. Its diagram includes subtopic status, utterance feature extraction, accumulative summary, participant features, and strategies such as keep silent, direct chatting, participation encouragement, conflict resolution, and initiative summarization. 
+
+Implementation implication: split your simulator loop into:
+
+When: should anyone speak now, and who has obligation?
+Who: who is addressed or replied to?
+What: what dialogue act should be performed?
+How: realize the planned act in persona voice.
+
+Right now, these are mixed across `turn_manager.py`, `simulator.py`, `moderation.py`, and `orchestrator.py`.
+
+MUCA also discusses compute cost and short utterance generation difficulties for LLM-based multi-user simulation. It notes that LLM simulators may repeat conversational strategies and that cooldown mechanisms can help. 
+
+Implementation implication: strategy cooldowns should be explicit state, not only forbidden openers.
+
+### Ouchi & Tsuboi — Addressee and Response Selection
+
+This paper is directly relevant to your addressee problem. It formalizes multi-party conversation as selecting both addressee and response. The key challenge is jointly modeling who is talking about what at each time step. 
+
+The paper also shows why addressee tracking matters especially in text chat: unlike face-to-face conversation, text often uses explicit name mentions or user IDs to indicate addressee. 
+
+Implementation implication: every generated turn should store:
+
+speaker,
+addressee or addressees,
+reply-to turn id,
+topic/thread,
+dialogue act,
+option stance.
+
+The paper’s experimental setup uses context windows of 5, 10, and 15 utterances and truncates utterances to 20 words for efficiency. 
+
+Implementation implication: your per-turn prompt should not blindly include large history windows. Use short local context plus structured long-term state.
+
+### McCrae & John — Five-Factor Model
+
+McCrae & John define the Five-Factor Model as a hierarchical organization of traits in terms of Extraversion, Agreeableness, Conscientiousness, Neuroticism, and Openness to Experience. They describe these as broad dimensions of enduring emotional, interpersonal, experiential, attitudinal, and motivational styles. 
+
+The paper is useful as a justification for using the Big Five as a broad trait framework, not as a direct algorithm for dialogue behavior. It supports the idea that the Big Five are broad individual-difference dimensions, but your mapping from traits to speaking probabilities, compromise behavior, emotional tone, and disagreement style is an engineering design decision.
+
+Engineering inference: traits should bias probabilities and style, not deterministically produce behavior. Low agreeableness should increase direct disagreement and reduce automatic validation. It should not automatically create a hard blocker. High neuroticism should increase risk salience and anxious framing. It should not automatically create refusal. High extraversion should increase speaking probability and reactive turns. High conscientiousness should increase detail orientation and stable criteria. High openness should increase reframing and alternative exploration.
+
+---
+
+## 6. Main Failure Modes
+
+### 1. Too many stubborn simulations
+
+Your intended target is plausible rare hard blocking, perhaps 0–10% of dialogues. The current design likely produces too many blockers because several independent mechanisms all push toward resistance.
+
+Low agreeableness can make participants challenging. High neuroticism can make them risk-focused. The belief generator can assign narrow acceptable sets and rejected options. `simulator.py` adds skepticism nudges for low agreeableness or high neuroticism. Emergence logic can tell participants to name remaining concerns. Consensus logic may treat one dissenter as acceptable for majority but confirmation then reactivates the dissenter. The combined effect is far stronger than any single rule.
+
+### 2. Consensus detection is under-modeled
+
+Current consensus detection relies on soft phrase lists, regex votes, reduced opposition, and LLM fallback. 
+
+The missing part is explicit public stance state. You need to know:
+
+Who supports which option?
+Who opposes which option?
+Who conditionally accepts which option?
+Who is ambiguous?
+Which objections are unresolved?
+Which conditions have been addressed?
+Which option is emerging?
+
+Without this, consensus is either premature or delayed until force-close.
+
+### 3. Turn-taking is plausible but not interactionally grounded
+
+The current turn manager uses weighted scores. That works sometimes, but it does not properly represent selected next speaker, self-selection, current-speaker continuation, adjacency pairs, or open obligations.
+
+The result is that sims may ignore direct references, answer too late, respond to the wrong person, or continue with generic option talk when the local conversational structure demands an answer.
+
+### 4. Prompt/token inefficiency
+
+The current per-turn prompt repeats stable information: topic, options, backstory, goal, personality summary, private beliefs, style rules, recent history, own recent points, phase instructions, interaction instructions, and constraints. The persona pipeline itself also uses multiple setup calls per participant: role assignment, persona concept generation, and belief generation. 
+
+This explains the reported ratio of roughly 60k input tokens to 3k output tokens. The system is paying repeatedly for context that should be cached or compressed.
+
+### 5. Chats can feel scripted
+
+The system repeatedly gives the LLM similar instructions: react, answer, do not repeat, name a condition, state preference, avoid vague questions. This creates structural repetition. The surface phrases may vary, but the move structure stays similar.
+
+The better fix is a dialogue-act planner that explicitly varies moves: answer, challenge, clarify, concede, conditionally accept, ask a targeted question, summarize, propose compromise, confirm, reject with blocker, or stay silent.
+
+### 6. Invented facts
+
+`CLAUDE.md` already identifies made-up attributes as an issue. 
+
+The prompt says options are the only shared facts, but this is not enforced structurally. You need either a deterministic option-fact checker or a post-generation repair step that flags claims not grounded in option text.
+
+---
+
+## 7. Root Causes
+
+The main root cause is that the current system uses raw transcript strings as the primary memory. This causes multiple downstream weaknesses.
+
+Consensus is inferred from text rather than stored as stance evolution.
+Turn-taking is inferred from recent mentions rather than stored as obligations.
+Phase progression is procedural rather than evidence-driven.
+Moderation responds to symptoms such as repetition pressure rather than a precise state such as “Casey has an unresolved blocker against Option B.”
+Prompting compensates for missing state by repeating many instructions.
+LLM behavior becomes uncontrolled because each turn prompt asks the model to infer too much.
+
+The second root cause is that personality and stubbornness are entangled. Big Five traits should shape style and tendencies. They should not frequently create hard refusal. Hard refusal should be explicitly sampled, capped, and logged.
+
+The third root cause is magic-number dispersion. Even though `config.yaml` exists, many behavior-changing values are still embedded in code. This makes experiments hard. You cannot easily say “I reduced hard blockers from 60% to 8%” if the relevant causes are spread across sampling, belief generation, skepticism nudges, emergence prompts, consensus thresholds, and force-close scoring.
+
+The fourth root cause is that LLM calls are used where deterministic state logic would be better. LLMs are useful for natural language realization, option generation, persona text, and ambiguous classification. They are weaker and more expensive for repeated state reconstruction.
+
+---
+
+## 8. Target Architecture
+
+The target architecture should be refactored around structured state and a planning-realization split.
+
+Recommended module structure:
+
+`dialogue_state.py`
+Defines core dataclasses.
+
+`state_tracker.py`
+Updates structured state after every turn.
+
+`turn_policy.py`
+Chooses next speaker(s) and addressee obligations.
+
+`act_planner.py`
+Chooses what kind of move the selected speaker should make.
+
+`prompts.py`
+Contains every LLM-facing template and prompt fragment.
+
+`realizer.py`
+Calls the LLM to realize a planned move in the selected persona’s voice.
+
+`consensus_engine.py`
+Tracks support, opposition, ambiguity, conditional acceptance, blockers, and consensus.
+
+`phase_detector.py`
+Detects Fisher-style phase based on stance evidence trends.
+
+`moderator_policy.py`
+Chooses moderator interventions and escalation.
+
+`token_manager.py` or `prompt_context.py`
+Builds compact context windows and summaries.
+
+`metrics.py` / `evaluate_logs.py`
+Computes batch metrics.
+
+`logger.py`
+Writes transcript plus full JSONL trace.
+
+A minimal `TurnRecord` should store:
+
+```python
+turn_id: int
+speaker: str
+text: str
+phase: str
+is_moderator: bool
+addressees: list[str]
+reply_to: int | None
+dialogue_act: str
+option_stances: dict[str, str]
+mentioned_options: list[str]
+is_question: bool
+answers_question_id: int | None
+selected_reason: str
+tokens_in: int
+tokens_out: int
+prompt_type: str
+```
+
+A minimal `ParticipantState` should store:
+
+```python
+name: str
+persona: Persona
+public_preference: str | None
+public_stances: dict[str, str]
+conditions: dict[str, str]
+hard_blockers: dict[str, str]
+turn_count: int
+last_spoke_turn: int | None
+participation_debt: float
+open_questions_to_answer: list[int]
+recent_dialogue_acts: list[str]
+strategy_cooldowns: dict[str, int]
+is_hard_blocker: bool
+```
+
+A minimal `OptionState` should store:
+
+```python
+option_id: str
+supporters: set[str]
+opponents: set[str]
+ambiguous: set[str]
+conditional_supporters: dict[str, str]
+hard_blockers: dict[str, str]
+last_mentioned_turn: int
+support_score: float
+opposition_score: float
+```
+
+A minimal `PhaseEvidence` should store:
+
+```python
+phase: Literal["orientation", "conflict", "emergence", "reinforcement"]
+confidence: float
+window_support_rate: float
+window_oppose_rate: float
+window_ambiguous_rate: float
+window_conditional_rate: float
+trend_support: float
+trend_oppose: float
+trend_ambiguous: float
+```
+
+This target architecture directly maps to the papers:
+
+Fisher gives phase and stance evidence.
+Sacks/Schegloff/Jefferson give ordered turn-allocation rules.
+MUCA gives What/When/Who separation.
+Ouchi & Tsuboi justify explicit addressee/reply tracking.
+McCrae & John justify broad trait dimensions, while the probabilistic behavior mapping remains your engineering design.
+
+---
+
+## 9. Paper-to-Implementation Mapping
+
+| Paper / Concept                                         | Relevant idea                                                                                                                | Current weakness it addresses                                     | Concrete implementation change                                                                                                   | Likely module/file                                | Difficulty | Expected effect                                      |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------- | ---------------------------------------------------- |
+| Fisher: favorable / unfavorable / ambiguous units       | Decision emergence is visible in changing proportions of favorable, unfavorable, and ambiguous statements toward proposals.  | Consensus is mostly regex and phrase lists.                       | Add per-option stance labels: `support`, `oppose`, `ambiguous`, `conditional_support`, `blocker`.                                | `consensus_engine.py`, `state_tracker.py`         | Medium     | More grounded consensus and fewer premature endings. |
+| Fisher: emergence phase                                 | Dissent declines and ambiguity rises before final reinforcement.                                                             | Ambiguous softening is treated inconsistently.                    | Detect emergence when opposition decreases and conditional/ambiguous acceptance increases around one candidate.                  | `phase_detector.py`                               | Medium     | More natural compromise transitions.                 |
+| Fisher: reinforcement                                   | Final phase reinforces an emerged decision; dissent mostly vanishes.                                                         | Closure can feel forced.                                          | Separate “candidate emerged” from “reinforced/confirmed.” Require explicit confirmation or no unresolved blocker before closure. | `consensus_engine.py`, `moderator_policy.py`      | Medium     | Better endings; fewer fake consensuses.              |
+| Fisher caveat                                           | Phases are gradual and not universal.                                                                                        | Current phases risk becoming scripted.                            | Store phase confidence, not only phase label. Allow skipped/short phases if evidence supports it.                                | `phase_detector.py`                               | Medium     | Less mechanical phase progression.                   |
+| Sacks/Schegloff/Jefferson: current speaker selects next | Addressed participant has priority/obligation.                                                                               | Direct replies are sometimes ignored.                             | Represent selected next speaker and unresolved adjacency obligations.                                                            | `turn_policy.py`, `dialogue_state.py`             | Medium     | More realistic reply behavior.                       |
+| Sacks/Schegloff/Jefferson: self-selection               | If no one is selected, participants self-select.                                                                             | Speaker choice is mostly weighted random.                         | Score self-selection candidates by relevance, participation debt, novelty, personality, and phase need.                          | `turn_policy.py`                                  | Medium     | More natural participation flow.                     |
+| Sacks/Schegloff/Jefferson: current-speaker continuation | If no selected/self-selected speaker, current speaker may continue.                                                          | The system always picks new speakers by policy.                   | Allow rare continuation when a speaker’s prior act is incomplete or asks/clarifies.                                              | `turn_policy.py`                                  | Low–Medium | Better multi-turn local coherence.                   |
+| MUCA: 3W                                                | Multi-user dialogue requires What, When, Who decisions.                                                                      | Turn selection, addressee choice, and content planning are mixed. | Split into turn policy, addressee policy, act planner, realizer.                                                                 | `turn_policy.py`, `act_planner.py`, `realizer.py` | High       | Cleaner architecture and better controllability.     |
+| MUCA: Dialog Analyzer                                   | Track subtopics, participant features, summaries, statistics.                                                                | State is mostly raw history.                                      | Add state tracker for topic/status, per-participant features, recent acts, and summaries.                                        | `state_tracker.py`                                | Medium     | Better context and lower prompt cost.                |
+| MUCA: strategy arbitrator / cooldowns                   | Repeated strategies are a known issue; cooldowns help.                                                                       | Sims repeat the same move shape.                                  | Add dialogue-act cooldowns per participant: avoid repeated question, repeated objection, repeated validation.                    | `act_planner.py`                                  | Medium     | Less scripted dialogue.                              |
+| Ouchi & Tsuboi: addressee-response selection            | Need to model who talks to whom about what.                                                                                  | Addressee detection only scans recent name mentions.              | Store addressee and reply-to for every turn.                                                                                     | `dialogue_state.py`, `state_tracker.py`           | Medium     | Better multi-party coherence.                        |
+| Ouchi & Tsuboi: dynamic speaker state                   | Speaker representations change over context.                                                                                 | Participant state is mostly static persona plus raw history.      | Maintain dynamic `ParticipantState`: public stance, obligations, recent acts, participation debt.                                | `dialogue_state.py`                               | Medium     | More realistic adaptation.                           |
+| Ouchi & Tsuboi: context windows                         | They test finite context windows and truncation.                                                                             | Per-turn prompts are too large.                                   | Use short local context plus long-term structured summary.                                                                       | `prompt_context.py`                               | Medium     | Lower token cost.                                    |
+| McCrae & John: FFM dimensions                           | Big Five represent broad emotional/interpersonal/motivational styles.                                                        | Traits can become caricatures.                                    | Map traits to probabilistic tendencies, not deterministic behavior.                                                              | `persona.py`, `behavior_policy.py`                | Medium     | More believable personas.                            |
+| McCrae & John: factor naming and scope                  | FFM names include Extraversion, Agreeableness, Conscientiousness, Neuroticism, Openness.                                     | Need citation basis for Big Five.                                 | Cite McCrae & John in report; keep `response_length` separate.                                                                   | Report, `persona.py`                              | Low        | Stronger theoretical grounding.                      |
+| Engineering inference from FFM                          | Low agreeableness ≠ hard blocker.                                                                                            | Too many stubborn sims.                                           | Add rare explicit `hard_blocker` variable with config cap; keep agreeableness as style/cooperation bias.                         | `persona.py`, `config.yaml`                       | Medium     | Hard blockers fall to target range.                  |
+
+---
+
+## 10. Staged Refactor Plan
+
+### Stage 1: Diagnostics and Logging
+
+Do this before changing behavior.
+
+Add a structured JSONL trace next to each transcript. Each turn should log:
+
+speaker, phase, selected speaker candidates, candidate scores, final selected reason, addressee, reply-to, dialogue act, mentioned options, stance per mentioned option, open question ids, whether the turn answered a question, current leading option, candidate option, consensus decision, moderator intervention reason, force-close reason, tokens in/out, prompt type, and prompt component token estimates.
+
+Metrics to compute:
+
+Stubbornness frequency: percentage of dialogues with a hard blocker who rejects at least two compromise attempts or rejects an option they previously marked acceptable. Target: 0–10%.
+
+Force-close frequency: percentage of dialogues ending through force-close. Track by topic, participant count, moderator style, and number of rejected options.
+
+Consensus success/failure: natural consensus, confirmation success, confirmation rejection, force-close, hard ceiling failure.
+
+Participation balance: participant turn counts, max/min ratio, coefficient of variation, or Gini coefficient.
+
+Phase progression: turns per phase, skipped phases, repeated phase loops, Fisher evidence proportions per phase.
+
+Question-answer compliance: direct questions asked, answered by addressed participant, answered by someone else, ignored, timed out.
+
+Addressee coherence: turns with explicit addressee, turns replying to last addressed speaker, missed direct mentions.
+
+Token cost: setup tokens, dialogue tokens, per prompt type, per participant, per phase, per repeated context component.
+
+Bad-dialogue inspection: save a decision trace summary containing “why this speaker,” “why this phase,” “why this consensus,” “why this moderator line.”
+
+### Stage 2: Configuration Cleanup
+
+Move all behavior-controlling numeric parameters into config.
+
+Likely magic-number areas:
+
+`turn_manager.py`: direct-address weights, pending-question weights, trait weights, recent speaker penalties, repetition overlap thresholds, recent window sizes.
+
+`simulator.py`: word budgets, phase-specific word caps, recent history size, own-points history size, repetition thresholds, softening thresholds, agreeableness/neuroticism cutoffs, closure probability.
+
+`orchestrator.py`: max speaker thresholds, random max-speaker probabilities, vote scoring, compromise scoring, force-close scoring, confirmation rejection cooldown, recent windows, top-option tie margins.
+
+`moderation.py`: repetition thresholds, stall thresholds, speculative-loop thresholds, overlap thresholds, intervention windows.
+
+`consensus.py`: required support counts, primary vote weight, regex window, phrase lists, LLM check interval, reduced-opposition objection signals.
+
+`utils.py`: first-N-word vote extraction windows and ambiguity windows.
+
+`llm_client.py`: request timeout and retry behavior.
+
+Config should be structured, not just a flat bag of values.
+
+Recommended top-level sections:
+
+`llm`
+`simulation`
+`participants`
+`personality`
+`turn_policy`
+`dialogue_acts`
+`phase_policy`
+`consensus`
+`moderation`
+`repetition`
+`prompt_budget`
+`logging`
+`evaluation`.
+
+### Stage 3: Prompt Centralization
+
+Move all LLM-facing text into `prompts.py`.
+
+Specifically move from `simulator.py`:
+
+phase instructions, narrowing base, interaction instructions, position discipline text, skepticism nudge text, forced adaptation text, forbidden opener wording.
+
+Keep non-LLM deterministic message templates either in `prompts.py` or a separate `templates.py`, but every string that reaches an LLM must be built by `prompts.py`.
+
+Define prompt functions around structured inputs:
+
+`option_generation(topic)`
+`persona_group_generation(topic, names, trait_sets, roles)`
+`agent_beliefs_group(topic, personas, options)`
+`realize_turn(turn_plan, speaker_card, public_state, local_context)`
+`classify_stance(turn_text, options)`
+`moderator_realization(intervention_plan, public_state)`
+`consensus_fallback(public_state, recent_turns)`.
+
+Do not pass large unstructured blocks if the same information can be passed as compact state.
+
+### Stage 4: Dialogue State Redesign
+
+Add `dialogue_state.py`.
+
+Core objects:
+
+`DialogueState`
+`TurnRecord`
+`ParticipantState`
+`OptionState`
+`QuestionObligation`
+`PhaseEvidence`
+`ModeratorState`.
+
+During transition, you can keep `history: list[str]` for transcript compatibility, but the actual logic should use `state.turns: list[TurnRecord]`.
+
+Every new turn should go through `state_tracker.update(turn)`.
+
+The state tracker should extract:
+
+speaker, addressee, reply-to, mentioned options, dialogue act, stance, question, answer target, public preference change, condition, blocker, invented-fact warning.
+
+### Stage 5: Turn-Taking Redesign
+
+Replace weighted selection as the primary mechanism with ordered rules:
+
+1. Resolve selected-next-speaker obligations. Direct question to Riley → Riley has first priority.
+2. Resolve open adjacency pairs. If someone asks a group question, choose among participants with relevant stance or knowledge.
+3. Allow self-selection. Score by participation debt, relevance, novelty, phase need, extraversion, and current unresolved issue.
+4. Allow current-speaker continuation only if useful and no other obligation exists.
+5. Allow silence or moderator intervention if nobody has a meaningful move.
+6. Limit multi-speaker rounds. If two speakers are selected, order them by obligation strength.
+
+This applies Sacks/Schegloff/Jefferson, MUCA’s “When/Who,” and Ouchi & Tsuboi’s addressee-response framing.
+
+### Stage 6: Big Five Behavior Redesign
+
+Separate three things:
+
+Personality traits: stable broad tendencies.
+Dialogue role/state: current obligations and public stance.
+Hard blocking: rare latent behavior state.
+
+Trait effects should be probabilistic:
+
+Openness: increases reframing, alternative exploration, and willingness to consider novel compromise.
+Conscientiousness: increases criteria-based reasoning, consistency, and reluctance to flip without evidence.
+Extraversion: increases self-selection probability, reaction frequency, and longer turns.
+Agreeableness: increases softening, validation, compromise probability, and reduced face-threatening disagreement.
+Neuroticism: increases risk salience, worry language, and sensitivity to unresolved uncertainty.
+
+Hard blocker design:
+
+Sample at dialogue level, not participant level.
+Config: `hard_blocker_dialogue_probability`, target 0.0–0.10.
+Config: `max_hard_blockers = 1`.
+A hard blocker must have a clear public reason.
+A hard blocker can still accept a compromise if their stated blocker condition is met.
+Low agreeableness alone never implies hard blocking.
+
+### Stage 7: Consensus and Phase Redesign
+
+Use Fisher as the core model.
+
+Each turn updates option-level evidence:
+
+`support`
+`oppose`
+`ambiguous`
+`conditional_support`
+`blocker`
+`neutral`.
+
+Phase detector:
+
+Orientation: many neutral/ambiguous/clarification acts, low strong opposition.
+Conflict: opposition and challenge acts rise.
+Emergence: opposition declines; ambiguous and conditional support increase around one candidate.
+Reinforcement: explicit support/confirmation dominates; opposition and ambiguity are low.
+
+Consensus detector:
+
+A candidate can be “emerging” before it is final.
+A candidate is final only if visible support threshold is reached, no unresolved hard blocker remains, and conditions are either accepted or minor.
+A 2-vs-1 majority in a 3-person group should usually be “majority candidate,” not full consensus, unless the dissenter has softened to conditional acceptance.
+Confirmation should test public acceptance, not private belief compatibility.
+
+LLM fallback should classify ambiguous stances, not replace deterministic state.
+
+### Stage 8: LLM / Token Optimization
+
+Reduce setup calls.
+
+Current setup uses option generation, role assignment, one persona-concept call per participant, and one belief call per participant. 
+
+Better:
+
+1 option-generation call.
+1 group persona call for all participants.
+1 group belief call for all participants, or deterministic belief assignment plus one validation call.
+
+Reduce per-turn prompt.
+
+Current prompt repeats too much. Replace it with:
+
+speaker card: 2–4 lines;
+current act plan: one structured instruction;
+relevant options only;
+last 4–6 local turns;
+open obligations;
+public stance summary;
+strict output length.
+
+Do not resend full backstory every turn. Do not resend all options if only one or two are relevant. Do not ask the LLM to infer consensus or phase inside every participant turn.
+
+Use deterministic modules for:
+
+speaker selection, addressee selection, phase update, support/opposition counting, participation balance, compromise candidate scoring, force-close candidate selection.
+
+Use LLM for:
+
+option generation, persona text, natural utterance realization, nuanced moderator wording, ambiguous stance classification, optional final evaluator.
+
+A realistic target for 3 participants:
+
+Setup input: under 8k–12k tokens.
+Per-turn input: 500–900 tokens initially; later 350–700 if state is compact.
+25-turn dialogue: roughly 12.5k–22.5k dialogue input tokens.
+Total: roughly 20k–35k input tokens instead of 60k.
+
+More aggressive target after refactor: 15k–25k total input tokens for typical 3-person dialogue.
+
+### Stage 9: Evaluation
+
+Evaluate generated dialogues quantitatively and qualitatively.
+
+Quantitative metrics:
+
+force-close rate;
+hard-blocker rate;
+natural consensus rate;
+confirmation rejection rate;
+average turns per phase;
+phase transition validity;
+participation Gini/CV;
+direct-question answer rate;
+addressee-reply compliance;
+stance consistency;
+vote flip count;
+repetition overlap;
+invented fact count;
+token cost per dialogue;
+tokens per successful consensus;
+LLM call count per dialogue.
+
+Qualitative rubric, 1–5:
+
+naturalness,
+coherence,
+human-likeness,
+non-scriptedness,
+disagreement plausibility,
+compromise plausibility,
+ending quality,
+personality distinctiveness,
+topic grounding.
+
+If you use Delidata or other real group-chat data later, compare distributions:
+
+turn length,
+speaker share,
+top-speaker fraction,
+question-answer adjacency rate,
+agreement/disagreement marker rate,
+phase length proxy,
+topic-shift rate.
+
+---
+
+## 11. Config Centralization Plan
+
+Use config for all behavior-changing values.
+
+Recommended sections:
+
+```yaml
+llm:
+  provider: ...
+  models: ...
+  sampling:
+    temperature: ...
+    top_p: ...
+    top_k: ...
+  timeouts:
+    request_seconds: ...
+  retries:
+    max_json_repairs: ...
+
+simulation:
+  num_participants: ...
+  num_participants_random: ...
+  max_rounds: ...
+  hard_ceiling: ...
+
+personality:
+  trait_scale:
+    min: 1
+    max: 5
+  distributions:
+    agreeableness:
+      type: triangular
+      min: 1
+      mode: 3
+      max: 5
+  hard_blocker:
+    dialogue_probability: 0.05
+    max_per_dialogue: 1
+
+turn_policy:
+  obligation_weights:
+    direct_question: ...
+    direct_mention: ...
+    reply_to_disagreement: ...
+  self_selection_weights:
+    extraversion: ...
+    participation_debt: ...
+    novelty: ...
+    phase_relevance: ...
+  penalties:
+    last_speaker: ...
+    recent_speaker: ...
+    repetition: ...
+  windows:
+    recent_speakers: ...
+    recent_turns: ...
+
+phase_policy:
+  window_size: ...
+  min_turns_before_conflict: ...
+  emergence:
+    opposition_decline_threshold: ...
+    ambiguity_rise_threshold: ...
+  reinforcement:
+    support_rate_threshold: ...
+
+consensus:
+  support_thresholds:
+    unanimous_required_phases: [...]
+    max_unresolved_blockers: ...
+  stance_weights:
+    support: ...
+    conditional_support: ...
+    ambiguous: ...
+    oppose: ...
+    blocker: ...
+  llm_fallback:
+    enabled: true
+    interval_turns: ...
+
+moderation:
+  narrowing:
+    min_turns_per_participant: ...
+    max_negotiation_turns: ...
+  escalation:
+    rounds_level_1: ...
+    rounds_level_2: ...
+    rounds_level_3: ...
+  force_close:
+    enabled: true
+    vote_weight: ...
+    primary_tiebreak_weight: ...
+
+prompt_budget:
+  recent_turns_short: ...
+  recent_turns_long: ...
+  max_turn_prompt_tokens: ...
+  max_options_in_turn_prompt: ...
+  summarize_after_turn: ...
+
+logging:
+  write_jsonl_trace: true
+  write_csv: true
+  write_token_log: true
+```
+
+Avoid config bloat by grouping related values into maps and using clear names. Do not expose every constant if it is not behavior-changing. But if changing the value changes dialogue behavior, it belongs in config.
+
+---
+
+## 12. Prompt Centralization Plan
+
+Current `prompts.py` is the right place, but the centralization is incomplete. 
+
+Move all LLM-facing strings into `prompts.py`, including:
+
+phase instructions currently built in `simulator.py`;
+narrowing instructions;
+interaction instructions;
+position-discipline messages;
+skepticism nudges;
+forced adaptation text;
+repair prompts;
+moderator intervention instructions if any are assembled elsewhere.
+
+Then make non-prompt modules pass structured data only.
+
+Bad pattern:
+
+```python
+phase_instruction = "The group is trying to land somewhere..."
+prompt = prompts.sim_turn(..., phase_instruction=phase_instruction)
+```
+
+Better pattern:
+
+```python
+prompt = prompts.sim_turn(
+    speaker_card=speaker_card,
+    turn_plan=turn_plan,
+    public_state=public_state,
+    context=context,
+    config=prompt_config,
+)
+```
+
+Inside `prompts.py`, build the exact instruction text.
+
+Also separate stable and dynamic prompt components:
+
+Stable speaker card: name, role, compact style, stable preference anchor.
+Dynamic state: current phase, open obligation, target addressee, candidate option, unresolved condition.
+Local context: last few relevant turns.
+Output contract: one message only, max word budget.
+
+This should reduce both token cost and prompt inconsistency.
+
+---
+
+## 13. Token Efficiency Plan
+
+The current token problem is structural. The simulator repeatedly sends stable information. The setup also uses multiple per-participant calls. 
+
+Priority changes:
+
+First, combine setup calls. Generate all participant profiles in one group prompt. Generate all beliefs in one group prompt. This alone can save repeated topic/options/context tokens.
+
+Second, replace full persona context with a compact speaker card. Example:
+
+```text
+Speaker: Riley
+Role: main traveler
+Voice: reserved, practical, short turns
+Public leaning: prefers B, could accept C if timing is handled
+Current obligation: answer Casey's concern about cost
+```
+
+Third, send only relevant option facts. If the turn concerns Option B vs C, do not resend A and D unless needed.
+
+Fourth, use local context plus structured memory:
+
+local context: last 4–6 turns;
+structured memory: current public stances and unresolved blockers;
+long summary: updated every N turns, not every turn.
+
+Fifth, remove repeated “do not” lists from normal turns. Convert them into deterministic validators. For example, instead of repeatedly saying “do not invent facts,” check after generation whether the turn mentions unsupported attributes. If it does, repair once.
+
+Sixth, reduce LLM consensus checks. Use deterministic stance tracking first. Call LLM only when a newly generated turn’s stance is ambiguous or when deterministic consensus is uncertain.
+
+Seventh, log prompt component sizes so you can prove improvement.
+
+Expected reduction:
+
+Current reported: about 60k input / 3k output.
+After setup compression and compact per-turn prompts: likely 20k–35k input.
+After structured state and fewer LLM evaluator/moderator calls: likely 15k–25k input for typical 3-participant runs.
+
+---
+
+## 14. Evaluation Plan
+
+Evaluation should become part of the generation pipeline, not an afterthought.
+
+Batch metrics:
+
+Run 50–100 dialogues with fixed random seeds before refactor. Save baseline metrics. Repeat after each stage.
+
+Core metrics:
+
+`force_close_rate`
+`natural_consensus_rate`
+`confirmation_success_rate`
+`hard_blocker_rate`
+`avg_turns_per_dialogue`
+`avg_turns_per_phase`
+`participation_gini`
+`top_speaker_fraction`
+`question_answer_rate`
+`direct_address_response_rate`
+`stance_flip_rate`
+`condition_resolution_rate`
+`invented_fact_rate`
+`repetition_overlap_rate`
+`tokens_in_per_dialogue`
+`tokens_in_per_successful_dialogue`.
+
+Stubbornness metric:
+
+A participant is a hard blocker only if all are true:
+
+They explicitly oppose the current candidate.
+They reject at least one tested compromise.
+They provide a blocker condition or refusal.
+Their opposition persists across at least two relevant turns.
+The rejected option was not merely outside their top preference but treated as unacceptable.
+
+This distinction prevents ordinary disagreement from being counted as stubbornness.
+
+Consensus correctness metric:
+
+For each final decision, compare final selected option against public stances:
+
+valid consensus: all support or conditionally accept;
+valid majority: majority supports, dissenter explicitly accepts or abstains;
+invalid consensus: at least one unresolved blocker;
+force-close: no consensus but system selected best available option.
+
+Naturalness evaluation:
+
+Manually rate 20 dialogues after each major refactor. Keep a small regression set of bad examples and good examples. Rate:
+
+local coherence,
+reply correctness,
+non-repetition,
+persona distinctiveness,
+disagreement plausibility,
+compromise plausibility,
+ending quality.
+
+If real dialogue data is available, compare distributions rather than exact content. For your project, distributional similarity is more defensible than claiming true psychological realism.
+
+---
+
+## 15. Concrete Next Tasks
+
+1. Add a JSONL trace logger without changing behavior.
+
+2. Batch-run the current system on 50–100 topics with fixed seeds.
+
+3. Compute baseline metrics: force-close rate, hard-blocker rate, consensus success rate, participation balance, question-answer rate, token cost.
+
+4. Create a `metrics.py` or `evaluate_logs.py` script that reads transcript/CSV/JSONL and outputs a summary table.
+
+5. Move every behavior-changing number currently in `turn_manager.py`, `simulator.py`, `consensus.py`, `moderation.py`, `orchestrator.py`, `utils.py`, and `llm_client.py` into `config.yaml`.
+
+6. Move all LLM-facing prompt fragments from `simulator.py` into `prompts.py`.
+
+7. Add `dialogue_state.py` with `TurnRecord`, `ParticipantState`, `OptionState`, `QuestionObligation`, and `PhaseEvidence`.
+
+8. Keep `history: list[str]` temporarily, but add `state.turns: list[TurnRecord]` as the source of truth.
+
+9. Implement a first rule-based `state_tracker.py` that extracts speaker, addressee, mentioned options, questions, reply-to, and simple stance.
+
+10. Replace consensus phrase checks with stance-based candidate tracking while keeping the old detector as fallback.
+
+11. Add Fisher-style phase evidence: rolling counts of support, opposition, ambiguity, and conditional support.
+
+12. Refactor `TurnManager` into `turn_policy.py` with ordered obligations: selected next speaker, open question, self-selection, continuation.
+
+13. Add `act_planner.py` so selected speakers receive a concrete move such as answer, oppose, concede, clarify, conditionally accept, confirm, or stay silent.
+
+14. Modify `Simulator` so it only realizes a planned act instead of deciding behavior internally.
+
+15. Redesign Big Five mapping so traits bias probabilities and style, not hard refusal.
+
+16. Add explicit rare hard-blocker sampling in config, capped at one participant and target 0–10% of dialogues.
+
+17. Combine persona setup calls: one group persona call and one group belief call.
+
+18. Compress per-turn prompts to speaker card, act plan, relevant option facts, local context, and public state summary.
+
+19. Add invented-fact detection against option text and repair once when needed.
+
+20. After the above, rerun the baseline batch and compare metrics before making further prompt changes.
+
+
+
+
+>> Here I gave the LLM your answer and asked to combine both things:
+Yes. The other response adds several useful concrete observations, but it also contains a few claims I would not adopt as-is.
+
+The best new insight is the **confirmation rollback loop**: if a single “no” during confirmation resets agreement and sends the system back into re-litigation, the dialogue can get trapped in repeated rejection → retest → rejection → force-close. That is more specific than my earlier “force-close happens too often” diagnosis and should be logged/fixed explicitly. The other response also correctly emphasizes that `force_close` and compromise scoring should use **visible public stances**, not hidden private beliefs mixed with vote weights. It also adds a good implementation tactic: run the new structured state in parallel first, without changing behavior, so you can compare old and new logic before switching. 
+
+The most questionable part is its claim that prompt construction is “entirely in `prompts.py`.” Based on the uploaded code, that is not fully true. `prompts.py` is the prompt registry, but `simulator.py` still constructs important LLM-facing instruction text such as narrowing instructions, phase behavior, interaction instructions, position discipline, and skepticism nudges before passing them into prompt functions. That still violates your hard requirement that all LLM prompt text lives in `prompts.py`.  
+
+Another questionable recommendation is the hard cap “after N holdout turns, force the persona to concede.” That can reduce stubbornness numerically, but it can also create fake agreement. Better: cap the probability of generating true hard blockers at the dialogue/persona sampling level, then model blockers with explicit conditions. If the condition is addressed, they may soften; if not, the dialogue may legitimately fail. Low agreeableness should not directly become “must block.” McCrae & John support Big Five traits as broad trait dimensions, not deterministic scripts. 
+
+Below is the merged master plan I would use.
+
+---
+
+# Master Plan: Scientifically Grounded Multi-Party Dialogue Simulator
+
+## 1. Core Diagnosis
+
+Your current architecture is a strong prototype, not a broken system. The major components are already present: `Orchestrator`, `PersonaBuilder`, `Simulator`, `TurnManager`, `ConsensusDetector`, `ModerationEngine`, `DialogueLogger`, `LLMClient`, config loading, and a centralized `prompts.py` direction. `CLAUDE.md` also shows that the intended design is already clear: controlled decision dialogue with stable personas, grounded disagreement, answer obligations, compromise testing, varied message length, and non-scripted progression. 
+
+The main weakness is that the system still treats the transcript as the source of truth. Many things are recomputed from `list[str]` history: votes, addressees, pending questions, repeated points, current leading option, consensus, and phase evidence. That produces brittle regex logic, repeated prompt instructions, expensive context windows, and uncontrolled LLM behavior.
+
+The correct target is not “better prompts only.” The correct target is:
+
+state tracking → turn/addressee selection → dialogue-act planning → compact LLM realization → stance update → phase/consensus update → moderator policy → logging/evaluation.
+
+The LLM should mostly produce natural wording for a planned conversational move. It should not repeatedly infer the whole group state from raw chat history.
+
+---
+
+## 2. Best New Insights from the Other Response
+
+The other response adds these important points:
+
+First, the **confirmation rejection path** deserves special attention. A single rejection during confirmation can reset the agreement state, reopen discussion, send priority back to the rejecting speaker, and often trigger another failed confirmation. This should become a measured failure mode: `confirmation_rejection_count`, `same_candidate_retested`, `reopened_after_confirmation`, and `force_closed_after_confirmation_failure`. 
+
+Second, the system should distinguish **visible public stance** from **private belief state** more strictly. Private `AgentBeliefs` are useful for generating coherent persona behavior, but final consensus and force-close should be justified from public dialogue evidence. This matches your own project goal: the transcript must make the outcome defensible.
+
+Third, the response correctly identifies that Fisher-style “emergence” should not merely mean “everyone voted and no regex consensus was found.” Fisher’s useful signal is the changing pattern of favorable, unfavorable, and ambiguous statements over time. The current `ConsensusDetector` has a “reduced opposition” tier, but it is still not a proper stance-evidence model. 
+
+Fourth, the response is right that refactoring should be staged by running new structured state **in parallel** first. Do not rip out the old detector immediately. Add `TurnRecord`, `StanceTable`, and `DiscourseGraph`, populate them during each turn, log both old and new decisions, and compare.
+
+Fifth, it gives a useful practical token insight: a large amount of input cost comes from resending stable context every simulator turn: persona, options, voice/style rules, beliefs, repeated constraints, and recent history. The current `PersonaBuilder` pipeline also documents setup as `2N + 2` LLM calls per dialogue: options, roles, N persona concepts, and N belief generations. 
+
+---
+
+## 3. Important Problems in the Other Response
+
+Do not adopt these parts uncritically.
+
+The statement “prompt construction is entirely in `prompts.py`” is too optimistic. `prompts.py` is the main prompt registry, but `simulator.py` still builds LLM-facing behavioral strings. For your requirement, those strings must move into `prompts.py`.  
+
+The proposed hard rule “after N blocking turns, force concession” is risky. It can produce exactly the kind of fake consensus you want to avoid. Replace it with a sampled, logged, rare hard-blocker model and condition-based softening.
+
+The proposed Fisher transition rule “orientation → conflict when unfavorable exceeds ambiguity; conflict → emergence when ambiguity exceeds unfavorable” is too mechanical. Fisher’s phases are useful as evidence trends, not exact thresholds. Use rolling evidence and confidence, not one hard phase switch.
+
+“Cached system message” is not equally available across Gemini, Groq, and your university endpoint. You can still split stable and dynamic prompt components, but do not assume real provider-side prompt caching. Treat caching as an optional optimization. The portable improvement is prompt compression, not API caching.
+
+The recommendation to remove fallback options entirely is too strong. Better: add config modes. In development, fail fast if option generation fails. In batch production, optionally use fallback but log `option_generation_failed=true`. Silent fallback is bad; explicit fallback is acceptable.
+
+The suggested target `force_close_rate ≤ 30%` may be too high or too low depending on topic type and participant count. Use it as an initial diagnostic, not a scientific target. More meaningful: true hard-blocker dialogue rate should be near your design target, for example 0–10%, while force-close should be explainable from public stance evidence.
+
+---
+
+## 4. Target Architecture
+
+The merged target architecture should be:
+
+`dialogue_state.py`
+Central dataclasses.
+
+`state_tracker.py`
+Updates structured state after every turn.
+
+`turn_policy.py`
+Implements Sacks/Schegloff/Jefferson-style speaker selection.
+
+`act_planner.py`
+Chooses the dialogue act before generation.
+
+`prompts.py`
+Contains every LLM-facing prompt string and prompt builder.
+
+`realizer.py` or simplified `simulator.py`
+Calls the LLM to realize a planned act in persona voice.
+
+`stance_tracker.py` / `consensus.py`
+Tracks option support, opposition, ambiguity, conditional support, and blockers.
+
+`phase_detector.py`
+Computes Fisher-style phase evidence.
+
+`moderation.py`
+Handles moderator strategy and escalation from structured state.
+
+`prompt_context.py` or `token_manager.py`
+Builds compact prompt context.
+
+`logger.py`
+Writes transcript, CSV, JSONL trace, token logs, and per-dialogue summaries.
+
+`metrics.py` / `tools/analyze_logs.py`
+Computes batch diagnostics.
+
+The existing `orchestrator.py` should become thinner. It should coordinate the loop, not contain all decision logic.
+
+---
+
+## 5. Central Data Model
+
+Add these objects.
+
+```python
+@dataclass
+class TurnRecord:
+    turn_id: int
+    speaker: str
+    text: str
+    phase: str
+    is_moderator: bool
+    addressees: list[str]
+    reply_to: int | None
+    dialogue_act: str
+    mentioned_options: list[str]
+    stance_updates: list["StanceUpdate"]
+    is_question: bool
+    answers_question_id: int | None
+    selected_reason: str
+    tokens_in: int
+    tokens_out: int
+    prompt_type: str
+```
+
+```python
+@dataclass
+class StanceUpdate:
+    speaker: str
+    option: str
+    stance: Literal[
+        "support",
+        "oppose",
+        "ambiguous",
+        "conditional_support",
+        "blocker",
+        "neutral"
+    ]
+    confidence: float
+    condition: str | None = None
+```
+
+```python
+@dataclass
+class ParticipantState:
+    name: str
+    public_preference: str | None
+    public_stances: dict[str, str]
+    unresolved_conditions: dict[str, str]
+    hard_blockers: dict[str, str]
+    open_questions_to_answer: list[int]
+    turn_count: int
+    last_spoke_turn: int | None
+    participation_debt: float
+    recent_dialogue_acts: list[str]
+    strategy_cooldowns: dict[str, int]
+    is_true_hard_blocker: bool
+```
+
+```python
+@dataclass
+class OptionState:
+    option_id: str
+    supporters: set[str]
+    opponents: set[str]
+    ambiguous: set[str]
+    conditional_supporters: dict[str, str]
+    hard_blockers: dict[str, str]
+    support_score: float
+    opposition_score: float
+    last_mentioned_turn: int
+```
+
+```python
+@dataclass
+class DiscourseGraph:
+    pending_questions: dict[int, str]
+    reply_edges: dict[int, int]
+    last_addressed: str | None
+    open_invitations: list[int]
+```
+
+This is the single most important architectural change. Once this exists, consensus, phase tracking, turn-taking, moderation, and logging can stop re-parsing transcript strings.
+
+---
+
+## 6. Paper Mapping into Implementation
+
+| Paper / Concept                                         | Implementation meaning                                                                            | Concrete module change                                   |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Fisher: favorable / unfavorable / ambiguous statements  | Track stance evidence per option and participant                                                  | `stance_tracker.py`, `phase_detector.py`, `consensus.py` |
+| Fisher: emergence                                       | Detect softening: opposition decreases, ambiguity/conditional support increases                   | `phase_detector.py`                                      |
+| Fisher: reinforcement                                   | Closure only after visible support dominates and unresolved blockers are gone                     | `consensus.py`, `moderation.py`                          |
+| Sacks/Schegloff/Jefferson: selected next speaker        | Direct questions and address terms create response obligations                                    | `turn_policy.py`, `DiscourseGraph`                       |
+| Sacks/Schegloff/Jefferson: self-selection               | If no one is selected, participants self-select based on relevance/personality/participation debt | `turn_policy.py`                                         |
+| Sacks/Schegloff/Jefferson: current speaker continuation | Rare continuation if no other speaker has priority                                                | `turn_policy.py`                                         |
+| MUCA: What / When / Who                                 | Separate act planning, turn timing, addressee selection                                           | `act_planner.py`, `turn_policy.py`                       |
+| MUCA: dialog analyzer                                   | Periodically update public state, topic/option status, participant features                       | `state_tracker.py`                                       |
+| Ouchi & Tsuboi: addressee-response selection            | Every turn needs addressee and reply-to metadata                                                  | `TurnRecord`, `DiscourseGraph`                           |
+| McCrae & John: Big Five as broad traits                 | Traits bias probabilities and style, not scripted phrases                                         | `persona.py`, `act_planner.py`, `turn_policy.py`         |
+
+Fisher gives your phase and consensus evidence model. Sacks/Schegloff/Jefferson gives your turn-allocation rule cascade. MUCA gives your architectural separation of What/When/Who. Ouchi & Tsuboi gives your addressee/reply-to representation. McCrae & John justifies the Big Five trait framework, but the exact mapping from traits to simulator behavior is your engineering design.     
+
+---
+
+## 7. Master Refactor Plan
+
+### Stage 1 — Diagnostics and Logging
+
+Do this first.
+
+Add JSONL trace logging. Keep the transcript clean, but log the full machine state per turn.
+
+Add per-turn fields:
+
+`dialogue_act`, `addressee`, `reply_to`, `stance_updates`, `mentioned_options`, `selected_reason`, `candidate_speakers`, `speaker_scores`, `open_questions`, `phase_evidence`, `consensus_state`, `moderator_intervention_type`, `tokens_in`, `tokens_out`, `prompt_type`.
+
+Add per-dialogue summary:
+
+`outcome`, `force_close_reason`, `confirmation_rejection_count`, `phase_durations`, `hard_blocker_present`, `holdout_turns_by_speaker`, `consensus_tier_used`, `vote_flips`, `token_total`, `input_output_ratio`.
+
+Create `tools/analyze_logs.py`.
+
+Compute:
+
+force-close rate, consensus success rate, confirmation rollback rate, hard-blocker rate, participation balance, question-answer rate, addressee-response compliance, repetition rate, phase progression, invented-fact rate, and token cost per component.
+
+Do not change behavior yet.
+
+### Stage 2 — Config Cleanup
+
+Your `config_loader.py` already supports the required direction. 
+
+Move all behavior-changing numbers into `config.yaml`.
+
+Use sections:
+
+`llm`, `simulation`, `participants`, `personality`, `stubbornness`, `turn_policy`, `dialogue_acts`, `phase_policy`, `consensus`, `moderation`, `repetition`, `prompt_budget`, `logging`, `evaluation`.
+
+Specific numbers to move:
+
+turn weights, direct-address boosts, recent-speaker penalties, max-speaker probabilities, word budgets, response caps, repetition thresholds, Jaccard thresholds, speculative-loop thresholds, escalation thresholds, consensus windows, LLM-check intervals, force-close scoring weights, compromise scoring weights, retry limits, history-window sizes, token budgets.
+
+### Stage 3 — Prompt Centralization
+
+Move all LLM-facing text into `prompts.py`.
+
+This includes text currently built in `simulator.py`:
+
+narrowing instructions, phase instructions, interaction instructions, position discipline, skepticism nudges, forced adaptation text, forbidden opener wording, closure instructions if LLM-facing.
+
+After this stage, other modules may pass structured values, but they must not assemble prompt prose.
+
+Bad:
+
+```python
+instruction = "You are the remaining holdout. Name your concrete dealbreaker..."
+```
+
+Good:
+
+```python
+prompt = prompts.sim_turn(
+    speaker=speaker_card,
+    turn_plan=turn_plan,
+    state=public_state,
+    context=local_context,
+)
+```
+
+Inside `prompts.py`, build the prose.
+
+### Stage 4 — Prompt/Token Compression
+
+Separate stable and dynamic context.
+
+Stable per dialogue/persona:
+
+topic, options, persona name, role, compact backstory, goal, Big Five summary, private beliefs, allowed known facts.
+
+Dynamic per turn:
+
+phase, current act plan, addressee/reply target, relevant options only, last 4–6 turns, unresolved question/condition, public stance summary.
+
+Do not resend full stable blocks as large free text if a compact speaker card is enough.
+
+Target prompt shape:
+
+```text
+Speaker card:
+- Riley, primary traveler
+- reserved, practical, short turns
+- prefers B; can accept C if cost is handled
+
+Current public state:
+- Candidate: B
+- Casey supports B
+- Blake conditionally accepts B if timing is clear
+- Riley has unresolved concern: baggage fee
+
+Your planned act:
+Answer Blake directly and state whether B is acceptable if the fee is included.
+
+Recent context:
+...
+```
+
+This is more controllable than a long “be natural, avoid repetition, remember your personality, follow your beliefs” prompt.
+
+### Stage 5 — Dialogue State Redesign
+
+Add the new state objects and populate them in parallel with old logic.
+
+At first, do not use the new state for decisions. Just log it and compare.
+
+`state_tracker.py` should parse each new turn once and update:
+
+speaker, addressee, reply-to, dialogue act, mentioned options, stance updates, question obligations, answered questions, preference changes, blockers, conditions.
+
+The old `history: list[str]` can remain for transcript output, but the new logic should gradually migrate to `state.turns`.
+
+### Stage 6 — Turn-Taking Redesign
+
+Replace pure weighted speaker selection with a rule cascade.
+
+Order:
+
+1. Direct question to named participant → that participant has first priority.
+2. Direct mention or challenge → addressed participant has high priority.
+3. Open group question → self-selection among relevant participants.
+4. No obligation → self-selection based on participation debt, phase need, personality, and stance relevance.
+5. No useful participant move → moderator may intervene.
+6. Rarely, current speaker may continue.
+
+This keeps Sacks/Schegloff/Jefferson as the theoretical basis while still using probabilities for natural variation.
+
+Keep old `TurnManager` behind a config flag for A/B testing.
+
+### Stage 7 — Dialogue-Act Planner
+
+Add `act_planner.py`.
+
+Before the LLM writes a turn, choose the intended act:
+
+`GREET`, `OPEN_PRIORITY`, `ASSERT_SUPPORT`, `ASSERT_OPPOSITION`, `ASK_CLARIFICATION`, `ANSWER`, `CHALLENGE`, `CONCEDE`, `CONDITIONAL_ACCEPT`, `PROPOSE_COMPROMISE`, `COMMIT_VOTE`, `CONFIRM`, `REJECT_WITH_REASON`, `GOODBYE`, `SILENCE`.
+
+The LLM receives one act plan, not a pile of competing instructions.
+
+Example:
+
+```python
+TurnPlan(
+    speaker="Riley",
+    addressee="Blake",
+    reply_to=17,
+    act="CONDITIONAL_ACCEPT",
+    target_option="B",
+    condition="only if baggage fee is included",
+    max_words=32,
+)
+```
+
+This will reduce scriptedness because the structure varies explicitly.
+
+### Stage 8 — Big Five Redesign
+
+Keep Big Five traits, but remove caricature phrases.
+
+Traits should affect probabilities:
+
+Openness:
+more reframing, more alternative exploration, more willingness to consider unusual compromise.
+
+Conscientiousness:
+more criteria-based reasoning, more consistency, less random vote flipping, more concern about missing details.
+
+Extraversion:
+higher self-selection probability, more reactions, slightly longer turns.
+
+Agreeableness:
+more validation, more softening, more compromise, less direct face-threatening disagreement.
+
+Neuroticism:
+more risk salience, more worry, more sensitivity to unresolved uncertainty.
+
+Do not map:
+
+low agreeableness → hard blocker
+high neuroticism → hard blocker
+high conscientiousness → never changes mind
+
+Add explicit rare hard-blocker sampling:
+
+```yaml
+stubbornness:
+  hard_blocker_dialogue_probability: 0.05
+  max_hard_blockers_per_dialogue: 1
+  require_public_reason: true
+  allow_softening_if_condition_met: true
+```
+
+A blocker should have a condition or concrete reason. If the condition is addressed, they may soften. If not, failure is plausible.
+
+### Stage 9 — Consensus and Phase Redesign
+
+Replace “vote counting plus fallback” with stance evidence.
+
+Each option has public stance evidence:
+
+support, opposition, ambiguity, conditional support, blockers.
+
+Fisher phase evidence:
+
+Orientation:
+many neutral/ambiguous/clarification turns, low strong opposition.
+
+Conflict:
+opposition and challenge increase.
+
+Emergence:
+opposition decreases, ambiguity and conditional support increase around one candidate.
+
+Reinforcement:
+support/confirmation dominates, opposition is low, conditions are resolved or accepted.
+
+Consensus states:
+
+`none`
+`candidate_emerging`
+`majority_candidate`
+`conditional_consensus`
+`full_consensus`
+`blocked`
+`failed`.
+
+Closure requires:
+
+visible support or conditional support from all/most participants depending on config, no unresolved hard blocker, and confirmation not contradicted by public stances.
+
+Force-close should be renamed conceptually to something like `best_available_decision` and should be explicitly logged as non-consensus.
+
+### Stage 10 — Moderator Redesign
+
+Moderator policy should act on structured state.
+
+Interventions:
+
+clarify unresolved condition, ask addressed participant to answer, ask holdout for concrete blocker, summarize emerging candidate, test compromise, invite backup option, confirm decision, declare failure/no consensus.
+
+Avoid generic “can we agree?” prompts if the state says the actual issue is one participant’s unresolved condition.
+
+The moderator should not force closure merely because rounds passed. It should force or fail only when:
+
+max rounds reached, no stance movement, repeated unresolved blocker, or no candidate has enough support.
+
+### Stage 11 — Grounding / Fact Control
+
+Add `KNOWN_FACTS`.
+
+The options generated by the moderator are the shared factual ground. Persona backstory may explain preferences, but it must not invent facts about the current options.
+
+Post-turn validator:
+
+Check whether a generated turn asserts concrete attributes not present in option text or previous public dialogue. If yes, repair once.
+
+Use deterministic checks first. Use LLM fact-check only for ambiguous cases, because LLM fact-checking adds cost.
+
+### Stage 12 — Evaluation
+
+Create a fixed `eval_scenarios.txt`.
+
+Run current baseline first. Then after each stage, run the same topics with fixed seeds.
+
+Quantitative metrics:
+
+force-close rate, true hard-blocker rate, consensus success rate, confirmation rollback rate, question-answer rate, addressee response rate, phase progression, participation Gini, top-speaker fraction, repetition rate, invented-fact rate, vote-flip rate, token cost per dialogue, token cost per successful dialogue.
+
+Qualitative rubric:
+
+naturalness, coherence, human-likeness, local reply correctness, disagreement plausibility, compromise plausibility, ending quality, persona distinctiveness, topic grounding.
+
+---
+
+## 8. Concrete Next Tasks, in Order
+
+1. Add JSONL trace logging without changing generation behavior.
+
+2. Add `tools/analyze_logs.py` to compute current baseline metrics.
+
+3. Log confirmation rejection and confirmation rollback separately.
+
+4. Log force-close reason and whether force-close happened after failed confirmation.
+
+5. Move all obvious numeric constants from code into config.
+
+6. Move all LLM-facing prompt fragments from `simulator.py` into `prompts.py`.
+
+7. Remove or soften prompt phrases that directly model low-agreeableness/high-neuroticism as adversarial wording.
+
+8. Add `TurnRecord` and populate it in parallel with current `history`.
+
+9. Add `StanceUpdate` and a simple deterministic stance parser.
+
+10. Add `DiscourseGraph` for pending questions, addressees, and reply-to links.
+
+11. Add Fisher evidence logging: support/opposition/ambiguous/conditional rates per rolling window.
+
+12. Add config-gated SSJ-style turn selection while keeping old `TurnManager` available.
+
+13. Add `ActPlanner` and pass a single planned dialogue act into simulator generation.
+
+14. Redesign Big Five effects as probability modifiers, not prompt scripts.
+
+15. Add rare explicit hard-blocker sampling with config cap.
+
+16. Replace consensus detection gradually with stance-table consensus.
+
+17. Make confirmation update the stance table instead of using a separate rejection-word scan.
+
+18. Make force-close use only visible public stance evidence.
+
+19. Compress per-turn prompts to speaker card + act plan + relevant state + short local context.
+
+20. Run the fixed eval set and compare against baseline after every major stage.
+
+The most efficient immediate sequence is: diagnostics → config cleanup → prompt centralization → trace state in parallel → turn-taking/stance/consensus refactor. That gives you measurable progress without destabilizing the whole project at once.
+
+
+
+
+Now this is the whole context. 

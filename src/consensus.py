@@ -52,30 +52,39 @@ class ConsensusDetector:
     ) -> Optional[tuple[str, Optional[str]]]:
         """
         Run all tiers in order. Returns (preferred_option, backup_option) or None.
+        Sets state.consensus_tier_last_used to the tier that fired (or "none").
         Guard: everyone must have spoken at least twice before we can detect consensus.
         """
         if participant_turn_count(history) < len(self.sims) * 2:
+            state.consensus_tier_last_used = "none"
             return None
 
         result = self._soft(history, state)
         if result:
+            state.consensus_tier_last_used = "soft"
             return result
 
         result = self._regex(history, expected_option=state.preferred_option)
         if result:
+            state.consensus_tier_last_used = "regex"
             return result
 
         # Reduced-opposition tier: emergence-phase consensus detected by silence of dissent
         result = self._reduced_opposition(history, state)
         if result:
+            state.consensus_tier_last_used = "reduced_opposition"
             return result
 
         if state.phase in {"negotiation", "narrowing", "emergence", "confirmation"}:
             state.llm_check_countdown -= 1
             if state.llm_check_countdown <= 0:
                 state.llm_check_countdown = cfg.consensus.llm_check_every_n_turns
-                return self.llm_check(history)
+                llm_result = self.llm_check(history)
+                if llm_result:
+                    state.consensus_tier_last_used = "llm"
+                    return llm_result
 
+        state.consensus_tier_last_used = "none"
         return None
 
     def llm_check(self, history: list[str]) -> Optional[tuple[str, Optional[str]]]:

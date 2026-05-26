@@ -16,15 +16,17 @@ from __future__ import annotations
 
 import random
 import re
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 from persona import Persona
+from realize.grounding import fact_check as _fact_check, repair_directive as _repair_directive
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
+    from policy.act_planner import TurnPlan
 
 
 class Simulator:
@@ -48,6 +50,7 @@ class Simulator:
         state: "DialogueState",
         all_names: list[str] | None = None,
         forced_adaptation: bool = False,
+        turn_plan: Optional["TurnPlan"] = None,
     ) -> tuple[str, int, int]:
         """Returns (text, tokens_in, tokens_out). Tokens are 0 when skipped."""
         all_names = all_names or []
@@ -55,7 +58,7 @@ class Simulator:
         if state.phase == "closure":
             return self._closure_line(state), 0, 0
 
-        raw = self._generate_decision(history, state, forced_adaptation)
+        raw = self._generate_decision(history, state, forced_adaptation, turn_plan=turn_plan)
         tok_in = self._llm.last_tokens_in
         tok_out = self._llm.last_tokens_out
 
@@ -86,65 +89,31 @@ class Simulator:
         return False
 
     def _generate_decision(
-        self, history: list[str], state: "DialogueState", forced_adaptation: bool
+        self, history: list[str], state: "DialogueState", forced_adaptation: bool,
+        turn_plan: Optional["TurnPlan"] = None,
     ) -> str:
-        narrowing_base = (
-            "Name your current preferred option clearly (e.g. 'I prefer Option A'). "
-            "You may mention a backup if it is genuinely plausible. "
-            "Once you have stated a preference, change it at most once, and only because a specific new point "
-            "actually changes your mind. Do not switch just because the group repeats itself."
+        add_brevity = (
+            (state.repetition_pressure >= cfg.repetition.add_brevity_threshold
+             or state.post_narrowing_rounds >= 2)
+            and state.phase not in {"greeting", "opening", "closure", "confirmation"}
         )
-        if state.phase == "narrowing" and not self._has_voted(history):
-            narrowing_instruction = (
-                "You have not yet stated a preferred option. "
-                "Before anything else this turn, name your preferred option explicitly. "
-                + narrowing_base
-            )
-        elif state.phase == "narrowing":
-            narrowing_instruction = (
-                "You already named your preferred option. Do not repeat 'I prefer Option X'. "
-                "Now give one condition, concern, or possible compromise."
-            )
-        else:
-            narrowing_instruction = narrowing_base
+        phase_instr = prompts.phase_instruction_text(
+            phase=state.phase,
+            add_brevity=add_brevity,
+            has_voted=self._has_voted(history),
+        )
 
-        phase_instructions = {
-            "greeting": (
-                "Say a quick, casual hello. One short line only. "
-                "Do not introduce your role and do not discuss the topic yet."
-            ),
-            "opening": (
-                "Give your first real reaction. Name what matters to you and why, briefly. "
-                "A short concern or question is fine, but do not make the whole turn only a vague question."
-            ),
-            "negotiation": (
-                "Discuss the actual point on the table. Answer if someone asked something, or respond to a claim. "
-                "You may disagree, build on it, give a reason, or make a concrete trade-off. "
-                "Do not simply say your preferred option is better for the same reason again. "
-                "Only use facts listed in the options; do not invent hidden attributes."
-            ),
-            "narrowing": narrowing_instruction,
-            "emergence": (
-                "The group is trying to land somewhere. "
-                "Say what would make the leading option workable, or name the concrete concern that still blocks you. "
-                "Do not repeat your original reason; respond to someone else's objection or offer a compromise condition."
-            ),
-            "confirmation": (
-                "The moderator is asking for final confirmation. "
-                "Reply with an explicit yes or no. A question, hedge, or silence is treated as no. "
-                "Only say no if you have a specific objection you have not yet raised."
-            ),
-            "closure": (
-                "The discussion is over. Write one short goodbye only. "
-                "Nothing about the topic. No opinions. No questions."
-            ),
-        }
+        use_compact = cfg.prompt_budget.use_compact_prompt
+        if use_compact:
+            return self._generate_compact(history, state, forced_adaptation, phase_instr,
+                                           turn_plan=turn_plan)
+        return self._generate_legacy(history, state, forced_adaptation, phase_instr)
 
-        phase_instr = phase_instructions.get(state.phase, "React naturally to the conversation.")
-        if (state.repetition_pressure >= 0.55 or state.post_narrowing_rounds >= 2) \
-                and state.phase not in {"greeting", "opening", "closure", "confirmation"}:
-            phase_instr += " Add only one new useful thing; do not re-explain your full case."
-
+    def _generate_legacy(
+        self, history: list[str], state: "DialogueState",
+        forced_adaptation: bool, phase_instr: str,
+    ) -> str:
+        """Original monolithic prompt — kept for A/B comparison."""
         is_closure = state.phase == "closure"
         prompt = prompts.sim_turn(
             name=self.name,
@@ -161,19 +130,115 @@ class Simulator:
             own_recent_points=self._own_recent_points_block(history),
             recent_history=self._recent_history(history, max_lines=4 if is_closure else 8),
             forbidden_openers=self._recent_openers(history),
-            forbidden_frames=list(cfg.repetition.forbidden_frames),
             beliefs_block="" if is_closure else self._beliefs_block(),
             last_speaker_line="" if is_closure else self._last_participant_line(history),
             position_discipline="" if is_closure else self._position_discipline(state),
-            skepticism_nudge=self._skepticism_nudge(state),
             forced_adaptation=forced_adaptation,
         )
-
         try:
-            return self._llm.generate(prompt).strip()
+            result = self._llm.generate(prompt).strip()
+            return self._ground_check(result, prompt)
         except Exception as exc:
             print(f"!! Turn generation error for {self.name}: {exc}")
             return "[SILENCE]"
+
+    def _generate_compact(
+        self, history: list[str], state: "DialogueState",
+        forced_adaptation: bool, phase_instr: str,
+        turn_plan: Optional["TurnPlan"] = None,
+    ) -> str:
+        """Speaker-card compact prompt (Stage 4). ~50-60% fewer input tokens."""
+        from realize.prompt_context import (
+            build_speaker_card,
+            build_relevant_options,
+            build_group_state,
+            build_rolling_summary,
+            build_local_context,
+            build_move_instruction,
+            build_output_contract,
+        )
+
+        is_closure = state.phase == "closure"
+        n_recent: int = cfg.prompt_budget.recent_turns_short
+
+        speaker_card = build_speaker_card(self.persona)
+
+        candidate = state.candidate_option or state.current_leading_option
+        relevant_opts = build_relevant_options(self.options, self.persona, candidate)
+
+        group_state = "" if is_closure else build_group_state(state)
+
+        rolling = build_rolling_summary(history, older_than_n=n_recent)
+        local_ctx = build_local_context(history, n_recent=n_recent, rolling_summary=rolling)
+
+        interaction_instr = "" if is_closure else self._interaction_instruction(history, state)
+        position_disc = "" if is_closure else self._position_discipline(state)
+        forbidden_openers = self._recent_openers(history)
+
+        move_instr = build_move_instruction(
+            phase_instruction=phase_instr,
+            interaction_instruction=interaction_instr,
+            position_discipline=position_disc,
+            forced_adaptation=forced_adaptation,
+            forbidden_openers=forbidden_openers,
+            turn_plan=turn_plan,
+        )
+
+        output_contract = build_output_contract(
+            max_words=self.persona.max_words(state.phase),
+            name=self.name,
+        )
+
+        prompt = prompts.sim_turn_compact(
+            speaker_card=speaker_card,
+            relevant_options=relevant_opts,
+            group_state=group_state,
+            local_context=local_ctx,
+            move_instruction=move_instr,
+            output_contract=output_contract,
+        )
+
+        try:
+            result = self._llm.generate(prompt).strip()
+            return self._ground_check(result, prompt)
+        except Exception as exc:
+            print(f"!! Turn generation error for {self.name}: {exc}")
+            return "[SILENCE]"
+
+    # ------------------------------------------------------------------
+    # Grounding check (Stage 10)
+    # ------------------------------------------------------------------
+
+    def _ground_check(self, turn_text: str, original_prompt: str) -> str:
+        """
+        Deterministic fact-check.  If suspicious invented facts are found and
+        cfg.grounding.repair_attempts >= 1, regenerate once with an appended
+        directive.  Returns the final turn text (repaired or original).
+        """
+        grounding_cfg = cfg.grounding
+        if not grounding_cfg.enable_fact_check:
+            return turn_text
+
+        flags = _fact_check(turn_text, self.options, self.topic)
+        if not flags:
+            return turn_text
+
+        repair_limit = grounding_cfg.repair_attempts
+        if repair_limit < 1:
+            print(f"  [grounding] {self.name}: invented facts flagged: {flags[:3]}")
+            return turn_text
+
+        print(f"  [grounding] {self.name}: repairing — flagged {flags[:3]}")
+        repair_prompt = original_prompt + "\n\n" + _repair_directive()
+        try:
+            repaired = self._llm.generate(repair_prompt).strip()
+            remaining = _fact_check(repaired, self.options, self.topic)
+            if remaining:
+                print(f"  [grounding] {self.name}: repair did not fully resolve flags {remaining[:3]}")
+            return repaired
+        except Exception as exc:
+            print(f"  [grounding] repair error for {self.name}: {exc}")
+            return turn_text
 
     # ------------------------------------------------------------------
     # Beliefs block
@@ -204,12 +269,7 @@ class Simulator:
     # ------------------------------------------------------------------
 
     def _position_discipline(self, state: "DialogueState") -> str:
-        """
-        Inject a coherence anchor derived from the stable belief state.
-        In negotiation: soft reminder of their lean.
-        In narrowing/confirmation: escalates with flip count.
-        In emergence: facilitates softening toward the candidate option.
-        """
+        """Compute belief-state flags and delegate prose to prompts.position_discipline_block()."""
         if state.phase not in ("negotiation", "narrowing", "emergence", "confirmation"):
             return ""
 
@@ -228,69 +288,26 @@ class Simulator:
             anchor = preferred
             prefix = f"You lean toward Option {anchor} ({beliefs.key_concern})."
 
-        if state.phase == "emergence":
-            candidate = state.candidate_option or state.current_leading_option
-            if candidate and candidate in beliefs.acceptable and candidate != anchor:
-                cond = f" Concession condition: {beliefs.concession}." if beliefs.concession else ""
-                if self.persona.agreeableness >= 4:
-                    return (
-                        f"\n{prefix} Option {candidate} is acceptable."
-                        f"{cond} Give one short condition."
-                    )
-                if self.persona.agreeableness <= 2 or self.persona.neuroticism >= 4:
-                    return (
-                        f"\n{prefix} Option {candidate} is acceptable."
-                        f"{cond} Name one concern before softening."
-                    )
-                return (
-                    f"\n{prefix} Option {candidate} is acceptable."
-                    f"{cond} Soften briefly."
-                )
-            if candidate and candidate in (beliefs.rejected or []):
-                # Soften if: moderately agreeable (>=3) OR spontaneous/flexible (conscientiousness <=2),
-                # AND emergence has been going long enough to warrant a decision.
-                can_soften = (
-                    (self.persona.agreeableness >= 3 or self.persona.conscientiousness <= 2)
-                    and state.emergence_rounds >= 3
-                )
-                if can_soften:
-                    cond = f" Your concession condition: {beliefs.concession}." if beliefs.concession else ""
-                    return (
-                        f"\n{prefix} Option {candidate} is where the group is heading and you can find common ground when needed."
-                        f"{cond} You've raised concerns already — decide now: name one specific condition that would let you accept it,"
-                        " or say it is a genuine dealbreaker and why."
-                    )
-                return (
-                    f"\n{prefix} Option {candidate} is gaining ground but you genuinely oppose it. "
-                    "Acknowledge the direction briefly, then state your specific remaining objection."
-                )
-            if candidate and candidate == anchor:
-                return (
-                    f"\n{prefix} Option {candidate} is gaining ground - it is your preferred choice. "
-                    "Help it land without being heavy-handed."
-                )
-            return (
-                f"\n{prefix} The group is moving toward resolution. "
-                "Let your position soften if it is genuinely softening."
-            )
+        candidate = (state.candidate_option or state.current_leading_option) if state.phase == "emergence" else None
+        rejected_list = beliefs.rejected or []
+        can_soften = (
+            (self.persona.agreeableness >= 3 or self.persona.conscientiousness <= 2)
+            and state.emergence_rounds >= 3
+        )
 
-        coherence = f" Stay consistent with Option {anchor}."
-
-        if state.phase == "negotiation":
-            return f"\n{prefix}{coherence}"
-
-        if flips == 0:
-            return (
-                f"\n{prefix}{coherence} "
-                "Only change for a genuinely new reason."
-            )
-        if flips == 1:
-            return (
-                f"\n{prefix} Already switched once.{coherence} "
-                "Hold this; no repeat."
-            )
-        return (
-            f"\n{prefix} Switched {flips} times. Commit now - no more switching.{coherence}"
+        return prompts.position_discipline_block(
+            phase=state.phase,
+            prefix=prefix,
+            anchor=anchor,
+            flips=flips,
+            candidate=candidate,
+            candidate_in_acceptable=bool(candidate and candidate in beliefs.acceptable and candidate != anchor),
+            candidate_in_rejected=bool(candidate and candidate in rejected_list),
+            candidate_is_anchor=bool(candidate and candidate == anchor),
+            can_soften=can_soften,
+            concession_text=beliefs.concession or "",
+            high_agreeableness=self.persona.agreeableness >= 4,
+            low_agreeableness_or_high_neuroticism=(self.persona.agreeableness <= 2 or self.persona.neuroticism >= 4),
         )
 
     # ------------------------------------------------------------------
@@ -304,7 +321,7 @@ class Simulator:
         return "\n".join(history[-max_lines:])
 
     def _interaction_instruction(self, history: list[str], state: "DialogueState") -> str:
-        """Dynamic prompt guidance for conversational obligations."""
+        """Compute dialogue-state flags and delegate prose to prompts.interaction_instruction_block()."""
         if state.phase in {"greeting", "closure", "confirmation"}:
             return ""
 
@@ -312,81 +329,39 @@ class Simulator:
         recent = self._recent_participant_messages(history, limit=5)
         question_count = sum(1 for msg in recent if "?" in msg)
 
-        parts: list[str] = []
-        if last and "?" in last:
-            speaker = last.split(":", 1)[0].strip()
-            if speaker != self.name:
-                parts.append(
-                    " The last participant asked a question. Answer it directly if you can; "
-                    "if the options do not contain enough information, say what you can infer and then give your view."
-                )
+        last_has_question = bool(last and "?" in last and last.split(":", 1)[0].strip() != self.name)
 
-        if question_count >= 3:
-            parts.append(
-                " The chat has too many unanswered questions. Do not ask another one; make a claim, answer, or choose a trade-off."
-            )
-
-        compromise = getattr(state, "compromise_option", None)
-        if compromise and state.phase == "emergence":
-            b = self.persona.beliefs
-            if b and compromise in b.acceptable:
-                parts.append(
-                    f" The moderator is testing Option {compromise} as a compromise. "
-                    f"Say whether you could live with Option {compromise}; name a condition that applies to that option."
-                )
-            else:
-                parts.append(
-                    f" The moderator is testing Option {compromise} as a compromise. "
-                    f"If Option {compromise} does not work for you, say no and give the specific objection to that option."
-                )
+        compromise = getattr(state, "compromise_option", None) if state.phase == "emergence" else None
+        b = self.persona.beliefs
+        compromise_in_acceptable = bool(compromise and b and compromise in b.acceptable)
 
         rejected = getattr(state, "last_rejected_option", None)
         rejecting_speaker = getattr(state, "last_rejecting_speaker", None)
-        if rejected and rejecting_speaker == self.name and state.phase in {"narrowing", "emergence"}:
-            # Count how many turns this sim has spoken since rejecting
-            turns_since_rejection = len(self._own_recent_turns(history, limit=10))
-            if turns_since_rejection >= 3:
-                parts.append(
-                    f" You have raised multiple concerns about Option {rejected} and the group has tried to address them."
-                    f" Name your single concrete dealbreaker for Option {rejected}, or say whether you can accept it with one specific condition."
-                    " Do not raise a new objection — commit to a position."
-                )
-            else:
-                parts.append(
-                    f" You just rejected Option {rejected}. Explain the main blocker clearly, "
-                    "and say what would need to change for you to consider it."
-                )
+        rejecting_self = bool(rejected and rejecting_speaker == self.name and state.phase in {"narrowing", "emergence"})
+        turns_since_rejection = len(self._own_recent_turns(history, limit=10)) if rejecting_self else 0
 
-        own_recent = self._last_own_turn(history)
-        if own_recent and "?" in own_recent:
-            parts.append(
-                " Your previous turn was a question, so this turn should not be another bare question."
-            )
+        own_last_was_question = bool(self._last_own_turn(history) and "?" in self._last_own_turn(history))
 
-        # Detect "but what if / what if" as a speculative-question crutch
         own_turns = self._own_recent_turns(history, limit=4)
-        speculative_count = sum(
-            1 for t in own_turns
-            if re.search(r"\bwhat if\b", t, re.IGNORECASE)
-        )
-        if speculative_count >= 2:
-            parts.append(
-                " You've asked 'what if' hypotheticals multiple times. Stop — make a direct claim or statement instead."
-            )
+        speculative_count = sum(1 for t in own_turns if re.search(r"\bwhat if\b", t, re.IGNORECASE))
 
         repeated_kws = self._repeated_concern_keywords(history)
-        if len(repeated_kws) >= 2:
-            kw_str = ", ".join(repeated_kws[:3])
-            parts.append(
-                f" You keep returning to the same theme ({kw_str}). That point is on the table — don't repeat it."
-                " Either name a concrete dealbreaker, propose a condition, or move to a completely different angle."
-            )
-        elif self._own_recent_repetition(history):
-            parts.append(
-                " Your recent turns are repeating the same point. Change move: answer someone, name a downside of your own option, or offer a compromise."
-            )
+        self_repeated = self._own_recent_repetition(history) if len(repeated_kws) < 2 else False
 
-        return "\n" + "".join(parts) if parts else ""
+        return prompts.interaction_instruction_block(
+            last_has_question=last_has_question,
+            question_count=question_count,
+            compromise_option=compromise,
+            compromise_in_acceptable=compromise_in_acceptable,
+            rejected_option=rejected if rejecting_self else None,
+            rejecting_self=rejecting_self,
+            turns_since_rejection=turns_since_rejection,
+            escalation_threshold=cfg.repetition.turns_since_rejection_escalation,
+            own_last_was_question=own_last_was_question,
+            speculative_count=speculative_count,
+            repeated_kws=repeated_kws,
+            self_repeated=self_repeated,
+        )
 
     def _own_recent_points_block(self, history: list[str], limit: int = 3) -> str:
         turns = self._own_recent_turns(history, limit=limit)
@@ -406,7 +381,7 @@ class Simulator:
         b = set(re.sub(r"[^\w\s]", "", turns[1].lower()).split())
         if not a or not b:
             return False
-        return len(a & b) / max(1, min(len(a), len(b))) >= 0.45
+        return len(a & b) / max(1, min(len(a), len(b))) >= cfg.repetition.jaccard_threshold_self
 
     def _repeated_concern_keywords(self, history: list[str]) -> list[str]:
         """Keywords this sim mentioned in 2+ of their last 5 turns — signals semantic looping."""
@@ -491,10 +466,7 @@ class Simulator:
                 kept = s_words[:max_words]
                 break
 
-        if kept and isinstance(kept[0], str) and " " in kept[0]:
-            trimmed = " ".join(kept)
-        else:
-            trimmed = " ".join(kept)
+        trimmed = " ".join(kept)
 
         trimmed = trimmed.strip(" ,;:")
         if not trimmed.endswith((".", "!", "?")):
@@ -534,19 +506,6 @@ class Simulator:
     # Nudges
     # ------------------------------------------------------------------
 
-    def _skepticism_nudge(self, state: "DialogueState") -> str:
-        if state.phase == "emergence":
-            return ""
-        leading = state.current_leading_option
-        if not leading:
-            return ""
-        if self.persona.agreeableness <= 2 or self.persona.neuroticism >= 4:
-            return (
-                f"\nIMPORTANT: The group is leaning toward Option {leading}. "
-                "If you are not convinced, raise one specific weakness or risk from a fresh angle."
-            )
-        return ""
-
     def _last_participant_line(self, history: list[str]) -> str:
         """Most recent line from someone other than self, for soft context."""
         for line in reversed(history):
@@ -559,12 +518,6 @@ class Simulator:
 
     def _closure_line(self, state: "DialogueState") -> str:
         option = getattr(state, "preferred_option", None)
-        if option and random.random() < 0.65:
-            templates = [
-                f"Okay, Option {option} works for me. Bye!",
-                f"Option {option} it is then. See you!",
-                f"Sounds good, Option {option}. Bye!",
-                f"Alright, let's go with Option {option}. See you.",
-            ]
-            return random.choice(templates)
+        if option and random.random() < cfg.moderation.closure.template_probability:
+            return random.choice(prompts.closure_templates(option))
         return random.choice(self._GOODBYES)

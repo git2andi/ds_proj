@@ -75,53 +75,55 @@ class TurnManager:
     def _score(
         self, sim: "Simulator", history: list[str], state: "DialogueState"
     ) -> float:
+        w = cfg.turn_policy.weights
+        p = cfg.turn_policy.penalties
         score = 0.0
 
         # Discourse obligations
         if state.last_addressed == sim.name:
-            score += 0.80
+            score += w.last_addressed
         if state.pending_question_target == sim.name:
-            score += 0.90
+            score += w.pending_question
 
-        # Big Five behavioral effects.
-        score += 0.22 * _norm(sim.persona.extraversion)
+        # Big Five behavioral effects
+        score += w.extraversion * _norm(sim.persona.extraversion)
 
         if state.last_addressed == sim.name or state.pending_question_target == sim.name:
-            score += 0.10 * _norm(sim.persona.agreeableness)
+            score += w.agreeableness_addressed * _norm(sim.persona.agreeableness)
         else:
-            score -= 0.04 * _norm(sim.persona.agreeableness)
+            score -= w.agreeableness_off * _norm(sim.persona.agreeableness)
 
         if state.phase in {"negotiation", "emergence"}:
-            score += 0.08 * _norm(sim.persona.openness)
-            score += 0.05 * _norm(sim.persona.conscientiousness)
+            score += w.openness_negotiation * _norm(sim.persona.openness)
+            score += w.conscientiousness_negotiation * _norm(sim.persona.conscientiousness)
 
         if state.phase not in {"greeting", "opening"}:
-            score += 0.10 * _norm(sim.persona.neuroticism) * state.repetition_pressure
+            score += w.neuroticism_pressure * _norm(sim.persona.neuroticism) * state.repetition_pressure
 
         if sim.persona.is_primary:
-            score += 0.10
+            score += w.primary_boost
 
         # Speaking balance — penalise recent speakers
         if self._last_participant_speaker(history) == sim.name:
-            score -= 0.50
+            score -= p.last_speaker
         recent_count = sum(
             1 for s in self._recent_speakers(history, n=4) if s == sim.name
         )
-        score -= 0.12 * recent_count
+        score -= p.recent_speaker_per_turn * recent_count
 
         # Boost participants who haven't spoken yet
         if not self._has_spoken(sim.name, history):
-            score += 0.35
+            score += w.unspoken_boost
 
         if sim.persona.extraversion <= 2 and not (
             state.last_addressed == sim.name or state.pending_question_target == sim.name
         ):
-            score -= 0.08
+            score -= p.introvert_off_turn
 
         if self._own_recent_repetition(sim.name, history) and not (
             state.last_addressed == sim.name or state.pending_question_target == sim.name
         ):
-            score -= 0.30
+            score -= p.own_repetition
 
         return max(0.01, score)
 
@@ -157,10 +159,7 @@ class TurnManager:
     # ------------------------------------------------------------------
 
     def repetition_pressure(self, history: list[str]) -> float:
-        """
-        Returns 0.0–1.0 based on vocabulary overlap in recent participant messages.
-        High values indicate the discussion is going in circles.
-        """
+        """Returns 0.0–1.0 based on vocabulary overlap in recent participant messages."""
         window = cfg.repetition.pressure_window
         min_len = cfg.repetition.min_word_length
         texts: list[str] = []
@@ -196,10 +195,7 @@ class TurnManager:
     # ------------------------------------------------------------------
 
     def extract_discourse(self, history: list[str], sim_names: set[str]) -> dict:
-        """
-        Scan the most recent participant line for who was addressed and
-        whether a question was asked. Returns last_addressed and pending_question_target.
-        """
+        """Scan the most recent participant line for addressee and pending question."""
         import re
         result = {"last_addressed": None, "pending_question_target": None}
         for line in reversed(history):
@@ -268,7 +264,7 @@ class TurnManager:
         b = set(re.sub(r"[^\w\s]", "", turns[1]).split())
         if not a or not b:
             return False
-        return len(a & b) / max(1, min(len(a), len(b))) >= 0.45
+        return len(a & b) / max(1, min(len(a), len(b))) >= cfg.repetition.jaccard_threshold_self
 
 
 # ---------------------------------------------------------------------------
