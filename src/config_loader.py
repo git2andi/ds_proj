@@ -2,7 +2,7 @@
 config_loader.py
 ----------------
 Loads config.yaml once at import time and exposes a typed `cfg` object.
-All modules import `cfg` from here — no magic numbers elsewhere.
+All modules import `cfg` from here -- no magic numbers elsewhere.
 """
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ class Config(_Section):
     # Speakers never treated as participants in turn logic.
     EXCLUDED_SPEAKERS: frozenset[str] = frozenset({"Moderator"})
 
-    # Top-level YAML sections — declared so Pylance can resolve cfg.<section>
+    # Top-level YAML sections -- declared so Pylance can resolve cfg.<section>
     llm: _Section
     simulation: _Section
     turns: _Section

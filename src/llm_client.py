@@ -5,9 +5,9 @@ Thin provider abstraction over Gemini, Groq, and a local Ollama endpoint.
 All provider details come from config. Exposes two methods: generate() and generate_json().
 
 Token tracking
-  last_tokens_in / last_tokens_out  — counts for the most recent generate() call
-  session_tokens_in / session_tokens_out — accumulated totals since last reset_session()
-  reset_session() — call between setup phase and dialogue phase to separate the two
+  last_tokens_in / last_tokens_out  -- counts for the most recent generate() call
+  session_tokens_in / session_tokens_out -- accumulated totals since last reset_session()
+  reset_session() -- call between setup phase and dialogue phase to separate the two
 """
 
 from __future__ import annotations
@@ -160,13 +160,13 @@ class LLMClient:
 
 
 # ---------------------------------------------------------------------------
-# JSON repair — fixes the most common LLM mistakes
+# JSON repair -- fixes the most common LLM mistakes
 # ---------------------------------------------------------------------------
 
 def _repair_json(text: str) -> str:
     """
     Two-pass repair:
-    1. Swap ] or ) that close an object context → }
+    1. Swap ] or ) that close an object context -> }
     2. Remove trailing commas before } or ]
     """
     result: list[str] = []

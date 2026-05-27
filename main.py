@@ -191,6 +191,15 @@ def run_dialogue(
         personas = _personas_from_overrides(
             persona_overrides, topic=topic, dialogue_id=orch.dialogue_id
         )
+    elif getattr(cfg.simulation, "use_llm_names", False):
+        # LLM picks names + roles in one call, tuned to the topic
+        info = builder.generate_names_and_roles(n)
+        names = [e["name"] for e in info]
+        pre_role_map = {
+            e["name"]: {"role": e["role"], "is_primary": e["is_primary"]}
+            for e in info
+        }
+        personas = builder.build_all(names, pre_role_map=pre_role_map)
     else:
         names = _default_names(n)
         personas = builder.build_all(names)

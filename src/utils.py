@@ -34,8 +34,8 @@ def extract_preference_vote(msg: str) -> Optional[str]:
 
     fp_patterns = [
         r"\bi\s+prefer\s+option\s+([a-d])\b",
-        r"\bi(?:'m|\s+am)\s+(?:going\s+with|for)\s+option\s+([a-d])\b",
-        r"\bi(?:'d|\s+would)\s+(?:go\s+with|choose|prefer)\s+option\s+([a-d])\b",
+        r"\bi(?:'m|\s+am)\s+(?:going\s+with|for|set\s+on|sold\s+on|leaning)\s+(?:option\s+)?([a-d])\b",
+        r"\bi(?:'d|\s+would)\s+(?:go\s+with|choose|prefer)\s+(?:option\s+)?([a-d])\b",
         r"\bi\s+(?:choose|pick|want|vote\s+for)\s+option\s+([a-d])\b",
         r"\bmy\s+(?:choice|pick|preference)\s+is\s+(?:option\s+)?([a-d])\b",
     ]
@@ -55,14 +55,29 @@ def extract_preference_vote(msg: str) -> Optional[str]:
             return None
         letter = early.group(1)
         pos = text.find(f"option {letter}")
+
+        # Check what comes BEFORE -- "not", "never", "rather not", "anything but"
+        before = text[:pos].rstrip()
+        if re.search(
+            r"\b(not|never|rather\s+not|anything\s+but|except|avoid|skip|hate|dislike|reject|refuse|nope\s+to)\s*$",
+            before,
+        ):
+            return None
+
         char_after = text[pos + len(f"option {letter}"):].lstrip()[:1]
         if char_after == "'":
             return None
         text_after = text[pos + len(f"option {letter}"):].lstrip()
         if re.search(
-            r"^(is\s+(?:only|too|just|not|barely|merely)|might\s+be|could\s+be\s+too|won't|can't|seems\s+too)",
+            r"^(is\s+(?:only|too|just|not|barely|merely)|isn'?t|aren'?t|wasn'?t|"
+            r"might\s+be|could\s+be|won't|can't|seems|sounds\s+(?:bad|terrible|awful)|sucks|nope)",
             text_after,
         ):
+            return None
+        # Also reject if the surrounding clause is non-committal ("not bad either",
+        # "either", "maybe", "perhaps" near the option mention).
+        nearby_after = text[pos:pos + len(f"option {letter}") + 50].lower()
+        if re.search(r"\b(either|maybe|perhaps|possibly|might\s+work)\b", nearby_after):
             return None
         return letter.upper()
 

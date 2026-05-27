@@ -16,8 +16,6 @@ LLM calls per dialogue setup:
 
 from __future__ import annotations
 
-import json
-import os
 import random
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -84,7 +82,7 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
 }
 
 _STYLE_RULE: dict[int, str] = {
-    1: "Terse chat style. One punchy fragment or short sentence. Cut everything non-essential — no filler.",
+    1: "Terse chat style. One punchy fragment or short sentence. Cut everything non-essential -- no filler.",
     2: "Brief chat style. One clear point, sometimes with a short reason. Stay under two short sentences.",
     3: "Normal chat style. One or two compact sentences. Explain when needed, not by default.",
     4: "Chatty style. You can explain a bit and riff on ideas, but keep it breezy and conversational like a group chat.",
@@ -172,7 +170,7 @@ class Persona:
     def personality_summary(self) -> str:
         """
         Register descriptors derived from Big Five scores.
-        Describes communication style — never prescribes specific phrases.
+        Describes communication style -- never prescribes specific phrases.
         (MASTERPLAN Stage 8A: caricature phrases removed; register cues only.)
         """
         parts: list[str] = []
@@ -233,15 +231,60 @@ class PersonaBuilder:
         self.dialogue_id = dialogue_id
         self._llm = get_llm_client()
 
-    def build_all(self, names: list[str]) -> list[Persona]:
+    def generate_names_and_roles(self, n: int) -> list[dict[str, Any]]:
+        """
+        Ask the LLM for N participant names + roles tuned to the topic, in one call.
+        Returns list of {name, role, is_primary} dicts. Falls back to the config
+        name pool on any failure or schema mismatch.
+        """
+        fallback_pool = list(cfg.simulation.name_pool)
+        random.shuffle(fallback_pool)
+        fallback_names = fallback_pool[:n] if n <= len(fallback_pool) else (
+            fallback_pool + [f"Participant{i}" for i in range(1, n - len(fallback_pool) + 1)]
+        )
+        fallback = [
+            {"name": fallback_names[i], "role": "participant", "is_primary": (i == 0)}
+            for i in range(n)
+        ]
+        try:
+            data = self._llm.generate_json(prompts.names_and_roles(self.topic, n))
+            entries = data.get("participants", [])
+            if not isinstance(entries, list) or len(entries) != n:
+                return fallback
+            cleaned: list[dict[str, Any]] = []
+            seen: set[str] = set()
+            for e in entries:
+                if not isinstance(e, dict):
+                    return fallback
+                name = str(e.get("name", "")).strip()
+                role = str(e.get("role", "participant")).strip() or "participant"
+                is_primary = bool(e.get("is_primary", False))
+                if not name or name in seen:
+                    return fallback
+                seen.add(name)
+                cleaned.append({"name": name, "role": role, "is_primary": is_primary})
+            primaries = sum(1 for c in cleaned if c["is_primary"])
+            if primaries != 1:
+                for c in cleaned:
+                    c["is_primary"] = False
+                cleaned[0]["is_primary"] = True
+            return cleaned
+        except Exception as exc:
+            print(f"!! Name+role generation error: {exc}")
+            return fallback
+
+    def build_all(self, names: list[str],
+                  pre_role_map: Optional[dict[str, dict[str, Any]]] = None) -> list[Persona]:
         """
         Build personas without beliefs (options not known yet).
-        Uses a single grouped LLM call (Stage 11) with per-persona fallback.
+        Uses a single grouped LLM call with per-persona fallback for concepts.
         Call assign_beliefs() after Orchestrator has generated the options.
+        If pre_role_map is given, skip the separate role-assignment LLM call.
         """
-        role_map = self._assign_roles(names)
+        role_map = pre_role_map if pre_role_map is not None else self._assign_roles(names)
 
         trait_sets = [_random_traits() for _ in names]
+        trait_sets = _apply_stubbornness_distribution(trait_sets)
         if cfg.personas.enforce_diversity:
             trait_sets = _enforce_diversity(trait_sets)
 
@@ -288,9 +331,6 @@ class PersonaBuilder:
                 persona.beliefs = group_beliefs[persona.name]
             else:
                 persona.beliefs = self._generate_beliefs(persona, options)
-
-        if self.dialogue_id:
-            _save_personas(personas, self.dialogue_id)
 
     # ------------------------------------------------------------------
     # Stage 11: grouped LLM calls
@@ -527,6 +567,24 @@ def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]
     return trait_sets
 
 
+def _apply_stubbornness_distribution(
+    trait_sets: list[dict[str, int]]
+) -> list[dict[str, int]]:
+    """
+    Per-sim Bernoulli draw: with probability cfg.stubbornness.sim_stubborn_probability,
+    overwrite the trait set with a stubborn combo (low A, high C, high N, low O).
+    The rest stay as sampled from the cooperative defaults.
+    """
+    p = getattr(cfg.stubbornness, "sim_stubborn_probability", 0.0)
+    for ts in trait_sets:
+        if random.random() < p:
+            ts["agreeableness"]     = random.randint(1, 2)
+            ts["conscientiousness"] = random.randint(4, 5)
+            ts["neuroticism"]       = random.randint(4, 5)
+            ts["openness"]          = random.randint(1, 2)
+    return trait_sets
+
+
 # ---------------------------------------------------------------------------
 # Trait sampling
 # ---------------------------------------------------------------------------
@@ -548,13 +606,3 @@ def _random_traits() -> dict[str, int]:
     return result
 
 
-# ---------------------------------------------------------------------------
-# Persistence
-# ---------------------------------------------------------------------------
-
-def _save_personas(personas: list[Persona], dialogue_id: str) -> None:
-    log_dir = cfg.output.log_dir
-    os.makedirs(log_dir, exist_ok=True)
-    path = os.path.join(log_dir, f"{dialogue_id}_personas.json")
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump([p.as_dict() for p in personas], f, indent=2)
