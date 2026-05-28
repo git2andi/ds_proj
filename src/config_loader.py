@@ -47,10 +47,18 @@ class Config(_Section):
     personas: _Section
     output: _Section
     response_length: _Section
+    voice: _Section
+    argument_kit: _Section
+    divergence: _Section
+    memory: _Section
+    deliberation: _Section
     turn_policy: _Section
+    act_planner: _Section
+    personality_bias: _Section
     stubbornness: _Section
     fisher: _Section
     grounding: _Section
+    moderation: _Section
     evaluation: _Section
     prompt_budget: _Section
 

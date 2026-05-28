@@ -41,12 +41,14 @@ _CATEGORY_WORDS = {
 
 _FIRST_PERSON_VOTE = re.compile(
     r"\b("
-    r"i\s+(?:prefer|pick|choose|want|vote\s+for|like|say|favou?r)|"
-    r"i(?:'m|\s+am)\s+(?:going\s+with|for|leaning(?:\s+toward(?:s)?)?|sold\s+on|set\s+on)|"
-    r"i(?:'d|\s+would)\s+(?:go\s+with|choose|prefer|say|pick)|"
+    r"i\s+(?:prefer|pick|choose|want|vote(?:\s+for)?|like|say|favou?r|voted|picked|chose)|"
+    r"i(?:'m|\s+am)\s+(?:voting(?:\s+for)?|going\s+with|for|leaning(?:\s+toward(?:s)?)?|sold\s+on|set\s+on)|"
+    r"i(?:'d|\s+would)\s+(?:go\s+with|choose|prefer|say|pick|vote(?:\s+for)?)|"
+    r"i'?ll\s+(?:go\s+with|pick|take|vote(?:\s+for)?)|"
     r"let'?s\s+(?:go\s+with|do|pick|book|try)|"
     r"going\s+with|"
-    r"my\s+(?:pick|choice|vote|preference)\s+(?:is|would\s+be)"
+    r"my\s+(?:pick|choice|vote|preference)\s+(?:is|would\s+be)|"
+    r"count\s+me\s+(?:in|for)"
     r")\b",
     re.I,
 )
@@ -143,6 +145,15 @@ class OptionResolver:
         hits.sort(key=lambda x: x[0])
         return [l for _, l in hits]
 
+    def option_mention_spans(self, text: str) -> list[tuple[int, int]]:
+        """All (start, end) spans where any option letter or alias appears.
+        Used by grounding to scope claims-about-options (Stage 4)."""
+        spans: list[tuple[int, int]] = []
+        for letter in self.letters:
+            for m in self._regex[letter].finditer(text):
+                spans.append(m.span())
+        return spans
+
     def vote_in(self, text: str) -> Optional[str]:
         """The single option this turn commits to, or None.
 
@@ -184,8 +195,20 @@ class OptionResolver:
         if _NEGATION_BEFORE.search(t[:start]):
             return None
         tail = t[start:start + 60]
-        if re.search(r"\b(isn'?t|aren'?t|won'?t|can'?t|too\s+\w+|sucks|terrible|"
-                     r"awful|not\s+sure)\b", tail) and not pref:
+        # Tail negatives: when the option mention is followed by criticism --
+        # "Option B does have that downside" / "Option B might lack analysis"
+        # -- an agreement-lead alone ("yeah", "true") should NOT be read as
+        # a vote for the option being criticised. An explicit first-person
+        # preference frame overrides this (the speaker says they prefer it
+        # despite the downside).
+        if re.search(
+            r"\b(isn'?t|aren'?t|won'?t|can'?t|too\s+\w+|sucks|terrible|awful|"
+            r"not\s+sure|lack(?:s|ing|ed)?|downside|drawback|problem(?:s|atic)?|"
+            r"issue(?:s)?|fault(?:s|y)?|flaw(?:s|ed)?|miss(?:es|ing)?|"
+            r"weak\w*|fail(?:s|ing|ed)?|not\s+(?:great|ideal|enough)|"
+            r"might\s+(?:lack|miss|fail))\b",
+            tail,
+        ) and not pref:
             return None
         return letter
 

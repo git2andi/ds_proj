@@ -1,3 +1,11 @@
+# ===========================================================================
+# Dialogue-simulation configuration
+#
+# Two hard rules:
+#   1. No magic numbers in code -- every tunable lives here.
+#   2. No LLM prose in code   -- every prompt lives in src/prompts.py.
+# ===========================================================================
+
 # ---------------------------------------------------------------------------
 # LLM provider
 # ---------------------------------------------------------------------------
@@ -24,19 +32,30 @@ simulation:
   num_participants: 3
 
 # ---------------------------------------------------------------------------
-# Turn budget — scales with participant count so 2 and 5 sims both behave.
+# Turn budget -- ceilings/floors that scale with participant count.
+# After Stage 5, narrowing is gated on deliberation signals (positions stated
+# with reason + at least one challenge-response), not just turn count. These
+# values are floors/ceilings around that gate.
 # ---------------------------------------------------------------------------
 turns:
-  ceiling_per_participant: 9             # hard ceiling = max(min_ceiling, n * this)
-  min_ceiling: 18
-  min_before_narrowing_per_participant: 3  # opening + ~2 negotiation rounds each before narrowing
-  narrow_after_per_participant: 4          # force narrowing once everyone's had ~this many turns
+  ceiling_per_participant: 11              # hard ceiling = max(min_ceiling, n * this)
+  min_ceiling: 22
 
-  # Rounds AFTER narrowing before the moderator escalates. A grace of n rounds
-  # is added at runtime so larger groups have time to collect every vote first.
-  escalation_level_1: 2
-  escalation_level_2: 4
-  escalation_level_3: 7
+  # Floor: don't even consider narrowing before each sim has had at least this
+  # many turns. Lets opening + at least one real round of exchange happen.
+  min_before_narrowing_per_participant: 4
+
+  # Ceiling: force narrowing once everyone's had this many turns, even if
+  # deliberation signals haven't fired (otherwise contested topics could
+  # never close).
+  narrow_after_per_participant: 7
+
+  # Rounds AFTER narrowing before escalation triggers a moderator nudge or
+  # force-close. A grace of n rounds is added at runtime so larger groups
+  # can finish collecting votes first.
+  escalation_level_1: 3
+  escalation_level_2: 6
+  escalation_level_3: 10
 
 # ---------------------------------------------------------------------------
 # Consensus
@@ -45,7 +64,7 @@ consensus:
   stall_rounds_to_force: 2
   max_dissenters: 1
 
-  # Weights for ConsensusEngine.best_available_decision() — public stances only
+  # Weights for ConsensusEngine.best_available_decision() -- public stances only.
   stance_weights:
     support: 1.0
     conditional_support: 0.7
@@ -53,6 +72,12 @@ consensus:
     oppose: -1.0
     blocker: -2.0
     neutral: 0.0
+
+  # Weights for ConsensusEngine._leading_option() -- mirrors above but is the
+  # narrower signal for "what option is currently winning".
+  leading_weights:
+    support: 1.0
+    conditional_support: 0.7
 
 # ---------------------------------------------------------------------------
 # Repetition / stall detection (single Jaccard-based check)
@@ -73,27 +98,30 @@ personas:
   trait_min: 1
   trait_max: 5
 
-  # Big Five: openness, conscientiousness, extraversion, agreeableness, neuroticism
+  # Big Five: openness, conscientiousness, extraversion, agreeableness, neuroticism.
   # response_length is output control, not a personality trait.
   trait_ranges:
     openness: [3, 5]
     conscientiousness: [2, 5]
     extraversion: [1, 5]
-    agreeableness: [3, 5]
+    agreeableness: [2, 5]                  # opened up a bit so we get genuine pushback
     neuroticism: [1, 4]
-    response_length: [2, 4]               # a touch more substance; mixes short and fuller turns
+    response_length: [2, 4]
 
   enforce_diversity: true
   diversity_agree_threshold: 5
   diversity_extraversion_min: 4
 
+  # Recent-act memory bound on ParticipantState.
+  recent_acts_max_history: 10
+
 # ---------------------------------------------------------------------------
-# Response length budgets
+# Response length budgets (Big Five "response_length" maps to these)
 # ---------------------------------------------------------------------------
 response_length:
   word_budgets: [14, 22, 30, 42, 55]
   phase_caps:
-    opening: 28           # hello + one priority, not a full case
+    opening: 28
     confirmation: 14
     narrowing_min: 14
     narrowing_max: 30
@@ -101,13 +129,88 @@ response_length:
     closure: 16
 
 # ---------------------------------------------------------------------------
-# Stubbornness — rare per-dialogue hard blocker (single knob)
+# Big Five -> voice (Shanahan 2023; Character-LLM). Trait-driven speech
+# features so personas don't all sound like the same polite evaluator.
+# All values are normalised 0..1 deltas applied to a 0.5 baseline.
+# ---------------------------------------------------------------------------
+voice:
+  # Hedge frequency lifts with neuroticism + agreeableness, drops with low neuroticism.
+  hedge_neuroticism_weight: 0.35
+  hedge_agreeableness_weight: 0.25
+
+  # Directness lifts with (1 - agreeableness). Disagreeable sims say "no" plainly.
+  directness_disagreeableness_weight: 0.55
+  directness_low_neuroticism_weight: 0.15
+
+  # "Think-aloud" / fragment use lifts with extraversion + low conscientiousness.
+  thinkaloud_extraversion_weight: 0.40
+  thinkaloud_low_conscientiousness_weight: 0.20
+
+  # Detail-citing (names option text fragments) lifts with conscientiousness.
+  detail_conscientiousness_weight: 0.50
+
+# ---------------------------------------------------------------------------
+# Argument kit (Toulmin 1958) -- belief generation targets and constraints.
+# Each persona's private belief block carries reasons + reservation +
+# would_reconsider_if alongside preferred/acceptable/rejected.
+# ---------------------------------------------------------------------------
+argument_kit:
+  reasons_per_persona: 2                   # 1-2 Toulmin warrants in the prompt
+  reasons_min: 1
+  reasons_max: 3
+  reservation_required: true               # one concern about a rival option
+  reconsider_required: true                # the concrete condition that would move them
+
+# ---------------------------------------------------------------------------
+# Divergence (Liang 2023 -- "Encouraging Divergent Thinking"). Cooperative
+# sims that start in DIFFERENT places for good reasons. Acceptable sets must
+# still overlap so consensus is reachable.
+# ---------------------------------------------------------------------------
+divergence:
+  target_acceptable_min: 2                 # each sim must accept at least this many
+  target_acceptable_max: 3                 # ...and at most this many (smaller than 4-of-4)
+  enforce_distinct_preferred: true         # nudge if all preferred match
+  required_common_acceptable: 1            # the overlap that makes consensus reachable
+
+# ---------------------------------------------------------------------------
+# Per-sim memory (Park 2023 scaled down -- relevance-filtered, no reflection).
+# Anti-repetition + build-on. Fed to the speaker card instead of raw history.
+# ---------------------------------------------------------------------------
+memory:
+  points_made_max: 4                       # the speaker's own recent points (anti-repeat)
+  others_arguments_max: 4                  # other sims' key live arguments
+  open_challenges_max: 2                   # questions/objections aimed AT this sim
+  perceived_priorities_max_chars: 50       # short phrase per other sim, from opening
+
+# ---------------------------------------------------------------------------
+# Deliberation gating (Du 2023; Liang 2023). Narrowing fires when all three:
+#   - each sim has stated a position with a reason
+#   - at least one challenge-response exchange has happened on a contested option
+#   - repetition pressure shows the live arguments are exhausted
+# Turn counts (above) remain as a hard floor/ceiling.
+# ---------------------------------------------------------------------------
+deliberation:
+  challenges_to_unlock_narrowing: 1
+  positions_with_reason_required_ratio: 1.0     # 1.0 = everyone
+  exhaustion_pressure_threshold: 0.60           # below the global stall threshold
+  challenge_window_turns: 6                     # a challenge counts as "answered" if rebutted within N turns
+
+  # Act-planner suppression: when this share of recent participant turns ended
+  # in "?", the planner drops ASK_CLARIFICATION from the pool. Hypothetical
+  # question pile-ups ("what about X?", "what if Y?") are dodges -- the act
+  # planner should push toward committing instead.
+  question_density_window: 6
+  question_density_suppress: 0.50
+
+# ---------------------------------------------------------------------------
+# Stubbornness -- the one route to a legitimate force-close. Rare hard blocker.
 # ---------------------------------------------------------------------------
 stubbornness:
   hard_blocker_dialogue_probability: 0.05
 
 # ---------------------------------------------------------------------------
-# Fisher (1970) — logged per dialogue, not used for control flow
+# Fisher (1970) -- evaluation-only ratios written to .eval.json.
+# Not used for control flow; kept for analysis.
 # ---------------------------------------------------------------------------
 fisher:
   window_size: 8
@@ -130,11 +233,52 @@ turn_policy:
     neuroticism_pressure: 0.10
     primary_boost: 0.10
     unspoken_boost: 0.55
+    unspoken_recent_factor: 0.70           # spoken-but-not-recently gets boost * this
   penalties:
     last_speaker: 0.50
     recent_speaker_per_turn: 0.25
     own_repetition: 0.30
     introvert_off_turn: 0.08
+  introvert_threshold: 2                   # extraversion <= this is "introverted" for penalty
+  recent_speaker_window: 6
+  min_score_floor: 0.01
+
+# ---------------------------------------------------------------------------
+# Act planner -- phase-specific base weights for MUCA-style sampling.
+# Multipliers come from PersonalityBias (Big Five).
+# ---------------------------------------------------------------------------
+act_planner:
+  bias_baseline: 0.5                       # multipliers sit at 0.5 + propensity
+  conditional_concession_factor: 0.7       # conditional accept uses concession * this
+  ambiguous_reframing_factor: 0.3
+  base_weights:
+    negotiation:
+      assert_support:     0.18
+      assert_opposition:  0.20             # opposition lifted -- Liang divergent thinking
+      ask_clarification:  0.14
+      concede:            0.16
+      answer:             0.18
+      assert_ambiguous:   0.06
+      challenge:          0.08             # explicit challenge act (Stage 5)
+    emergence:
+      assert_support:     0.20
+      assert_opposition:  0.10
+      concede:            0.26
+      conditional_accept: 0.36
+      assert_ambiguous:   0.08
+
+# ---------------------------------------------------------------------------
+# Personality-bias derivation (McCrae & John 1992 -> probabilistic biases).
+# All weights normalised across the five Big Five values.
+# ---------------------------------------------------------------------------
+personality_bias:
+  concession_agreeableness_weight: 0.7
+  concession_low_neuro_weight: 0.3
+  objection_disagreeableness_weight: 0.6
+  objection_neuroticism_weight: 0.4
+  clarification_neuroticism_weight: 0.5
+  clarification_openness_weight: 0.3
+  clarification_low_consc_weight: 0.2
 
 # ---------------------------------------------------------------------------
 # Output
@@ -143,12 +287,31 @@ output:
   log_dir: "logs"
 
 # ---------------------------------------------------------------------------
-# Grounding (deterministic fact-check, no LLM)
+# Grounding (deterministic). After Stage 4, the check is SCOPED to claims
+# made directly about options (numbers asserted as option attributes). World
+# knowledge from the persona's backstory/expertise is permitted -- that's the
+# raw material of a real argument (Toulmin warrants).
 # ---------------------------------------------------------------------------
 grounding:
   enable_fact_check: true
   repair_attempts: 1
   min_words_to_check: 12
+  # Window (chars) around an option mention within which a number is treated
+  # as an asserted option attribute. Outside this window numbers are world
+  # knowledge ("CRISPR has been around since 2012" not an option attribute).
+  option_proximity_chars: 60
+
+# ---------------------------------------------------------------------------
+# Moderation -- timing thresholds for facilitator interventions (Stage 3).
+# ---------------------------------------------------------------------------
+moderation:
+  outlier_repeat_jaccard: 0.55             # post-narrowing verbatim-repeat threshold
+  recent_window_history: 10                # lines of history the moderator sees
+  recent_window_clarify: 4
+  recent_window_force_close: 6
+  questions_pile_up_for_facilitation: 2    # >= this many "?" in window triggers facilitate-questions
+  facilitate_cooldown_rounds: 2            # don't facilitate twice in a row
+  emergence_min_level_for_stall: 2         # below this escalation, emergence stall uses emergence prompt
 
 # ---------------------------------------------------------------------------
 # Evaluation

@@ -1,16 +1,29 @@
 """
 persona.py
 ----------
-Persona dataclass, AgentBeliefs, PersonaBuilder.
+Persona dataclass, AgentBeliefs (argument kit), SpeechSignature, PersonaBuilder.
 
-Pipeline per dialogue (single grouped LLM path, no per-persona fallback):
+Per-dialogue setup (one grouped LLM path -- no per-persona fallback):
   1. One LLM call generates N names + roles tuned to the topic.
   2. Sample Big Five traits per participant from cooperative defaults.
-  3. Group diversity check.
+  3. Group diversity check (Big Five spread).
   4. One LLM call generates all backstories + goals.
-  5. One LLM call generates all belief states (after options exist).
+  5. One LLM call generates all belief states (Toulmin argument kit).
+  6. Deterministic divergence enforcement on preferred-options.
 
 Total: 3 LLM calls for setup, regardless of N.
+
+Research grounding (the parts of the architecture this module owns):
+  - McCrae & John (1992) -- Big Five traits, sampled with diversity constraint
+    and routed both into act-sampling weights (policy.derive_bias) and into
+    a deterministic SpeechSignature (this module) that scaffolds distinct voices.
+  - Shanahan (2023, "Role-play with LLMs") -- persona scaffolding is structural,
+    not "be the character" instruction; SpeechSignature lives in the speaker card.
+  - Toulmin (1958) -- AgentBeliefs carries claim + warrants (reasons) +
+    reservation + would_reconsider_if so personas have material to argue with,
+    not just positions to hold.
+  - Liang et al. (2023) "Encouraging Divergent Thinking" -- _enforce_divergence
+    spreads preferred options so the group must actually reconcile.
 """
 
 from __future__ import annotations
@@ -86,16 +99,99 @@ _STYLE_RULE: dict[int, str] = {
 
 
 # ---------------------------------------------------------------------------
-# Belief state
+# Belief state -- Toulmin argument kit
 # ---------------------------------------------------------------------------
 
 @dataclass
 class AgentBeliefs:
+    """Private belief model. The 'argument kit' (reasons, reservation,
+    would_reconsider_if) is what lets sims ARGUE rather than restate."""
+
     preferred: str
     acceptable: list[str]
     rejected: list[str]
     key_concern: str
-    concession: str
+    # Toulmin warrants -- 1-2 concrete reasons drawn from the persona's
+    # goal/expertise/backstory, phrased as their knowledge/experience.
+    reasons: list[str]
+    # One genuine concern about a rival option -- framed to be addressable,
+    # not a veto. ("I'd worry about X" not "I refuse Y".)
+    reservation: str
+    # The concrete thing that would move them off `preferred`. Enables genuine
+    # update and keeps disagreements resolvable.
+    would_reconsider_if: str
+
+
+# ---------------------------------------------------------------------------
+# Speech signature -- Big Five routed into distinct voice features.
+# Deterministic floats fed into the speaker card and the turn prompt; never
+# surfaced as named phrases or filler lists.
+# ---------------------------------------------------------------------------
+
+@dataclass
+class SpeechSignature:
+    hedge_propensity: float        # 0..1; "I think", "kind of", "tbh"
+    directness: float              # 0..1; willingness to say "no" plainly
+    thinkaloud_propensity: float   # 0..1; fragments + run-ons, less polish
+    detail_orientation: float      # 0..1; cites concrete option-text fragments
+
+    def descriptor(self) -> str:
+        """Short register descriptor for the speaker card -- never prescribes phrases."""
+        parts: list[str] = []
+        if self.hedge_propensity >= 0.65:
+            parts.append("hedges naturally (\"i think\", \"kind of\")")
+        elif self.hedge_propensity <= 0.30:
+            parts.append("speaks with little hedging")
+        if self.directness >= 0.65:
+            parts.append("blunt; will say \"no\" plainly")
+        elif self.directness <= 0.30:
+            parts.append("softens disagreement before stating it")
+        if self.thinkaloud_propensity >= 0.65:
+            parts.append("thinks aloud; sentences run a bit loose")
+        elif self.thinkaloud_propensity <= 0.30:
+            parts.append("tight, polished sentences")
+        if self.detail_orientation >= 0.65:
+            parts.append("cites concrete details from the options")
+        elif self.detail_orientation <= 0.30:
+            parts.append("speaks at the level of impressions, not specifics")
+        return "; ".join(parts) if parts else "neutral register"
+
+
+def _norm(value: int) -> float:
+    return (max(1, min(5, int(value))) - 1) / 4.0
+
+
+def derive_speech_signature(
+    openness: int, conscientiousness: int, extraversion: int,
+    agreeableness: int, neuroticism: int,
+) -> SpeechSignature:
+    """Map Big Five -> voice features (Shanahan 2023; Character-LLM).
+    All weights come from cfg.voice; this is pure config-driven mapping."""
+    w = cfg.voice
+    a = _norm(agreeableness)
+    o = _norm(openness)
+    c = _norm(conscientiousness)
+    neuro = _norm(neuroticism)
+    e = _norm(extraversion)
+
+    hedge = 0.5 + w.hedge_neuroticism_weight * (neuro - 0.5) \
+                + w.hedge_agreeableness_weight * (a - 0.5)
+    directness = 0.5 + w.directness_disagreeableness_weight * (0.5 - a) \
+                     + w.directness_low_neuroticism_weight * (0.5 - neuro)
+    thinkaloud = 0.5 + w.thinkaloud_extraversion_weight * (e - 0.5) \
+                     + w.thinkaloud_low_conscientiousness_weight * (0.5 - c)
+    detail = 0.5 + w.detail_conscientiousness_weight * (c - 0.5)
+
+    # openness has a small reframing influence on hedge / directness too --
+    # very open sims hedge slightly more (consider angles before committing).
+    hedge = max(0.0, min(1.0, hedge + 0.05 * (o - 0.5)))
+
+    return SpeechSignature(
+        hedge_propensity=max(0.0, min(1.0, hedge)),
+        directness=max(0.0, min(1.0, directness)),
+        thinkaloud_propensity=max(0.0, min(1.0, thinkaloud)),
+        detail_orientation=max(0.0, min(1.0, detail)),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -137,8 +233,17 @@ class Persona:
                 "acceptable": self.beliefs.acceptable,
                 "rejected": self.beliefs.rejected,
                 "key_concern": self.beliefs.key_concern,
-                "concession": self.beliefs.concession,
+                "reasons": list(self.beliefs.reasons),
+                "reservation": self.beliefs.reservation,
+                "would_reconsider_if": self.beliefs.would_reconsider_if,
             }
+        sig = self.speech_signature()
+        d["speech_signature"] = {
+            "hedge": round(sig.hedge_propensity, 2),
+            "directness": round(sig.directness, 2),
+            "thinkaloud": round(sig.thinkaloud_propensity, 2),
+            "detail": round(sig.detail_orientation, 2),
+        }
         return d
 
     def response_length_score(self) -> int:
@@ -162,8 +267,14 @@ class Persona:
             return min(base, caps.closure)
         return base
 
+    def speech_signature(self) -> SpeechSignature:
+        return derive_speech_signature(
+            self.openness, self.conscientiousness, self.extraversion,
+            self.agreeableness, self.neuroticism,
+        )
+
     def personality_summary(self) -> str:
-        """Register descriptors derived from Big Five — never prescribes phrases."""
+        """Register descriptors derived from Big Five -- never prescribes phrases."""
         parts: list[str] = []
         if self.openness >= 4:
             parts.append("considers angles others haven't raised; comfortable reframing the question")
@@ -263,12 +374,17 @@ class PersonaBuilder:
         return shells
 
     def assign_beliefs(self, personas: list[Persona], options: list[str]) -> None:
-        """One LLM call for all belief states. Raises if any persona is missing."""
+        """One LLM call for all belief states + deterministic divergence enforcement."""
         group_beliefs = self._generate_beliefs_group(personas, options)
         for persona in personas:
             if persona.name not in group_beliefs:
                 raise ValueError(f"Belief generation missing entry for {persona.name!r}")
             persona.beliefs = group_beliefs[persona.name]
+
+        option_letters = _option_letters_from_texts(options)
+        if option_letters:
+            _enforce_divergence(personas, option_letters)
+            _enforce_acceptable_overlap(personas, option_letters)
 
     # ------------------------------------------------------------------
 
@@ -349,16 +465,37 @@ class PersonaBuilder:
         ]
 
         key_concern = str(data.get("key_concern", "")).strip()
-        concession = str(data.get("concession", "")).strip()
-        if not key_concern or not concession:
-            raise ValueError(f"Belief for {name!r} missing key_concern or concession.")
+        if not key_concern:
+            raise ValueError(f"Belief for {name!r} missing key_concern.")
+
+        reasons_raw = data.get("reasons", [])
+        if not isinstance(reasons_raw, list):
+            reasons_raw = []
+        reasons = [str(r).strip() for r in reasons_raw if isinstance(r, str) and str(r).strip()]
+        rk = cfg.argument_kit
+        if len(reasons) < rk.reasons_min:
+            raise ValueError(
+                f"Belief for {name!r} needs at least {rk.reasons_min} reason(s); got {reasons!r}"
+            )
+        if len(reasons) > rk.reasons_max:
+            reasons = reasons[:rk.reasons_max]
+
+        reservation = str(data.get("reservation", "")).strip()
+        if rk.reservation_required and not reservation:
+            raise ValueError(f"Belief for {name!r} missing required 'reservation'.")
+
+        would_reconsider_if = str(data.get("would_reconsider_if", "")).strip()
+        if rk.reconsider_required and not would_reconsider_if:
+            raise ValueError(f"Belief for {name!r} missing required 'would_reconsider_if'.")
 
         beliefs = AgentBeliefs(
             preferred=preferred,
             acceptable=acceptable,
             rejected=rejected,
             key_concern=key_concern,
-            concession=concession,
+            reasons=reasons,
+            reservation=reservation,
+            would_reconsider_if=would_reconsider_if,
         )
         accept_others = [x for x in acceptable if x != preferred]
         accept_str = f", accepts {accept_others}" if accept_others else ""
@@ -367,7 +504,7 @@ class PersonaBuilder:
 
 
 # ---------------------------------------------------------------------------
-# Diversity + trait sampling
+# Trait diversity + sampling
 # ---------------------------------------------------------------------------
 
 def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]:
@@ -401,3 +538,109 @@ def _random_traits() -> dict[str, int]:
         else:
             result[t] = max(1, min(5, int(override)))
     return result
+
+
+# ---------------------------------------------------------------------------
+# Divergence enforcement (Liang 2023). The fuel for real discussion is that
+# cooperative people START in different places for good reasons.
+# ---------------------------------------------------------------------------
+
+def _option_letters_from_texts(option_texts: list[str]) -> list[str]:
+    import re
+    letters: list[str] = []
+    for opt in option_texts:
+        m = re.match(r"^\s*option\s+([a-d])\b", opt, re.I)
+        if m:
+            letters.append(m.group(1).upper())
+    return letters
+
+
+def _enforce_divergence(personas: list[Persona], option_letters: list[str]) -> None:
+    """If `divergence.enforce_distinct_preferred`, ensure not all `preferred`
+    are identical. Pick the most-similar pair and nudge one toward an option
+    still inside their `acceptable` list, preferring a not-yet-claimed letter."""
+    if not cfg.divergence.enforce_distinct_preferred:
+        return
+    if len({p.beliefs.preferred for p in personas if p.beliefs}) > 1:
+        return  # already diverse
+
+    claimed: set[str] = set()
+    # Anchor the first persona; nudge the rest off the shared preference.
+    anchor = personas[0]
+    if anchor.beliefs:
+        claimed.add(anchor.beliefs.preferred)
+
+    for persona in personas[1:]:
+        if not persona.beliefs:
+            continue
+        alternatives = [
+            o for o in persona.beliefs.acceptable
+            if o != persona.beliefs.preferred and o not in claimed
+        ] or [o for o in option_letters if o not in claimed]
+        if not alternatives:
+            continue
+        old = persona.beliefs.preferred
+        persona.beliefs.preferred = alternatives[0]
+        if persona.beliefs.preferred not in persona.beliefs.acceptable:
+            persona.beliefs.acceptable.insert(0, persona.beliefs.preferred)
+        claimed.add(persona.beliefs.preferred)
+        print(
+            f"  [divergence] nudged {persona.name}: preferred {old} -> "
+            f"{persona.beliefs.preferred} (keeps acceptable overlap)"
+        )
+
+
+def _enforce_acceptable_overlap(personas: list[Persona], option_letters: list[str]) -> None:
+    """Trim each persona's `acceptable` to the configured size range, and
+    guarantee at least `required_common_acceptable` options are in everyone's
+    acceptable set so consensus is reachable."""
+    lo = cfg.divergence.target_acceptable_min
+    hi = cfg.divergence.target_acceptable_max
+    required_common = cfg.divergence.required_common_acceptable
+
+    # Step 1: trim oversize acceptable sets to `hi`, preserving preferred + variety.
+    for persona in personas:
+        if not persona.beliefs:
+            continue
+        accept = list(persona.beliefs.acceptable)
+        if len(accept) > hi:
+            keep = [persona.beliefs.preferred]
+            for opt in accept:
+                if opt not in keep and len(keep) < hi:
+                    keep.append(opt)
+            persona.beliefs.acceptable = keep
+
+    # Step 2: pick a common option (the most popular acceptable letter) and
+    # make sure every persona has it. This is the shared fallback.
+    if required_common <= 0:
+        return
+    pool: dict[str, int] = {l: 0 for l in option_letters}
+    for persona in personas:
+        if not persona.beliefs:
+            continue
+        for opt in persona.beliefs.acceptable:
+            pool[opt] = pool.get(opt, 0) + 1
+    if not pool:
+        return
+    common = sorted(pool.items(), key=lambda kv: (-kv[1], kv[0]))
+    common_letters = [opt for opt, _ in common][:required_common]
+
+    for persona in personas:
+        if not persona.beliefs:
+            continue
+        for opt in common_letters:
+            if opt not in persona.beliefs.acceptable and opt not in persona.beliefs.rejected:
+                persona.beliefs.acceptable.append(opt)
+
+    # Step 3: ensure minimum acceptable size (preferred + at least one other).
+    for persona in personas:
+        if not persona.beliefs:
+            continue
+        if len(persona.beliefs.acceptable) >= lo:
+            continue
+        for opt in option_letters:
+            if opt in persona.beliefs.acceptable or opt in persona.beliefs.rejected:
+                continue
+            persona.beliefs.acceptable.append(opt)
+            if len(persona.beliefs.acceptable) >= lo:
+                break

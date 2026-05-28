@@ -68,6 +68,12 @@ def run_dialogue(topic: str) -> None:
                 if len(b.acceptable) > 1 else ""
             )
             print(f"    beliefs: prefers {b.preferred}{accept_str} | {b.key_concern}")
+            if b.reasons:
+                print(f"      reasons: {' | '.join(b.reasons)}")
+            if b.reservation:
+                print(f"      reservation: {b.reservation}")
+            if b.would_reconsider_if:
+                print(f"      would reconsider if: {b.would_reconsider_if}")
     print()
 
     for persona in personas:

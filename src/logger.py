@@ -1,16 +1,19 @@
 """
 logger.py
 ---------
-DialogueLogger — writes two files per dialogue:
+DialogueLogger -- writes two files per dialogue:
 
   .txt          chat with persona block at the top, Outcome/Tokens footer.
   .eval.json    everything else for evaluation:
                   - dialogue metadata + outcome + tokens
                   - per-speaker / per-phase turn counts + Gini
                   - vote flips, confirmation rejections
-                  - Fisher (1970) ratios over public stances
-                  - full personas (traits + beliefs)
-                  - structured per-turn trace (acts, addressees, stance updates)
+                  - Fisher (1970) ratios  (eval-only)
+                  - Stage 5: justification / reciprocity / reflexivity rates
+                  - challenges + answered challenges
+                  - full personas (traits + beliefs + speech signature)
+                  - structured per-turn trace (acts, addressees, stance updates,
+                    challenge edges)
 """
 
 from __future__ import annotations
@@ -20,7 +23,7 @@ import os
 from typing import Any, Optional, TYPE_CHECKING
 
 from config_loader import cfg
-from reasoning import fisher_ratios
+from reasoning import deliberation_metrics, fisher_ratios
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
@@ -48,11 +51,16 @@ def _persona_block(personas: list["Persona"]) -> str:
     lines.append("-" * 50)
     for p in personas:
         primary_tag = " (primary)" if p.is_primary else ""
-        lines.append(f"{p.name}{primary_tag} — {p.role}")
+        lines.append(f"{p.name}{primary_tag} -- {p.role}")
         lines.append(
             f"  traits: open={p.openness} consc={p.conscientiousness} "
             f"extra={p.extraversion} agree={p.agreeableness} "
             f"neuro={p.neuroticism} length={p.response_length}"
+        )
+        sig = p.speech_signature()
+        lines.append(
+            f"  voice: hedge={sig.hedge_propensity:.2f} direct={sig.directness:.2f} "
+            f"thinkaloud={sig.thinkaloud_propensity:.2f} detail={sig.detail_orientation:.2f}"
         )
         if p.goal:
             lines.append(f"  goal: {p.goal}")
@@ -65,6 +73,12 @@ def _persona_block(personas: list["Persona"]) -> str:
             rejects_str = f", rejects {b.rejected}" if b.rejected else ""
             lines.append(f"  prefers Option {b.preferred}{accept_str}{rejects_str}")
             lines.append(f"  concern: {b.key_concern}")
+            if b.reasons:
+                lines.append(f"  reasons: {' | '.join(b.reasons)}")
+            if b.reservation:
+                lines.append(f"  reservation: {b.reservation}")
+            if b.would_reconsider_if:
+                lines.append(f"  would reconsider if: {b.would_reconsider_if}")
     lines.append("-" * 50)
     return "\n".join(lines)
 
@@ -183,7 +197,9 @@ class DialogueLogger:
         }
 
         if structured is not None:
-            meta["fisher_ratios"] = fisher_ratios(structured)
+            names = [s.name for s in sims]
+            meta["fisher_ratios"] = fisher_ratios(structured)              # eval-only
+            meta["deliberation"] = deliberation_metrics(structured, names) # Stage 5 signals
             meta["consensus_state_final"] = structured.consensus_state
             meta["is_hard_blocker"] = {
                 name: ps.is_true_hard_blocker
@@ -193,6 +209,20 @@ class DialogueLogger:
                 name: ps.public_preference
                 for name, ps in structured.participants.items()
             }
+            meta["stated_priorities"] = {
+                name: ps.stated_priority
+                for name, ps in structured.participants.items()
+            }
+            meta["challenges"] = [
+                {
+                    "turn_id": c.challenge_turn_id,
+                    "challenger": c.challenger,
+                    "target": c.target,
+                    "target_option": c.target_option,
+                    "answered_turn_id": c.answered_turn_id,
+                }
+                for c in structured.discourse.challenges
+            ]
             meta["structured_turns"] = [
                 {
                     "id": t.turn_id,
@@ -204,6 +234,8 @@ class DialogueLogger:
                     "addressees": t.addressees,
                     "reply_to": t.reply_to,
                     "answers_question_id": t.answers_question_id,
+                    "challenges_turn_id": t.challenges_turn_id,
+                    "answered_challenge_id": t.answered_challenge_id,
                     "stance_updates": [
                         {"option": su.option, "stance": su.stance,
                          "confidence": su.confidence, "condition": su.condition}

@@ -1,7 +1,7 @@
 """
 orchestrator.py
 ---------------
-Orchestrator — coordinates a single dialogue run.
+Orchestrator -- coordinates a single dialogue run.
 
 Responsibilities:
   1. Setup       generate options + opening (one LLM call)
@@ -83,6 +83,7 @@ class DialogueState:
     candidate_option: Optional[str] = None
 
     info_gap_cooldown: int = 0
+    facilitate_cooldown: int = 0
     confirmation_rejection_count: int = 0
 
 
@@ -136,6 +137,10 @@ class Orchestrator:
             if not text.lower().startswith(f"option {label.lower()}"):
                 text = f"Option {label} - {text}"
             cleaned.append(text)
+
+        decision_kind = str(data.get("decision_kind", "")).strip().lower()
+        if decision_kind:
+            print(f"  [options] decision_kind={decision_kind}")
         return cleaned, question
 
     def _build_opening_history(self) -> list[str]:
@@ -229,6 +234,25 @@ class Orchestrator:
     def _update_repetition(self) -> None:
         self.state.repetition_pressure = compute_repetition_pressure(self.history)
 
+    def _decrement_cooldowns(self) -> None:
+        self.state.facilitate_cooldown = max(0, self.state.facilitate_cooldown - 1)
+        self.state.info_gap_cooldown = max(0, self.state.info_gap_cooldown - 1)
+        self.state.consensus_cooldown = max(0, self.state.consensus_cooldown - 1)
+
+    def _set_priority_to_holdout(self) -> None:
+        """Route priority_next_speaker to the dissenter (vote != current majority).
+        Used by stall + outlier interventions so the moderator nudge actually
+        lands on the person whose movement would unblock things -- not on the
+        person who just spoke."""
+        sv = current_votes(self.history, self.resolver)
+        if not sv:
+            return
+        top_opt = Counter(sv.values()).most_common(1)[0][0]
+        for sim in self.sims:
+            if sv.get(sim.name) != top_opt:
+                self.state.priority_next_speaker = sim.name
+                return
+
     def _max_dissenters(self) -> int:
         """Dissenters tolerated before a vote split counts as deadlock.
         Scales with group size: 0 for a pair, 1 for 3-4, up to (n-1)//2 capped
@@ -274,8 +298,9 @@ class Orchestrator:
         self._update_leading_option()
 
         discourse = self._tracker.state.discourse if self._tracker else None
+        structured = self._tracker.state if self._tracker else None
 
-        # During narrowing, prefer unvoted sims — sorted by "stalest first".
+        # During narrowing, prefer unvoted sims -- "stalest first".
         if self.state.phase == "narrowing":
             votes = current_votes(self.history, self.resolver)
             unvoted = [s for s in self.sims if s.name not in votes]
@@ -315,6 +340,7 @@ class Orchestrator:
                 self.history, self.state,
                 all_names=all_names,
                 turn_plan=turn_plan,
+                structured=structured,
             )
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name == self.state.last_addressed else "weighted"
@@ -353,7 +379,7 @@ class Orchestrator:
                 self.state.rejected_options_by_speaker.pop(sim.name, None)
 
     # ------------------------------------------------------------------
-    # Consensus check — structured only
+    # Consensus check -- structured only
     # ------------------------------------------------------------------
 
     def _detect_consensus(self) -> Optional[str]:
@@ -400,18 +426,18 @@ class Orchestrator:
             f"feels like Option {preferred} -- any last objections before we lock it in?",
         ]))
 
-        # One natural pass — primary first, then the others. No per-sim roll-call;
-        # everyone answers the single question above in their own words.
+        structured = self._tracker.state if self._tracker else None
         all_names = [s.name for s in self.sims]
         primary = self._primary_sim()
         ordered = ([primary] if primary else []) + [s for s in self.sims if s is not primary]
         for sim in ordered:
-            text, tok_in, tok_out = sim.generate_turn(self.history, self.state, all_names=all_names)
+            text, tok_in, tok_out = sim.generate_turn(
+                self.history, self.state, all_names=all_names, structured=structured,
+            )
             if text and "[SILENCE]" not in text.upper():
                 self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
                                  tokens_in=tok_in, tokens_out=tok_out)
 
-        # Detect rejection in the most recent participant lines
         rejection_signals = (
             "no,", "no.", "not quite", "not yet", "still weighing",
             "not sure", "don't agree", "disagree", "not ready",
@@ -452,8 +478,11 @@ class Orchestrator:
         others = [s for s in self.sims if s is not primary]
         ordered = ([primary] if primary else []) + others
         all_names = [s.name for s in self.sims]
+        structured = self._tracker.state if self._tracker else None
         for sim in ordered:
-            text, tok_in, tok_out = sim.generate_turn(self.history, self.state, all_names=all_names)
+            text, tok_in, tok_out = sim.generate_turn(
+                self.history, self.state, all_names=all_names, structured=structured,
+            )
             if text and "[SILENCE]" not in text.upper():
                 self._store_line(f"{sim.name}: {text}", selected_reason="closure",
                                  tokens_in=tok_in, tokens_out=tok_out)
@@ -469,7 +498,6 @@ class Orchestrator:
             self._run_closure()
 
     def _force_conclusion(self) -> None:
-        """Public-stance-only force-close via the consensus engine."""
         names = [s.name for s in self.sims]
         final: Optional[str] = None
         if self._tracker is not None and self._consensus_engine is not None:
@@ -489,12 +517,9 @@ class Orchestrator:
                 topic=self.topic,
                 participant_names=names,
                 final_option=final,
-                recent_dialogue="\n".join(self.history[-6:]),
+                recent_dialogue="\n".join(self.history[-cfg.moderation.recent_window_force_close:]),
             )
         ).strip()
-        # clean_moderator_line returns "" only if the model impersonated a
-        # participant — a malformed line, not an LLM failure; substitute a
-        # plain system line in that single case.
         self._store_moderator(
             clean_moderator_line(line, names) or f"No full agreement -- calling Option {final}. Done.",
             tokens_in=self._llm.last_tokens_in,
@@ -553,12 +578,17 @@ class Orchestrator:
         print()
 
         def _intervene(reason: str) -> None:
-            self._mod.run_intervention(reason, self.state, self.history,
-                                       lambda t, ti, to: self._store_moderator(t, ti, to))
+            self._mod.run_intervention(
+                reason, self.state, self.history,
+                lambda t, ti, to: self._store_moderator(t, ti, to),
+                structured=(self._tracker.state if self._tracker else None),
+            )
 
         try:
             for _ in range(hard_ceiling):
                 self.state.turn_index += 1
+                self._decrement_cooldowns()
+
                 active = self._run_participant_round()
                 if not active:
                     self.outcome = "failed"
@@ -572,10 +602,9 @@ class Orchestrator:
                         self.state.has_entered_emergence = True
 
                 # 1. Natural consensus
-                if self.state.consensus_cooldown > 0:
-                    self.state.consensus_cooldown -= 1
                 final = self._detect_consensus()
-                if final and self.state.consensus_cooldown > 0 and final == self.state.last_rejected_option:
+                if final and self.state.consensus_cooldown > 0 \
+                        and final == self.state.last_rejected_option:
                     final = None
                 if final and final in set(self.state.rejected_options_by_speaker.values()):
                     final = None
@@ -585,20 +614,19 @@ class Orchestrator:
                         break
                     continue
 
-                # 1b. Info gap — sims fishing for detail the options don't hold.
-                # The moderator answers from the options or says it's not specified,
-                # so sims stop looping and don't invent the missing facts.
-                if self.state.info_gap_cooldown > 0:
-                    self.state.info_gap_cooldown -= 1
-                elif (self.state.phase in ("negotiation", "narrowing", "emergence")
-                      and self._mod.detect_info_gap(self.history)):
+                # 1b. Info-chase (sims fishing for a specific missing attribute).
+                # Stage 3: the moderator REFRAMES rather than shuts down.
+                if self.state.info_gap_cooldown == 0 \
+                        and self.state.phase in ("negotiation", "narrowing", "emergence") \
+                        and self._mod.detect_info_chase(self.history):
                     _intervene("clarify")
                     self.state.info_gap_cooldown = len(self.sims) + 1
                     continue
 
-                # 2. Narrowing prompt
+                # 2. Narrowing -- deliberation-gated.
                 ptc = participant_turn_count(self.history)
-                if self._mod.should_narrow(self.state, ptc):
+                structured = self._tracker.state if self._tracker else None
+                if self._mod.should_narrow(self.state, ptc, structured=structured):
                     if self._fresh_unanswered_question():
                         continue
                     self._narrowing_prompt()
@@ -623,28 +651,27 @@ class Orchestrator:
                     if self.state.stall_rounds >= stall_limit:
                         _intervene("stall")
                         self.state.stall_rounds = 0
-                        sv = current_votes(self.history, self.resolver)
-                        if sv:
-                            top_opt = Counter(sv.values()).most_common(1)[0][0]
-                            for _sim in self.sims:
-                                if sv.get(_sim.name) != top_opt:
-                                    self.state.priority_next_speaker = _sim.name
-                                    break
+                        self._set_priority_to_holdout()
                         continue
 
-                # 4. Regular interventions
+                # 4. Regular interventions (Stage 3 includes facilitation moves).
                 ptc = participant_turn_count(self.history)
-                intervention = self._mod.should_intervene(self.state, self.history,
-                                                          self._any_sim_stuck(), ptc)
+                intervention = self._mod.should_intervene(
+                    self.state, self.history, self._any_sim_stuck(), ptc,
+                    structured=(self._tracker.state if self._tracker else None),
+                )
                 if intervention:
                     if intervention == "stall" and self._fresh_unanswered_question():
                         continue
                     _intervene(intervention)
-                    if intervention.startswith("outlier:"):
-                        self.state.priority_next_speaker = intervention.split(":", 1)[1]
+                    # Route priority to the HOLDOUT (dissenter), never to the
+                    # outlier itself. The outlier nudge exists to break a repeat
+                    # loop; forcing the repeater to speak again recreates the loop.
+                    if intervention == "stall" or intervention.startswith("outlier:"):
+                        self._set_priority_to_holdout()
 
             else:
-                # Hard ceiling hit
+                # Hard ceiling hit.
                 self._force_conclusion()
 
         finally:

@@ -17,7 +17,14 @@
       "Bash(rm -rf src/__pycache__ __pycache__)",
       "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main; print\\('final: compile + import clean'\\)\")",
       "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main; print\\('compile + import clean'\\)\")",
-      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main,orchestrator,state,policy,reasoning,persona,prompts,prompt_context,simulator,moderation,logger,utils,llm_client; print\\('compile + all imports clean'\\)\")"
+      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main,orchestrator,state,policy,reasoning,persona,prompts,prompt_context,simulator,moderation,logger,utils,llm_client; print\\('compile + all imports clean'\\)\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(tee /tmp/dialogue_run.log)",
+      "Bash(cat /tmp/dialogue_run.log 2>&1 | tail -50; echo \"----\"; ps -ef | grep -E \"python|main.py\" 2>&1 | head -5)",
+      "Read(//tmp/**)",
+      "Bash(python main.py eval/_smoke.txt)",
+      "Bash(python -m compileall -q src)",
+      "PowerShell(Get-Process python -ErrorAction SilentlyContinue)"
     ]
   }
 }

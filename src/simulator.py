@@ -1,8 +1,9 @@
 """
 simulator.py
 ------------
-Simulator — wraps a Persona and generates one dialogue turn via the LLM,
-using the compact speaker-card prompt.
+Simulator -- wraps a Persona and generates one dialogue turn via the LLM,
+using the compact speaker-card prompt. Stage 1c + Stage 6: the prompt now
+carries a per-sim memory block built from StructuredState.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from persona import Persona
 from prompt_context import (
     build_group_state,
     build_local_context,
+    build_memory_block,
     build_move_instruction,
     build_output_contract,
     build_relevant_options,
@@ -28,6 +30,7 @@ from utils import OptionResolver
 if TYPE_CHECKING:
     from orchestrator import DialogueState
     from policy import TurnPlan
+    from state import StructuredState
 
 
 class Simulator:
@@ -43,12 +46,15 @@ class Simulator:
     # ------------------------------------------------------------------
 
     def generate_turn(
-        self, history: list[str], state: "DialogueState",
+        self,
+        history: list[str],
+        state: "DialogueState",
         all_names: Optional[list[str]] = None,
         turn_plan: Optional["TurnPlan"] = None,
+        structured: Optional["StructuredState"] = None,
     ) -> tuple[str, int, int]:
         del all_names  # reserved for future use
-        raw = self._generate(history, state, turn_plan)
+        raw = self._generate(history, state, turn_plan, structured)
         tok_in = self._llm.last_tokens_in
         tok_out = self._llm.last_tokens_out
 
@@ -74,8 +80,13 @@ class Simulator:
                 return True
         return False
 
-    def _generate(self, history: list[str], state: "DialogueState",
-                  turn_plan: Optional["TurnPlan"]) -> str:
+    def _generate(
+        self,
+        history: list[str],
+        state: "DialogueState",
+        turn_plan: Optional["TurnPlan"],
+        structured: Optional["StructuredState"],
+    ) -> str:
         is_closure = state.phase == "closure"
         phase_instr = prompts.phase_instruction_text(
             phase=state.phase, has_voted=self._has_voted(history),
@@ -89,12 +100,14 @@ class Simulator:
         relevant_opts = build_relevant_options(self.options, self.persona, candidate)
         group_state = "" if is_closure else build_group_state(state)
         local_ctx = build_local_context(history, n_recent=n_recent)
+        memory_block = "" if is_closure else build_memory_block(self.name, structured)
 
-        interaction_instr = "" if is_closure else self._interaction_instruction(history, state)
+        open_challenger = self._open_challenger(structured)
+        interaction_instr = "" if is_closure else self._interaction_instruction(
+            history, state, open_challenger,
+        )
         position_disc = "" if is_closure else self._position_discipline(state)
 
-        # Only surface the planned act when it's a real obligation (answer/commit/
-        # confirm/reject). Sampled negotiation acts stay implicit so turns read natural.
         plan_to_show = turn_plan if (turn_plan is not None and turn_plan.directive) else None
 
         move_instr = build_move_instruction(
@@ -108,9 +121,13 @@ class Simulator:
         )
 
         prompt = prompts.sim_turn_compact(
-            speaker_card=speaker_card, relevant_options=relevant_opts,
-            group_state=group_state, local_context=local_ctx,
-            move_instruction=move_instr, output_contract=output_contract,
+            speaker_card=speaker_card,
+            relevant_options=relevant_opts,
+            group_state=group_state,
+            local_context=local_ctx,
+            memory_block=memory_block,
+            move_instruction=move_instr,
+            output_contract=output_contract,
         )
 
         result = self._llm.generate(prompt).strip()
@@ -126,8 +143,6 @@ class Simulator:
         if not flags:
             return turn_text
 
-        # Short turns are skipped for quote/aside flags (they can't invent much),
-        # but an invented NUMBER is the costly hallucination and is always caught.
         if len(turn_text.split()) < cfg.grounding.min_words_to_check:
             if not any(f[:1].isdigit() for f in flags):
                 return turn_text
@@ -136,12 +151,29 @@ class Simulator:
 
     # ------------------------------------------------------------------
 
-    def _interaction_instruction(self, history: list[str], state: "DialogueState") -> str:
+    def _open_challenger(
+        self, structured: Optional["StructuredState"]
+    ) -> Optional[str]:
+        if structured is None:
+            return None
+        for ch in reversed(structured.discourse.challenges):
+            if ch.target == self.name and ch.answered_turn_id is None:
+                return ch.challenger
+        return None
+
+    def _interaction_instruction(
+        self,
+        history: list[str],
+        state: "DialogueState",
+        open_challenger: Optional[str],
+    ) -> str:
         if state.phase in {"opening", "closure", "confirmation"}:
             return ""
 
         last = self._last_participant_line(history)
-        last_has_question = bool(last and "?" in last and last.split(":", 1)[0].strip() != self.name)
+        last_has_question = bool(
+            last and "?" in last and last.split(":", 1)[0].strip() != self.name
+        )
 
         last_claim_speaker: Optional[str] = None
         if not last_has_question and last and ":" in last:
@@ -155,6 +187,7 @@ class Simulator:
             last_has_question=last_has_question,
             last_claim_speaker=last_claim_speaker,
             repetition_high=repetition_high,
+            open_challenge_from=open_challenger,
         )
 
     def _position_discipline(self, state: "DialogueState") -> str:
@@ -171,11 +204,12 @@ class Simulator:
             phase=state.phase,
             anchor=anchor,
             candidate=candidate,
-            candidate_in_acceptable=bool(candidate and candidate in beliefs.acceptable
-                                        and candidate != anchor),
+            candidate_in_acceptable=bool(
+                candidate and candidate in beliefs.acceptable and candidate != anchor
+            ),
             candidate_in_rejected=bool(candidate and candidate in (beliefs.rejected or [])),
             candidate_is_anchor=bool(candidate and candidate == anchor),
-            concession_text=beliefs.concession or "",
+            reconsider_text=beliefs.would_reconsider_if or "",
         )
 
     # ------------------------------------------------------------------
