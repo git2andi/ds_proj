@@ -18,8 +18,10 @@ Sections built here:
 
 from __future__ import annotations
 
+import random
 from typing import Optional, TYPE_CHECKING
 
+import prompts
 from config_loader import cfg
 
 if TYPE_CHECKING:
@@ -133,12 +135,19 @@ def build_memory_block(
 ) -> str:
     """Relevance-filtered per-sim memory. Replaces a raw transcript dump.
 
-    Sections (each optional, capped per cfg.memory):
-      - Your last turn (literal)      : strongest anti-repeat signal
-      - What you've already said      : compact running anti-repetition
-      - Pushback aimed at you         : forces engagement
-      - Live arguments from others    : enables build-on
-      - What others care about        : perceived priorities for theory-of-mind
+    Update.md §5.2 trim: drop summary-heavy blocks that fed the chat back
+    abstract concern words ("cost", "reliability", "flexibility") and pushed
+    sims to recite them. Kept (functional, anti-repeat, anti-drop):
+      - Your literal last turn         : strongest anti-rephrase signal
+      - Your recent point signatures   : longer-window anti-repeat
+      - Pushback aimed at you          : prevents dropped engagement
+    Trimmed:
+      - Others' live arguments cap reduced (cfg.memory.others_arguments_max)
+    Toggleable (default OFF after update):
+      - Perceived priorities (cfg.memory.show_perceived_priorities)
+
+    Build-on and theory-of-mind still happen through the raw RECENT TURNS
+    block in the prompt -- we just stopped pre-digesting them.
     """
     if structured is None:
         return ""
@@ -146,9 +155,7 @@ def build_memory_block(
     ps = structured.participants.get(speaker_name)
     parts: list[str] = []
 
-    # 1a) Your literal last turn -- the strongest anti-repeat signal. Summary
-    # forms are easy to paraphrase; seeing your own exact prior line forces a
-    # genuine pivot.
+    # 1a) Your literal last turn -- strongest anti-rephrase signal.
     last_own = _last_own_turn_text(speaker_name, structured)
     if last_own:
         parts.append(
@@ -156,15 +163,14 @@ def build_memory_block(
         )
 
     # 1b) Your other recent points (longer-window anti-repeat). Skip the most
-    # recent point -- it's already shown literally as "Your last turn", so
-    # surfacing it again here just creates redundant noise.
+    # recent point -- it's already shown literally as "Your last turn".
     if ps and len(ps.points_made) > 1:
         recent = ps.points_made[-cfg.memory.points_made_max:][:-1]
         if recent:
             joined = "; ".join(recent)
             parts.append(f"Earlier you said: {joined}. Don't repeat these either.")
 
-    # 2) Open challenges aimed at this sim (Stage 5).
+    # 2) Open challenges aimed at this sim (kept -- functional, not summary).
     open_against = [
         c for c in structured.discourse.challenges
         if c.target == speaker_name and c.answered_turn_id is None
@@ -177,17 +183,83 @@ def build_memory_block(
             ch_lines.append(f"{c.challenger}{opt_tag}: \"{ch_text}\"")
         parts.append("Pushback aimed at you (engage with one): " + " | ".join(ch_lines))
 
-    # 3) Live arguments from other sims (Stage 6 build-on).
-    others_args = _recent_others_arguments(speaker_name, structured)
-    if others_args:
-        parts.append("Others' live arguments: " + " | ".join(others_args))
+    # 3) Live arguments from other sims -- kept but trimmed to a tighter cap.
+    if cfg.memory.others_arguments_max > 0:
+        others_args = _recent_others_arguments(speaker_name, structured)
+        if others_args:
+            parts.append("Others' live arguments: " + " | ".join(others_args))
 
-    # 4) Perceived priorities -- what others said in opening (Stage 1c).
-    priorities = _perceived_priorities(speaker_name, structured)
-    if priorities:
-        parts.append("What others care about: " + "; ".join(priorities))
+    # 4) Perceived priorities -- now opt-in. Off by default after update.md §5.2.
+    if getattr(cfg.memory, "show_perceived_priorities", False):
+        priorities = _perceived_priorities(speaker_name, structured)
+        if priorities:
+            parts.append("What others care about: " + "; ".join(priorities))
 
     return "\n".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# Surface-move sampler (update.md §4.2)
+# ---------------------------------------------------------------------------
+
+def _surface_move_weights(repetition_high: bool) -> dict[str, float]:
+    sm = getattr(cfg, "surface_moves", None)
+    if sm is None:
+        return {}
+    weights_obj = sm.weights_high_repetition if repetition_high else sm.weights_normal
+    if weights_obj is None:
+        return {}
+    raw = getattr(weights_obj, "_raw", None)
+    if isinstance(raw, dict):
+        return {k: float(v) for k, v in raw.items()}
+    # fallback: walk attributes
+    out: dict[str, float] = {}
+    for k in ("ack_only", "short_no", "question", "compromise",
+              "decision_move", "new_reason"):
+        v = getattr(weights_obj, k, None)
+        if v is not None:
+            out[k] = float(v)
+    return out
+
+
+def pick_surface_move_kind(
+    phase: str,
+    repetition_high: bool,
+    has_open_challenge: bool,
+    has_open_question: bool,
+) -> Optional[str]:
+    """Stochastic nudge that picks ONE surface-move kind, or None for "no hint".
+
+    Returns the KIND only; the prose lives in prompts.surface_move_hint().
+
+    Suppressed when the simulator already has a hard obligation (an open
+    challenge or a pending question) -- those instructions own the turn shape.
+    """
+    sm = getattr(cfg, "surface_moves", None)
+    if sm is None or not getattr(sm, "enable", True):
+        return None
+    if phase not in ("negotiation", "narrowing", "emergence"):
+        return None
+    if has_open_challenge or has_open_question:
+        return None
+
+    prob = float(sm.hint_prob_high_repetition if repetition_high else sm.hint_prob_normal)
+    if random.random() >= prob:
+        return None
+
+    weights = _surface_move_weights(repetition_high)
+    if not weights:
+        return None
+    total = sum(max(0.0, w) for w in weights.values())
+    if total <= 0:
+        return None
+    r = random.uniform(0, total)
+    upto = 0.0
+    for kind, w in weights.items():
+        upto += max(0.0, w)
+        if upto >= r:
+            return kind
+    return next(iter(weights), None)
 
 
 def _challenge_text(structured: "StructuredState", turn_id: int) -> str:
@@ -260,12 +332,24 @@ def build_move_instruction(
     phase_instruction: str,
     interaction_instruction: str = "",
     position_discipline: str = "",
+    surface_move_kind: Optional[str] = None,
 ) -> str:
+    """Assemble the YOUR MOVE block.
+
+    Optional `surface_move_kind` injects a short hint nudging the turn toward
+    a specific natural shape (update.md §4.2). The hint sits AFTER the
+    position-discipline block so the model reads it last and is most likely
+    to follow it. Prose lives in prompts.surface_move_hint().
+    """
     parts = [phase_instruction]
     if interaction_instruction:
         parts.append(interaction_instruction.strip())
     if position_discipline:
         parts.append(position_discipline.strip())
+    if surface_move_kind:
+        hint = prompts.surface_move_hint(surface_move_kind).strip()
+        if hint:
+            parts.append(f"Suggested move for this turn: {hint}")
     return "\n".join(p for p in parts if p.strip())
 
 

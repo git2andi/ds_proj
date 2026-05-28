@@ -18,9 +18,11 @@ llm:
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   sampling:
-    temperature: 0.9
-    top_k: 50
-    top_p: 0.95
+    # Lowered after prompt-shape fixes (update.md §4.10). Naturalness is
+    # produced by the prompt + verifier; lower randomness reduces ramble.
+    temperature: 0.65
+    top_k: 40
+    top_p: 0.9
   gemini_rpm_delay: 12
   timeouts:
     request_seconds: 120
@@ -175,10 +177,14 @@ divergence:
 # Anti-repetition + build-on. Fed to the speaker card instead of raw history.
 # ---------------------------------------------------------------------------
 memory:
+  # Trimmed (update.md §5.2): the memory block was overfeeding abstract repeated
+  # terms. Keep your own anti-repeat strong; reduce others-summary noise to
+  # stop sims trading the same concern words back and forth.
   points_made_max: 4                       # the speaker's own recent points (anti-repeat)
-  others_arguments_max: 4                  # other sims' key live arguments
+  others_arguments_max: 2                  # trimmed -- was 4
   open_challenges_max: 2                   # questions/objections aimed AT this sim
   perceived_priorities_max_chars: 50       # short phrase per other sim, from opening
+  show_perceived_priorities: false         # update.md: drop summary-heavy block
 
 # ---------------------------------------------------------------------------
 # Deliberation gating (Du 2023; Liang 2023). Narrowing fires when all three:
@@ -290,6 +296,55 @@ verification:
   # Jaccard thresholds for self-repetition detection.
   own_last_turn_jaccard: 0.55             # last own turn similarity -> repair
   own_points_similarity: 0.65             # older memory points similarity -> warn
+
+  # ACK_LOOP (update.md §4.3) -- repair when this turn is ack-led AND
+  # several recent participant turns also opened with acknowledgement.
+  check_ack_loop: true
+  ack_loop_window: 3                       # last N non-self participant turns scanned
+  ack_loop_min_recent_with_ack: 2          # >= this many of those must contain ack
+  ack_loop_max_words_for_pure_ack: 14      # short ack-only turns always count
+  ack_loop_head_chars: 60                  # ack phrase must appear in the first N chars
+
+  # SEMANTIC_POINT_REPEAT (update.md §4.4) -- repair when current turn restates
+  # a prior point by the same speaker (same option mention + high overlap, OR
+  # very high overlap on no-option remarks). Stronger than the existing warn.
+  # Same-option threshold is lower since shared option already means the
+  # speaker is on the same topic -- the attribute words just need to overlap.
+  check_semantic_point_repeat: true
+  semantic_repeat_jaccard_same_option: 0.35
+  semantic_repeat_jaccard_no_option: 0.55
+
+# ---------------------------------------------------------------------------
+# Surface moves (update.md §4.2) -- lightweight stochastic nudge that
+# occasionally biases the next turn toward a short non-analytical move
+# (yes/no, question, compromise, decision-move). NOT a heavy act planner --
+# a tiny prompt hint chosen with these probabilities.
+# ---------------------------------------------------------------------------
+surface_moves:
+  enable: true
+  hint_prob_normal: 0.30                   # share of normal turns getting any hint
+  hint_prob_high_repetition: 0.85          # when repetition pressure is high
+  # Weights for hint kinds (relative; normalised by the sampler).
+  # The hints themselves live in prompts.surface_move_hint().
+  weights_normal:
+    ack_only: 1.0
+    short_no: 1.0
+    question: 1.0
+    compromise: 1.0
+    new_reason: 1.0
+  weights_high_repetition:
+    decision_move: 3.0                     # bias hard toward forward motion
+    short_no: 1.5
+    ack_only: 1.0
+    new_reason: 0.5
+
+# ---------------------------------------------------------------------------
+# Closure (update.md §4.9) -- don't force every sim to produce a sign-off line.
+# Moderator success line + a small number of participant reactions is enough.
+# ---------------------------------------------------------------------------
+closure:
+  participants_to_close: 2                 # 0..n; how many sims close. 0 = mod only.
+  always_close_primary: true               # primary always gets a slot if >=1
 
 # ---------------------------------------------------------------------------
 # Evaluation

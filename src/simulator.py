@@ -29,6 +29,7 @@ from prompt_context import (
     build_output_contract,
     build_relevant_options,
     build_speaker_card,
+    pick_surface_move_kind,
 )
 from utils import OptionResolver
 from verifier import VerificationResult, verify_participant_turn
@@ -120,10 +121,25 @@ class Simulator:
         )
         position_disc = "" if is_closure else self._position_discipline(state)
 
+        # Update.md §4.2 -- tiny stochastic surface-move nudge. Suppressed when
+        # the simulator already has a hard obligation (open challenge or
+        # pending question) so we don't fight the existing instruction.
+        last_line = self._last_participant_line(history)
+        last_has_question = bool(
+            last_line and "?" in last_line and last_line.split(":", 1)[0].strip() != self.name
+        )
+        surface_kind = None if is_closure else pick_surface_move_kind(
+            phase=state.phase,
+            repetition_high=state.repetition_pressure >= cfg.repetition.stall_increment_threshold,
+            has_open_challenge=open_challenger is not None,
+            has_open_question=last_has_question,
+        )
+
         move_instr = build_move_instruction(
             phase_instruction=phase_instr,
             interaction_instruction=interaction_instr,
             position_discipline=position_disc,
+            surface_move_kind=surface_kind,
         )
         output_contract = build_output_contract(
             max_words=self.persona.max_words(state.phase), name=self.name,
@@ -223,7 +239,12 @@ class Simulator:
         result: "VerificationResult",
         state: "DialogueState",
     ) -> str:
-        """Choose the right repair prompt based on the primary issue code."""
+        """Choose the right repair prompt based on the primary issue code.
+
+        Priority order (high-impact / phase-critical first):
+          phase obligations (vote, confirmation) -> validity (option refs/facts)
+          -> naturalness (ack-loop, semantic repeat, self-repetition).
+        """
         repair_codes = {i.code for i in result.issues if i.severity == "repair"}
 
         if "MISSING_EXPLICIT_VOTE" in repair_codes:
@@ -238,6 +259,20 @@ class Simulator:
 
         if "INVENTED_OPTION_FACT" in repair_codes:
             return prompts.repair_invented_fact(gen_prompt)
+
+        # Update.md §4.3 -- group-level acknowledgement loop.
+        if "ACK_LOOP" in repair_codes:
+            return prompts.repair_ack_loop(original_text)
+
+        # Update.md §4.4 -- semantic repeat (use the matched prior point in the
+        # repair so the model knows which point to avoid).
+        if "SEMANTIC_POINT_REPEAT" in repair_codes:
+            prior = next(
+                (i.message.split("'")[1] for i in result.issues
+                 if i.code == "SEMANTIC_POINT_REPEAT" and "'" in i.message),
+                "",
+            )
+            return prompts.repair_semantic_repeat(original_text, prior)
 
         if "SELF_REPETITION" in repair_codes:
             return prompts.repair_repetition(original_text)

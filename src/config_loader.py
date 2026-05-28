@@ -60,6 +60,8 @@ class Config(_Section):
     evaluation: _Section
     prompt_budget: _Section
     verification: _Section
+    surface_moves: _Section
+    closure: _Section
 
     def __init__(self, path: Path) -> None:
         with open(path, "r", encoding="utf-8") as f:

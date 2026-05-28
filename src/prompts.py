@@ -23,13 +23,19 @@ from typing import Optional
 
 def phase_instruction_text(phase: str, has_voted: bool = False,
                            final_option: Optional[str] = None) -> str:
+    """Phase-level guidance.
+
+    Update.md §4.1 / §4.5: stop forcing every turn to acknowledge + name an
+    option + give pro/con + restate preference. Negotiation now permits any
+    natural move; an option name is required ONLY when adding a real point
+    about a specific option, voting, or clarifying a candidate.
+    """
     if phase == "narrowing":
         if has_voted:
             return ("You already named your pick. Don't repeat it. Either react to "
                     "someone else's pick, raise one new consideration, or note a condition.")
-        return ("Now say which option you actually lean toward, and one honest reason "
-                "(use one of your real reasons, not a generic one). Name it (its name "
-                "or letter) so it's clear. A sentence is plenty.")
+        return ("Time to land. Say the option you lean toward and one honest reason "
+                "(use one of your real reasons, not a generic one). One sentence is plenty.")
     if phase == "closure":
         if final_option:
             return (f"The group landed on Option {final_option}. Sign off in one natural line -- "
@@ -38,27 +44,33 @@ def phase_instruction_text(phase: str, has_voted: bool = False,
     return {
         "opening": (
             "The discussion is just starting. Say a quick, natural hello and the ONE thing that "
-            "matters most to YOU for this decision -- your priority, worry, or what you're hoping "
-            "for. Talk about that, not the specific options yet. A sentence or two, in your own voice."
+            "matters most to YOU -- your priority, worry, or what you're hoping for. Talk about "
+            "that, not the specific options. A sentence or two, in your own voice."
         ),
         "negotiation": (
-            "This is the discussion phase. You should be talking ABOUT THE OPTIONS BY NAME -- "
-            "which one fits which priority, which one's trade-off worries you, which one's upside "
-            "you'd take, why one beats another for the group. Don't trade abstract priority words "
-            "('depth', 'flexibility', 'safety', 'engagement') back and forth -- every point you "
-            "make should be tied to a SPECIFIC OPTION (by its name or letter). If someone made a "
-            "claim about an option, engage with that claim: build, push back on one specific "
-            "point, name a trade-off they glossed over. If you have a position, state it as a "
-            "CLAIM, not as a rhetorical 'what about X?' question -- those are dodges. You may "
-            "use your own knowledge as a reason; do NOT invent specific details about the options."
+            "This is the discussion phase. You do NOT have to evaluate the last message. "
+            "Reply only if you actually have something to add. Natural moves include:\n"
+            "- a short yes or no reaction (\"yeah\", \"not sold\", \"that might work\");\n"
+            "- a brief question if you're genuinely unsure about something;\n"
+            "- a genuinely new reason (not a rephrase of a point already made);\n"
+            "- a compromise framed as one (\"I still prefer X, but I can live with Y\");\n"
+            "- moving the decision forward (\"then we're basically between A and D\");\n"
+            "- or just push back plainly when you disagree.\n"
+            "Do NOT open with \"valid point\", \"good point\", \"fair point\", \"I agree\", "
+            "or \"X is right\" -- they make the chat sound robotic. Don't restate something you "
+            "(or someone else) already said. Name an option only when you're making a real point "
+            "about that specific option, voting, or clarifying a candidate -- not for every short "
+            "reaction. You may use your own knowledge and lived experience as reasons; do NOT "
+            "invent specific facts about the OPTIONS themselves."
         ),
         "emergence": (
             "The group is closing in on one option. Say whether it works for you, what would make it "
-            "work, or the one thing still bothering you. Add something new, don't restate."
+            "work, or the one thing still bothering you. Brief is fine."
         ),
         "confirmation": (
-            "Give a clear yes or no on the option on the table, in your own words. "
-            "Only say no if you have a real, specific objection."
+            "Give a clear yes or no in your own words. If yes and it isn't your top pick, you can "
+            "say so honestly (\"I'd still prefer X but I can live with this\"). Only say no if you "
+            "have a real, specific objection."
         ),
     }.get(phase, "React naturally and briefly.")
 
@@ -73,28 +85,31 @@ def interaction_instruction_block(
     repetition_high: bool,
     open_challenge_from: Optional[str] = None,
 ) -> str:
+    """Computed per-turn interaction guidance.
+
+    Update.md §3.2 / §4.1: drop the unconditional 'engage with the last point'
+    instruction. Only force engagement when there is a real obligation -- an
+    unanswered question or an open challenge aimed at this speaker. Letting a
+    point sit without explicit acknowledgement is natural and necessary.
+    """
+    del last_claim_speaker  # intentionally unused — no automatic-engagement push
     parts: list[str] = []
 
     if open_challenge_from:
         parts.append(
             f" {open_challenge_from} pushed back on something you said. Engage with that "
-            f"directly -- concede the point, defend it with a specific reason, or name what would "
-            f"change your mind."
+            f"directly -- concede, defend with a specific reason, or name what would change "
+            f"your mind. Do not open with \"valid point\" or \"fair point\"."
         )
     elif last_has_question:
         parts.append(" There's an open question -- answer it directly first. If the options "
                      "don't say enough to answer, say that plainly.")
-    elif last_claim_speaker:
-        parts.append(
-            f" {last_claim_speaker} just made a point. Engage with it specifically: agree with a "
-            f"detail, push back on one claim, or name a trade-off they glossed over. Don't pivot "
-            f"back to your own position without addressing theirs."
-        )
 
     if repetition_high:
         parts.append(
-            " This point has been made already -- don't repeat it. Either move toward a decision, "
-            "concede something, or introduce a genuinely new angle."
+            " The thread has stalled -- the same point keeps coming back. Either move toward "
+            "a pick (\"then we're basically between X and Y\"), say a short yes/no, or raise "
+            "a genuinely new angle. Don't restate."
         )
 
     return "\n" + "".join(parts) if parts else ""
@@ -113,24 +128,79 @@ def position_discipline_block(
     candidate_is_anchor: bool,
     reconsider_text: str,
 ) -> str:
+    """Per-turn position guidance keyed by phase + private belief state.
+
+    Update.md §4.7: when the candidate on the table is acceptable but is NOT
+    the speaker's preferred, the prompt explicitly asks for a compromise frame
+    ("I still prefer X, but I can live with Y"). This makes preference movement
+    visible instead of looking like a sudden flip.
+    """
     if phase not in ("negotiation", "narrowing", "emergence", "confirmation"):
         return ""
 
     cond = f" The condition that would move you: {reconsider_text}." if reconsider_text else ""
 
     if phase in ("emergence", "confirmation", "narrowing") and candidate:
-        if candidate_is_anchor or candidate_in_acceptable:
-            return (f"\nYou lean Option {anchor}, and Option {candidate} works for you. "
-                    f"Say so briefly and concretely.{cond}")
+        if candidate_is_anchor:
+            return (f"\nYou lean Option {anchor}, and that's what's on the table. Say so briefly "
+                    f"and concretely.")
+        if candidate_in_acceptable:
+            # Compromise framing -- explicit. Update.md §4.7.
+            return (f"\nYou still prefer Option {anchor}, but Option {candidate} is something "
+                    f"you can live with. Frame it as a compromise -- e.g. \"I'd still prefer "
+                    f"{anchor}, but I can live with {candidate}\" -- so it doesn't look like "
+                    f"a flip. Brief.{cond}")
         if candidate_in_rejected:
             return (f"\nYou lean Option {anchor}. Option {candidate} is one you can't accept -- "
                     f"say no and give the one specific reason.{cond}")
         return (f"\nYou lean Option {anchor}. Option {candidate} isn't your pick and isn't a clear "
-                f"yes for you. Don't just block it: say what one change would make it acceptable.")
+                f"yes for you. Don't just block it: say what one change would make it acceptable, "
+                f"or hedge honestly.")
 
-    return (f"\nYou lean Option {anchor}. You've made that point -- don't restate it. Engage with "
-            f"what others are arguing: challenge a specific claim, concede a real trade-off, or "
-            f"acknowledge an honest weakness of Option {anchor} itself.")
+    # Negotiation phase without a fixed candidate.
+    return (f"\nYou lean Option {anchor}. You've already made that point -- don't restate it. "
+            f"Either add something new, react briefly, or stay quiet on it.")
+
+
+# =============================================================================
+# Surface-move hints (update.md §4.2) -- short, prose-only nudges that bias the
+# next turn toward a specific natural shape. The probabilistic sampler in
+# prompt_context.pick_surface_move_kind() decides whether to inject one.
+#
+# Hard rule: prose lives here, not in prompt_context. The sampler only chooses
+# which KIND to use; the prose comes from this table.
+# =============================================================================
+
+_SURFACE_MOVE_HINTS: dict[str, str] = {
+    "ack_only": (
+        "A brief one-line yes/agreement is fine if you basically agree -- don't "
+        "manufacture a reason."
+    ),
+    "short_no": (
+        "A brief plain \"not sold\" / \"not for me\" / \"still not convinced\" is fine "
+        "if you don't agree. Keep it short; don't justify unless asked."
+    ),
+    "question": (
+        "If you're genuinely unsure about something, ask ONE short, useful question."
+    ),
+    "compromise": (
+        "If you're moving toward something you don't actually prefer, mark it as a "
+        "compromise: \"I still prefer X, but I can live with Y\"."
+    ),
+    "decision_move": (
+        "Try moving the decision forward -- e.g. \"then we're basically between X and Y\" "
+        "or \"can we rule that one out?\"."
+    ),
+    "new_reason": (
+        "Add a genuinely NEW reason -- something nobody has said yet, drawn from your "
+        "own knowledge or experience. Don't rephrase what's already on the table."
+    ),
+}
+
+
+def surface_move_hint(kind: str) -> str:
+    """Return the prose nudge for a surface-move kind, or empty string."""
+    return _SURFACE_MOVE_HINTS.get(kind, "")
 
 
 def narrowing_lines() -> list[str]:
@@ -149,8 +219,15 @@ def narrowing_lines() -> list[str]:
 
 def option_generation(topic: str) -> str:
     """Two-step generation: classify the decision kind, then produce options
-    that ARE the thing being chosen. Concrete picks get real names; abstract
-    picks get descriptive options without forced proper nouns."""
+    that ARE the thing being chosen.
+
+    Update.md §4.6: options now carry FIVE bounded qualitative fields instead
+    of three. Thin option cards (upside + tradeoff + best_for) gave sims so
+    little to chew on that they kept rephrasing the same two attributes. The
+    richer card -- adding a practical concern, a fit hint, and an uncertainty
+    -- gives real material for disagreement without inviting fabricated
+    numbers.
+    """
     return f"""You are preparing a small-group chat about a decision.
 
 Topic: {topic}
@@ -164,6 +241,11 @@ STEP 1 -- classify the decision:
 
 STEP 2 -- generate four options that ARE valid answers to the literal decision.
 
+Each option must be RICHER than just upside + tradeoff. Use this single-line
+shape with semicolon-separated fields (do not break across lines):
+
+  Option X - [Name or Topic]: [upside]; tradeoff: [qualitative]; concern: [practical worry]; fit: [who/when it suits]; uncertainty: [what's unclear]; best for: [priority]
+
 Hard rules:
 - Each option line is the ONLY information the group will have. Self-contained
   and decision-ready.
@@ -172,16 +254,21 @@ Hard rules:
 - For "abstract_pick": do NOT force a proper-noun venue. The option IS the
   topic/approach/theme. Example for "biology presentation topic":
     "CRISPR gene-editing ethics" -- NOT "The Helix Institute".
-  Example for "marketing strategy":
-    "Influencer partnerships on Instagram" -- NOT "The Brandify Agency".
-- Each option must carry 2-3 GENUINELY CONTESTABLE dimensions: one real upside,
-  one real trade-off, and the kind of priority/audience it suits. Trade-offs in
-  qualitative terms ("higher cost", "narrower scope", "harder to research"); do
-  NOT invent numbers, prices, or dates.
+- Use QUALITATIVE descriptors only. Do NOT invent numbers, prices, dates,
+  durations, or fake percentages. Trade-offs and concerns are in plain words
+  ("higher cost", "narrower scope", "less flexible if plans change").
 - The four options must be MEANINGFULLY DIFFERENT -- each upside should serve a
   distinct priority a reasonable person could weight differently.
-- "best for" is a priority phrase ("best for: depth-over-breadth"), never an
-  invented person's name.
+- "concern" is a real, practical worry distinct from the tradeoff (the tradeoff
+  is the headline cost; concern is the second-order worry: "less flexibility if
+  plans change", "depends on one person showing up", "social pressure to join").
+- "fit" names the kind of priority or person this suits best -- "low-disruption
+  travellers", "people who want depth", "anyone bringing kids".
+- "uncertainty" is the honest thing the group can't be sure about from the
+  option alone -- "baggage policy unclear", "weather dependent", "vendor
+  reliability is variable".
+- "best for" is a short priority phrase ("depth-over-breadth"), never a
+  person's name.
 
 Opening question:
 - One short, natural moderator question inviting priorities (not a vote).
@@ -190,7 +277,7 @@ Return JSON only:
 {{
   "decision_kind": "concrete_pick" | "abstract_pick",
   "options": [
-    "Option A - [Name or Topic]: [upside]; trade-off: [qualitative]; best for: [priority]",
+    "Option A - [Name or Topic]: [upside]; tradeoff: [qualitative]; concern: [practical worry]; fit: [who/when it suits]; uncertainty: [what's unclear]; best for: [priority]",
     "Option B - ...",
     "Option C - ...",
     "Option D - ..."
@@ -353,12 +440,14 @@ def sim_turn_compact(
 Voice rules (apply every turn):
 - Talk like a real person in a group chat -- relaxed, but articulate when needed. Not a formal panel, not exaggerated slang.
 - Use normal punctuation and capitalization. Full sentences are fine; so is the occasional fragment. Write the way a thoughtful adult texts.
-- Vary your length naturally. Most turns are a sentence or two; a quick "yeah, that works for me" is fine when you agree; go to three sentences only when you're actually explaining something.
+- Vary length naturally. Many turns are short -- a "yeah", a "not sold", a quick question. Go longer only when you're actually adding a real reason or explaining something. Two or three sentences is the upper end of normal.
 - Contractions are natural ("I'd", "don't", "it's"). A light filler now and then is okay, but don't lean on slang.
+- Don't open with "valid point", "good point", "fair point", "I agree", "X is right", or "that's a concern" -- they make the chat feel robotic.
+- You don't have to evaluate the previous message. If you have nothing genuinely new to add, prefer a short reaction, a question, or just engaging with someone else's earlier point.
 - If you agree, say so briefly and move on -- don't manufacture reasons.
 - If you disagree, say it plainly with one real reason. One good reason beats three weak ones.
-- Don't restate a point you (or someone else) already made. Each turn should add something: an answer, a reaction to a specific claim, a new consideration, or a decision.
-- When you mean a specific option, name it (its name or letter) so others know which one.
+- Don't restate a point you (or someone else) already made. Each turn should add something: an answer, a reaction, a new consideration, a compromise, or a decision move.
+- Name an option (its name or letter) only when you're making a real point about it, voting, or clarifying a candidate -- not for short reactions.
 - No corporate-speak ("great point", "absolutely", "I completely agree"). No name prefix. No markdown. No em dashes.
 - You may use your own knowledge and lived experience to back a point -- that's how real arguments work. Do NOT invent specific facts about the OPTIONS themselves (no fake prices, fake names of services, fake dates tied to an option).
 
@@ -514,6 +603,44 @@ Do NOT write any participant attribution like "Name: ..." -- you are the moderat
 Return only the line."""
 
 
+def moderator_ask_holdout(
+    topic: str,
+    participant_names: list[str],
+    candidate_option: str,
+    holdout_name: str,
+    holdout_pick: Optional[str],
+    recent_dialogue: str,
+) -> str:
+    """Update.md §4.8 -- targeted holdout question, NOT a generic group ask.
+
+    Used at confirmation / split-vote moments. The moderator names the holdout
+    and asks specifically whether they can live with the candidate, instead of
+    "everyone good with Option X?" (which produces weak fake-consensus).
+    """
+    holdout_clause = (
+        f"{holdout_name} picked Option {holdout_pick}"
+        if holdout_pick else f"{holdout_name} hasn't landed yet"
+    )
+    return f"""Neutral moderator in a small group chat.
+
+Topic: {topic}
+Participants: {", ".join(participant_names)}
+
+Most of the group is on Option {candidate_option}. {holdout_clause}.
+
+Recent:
+{recent_dialogue}
+
+Ask {holdout_name} directly whether they could live with Option {candidate_option},
+or whether it's a no for them. Don't ask the whole group. Don't editorialise --
+just the question, by name, real and concrete.
+
+One sentence. <=22 words. Sound real, not formal.
+
+Do NOT write any participant attribution like "Name: ..." -- you are the moderator, write only your own line.
+Return only the line."""
+
+
 def moderator_emergence(
     topic: str,
     participant_names: list[str],
@@ -555,6 +682,59 @@ Write ONE natural chat message that says something new:
 - Move toward a pick.
 Do NOT repeat the same reason or argument.
 No name prefix. No markdown. Under 25 words.
+
+Write only the rewritten message."""
+
+
+def repair_ack_loop(original_text: str) -> str:
+    """Update.md §4.3 -- repair an acknowledgement loop.
+
+    Triggered when the turn opens with acknowledgement language AND the recent
+    participant turns also do. Do NOT ban acknowledgement globally; only ask
+    for a different move when the loop is forming.
+    """
+    return f"""A chat message was rejected because it only acknowledges the previous point,
+and the last few messages already contain acknowledgement language. The chat is
+turning into a loop of "fair point / I agree / valid concern".
+
+Original (rejected):
+{original_text}
+
+Rewrite this as a DIFFERENT natural move (pick ONE):
+- ask one short, useful question;
+- say a brief yes or no ("not sold", "yeah, that works", "not for me");
+- add a genuinely new reason (something NOT yet said);
+- compromise explicitly ("I'd still prefer X, but I can live with Y");
+- or push the decision forward ("then we're basically between A and D").
+
+Do NOT start with "valid point", "good point", "fair point", "I agree",
+"that's a concern", "X is right", or "makes sense".
+No name prefix. No markdown. Under 22 words.
+
+Write only the rewritten message."""
+
+
+def repair_semantic_repeat(original_text: str, prior_point: str) -> str:
+    """Update.md §4.4 -- repair a repeated point (same option + same attribute,
+    rephrased). The current message restates a point the same speaker already
+    made.
+    """
+    return f"""A chat message was rejected because the same speaker already made
+this point (just rephrased).
+
+Earlier point: "{prior_point}"
+
+Original (rejected):
+{original_text}
+
+Rewrite this turn so it does NOT restate the same option-attribute argument.
+Pick ONE genuinely new move:
+- respond to what someone ELSE said, with a specific reason or pushback;
+- name a trade-off you haven't raised;
+- ask one short useful question;
+- or move toward a pick.
+
+No name prefix. No markdown. Under 22 words.
 
 Write only the rewritten message."""
 

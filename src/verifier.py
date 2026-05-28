@@ -137,6 +137,26 @@ _FAKE_CONSENSUS = re.compile(
     re.I,
 )
 
+# Acknowledgement phrases -- the "valid point / fair point / I agree" family
+# that produces the loop pattern described in update.md §2.2 / §4.3.
+_ACK_PHRASES = re.compile(
+    r"\b(?:"
+    r"valid\s+(?:point|concern)|"
+    r"fair\s+(?:point|enough)|"
+    r"good\s+(?:point|call)|"
+    r"great\s+point|"
+    r"makes?\s+sense|"
+    r"i\s+(?:totally\s+)?(?:agree|hear\s+you|see\s+(?:your\s+)?point)|"
+    r"that(?:'s|\s+is)\s+(?:a\s+)?(?:fair|valid|good|true|right)|"
+    r"that(?:'s|\s+is)\s+(?:a\s+)?concern|"
+    r"that\s+concern\s+is\s+valid|"
+    r"i\s+see\s+what\s+(?:you|\w+)\s+(?:mean|said|are\s+saying)|"
+    r"\w+(?:'s|\s+is)\s+right(?:\s+about)?|"
+    r"absolutely|noted|granted|true\s+enough|exactly"
+    r")\b",
+    re.I,
+)
+
 
 # ---------------------------------------------------------------------------
 # Participant checks
@@ -245,6 +265,149 @@ def detect_self_repetition(
                     severity="warn",
                     message="Turn repeats a key point the speaker made earlier.",
                 )
+
+    return None
+
+
+def _ack_in_head(text: str) -> bool:
+    """True iff an acknowledgement phrase appears in the opening of the text.
+    'Opening' is the first `ack_loop_head_chars` characters."""
+    head_chars = int(_vcfg("ack_loop_head_chars", 60))
+    head = text.strip()[:head_chars]
+    return bool(_ACK_PHRASES.search(head))
+
+
+def _is_ack_led(text: str) -> bool:
+    """A turn is 'ack-led' if it opens with an acknowledgement phrase, OR if
+    it's short enough that an ack phrase anywhere makes the whole turn pure
+    acknowledgement.
+
+    Both shapes feed the loop:
+      "Fair point. I still think B."           -- ack-led with thin pivot
+      "Yeah, that concern is valid."            -- short pure ack
+    """
+    if not text or not text.strip():
+        return False
+    short_cap = int(_vcfg("ack_loop_max_words_for_pure_ack", 14))
+    words = text.split()
+    if len(words) <= short_cap and _ACK_PHRASES.search(text):
+        return True
+    return _ack_in_head(text)
+
+
+def detect_ack_loop(
+    text: str,
+    speaker_name: str,
+    history: list[str],
+) -> Optional[VerificationIssue]:
+    """Update.md §4.3 -- group-level acknowledgement-loop detection.
+
+    Fires when THIS turn is ack-led AND the recent non-self participant turns
+    also contain acknowledgement language. The loop only matters as a pattern;
+    a single ack turn is fine in isolation.
+    """
+    if not _vcfg("check_ack_loop", True):
+        return None
+    if not _is_ack_led(text):
+        return None
+
+    window = int(_vcfg("ack_loop_window", 3))
+    needed = int(_vcfg("ack_loop_min_recent_with_ack", 2))
+
+    scanned = 0
+    recent_ack_count = 0
+    for line in reversed(history):
+        if scanned >= window:
+            break
+        if ":" not in line:
+            continue
+        spk, msg = line.split(":", 1)
+        spk = spk.strip()
+        if spk in {"Moderator"} or spk == speaker_name:
+            continue
+        scanned += 1
+        if _ACK_PHRASES.search(msg):
+            recent_ack_count += 1
+
+    if recent_ack_count < needed:
+        return None
+
+    return VerificationIssue(
+        code="ACK_LOOP",
+        severity="repair",
+        message=(
+            f"Acknowledgement loop: this turn is ack-led and {recent_ack_count} "
+            f"of the last {scanned} participant turns also acknowledged."
+        ),
+    )
+
+
+# Stopwords stripped before semantic-repeat comparison so function words don't
+# pad the union and hide real attribute-level overlap.
+_SEMANTIC_STOPWORDS = frozenset({
+    "the", "and", "but", "for", "with", "that", "this", "these", "those",
+    "are", "was", "were", "been", "being", "have", "has", "had",
+    "would", "could", "should", "will", "can", "may", "might",
+    "you", "your", "our", "us", "we", "they", "them", "their",
+    "really", "just", "very", "also", "too", "still", "yet",
+    "from", "into", "onto", "about", "than", "then", "there", "here",
+    "what", "when", "where", "which", "who", "how", "why",
+    "option", "options",
+})
+
+
+def detect_semantic_point_repeat(
+    text: str,
+    persona_state: Optional["ParticipantState"],
+    resolver: OptionResolver,
+) -> Optional[VerificationIssue]:
+    """Update.md §4.4 -- repair (not just warn) when this turn restates a
+    point the same speaker already made.
+
+    Two shapes count as a repeat:
+      1. Same option mentioned + jaccard >= same_option threshold on
+         content tokens (stopwords stripped). ("Reliability of A is worth
+         the cost" vs. "Option A's reliability offsets cost".)
+      2. No option mentioned in either turn, but jaccard >= the stricter
+         no-option threshold (catches "cost is a concern" loops).
+    """
+    if not _vcfg("check_semantic_point_repeat", True):
+        return None
+    if persona_state is None:
+        return None
+    points = getattr(persona_state, "points_made", []) or []
+    if not points:
+        return None
+
+    threshold_same = float(_vcfg("semantic_repeat_jaccard_same_option", 0.50))
+    threshold_none = float(_vcfg("semantic_repeat_jaccard_no_option", 0.65))
+
+    current_opts = set(resolver.options_in(text))
+    current_toks = _tokenize(text) - _SEMANTIC_STOPWORDS
+    if len(current_toks) < 2:
+        return None
+
+    # Scan prior points oldest-first so we report the first match; skip the most
+    # recent (covered by SELF_REPETITION against last own turn).
+    for prior in points[:-1] if len(points) >= 1 else []:
+        prior_opts = set(resolver.options_in(prior))
+        prior_toks = _tokenize(prior) - _SEMANTIC_STOPWORDS
+        if len(prior_toks) < 2:
+            continue
+        overlap = _jaccard(current_toks, prior_toks)
+        same_option = bool(current_opts & prior_opts)
+        if same_option and overlap >= threshold_same:
+            return VerificationIssue(
+                code="SEMANTIC_POINT_REPEAT",
+                severity="repair",
+                message=f"Same option-attribute point as earlier: '{prior[:60]}'",
+            )
+        if not current_opts and not prior_opts and overlap >= threshold_none:
+            return VerificationIssue(
+                code="SEMANTIC_POINT_REPEAT",
+                severity="repair",
+                message=f"Same point (no specific option) as earlier: '{prior[:60]}'",
+            )
 
     return None
 
@@ -375,6 +538,19 @@ def verify_participant_turn(
         rep = detect_self_repetition(text, speaker_name, history, persona_state)
         if rep:
             issues.append(rep)
+
+    # Update.md §4.3 -- group-level acknowledgement loop. Skip in phases where
+    # a brief yes/no IS the expected shape (confirmation/closure/opening).
+    if _vcfg("check_ack_loop", True) and phase in ("negotiation", "narrowing", "emergence"):
+        ack = detect_ack_loop(text, speaker_name, history)
+        if ack:
+            issues.append(ack)
+
+    # Update.md §4.4 -- semantic point repeat (stronger than warn-only memory check).
+    if _vcfg("check_semantic_point_repeat", True) and phase in ("negotiation", "narrowing", "emergence"):
+        sem = detect_semantic_point_repeat(text, persona_state, resolver)
+        if sem:
+            issues.append(sem)
 
     if _vcfg("check_votes", True):
         mv = detect_missing_vote(text, phase, resolver)

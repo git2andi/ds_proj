@@ -291,6 +291,27 @@ class ModerationEngine:
                 )
             ).strip()
 
+        elif reason.startswith("ask_holdout:"):
+            # Update.md §4.8 -- targeted holdout question, not generic group ask.
+            # Payload: "ask_holdout:CandidateLetter|HoldoutName|HoldoutPickOrNone"
+            payload = reason.split(":", 1)[1]
+            parts_h = payload.split("|")
+            if len(parts_h) >= 2:
+                candidate_letter = parts_h[0].strip()
+                holdout_name = parts_h[1].strip()
+                holdout_pick: Optional[str] = parts_h[2].strip() if len(parts_h) >= 3 and parts_h[2].strip() else None
+                line = self._llm.generate(
+                    prompts.moderator_ask_holdout(
+                        topic=self.topic, participant_names=names,
+                        candidate_option=candidate_letter,
+                        holdout_name=holdout_name,
+                        holdout_pick=holdout_pick,
+                        recent_dialogue=recent,
+                    )
+                ).strip()
+            else:
+                line = ""
+
         elif reason.startswith("outlier:"):
             outlier_name = reason.split(":", 1)[1]
             state.nudged_participants.add(outlier_name)

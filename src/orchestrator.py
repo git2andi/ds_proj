@@ -436,31 +436,88 @@ class Orchestrator:
         self._store_moderator(random.choice(prompts.narrowing_lines()))
 
     def _run_confirmation(self) -> None:
+        """Confirmation pass.
+
+        Update.md §4.8: when votes are split going into confirmation, ask each
+        holdout BY NAME (not the whole group generically). Generic "everyone
+        good with X?" produces weak fake-consensus.
+        """
         self.state.phase = "confirmation"
         preferred = self.state.preferred_option
         if preferred is None:
             return
 
-        self._store_moderator(random.choice([
-            f"sounds like we're landing on Option {preferred} -- everyone good with that?",
-            f"ok, so Option {preferred}? anyone not on board, now's the time.",
-            f"looks like Option {preferred} is where we're at. that work for everyone?",
-            f"feels like Option {preferred} -- any last objections before we lock it in?",
-        ]))
+        votes = current_votes(self.history, self.resolver)
+        holdouts = [
+            s for s in self.sims
+            if votes.get(s.name) and votes.get(s.name) != preferred
+        ]
 
         structured = self._tracker.state if self._tracker else None
         all_names = [s.name for s in self.sims]
-        primary = self._primary_sim()
-        ordered = ([primary] if primary else []) + [s for s in self.sims if s is not primary]
-        for sim in ordered:
-            text, tok_in, tok_out = sim.generate_turn(
-                self.history, self.state, all_names=all_names, structured=structured,
-            )
-            if text and "[SILENCE]" not in text.upper():
-                v_result = getattr(sim, "_last_verification", None)
-                self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
-                                 tokens_in=tok_in, tokens_out=tok_out,
-                                 verification_result=v_result)
+
+        if holdouts:
+            # Targeted holdout questions FIRST -- one moderator line per
+            # holdout, with the holdout responding to it directly.
+            for holdout in holdouts:
+                self._mod.run_intervention(
+                    f"ask_holdout:{preferred}|{holdout.name}|{votes.get(holdout.name, '')}",
+                    self.state, self.history,
+                    lambda t, ti, to: self._store_moderator(t, ti, to),
+                    structured=structured,
+                )
+                # Holdout speaks next
+                text, tok_in, tok_out = holdout.generate_turn(
+                    self.history, self.state,
+                    all_names=all_names, structured=structured,
+                )
+                if text and "[SILENCE]" not in text.upper():
+                    v_result = getattr(holdout, "_last_verification", None)
+                    self._store_line(
+                        f"{holdout.name}: {text}", selected_reason="confirmation_holdout",
+                        tokens_in=tok_in, tokens_out=tok_out,
+                        verification_result=v_result,
+                    )
+
+            # Then the rest of the group confirms briefly.
+            remaining = [s for s in self.sims if s not in holdouts]
+            primary = self._primary_sim()
+            if primary and primary not in remaining and primary in holdouts:
+                # Holdout already spoke; skip
+                pass
+            ordered = (
+                [primary] if (primary and primary in remaining) else []
+            ) + [s for s in remaining if s is not primary]
+            for sim in ordered:
+                text, tok_in, tok_out = sim.generate_turn(
+                    self.history, self.state,
+                    all_names=all_names, structured=structured,
+                )
+                if text and "[SILENCE]" not in text.upper():
+                    v_result = getattr(sim, "_last_verification", None)
+                    self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
+                                     tokens_in=tok_in, tokens_out=tok_out,
+                                     verification_result=v_result)
+        else:
+            # Clean consensus -- one generic confirmation question, everyone reacts briefly.
+            self._store_moderator(random.choice([
+                f"sounds like we're landing on Option {preferred} -- everyone good with that?",
+                f"ok, so Option {preferred}? anyone not on board, now's the time.",
+                f"looks like Option {preferred} is where we're at. that work for everyone?",
+                f"feels like Option {preferred} -- any last objections before we lock it in?",
+            ]))
+
+            primary = self._primary_sim()
+            ordered = ([primary] if primary else []) + [s for s in self.sims if s is not primary]
+            for sim in ordered:
+                text, tok_in, tok_out = sim.generate_turn(
+                    self.history, self.state, all_names=all_names, structured=structured,
+                )
+                if text and "[SILENCE]" not in text.upper():
+                    v_result = getattr(sim, "_last_verification", None)
+                    self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
+                                     tokens_in=tok_in, tokens_out=tok_out,
+                                     verification_result=v_result)
 
         rejection_signals = (
             "no,", "no.", "not quite", "not yet", "still weighing",
@@ -497,13 +554,40 @@ class Orchestrator:
                 break
 
     def _run_closure(self) -> None:
+        """Update.md §4.9 -- don't force every sim to close.
+
+        Real chats often end after the decision, with maybe one or two short
+        sign-offs. Configurable via `cfg.closure.participants_to_close`
+        (default 2). The primary always gets one slot if any are spoken
+        (`cfg.closure.always_close_primary`).
+        """
         self.state.phase = "closure"
         primary = self._primary_sim()
-        others = [s for s in self.sims if s is not primary]
-        ordered = ([primary] if primary else []) + others
         all_names = [s.name for s in self.sims]
         structured = self._tracker.state if self._tracker else None
-        for sim in ordered:
+
+        cap = int(getattr(cfg.closure, "participants_to_close", 2))
+        always_primary = bool(getattr(cfg.closure, "always_close_primary", True))
+
+        if cap <= 0:
+            return  # moderator-only closure
+
+        ordered: list = []
+        if always_primary and primary is not None:
+            ordered.append(primary)
+
+        # Add others (in declared order) up to the cap.
+        others = [s for s in self.sims if s is not primary]
+        for s in others:
+            if len(ordered) >= cap:
+                break
+            ordered.append(s)
+
+        # If primary slot wasn't taken, fall back to the first sim.
+        if not ordered and self.sims:
+            ordered.append(self.sims[0])
+
+        for sim in ordered[:cap]:
             text, tok_in, tok_out = sim.generate_turn(
                 self.history, self.state, all_names=all_names, structured=structured,
             )
