@@ -18,7 +18,6 @@ Sections built here:
 
 from __future__ import annotations
 
-import re
 from typing import Optional, TYPE_CHECKING
 
 from config_loader import cfg
@@ -26,7 +25,6 @@ from config_loader import cfg
 if TYPE_CHECKING:
     from persona import Persona
     from orchestrator import DialogueState
-    from policy import TurnPlan
     from state import ParticipantState, StructuredState
 
 
@@ -36,12 +34,11 @@ if TYPE_CHECKING:
 
 def build_speaker_card(persona: "Persona") -> str:
     role_tag = " (primary)" if persona.is_primary else ""
-    sig = persona.speech_signature()
+    style_desc = persona.derived_controls_descriptor()
     lines = [
         f"Name: {persona.name}  Role: {persona.role}{role_tag}",
         f"Register: {persona.style_rule()}",
-        f"Voice: {sig.descriptor()}",
-        f"Personality: {persona.personality_summary()}",
+        f"Style: {style_desc}",
     ]
     if persona.backstory:
         lines.append(
@@ -73,7 +70,8 @@ def build_speaker_card(persona: "Persona") -> str:
 
 
 # ---------------------------------------------------------------------------
-# Relevant options -- only the ones in play for this sim
+# All options -- every participant always sees all four options.
+# Filtering caused "option X doesn't exist" failures; full visibility fixes it.
 # ---------------------------------------------------------------------------
 
 def build_relevant_options(
@@ -81,21 +79,14 @@ def build_relevant_options(
     persona: "Persona",
     candidate: Optional[str] = None,
 ) -> str:
-    relevant: set[str] = set()
-    if persona.beliefs:
-        relevant.add(persona.beliefs.preferred)
-        relevant.update(persona.beliefs.acceptable or [])
-    if candidate:
-        relevant.add(candidate)
-    if len(relevant) < 2:
-        relevant.update(["A", "B"])
+    """Return all options for this participant. No filtering.
 
-    result: list[str] = []
-    for opt in options:
-        m = re.match(r"^Option\s+([A-D])\b", opt, re.IGNORECASE)
-        if m and m.group(1).upper() in relevant:
-            result.append(f"  {opt}")
-    return "\n".join(result) if result else "\n".join(f"  {o}" for o in options)
+    Filtering was removed because it caused participants to deny valid options
+    that weren't in their personal 'relevant' set. Full visibility ensures no
+    participant can claim an option is unavailable.
+    """
+    del persona, candidate  # kept in signature for call-site compatibility
+    return "\n".join(f"  {o}" for o in options)
 
 
 # ---------------------------------------------------------------------------
@@ -269,12 +260,8 @@ def build_move_instruction(
     phase_instruction: str,
     interaction_instruction: str = "",
     position_discipline: str = "",
-    turn_plan: Optional["TurnPlan"] = None,
 ) -> str:
-    parts: list[str] = []
-    if turn_plan is not None:
-        parts.append(turn_plan.to_prompt_str())
-    parts.append(phase_instruction)
+    parts = [phase_instruction]
     if interaction_instruction:
         parts.append(interaction_instruction.strip())
     if position_discipline:

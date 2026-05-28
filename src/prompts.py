@@ -12,6 +12,7 @@ Sections:
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 from typing import Optional
 
@@ -245,17 +246,16 @@ Topic: {topic}
 Participants: {names_list}
 {participants_block}
 For each participant write:
-- A 2-sentence backstory with ONE CONCRETE, SPECIFIC EXPERIENCE tied to the topic
-  (something they did or saw -- this experience will later become argumentative
-  evidence). Avoid generic interests.
+- A 1-sentence backstory with ONE CONCRETE, SPECIFIC EXPERIENCE tied to the topic
+  (something they did or saw -- this experience becomes argumentative evidence).
+  Avoid generic interests. Keep it tight -- one focused sentence only.
 - One sentence describing what they want from the chat (third person).
 
 Rules:
 - Specific to the topic; reflect traits subtly; no caricature.
-- The concrete experience should be something they could genuinely cite in an
-  argument (a project, an event, a course, a trip, an incident).
-- One concrete reason they could resist at least one option, drawn from that
-  experience.
+- The concrete experience must be something they could cite in an argument
+  (a project, an event, a course, a trip, an incident).
+- The experience should hint at one reason they could resist at least one option.
 
 Return JSON only:
 {{
@@ -535,6 +535,94 @@ One sentence. <=22 words. Don't declare a winner. Don't ask for a vote.
 
 Do NOT write any participant attribution like "Name: ..." -- you are the moderator, write only your own line.
 Return only the line."""
+
+
+# =============================================================================
+# Repair prompts -- called when verifier flags a generated turn for correction.
+# Each prompt includes the specific issue and asks for one clean rewrite.
+# =============================================================================
+
+def repair_repetition(original_text: str) -> str:
+    """Prompt for self-repetition: ask for a pivot, not a restatement."""
+    return f"""A chat message was rejected because it repeats a point already made.
+
+Original (rejected):
+{original_text}
+
+Write ONE natural chat message that says something new:
+- React to what someone else just said, or
+- Name a trade-off you haven't raised yet, or
+- Move toward a pick.
+Do NOT repeat the same reason or argument.
+No name prefix. No markdown. Under 25 words.
+
+Write only the rewritten message."""
+
+
+def repair_invalid_option(original_text: str, options: list[str]) -> str:
+    """Prompt when an option reference is invalid or a valid option is denied."""
+    options_block = "\n".join(options)
+    return f"""A chat message was rejected because it referenced a non-existent option
+or incorrectly claimed a listed option is unavailable.
+
+The ONLY valid options are:
+{options_block}
+
+Original (rejected):
+{original_text}
+
+Rewrite the message so it only refers to the listed options and treats all of
+them as genuinely available. No name prefix. Similar length.
+
+Write only the rewritten message."""
+
+
+def repair_vote(options: list[str]) -> str:
+    """Prompt for a missing vote during narrowing."""
+    letters = ", ".join(
+        m.group(1).upper()
+        for opt in options
+        if (m := re.match(r"Option\s+([A-D])", opt, re.I))
+    )
+    options_block = "\n".join(options)
+    return f"""A narrowing-phase message was rejected because it doesn't clearly vote
+for one of the options.
+
+Available options:
+{options_block}
+
+Write one natural chat message that names exactly one option ({letters}) as your pick.
+Example: "I'd go with Option B." or "My pick is Option C -- it fits what I need."
+No name prefix. Under 22 words.
+
+Write only the message."""
+
+
+def repair_confirmation(candidate: str) -> str:
+    """Prompt for an unclear confirmation (must be yes or no)."""
+    return f"""A confirmation message was rejected because it was unclear.
+
+The group is deciding on Option {candidate}.
+
+Write one clear response -- pick one:
+  YES: "yeah, works for me" / "that's fine" / "I'm on board" / etc.
+  NO: "no, [specific one-line reason]"
+
+Only say no if you have a real objection. No name prefix. Under 18 words.
+
+Write only the message."""
+
+
+def repair_invented_fact(original_prompt: str) -> str:
+    """Append to original prompt to repair an invented option attribute."""
+    return (
+        original_prompt
+        + "\n\nIMPORTANT: Your previous response invented specific facts about an option "
+        "(a fake price, number, or named feature not in the option text). "
+        "Rewrite the same turn WITHOUT those invented details. "
+        "You may use general knowledge and personal experience as reasons, "
+        "but do NOT attach specific numbers or fake named features to any option."
+    )
 
 
 def moderator_force_close(

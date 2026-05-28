@@ -11,7 +11,6 @@ Responsibilities:
 
 Single decision path:
   - Speaker selection : policy.select_next_speakers (SSJ cascade, one speaker/round)
-  - Act planning      : policy.plan_turn
   - Consensus         : reasoning.ConsensusEngine (public stances only)
   - Turn prompt       : prompts.sim_turn_compact via simulator
 """
@@ -30,7 +29,6 @@ from llm_client import get_llm_client
 from logger import DialogueLogger
 from moderation import ModerationEngine, clean_moderator_line
 from policy import (
-    plan_turn,
     repetition_pressure as compute_repetition_pressure,
     sample_hard_blocker,
     select_next_speakers,
@@ -158,12 +156,14 @@ class Orchestrator:
     # ------------------------------------------------------------------
 
     def _store_line(self, line: str, selected_reason: str = "",
-                    tokens_in: int = 0, tokens_out: int = 0) -> None:
+                    tokens_in: int = 0, tokens_out: int = 0,
+                    verification_result: Optional[dict] = None) -> None:
         self.history.append(line)
         print(f"-> {line}")
         self._logger.append_chat_line(line)
         self._logger.buffer(line, selected_reason, self.state,
-                            tokens_in=tokens_in, tokens_out=tokens_out)
+                            tokens_in=tokens_in, tokens_out=tokens_out,
+                            verification_result=verification_result)
 
         if self._tracker is not None:
             self._tracker.update(line, self.state.phase,
@@ -326,26 +326,17 @@ class Orchestrator:
         active = False
 
         for sim in selected:
-            turn_plan = None
-            if self._tracker is not None:
-                turn_plan = plan_turn(
-                    speaker_name=sim.name,
-                    persona=sim.persona,
-                    structured=self._tracker.state,
-                    legacy_state=self.state,
-                    max_words=sim.persona.max_words(self.state.phase),
-                )
-
             text, tok_in, tok_out = sim.generate_turn(
                 self.history, self.state,
                 all_names=all_names,
-                turn_plan=turn_plan,
                 structured=structured,
             )
             if text and "[SILENCE]" not in text.upper():
                 reason = "forced" if sim.name == self.state.last_addressed else "weighted"
+                v_result = getattr(sim, "_last_verification", None)
                 self._store_line(f"{sim.name}: {text}", selected_reason=reason,
-                                 tokens_in=tok_in, tokens_out=tok_out)
+                                 tokens_in=tok_in, tokens_out=tok_out,
+                                 verification_result=v_result)
                 active = True
                 self.state.nudged_participants.discard(sim.name)
 
@@ -379,29 +370,60 @@ class Orchestrator:
                 self.state.rejected_options_by_speaker.pop(sim.name, None)
 
     # ------------------------------------------------------------------
-    # Consensus check -- structured only
+    # Consensus check -- explicit votes first; private acceptability for compromise
     # ------------------------------------------------------------------
+
+    def _private_acceptable_for(self, option: str, dissenters: list) -> bool:
+        """True if every dissenter has `option` in their private acceptable list."""
+        if not dissenters:
+            return True
+        for sim in dissenters:
+            if not sim.persona.beliefs:
+                return False
+            if option not in sim.persona.beliefs.acceptable:
+                return False
+        return True
 
     def _detect_consensus(self) -> Optional[str]:
         if participant_turn_count(self.history) < len(self.sims) * 2:
             return None
+
+        names = [s.name for s in self.sims]
+        votes = current_votes(self.history, self.resolver)
+        n = len(self.sims)
+
+        # 1. All explicit votes agree → clean consensus (works before and after narrowing).
+        if len(votes) == n and len(set(votes.values())) == 1:
+            return next(iter(votes.values()))
+
+        # 2. Vote majority + all dissenters privately accept the leading option → compromise.
+        if len(votes) >= n:
+            counts = Counter(votes.values())
+            top_opt, top_n = counts.most_common(1)[0]
+            if top_n > n // 2:   # strict majority (>50%)
+                dissenters = [s for s in self.sims if votes.get(s.name) != top_opt]
+                if self._private_acceptable_for(top_opt, dissenters):
+                    return top_opt
+
         if self._tracker is None or self._consensus_engine is None:
             return None
 
-        names = [s.name for s in self.sims]
         cs = self._tracker.state.consensus_state
-        if cs in ("full_consensus", "conditional_consensus"):
+
+        # 3. Full stance consensus (everyone explicitly supports the same option).
+        #    Note: conditional_consensus is NOT used here — vague conditionals are not
+        #    treated as real support; only unconditional "support" stance counts.
+        if cs == "full_consensus":
             return self._consensus_engine.leading_candidate(self._tracker.state, names)
 
-        # Clean majority: once everyone has voted, a plurality with no more than
-        # the tolerated number of dissenters (no active opposition) can conclude.
+        # 4. Vote plurality after narrowing with tolerated dissent count.
         if self.state.has_asked_narrowing and cs == "majority_candidate":
-            votes = current_votes(self.history, self.resolver)
-            if len(votes) >= len(self.sims):
+            if len(votes) >= n:
                 counts = Counter(votes.values())
                 top_opt, top_n = counts.most_common(1)[0]
-                if len(self.sims) - top_n <= self._max_dissenters():
+                if n - top_n <= self._max_dissenters():
                     return top_opt
+
         return None
 
     # ------------------------------------------------------------------
@@ -435,8 +457,10 @@ class Orchestrator:
                 self.history, self.state, all_names=all_names, structured=structured,
             )
             if text and "[SILENCE]" not in text.upper():
+                v_result = getattr(sim, "_last_verification", None)
                 self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
-                                 tokens_in=tok_in, tokens_out=tok_out)
+                                 tokens_in=tok_in, tokens_out=tok_out,
+                                 verification_result=v_result)
 
         rejection_signals = (
             "no,", "no.", "not quite", "not yet", "still weighing",
@@ -484,8 +508,10 @@ class Orchestrator:
                 self.history, self.state, all_names=all_names, structured=structured,
             )
             if text and "[SILENCE]" not in text.upper():
+                v_result = getattr(sim, "_last_verification", None)
                 self._store_line(f"{sim.name}: {text}", selected_reason="closure",
-                                 tokens_in=tok_in, tokens_out=tok_out)
+                                 tokens_in=tok_in, tokens_out=tok_out,
+                                 verification_result=v_result)
 
     def _conclude(self, option: str) -> None:
         self.state.preferred_option = option
@@ -499,12 +525,14 @@ class Orchestrator:
 
     def _force_conclusion(self) -> None:
         names = [s.name for s in self.sims]
+        votes = current_votes(self.history, self.resolver)
         final: Optional[str] = None
         if self._tracker is not None and self._consensus_engine is not None:
-            final = self._consensus_engine.best_available_decision(self._tracker.state, names)
+            final = self._consensus_engine.best_available_decision(
+                self._tracker.state, names, explicit_votes=votes
+            )
 
         if final is None:
-            votes = current_votes(self.history, self.resolver)
             if votes:
                 final = Counter(votes.values()).most_common(1)[0][0]
             else:

@@ -106,14 +106,12 @@ personas:
     extraversion: [1, 5]
     agreeableness: [2, 5]                  # opened up a bit so we get genuine pushback
     neuroticism: [1, 4]
-    response_length: [2, 4]
+    response_length: [1, 5]
 
   enforce_diversity: true
   diversity_agree_threshold: 5
   diversity_extraversion_min: 4
 
-  # Recent-act memory bound on ParticipantState.
-  recent_acts_max_history: 10
 
 # ---------------------------------------------------------------------------
 # Response length budgets (Big Five "response_length" maps to these)
@@ -244,43 +242,6 @@ turn_policy:
   min_score_floor: 0.01
 
 # ---------------------------------------------------------------------------
-# Act planner -- phase-specific base weights for MUCA-style sampling.
-# Multipliers come from PersonalityBias (Big Five).
-# ---------------------------------------------------------------------------
-act_planner:
-  bias_baseline: 0.5                       # multipliers sit at 0.5 + propensity
-  conditional_concession_factor: 0.7       # conditional accept uses concession * this
-  ambiguous_reframing_factor: 0.3
-  base_weights:
-    negotiation:
-      assert_support:     0.18
-      assert_opposition:  0.20             # opposition lifted -- Liang divergent thinking
-      ask_clarification:  0.14
-      concede:            0.16
-      answer:             0.18
-      assert_ambiguous:   0.06
-      challenge:          0.08             # explicit challenge act (Stage 5)
-    emergence:
-      assert_support:     0.20
-      assert_opposition:  0.10
-      concede:            0.26
-      conditional_accept: 0.36
-      assert_ambiguous:   0.08
-
-# ---------------------------------------------------------------------------
-# Personality-bias derivation (McCrae & John 1992 -> probabilistic biases).
-# All weights normalised across the five Big Five values.
-# ---------------------------------------------------------------------------
-personality_bias:
-  concession_agreeableness_weight: 0.7
-  concession_low_neuro_weight: 0.3
-  objection_disagreeableness_weight: 0.6
-  objection_neuroticism_weight: 0.4
-  clarification_neuroticism_weight: 0.5
-  clarification_openness_weight: 0.3
-  clarification_low_consc_weight: 0.2
-
-# ---------------------------------------------------------------------------
 # Output
 # ---------------------------------------------------------------------------
 output:
@@ -312,6 +273,23 @@ moderation:
   questions_pile_up_for_facilitation: 2    # >= this many "?" in window triggers facilitate-questions
   facilitate_cooldown_rounds: 2            # don't facilitate twice in a row
   emergence_min_level_for_stall: 2         # below this escalation, emergence stall uses emergence prompt
+
+# ---------------------------------------------------------------------------
+# Verification -- deterministic post-generation checks (verifier.py).
+# Each check can be disabled individually for debugging.
+# ---------------------------------------------------------------------------
+verification:
+  enabled: true
+  repair_attempts: 1                       # max one repair attempt per turn
+  check_repetition: true                   # self-repetition vs. own recent turns
+  check_option_validity: true              # invalid refs, option denial, invented facts
+  check_moderator_options: true            # moderator introducing new options / fake consensus
+  check_votes: true                        # missing explicit vote during narrowing
+  check_confirmation: true                 # unclear yes/no during confirmation
+
+  # Jaccard thresholds for self-repetition detection.
+  own_last_turn_jaccard: 0.55             # last own turn similarity -> repair
+  own_points_similarity: 0.65             # older memory points similarity -> warn
 
 # ---------------------------------------------------------------------------
 # Evaluation

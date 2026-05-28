@@ -53,14 +53,13 @@ class Config(_Section):
     memory: _Section
     deliberation: _Section
     turn_policy: _Section
-    act_planner: _Section
-    personality_bias: _Section
     stubbornness: _Section
     fisher: _Section
     grounding: _Section
     moderation: _Section
     evaluation: _Section
     prompt_budget: _Section
+    verification: _Section
 
     def __init__(self, path: Path) -> None:
         with open(path, "r", encoding="utf-8") as f:

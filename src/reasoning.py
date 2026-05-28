@@ -88,28 +88,34 @@ class ConsensusEngine:
         return _leading_option(structured.stance_table, list(structured.options.keys()))
 
     def best_available_decision(
-        self, structured: "StructuredState", participant_names: list[str]
+        self,
+        structured: "StructuredState",
+        participant_names: list[str],
+        explicit_votes: Optional[dict[str, str]] = None,
     ) -> Optional[str]:
+        """Pick the best option for force-close.
+
+        Priority order:
+          1. Explicit vote plurality (each vote counts as a strong +2 signal).
+          2. Stance-table weights as tiebreaker.
+        """
         weights = cfg.consensus.stance_weights
         stance  = structured.stance_table
         options = list(structured.options.keys())
         if not options:
             return None
 
+        votes = explicit_votes or {}
+
         def score(opt: str) -> float:
-            return sum(
+            vote_bonus = sum(2.0 for v in votes.values() if v == opt)
+            stance_score = sum(
                 weights.get(stance.current_stance_label(name, opt), 0.0)
                 for name in participant_names
             )
+            return vote_bonus + stance_score
 
-        scores = {opt: score(opt) for opt in options}
-        voted = [
-            opt for opt in options
-            if any(stance.current_stance_label(name, opt) in ("support", "conditional_support")
-                   for name in participant_names)
-        ]
-        pool = voted if voted else options
-        return max(pool, key=lambda o: scores[o])
+        return max(options, key=score)
 
 
 def _leading_option(stance: "StanceTable", options: list[str]) -> Optional[str]:
@@ -301,3 +307,82 @@ def repair_directive() -> str:
         "do not invent specific attributes of the OPTIONS (no fake prices, fake "
         "named features, or fabricated numbers attached to an option)."
     )
+
+
+# =============================================================================
+# Phase 6 -- post-dialogue evaluation summary
+# =============================================================================
+
+def evaluation_summary(
+    outcome: str,
+    final_option: Optional[str],
+    speaker_targets: dict[str, int],
+    turn_records: list[dict],
+) -> dict:
+    """Automatic quality metrics written to the .eval.json file.
+
+    Args:
+        outcome: "success" | "force_close" | "failed"
+        final_option: the winning option letter, or None
+        speaker_targets: {speaker: target_word_count} from persona.response_length
+        turn_records: buffered turn dicts from DialogueLogger
+
+    Returns a dict suitable for meta["evaluation"].
+    """
+    import re as _re
+
+    valid_options = {"A", "B", "C", "D"}
+    outcome_valid = (
+        outcome in ("success", "force_close") and (final_option or "") in valid_options
+    ) or outcome == "failed"
+
+    participant_records = [r for r in turn_records if not r.get("is_moderator", False)]
+    total_turns = max(1, len(participant_records))
+
+    # Per-speaker word counts from actual text
+    word_counts: dict[str, list[int]] = {}
+    for r in participant_records:
+        speaker = r["speaker"]
+        text = r.get("text", "")
+        wc = len(_re.sub(r"\s+", " ", text).split()) if text.strip() else 0
+        word_counts.setdefault(speaker, []).append(wc)
+
+    avg_words = {s: round(sum(wcs) / len(wcs), 1) for s, wcs in word_counts.items() if wcs}
+
+    # Length adherence: 1 - |avg - target| / target, floored at 0
+    adherence: dict[str, float] = {}
+    for s, avg in avg_words.items():
+        target = speaker_targets.get(s, 24)
+        adherence[s] = round(max(0.0, 1.0 - abs(avg - target) / max(1, target)), 2)
+
+    # Repetition rate: share of turns flagged SELF_REPETITION by verifier
+    rep_counts: dict[str, int] = {}
+    rep_totals: dict[str, int] = {}
+    for r in participant_records:
+        speaker = r["speaker"]
+        rep_totals[speaker] = rep_totals.get(speaker, 0) + 1
+        if "SELF_REPETITION" in r.get("verification_issues", []):
+            rep_counts[speaker] = rep_counts.get(speaker, 0) + 1
+    rep_rate = {
+        s: round(rep_counts.get(s, 0) / max(1, rep_totals.get(s, 1)), 3)
+        for s in rep_totals
+    }
+
+    # Overall repair rate
+    repairs = sum(1 for r in participant_records if r.get("repair_attempted", False))
+    repair_rate = round(repairs / total_turns, 3)
+
+    # Participation ratio (normalised)
+    turn_counts = {s: len(wcs) for s, wcs in word_counts.items()}
+    total_tc = sum(turn_counts.values()) or 1
+    participation_ratio = {s: round(v / total_tc, 3) for s, v in turn_counts.items()}
+
+    return {
+        "outcome_valid": outcome_valid,
+        "avg_words_per_turn": avg_words,
+        "target_words_per_turn": {s: speaker_targets.get(s, 24) for s in avg_words},
+        "length_adherence_per_speaker": adherence,
+        "repetition_rate_per_speaker": rep_rate,
+        "repair_rate": repair_rate,
+        "participation_ratio": participation_ratio,
+    }

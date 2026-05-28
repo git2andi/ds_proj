@@ -286,39 +286,20 @@ class ParticipantState:
     last_spoke_turn: Optional[int]            = None
     participation_debt: float                 = 0.0
 
-    recent_dialogue_acts: list[DialogueAct]   = field(default_factory=list)
-    strategy_cooldowns: dict[str, int]        = field(default_factory=dict)
-
     is_true_hard_blocker: bool                = False
 
     # Stage 1c -- captured from the opening phase (one phrase). Becomes the
     # "what this sim cares about" entry in everyone else's perceived_priorities.
     stated_priority: Optional[str]            = None
 
-    # Stage 5 -- has this sim stated a position with at least one reason yet?
+    # Deliberation signal: has this sim stated a position with at least one reason?
     position_with_reason_stated: bool         = False
 
-    # Stage 6 -- relevance-filtered memory (Park 2023 scaled down). Compact
-    # lines, capped per cfg.memory. Replaces feeding raw last-N turns.
+    # Relevance-filtered memory (Park 2023 scaled down). Compact lines, capped
+    # per cfg.memory. Replaces feeding raw last-N turns.
     points_made: list[str]                    = field(default_factory=list)
 
     persona_ref: Optional["Persona"]          = field(default=None, repr=False, compare=False)
-
-    def decrement_cooldowns(self) -> None:
-        self.strategy_cooldowns = {
-            act: max(0, remaining - 1)
-            for act, remaining in self.strategy_cooldowns.items()
-            if remaining > 1
-        }
-
-    def on_cooldown(self, act: DialogueAct) -> bool:
-        return self.strategy_cooldowns.get(act.value, 0) > 0
-
-    def record_act(self, act: DialogueAct) -> None:
-        self.recent_dialogue_acts.append(act)
-        cap = cfg.personas.recent_acts_max_history
-        if len(self.recent_dialogue_acts) > cap:
-            self.recent_dialogue_acts = self.recent_dialogue_acts[-cap:]
 
     def record_point(self, text: str) -> None:
         """Append a compact summary of a point this sim made (anti-repeat)."""
@@ -531,8 +512,6 @@ class StateTracker:
             if ps:
                 ps.turn_count += 1
                 ps.last_spoke_turn = turn_id
-                ps.record_act(act)
-                ps.decrement_cooldowns()
                 if act == DialogueAct.COMMIT_VOTE:
                     vote = self._resolver.vote_in(text)
                     if vote:

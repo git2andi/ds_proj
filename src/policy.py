@@ -1,16 +1,11 @@
 """
 policy.py
 ---------
-Speaker selection (SSJ cascade), per-turn act planning, personality bias,
-repetition / discourse signals consumed by the orchestrator.
+Speaker selection (SSJ cascade), repetition / discourse signals.
 
 Public API
   - select_next_speakers()  : SSJ priority cascade, returns ONE speaker per round
                               (Sacks/Schegloff/Jefferson 1974).
-  - plan_turn() -> TurnPlan : per-speaker act selection. Uses the argument kit
-                              (Toulmin) for emergence soft-paths and reservation
-                              hooks during negotiation.
-  - derive_bias()           : Big Five -> probabilistic act biases (McCrae & John).
   - sample_hard_blocker()   : rare per-dialogue stubbornness sampler.
   - repetition_pressure()   : rolling Jaccard overlap signal.
   - extract_discourse()     : last-addressed + pending-question target (Ouchi/Tsuboi).
@@ -20,54 +15,14 @@ from __future__ import annotations
 
 import random
 import re
-from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING
 
 from config_loader import cfg
-from state import DialogueAct
 
 if TYPE_CHECKING:
-    from persona import Persona
     from state import DiscourseGraph, ParticipantState, StructuredState
     from simulator import Simulator
     from orchestrator import DialogueState
-
-
-# =============================================================================
-# PersonalityBias -- Big Five -> probabilistic act multipliers (McCrae & John 1992)
-# All weights come from cfg.personality_bias.
-# =============================================================================
-
-@dataclass
-class PersonalityBias:
-    concession_propensity: float
-    objection_propensity: float
-    detail_orientation: float
-    reframing_propensity: float
-    clarification_propensity: float
-
-
-def derive_bias(persona: "Persona") -> PersonalityBias:
-    def n(v: int) -> float:
-        return (max(1, min(5, int(v))) - 1) / 4.0
-
-    a     = n(persona.agreeableness)
-    o     = n(persona.openness)
-    c     = n(persona.conscientiousness)
-    neuro = n(persona.neuroticism)
-
-    w = cfg.personality_bias
-    return PersonalityBias(
-        concession_propensity    = a * w.concession_agreeableness_weight
-                                   + (1.0 - neuro) * w.concession_low_neuro_weight,
-        objection_propensity     = (1.0 - a) * w.objection_disagreeableness_weight
-                                   + neuro * w.objection_neuroticism_weight,
-        detail_orientation       = c,
-        reframing_propensity     = o,
-        clarification_propensity = neuro * w.clarification_neuroticism_weight
-                                   + o     * w.clarification_openness_weight
-                                   + (1.0 - c) * w.clarification_low_consc_weight,
-    )
 
 
 # =============================================================================
@@ -187,9 +142,7 @@ def select_next_speakers(
             return [addr[0]]
 
     # Rule 1b -- self-selection. Hard-exclude the last speaker so two
-    # consecutive turns from the same sim are impossible under self-select
-    # (the SSJ cascade above is the only path that can still re-pick them,
-    # e.g. when they are the addressee of an open question).
+    # consecutive turns from the same sim are impossible under self-select.
     return [_self_select(sims, history, state)]
 
 
@@ -287,12 +240,7 @@ def repetition_pressure(history: list[str]) -> float:
 
 
 def extract_discourse(history: list[str], sim_names: set[str]) -> dict[str, Optional[str]]:
-    """Addressee tracking -- Ouchi & Tsuboi (2016). Last addressed + pending question target.
-
-    Uses the SAME address-vs-citation rule as StateTracker (`state._is_addressing`)
-    so that 'Liam's point is good' or 'I agree with Lena' do NOT force the cited
-    sim to speak next -- they're citations, not addresses.
-    """
+    """Addressee tracking -- Ouchi & Tsuboi (2016). Last addressed + pending question target."""
     from state import _is_addressing  # avoid module-load cycle
 
     result: dict[str, Optional[str]] = {"last_addressed": None, "pending_question_target": None}
@@ -315,220 +263,3 @@ def extract_discourse(history: list[str], sim_names: set[str]) -> dict[str, Opti
                     result["pending_question_target"] = name
         break
     return result
-
-
-# =============================================================================
-# Act planner -- TurnPlan + plan_turn()
-# =============================================================================
-
-@dataclass
-class TurnPlan:
-    speaker: str
-    act: DialogueAct
-    target_option: Optional[str]  = None
-    addressee: Optional[str]      = None
-    reply_to: Optional[int]       = None
-    condition: Optional[str]      = None
-    max_words: int                = 24
-    rationale: str                = ""
-    # directive=True only for genuine obligations (answer a question, commit a
-    # vote, confirm/reject, respond to an open challenge). Sampled negotiation
-    # acts are NOT surfaced as a rigid instruction.
-    directive: bool               = True
-
-    def to_prompt_str(self) -> str:
-        label = _ACT_LABELS.get(self.act, self.act.name)
-        line1 = f"Planned act: {label}"
-        if self.target_option:
-            line1 += f" -> Option {self.target_option}"
-        parts = [line1]
-        if self.condition:
-            parts.append(f"  Condition: {self.condition}")
-        if self.addressee:
-            parts.append(f"  Address: {self.addressee}")
-        return "\n".join(parts)
-
-
-_ACT_LABELS: dict[DialogueAct, str] = {
-    DialogueAct.OPEN_PRIORITY:      "Share your priority",
-    DialogueAct.ASSERT_SUPPORT:     "Express support",
-    DialogueAct.ASSERT_OPPOSITION:  "Express opposition",
-    DialogueAct.ASSERT_AMBIGUOUS:   "Express uncertainty",
-    DialogueAct.ASK_CLARIFICATION:  "Ask for clarification",
-    DialogueAct.ANSWER:             "Answer the question",
-    DialogueAct.CHALLENGE:          "Push back on someone's specific claim",
-    DialogueAct.CONCEDE:            "Concede or agree",
-    DialogueAct.CONDITIONAL_ACCEPT: "Accept conditionally",
-    DialogueAct.COMMIT_VOTE:        "State your explicit vote",
-    DialogueAct.CONFIRM:            "Confirm agreement",
-    DialogueAct.REJECT_WITH_REASON: "Reject with a specific reason",
-    DialogueAct.GOODBYE:            "Say goodbye",
-}
-
-
-def _act_weights_for(phase: str) -> list[tuple[DialogueAct, float]]:
-    """Materialise phase base weights from cfg.act_planner."""
-    section = getattr(cfg.act_planner.base_weights, phase, None)
-    if section is None:
-        section = cfg.act_planner.base_weights.negotiation
-
-    # Map yaml-case keys (assert_support) -> DialogueAct members (ASSERT_SUPPORT).
-    weights: list[tuple[DialogueAct, float]] = []
-    for key, value in section._raw.items():
-        try:
-            act = DialogueAct[key.upper()]
-        except KeyError:
-            continue
-        weights.append((act, float(value)))
-    return weights
-
-
-def plan_turn(
-    speaker_name: str,
-    persona: "Persona",
-    structured: "StructuredState",
-    legacy_state: "DialogueState",
-    max_words: int = 24,
-) -> TurnPlan:
-    phase     = legacy_state.phase
-    ps        = structured.participants.get(speaker_name)
-    beliefs   = persona.beliefs if persona else None
-    bias      = derive_bias(persona)
-    candidate = legacy_state.candidate_option or legacy_state.current_leading_option
-
-    # 1. Discourse obligation -- answer pending question.
-    if ps is not None:
-        for q_id, addressees in list(structured.discourse.pending_questions.items()):
-            if speaker_name in addressees:
-                return TurnPlan(
-                    speaker=speaker_name, act=DialogueAct.ANSWER,
-                    reply_to=q_id, max_words=max_words,
-                    rationale=f"pending question turn={q_id}",
-                )
-
-    # 1b. Open challenge aimed at this sim -- treat as soft directive to engage.
-    open_ch = next(
-        (c for c in reversed(structured.discourse.challenges)
-         if c.target == speaker_name and c.answered_turn_id is None),
-        None,
-    )
-    if open_ch and phase in {"negotiation", "emergence"}:
-        return TurnPlan(
-            speaker=speaker_name, act=DialogueAct.ANSWER,
-            target_option=open_ch.target_option, max_words=max_words,
-            rationale=f"unanswered challenge from {open_ch.challenger}",
-        )
-
-    # 2. Phase obligations.
-    if phase == "opening":
-        return TurnPlan(speaker=speaker_name, act=DialogueAct.OPEN_PRIORITY, max_words=max_words)
-    if phase == "closure":
-        return TurnPlan(speaker=speaker_name, act=DialogueAct.GOODBYE, max_words=max_words)
-
-    if phase == "narrowing":
-        has_voted = bool(ps.public_preference) if ps else False
-        if not has_voted:
-            return TurnPlan(
-                speaker=speaker_name, act=DialogueAct.COMMIT_VOTE,
-                target_option=beliefs.preferred if beliefs else None,
-                max_words=max_words,
-                rationale="narrowing: no public vote yet",
-            )
-
-    if phase == "confirmation" and candidate:
-        rejected = beliefs.rejected if beliefs else []
-        if candidate in rejected:
-            return TurnPlan(
-                speaker=speaker_name, act=DialogueAct.REJECT_WITH_REASON,
-                target_option=candidate,
-                condition=beliefs.would_reconsider_if if beliefs else None,
-                max_words=max_words,
-                rationale=f"confirmation: {candidate} in rejected",
-            )
-        return TurnPlan(
-            speaker=speaker_name, act=DialogueAct.CONFIRM,
-            target_option=candidate, max_words=max_words,
-            rationale=f"confirmation: {candidate} acceptable",
-        )
-
-    # 3. Emergence soft-path -- candidate is acceptable but not preferred.
-    if phase == "emergence" and candidate and beliefs:
-        if candidate in (beliefs.acceptable or []) and candidate != beliefs.preferred:
-            return TurnPlan(
-                speaker=speaker_name, act=DialogueAct.CONDITIONAL_ACCEPT,
-                target_option=candidate,
-                condition=beliefs.would_reconsider_if or None,
-                max_words=max_words,
-                rationale=f"emergence: {candidate} within acceptable",
-            )
-
-    # 4. Hard-blocker path -- the only legitimate route to force-close.
-    if ps and ps.is_true_hard_blocker and candidate and beliefs \
-            and candidate in (beliefs.rejected or []):
-        return TurnPlan(
-            speaker=speaker_name, act=DialogueAct.REJECT_WITH_REASON,
-            target_option=candidate,
-            condition=beliefs.would_reconsider_if or None,
-            max_words=max_words,
-            rationale="hard blocker rejects candidate",
-        )
-
-    # 5. Personality-biased sampling with MUCA-style cooldowns.
-    base = _act_weights_for(phase)
-    baseline = cfg.act_planner.bias_baseline
-    multipliers: dict[DialogueAct, float] = {
-        DialogueAct.CONCEDE:            baseline + bias.concession_propensity,
-        DialogueAct.ASSERT_OPPOSITION:  baseline + bias.objection_propensity,
-        DialogueAct.CHALLENGE:          baseline + bias.objection_propensity,
-        DialogueAct.ASK_CLARIFICATION:  baseline + bias.clarification_propensity,
-        DialogueAct.ASSERT_SUPPORT:     baseline + bias.detail_orientation,
-        DialogueAct.CONDITIONAL_ACCEPT: baseline
-                                        + bias.concession_propensity
-                                          * cfg.act_planner.conditional_concession_factor,
-        DialogueAct.ASSERT_AMBIGUOUS:   baseline
-                                        + bias.reframing_propensity
-                                          * cfg.act_planner.ambiguous_reframing_factor,
-    }
-    weighted = [
-        (act, max(cfg.turn_policy.min_score_floor, w * multipliers.get(act, 1.0)))
-        for act, w in base
-    ]
-    if ps is not None:
-        weighted = [(act, w) for act, w in weighted if not ps.on_cooldown(act)]
-
-    # Suppress ASK_CLARIFICATION when the recent transcript is already
-    # question-heavy. Open-hypothetical pile-ups ("what about X?" / "what if
-    # Y?") are dodges, not deliberation -- the planner should push toward
-    # committing instead.
-    if _recent_question_density(structured) >= cfg.deliberation.question_density_suppress:
-        weighted = [(act, w) for act, w in weighted if act != DialogueAct.ASK_CLARIFICATION]
-
-    chosen = _weighted_choice(weighted) if weighted else DialogueAct.ASSERT_AMBIGUOUS
-
-    return TurnPlan(
-        speaker=speaker_name, act=chosen, target_option=None,
-        max_words=max_words, rationale=f"sampled act in {phase}",
-        directive=False,
-    )
-
-
-def _recent_question_density(structured: "StructuredState") -> float:
-    """Share of recent participant turns ending in a question. Used by the act
-    planner to suppress ASK_CLARIFICATION when sims are already trading
-    hypotheticals -- those are dodges, not deliberation."""
-    window = cfg.deliberation.question_density_window
-    recent = [t for t in structured.turns if not t.is_moderator][-window:]
-    if not recent:
-        return 0.0
-    return sum(1 for t in recent if t.is_question) / len(recent)
-
-
-def _weighted_choice(weights: list[tuple[DialogueAct, float]]) -> DialogueAct:
-    total = sum(w for _, w in weights)
-    r = random.uniform(0.0, total)
-    cumulative = 0.0
-    for act, w in weights:
-        cumulative += w
-        if cumulative >= r:
-            return act
-    return weights[-1][0]

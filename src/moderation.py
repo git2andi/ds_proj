@@ -27,6 +27,7 @@ import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 from utils import OptionResolver, current_votes, last_n_turns_for
+from verifier import verify_moderator_turn
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
@@ -131,21 +132,20 @@ class ModerationEngine:
             return False
 
         # Deliberation gate.
+        # Phase 2: challenge-response tracking is kept for evaluation/logging but
+        # no longer gates narrowing. Requiring an answered challenge before sims
+        # can vote caused artificial debate loops. Positions + exhaustion are enough.
         ratio = cfg.deliberation.positions_with_reason_required_ratio
         needed_positions = max(1, int(round(n * ratio)))
         positions = sum(
             1 for ps in structured.participants.values()
             if ps.position_with_reason_stated
         )
-        challenges_answered = sum(
-            1 for c in structured.discourse.challenges if c.answered_turn_id is not None
-        )
 
         gate_positions = positions >= needed_positions
-        gate_challenges = challenges_answered >= cfg.deliberation.challenges_to_unlock_narrowing
         gate_exhausted = state.repetition_pressure >= cfg.deliberation.exhaustion_pressure_threshold
 
-        return gate_positions and gate_challenges and gate_exhausted
+        return gate_positions and gate_exhausted
 
     # ------------------------------------------------------------------
 
@@ -324,6 +324,20 @@ class ModerationEngine:
                 ).strip()
 
         cleaned = clean_moderator_line(line, names)
+
+        # Verify moderator line. If it introduces a new option or is empty,
+        # discard it silently (the orchestrator will fall through to participant turns).
+        if cleaned:
+            v_result = verify_moderator_turn(
+                text=cleaned, options=self.options, resolver=self._resolver,
+                phase=state.phase,
+            )
+            if v_result.needs_repair:
+                # Bad moderator line -- drop it. Deterministic templates are
+                # used for phase-critical moderator turns (narrowing, force-close)
+                # directly in the orchestrator; intervention lines can just be skipped.
+                cleaned = ""
+
         if cleaned:
             store_fn(cleaned, self._llm.last_tokens_in, self._llm.last_tokens_out)
         del structured  # not needed beyond the dispatch above

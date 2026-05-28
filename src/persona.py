@@ -15,8 +15,8 @@ Total: 3 LLM calls for setup, regardless of N.
 
 Research grounding (the parts of the architecture this module owns):
   - McCrae & John (1992) -- Big Five traits, sampled with diversity constraint
-    and routed both into act-sampling weights (policy.derive_bias) and into
-    a deterministic SpeechSignature (this module) that scaffolds distinct voices.
+    and routed into a deterministic SpeechSignature + derived conversational
+    controls (this module) that scaffold distinct voices.
   - Shanahan (2023, "Role-play with LLMs") -- persona scaffolding is structural,
     not "be the character" instruction; SpeechSignature lives in the speaker card.
   - Toulmin (1958) -- AgentBeliefs carries claim + warrants (reasons) +
@@ -244,6 +244,7 @@ class Persona:
             "thinkaloud": round(sig.thinkaloud_propensity, 2),
             "detail": round(sig.detail_orientation, 2),
         }
+        d["derived_controls"] = self.derived_controls()
         return d
 
     def response_length_score(self) -> int:
@@ -272,6 +273,62 @@ class Persona:
             self.openness, self.conscientiousness, self.extraversion,
             self.agreeableness, self.neuroticism,
         )
+
+    def derived_controls(self) -> dict[str, float]:
+        """Six behavioural controls derived from Big Five (each 0..1).
+
+        Used in the speaker card instead of the verbose personality_summary +
+        speech_signature descriptor so the prompt stays compact.
+        """
+        o = _norm(self.openness)
+        c = _norm(self.conscientiousness)
+        e = _norm(self.extraversion)
+        a = _norm(self.agreeableness)
+        n = _norm(self.neuroticism)
+        return {
+            "initiative":   round(min(1.0, 0.40 * e + 0.30 * (1.0 - n) + 0.30 * o), 2),
+            "flexibility":  round(min(1.0, 0.50 * a + 0.30 * o + 0.20 * (1.0 - n)), 2),
+            "directness":   round(min(1.0, 0.50 * (1.0 - a) + 0.30 * (1.0 - n) + 0.20 * c), 2),
+            "detail_level": round(min(1.0, 0.60 * c + 0.20 * o + 0.20 * (1.0 - e)), 2),
+            "warmth":       round(min(1.0, 0.60 * a + 0.20 * e + 0.20 * (1.0 - n)), 2),
+            "target_response_length": round(_norm(self.response_length), 2),
+        }
+
+    def derived_controls_descriptor(self) -> str:
+        """Compact one-line style descriptor for the speaker card.
+
+        Replaces the separate Voice + Personality lines to reduce prompt bloat.
+        Only expresses values that are clearly high or low (>=0.65 or <=0.30).
+        """
+        dc = self.derived_controls()
+        parts: list[str] = []
+
+        if dc["initiative"] >= 0.65:
+            parts.append("jumps into the conversation readily")
+        elif dc["initiative"] <= 0.30:
+            parts.append("waits before contributing")
+
+        if dc["flexibility"] >= 0.65:
+            parts.append("genuinely open to shifting position")
+        elif dc["flexibility"] <= 0.30:
+            parts.append("holds position firmly")
+
+        if dc["directness"] >= 0.65:
+            parts.append("states disagreement plainly")
+        elif dc["directness"] <= 0.30:
+            parts.append("softens pushback")
+
+        if dc["detail_level"] >= 0.65:
+            parts.append("references concrete specifics")
+        elif dc["detail_level"] <= 0.30:
+            parts.append("stays at the level of impressions")
+
+        if dc["warmth"] >= 0.65:
+            parts.append("warm, friendly tone")
+        elif dc["warmth"] <= 0.30:
+            parts.append("cool, businesslike tone")
+
+        return "; ".join(parts) if parts else "neutral, balanced style"
 
     def personality_summary(self) -> str:
         """Register descriptors derived from Big Five -- never prescribes phrases."""
@@ -520,6 +577,21 @@ def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]
     if not any(v >= extraversion_min for v in extraversion_vals):
         idx = random.randrange(len(trait_sets))
         trait_sets[idx]["extraversion"] = random.randint(extraversion_min, 5)
+
+    # Ensure response lengths are spread across the group. If the spread is
+    # less than 2 points, push one sim toward a short length and one toward
+    # a long length so turns feel visibly different in size.
+    rl_vals = [ts["response_length"] for ts in trait_sets]
+    if len(trait_sets) >= 2 and max(rl_vals) - min(rl_vals) < 2:
+        idx_min = rl_vals.index(min(rl_vals))
+        idx_max = rl_vals.index(max(rl_vals))
+        if idx_min == idx_max:
+            idx_max = (idx_min + 1) % len(trait_sets)
+        rl_lo = getattr(cfg.personas.trait_ranges, "response_length", None)
+        lo_floor = int(rl_lo[0]) if rl_lo else 1
+        hi_ceil  = int(rl_lo[1]) if rl_lo else 5
+        trait_sets[idx_min]["response_length"] = lo_floor
+        trait_sets[idx_max]["response_length"] = hi_ceil
 
     return trait_sets
 

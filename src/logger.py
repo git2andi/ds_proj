@@ -23,7 +23,7 @@ import os
 from typing import Any, Optional, TYPE_CHECKING
 
 from config_loader import cfg
-from reasoning import deliberation_metrics, fisher_ratios
+from reasoning import deliberation_metrics, evaluation_summary, fisher_ratios
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
@@ -121,14 +121,15 @@ class DialogueLogger:
             f.write(f"{line}\n\n")
 
     def buffer(self, line: str, selected_reason: str, state: "DialogueState",
-               tokens_in: int = 0, tokens_out: int = 0) -> None:
+               tokens_in: int = 0, tokens_out: int = 0,
+               verification_result: Optional[dict] = None) -> None:
         if ":" not in line:
             return
         speaker, text = line.split(":", 1)
         speaker = speaker.strip()
         is_moderator = speaker == "Moderator"
 
-        self._turn_records.append({
+        record: dict = {
             "turn_index": state.turn_index,
             "phase": state.phase,
             "speaker": speaker,
@@ -137,7 +138,16 @@ class DialogueLogger:
             "selected_reason": selected_reason,
             "tokens_in": tokens_in,
             "tokens_out": tokens_out,
-        })
+        }
+        if verification_result is not None:
+            record["verification_issues"] = [
+                i["code"] for i in verification_result.get("issues", [])
+                if i["severity"] == "repair"
+            ]
+            record["repair_attempted"] = verification_result.get("repair_attempted", False)
+            record["repair_succeeded"] = verification_result.get("repair_succeeded", False)
+
+        self._turn_records.append(record)
         if not is_moderator:
             self._speaker_turn_counts[speaker] = self._speaker_turn_counts.get(speaker, 0) + 1
             self._phase_turn_counts[state.phase] = self._phase_turn_counts.get(state.phase, 0) + 1
@@ -196,10 +206,37 @@ class DialogueLogger:
             "turns": self._turn_records,
         }
 
+        # --- Verification aggregate stats ----------------------------------
+        repair_attempts = sum(
+            1 for t in self._turn_records if t.get("repair_attempted", False)
+        )
+        failed_repairs = sum(
+            1 for t in self._turn_records
+            if t.get("repair_attempted", False) and not t.get("repair_succeeded", True)
+        )
+        meta["verification"] = {
+            "repair_attempts": repair_attempts,
+            "failed_repairs": failed_repairs,
+        }
+
+        # --- Post-dialogue evaluation metrics ----------------------------------
+        word_budgets = cfg.response_length.word_budgets
+        speaker_targets = {
+            s.name: word_budgets[max(0, min(4, s.persona.response_length - 1))]
+            for s in sims
+        }
+        final_opt = state.preferred_option or state.candidate_option
+        meta["evaluation"] = evaluation_summary(
+            outcome=outcome,
+            final_option=final_opt,
+            speaker_targets=speaker_targets,
+            turn_records=self._turn_records,
+        )
+
         if structured is not None:
             names = [s.name for s in sims]
             meta["fisher_ratios"] = fisher_ratios(structured)              # eval-only
-            meta["deliberation"] = deliberation_metrics(structured, names) # Stage 5 signals
+            meta["deliberation"] = deliberation_metrics(structured, names) # gating signals
             meta["consensus_state_final"] = structured.consensus_state
             meta["is_hard_blocker"] = {
                 name: ps.is_true_hard_blocker

@@ -1,287 +1,1026 @@
-# MASTERPLAN v2 — From a decision pipeline to a real deliberation
+# MASTERPLAN_REVISED.md — Focused Refactor Plan for the Group-Discussion User Simulator
 
-**Status:** the structural plumbing works (option aliasing → stances → consensus → honest
-outcomes, all scaling 2–5 sims). What does **not** work is the thing the project exists
-for: the transcripts do not read like a group of humans actually discussing. This document
-diagnoses why, grounds the fix in current research, and lays out a staged plan.
+## 0. Purpose
 
-This supersedes the previous MASTERPLAN, whose work (simplification, the prose↔state
-bridge, fail-fast, the phase rework) is largely **done**. The remaining problem is
-qualitatively different and needs an architectural reframe, not more prompt text.
+This document is the revised implementation plan for the dialogue-simulation project.
 
----
+The earlier system already contains many of the right building blocks:
 
-## Part I — The evidence
+- compact hidden user states;
+- diverse personas;
+- preferences and acceptable options;
+- moderator-guided phase progression;
+- explicit options;
+- LLM-generated utterances;
+- logging and evaluation data.
 
-Two real runs (full-LLM, see `logs/20260528_013648_995747.txt` and `…013322_078489.txt`).
+The project does **not** need another large theoretical layer. It needs a narrower control structure and a strong verification/repair layer around each generated utterance.
 
-### Exhibit A — broken at the source (biology presentation topic)
+The target system is:
 
-Topic: *"find a university presentation topic in the course about biology."*
-Generated options: **"The Helix Institute", "EcoCycle Conference", "The Biosphere Summit",
-"The Cellarius Symposium"** — i.e. conferences/venues, not presentation topics. The decision
-is incoherent before a single sim speaks. The sims then argue about abstract qualities
-("breadth vs depth", "feasibility") that aren't attached to any option, and the moderator
-force-closes on Option A that nobody argued for.
+> A scalable simulator that generates casual, human-like group chats between distinct simulated users who discuss options, avoid repeating themselves, try to compromise, and either reach a valid decision or honestly fail when compromise is not plausible.
 
-### Exhibit B — "okay" but hollow (lunch spot)
+The main correction is:
 
-Reads more naturally, but every sim is a **one-note concern repeater**:
-- Ava → "accommodates various dietary preferences" (her `key_concern`, verbatim, repeatedly)
-- Liam → "familiar sandwich options" (asks "does X have sandwiches?" three times)
-- Julian → "filling and affordable"
-
-Nobody is *moved* by an argument. They converge only because every persona's `acceptable`
-list contains almost every option, so agreement is automatic. The discussion is filler.
-
-### The six concrete failure modes
-
-1. **Options don't fit the decision.** `option_generation` forces a proper-noun venue onto
-   every topic. Abstract decisions (a topic, a strategy, a policy) get nonsensical options.
-2. **Personas hold positions, not arguments.** The belief model
-   (`preferred/acceptable/rejected/key_concern/concession`) encodes *where* a sim stands but
-   not *why*, what *evidence/experience* backs it, or what would *change their mind*. Rich
-   backstories never become argumentative ammunition.
-3. **No genuine disagreement.** `acceptable ≈ 3 of 4` (cooperative baseline) means nobody
-   really objects, so there is nothing to deliberate and "narrowing comes too soon."
-4. **The moderator shuts discussion down.** `detect_info_gap` → "isn't specified, decide on
-   what's listed" fires on *rhetorical/deliberative* questions, killing the substance.
-5. **Grounding sterilizes.** `fact_check` forbids any detail not in the option text, so sims
-   can't reason from general knowledge or their own experience — the raw material of a real
-   argument.
-6. **Pacing is content-blind.** Phase transitions are pure turn counts; the system never asks
-   "did a real disagreement actually get surfaced and worked through?"
-
-### The root cause
-
-**The architecture optimizes for *terminating on an option*, not for *having a discussion*.**
-Consensus engine, narrowing, confirmation, force-close — all machinery for ending. The
-deliberation is treated as filler to be rushed past. To get real chats, deliberation must
-become the *product*; the decision is its *byproduct*.
+> Keep the useful architecture. Remove overlapping control logic. Add deterministic verification after generation.
 
 ---
 
-## Part II — What a real discussion needs (research grounding)
+## 1. Core conclusion
 
-- **Generative Agents (Park et al., 2023).** Believability comes from *memory + reflection +
-  reactivity*: agents remember what was said, form higher-level takes, and respond to each
-  other. Our sims see only the last ~6 raw turns and never reflect, so they loop and repeat.
-- **Multi-agent debate (Du et al., 2023; ChatEval; AgentVerse).** Quality emerges from genuine
-  *critique and rebuttal* between agents, not from each restating its view. Our act mix is
-  dominated by self-assertion; there is almost no challenge→response→update cycle.
-- **Argumentation theory (Toulmin).** A real argumentative move is *claim + warrant (reason) +
-  optional evidence/backing*. Our turns are claims only ("I prefer C"). No warrants, no backing.
-- **Negotiation / persuasion agents (e.g. CICERO, Diplomacy).** Persuasion requires *intents*
-  and *theory-of-mind*: modelling what others want and appealing to it. Our sims never reason
-  about each other's priorities; they broadcast their own.
-- **Deliberative-quality research (justification, reciprocity, reflexivity).** A good
-  deliberation has participants *justifying* claims and *referencing each other's* justifications,
-  and being willing to *update*. Our sims do none of the three.
-- **Role-play LLMs (Character-LLM, RoleLLM).** Persona fidelity needs traits→behaviour→speech
-  grounding and *distinct* voices. Our personas are differentiated on paper (Big Five, backstory)
-  but speak identically because nothing routes those differences into argumentative behaviour.
+Your code already roughly follows the research pattern:
 
-### The principled line on "inventing facts"
+1. Define hidden user state.
+2. Generate bounded personas.
+3. Keep task options.
+4. Route turns.
+5. Let the LLM generate utterances.
+6. Track votes and acceptability.
+7. Evaluate output.
 
-The user's open question — *should sims invent missing detail?* — is answered cleanly by the
-literature: **inventing reasons and general world-knowledge is argumentation (good); inventing
-specific option attributes is hallucination that corrupts the decision (bad).**
+The missing or weak part is:
 
-- A biology student *should* be able to say "CRISPR has tons of accessible material and it's
-  what everyone's excited about" — that's a warrant from their knowledge, not in any option text.
-- No sim should say "Option A costs $40" when no price was given — that's a fabricated option fact.
+```text
+verify the utterance before accepting it
+```
 
-Today's grounding bans **both**. It must ban only the second.
+This should become the central improvement.
 
----
+The simulator should not rely only on better prompts. Prompts help, but they will not reliably prevent:
 
-## Part III — The reframe
+- repeated statements;
+- invalid option claims;
+- invented option facts;
+- unclear votes;
+- moderator-created extra options;
+- fake consensus;
+- conditionals being misread as support.
 
-Stop building a pipeline that rushes to a decision. Build a **deliberation** in which:
-
-1. **There is real substance to argue about** — options that fit the decision and carry
-   discussable trade-offs.
-2. **Sims have something to argue *with*** — reasons, evidence-from-experience, and a stake.
-3. **There is genuine disagreement among cooperative sims** — they start in different places
-   for good reasons, so reconciling them *requires* exchange. Everyone wants a workable
-   outcome and is open to moving; the difference is in starting preference and priority, not in
-   willingness to agree. (Outright obstruction is only the rare, by-design hard-blocker.)
-4. **The moderator facilitates rather than terminates** — it surfaces the disagreement, asks
-   sims to engage each other, and only closes when deliberation is genuinely spent.
-
-The decision then *emerges* from the discussion (Fisher's actual model), instead of the
-machinery declaring one and back-filling chatter.
+A lightweight verifier should catch these problems and trigger one repair attempt.
 
 ---
 
-## Part IV — Staged plan
+## 2. Revised design principle
 
-Each stage is independently shippable and lists the modules it touches, the acceptance
-signal, and the trade-off. Stages are ordered by leverage: nothing downstream matters if the
-options (Stage 0) are nonsense.
+Use this strict separation:
 
-### Stage 0 — Options that fit the decision and carry substance
-**Problem:** Exhibit A. Forced proper-noun venues; abstract topics get incoherent options.
-**Change (architectural, two-step generation in `prompts.option_generation` +
-`orchestrator._generate_options`):**
-1. First classify the decision kind: *concrete pick* (restaurant, flight, book, venue) vs
-   *abstract pick* (a topic, approach, strategy, policy, theme).
-2. Generate options that *are the thing being chosen*: concrete picks get real proper names;
-   abstract picks get descriptive options with **no forced proper noun** (e.g. presentation
-   topics → "CRISPR gene-editing ethics", "Coral-reef symbiosis", not "The Biosphere Summit").
-3. Each option must carry **2–3 genuinely contestable dimensions** (a real upside, a real
-   trade-off, who it suits) so there is something to weigh — but still **no fabricated hard
-   numbers**.
-**Acceptance:** for 10 varied topics (concrete + abstract), every option is a plausible answer
-to the literal decision, and at least one trade-off per option is debatable.
-**Trade-off:** one extra reasoning step in setup (still one LLM call if folded into the prompt).
+| Component | Responsibility |
+|---|---|
+| Persona | defines stable preferences, style, response length, flexibility, and reasons |
+| Prompt | asks for one natural next message |
+| Turn policy | chooses who speaks next |
+| Verifier | checks whether the generated message is valid |
+| Repair | regenerates once if invalid/repetitive |
+| Moderator | moves phases and asks focused questions |
+| Consensus | uses explicit votes + private acceptability |
+| Evaluation | measures quality after the dialogue |
 
-### Stage 1 — Personas with an "argument kit", not just a position
-**Problem:** failure mode 2; Exhibit B's one-note repeaters.
-**Change (`persona.AgentBeliefs`, `prompts.agent_beliefs_group`, `prompt_context.build_speaker_card`):**
-Extend each persona's private model from a bare stance to an **argument kit**:
-- `preferred`, and **1–2 concrete reasons** for it drawn from their goal/expertise/backstory
-  (Toulmin warrants), phrased as *their* knowledge/experience.
-- **1 genuine reservation** about a rival option — framed as a concern they'd want addressed
-  ("I'd worry about the longer walk"), not a veto. This gives them something substantive to
-  raise and resolve, while staying cooperative.
-- `would_reconsider_if` — the concrete thing that would move them (enables genuine update and
-  keeps every disagreement resolvable).
-This is the same number of LLM calls; it enriches the existing grouped belief call.
-**Acceptance:** transcripts show sims giving *reasons* and *experience*, not just "I prefer X";
-backstory details surface as arguments.
-**Trade-off:** longer belief prompt/output; must stay disciplined to avoid caricature.
+Do not let one component do the job of another.
 
-### Stage 2 — Divergent starting positions among cooperative sims
-**Problem:** failure mode 3. Everyone accepts almost everything, so the group converges
-instantly with nothing to discuss.
+Especially:
 
-**Principle (important):** every sim is fundamentally **cooperative** — they want the group
-to reach a workable outcome and they are open to being persuaded and to compromise. The fuel
-for a real discussion is **not** an objector blocking progress; it is that sensible people
-*start in different places for good reasons* and have to talk it through. The discussion
-exists to reconcile honest differences in **preference and priority**, not to overcome anyone's
-unwillingness to move. Obstruction is **only** ever the rare, by-design hard-blocker
-(`hard_blocker_dialogue_probability`, ~5%), and that is the one case where ending in
-`force_close` is a legitimate, realistic outcome.
-
-**Change (`persona.PersonaBuilder.assign_beliefs` + belief prompt + a diversity check):**
-- **Spread the starting preferences.** The group should not all `prefer` the same option.
-  Enforce this deterministically post-generation, exactly the way trait-diversity is already
-  enforced: if every persona's `preferred` is identical, nudge one persona toward the option
-  that best fits their stated `key_concern`. This creates a reason to deliberate without making
-  anyone difficult.
-- **Keep `acceptable` overlapping enough that consensus is reachable.** Aim for ~2 acceptable
-  options per persona (their `preferred` plus at least one other), with the group's acceptable
-  sets overlapping on at least one common option. Divergent *preferences*, shared *fallback* —
-  this is what lets a cooperative group start apart and still converge.
-- **Frame each persona's reservation as a concern to be addressed, not a veto.** A persona may
-  be lukewarm about an option, but the belief model should phrase that as "I'd want X handled
-  first" (resolvable via Stage 1's `would_reconsider_if`), never as a refusal. Hard refusal is
-  reserved for the sampled hard-blocker alone.
-
-**Acceptance:** dialogues open with genuinely different preferred options and reasons, then
-*converge through discussion* in the large majority of runs; `force_close` stays rare and
-correlates with the hard-blocker flag, not with ordinary disagreement.
-**Trade-off:** if `acceptable` is tightened too far the group can deadlock even though everyone
-is willing — so the overlap guarantee above is load-bearing. Resolvability is protected by the
-shared fallback option, the `would_reconsider_if` update path (Stage 1), and the facilitator
-(Stage 3). Disagreement should make the discussion *necessary*, never make it *unwinnable*.
-
-### Stage 3 — Moderator as facilitator, not terminator
-**Problem:** failure modes 4 and 6. The blunt "isn't specified" shutdown; rushed narrowing.
-**Change (`moderation.ModerationEngine`, its prompts, `orchestrator` loop):**
-- **Remove the blunt info-gap shutdown.** Replace with two distinct behaviours:
-  - *Genuine* missing option-attribute → reframe toward judgment, don't end it:
-    "we don't have exact figures — which matters more to you here, speed or cost?"
-  - *Deliberative* question (the common case) → leave it alone; it's the discussion.
-  Distinguish the two by intent, not by the presence of a "?" (the current detector conflates
-  them). A question that targets another sim's reason is deliberation, not an info gap.
-- **Add facilitation moves** the moderator can choose: surface the live disagreement
-  ("Ava wants depth, Liam wants breadth — can one of you address the other's point?"), ask a
-  sim to respond to a specific argument, ask "what would change your mind?" (which Stage 1's
-  `would_reconsider_if` makes answerable).
-- The moderator should be **mostly quiet** while real exchange is happening, and only step in
-  to unstick or to move toward a decision once the disagreement is genuinely explored.
-**Acceptance:** moderator no longer ends lines of inquiry; its interventions visibly advance
-deliberation; transcripts show challenge→response→(update or principled hold).
-**Trade-off:** intent classification is harder than keyword matching; start with tight
-heuristics over the structured trace (addressee graph + act types) before any LLM classifier.
-
-### Stage 4 — Grounding that allows argument, forbids fabricated option facts
-**Problem:** failure mode 5. Sterile turns.
-**Change (`reasoning.fact_check`, `simulator._ground_check`, voice rules):**
-- Permit reasoning from **general knowledge and the persona's stated experience**.
-- Continue to block **invented option attributes**: numbers/prices/dates/features asserted
-  *about an option* that aren't in its text. The existing number-detector already does most of
-  this; the refinement is to scope it to claims-about-options, not all world-knowledge.
-- Voice rule shifts from "only use facts in the option text" to "don't invent specifics about
-  the options; you may bring your own knowledge and experience to bear."
-**Acceptance:** sims make experience-based arguments; no sim asserts a false option attribute.
-**Trade-off:** the line is fuzzier; accept occasional benign world-knowledge to gain real
-argument. Keep the deterministic option-fact check strict.
-
-### Stage 5 — Content-aware pacing (deliberation-gated transitions)
-**Problem:** failure mode 6. Narrowing on a turn counter.
-**Change (`orchestrator._update_phase`/loop, `moderation.should_narrow`):**
-Gate narrowing on *deliberation actually having happened*, read from the structured trace we
-already build:
-- each sim has stated a position **with a reason**, AND
-- at least one **challenge→response** exchange has occurred on a contested option, AND
-- repetition pressure indicates the live arguments are exhausted.
-Turn counts become a **ceiling/floor**, not the trigger. Naturally, easy decisions narrow fast
-and contested ones run longer — which answers "different topics → different lengths."
-**Acceptance:** dialogue length correlates with how contested the topic is, not a constant.
-**Trade-off:** needs reliable act tagging (CHALLENGE/ANSWER/CONCEDE). Today's keyword
-estimator is weak here; may need a small, batched LLM act-tagger (one call per few turns) —
-the one place an LLM-in-the-loop classifier is worth its cost.
-
-### Stage 6 — Lightweight per-sim memory (anti-repetition, build-on)
-**Problem:** Liam repeating his Option-B line ~4× verbatim; general sameness.
-**Change (`state.ParticipantState`, `prompt_context`):**
-Maintain per sim a compact running memory fed into their prompt instead of raw last-6-turns:
-- *points I've already made* (so they don't repeat),
-- *open challenges directed at me* (so they must respond),
-- *others' key arguments* (so they can build on/rebut).
-This is the scaled-down Generative-Agents idea: relevance-filtered memory, not a transcript dump.
-**Acceptance:** near-zero verbatim self-repetition; turns reference and build on prior points.
-**Trade-off:** more state to maintain; keep it deterministic and small.
+- Do not let evaluation metrics control phase transitions.
+- Do not let the moderator invent options.
+- Do not let traits become a large dialogue-act planner.
+- Do not infer full stance from every casual sentence.
+- Do not use challenge graphs as a requirement for progress.
 
 ---
 
-## Part V — Guardrails (what NOT to do)
+## 3. What to keep
 
-- **No more prompt-instruction piling.** Every stage above is a structural/state change; prompt
-  edits only follow from them. If a fix is "add another sentence to the sim prompt," it's wrong. Existing prompts might be adapted, unuseful lines removed and some new created to improve the changes done. 
-- **Don't force convergence.** Real disagreement should resolve through argument or fail
-  honestly (force-close is acceptable when deliberation is genuinely spent — it just shouldn't
-  be the *default* because nothing was discussed).
-- **Keep the five papers load-bearing.** Fisher (emergence from ratio shifts), SSJ (turn-taking),
-  Ouchi/Tsuboi (addressee graph — now also the basis for detecting challenge→response),
-  McCrae/John (Big Five → now routed into argument *style*), MUCA (act cooldowns). Stage 5/6
-  finally make Fisher and the addressee graph do real work.
-- **One LLM-in-the-loop classifier, at most.** Only Stage 5's act-tagger justifies a per-few-turns
-  call; everything else stays deterministic.
+### 3.1 Keep persona traits
+
+Keep:
+
+```text
+openness
+conscientiousness
+extraversion
+agreeableness
+neuroticism
+response_length
+```
+
+These are useful for distinct simulated users and later evaluation.
+
+But use them mainly to derive simpler behavioural controls:
+
+```text
+initiative
+flexibility
+directness
+detail_level
+warmth
+target_response_length
+```
+
+The raw traits should remain logged. Runtime code should mostly use the derived controls.
+
+### 3.2 Keep private belief states
+
+Keep the current `AgentBeliefs` idea.
+
+Each sim should have:
+
+```text
+preferred
+acceptable
+rejected
+key_concern
+reasons
+reservation
+would_reconsider_if
+```
+
+This is one of the strongest parts of the project. It gives sims something to discuss beyond repeating "I like A".
+
+### 3.3 Keep moderation
+
+The moderator is useful for:
+
+- option setup;
+- opening prompt;
+- nudging stuck discussions;
+- asking for votes;
+- asking holdouts;
+- confirming final candidate;
+- honest force-close/failure.
+
+But moderator output must be verified too.
+
+### 3.4 Keep memory, but make it operational
+
+Memory should exist to prevent repetition, not to simulate a full mind.
+
+Keep:
+
+```text
+last own turn
+recent own point signatures
+recent dialogue turns
+current phase
+current candidate/votes if relevant
+```
+
+Avoid large summaries of other people's arguments unless needed.
+
+### 3.5 Keep evaluation logging
+
+Keep `_eval.json`.
+
+The system should support later LLM evaluation of:
+
+- persona consistency;
+- response-length consistency;
+- compromise plausibility;
+- distinctness between speakers;
+- repetition;
+- option validity;
+- final outcome validity.
 
 ---
 
-## Part VI — Sequencing and risk
+## 4. What to remove or demote
 
-Recommended order: **0 → 1 → 2 → 3 → 4 → 5 → 6.**
+### 4.1 Remove challenge-gated progress
 
-- **0–2 are the foundation:** fit options + argument kits + real disagreement. After these, even
-  with the current moderator, transcripts should already show genuine exchange. Do these first
-  and re-evaluate before touching the moderator.
-- **3–4 unblock the discussion** the foundation creates (stop shutting it down; let arguments
-  use world-knowledge).
-- **5–6 are refinement:** pacing and anti-repetition. Highest implementation risk (act tagging),
-  so last, and only if 0–4 haven't already produced good chats.
+Challenge-response tracking can exist as an optional metric, but it must not gate phase transitions.
 
-**Re-evaluation gate:** after Stage 2, run the same handful of topics (one concrete, one
-abstract, one contentious) at n=2/3/5 and judge transcripts qualitatively. If discussions feel
-real, Stages 5–6 may be unnecessary. Do not implement speculatively past the point where the
-chats are good.
+Delete or disable runtime logic that says the group cannot narrow/vote until a challenge has been answered.
 
-**Biggest risk:** Stage 2 (real disagreement) + a still-blunt moderator = more force-closes.
-Mitigation: ship Stage 3 close behind Stage 2, and keep the `would_reconsider_if` update path
-so disagreements can actually resolve.
+Reason:
+
+- It makes agents perform disagreement.
+- It creates artificial "but doesn't X outweigh Y?" loops.
+- It makes casual chats feel like debate exercises.
+
+### 4.2 Remove heavy dialogue-act planning
+
+The act planner is too much control.
+
+Delete or disable:
+
+```text
+TurnPlan
+plan_turn()
+large act-weight sampling
+strategy cooldowns over abstract acts
+```
+
+Replace with simple phase obligations:
+
+```text
+opening -> state priority
+discussion -> respond naturally
+vote -> explicit vote
+confirmation -> yes/no
+closure -> sign off
+```
+
+### 4.3 Demote full stance inference
+
+Do not build consensus from every option mention.
+
+Use explicit votes and explicit confirmations.
+
+Track casual option mentions for evaluation and context, but do not treat them as reliable support.
+
+Important rule:
+
+```text
+"If C had X, I could accept it" is not support for C unless X is true or feasible.
+```
+
+### 4.4 Remove option filtering from participant prompts
+
+Every participant should always see all options.
+
+Delete or replace any prompt function that only shows "relevant" options.
+
+This fixes invalid statements such as a participant claiming that a listed option is not available.
+
+### 4.5 Reduce long backstories
+
+Backstories should be short.
+
+Keep them as one light sentence, not a long explanation.
+
+Reason:
+
+- Long backstories dominate the dialogue.
+- Sims start reciting biography instead of discussing the current decision.
+
+---
+
+## 5. Add the missing piece: verifier + repair layer
+
+This is the most important new implementation.
+
+### 5.1 Add a new module: `verifier.py`
+
+Create:
+
+```text
+src/verifier.py
+```
+
+Purpose:
+
+- deterministic checks after each generated message;
+- return validation errors;
+- decide whether one repair attempt is needed.
+
+This should not call an LLM. It should be fast and deterministic.
+
+### 5.2 Main data structures
+
+Add:
+
+```python
+@dataclass
+class VerificationIssue:
+    code: str
+    severity: str  # "repair" | "warn" | "fatal"
+    message: str
+```
+
+Add:
+
+```python
+@dataclass
+class VerificationResult:
+    ok: bool
+    issues: list[VerificationIssue]
+    needs_repair: bool
+```
+
+### 5.3 Verifier functions
+
+Implement these functions:
+
+```python
+verify_participant_turn(
+    text: str,
+    speaker_name: str,
+    phase: str,
+    options: list[str],
+    history: list[str],
+    persona_state: ParticipantState | None,
+    resolver: OptionResolver,
+    candidate: str | None = None,
+) -> VerificationResult
+```
+
+```python
+verify_moderator_turn(
+    text: str,
+    options: list[str],
+    resolver: OptionResolver,
+    allow_multi_option_solution: bool = False,
+) -> VerificationResult
+```
+
+Helper checks:
+
+```python
+detect_invalid_option_reference(text, options, resolver)
+detect_option_denial(text, options, resolver)
+detect_invented_option_attribute(text, options, resolver)
+detect_self_repetition(text, speaker_name, history, persona_state)
+detect_missing_vote(text, phase, resolver)
+detect_unclear_confirmation(text, phase, candidate)
+detect_moderator_new_option(text, options, resolver)
+detect_moderator_mixed_solution(text, allow_multi_option_solution)
+```
+
+### 5.4 Verification issue codes
+
+Use explicit issue codes:
+
+```text
+INVALID_OPTION_REFERENCE
+VALID_OPTION_DENIED
+INVENTED_OPTION_FACT
+SELF_REPETITION
+MISSING_EXPLICIT_VOTE
+UNCLEAR_CONFIRMATION
+MODERATOR_NEW_OPTION
+MODERATOR_MIXED_SOLUTION
+NAME_PREFIX
+TOO_LONG
+EMPTY_OR_SILENCE
+```
+
+### 5.5 Repair rules
+
+Repair once.
+
+If the generated participant message fails verification:
+
+1. Build a repair prompt.
+2. Include the original bad message.
+3. Include the specific issue.
+4. Ask the LLM to rewrite the same turn, not continue the conversation.
+5. Verify again.
+6. If it still fails, fall back to a deterministic safe line for phase-required cases.
+
+Example repair prompt:
+
+```text
+Your previous message was rejected because it repeated your earlier point.
+Rewrite the same turn as one natural chat message.
+Do not repeat the same reason.
+React to the recent chat or move toward a decision.
+No name prefix.
+```
+
+For vote phase:
+
+```text
+Your previous message did not clearly vote for one option.
+Write one natural message that explicitly chooses exactly one of Option A-D.
+No name prefix.
+```
+
+For invalid option denial:
+
+```text
+Your previous message incorrectly claimed that a listed option is unavailable.
+Rewrite it while respecting that all listed options are available.
+No name prefix.
+```
+
+### 5.6 Where verifier is called
+
+In `simulator.py`:
+
+```text
+generate raw turn
+clean raw turn
+verify participant turn
+if repair needed:
+    repair once
+verify again
+return final turn
+```
+
+In `moderation.py` or `orchestrator.py`:
+
+```text
+generate or template moderator line
+verify moderator line
+if invalid:
+    use deterministic fallback template
+```
+
+---
+
+## 6. Revised file-level plan
+
+### 6.1 `main.py`
+
+Keep.
+
+Minor changes only:
+
+- keep entry point;
+- keep batch mode;
+- optionally print shorter persona summaries;
+- make debug output configurable.
+
+No large refactor here.
+
+### 6.2 `config_loader.py`
+
+Keep.
+
+Update declared config sections after config simplification.
+
+Do not overwork this file.
+
+### 6.3 `llm_client.py`
+
+Keep.
+
+No major change.
+
+Config should reduce temperature if currently high.
+
+Recommended:
+
+```yaml
+temperature: 0.55-0.70
+top_p: 0.90
+```
+
+### 6.4 `persona.py`
+
+Keep and simplify.
+
+Keep:
+
+- `Persona`
+- `AgentBeliefs`
+- `SpeechSignature`
+- `PersonaBuilder`
+- trait generation
+- belief generation
+- diversity enforcement
+
+Modify:
+
+- add derived conversational traits;
+- shorten backstories;
+- ensure `acceptable` sets overlap in normal cases;
+- ensure rare hard-blocker cases are truly rare;
+- ensure `response_length` diversity;
+- make `would_reconsider_if` feasible.
+
+Do not remove traits. They are useful.
+
+### 6.5 `policy.py`
+
+Simplify.
+
+Keep:
+
+- speaker selection;
+- direct-address priority;
+- participation balancing;
+- repetition pressure helpers if still useful.
+
+Remove or disable:
+
+- heavy act planning;
+- `TurnPlan`;
+- strategy cooldowns;
+- large personality-bias act weights.
+
+New core function:
+
+```python
+select_next_speaker(sims, state, history, structured_state) -> Simulator
+```
+
+Selection priority:
+
+1. unanswered direct question target;
+2. phase obligation target;
+3. participant with low participation;
+4. initiative bias;
+5. avoid same speaker twice unless required.
+
+### 6.6 `state.py`
+
+Simplify, but do not destroy useful logging.
+
+Keep:
+
+- turn records;
+- participant state;
+- structured state;
+- state tracker.
+
+Remove or demote:
+
+- full stance table as consensus source;
+- challenge graph as runtime control;
+- complex dialogue acts.
+
+Track:
+
+```text
+turn_id
+speaker
+text
+phase
+mentioned_options
+explicit_vote
+direct_question_to
+answered_question
+word_count
+verification_issues
+repair_attempted
+```
+
+### 6.7 `prompt_context.py`
+
+Do not delete immediately.
+
+Short-term:
+
+- keep if removing it would cause too much churn;
+- change `build_relevant_options()` so it always returns all options;
+- simplify memory block;
+- remove challenge-specific prompt text.
+
+Long-term:
+
+- merge into `prompts.py` only if the code becomes easier, not as a symbolic cleanup.
+
+The old plan said to delete it. This revised plan demotes that requirement. Stability matters more.
+
+### 6.8 `prompts.py`
+
+Keep as the central prompt registry.
+
+Simplify participant prompts.
+
+Participant turn prompt should contain:
+
+```text
+topic
+all options
+speaker card
+current phase
+recent chat
+short memory
+specific phase instruction
+output rules
+```
+
+Avoid:
+
+- huge theoretical instructions;
+- too many possible acts;
+- forcing disagreement;
+- forcing every turn to include a reason.
+
+Add repair prompts:
+
+```python
+repair_repetition(...)
+repair_invalid_option(...)
+repair_vote(...)
+repair_confirmation(...)
+repair_grounding(...)
+```
+
+### 6.9 `simulator.py`
+
+Keep.
+
+Add verifier integration.
+
+New flow:
+
+```text
+_generate()
+clean
+verify
+repair once if needed
+verify again
+enforce word budget
+return
+```
+
+Important:
+
+- do not repair endlessly;
+- log repair attempts;
+- deterministic fallback only for phase-required messages.
+
+### 6.10 `moderation.py`
+
+Keep, but constrain.
+
+Make most moderator messages deterministic templates.
+
+Allow LLM moderator lines only when:
+
+- the output is verified;
+- no new options are introduced;
+- no mixed solution is introduced unless config allows it.
+
+Add deterministic fallbacks for:
+
+```text
+ask_vote
+ask_holdout
+ask_confirmation
+announce_success
+announce_force_close
+announce_failure
+```
+
+### 6.11 `orchestrator.py`
+
+Simplify carefully.
+
+Do not rewrite all at once.
+
+Primary changes:
+
+- make phase flow explicit;
+- remove challenge-gated progress;
+- use explicit votes for vote phase;
+- use private acceptability for compromise;
+- call verifier path through simulator/moderator;
+- log verification issues.
+
+Preferred phase flow:
+
+```text
+opening
+discussion
+vote
+compromise
+confirmation
+closure
+```
+
+If keeping old phase names temporarily is easier, that is acceptable, but behaviour should match this flow.
+
+### 6.12 `reasoning.py`
+
+Keep but reduce runtime power.
+
+Keep:
+
+- scoped fact checking;
+- consensus helper;
+- evaluation metrics if useful.
+
+Modify consensus:
+
+- explicit vote first;
+- private acceptability second;
+- no vague stance inference as final authority.
+
+Move Fisher/deliberation metrics to evaluation-only.
+
+### 6.13 `logger.py`
+
+Keep.
+
+Add verifier metadata to `_eval.json`:
+
+```json
+"verification": {
+  "issues": [],
+  "repair_attempts": 0,
+  "failed_repairs": 0
+}
+```
+
+For each turn, log:
+
+```json
+{
+  "speaker": "...",
+  "text": "...",
+  "phase": "...",
+  "verification_issues": [],
+  "repair_attempted": false
+}
+```
+
+### 6.14 `utils.py`
+
+Keep.
+
+Add helpers only if needed by `verifier.py`.
+
+Useful helpers:
+
+```python
+normalize_option_label(...)
+option_denial_patterns(...)
+extract_numbers_near_option(...)
+```
+
+Avoid turning `utils.py` into a second verifier.
+
+### 6.15 `config.yaml`
+
+Simplify gradually.
+
+Add verifier config:
+
+```yaml
+verification:
+  enabled: true
+  repair_attempts: 1
+  check_repetition: true
+  check_option_validity: true
+  check_moderator_options: true
+  check_votes: true
+  check_confirmation: true
+```
+
+Keep trait and persona sections.
+
+Disable or remove later:
+
+```yaml
+act_planner
+personality_bias
+challenge_gating
+```
+
+If deleting sections would break too much code, first set them inactive.
+
+---
+
+## 7. Revised implementation order
+
+### Phase 1 — Verification-first patch
+
+Do this before major rewrites.
+
+1. Create `src/verifier.py`.
+2. Add participant verification in `simulator.py`.
+3. Add moderator verification in `moderation.py` or `orchestrator.py`.
+4. Make all options visible in every sim prompt.
+5. Add repair-on-repetition.
+6. Add repair-on-invalid-option/fact.
+7. Add repair-on-missing-vote.
+8. Log verifier issues.
+
+This phase gives immediate quality improvement without huge architectural risk.
+
+### Phase 2 — Reduce forced debate
+
+1. Disable challenge-gated narrowing/progress.
+2. Stop requiring answered challenges before moving forward.
+3. Remove prompt wording that forces pushback.
+4. Keep direct questions and answers.
+
+Goal:
+
+- agents should respond to each other naturally;
+- disagreement should happen when useful, not because the system needs a challenge edge.
+
+### Phase 3 — Simplify consensus
+
+1. Track explicit votes.
+2. Track confirmations.
+3. Use private acceptability for compromise.
+4. Stop using vague stance inference as the main decision source.
+5. Treat impossible conditionals as non-support.
+
+Goal:
+
+- final decision must be valid and explainable.
+
+### Phase 4 — Persona cleanup
+
+1. Keep traits.
+2. Add derived conversational controls.
+3. Shorten backstories.
+4. Improve response-length diversity.
+5. Make acceptable sets overlap unless hard-blocker case.
+
+Goal:
+
+- preserve variety without unstable control flow.
+
+### Phase 5 — Runtime simplification
+
+1. Simplify `policy.py`.
+2. Simplify `state.py`.
+3. Simplify `orchestrator.py`.
+4. Remove dead code only after tests pass.
+
+Goal:
+
+- easier debugging;
+- fewer overlapping systems.
+
+### Phase 6 — Evaluation polish
+
+1. Add automatic metrics:
+   - validity;
+   - repetition;
+   - response-length adherence;
+   - participation balance;
+   - outcome type;
+   - repair frequency.
+2. Keep full transcript and persona metadata.
+3. Prepare for later LLM-based evaluation, but do not add it to runtime yet.
+
+---
+
+## 8. Concrete verifier behaviour
+
+### 8.1 Repetition check
+
+Compare generated message against:
+
+- speaker's previous message;
+- recent own point signatures;
+- optionally last few group turns.
+
+Repair threshold examples:
+
+```yaml
+repetition:
+  own_last_turn_jaccard: 0.55
+  own_points_similarity: 0.65
+```
+
+If repeated:
+
+```text
+repair once
+```
+
+If still repeated:
+
+- accept if harmless short acknowledgement;
+- otherwise use deterministic phase-safe fallback.
+
+### 8.2 Option validity check
+
+Detect:
+
+- option letters outside A-D;
+- claims that a listed option is unavailable;
+- new option names introduced as choices.
+
+Repair if found.
+
+### 8.3 Grounding check
+
+Detect numbers or concrete attributes near option mentions that are not in the option text.
+
+Examples to repair:
+
+```text
+"B is only 20 minutes away"
+"C costs less"
+"D has online multiplayer"
+```
+
+unless those details appear in the option text or are general known facts not tied as attributes.
+
+### 8.4 Vote check
+
+During vote phase, participant message must contain exactly one clear vote.
+
+If no clear vote:
+
+```text
+repair
+```
+
+If multiple votes:
+
+```text
+repair
+```
+
+### 8.5 Confirmation check
+
+During confirmation, participant must be classifiable as:
+
+```text
+yes
+no
+conditional_yes
+```
+
+If unclear:
+
+```text
+repair
+```
+
+Conditional yes is accepted only if the condition is feasible and does not alter the option.
+
+### 8.6 Moderator check
+
+Moderator may not:
+
+- introduce Option E;
+- combine choices unless allowed;
+- mention fake option attributes;
+- claim consensus before confirmation;
+- force-close and call it agreement.
+
+Invalid moderator messages should be replaced by deterministic templates.
+
+---
+
+## 9. Acceptance criteria
+
+Before considering the refactor successful, test at least 20 dialogues.
+
+Required:
+
+1. Every final option is A-D or outcome is honest failure.
+2. No valid option is denied as unavailable.
+3. Moderator never invents new options.
+4. Every participant speaks at least twice in normal 3-person dialogues.
+5. Every participant votes.
+6. Force-close is rare and honest.
+7. Repair attempts are logged.
+8. Repetition is visibly reduced.
+9. Response lengths differ across personas.
+10. Chats sound casual, not formal debate scripts.
+
+A good result is not perfect realism. A good result is:
+
+```text
+valid
+bounded
+varied
+non-repetitive
+easy to debug
+```
+
+---
+
+## 10. What not to add
+
+Do not add more research papers into runtime.
+
+Do not add:
+
+- new personality theories;
+- full emotion models;
+- full memory retrieval systems;
+- multi-agent debate frameworks;
+- complex social graphs;
+- extra moderator roles;
+- second LLM judge inside the generation loop.
+
+If later evaluation needs an LLM judge, run it offline after dialogue generation.
+
+---
+
+## 11. Final target
+
+The final simulator should be built around this loop:
+
+```text
+choose speaker
+generate one message
+verify message
+repair once if needed
+store turn
+update simple state
+move phase if needed
+```
+
+This is the main architectural target.
+
+Naturalness should come from:
+
+- compact personas;
+- varied response lengths;
+- local conversational prompting;
+- short memory;
+- moderate randomness;
+- anti-repetition repair.
+
+Validity should come from:
+
+- full option visibility;
+- deterministic verification;
+- explicit votes;
+- acceptability-based compromise;
+- controlled moderator templates.
+
+That is enough for the project.
