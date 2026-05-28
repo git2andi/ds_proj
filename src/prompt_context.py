@@ -1,7 +1,7 @@
 """
 prompt_context.py
 -----------------
-Builders for the six sections of the compact speaker-card prompt.
+Builders for the sections of the compact speaker-card prompt.
 All prose templates live in prompts.py; this module only assembles them
 from structured orchestrator state.
 """
@@ -26,6 +26,8 @@ def build_speaker_card(persona: "Persona") -> str:
         f"Register: {persona.style_rule()}",
         f"Personality: {persona.personality_summary()}",
     ]
+    if persona.backstory:
+        lines.append(f"Your background (let it shape what you care about, don't recite it): {persona.backstory}")
     if persona.beliefs:
         b = persona.beliefs
         accept_others = [x for x in b.acceptable if x != b.preferred]
@@ -97,8 +99,6 @@ def build_move_instruction(
     phase_instruction: str,
     interaction_instruction: str = "",
     position_discipline: str = "",
-    forced_adaptation: bool = False,
-    forbidden_openers: str = "",
     turn_plan: Optional["TurnPlan"] = None,
 ) -> str:
     parts: list[str] = []
@@ -109,13 +109,6 @@ def build_move_instruction(
         parts.append(interaction_instruction.strip())
     if position_discipline:
         parts.append(position_discipline.strip())
-    if forced_adaptation:
-        parts.append(
-            "Moderator just pushed you. Don't repeat -- bring one fresh concern, "
-            "a direct answer, or a yes/no with a condition."
-        )
-    if forbidden_openers:
-        parts.append(f"Don't open with: {forbidden_openers}.")
     return "\n".join(p for p in parts if p.strip())
 
 

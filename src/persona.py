@@ -1,17 +1,16 @@
 """
 persona.py
 ----------
-Persona dataclass, AgentBeliefs, and PersonaBuilder.
+Persona dataclass, AgentBeliefs, PersonaBuilder.
 
-Pipeline per dialogue:
-  1. Sample Big Five traits randomly (1-5) - no LLM
-  2. Group diversity check across all sampled trait sets
-  3. One LLM call per participant - writes backstory + goal to match traits
-  4. One LLM call per participant - derives belief state from persona + options
-  5. Persona + AgentBeliefs assembled and saved
+Pipeline per dialogue (single grouped LLM path, no per-persona fallback):
+  1. One LLM call generates N names + roles tuned to the topic.
+  2. Sample Big Five traits per participant from cooperative defaults.
+  3. Group diversity check.
+  4. One LLM call generates all backstories + goals.
+  5. One LLM call generates all belief states (after options exist).
 
-LLM calls per dialogue setup:
-  1 (options) + 1 (roles) + N (persona concept) + N (beliefs) = 2N + 2
+Total: 3 LLM calls for setup, regardless of N.
 """
 
 from __future__ import annotations
@@ -30,18 +29,14 @@ from llm_client import get_llm_client
 # ---------------------------------------------------------------------------
 
 PERSONALITY_TRAITS = [
-    "openness",          # 1=conventional, 5=curious and imaginative
-    "conscientiousness", # 1=spontaneous, 5=careful and structured
-    "extraversion",      # 1=reserved, 5=outgoing and talkative
-    "agreeableness",     # 1=challenging, 5=cooperative and warm
-    "neuroticism",       # 1=calm, 5=emotionally reactive under stress
+    "openness",
+    "conscientiousness",
+    "extraversion",
+    "agreeableness",
+    "neuroticism",
 ]
 
-COMMUNICATION_FIELDS = [
-    "response_length",   # output control, not a Big Five trait
-]
-
-TRAITS = PERSONALITY_TRAITS + COMMUNICATION_FIELDS
+TRAITS = PERSONALITY_TRAITS + ["response_length"]
 
 _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
     "openness": {
@@ -82,11 +77,11 @@ _TRAIT_DESCRIPTIONS: dict[str, dict[int, str]] = {
 }
 
 _STYLE_RULE: dict[int, str] = {
-    1: "Terse chat style. One punchy fragment or short sentence. Cut everything non-essential -- no filler.",
-    2: "Brief chat style. One clear point, sometimes with a short reason. Stay under two short sentences.",
-    3: "Normal chat style. One or two compact sentences. Explain when needed, not by default.",
-    4: "Chatty style. You can explain a bit and riff on ideas, but keep it breezy and conversational like a group chat.",
-    5: "Verbose-for-chat style. Give useful detail and context, but never write an essay or a formal summary.",
+    1: "Terse chat style. One punchy fragment or short sentence. Cut everything non-essential.",
+    2: "Brief chat style. One clear point, sometimes with a short reason.",
+    3: "Normal chat style. One or two compact sentences. Explain when needed.",
+    4: "Chatty style. Explain a bit and riff, but keep it breezy.",
+    5: "Verbose-for-chat style. Give useful detail and context, never an essay.",
 }
 
 
@@ -147,71 +142,55 @@ class Persona:
         return d
 
     def response_length_score(self) -> int:
-        """Communication-style control, separate from Big Five personality."""
         return max(1, min(5, int(self.response_length)))
 
     def style_rule(self) -> str:
         return _STYLE_RULE[self.response_length_score()]
 
     def max_words(self, phase: str) -> int:
-        """Hard word budget used to make generated turns feel like chat."""
         base = cfg.response_length.word_budgets[self.response_length_score() - 1]
         caps = cfg.response_length.phase_caps
-        if phase == "greeting":
-            return min(base, caps.greeting)
+        if phase == "opening":
+            return min(base, caps.opening)
         if phase == "confirmation":
             return min(base, caps.confirmation)
         if phase == "narrowing":
             return min(max(base, caps.narrowing_min), caps.narrowing_max)
         if phase == "emergence":
             return min(base, caps.emergence)
+        if phase == "closure":
+            return min(base, caps.closure)
         return base
 
     def personality_summary(self) -> str:
-        """
-        Register descriptors derived from Big Five scores.
-        Describes communication style -- never prescribes specific phrases.
-        (MASTERPLAN Stage 8A: caricature phrases removed; register cues only.)
-        """
+        """Register descriptors derived from Big Five — never prescribes phrases."""
         parts: list[str] = []
-
-        # Openness
         if self.openness >= 4:
             parts.append("considers angles others haven't raised; comfortable reframing the question")
         elif self.openness <= 2:
             parts.append("prefers concrete options on the table; impatient with speculation")
-
-        # Conscientiousness
         if self.conscientiousness >= 4:
             parts.append("detail-oriented; names concrete specifics rather than gut impressions")
         elif self.conscientiousness <= 2:
             parts.append("relies on gut feel; comfortable deciding without exhaustive analysis")
-
-        # Extraversion
         if self.extraversion >= 4:
             parts.append("energetic, quick to react, thinks aloud")
         elif self.extraversion <= 2:
-            parts.append("reserved; speaks up only when there is something specific to add; keeps turns short")
-
-        # Agreeableness
+            parts.append("reserved; speaks up only when there is something specific to add")
         if self.agreeableness >= 4:
             parts.append("acknowledges before pushing back; seeks common ground")
         elif self.agreeableness <= 2:
             parts.append("direct, skeptical, blunt; states disagreement plainly")
-
-        # Neuroticism
         if self.neuroticism >= 4:
             parts.append("sensitive to uncertainty; concern and caution show through tone")
         elif self.neuroticism <= 2:
-            parts.append("calm and steady even when discussion stalls or others grow anxious")
-
+            parts.append("calm and steady even when discussion stalls")
         if not parts:
             return "Balanced, neutral register."
         summary = "; ".join(parts)
         return summary[0].upper() + summary[1:] + "."
 
     def trait_description_block(self) -> str:
-        """Full Big Five trait descriptions for the persona-concept LLM call."""
         lines: list[str] = []
         for trait in PERSONALITY_TRAITS:
             val = getattr(self, trait)
@@ -226,328 +205,169 @@ class Persona:
 
 class PersonaBuilder:
 
-    def __init__(self, topic: str, dialogue_id: str = "") -> None:
+    def __init__(self, topic: str) -> None:
         self.topic = topic
-        self.dialogue_id = dialogue_id
         self._llm = get_llm_client()
 
     def generate_names_and_roles(self, n: int) -> list[dict[str, Any]]:
-        """
-        Ask the LLM for N participant names + roles tuned to the topic, in one call.
-        Returns list of {name, role, is_primary} dicts. Falls back to the config
-        name pool on any failure or schema mismatch.
-        """
-        fallback_pool = list(cfg.simulation.name_pool)
-        random.shuffle(fallback_pool)
-        fallback_names = fallback_pool[:n] if n <= len(fallback_pool) else (
-            fallback_pool + [f"Participant{i}" for i in range(1, n - len(fallback_pool) + 1)]
-        )
-        fallback = [
-            {"name": fallback_names[i], "role": "participant", "is_primary": (i == 0)}
-            for i in range(n)
-        ]
-        try:
-            data = self._llm.generate_json(prompts.names_and_roles(self.topic, n))
-            entries = data.get("participants", [])
-            if not isinstance(entries, list) or len(entries) != n:
-                return fallback
-            cleaned: list[dict[str, Any]] = []
-            seen: set[str] = set()
-            for e in entries:
-                if not isinstance(e, dict):
-                    return fallback
-                name = str(e.get("name", "")).strip()
-                role = str(e.get("role", "participant")).strip() or "participant"
-                is_primary = bool(e.get("is_primary", False))
-                if not name or name in seen:
-                    return fallback
-                seen.add(name)
-                cleaned.append({"name": name, "role": role, "is_primary": is_primary})
-            primaries = sum(1 for c in cleaned if c["is_primary"])
-            if primaries != 1:
-                for c in cleaned:
-                    c["is_primary"] = False
-                cleaned[0]["is_primary"] = True
-            return cleaned
-        except Exception as exc:
-            print(f"!! Name+role generation error: {exc}")
-            return fallback
+        """One LLM call: N names + roles tuned to the topic. Raises on failure."""
+        data = self._llm.generate_json(prompts.names_and_roles(self.topic, n))
+        entries = data.get("participants", [])
+        if not isinstance(entries, list) or len(entries) != n:
+            raise ValueError(f"Name+role generation expected {n} participants, got: {entries!r}")
+        cleaned: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for e in entries:
+            if not isinstance(e, dict):
+                raise ValueError(f"Name+role entry is not an object: {e!r}")
+            name = str(e.get("name", "")).strip()
+            role = str(e.get("role", "")).strip()
+            if not name or not role:
+                raise ValueError(f"Name+role entry missing name or role: {e!r}")
+            if name in seen:
+                raise ValueError(f"Name+role generation produced a duplicate name: {name!r}")
+            seen.add(name)
+            cleaned.append({"name": name, "role": role, "is_primary": bool(e.get("is_primary", False))})
+        primaries = sum(1 for c in cleaned if c["is_primary"])
+        if primaries != 1:
+            for c in cleaned:
+                c["is_primary"] = False
+            cleaned[0]["is_primary"] = True
+        return cleaned
 
-    def build_all(self, names: list[str],
-                  pre_role_map: Optional[dict[str, dict[str, Any]]] = None) -> list[Persona]:
-        """
-        Build personas without beliefs (options not known yet).
-        Uses a single grouped LLM call with per-persona fallback for concepts.
-        Call assign_beliefs() after Orchestrator has generated the options.
-        If pre_role_map is given, skip the separate role-assignment LLM call.
-        """
-        role_map = pre_role_map if pre_role_map is not None else self._assign_roles(names)
-
-        trait_sets = [_random_traits() for _ in names]
-        trait_sets = _apply_stubbornness_distribution(trait_sets)
+    def build_all(self, name_role_entries: list[dict[str, Any]]) -> list[Persona]:
+        """Build personas from name+role entries; assign traits and concepts."""
+        trait_sets = [_random_traits() for _ in name_role_entries]
         if cfg.personas.enforce_diversity:
             trait_sets = _enforce_diversity(trait_sets)
 
         shells: list[Persona] = []
-        for name, traits in zip(names, trait_sets):
-            role_info = role_map.get(name, {"role": "participant", "is_primary": False})
+        for entry, traits in zip(name_role_entries, trait_sets):
             shells.append(Persona(
-                name=name,
-                role=role_info["role"],
-                is_primary=role_info["is_primary"],
+                name=entry["name"],
+                role=entry["role"],
+                is_primary=entry["is_primary"],
                 goal="",
                 backstory="",
                 **traits,
             ))
 
-        # Stage 11: attempt one grouped call for all personas
         concepts = self._generate_concepts_group(shells)
-
-        personas: list[Persona] = []
         for persona in shells:
-            backstory, goal = concepts.get(persona.name, ("", ""))
-            if not backstory and not goal:
-                backstory, goal = self._generate_concept(persona)
-            persona.backstory = backstory
-            persona.goal = goal or "Support a practical outcome that fits their priorities."
-            personas.append(persona)
+            if persona.name not in concepts:
+                raise ValueError(f"Persona concept generation missing entry for {persona.name!r}")
+            persona.backstory, persona.goal = concepts[persona.name]
 
-        if not any(p.is_primary for p in personas) and personas:
-            personas[0].is_primary = True
-
-        return personas
+        if not any(p.is_primary for p in shells) and shells:
+            shells[0].is_primary = True
+        return shells
 
     def assign_beliefs(self, personas: list[Persona], options: list[str]) -> None:
-        """
-        Generate and attach AgentBeliefs to each persona.
-        Uses a single grouped LLM call (Stage 11) with per-persona fallback.
-        Saves the final persona JSON (with beliefs) to disk.
-        """
-        # Stage 11: attempt one grouped call for all belief states
+        """One LLM call for all belief states. Raises if any persona is missing."""
         group_beliefs = self._generate_beliefs_group(personas, options)
-
         for persona in personas:
-            if persona.name in group_beliefs:
-                persona.beliefs = group_beliefs[persona.name]
-            else:
-                persona.beliefs = self._generate_beliefs(persona, options)
+            if persona.name not in group_beliefs:
+                raise ValueError(f"Belief generation missing entry for {persona.name!r}")
+            persona.beliefs = group_beliefs[persona.name]
 
-    # ------------------------------------------------------------------
-    # Stage 11: grouped LLM calls
     # ------------------------------------------------------------------
 
     def _generate_concepts_group(
         self, shells: list[Persona]
     ) -> dict[str, tuple[str, str]]:
-        """
-        One LLM call for all N persona backstories + goals.
-        Returns {name: (backstory, goal)}; empty dict on failure (triggers per-persona fallback).
-        """
-        if not (cfg.personas.generate_backstory or cfg.personas.generate_goal):
-            return {}
-        try:
-            entries = [
-                {
-                    "name": p.name,
-                    "role": p.role,
-                    "is_primary": p.is_primary,
-                    "trait_description_block": p.trait_description_block(),
-                }
-                for p in shells
-            ]
-            data = self._llm.generate_json(
-                prompts.persona_group_generation(self.topic, entries)
-            )
-            raw = data.get("personas", {})
-            if not isinstance(raw, dict):
-                return {}
-            result: dict[str, tuple[str, str]] = {}
-            for p in shells:
-                entry = raw.get(p.name)
-                if isinstance(entry, dict):
-                    backstory = str(entry.get("backstory", "")).strip()
-                    goal = str(entry.get("goal", "")).strip()
-                    if backstory or goal:
-                        result[p.name] = (backstory, goal)
-            # Only accept if all personas are present (partial groups fall back)
-            if len(result) == len(shells):
-                return result
-            print(f"  [grouped-concepts] partial result ({len(result)}/{len(shells)}); falling back")
-            return {}
-        except Exception as exc:
-            print(f"  [grouped-concepts] error: {exc}; falling back to per-persona calls")
-            return {}
+        entries = [
+            {
+                "name": p.name,
+                "role": p.role,
+                "is_primary": p.is_primary,
+                "trait_description_block": p.trait_description_block(),
+            }
+            for p in shells
+        ]
+        data = self._llm.generate_json(
+            prompts.persona_group_generation(self.topic, entries)
+        )
+        raw = data.get("personas", {})
+        if not isinstance(raw, dict):
+            raise ValueError(f"Persona concept generation returned no 'personas' object: {data!r}")
+        result: dict[str, tuple[str, str]] = {}
+        for p in shells:
+            entry = raw.get(p.name)
+            if not isinstance(entry, dict):
+                raise ValueError(f"Persona concept generation missing entry for {p.name!r}")
+            backstory = str(entry.get("backstory", "")).strip()
+            goal = str(entry.get("goal", "")).strip()
+            if not backstory or not goal:
+                raise ValueError(f"Persona concept for {p.name!r} missing backstory or goal.")
+            result[p.name] = (backstory, goal)
+        return result
 
     def _generate_beliefs_group(
         self, personas: list[Persona], options: list[str]
     ) -> dict[str, AgentBeliefs]:
-        """
-        One LLM call for all N belief states.
-        Returns {name: AgentBeliefs}; empty dict on failure (triggers per-persona fallback).
-        """
-        try:
-            personas_text = "\n".join(
-                f"{p.name} ({p.role}): goal={p.goal}  backstory={p.backstory}  "
-                f"personality={p.personality_summary()}"
-                for p in personas
-            )
-            options_text = "\n".join(f"  {o}" for o in options)
-            data = self._llm.generate_json(
-                prompts.agent_beliefs_group(self.topic, personas_text, options_text)
-            )
-            raw = data.get("beliefs", {})
-            if not isinstance(raw, dict):
-                return {}
-            result: dict[str, AgentBeliefs] = {}
-            for persona in personas:
-                entry = raw.get(persona.name)
-                if not isinstance(entry, dict):
-                    continue
-                beliefs = self._parse_beliefs(entry, persona.name)
-                if beliefs:
-                    result[persona.name] = beliefs
-            if len(result) == len(personas):
-                return result
-            print(f"  [grouped-beliefs] partial result ({len(result)}/{len(personas)}); falling back")
-            return {}
-        except Exception as exc:
-            print(f"  [grouped-beliefs] error: {exc}; falling back to per-persona calls")
-            return {}
-
-    def _parse_beliefs(self, data: dict, name: str) -> Optional[AgentBeliefs]:
-        """Parse and validate one raw belief dict; return None if invalid."""
-        try:
-            preferred_raw = str(data.get("preferred", "A")).strip().upper()
-            if preferred_raw not in {"A", "B", "C", "D"}:
-                preferred_raw = "A"
-
-            acceptable_raw = data.get("acceptable", [preferred_raw])
-            acceptable = [
-                x.strip().upper() for x in (acceptable_raw if isinstance(acceptable_raw, list) else [])
-                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
-            ]
-            if preferred_raw not in acceptable:
-                acceptable.insert(0, preferred_raw)
-
-            rejected_raw = data.get("rejected", [])
-            rejected = [
-                x.strip().upper() for x in (rejected_raw if isinstance(rejected_raw, list) else [])
-                if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
-                and x.strip().upper() not in acceptable
-            ]
-
-            key_concern = str(data.get("key_concern", "practical trade-offs")).strip()
-            concession = str(
-                data.get("concession", "could accept a different option if it addresses their main concern")
-            ).strip()
-
-            beliefs = AgentBeliefs(
-                preferred=preferred_raw,
-                acceptable=acceptable,
-                rejected=rejected,
-                key_concern=key_concern,
-                concession=concession,
-            )
-            accept_others = [x for x in acceptable if x != preferred_raw]
-            accept_str = f", accepts {accept_others}" if accept_others else ""
-            print(f"  [{name}] prefers {preferred_raw}{accept_str} | {key_concern[:45]}")
-            return beliefs
-        except Exception as exc:
-            print(f"  [beliefs-parse] error for {name}: {exc}")
-            return None
-
-    # ------------------------------------------------------------------
-    # Internal
-    # ------------------------------------------------------------------
-
-    def _assign_roles(self, names: list[str]) -> dict[str, dict[str, Any]]:
-        fallback = {
-            name: {"role": "participant", "is_primary": (i == 0)}
-            for i, name in enumerate(names)
-        }
-        try:
-            data = self._llm.generate_json(prompts.role_assignment(self.topic, names))
-            roles = data.get("roles", {})
-            if not isinstance(roles, dict):
-                return fallback
-
-            cleaned: dict[str, dict[str, Any]] = {}
-            for name in names:
-                info = roles.get(name)
-                if not isinstance(info, dict):
-                    return fallback
-                cleaned[name] = {
-                    "role": str(info.get("role", "participant")).strip() or "participant",
-                    "is_primary": bool(info.get("is_primary", False)),
-                }
-
-            primaries = [n for n, v in cleaned.items() if v["is_primary"]]
-            if len(primaries) != 1:
-                for n in cleaned:
-                    cleaned[n]["is_primary"] = False
-                cleaned[names[0]]["is_primary"] = True
-
-            return cleaned
-
-        except Exception as exc:
-            print(f"!! Role assignment error: {exc}")
-            return fallback
-
-    def _generate_concept(self, persona: Persona) -> tuple[str, str]:
-        """LLM writes backstory and goal to match the pre-sampled traits."""
-        if not (cfg.personas.generate_backstory or cfg.personas.generate_goal):
-            return "", "Support a practical outcome that fits their priorities."
-
-        try:
-            data = self._llm.generate_json(
-                prompts.persona_concept(
-                    topic=self.topic,
-                    name=persona.name,
-                    role=persona.role,
-                    is_primary=persona.is_primary,
-                    trait_description_block=persona.trait_description_block(),
-                )
-            )
-            backstory = str(data.get("backstory", "")).strip()
-            goal = str(data.get("goal", "")).strip() or "Support a practical outcome."
-            return backstory, goal
-
-        except Exception as exc:
-            print(f"!! Persona concept error for {persona.name}: {exc}")
-            return "", "Support a practical outcome."
-
-    def _generate_beliefs(self, persona: Persona, options: list[str]) -> AgentBeliefs:
-        """
-        One LLM call per participant: given their character and the options,
-        produce a stable internal belief state before the conversation starts.
-        Fallback path used when grouped call fails.
-        """
-        fallback = AgentBeliefs(
-            preferred="A",
-            acceptable=["A", "B"],
-            rejected=[],
-            key_concern="practical trade-offs",
-            concession="could accept a different option if it directly addresses their main concern",
+        personas_text = "\n".join(
+            f"{p.name} ({p.role}): goal={p.goal}  backstory={p.backstory}  "
+            f"personality={p.personality_summary()}"
+            for p in personas
         )
-        try:
-            data = self._llm.generate_json(
-                prompts.agent_beliefs(
-                    name=persona.name,
-                    role=persona.role,
-                    goal=persona.goal,
-                    backstory=persona.backstory,
-                    personality_summary=persona.personality_summary(),
-                    options_text="\n".join(f"  {o}" for o in options),
-                )
-            )
-            return self._parse_beliefs(data, persona.name) or fallback
-        except Exception as exc:
-            print(f"!! Belief generation error for {persona.name}: {exc}")
-            return fallback
+        options_text = "\n".join(f"  {o}" for o in options)
+        data = self._llm.generate_json(
+            prompts.agent_beliefs_group(self.topic, personas_text, options_text)
+        )
+        raw = data.get("beliefs", {})
+        if not isinstance(raw, dict):
+            raise ValueError(f"Belief generation returned no 'beliefs' object: {data!r}")
+        result: dict[str, AgentBeliefs] = {}
+        for persona in personas:
+            entry = raw.get(persona.name)
+            if not isinstance(entry, dict):
+                raise ValueError(f"Belief generation missing entry for {persona.name!r}")
+            result[persona.name] = self._parse_beliefs(entry, persona.name)
+        return result
+
+    def _parse_beliefs(self, data: dict, name: str) -> AgentBeliefs:
+        """Parse a belief dict. Raises if required fields are missing or invalid."""
+        preferred = str(data.get("preferred", "")).strip().upper()
+        if preferred not in {"A", "B", "C", "D"}:
+            raise ValueError(f"Belief for {name!r} has invalid 'preferred': {preferred!r}")
+
+        acceptable_raw = data.get("acceptable")
+        if not isinstance(acceptable_raw, list):
+            raise ValueError(f"Belief for {name!r} has no 'acceptable' list.")
+        acceptable = [
+            x.strip().upper() for x in acceptable_raw
+            if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+        ]
+        if preferred not in acceptable:
+            acceptable.insert(0, preferred)
+
+        rejected_raw = data.get("rejected", [])
+        rejected = [
+            x.strip().upper() for x in (rejected_raw if isinstance(rejected_raw, list) else [])
+            if isinstance(x, str) and x.strip().upper() in {"A", "B", "C", "D"}
+            and x.strip().upper() not in acceptable
+        ]
+
+        key_concern = str(data.get("key_concern", "")).strip()
+        concession = str(data.get("concession", "")).strip()
+        if not key_concern or not concession:
+            raise ValueError(f"Belief for {name!r} missing key_concern or concession.")
+
+        beliefs = AgentBeliefs(
+            preferred=preferred,
+            acceptable=acceptable,
+            rejected=rejected,
+            key_concern=key_concern,
+            concession=concession,
+        )
+        accept_others = [x for x in acceptable if x != preferred]
+        accept_str = f", accepts {accept_others}" if accept_others else ""
+        print(f"  [{name}] prefers {preferred}{accept_str} | {key_concern[:45]}")
+        return beliefs
 
 
 # ---------------------------------------------------------------------------
-# Diversity enforcement
+# Diversity + trait sampling
 # ---------------------------------------------------------------------------
 
 def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]:
@@ -567,33 +387,10 @@ def _enforce_diversity(trait_sets: list[dict[str, int]]) -> list[dict[str, int]]
     return trait_sets
 
 
-def _apply_stubbornness_distribution(
-    trait_sets: list[dict[str, int]]
-) -> list[dict[str, int]]:
-    """
-    Per-sim Bernoulli draw: with probability cfg.stubbornness.sim_stubborn_probability,
-    overwrite the trait set with a stubborn combo (low A, high C, high N, low O).
-    The rest stay as sampled from the cooperative defaults.
-    """
-    p = getattr(cfg.stubbornness, "sim_stubborn_probability", 0.0)
-    for ts in trait_sets:
-        if random.random() < p:
-            ts["agreeableness"]     = random.randint(1, 2)
-            ts["conscientiousness"] = random.randint(4, 5)
-            ts["neuroticism"]       = random.randint(4, 5)
-            ts["openness"]          = random.randint(1, 2)
-    return trait_sets
-
-
-# ---------------------------------------------------------------------------
-# Trait sampling
-# ---------------------------------------------------------------------------
-
 def _random_traits() -> dict[str, int]:
     lo = cfg.personas.trait_min
     hi = cfg.personas.trait_max
     ranges_cfg = getattr(cfg.personas, "trait_ranges", None)
-
     result: dict[str, int] = {}
     for t in TRAITS:
         override = getattr(ranges_cfg, t, None) if ranges_cfg else None
@@ -604,5 +401,3 @@ def _random_traits() -> dict[str, int]:
         else:
             result[t] = max(1, min(5, int(override)))
     return result
-
-

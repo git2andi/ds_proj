@@ -1,21 +1,21 @@
 """
 reasoning.py
 ------------
-Consensus + Fisher phase detection + lightweight grounding fact-check.
-Merged from the former reasoning/ and realize/grounding modules.
+Consensus + Fisher ratios (logging only) + lightweight grounding fact-check.
 
-ConsensusEngine  -- uses public StanceTable; no private beliefs.
-PhaseDetector    -- Fisher (1970) ratio-driven phase confidence.
-fact_check()     -- deterministic invented-attribute detector for turns.
+ConsensusEngine  — uses public StanceTable; no private beliefs.
+fisher_ratios()  — Fisher (1970) favorable / unfavorable / ambiguous ratios.
+                   Logged per dialogue for analysis; does not drive control flow.
+fact_check()     — deterministic invented-attribute detector for turns.
 """
 
 from __future__ import annotations
 
 import re
+from collections import Counter
 from typing import Optional, TYPE_CHECKING
 
 from config_loader import cfg
-from state import PhaseEvidence
 
 if TYPE_CHECKING:
     from state import StanceTable, StructuredState
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
 # ConsensusEngine
 # =============================================================================
 
-ConsensusState = str   # one of: none | candidate_emerging | majority_candidate |
-                       #          conditional_consensus | full_consensus | blocked | failed
+ConsensusState = str   # none | candidate_emerging | majority_candidate |
+                       # conditional_consensus | full_consensus | blocked | failed
 
 
 class ConsensusEngine:
@@ -72,7 +72,7 @@ class ConsensusEngine:
             return "conditional_consensus"
         if not opposing and len(supporters) + len(conditional) + len(ambiguous) == n:
             return "majority_candidate"
-        if len(supporters) + len(conditional) > n // 2 or (supporters or conditional):
+        if supporters or conditional:
             return "candidate_emerging"
         return "none"
 
@@ -113,7 +113,7 @@ def _leading_option(stance: "StanceTable", options: list[str]) -> Optional[str]:
         score = sum(
             (1.0 if su.stance == "support" else
              0.7 if su.stance == "conditional_support" else 0.0)
-            for (_, o), su in stance._current.items()
+            for (_, o), su in stance.current_items()
             if o == opt
         )
         if score > best_score:
@@ -123,65 +123,27 @@ def _leading_option(stance: "StanceTable", options: list[str]) -> Optional[str]:
 
 
 # =============================================================================
-# PhaseDetector -- Fisher (1970)
+# Fisher (1970) ratios — logged per dialogue, not used for control
 # =============================================================================
 
-class PhaseDetector:
-    """Fisher ratio -> phase + confidence. Phases are gradual, not hard switches."""
-
-    def update(
-        self, structured: "StructuredState", participant_turn_count: int
-    ) -> PhaseEvidence:
-        pc = cfg.phase_policy
-        ratios = structured.stance_table.fisher_ratios(window=pc.window_size)
-        current = structured.phase_evidence
-
-        new_phase, conf = self._transition(ratios, current, participant_turn_count)
-
-        rounds_in  = current.rounds_in_phase + 1 if new_phase == current.phase else 1
-        entered_at = current.entered_at_turn if new_phase == current.phase else participant_turn_count
-
-        return PhaseEvidence(
-            phase=new_phase,
-            confidence=round(min(0.99, max(0.0, conf)), 3),
-            favor_rate=round(ratios["favor"], 3),
-            disfavor_rate=round(ratios["disfavor"], 3),
-            ambiguous_rate=round(ratios["ambiguous"], 3),
-            conditional_rate=round(ratios["conditional"], 3),
-            rounds_in_phase=rounds_in,
-            entered_at_turn=entered_at,
-        )
-
-    def _transition(self, ratios: dict[str, float], current: PhaseEvidence,
-                    participant_turn_count: int) -> tuple[str, float]:
-        fav, dis, amb, cnd = ratios["favor"], ratios["disfavor"], ratios["ambiguous"], ratios["conditional"]
-        pc = cfg.phase_policy
-        phase = current.phase
-
-        if phase == "orientation":
-            if participant_turn_count >= pc.min_turns_before_conflict and dis > amb:
-                return "conflict", min(0.92, 0.55 + (dis - amb) * 0.8)
-            return "orientation", max(0.40, 0.70 - dis * 0.5)
-
-        if phase == "conflict":
-            emer = pc.emergence
-            if dis <= emer.opposition_decline_threshold and (amb + cnd) >= emer.ambiguity_rise_threshold:
-                return "emergence", min(0.90, 0.50 + (emer.ambiguity_rise_threshold - dis) * 0.4 + cnd * 0.3)
-            return "conflict", max(0.40, 0.60 - fav * 0.2)
-
-        if phase == "emergence":
-            if fav >= pc.reinforcement.support_rate_threshold:
-                return "reinforcement", min(0.94, 0.50 + (fav - pc.reinforcement.support_rate_threshold) * 1.5)
-            return "emergence", max(0.40, 0.50 + cnd * 0.4)
-
-        if phase == "reinforcement":
-            return "reinforcement", min(0.95, 0.70 + fav * 0.3)
-
-        return phase, current.confidence
+def fisher_ratios(structured: "StructuredState", window: Optional[int] = None) -> dict[str, float]:
+    """Favorable / unfavorable / ambiguous / conditional ratios over recent stances."""
+    w = window if window is not None else cfg.fisher.window_size
+    recent = structured.stance_table.history()[-w:]
+    if not recent:
+        return {"favor": 0.0, "disfavor": 0.0, "ambiguous": 0.0, "conditional": 0.0}
+    counts: Counter = Counter(su.stance for su in recent)
+    total = len(recent)
+    return {
+        "favor":       round(counts.get("support", 0) / total, 3),
+        "disfavor":    round((counts.get("oppose", 0) + counts.get("blocker", 0)) / total, 3),
+        "ambiguous":   round((counts.get("ambiguous", 0) + counts.get("neutral", 0)) / total, 3),
+        "conditional": round(counts.get("conditional_support", 0) / total, 3),
+    }
 
 
 # =============================================================================
-# Grounding -- deterministic invented-fact detection
+# Grounding — deterministic invented-fact detection
 # =============================================================================
 
 def fact_check(turn_text: str, option_texts: list[str], topic: str) -> list[str]:

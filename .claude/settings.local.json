@@ -11,7 +11,13 @@
       "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); from config_loader import cfg; print\\('grounding.enable_fact_check:', cfg.grounding.enable_fact_check\\); print\\('grounding.repair_attempts:', cfg.grounding.repair_attempts\\); print\\('evaluation.seed:', cfg.evaluation.seed\\); print\\('evaluation.eval_scenarios_path:', cfg.evaluation.eval_scenarios_path\\)\")",
       "Bash(python -c ' *)",
       "Bash(python main.py)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(python -)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main,orchestrator,state,policy,reasoning,persona,prompts,prompt_context,simulator,moderation,logger,utils,llm_client; print\\('imports clean'\\)\")",
+      "Bash(rm -rf src/__pycache__ __pycache__)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main; print\\('final: compile + import clean'\\)\")",
+      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main; print\\('compile + import clean'\\)\")",
+      "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); import main,orchestrator,state,policy,reasoning,persona,prompts,prompt_context,simulator,moderation,logger,utils,llm_client; print\\('compile + all imports clean'\\)\")"
     ]
   }
 }

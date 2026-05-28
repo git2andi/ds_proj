@@ -4,7 +4,7 @@
 llm:
   provider: "uni"                          # "uni" | "groq" | "gemini"
   models:
-    uni: "llama3.3:latest"    # llama3.3:latest, gemma2:27b
+    uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
   endpoints:
@@ -22,58 +22,30 @@ llm:
 # ---------------------------------------------------------------------------
 simulation:
   num_participants: 3
-  num_participants_random: false
-  num_participants_min: 2
-  num_participants_max: 5
-
-  moderator_style: "active"
-
-  # When true, the LLM picks participant names AND roles in a single call,
-  # tuned to the topic vibe (workplace topics get professional names; friend
-  # topics get casual ones, etc). When false, names are drawn from name_pool
-  # below and roles come from a separate LLM call.
-  use_llm_names: true
-
-  name_pool:
-    - "Alex"
-    - "Jordan"
-    - "Morgan"
-    - "Taylor"
-    - "Casey"
-    - "Riley"
-    - "Drew"
-    - "Quinn"
-    - "Avery"
-    - "Blake"
 
 # ---------------------------------------------------------------------------
-# Turn budget
+# Turn budget — scales with participant count so 2 and 5 sims both behave.
 # ---------------------------------------------------------------------------
 turns:
-  hard_ceiling: 28              # was 40 — chats are shorter now
-  min_before_narrowing: 9       # greeting(n) + opening(n) + at least one negotiation round(n)
+  ceiling_per_participant: 9             # hard ceiling = max(min_ceiling, n * this)
+  min_ceiling: 18
+  min_before_narrowing_per_participant: 3  # opening + ~2 negotiation rounds each before narrowing
+  narrow_after_per_participant: 4          # force narrowing once everyone's had ~this many turns
 
+  # Rounds AFTER narrowing before the moderator escalates. A grace of n rounds
+  # is added at runtime so larger groups have time to collect every vote first.
   escalation_level_1: 2
-  escalation_level_2: 4         # was 5 — pull the trigger faster
-  escalation_level_3: 7         # was 9
-
-  high_repetition_max_speakers_threshold: 0.65
-  max_speakers_weights: [0.40, 0.45, 0.15]   # bias toward 1-2 speakers per round
-  max_speakers_weights_2: [0.55, 0.45]
+  escalation_level_2: 4
+  escalation_level_3: 7
 
 # ---------------------------------------------------------------------------
 # Consensus
 # ---------------------------------------------------------------------------
 consensus:
-  regex_window: 8
-  stall_rounds_to_force:
-    active: 2
-    minimal: 3
-    passive: 999
-  max_dissenters_active: 1
-  max_dissenters_other: 0
+  stall_rounds_to_force: 2
+  max_dissenters: 1
 
-  # Weights used by ConsensusEngine.best_available_decision() — public stances only
+  # Weights for ConsensusEngine.best_available_decision() — public stances only
   stance_weights:
     support: 1.0
     conditional_support: 0.7
@@ -83,15 +55,13 @@ consensus:
     neutral: 0.0
 
 # ---------------------------------------------------------------------------
-# Repetition / stall detection
+# Repetition / stall detection (single Jaccard-based check)
 # ---------------------------------------------------------------------------
 repetition:
   pressure_window: 8
   min_word_length: 3
   jaccard_threshold_self: 0.45
-  stall_increment_threshold: 0.70           # was 0.75 — act on stalls a bit sooner
-  add_brevity_threshold: 0.50
-  turns_since_rejection_escalation: 3
+  stall_increment_threshold: 0.70
 
 # ---------------------------------------------------------------------------
 # Persona generation
@@ -105,62 +75,42 @@ personas:
 
   # Big Five: openness, conscientiousness, extraversion, agreeableness, neuroticism
   # response_length is output control, not a personality trait.
-  # Default ranges bias toward cooperative sims; stubbornness.sim_stubborn_probability
-  # below picks a per-sim chance of overriding with a rigid trait combo.
   trait_ranges:
-    openness: [3, 5]                         # mostly open to alternatives
+    openness: [3, 5]
     conscientiousness: [2, 5]
     extraversion: [1, 5]
-    agreeableness: [3, 5]                    # cooperative baseline
-    neuroticism: [1, 4]                      # rarely highly reactive
-    response_length: [1, 3]
+    agreeableness: [3, 5]
+    neuroticism: [1, 4]
+    response_length: [2, 4]               # a touch more substance; mixes short and fuller turns
 
   enforce_diversity: true
-  diversity_agree_threshold: 5               # only nudge agreeableness down if EVERYONE is at 5
+  diversity_agree_threshold: 5
   diversity_extraversion_min: 4
 
 # ---------------------------------------------------------------------------
-# Response length budgets -- caps; prompt encourages going shorter most of the
-# time but allows fuller explanations when actually making a point.
+# Response length budgets
 # ---------------------------------------------------------------------------
 response_length:
-  # word_budgets[i] applies to response_length == i+1
   word_budgets: [14, 22, 30, 42, 55]
   phase_caps:
-    greeting: 8
-    confirmation: 10
-    narrowing_min: 16
-    narrowing_max: 32
-    emergence: 34
+    opening: 28           # hello + one priority, not a full case
+    confirmation: 14
+    narrowing_min: 14
+    narrowing_max: 30
+    emergence: 32
+    closure: 16
 
 # ---------------------------------------------------------------------------
-# Stubbornness
+# Stubbornness — rare per-dialogue hard blocker (single knob)
 # ---------------------------------------------------------------------------
-# Two independent knobs:
-#   sim_stubborn_probability: per-sim chance of being sampled with a rigid trait
-#     combo (low agreeableness, high conscientiousness, high neuroticism, low
-#     openness). The other 95% sample from the cooperative defaults above and
-#     therefore tend to find compromise.
-#   hard_blocker_dialogue_probability: per-dialogue chance that ONE participant
-#     becomes an actual hard-blocker, which biases their act planner toward
-#     REJECT_WITH_REASON when the candidate is in their rejected list.
 stubbornness:
-  sim_stubborn_probability: 0.05
   hard_blocker_dialogue_probability: 0.05
-  max_hard_blockers_per_dialogue: 1
-  allow_softening_if_condition_met: true
 
 # ---------------------------------------------------------------------------
-# Fisher phase detection (informational; orchestrator does not branch on it)
+# Fisher (1970) — logged per dialogue, not used for control flow
 # ---------------------------------------------------------------------------
-phase_policy:
+fisher:
   window_size: 8
-  min_turns_before_conflict: 6
-  emergence:
-    opposition_decline_threshold: 0.20
-    ambiguity_rise_threshold: 0.30
-  reinforcement:
-    support_rate_threshold: 0.60
 
 # ---------------------------------------------------------------------------
 # Prompt budget
@@ -173,53 +123,18 @@ prompt_budget:
 # ---------------------------------------------------------------------------
 turn_policy:
   weights:
-    last_addressed: 0.80
-    pending_question: 0.90
     extraversion: 0.22
-    agreeableness_addressed: 0.10
     agreeableness_off: 0.04
     openness_negotiation: 0.08
     conscientiousness_negotiation: 0.05
     neuroticism_pressure: 0.10
     primary_boost: 0.10
-    unspoken_boost: 0.55          # was 0.35 -- stronger pull for silent/absent sims
+    unspoken_boost: 0.55
   penalties:
     last_speaker: 0.50
-    recent_speaker_per_turn: 0.25  # was 0.12 -- harder brake on recent speakers
+    recent_speaker_per_turn: 0.25
     own_repetition: 0.30
     introvert_off_turn: 0.08
-
-# ---------------------------------------------------------------------------
-# Scoring (compromise selection)
-# ---------------------------------------------------------------------------
-scoring:
-  compromise:
-    private_preferred_weight: 2.0
-    private_acceptable_weight: 1.0
-    private_rejected_penalty: 2.0
-    vote_weight: 0.5
-    dialogue_rejection_penalty: 4.0
-    primary_rejection_extra: 3.0
-
-# ---------------------------------------------------------------------------
-# Moderation thresholds
-# ---------------------------------------------------------------------------
-moderation:
-  interventions:
-    outlier_overlap_threshold: 0.55
-    stall_repetition_threshold: 0.80
-    stall_rounds_required: 2
-  narrowing:
-    stalling_repetition_threshold: 0.75
-  closure:
-    template_probability: 0.65
-
-# ---------------------------------------------------------------------------
-# Participants — manual override (CLI --personas takes priority)
-# ---------------------------------------------------------------------------
-participants:
-  from_config: false
-  entries: []
 
 # ---------------------------------------------------------------------------
 # Output
@@ -233,7 +148,7 @@ output:
 grounding:
   enable_fact_check: true
   repair_attempts: 1
-  min_words_to_check: 12             # skip short reactions — they can't invent facts
+  min_words_to_check: 12
 
 # ---------------------------------------------------------------------------
 # Evaluation

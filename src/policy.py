@@ -1,15 +1,15 @@
 """
 policy.py
 ---------
-Speaker selection (SSJ) + per-turn act planning + personality bias derivation.
-Merged from the former policy/ subpackage (turn_policy, act_planner,
-personality_bias, stubbornness).
+Speaker selection (SSJ cascade), per-turn act planning, personality bias.
 
 Public API:
-  - select_next_speakers()   speaker selection cascade (SSJ 1a..1c)
-  - plan_turn() -> TurnPlan  per-speaker act selection
-  - derive_bias()            Big-Five -> probabilistic floats
-  - sample_hard_blockers()   rare latent-trait sampler at dialogue start
+  - select_next_speakers()   SSJ priority cascade (1a addressed > 1b self-select > 1c continues)
+  - plan_turn() -> TurnPlan  per-speaker dialogue-act selection
+  - derive_bias()            Big-Five -> probabilistic biases (used here only)
+  - sample_hard_blocker()    rare per-dialogue stubbornness sampler
+  - repetition_pressure()    rolling Jaccard overlap signal
+  - extract_discourse()      last-addressed + pending-question target
 """
 
 from __future__ import annotations
@@ -30,18 +30,14 @@ if TYPE_CHECKING:
 
 
 # =============================================================================
-# Personality bias (McCrae & John 1992 -- orthogonal factor model)
+# Personality bias (McCrae & John 1992 — Big Five as probabilistic biases)
 # =============================================================================
 
 @dataclass
 class PersonalityBias:
-    talkativeness: float
-    self_selection_propensity: float
     concession_propensity: float
     objection_propensity: float
-    risk_salience: float
     detail_orientation: float
-    consistency: float
     reframing_propensity: float
     clarification_propensity: float
 
@@ -50,49 +46,41 @@ def derive_bias(persona: "Persona") -> PersonalityBias:
     def n(v: int) -> float:
         return (max(1, min(5, int(v))) - 1) / 4.0
 
-    e = n(persona.extraversion)
-    a = n(persona.agreeableness)
-    o = n(persona.openness)
-    c = n(persona.conscientiousness)
+    a     = n(persona.agreeableness)
+    o     = n(persona.openness)
+    c     = n(persona.conscientiousness)
     neuro = n(persona.neuroticism)
 
     return PersonalityBias(
-        talkativeness             = e,
-        self_selection_propensity = e * 0.6 + o * 0.2 + a * 0.2,
-        concession_propensity     = a * 0.7 + (1.0 - neuro) * 0.3,
-        objection_propensity      = (1.0 - a) * 0.6 + neuro * 0.4,
-        risk_salience             = neuro,
-        detail_orientation        = c,
-        consistency               = c * 0.6 + (1.0 - o) * 0.4,
-        reframing_propensity      = o,
-        clarification_propensity  = neuro * 0.5 + o * 0.3 + (1.0 - c) * 0.2,
+        concession_propensity    = a * 0.7 + (1.0 - neuro) * 0.3,
+        objection_propensity     = (1.0 - a) * 0.6 + neuro * 0.4,
+        detail_orientation       = c,
+        reframing_propensity     = o,
+        clarification_propensity = neuro * 0.5 + o * 0.3 + (1.0 - c) * 0.2,
     )
 
 
 # =============================================================================
-# Hard-blocker sampling (rare, at dialogue start)
+# Hard-blocker sampling — rare, at dialogue start
 # =============================================================================
 
-def sample_hard_blockers(participant_states: list["ParticipantState"]) -> list[str]:
-    prob = cfg.stubbornness.hard_blocker_dialogue_probability
-    max_blockers = cfg.stubbornness.max_hard_blockers_per_dialogue
-
-    if random.random() >= prob:
-        return []
-
-    candidates_with_rejection = [
+def sample_hard_blocker(participant_states: list["ParticipantState"]) -> Optional[str]:
+    """With cfg.stubbornness.hard_blocker_dialogue_probability, flag ONE sim."""
+    if random.random() >= cfg.stubbornness.hard_blocker_dialogue_probability:
+        return None
+    candidates = [
         ps for ps in participant_states
         if ps.persona_ref and ps.persona_ref.beliefs and ps.persona_ref.beliefs.rejected
-    ]
-    candidates = candidates_with_rejection or list(participant_states)
-    chosen = random.sample(candidates, min(max_blockers, len(candidates)))
-    for ps in chosen:
-        ps.is_true_hard_blocker = True
-    return [ps.name for ps in chosen]
+    ] or list(participant_states)
+    if not candidates:
+        return None
+    chosen = random.choice(candidates)
+    chosen.is_true_hard_blocker = True
+    return chosen.name
 
 
 # =============================================================================
-# Speaker selection -- SSJ rule cascade
+# Speaker selection — SSJ rule cascade (Sacks/Schegloff/Jefferson 1974)
 # =============================================================================
 
 def _norm(value: int) -> float:
@@ -154,29 +142,25 @@ def select_next_speakers(
     history: list[str],
     state: "DialogueState",
     discourse: Optional["DiscourseGraph"],
-    max_speakers: int = 2,
 ) -> list["Simulator"]:
-    """SSJ rule cascade. Returns up to max_speakers Simulators."""
+    """SSJ rule cascade. Returns a single speaker (one-at-a-time)."""
     if not sims:
         return []
 
-    if state.phase == "greeting":
+    # Opening covers everyone once (one intro turn each) before repeats.
+    if state.phase == "opening":
         missing = [s for s in sims if _turn_count_for(s.name, history) == 0]
-        sims = missing or sims
-    elif state.phase == "opening":
-        missing = [s for s in sims if _turn_count_for(s.name, history) < 2]
         sims = missing or sims
 
     if state.phase == "confirmation":
         ordered = sorted(sims, key=lambda s: (0 if s.persona.is_primary else 1))
-        return ordered[:max_speakers]
+        return [ordered[0]]
 
-    # Rule 1a -- obligated addressees of pending questions (directed or open)
+    # Rule 1a — obligated addressees of pending questions (directed or open)
     if discourse is not None:
         obligated = [s for s in sims if discourse.has_obligation_for(s.name)]
         if obligated:
             oldest = discourse.oldest_pending_addressees()
-            # Sentinel "!asker" means anyone-but-asker (open invitation)
             ban = {n[1:] for n in oldest if isinstance(n, str) and n.startswith("!")}
             named = {n for n in oldest if isinstance(n, str) and not n.startswith("!")}
             if named:
@@ -184,51 +168,31 @@ def select_next_speakers(
             else:
                 top = [s for s in obligated if s.name not in ban]
             top = top or obligated
-            return _fill_to(top, sims, history, state, max_speakers)
+            return [top[0]]
 
-    # Rule 1a' -- recently name-mentioned (no question pending)
+    # Rule 1a' — recently name-mentioned (no question pending)
     if state.last_addressed and not state.pending_question_target:
         addr = [s for s in sims if s.name == state.last_addressed]
         if addr:
-            return _fill_to(addr, sims, history, state, max_speakers)
+            return [addr[0]]
 
-    # Rule 1b -- self-selection
-    return _self_select(sims, history, state, count=max_speakers)
-
-
-def _fill_to(priority: list["Simulator"], all_sims: list["Simulator"],
-             history: list[str], state: "DialogueState",
-             max_speakers: int) -> list["Simulator"]:
-    result = list(priority[:max_speakers])
-    if len(result) < max_speakers:
-        rest = [s for s in all_sims if s not in result]
-        result.extend(_self_select(rest, history, state, count=max_speakers - len(result)))
-    return result[:max_speakers]
+    # Rule 1b — self-selection
+    return [_self_select(sims, history, state)]
 
 
 def _self_select(sims: list["Simulator"], history: list[str],
-                 state: "DialogueState", count: int = 1) -> list["Simulator"]:
-    available = list(sims)
-    picked: list["Simulator"] = []
-
-    for _ in range(min(count, len(available))):
-        scored = [(_score(s, history, state), s) for s in available]
-        total = sum(sc for sc, _ in scored)
-        if total <= 0:
-            choice = random.choice(available)
-        else:
-            r = random.uniform(0, total)
-            upto = 0.0
-            choice = available[0]
-            for sc, s in scored:
-                upto += sc
-                if upto >= r:
-                    choice = s
-                    break
-        picked.append(choice)
-        available.remove(choice)
-
-    return picked
+                 state: "DialogueState") -> "Simulator":
+    scored = [(_score(s, history, state), s) for s in sims]
+    total = sum(sc for sc, _ in scored)
+    if total <= 0:
+        return random.choice(sims)
+    r = random.uniform(0, total)
+    upto = 0.0
+    for sc, s in scored:
+        upto += sc
+        if upto >= r:
+            return s
+    return sims[-1]
 
 
 def _score(sim: "Simulator", history: list[str], state: "DialogueState") -> float:
@@ -242,7 +206,7 @@ def _score(sim: "Simulator", history: list[str], state: "DialogueState") -> floa
         score += w.openness_negotiation * _norm(sim.persona.openness)
         score += w.conscientiousness_negotiation * _norm(sim.persona.conscientiousness)
 
-    if state.phase not in {"greeting", "opening"}:
+    if state.phase != "opening":
         score += w.neuroticism_pressure * _norm(sim.persona.neuroticism) * state.repetition_pressure
 
     score -= w.agreeableness_off * _norm(sim.persona.agreeableness)
@@ -254,7 +218,6 @@ def _score(sim: "Simulator", history: list[str], state: "DialogueState") -> floa
     if not _has_spoken(sim.name, history):
         score += w.unspoken_boost
     elif sim.name not in recent_6:
-        # Has spoken before but has been silent in the last 6 turns — pull them back in.
         score += w.unspoken_boost * 0.70
 
     if _last_participant_speaker(history) == sim.name:
@@ -272,10 +235,11 @@ def _score(sim: "Simulator", history: list[str], state: "DialogueState") -> floa
 
 
 # =============================================================================
-# Repetition + discourse extraction (used by orchestrator)
+# Repetition pressure + discourse extraction (used by orchestrator)
 # =============================================================================
 
 def repetition_pressure(history: list[str]) -> float:
+    """Single Jaccard-overlap signal over the last `pressure_window` participant turns."""
     window = cfg.repetition.pressure_window
     min_len = cfg.repetition.min_word_length
     texts: list[str] = []
@@ -307,7 +271,7 @@ def repetition_pressure(history: list[str]) -> float:
 
 
 def extract_discourse(history: list[str], sim_names: set[str]) -> dict[str, Optional[str]]:
-    """Last addressed + pending question target from the most recent participant line."""
+    """Addressee tracking — Ouchi & Tsuboi (2016). Last addressed + pending question target."""
     result: dict[str, Optional[str]] = {"last_addressed": None, "pending_question_target": None}
     for line in reversed(history):
         if ":" not in line:
@@ -326,7 +290,7 @@ def extract_discourse(history: list[str], sim_names: set[str]) -> dict[str, Opti
 
 
 # =============================================================================
-# Act planner -- TurnPlan + plan_turn()
+# Act planner — TurnPlan + plan_turn()
 # =============================================================================
 
 @dataclass
@@ -339,6 +303,10 @@ class TurnPlan:
     condition: Optional[str]      = None
     max_words: int                = 24
     rationale: str                = ""
+    # directive=True only for genuine obligations (answer a question, commit a
+    # vote, confirm/reject). Sampled negotiation acts are NOT surfaced as a rigid
+    # instruction — that is what made every turn read "I support Option A".
+    directive: bool               = True
 
     def to_prompt_str(self) -> str:
         label = _ACT_LABELS.get(self.act, self.act.name)
@@ -354,44 +322,37 @@ class TurnPlan:
 
 
 _ACT_LABELS: dict[DialogueAct, str] = {
-    DialogueAct.GREET:              "Greet",
-    DialogueAct.OPEN_PRIORITY:      "State opening priority",
+    DialogueAct.OPEN_PRIORITY:      "Share your priority",
     DialogueAct.ASSERT_SUPPORT:     "Express support",
     DialogueAct.ASSERT_OPPOSITION:  "Express opposition",
     DialogueAct.ASSERT_AMBIGUOUS:   "Express uncertainty",
     DialogueAct.ASK_CLARIFICATION:  "Ask for clarification",
-    DialogueAct.ASK_PREFERENCE:     "Ask for preference",
     DialogueAct.ANSWER:             "Answer the question",
-    DialogueAct.CHALLENGE:          "Challenge a claim",
     DialogueAct.CONCEDE:            "Concede or agree",
     DialogueAct.CONDITIONAL_ACCEPT: "Accept conditionally",
-    DialogueAct.PROPOSE_COMPROMISE: "Propose a compromise",
     DialogueAct.COMMIT_VOTE:        "State your explicit vote",
     DialogueAct.CONFIRM:            "Confirm agreement",
     DialogueAct.REJECT_WITH_REASON: "Reject with a specific reason",
-    DialogueAct.SUMMARIZE:          "Summarize the discussion so far",
     DialogueAct.GOODBYE:            "Say goodbye",
-    DialogueAct.SILENCE:            "Remain silent",
 }
 
 
+# Weights favour moves that advance the conversation (support, concede, answer,
+# clarify) over vague restatement (ambiguous kept low) so turns don't ping-pong.
 _PHASE_BASE_WEIGHTS: dict[str, list[tuple[DialogueAct, float]]] = {
     "negotiation": [
-        (DialogueAct.ASSERT_SUPPORT,     0.10),  # reduced -- don't just restate position
+        (DialogueAct.ASSERT_SUPPORT,     0.22),
         (DialogueAct.ASSERT_OPPOSITION,  0.16),
-        (DialogueAct.ASK_CLARIFICATION,  0.10),
-        (DialogueAct.CHALLENGE,          0.22),  # push back on what others actually said
-        (DialogueAct.CONCEDE,            0.16),  # show real flexibility
-        (DialogueAct.PROPOSE_COMPROMISE, 0.10),
-        (DialogueAct.ASSERT_AMBIGUOUS,   0.10),  # reduced
-        (DialogueAct.ANSWER,             0.06),  # follow-up on unanswered points
+        (DialogueAct.ASK_CLARIFICATION,  0.14),
+        (DialogueAct.CONCEDE,            0.22),
+        (DialogueAct.ANSWER,             0.18),
+        (DialogueAct.ASSERT_AMBIGUOUS,   0.08),
     ],
     "emergence": [
-        (DialogueAct.ASSERT_SUPPORT,     0.18),
-        (DialogueAct.ASSERT_OPPOSITION,  0.12),
-        (DialogueAct.CONCEDE,            0.22),
-        (DialogueAct.CONDITIONAL_ACCEPT, 0.28),
-        (DialogueAct.PROPOSE_COMPROMISE, 0.12),
+        (DialogueAct.ASSERT_SUPPORT,     0.20),
+        (DialogueAct.ASSERT_OPPOSITION,  0.10),
+        (DialogueAct.CONCEDE,            0.28),
+        (DialogueAct.CONDITIONAL_ACCEPT, 0.34),
         (DialogueAct.ASSERT_AMBIGUOUS,   0.08),
     ],
 }
@@ -421,8 +382,6 @@ def plan_turn(
                 )
 
     # 2. Phase obligations
-    if phase == "greeting":
-        return TurnPlan(speaker=speaker_name, act=DialogueAct.GREET, max_words=max_words)
     if phase == "opening":
         return TurnPlan(speaker=speaker_name, act=DialogueAct.OPEN_PRIORITY, max_words=max_words)
     if phase == "closure":
@@ -472,17 +431,15 @@ def plan_turn(
             rationale="hard blocker rejects candidate",
         )
 
-    # 5. Personality-biased sampling
+    # 5. Personality-biased sampling with MUCA-style cooldowns
     base = list(_PHASE_BASE_WEIGHTS.get(phase, _PHASE_BASE_WEIGHTS["negotiation"]))
     multipliers: dict[DialogueAct, float] = {
         DialogueAct.CONCEDE:            0.5 + bias.concession_propensity,
         DialogueAct.ASSERT_OPPOSITION:  0.5 + bias.objection_propensity,
-        # CHALLENGE: objection-driven but also high-openness sims like to probe claims
-        DialogueAct.CHALLENGE:          0.5 + bias.objection_propensity * 0.6 + bias.reframing_propensity * 0.4,
         DialogueAct.ASK_CLARIFICATION:  0.5 + bias.clarification_propensity,
-        DialogueAct.PROPOSE_COMPROMISE: 0.5 + bias.reframing_propensity,
         DialogueAct.ASSERT_SUPPORT:     0.5 + bias.detail_orientation,
         DialogueAct.CONDITIONAL_ACCEPT: 0.5 + bias.concession_propensity * 0.7,
+        DialogueAct.ASSERT_AMBIGUOUS:   0.5 + bias.reframing_propensity * 0.3,
     }
     weighted = [(act, max(0.01, w * multipliers.get(act, 1.0))) for act, w in base]
     if ps is not None:
@@ -490,30 +447,13 @@ def plan_turn(
 
     chosen = _weighted_choice(weighted) if weighted else DialogueAct.ASSERT_AMBIGUOUS
 
-    target: Optional[str] = None
-    addressee: Optional[str] = None
-
-    if chosen in (DialogueAct.ASSERT_SUPPORT, DialogueAct.CONCEDE):
-        target = beliefs.preferred if beliefs else candidate
-    elif chosen in (DialogueAct.ASSERT_OPPOSITION, DialogueAct.CONDITIONAL_ACCEPT, DialogueAct.CHALLENGE):
-        target = candidate
-
-    if chosen == DialogueAct.CHALLENGE:
-        # Direct the challenge at the last other speaker and their option claim
-        last_other = next(
-            (t for t in reversed(structured.turns)
-             if not t.is_moderator and t.speaker != speaker_name),
-            None,
-        )
-        if last_other:
-            addressee = last_other.speaker
-            if not target and last_other.mentioned_options:
-                target = last_other.mentioned_options[0]
-
+    # Sampled negotiation acts are a soft steer for stance tracking only — they
+    # are NOT surfaced to the model as a directive, so turns stay conversational
+    # instead of "I support Option A" every time.
     return TurnPlan(
-        speaker=speaker_name, act=chosen, target_option=target,
-        addressee=addressee,
+        speaker=speaker_name, act=chosen, target_option=None,
         max_words=max_words, rationale=f"sampled act in {phase}",
+        directive=False,
     )
 
 

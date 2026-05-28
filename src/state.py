@@ -1,25 +1,26 @@
 """
 state.py
 --------
-Structured dialogue state -- the single source of truth for everything the
-orchestrator decides from. Merged from the former state/ subpackage:
+Structured dialogue state — the single source of truth the orchestrator
+decides from.
 
-  - DialogueAct enum and TurnRecord / StanceUpdate dataclasses
+  - DialogueAct enum (only the acts actually used in act planning / detection)
+  - TurnRecord, StanceUpdate dataclasses
   - StanceTable + OptionState (per speaker x option public stance)
   - DiscourseGraph (pending questions, reply edges)
   - ParticipantState (public stance, cooldowns, debt)
-  - PhaseEvidence + StructuredState containers
-  - StateTracker -- deterministic raw line -> structured update
+  - StructuredState container
+  - StateTracker — deterministic raw line -> structured update
 """
 
 from __future__ import annotations
 
-import dataclasses
 import re
-from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Literal, Optional, TYPE_CHECKING
+from typing import Literal, Optional, TYPE_CHECKING
+
+from utils import OptionResolver
 
 if TYPE_CHECKING:
     from persona import Persona
@@ -30,32 +31,26 @@ if TYPE_CHECKING:
 # =============================================================================
 
 class DialogueAct(Enum):
-    GREET              = "GREET"
     OPEN_PRIORITY      = "OPEN_PRIORITY"
     ASSERT_SUPPORT     = "ASSERT_SUPPORT"
     ASSERT_OPPOSITION  = "ASSERT_OPPOSITION"
     ASSERT_AMBIGUOUS   = "ASSERT_AMBIGUOUS"
     ASK_CLARIFICATION  = "ASK_CLARIFICATION"
-    ASK_PREFERENCE     = "ASK_PREFERENCE"
     ANSWER             = "ANSWER"
-    CHALLENGE          = "CHALLENGE"
     CONCEDE            = "CONCEDE"
     CONDITIONAL_ACCEPT = "CONDITIONAL_ACCEPT"
-    PROPOSE_COMPROMISE = "PROPOSE_COMPROMISE"
     COMMIT_VOTE        = "COMMIT_VOTE"
     CONFIRM            = "CONFIRM"
     REJECT_WITH_REASON = "REJECT_WITH_REASON"
-    SUMMARIZE          = "SUMMARIZE"
     GOODBYE            = "GOODBYE"
-    SILENCE            = "SILENCE"
     MODERATOR          = "MODERATOR"
 
 
 @dataclass
 class StanceUpdate:
     speaker: str
-    option: str
-    stance: str                        # support|oppose|ambiguous|conditional_support|blocker|neutral
+    option: str                        # support|oppose|ambiguous|conditional_support|blocker|neutral
+    stance: str
     confidence: float = 1.0
     condition: Optional[str] = None
 
@@ -97,8 +92,6 @@ class OptionState:
     conditional_supporters: dict[str, str]     = field(default_factory=dict)
     hard_blockers: dict[str, str]              = field(default_factory=dict)
 
-    support_score: float                       = 0.0
-    opposition_score: float                    = 0.0
     last_mentioned_turn: Optional[int]         = None
 
     def apply_update(self, update: StanceUpdate) -> None:
@@ -111,17 +104,13 @@ class OptionState:
 
         if update.stance == "support":
             self.supporters.add(name)
-            self.support_score += update.confidence
         elif update.stance == "oppose":
             self.opponents.add(name)
-            self.opposition_score += update.confidence
         elif update.stance == "blocker":
             self.opponents.add(name)
             self.hard_blockers[name] = update.condition or "unspecified"
-            self.opposition_score += update.confidence * 1.5
         elif update.stance == "conditional_support":
             self.conditional_supporters[name] = update.condition or ""
-            self.support_score += update.confidence * 0.7
         elif update.stance == "ambiguous":
             self.ambiguous.add(name)
 
@@ -132,11 +121,8 @@ class StanceTable:
         self._current: dict[tuple[str, str], StanceUpdate] = {}
         self._history: list[StanceUpdate] = []
 
-    def current(self, speaker: str, option: str) -> Optional[StanceUpdate]:
-        return self._current.get((speaker, option))
-
     def current_stance_label(self, speaker: str, option: str) -> str:
-        su = self.current(speaker, option)
+        su = self._current.get((speaker, option))
         return su.stance if su else "neutral"
 
     def apply(self, update: StanceUpdate, option_state: Optional[OptionState] = None) -> None:
@@ -145,19 +131,11 @@ class StanceTable:
         if option_state is not None:
             option_state.apply_update(update)
 
-    def fisher_ratios(self, window: int = 8) -> dict[str, float]:
-        recent = self._history[-window:]
-        if not recent:
-            return {"favor": 0.0, "disfavor": 0.0, "ambiguous": 0.5, "conditional": 0.0}
+    def history(self) -> list[StanceUpdate]:
+        return list(self._history)
 
-        counts: Counter = Counter(su.stance for su in recent)
-        total = len(recent)
-        return {
-            "favor":       counts.get("support", 0) / total,
-            "disfavor":    (counts.get("oppose", 0) + counts.get("blocker", 0)) / total,
-            "ambiguous":   (counts.get("ambiguous", 0) + counts.get("neutral", 0)) / total,
-            "conditional": counts.get("conditional_support", 0) / total,
-        }
+    def current_items(self) -> list[tuple[tuple[str, str], StanceUpdate]]:
+        return list(self._current.items())
 
     def unresolved_blockers(self, option: str) -> dict[str, str]:
         return {
@@ -175,15 +153,13 @@ class StanceTable:
 class DiscourseGraph:
     pending_questions: dict[int, list[str]] = field(default_factory=dict)
     reply_edges: dict[int, int]             = field(default_factory=dict)
-    # open_invitations: question turn_id -> asker name. Anyone-but-asker is
-    # obligated to answer (next-speaker-priority via SSJ rule 1a).
+    # open_invitations: question turn_id -> asker name. Anyone-but-asker is obligated.
     open_invitations: dict[int, str]        = field(default_factory=dict)
     last_addressed: Optional[str]           = None
 
     def has_obligation_for(self, name: str) -> bool:
         if any(name in addressees for addressees in self.pending_questions.values()):
             return True
-        # Open invitations obligate anyone other than the asker.
         return any(asker != name for asker in self.open_invitations.values())
 
     def oldest_pending_addressees(self) -> list[str]:
@@ -192,16 +168,12 @@ class DiscourseGraph:
         for q_id, addressees in self.pending_questions.items():
             candidates.append((q_id, addressees))
         for q_id, asker in self.open_invitations.items():
-            # Any non-asker is on the hook -- caller filters by current sim list
-            candidates.append((q_id, [f"!{asker}"]))    # sentinel: "anyone but"
+            candidates.append((q_id, [f"!{asker}"]))    # sentinel: "anyone but asker"
         if not candidates:
             return []
-        oldest = min(candidates, key=lambda c: c[0])
-        return oldest[1]
+        return min(candidates, key=lambda c: c[0])[1]
 
     def resolve_question(self, answering_turn_id: int, speaker: str) -> Optional[int]:
-        # Directed questions: peel off this one addressee only -- the question
-        # stays open until every named addressee has answered.
         for q_id, addressees in list(self.pending_questions.items()):
             if speaker in addressees:
                 self.reply_edges[answering_turn_id] = q_id
@@ -211,7 +183,6 @@ class DiscourseGraph:
                 else:
                     self.pending_questions[q_id] = addressees
                 return q_id
-        # Open invitations: anyone other than the asker resolves the oldest
         for q_id in sorted(self.open_invitations):
             asker = self.open_invitations[q_id]
             if speaker != asker:
@@ -222,7 +193,6 @@ class DiscourseGraph:
 
     def add_question(self, turn_id: int, addressees: list[str],
                      asker: Optional[str] = None) -> None:
-        """Register a question. With addressees -> directed. Without -> open invitation."""
         if addressees:
             self.pending_questions[turn_id] = list(addressees)
         elif asker:
@@ -238,9 +208,6 @@ class ParticipantState:
     name: str
 
     public_preference: Optional[str]          = None
-    public_stances: dict[str, str]            = field(default_factory=dict)
-    unresolved_conditions: dict[str, str]     = field(default_factory=dict)
-    hard_blockers: dict[str, str]             = field(default_factory=dict)
 
     turn_count: int                           = 0
     last_spoke_turn: Optional[int]            = None
@@ -270,22 +237,8 @@ class ParticipantState:
 
 
 # =============================================================================
-# PhaseEvidence + StructuredState
+# StructuredState
 # =============================================================================
-
-@dataclass
-class PhaseEvidence:
-    phase: Literal[
-        "orientation", "conflict", "emergence", "reinforcement", "closure"
-    ] = "orientation"
-    confidence: float       = 0.5
-    favor_rate: float       = 0.0
-    disfavor_rate: float    = 0.0
-    ambiguous_rate: float   = 0.5
-    conditional_rate: float = 0.0
-    rounds_in_phase: int    = 0
-    entered_at_turn: int    = 0
-
 
 @dataclass
 class StructuredState:
@@ -295,7 +248,6 @@ class StructuredState:
     options: dict[str, OptionState]                  = field(default_factory=dict)
     stance_table: StanceTable                        = field(default_factory=StanceTable)
     discourse: DiscourseGraph                        = field(default_factory=DiscourseGraph)
-    phase_evidence: PhaseEvidence                    = field(default_factory=PhaseEvidence)
     consensus_state: Literal[
         "none", "candidate_emerging", "majority_candidate",
         "conditional_consensus", "full_consensus", "blocked", "failed"
@@ -304,32 +256,16 @@ class StructuredState:
 
 
 # =============================================================================
-# StateTracker -- deterministic raw-line -> structured update
+# StateTracker — deterministic raw-line -> structured update
 # =============================================================================
-
-_VOTE_PATTERNS = [
-    r"\bi\s+prefer\s+option\s+([a-d])\b",
-    r"\bi(?:'m|\s+am)\s+(?:going\s+with|for|set\s+on|sold\s+on|leaning)\s+(?:option\s+)?([a-d])\b",
-    r"\bi(?:'d|\s+would)\s+(?:go\s+with|choose|prefer)\s+(?:option\s+)?([a-d])\b",
-    r"\bi\s+(?:choose|pick|want|vote\s+for)\s+option\s+([a-d])\b",
-    r"\bmy\s+(?:choice|pick|preference)\s+is\s+(?:option\s+)?([a-d])\b",
-]
-
-
-def _extract_vote(text: str) -> Optional[str]:
-    lower = text.lower()
-    for pat in _VOTE_PATTERNS:
-        m = re.search(pat, lower)
-        if m:
-            return m.group(1).upper()
-    return None
-
 
 class StateTracker:
 
-    def __init__(self, participant_names: list[str], options: list[str]) -> None:
+    def __init__(self, participant_names: list[str], options: list[str],
+                 resolver: OptionResolver) -> None:
         self._participant_names: set[str] = set(participant_names)
         self._all_names: list[str] = list(participant_names)
+        self._resolver = resolver
         self._option_map: dict[str, str] = {}
 
         for opt in options:
@@ -363,8 +299,8 @@ class StateTracker:
 
         addressees = self._extract_addressees(text, speaker, is_moderator)
         is_question = "?" in text
-        mentioned_options = [m.upper() for m in re.findall(r"\boption\s+([a-d])\b", text.lower())]
-        act = self._estimate_act(text, phase, is_moderator, is_question)
+        mentioned_options = self._resolver.options_in(text)
+        act = self._estimate_act(text, phase, is_moderator, is_question, mentioned_options)
         answers_id = None if is_moderator else self.state.discourse.resolve_question(turn_id, speaker)
         reply_to = None
         if not is_moderator:
@@ -379,11 +315,8 @@ class StateTracker:
             if not is_moderator:
                 self.state.discourse.last_addressed = addressees[0]
         elif is_question and not is_moderator:
-            # Participant open question: anyone-but-asker is obligated
             self.state.discourse.add_question(turn_id, [], asker=speaker)
         elif is_question and is_moderator:
-            # Moderator open question (e.g. narrowing, confirmation check):
-            # every participant is obligated to respond.
             self.state.discourse.add_question(turn_id, list(self._participant_names))
         elif addressees and not is_moderator:
             self.state.discourse.last_addressed = addressees[0]
@@ -402,7 +335,7 @@ class StateTracker:
                 ps.record_act(act)
                 ps.decrement_cooldowns()
                 if act == DialogueAct.COMMIT_VOTE:
-                    vote = _extract_vote(text)
+                    vote = self._resolver.vote_in(text)
                     if vote:
                         ps.public_preference = vote
                 n = len(self._all_names)
@@ -439,19 +372,18 @@ class StateTracker:
                     result.append(name)
         return result
 
-    def _estimate_act(self, text: str, phase: str, is_moderator: bool, is_question: bool) -> DialogueAct:
+    def _estimate_act(self, text: str, phase: str, is_moderator: bool,
+                      is_question: bool, mentioned_options: list[str]) -> DialogueAct:
         if is_moderator:
             return DialogueAct.MODERATOR
 
         lower = text.lower().strip()
         stripped = lower.rstrip(".,!?")
 
-        if phase == "greeting":
-            return DialogueAct.GREET
         if phase == "closure":
             return DialogueAct.GOODBYE
 
-        if _extract_vote(text):
+        if self._resolver.vote_in(text):
             return DialogueAct.COMMIT_VOTE
 
         if phase == "confirmation":
@@ -462,13 +394,11 @@ class StateTracker:
 
         if re.search(r"\bcould\s+(accept|live\s+with|work\s+with)\b.*\bif\b", lower):
             return DialogueAct.CONDITIONAL_ACCEPT
-        if re.search(r"\bif\b.{0,60}\b(work|accept|fine|okay|deal)\b", lower) and re.search(r"\boption\s+[a-d]\b", lower):
+        if re.search(r"\bif\b.{0,60}\b(work|accept|fine|okay|deal)\b", lower) and mentioned_options:
             return DialogueAct.CONDITIONAL_ACCEPT
 
         if is_question:
-            return DialogueAct.ASK_PREFERENCE if any(
-                w in lower for w in ("prefer", "choice", "pick", "vote", "which option")
-            ) else DialogueAct.ASK_CLARIFICATION
+            return DialogueAct.ASK_CLARIFICATION
 
         if any(p in lower for p in ("i agree", "sounds good", "works for me", "i'm in",
                                      "that works", "on board", "fair enough", "you're right")):
@@ -489,7 +419,7 @@ class StateTracker:
         cond = _extract_condition(text)
 
         if act == DialogueAct.COMMIT_VOTE:
-            vote = _extract_vote(text)
+            vote = self._resolver.vote_in(text)
             if vote:
                 updates.append(StanceUpdate(speaker, vote, "support", 1.0))
 

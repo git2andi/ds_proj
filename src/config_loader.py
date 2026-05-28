@@ -45,16 +45,11 @@ class Config(_Section):
     consensus: _Section
     repetition: _Section
     personas: _Section
-    participants: _Section
     output: _Section
     response_length: _Section
     turn_policy: _Section
-    act_planner: _Section
     stubbornness: _Section
-    phase_policy: _Section
-    scoring: _Section
-    moderation: _Section
-    logging: _Section
+    fisher: _Section
     grounding: _Section
     evaluation: _Section
     prompt_budget: _Section
