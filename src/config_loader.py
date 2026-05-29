@@ -62,6 +62,7 @@ class Config(_Section):
     verification: _Section
     surface_moves: _Section
     closure: _Section
+    compromise: _Section
 
     def __init__(self, path: Path) -> None:
         with open(path, "r", encoding="utf-8") as f:

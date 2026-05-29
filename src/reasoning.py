@@ -303,9 +303,9 @@ def _option_attribute_spans(turn_text: str, option_texts: list[str],
 
 def repair_directive() -> str:
     return (
-        "IMPORTANT: You may bring your own knowledge and experience to bear, but "
-        "do not invent specific attributes of the OPTIONS (no fake prices, fake "
-        "named features, or fabricated numbers attached to an option)."
+        "IMPORTANT: You may use any exact values that appear in the option cards, "
+        "but do not invent new option attributes (no fake prices, times, policies, "
+        "named features, or fabricated numbers that are not listed)."
     )
 
 

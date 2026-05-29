@@ -240,26 +240,59 @@ def repetition_pressure(history: list[str]) -> float:
 
 
 def extract_discourse(history: list[str], sim_names: set[str]) -> dict[str, Optional[str]]:
-    """Addressee tracking -- Ouchi & Tsuboi (2016). Last addressed + pending question target."""
-    from state import _is_addressing  # avoid module-load cycle
+    """Addressee tracking.
+
+    Explicit names win. If a participant asks an unnamed question that repeats a
+    keyword from the immediately previous participant turn, route it to that
+    previous speaker. Otherwise leave it open; open participant questions no
+    longer force a random answer.
+    """
+    from state import _is_addressing, _CHALLENGE_MARKERS  # avoid module-load cycle
 
     result: dict[str, Optional[str]] = {"last_addressed": None, "pending_question_target": None}
-    for line in reversed(history):
+    participant_lines: list[tuple[str, str]] = []
+    for line in history:
         if ":" not in line:
             continue
         speaker, msg = line.split(":", 1)
         speaker = speaker.strip()
-        if speaker in cfg.EXCLUDED_SPEAKERS:
+        if speaker not in cfg.EXCLUDED_SPEAKERS:
+            participant_lines.append((speaker, msg.strip()))
+
+    if not participant_lines:
+        return result
+
+    speaker, msg = participant_lines[-1]
+    is_question = "?" in msg
+    has_challenge = bool(_CHALLENGE_MARKERS.search(msg))
+    for name in sim_names:
+        if name == speaker:
             continue
-        is_question = "?" in msg
-        from state import _CHALLENGE_MARKERS as ch
-        has_challenge = bool(ch.search(msg))
-        for name in sim_names:
-            if name == speaker:
-                continue
-            if _is_addressing(name, msg, is_question=is_question, has_challenge=has_challenge):
-                result["last_addressed"] = name
-                if is_question:
-                    result["pending_question_target"] = name
-        break
+        if _is_addressing(name, msg, is_question=is_question, has_challenge=has_challenge):
+            result["last_addressed"] = name
+            if is_question:
+                result["pending_question_target"] = name
+            return result
+
+    if is_question and len(participant_lines) >= 2:
+        prev_speaker, prev_msg = participant_lines[-2]
+        if prev_speaker != speaker and _shares_content_keyword(msg, prev_msg):
+            result["last_addressed"] = prev_speaker
+            result["pending_question_target"] = prev_speaker
     return result
+
+
+def _shares_content_keyword(a: str, b: str) -> bool:
+    stop = {
+        "what", "about", "which", "option", "important", "choice", "really",
+        "still", "think", "would", "could", "should", "there", "their", "your",
+        "with", "that", "this", "from", "have", "does", "need", "want", "like",
+        "nice", "spot", "place", "decision", "best", "good", "lean", "toward",
+    }
+    def toks(x: str) -> set[str]:
+        return {
+            re.sub(r"[^a-z0-9]", "", w.lower())
+            for w in re.findall(r"[A-Za-z][A-Za-z'-]{3,}", x)
+            if re.sub(r"[^a-z0-9]", "", w.lower()) not in stop
+        }
+    return bool(toks(a) & toks(b))

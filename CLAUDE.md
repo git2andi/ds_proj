@@ -1,360 +1,1271 @@
 # CLAUDE.md
 
-## Project Overview
-
-This project is a university dialogue-simulation system. It creates multi-party
-group chats in which several simulated participants ("Sims") deliberate over a
-random decision topic and try to reach a workable group outcome.
-
-The design goal is **a real deliberation, not a roll-call to a decision.**
-The decision should emerge from the discussion; if the discussion is hollow,
-the decision is meaningless. Concretely the system aims for:
-
-- participants have stable preferences but argue from reasons, not by repeating
-  a position;
-- disagreement is visible, grounded in each person's priorities and experience,
-  and resolved by exchange rather than declared by the moderator;
-- questions are answered before the group moves on; pushback gets engaged with;
-- message length and structure vary naturally — mostly short chat-like turns,
-  occasionally longer when a point genuinely needs explanation;
-- each participant sounds like a distinct person, not a copy of the same polite
-  evaluator.
-
-## Research grounding (three layers)
-
-The architecture is organised by *layer of behaviour*, not "one paper per
-module". Each cited source maps to a specific, load-bearing piece of code.
-
-### Layer A — Conversation mechanics
-
-| Source | Module | Role |
-|---|---|---|
-| **Sacks, Schegloff & Jefferson (1974)** — turn-taking | `policy.select_next_speakers()` | Strict SSJ cascade: addressed > name-mentioned > personality-biased self-selection. One speaker per round. |
-| **Ouchi & Tsuboi (2016)** — addressee selection | `policy.extract_discourse()`, `state.DiscourseGraph` (+ `add_challenge` / `answer_challenge`) | Tracks last-addressed, pending questions, and **challenge ⇄ response edges** (Stage 5). Questions and pushbacks can't be silently dropped. |
-| **MUCA (2024)** — multi-user agent cooldowns | `state.ParticipantState.strategy_cooldowns` + filter in `policy.plan_turn()` | Recently-used acts are filtered out of the sampling pool; prevents strategy lock-in. |
-
-### Layer B — Cognitive / persona scaffolding
-
-| Source | Module | Role |
-|---|---|---|
-| **Toulmin (1958)** — argumentation structure | `persona.AgentBeliefs` (`reasons`, `reservation`, `would_reconsider_if`), `prompts.agent_beliefs_group`, `prompt_context.build_speaker_card` | Each persona carries an **argument kit**: 1–2 concrete reasons (warrants), one honest concern about a rival (reservation), and the condition that would change their mind. This is what lets sims argue rather than restate. |
-| **McCrae & John (1992)** — Big Five | `persona.Persona` traits, `policy.derive_bias()`, `persona.derive_speech_signature()` | Big Five is the source for trait sampling. It now routes **two ways**: into act-sampling weights (planner bias) and into a deterministic **SpeechSignature** (hedge / directness / think-aloud / detail) that scaffolds distinct voices in the speaker card. |
-| **Shanahan (2023, *Role-Play with LLMs*)** | `persona.SpeechSignature`, `prompt_context.build_speaker_card` | Justifies external scaffolding of persona over "be the character" instructions. The speech signature lives in the speaker card as a register descriptor, never as named phrases. |
-| **Park et al. (2023, Generative Agents)** — memory + reflection (scaled down) | `state.ParticipantState.points_made`, `prompt_context.build_memory_block` | Per-sim **relevance-filtered memory** replaces a raw transcript dump in the speaker card: what you've already said (anti-repeat), pushback aimed at you, others' live arguments, and what others said they care about. No reflection step — the structural pieces are kept; the heavy machinery is not. |
-
-### Layer C — Deliberation quality & convergence
-
-| Source | Module | Role |
-|---|---|---|
-| **Liang et al. (2023)**, **Du et al. (2023)** — multi-agent debate / divergent thinking | `persona._enforce_divergence`, `moderation.detect_facilitatable_disagreement` | Cooperative sims that start in **different places for good reasons** are the fuel for real exchange. A deterministic post-belief-generation pass spreads preferred options. The moderator surfaces the live disagreement by name when the group isn't already engaging. |
-| **Deliberative-quality framework** (justification, reciprocity, reflexivity) | `reasoning.deliberation_metrics()` (in `_eval.json`) | Evaluation-only metrics: share of stance turns with a reason marker, share of turns addressing/answering another sim, share of turns showing update (concession / conditional accept). |
-| **Fisher (1970)** — decision emergence (favourable / unfavourable ratios) | `reasoning.fisher_ratios()` (in `_eval.json`) | **Evaluation-only.** Logged per dialogue; does not drive control flow. (Was load-bearing on paper before; honest framing now.) |
-
-### What changed from the original five-paper roster
-
-- **Fisher** has been demoted from "load-bearing module" to **eval-only metric**. It was already logging-only in the code; the framing now matches reality.
-- **Toulmin**, **Generative Agents (scaled down)**, **Shanahan**, and **multi-agent debate (Liang/Du)** are now first-class. They are what makes deliberation possible in the first place.
-- **SSJ, Ouchi/Tsuboi, MUCA** remain load-bearing as before. Ouchi/Tsuboi is **stronger** now — the addressee graph also carries challenge edges and answered-challenge tracking, which gates phase transitions.
-- **McCrae & John** is now **load-bearing twice over**: act-bias weights AND speech signature. Same paper, two routes from trait to behaviour.
-
-## Entry Points
-
-`main.py` is the single executable entry.
-
-```
-python main.py                   interactive — prompted for one topic
-python main.py scenarios.txt     batch — one topic per non-comment line
-```
-
-`config.yaml` controls all behaviour. **No magic numbers in code.**
-
-## Module Layout
-
-All source files are flat under `src/` — no subpackages.
-
-```
-src/
-├── config_loader.py    typed cfg object; all modules import cfg from here
-├── llm_client.py       LLM provider abstraction (uni/groq/gemini)
-├── prompts.py          ALL LLM-facing text lives here (hard rule)
-├── persona.py          Persona, AgentBeliefs (argument kit), SpeechSignature,
-│                       PersonaBuilder (single grouped LLM path), divergence
-│                       enforcement
-│
-├── state.py            DialogueAct enum (incl. CHALLENGE), TurnRecord,
-│                       StanceUpdate, OptionState, StanceTable,
-│                       DiscourseGraph (+ ChallengeRecord),
-│                       ParticipantState (+ memory: points_made,
-│                       stated_priority, position_with_reason_stated),
-│                       StructuredState, StateTracker
-│
-├── policy.py           PersonalityBias, derive_bias, sample_hard_blocker,
-│                       select_next_speakers, repetition_pressure,
-│                       extract_discourse, TurnPlan, plan_turn (now
-│                       routes open challenges and uses argument kit)
-│
-├── reasoning.py        ConsensusEngine, fisher_ratios (eval-only),
-│                       deliberation_metrics (Stage 5 signals),
-│                       fact_check (scoped to claims-about-options),
-│                       repair_directive
-│
-├── prompt_context.py   compact speaker-card builders + memory_block
-│                       + perceived-priorities + others-arguments
-│
-├── orchestrator.py     loop coordinator; wires all layers together;
-│                       deliberation-gated narrowing
-├── simulator.py        generates one participant turn via LLM, with the
-│                       memory block and open-challenger hook
-├── moderation.py       facilitator-style intervention timing + LLM lines
-│                       (replaces the blunt info-gap shutdown)
-├── logger.py           2-file output per dialogue (.txt, .eval.json),
-│                       now includes deliberation metrics + challenges
-└── utils.py            OptionResolver (prose↔state bridge) + history helpers
-
-eval/
-└── eval_scenarios.txt  fixed topics for batch runs
-```
-
-## High-Level Pipeline
-
-For each topic:
-
-1. `Orchestrator` asks the LLM to **classify the decision kind** (concrete vs abstract pick) and generate four fitting options + an opening question.
-2. `PersonaBuilder.generate_names_and_roles()` — one LLM call: N names + roles tuned to the topic.
-3. `PersonaBuilder.build_all()` samples Big Five traits, enforces trait diversity, then one LLM call for all backstories + goals (each backstory carries a **concrete experience** that becomes argumentative evidence).
-4. `PersonaBuilder.assign_beliefs()` — one LLM call for all private belief states (the **Toulmin argument kit**), followed by deterministic **divergence enforcement** (spread preferred options) and **acceptable-overlap enforcement** (guarantee one common fallback).
-5. Each persona is wrapped by a `Simulator`.
-6. `Orchestrator.run_simulation()` initialises `StateTracker`, samples the per-dialogue hard-blocker flag (5%), and drives the dialogue through phases.
-7. Each round: `select_next_speakers()` picks ONE speaker; `plan_turn()` plans their act; `Simulator.generate_turn()` calls the LLM with the speaker card, **memory block**, recent turns, and move instruction.
-8. `StateTracker.update()` parses each turn into a `TurnRecord` and updates `StructuredState` (stance updates, challenge edges, captured priority, per-sim memory).
-9. `ConsensusEngine` recomputes consensus state from the public `StanceTable`.
-10. `ModerationEngine` decides if/when to intervene — facilitator moves first (surface disagreement, ask what would change a mind, reframe missing detail), force-close only when truly spent.
-11. `DialogueLogger` writes the chat `.txt` (with personas + reasons + reservations + voice sig at the top) and `.eval.json` (with `fisher_ratios`, `deliberation` metrics, `challenges`, `stated_priorities`).
-
-Total LLM setup cost per dialogue: **3 calls** (options/opening, names+roles+concepts, beliefs) — independent of participant count.
-
-## Dialogue Phases
-
-The arc is shaped so people establish *what they want* before pitching options,
-then converge by exchange — not by roll-call.
-
-- `opening` — each participant, once: a natural hello **and the one thing they care about** (a priority/constraint), **not an option**. This is captured into `ParticipantState.stated_priority` and shown to every other sim as a perceived priority (theory-of-mind).
-- `negotiation` — open discussion: react to each other, weigh priorities, ask, push back. Options come up only when relevant; turns are *not* forced into "I vote X". Sims may use their backstory experience as a warrant; the grounding check forbids only invented option attributes.
-- `narrowing` — moderator asks everyone to land on a pick; sims commit to an option here (14–30 words). **Stage 5: triggered by deliberation signals** (positions stated with reasons + at least one answered challenge + repetition pressure) within a turn-count floor/ceiling, not turn-count alone.
-- `emergence` — every sim has voted; the group closes in on the leading candidate (cap: 32 words).
-- `confirmation` — moderator asks once if the candidate works; everyone answers in one natural pass (cap: 14 words).
-- `closure` — each participant signs off in their own words (cap: 16 words). Gracious if it wasn't their pick.
-
-**Turns are not over-directed.** `plan_turn` marks each `TurnPlan` as `directive` only for real obligations (answer a pending question, answer an unanswered challenge aimed at this sim, commit a vote at narrowing, confirm/reject). Sampled negotiation acts are `directive=False` and are **not** surfaced to the model as "Planned act: …" — they only steer stance tracking.
-
-### Scaling with participant count
-
-The system is built for 2–5 sims (set `simulation.num_participants`). Turn budget and pacing scale with `n`:
-
-- `hard_ceiling = max(turns.min_ceiling, n * turns.ceiling_per_participant)`
-- narrowing has a **floor** (`turns.min_before_narrowing_per_participant`) and a **ceiling** (`turns.narrow_after_per_participant`); between them the deliberation gate fires it
-- moderator escalation gets `n` rounds of grace so larger groups finish collecting votes
-- dissenter tolerance is `min(consensus.max_dissenters, (n-1)//2)`
-
-### Register
-
-Relaxed but articulate. The `Persona.style_rule()` block sets length register from `response_length`; the `SpeechSignature` block adds trait-driven voice features (hedge / directness / think-aloud / detail). Together they keep sims from sounding identical.
-
-## Personas
-
-### Big Five model
-
-`openness`, `conscientiousness`, `extraversion`, `agreeableness`, `neuroticism`.
-`response_length` (1–5) is communication-style control, not a Big Five trait.
-
-Default `trait_ranges` lean cooperative; post-sample enforcement prevents everyone-too-agreeable groups.
-
-### Argument kit (Toulmin)
-
-Each persona's private `AgentBeliefs` carries:
-
-- `preferred` — top option before discussion
-- `acceptable` — options they could live with (size controlled by `divergence.target_acceptable_*`)
-- `rejected` — options they actively resist (typically empty)
-- `key_concern` — main reason behind their preference
-- **`reasons`** — 1–2 concrete reasons drawn from the persona's goal/backstory, phrased as their knowledge/experience (Toulmin warrants)
-- **`reservation`** — one honest concern about a rival option, framed as a concern (not a veto)
-- **`would_reconsider_if`** — the concrete condition that would move them off `preferred` (makes "what would change your mind" answerable)
-
-**Belief consistency rules:** `key_concern` must be consistent with `preferred`. `reasons` must come from the backstory. `reservation` must NOT be a refusal of a rival; only the rare hard-blocker (`stubbornness.hard_blocker_dialogue_probability`) is a refusal.
-
-### Divergence enforcement
-
-After belief generation, `persona._enforce_divergence` spreads `preferred` so the group doesn't all start on the same option (the fuel for real discussion). `persona._enforce_acceptable_overlap` guarantees a shared fallback option so consensus is reachable. The hard-blocker flag is the only sanctioned route to `force_close`.
-
-### Speech signature (Shanahan)
-
-`Persona.speech_signature()` deterministically maps the five traits to four floats:
-
-- `hedge_propensity` — neuroticism + agreeableness lift hedging
-- `directness` — (1 - agreeableness) drives plain "no"
-- `thinkaloud_propensity` — extraversion + (1 - conscientiousness)
-- `detail_orientation` — conscientiousness drives citing concrete option text
-
-These appear in the speaker card as a register descriptor (`"hedges naturally; thinks aloud; cites concrete details"`). Phrases are never prescribed; only register hints. All weights live in `config.yaml :: voice`.
-
-## Turn-Taking (SSJ)
-
-`policy.select_next_speakers()` returns **one speaker per round**:
-
-1. **Obligated addressees** of pending questions (`DiscourseGraph.pending_questions`)
-2. **Open invitation** — questions without an explicit addressee force any non-asker to respond
-3. **Recently name-mentioned participant** (no pending question)
-4. **Personality-biased self-selection** (extraversion, participation debt, novelty)
-
-Phase-specific rules: opening covers everyone once before repeats; confirmation gives the primary the first slot.
-
-## Act Planner
-
-`policy.plan_turn()` selects a `TurnPlan` before each LLM call.
-
-Priority cascade:
-
-1. Discourse obligation (pending question → `ANSWER`)
-2. **Open challenge aimed at this sim** → `ANSWER` (Stage 5)
-3. Phase obligation (opening → `OPEN_PRIORITY`; narrowing+no-vote → `COMMIT_VOTE`; confirmation → `CONFIRM` / `REJECT_WITH_REASON`)
-4. Emergence soft-path (candidate in `acceptable` → `CONDITIONAL_ACCEPT` with `would_reconsider_if` as condition)
-5. Hard-blocker path (`is_true_hard_blocker` + candidate in `rejected` → `REJECT_WITH_REASON`)
-6. Personality-biased sampling with MUCA cooldowns (base weights in `config.yaml :: act_planner.base_weights`; bias multipliers in `personality_bias`)
-
-The `DialogueAct` enum now includes `CHALLENGE` — explicit addressed pushback at another sim. The state tracker fires `add_challenge` when it sees this act, and `answer_challenge` when the target rebuts within the configured window.
-
-## Memory block (Stage 6, Park 2023 scaled down)
-
-`prompt_context.build_memory_block` produces a compact, relevance-filtered view that **replaces** sending the raw last-N transcript to the model. Four sections, each optional and capped per `cfg.memory`:
-
-- **What you've already said** — the speaker's own substantive points, for anti-repetition (kills the "Liam-says-sandwiches-3×" failure).
-- **Pushback aimed at you** — unanswered challenges this sim must engage.
-- **Others' live arguments** — for build-on; not a transcript.
-- **What others care about** — captured stated priorities from the opening (theory-of-mind).
-
-The raw last-N transcript is still passed under `RECENT TURNS` so the model has actual prose to anchor on, but the memory block is what makes turns specific, on-topic, and non-repetitive.
-
-## Prompting
-
-All LLM-facing templates live in `src/prompts.py`. No other module constructs LLM-facing prose.
-
-### Compact speaker-card prompt
-
-```
-SPEAKER CARD     name, role, register, voice signature, personality,
-                 background, stance + Toulmin argument kit
-OPTIONS          only the relevant options (preferred + acceptable + candidate)
-GROUP STATE      candidate, current votes, unresolved rejections
-YOUR MEMORY      points you've made, pushback aimed at you,
-                 others' live args, what others care about
-YOUR MOVE        phase instruction + optional TurnPlan act + interaction + position
-RECENT TURNS     last N turns (raw)
-OUTPUT           word budget + formatting rules
-```
-
-`prompt_context.py` builds each section from structured orchestrator state.
-
-### Position discipline (3 templates)
-
-- Decision phase + candidate is in sim's `acceptable` (or anchor) → "say yes briefly"
-- Decision phase + candidate is in sim's `rejected` → "say no with one specific reason"
-- Decision phase + neither → "hedge briefly or name what you'd need"
-- Negotiation without candidate → "engage with what others said; don't restate"
-
-### Repetition (single signal)
-
-`policy.repetition_pressure()` is the only repetition metric: rolling Jaccard overlap across the last `pressure_window` participant turns. When it crosses `cfg.repetition.stall_increment_threshold`, the prompt receives a single "loop detected, change move" line and the orchestrator increments `stall_rounds`. There are no forbidden-opener lists, no semantic-keyword detection.
-
-### Moderator (facilitator style)
-
-`ModerationEngine` is a facilitator. It intervenes when one of the following fires:
-
-- **Info-chase** — sims explicitly chasing a missing option attribute (cost, price, exact number). The moderator **reframes** toward judgment (`prompts.moderator_reframe_missing_detail`); it never says "decide based on what's listed".
-- **Facilitate disagreement** — two sims hold opposing stances on the same option and no challenge ⇄ response has happened. The moderator surfaces the disagreement by name (`prompts.moderator_facilitate_disagreement`).
-- **Outlier** — a sim repeats themselves verbatim after narrowing (one nudge).
-- **Stall** — repetition pressure crosses threshold for ≥2 rounds.
-
-A `facilitate_cooldown` prevents two facilitation moves in a row. Escalation levels (0–3) scale moderator directness. Level 3 force-closes via `ConsensusEngine.best_available_decision()`.
-
-## Prose ↔ State bridge (`utils.OptionResolver`)
-
-Unchanged in shape; now exposes `option_mention_spans()` so the grounding check can scope claims-about-options correctly (Stage 4).
-
-## Consensus
-
-`reasoning.ConsensusEngine` derives consensus state from `StanceTable` only:
-
-- `none` → `candidate_emerging` → `majority_candidate` → `conditional_consensus` → `full_consensus`
-- Special states: `blocked` (active hard blocker) and `failed`
-
-`leading_weights` (the "what's winning" weights) and `stance_weights` (the force-close weights) are both in `config.yaml :: consensus`. Dissenter tolerance scales with group size.
-
-## Grounding (Stage 4)
-
-`reasoning.fact_check()` now scopes its check to **claims about options**, not all world-knowledge:
-
-- **Currency / percentages** — flagged if absent from source (always option-attribute-like).
-- **Bare numbers** — flagged ONLY when they sit within `cfg.grounding.option_proximity_chars` of an option letter or alias. A persona saying "CRISPR has been around since 2012" passes; a persona saying "Option A is 40 dollars" gets flagged.
-- **Quoted strings** — flagged if absent (invented named feature).
-- **Parenthesised digit-asides** — the classic fabrication shape.
-
-When flagged, the turn is regenerated once with `repair_directive()`, which now permits world knowledge / experience and forbids only invented option attributes.
-
-## Logging — two files per dialogue
-
-| File | Contents |
+## Project overview
+
+This project is a university dialogue-simulation system for generating small
+multi-party group discussions. Given a short decision topic, the system creates
+several simulated participants ("Sims"), generates a small set of options, lets
+the Sims discuss those options, and tries to reach a valid group outcome.
+
+The goal is **not** to build a fully general social simulator. The goal is a
+bounded and useful dialogue generator:
+
+- Sims have stable preferences and reasons.
+- Sims sound different from each other.
+- Sims can answer briefly instead of explaining every turn.
+- Sims avoid repeating the same point.
+- Sims usually try to compromise.
+- Rare failed or force-closed dialogues are allowed when no viable compromise
+  exists.
+- Final outcomes must be honest: a force-close must not be presented as full
+  consensus.
+
+The current implementation is a simplified control-cleanup version of the
+earlier architecture. The project still keeps useful literature-grounded ideas
+such as turn-taking, addressee handling, persona scaffolding, compact memory,
+argument kits, and evaluation metrics. However, the live decision path is now
+much more explicit: **votes, acceptances, rejections, and private acceptability
+drive the outcome**, not broad stance inference or challenge-gated deliberation.
+
+---
+
+## Main design principle
+
+The current architecture follows this separation:
+
+| Layer | Responsibility |
 |---|---|
-| `<id>.txt` | Header + **persona block** (name, traits, **voice signature**, goal, backstory, beliefs + **reasons + reservation + would_reconsider_if**) + chat transcript + Outcome/Tokens footer. |
-| `<id>.eval.json` | Metadata, outcome, tokens, Gini + per-speaker/per-phase counts, vote flips, confirmation rejections, full personas, **Fisher ratios (eval-only)**, **`deliberation` metrics** (justification / reciprocity / reflexivity + gating signals), **`challenges`** (challenger, target, answered_turn_id), **`stated_priorities`**, consensus state, public preferences, full per-turn structured trace. |
+| Persona | Stable preferences, traits, voice, response-length tendency, flexibility |
+| Prompt | Ask the LLM for one local next message |
+| Policy | Decide who speaks next |
+| Verifier | Check whether the generated message is valid and non-repetitive |
+| State tracker | Extract structured facts for routing, memory, logging, and evaluation |
+| Moderator | Move the group through the decision process |
+| Consensus/control | Use explicit votes/acceptances/rejections to decide outcomes |
+| Evaluation | Measure quality after the dialogue |
 
-## Key config.yaml values
+Important boundary:
 
-| Section | Key | Default | Notes |
-|---|---|---|---|
-| `simulation` | `num_participants` | `3` | 2–5 supported |
-| `turns` | `min_before_narrowing_per_participant` | `3` | Floor — narrowing can't fire below this |
-| `turns` | `narrow_after_per_participant` | `5` | Ceiling — narrowing forced at or above this |
-| `argument_kit` | `reasons_per_persona` / `reasons_min` / `reasons_max` | `2 / 1 / 3` | Toulmin warrants on each persona |
-| `argument_kit` | `reservation_required` / `reconsider_required` | `true` | The shape of the argument kit |
-| `divergence` | `target_acceptable_min` / `max` | `2 / 3` | Smaller acceptable sets so disagreement is real |
-| `divergence` | `enforce_distinct_preferred` | `true` | Spread preferred options across the group |
-| `divergence` | `required_common_acceptable` | `1` | Shared fallback that keeps consensus reachable |
-| `deliberation` | `challenges_to_unlock_narrowing` | `1` | Stage 5 — must have at least one answered exchange |
-| `deliberation` | `exhaustion_pressure_threshold` | `0.60` | Below the global stall threshold |
-| `deliberation` | `challenge_window_turns` | `6` | A challenge counts as "answered" if rebutted within N |
-| `memory` | `points_made_max` | `4` | Compact anti-repeat memory size |
-| `memory` | `others_arguments_max` | `4` | Build-on memory size |
-| `memory` | `open_challenges_max` | `2` | Pushbacks shown to a sim |
-| `voice` | `hedge_*` / `directness_*` / `thinkaloud_*` / `detail_*` | various | Trait → speech-feature weights |
-| `act_planner` | `base_weights.negotiation` | varies | Per-phase MUCA base weights (incl. `CHALLENGE`) |
-| `personality_bias` | `concession_*` / `objection_*` / `clarification_*` | varies | Big Five → propensity weights |
-| `grounding` | `option_proximity_chars` | `60` | Window around option mentions for number-attribute flag |
-| `moderation` | `facilitate_cooldown_rounds` | `2` | Prevents back-to-back facilitation moves |
-| `repetition` | `stall_increment_threshold` | `0.70` | Global stall trigger |
-| `stubbornness` | `hard_blocker_dialogue_probability` | `0.05` | Per-dialogue rare hard blocker |
-| `fisher` | `window_size` | `8` | Eval-only ratio window |
+> Evaluation structures may observe rich discourse behaviour, but they should
+> not be the main live-control path.
 
-## Development Notes
+This prevents the project from becoming a large theory-driven control machine
+where every utterance has to satisfy many abstract dialogue criteria.
 
-After edits, sanity-check with:
+---
+
+## Research grounding
+
+The project is still literature-grounded, but the paper-to-code mapping has
+been trimmed. The system no longer tries to implement every cited theory as a
+runtime controller.
+
+### Load-bearing literature
+
+#### Sacks, Schegloff & Jefferson (1974): turn-taking
+
+Used for the basic idea that turns are locally organized and that the next
+speaker depends on address, prior speaker, and self-selection opportunities.
+
+Current implementation role:
+
+- `policy.select_next_speakers()`
+- one speaker is selected per participant turn;
+- directed questions have priority;
+- repeated immediate self-selection is discouraged;
+- participation balance and initiative are used only as light routing signals.
+
+The code does **not** attempt to fully model conversation analysis. It keeps only
+the practical routing idea.
+
+#### Ouchi & Tsuboi (2016): addressee / response selection
+
+Used for the multi-party problem of deciding **who should respond**.
+
+Current implementation role:
+
+- `policy.extract_discourse()`
+- `state.DiscourseGraph`
+- `StateTracker._extract_addressees()`
+- `StateTracker._implicit_previous_speaker_target()`
+
+The implementation now distinguishes:
+
+1. explicit name/address target;
+2. direct question target;
+3. implicit target from the previous speaker's priority/keyword;
+4. open invitation.
+
+Open participant questions no longer create hard obligations for arbitrary
+non-askers. This was changed because it produced question-answer-question-answer
+loops. If a participant asks about a keyword introduced by the previous speaker,
+the previous speaker should answer.
+
+Example:
+
+```text
+Julian: Hey, hoping for an eco-friendly spot.
+Liam: How important is being eco-friendly to our choice?
 ```
-python -m compileall -q main.py src
+
+The next likely speaker should be Julian.
+
+#### Toulmin (1958): compact argument kit
+
+Used for the private belief model of each Sim.
+
+Current implementation role:
+
+- `persona.AgentBeliefs`
+- `prompts.agent_beliefs_group()`
+- `prompt_context.build_speaker_card()`
+
+Each Sim receives:
+
+```text
+preferred
+acceptable
+rejected
+key_concern
+reasons
+reservation
+would_reconsider_if
 ```
 
-### Hard rules
+This is what gives a Sim material to discuss beyond simply restating "I prefer
+A". The implementation is deliberately compact: one or two reasons, one honest
+reservation, and one condition under which the Sim might compromise.
 
-- **All magic numbers live in `config.yaml`.** No literal constants in code that could be tuned.
-- **All LLM-facing prose lives in `prompts.py`.** Other modules assemble structured context; they do not write prose.
-- **Do not list specific filler phrases in prompts.** Any named phrase gets overused.
-- **Belief generation quality dominates runtime fixes.** If `acceptable` is too narrow or `reasons` are generic, no heuristic will fix the deadlock or the hollow exchange.
-- **Private beliefs never enter the structured force-close path.** `ConsensusEngine.best_available_decision()` uses public stances only.
-- **One speaker per round.** Don't reintroduce multi-speaker round logic.
-- **Repetition is one signal.** Don't layer phrase-blacklists or opener-tracking on top of `repetition_pressure`.
-- **Fisher is logging-only.** Don't add control flow that branches on Fisher ratios — narrowing is gated on deliberation signals, not Fisher.
-- **No fabricated defaults.** Setup LLM calls (options, names+roles, concepts, beliefs) and turn generation raise on failure or malformed output. The only kept non-LLM substitution is the force-close system line when the model impersonates a participant (a malformed line, not a failed call).
-- **Everything reads through `OptionResolver`.** Don't reintroduce raw `\boption [a-d]\b` scanning anywhere.
-- **Closure must be honest.** Forced close acknowledges no full agreement; a real agreement uses the affirming closure.
-- **Keep it scalable.** New pacing/threshold logic must derive from `n = len(sims)`, not hardcode for 3. Test 2 and 5 before assuming it generalises.
-- **Grounding lets world knowledge through.** Sims arguing from their own experience (Toulmin warrants) is intended; only INVENTED OPTION ATTRIBUTES are blocked. Don't tighten the check back into a sterilising filter.
-- **The moderator facilitates, it doesn't terminate.** Don't reintroduce a blunt "isn't specified, decide on what's listed" shutdown. The reframer is the answer; the discussion is the product.
+#### McCrae & John (1992): Big Five as persona scaffold
+
+Used to create varied but bounded personalities.
+
+Current implementation role:
+
+- `persona.Persona`
+- `persona.derive_speech_signature()`
+- `Persona.derived_controls()`
+- `Persona.derived_controls_descriptor()`
+- `Persona.response_length_score()`
+
+The system keeps Big Five traits plus `response_length`:
+
+```text
+openness
+conscientiousness
+extraversion
+agreeableness
+neuroticism
+response_length
+```
+
+These traits are used to derive simpler conversational controls such as:
+
+```text
+initiative
+flexibility
+directness
+detail_level
+warmth
+```
+
+Runtime code should prefer these derived controls over raw Big Five values when
+possible. Traits shape voice, length, initiative, directness, and flexibility.
+They should **not** become a large dialogue-act planner.
+
+#### Shanahan (2023): role-play / persona scaffolding for LLMs
+
+Used for the idea that persona instructions should be structural and external,
+not theatrical "be this character" prompts.
+
+Current implementation role:
+
+- `persona.SpeechSignature`
+- `prompt_context.build_speaker_card()`
+
+The speaker card describes role, style, stance, reasons, and tone tendencies.
+It does not ask the LLM to perform a dramatic character. The goal is distinct
+but ordinary chat behaviour.
+
+#### Park et al. (2023): Generative Agents, scaled down
+
+Used only for compact memory and anti-repetition.
+
+Current implementation role:
+
+- `state.ParticipantState.points_made`
+- `prompt_context.build_memory_block()`
+- `verifier.detect_self_repetition()`
+- `verifier.detect_semantic_point_repeat()`
+
+The project does **not** implement full generative-agent memory, reflection, or
+planning. It keeps only the useful minimum:
+
+- last own turn;
+- recent point signatures;
+- recent local dialogue context;
+- stated priority;
+- enough memory to avoid repeating the same point.
+
+### Demoted or evaluation-only literature
+
+#### Fisher (1970): decision emergence
+
+Fisher-style ratios are evaluation-only.
+
+Current implementation role:
+
+- `reasoning.fisher_ratios()`
+- `.eval.json` output
+
+Fisher does not drive live phase transitions.
+
+#### Deliberative quality frameworks
+
+Justification, reciprocity, and reflexivity are useful for later analysis.
+
+Current implementation role:
+
+- `reasoning.deliberation_metrics()`
+- `reasoning.evaluation_summary()`
+- `.eval.json` output
+
+They are not live-control gates.
+
+#### MUCA / multi-user strategy cooldowns
+
+Earlier versions used strategy cooldowns and richer act planning to prevent
+repetition. This has been demoted.
+
+Current implementation:
+
+- no heavy live dialogue-act planner;
+- lightweight surface moves may be used to vary message form;
+- repetition is handled mainly by memory + verifier + repair.
+
+#### Liang / Du style divergent debate
+
+The project keeps only the practical idea that participants should not all start
+from exactly the same preference. It does **not** force formal debate or require
+challenge-response pairs before progress.
+
+Current implementation role:
+
+- `persona._enforce_divergence()`
+- `persona._enforce_acceptable_overlap()`
+
+Divergence should create useful starting tension, not artificial conflict.
+
+---
+
+## Entry points
+
+`main.py` is the executable entry point.
+
+```bash
+python main.py
+python main.py scenarios.txt
+```
+
+Modes:
+
+- interactive mode: prompts for one topic;
+- batch mode: reads one topic per non-comment line from a scenario file.
+
+`main.py` performs the high-level setup:
+
+1. create `Orchestrator`;
+2. create `PersonaBuilder`;
+3. generate names and roles;
+4. build personas;
+5. assign private belief states;
+6. wrap each persona in `Simulator`;
+7. run the dialogue;
+8. write logs.
+
+---
+
+## Source layout
+
+All project files are flat under `src/`.
+
+```text
+src/
+├── config_loader.py
+├── llm_client.py
+├── logger.py
+├── moderation.py
+├── orchestrator.py
+├── persona.py
+├── policy.py
+├── prompt_context.py
+├── prompts.py
+├── reasoning.py
+├── simulator.py
+├── state.py
+├── utils.py
+└── verifier.py
+```
+
+The flat layout is intentional. This is still a university project, so the code
+should remain easy to inspect without a deep package hierarchy.
+
+---
+
+## Module responsibilities
+
+### `config_loader.py`
+
+Loads `config.yaml` once and exposes a typed `cfg` object.
+
+All modules import config from here.
+
+Important:
+
+- no module should parse YAML directly;
+- missing config values should be handled carefully only where needed;
+- sections declared in `Config` should match the actual YAML.
+
+### `llm_client.py`
+
+Thin LLM provider abstraction.
+
+Supported providers:
+
+```text
+gemini
+groq
+uni
+```
+
+Exposes:
+
+```text
+generate(prompt: str) -> str
+generate_json(prompt: str) -> dict
+reset_session()
+```
+
+It also tracks token usage:
+
+```text
+last_tokens_in
+last_tokens_out
+session_tokens_in
+session_tokens_out
+```
+
+Setup tokens and dialogue tokens are separated by `reset_session()` in `main.py`.
+
+### `persona.py`
+
+Owns persona and belief generation.
+
+Important classes:
+
+```text
+AgentBeliefs
+SpeechSignature
+Persona
+PersonaBuilder
+```
+
+Important functions:
+
+```text
+derive_speech_signature()
+_enforce_diversity()
+_enforce_divergence()
+_enforce_acceptable_overlap()
+_random_traits()
+```
+
+The persona system creates:
+
+- names and roles;
+- Big Five traits;
+- response-length tendency;
+- derived conversational controls;
+- compact goals/backstories;
+- private option beliefs.
+
+The current system still uses LLM calls for names/roles, persona concepts, and
+beliefs, but enforces structural constraints in Python.
+
+### `orchestrator.py`
+
+Coordinates a single dialogue.
+
+Responsibilities:
+
+1. generate topic options and opening question;
+2. create and update `DialogueState`;
+3. run bounded phases;
+4. store participant and moderator lines;
+5. update explicit votes/acceptances/rejections;
+6. select compromise candidates;
+7. finalize success, compromise, force-close, or failure;
+8. pass data to the logger.
+
+Important methods:
+
+```text
+_run_opening()
+_run_discussion()
+_run_vote_round()
+_run_compromise()
+_ask_holdout()
+_finalize_success()
+_finalize_force_or_failure()
+_run_closure()
+```
+
+The live outcome path is controlled by explicit data, not by broad inferred
+stance labels.
+
+### `policy.py`
+
+Handles speaker selection and lightweight discourse extraction.
+
+Important functions:
+
+```text
+select_next_speakers()
+extract_discourse()
+repetition_pressure()
+sample_hard_blocker()
+```
+
+`policy.py` should **not** become a dialogue-act planner. Its main job is to
+decide who speaks, not what they say.
+
+Routing priorities:
+
+1. opening participants who have not spoken;
+2. directed pending-question target;
+3. implicit previous-speaker question target;
+4. recent explicit addressee;
+5. participation balance and initiative;
+6. avoid repeated same speaker unless required.
+
+### `simulator.py`
+
+Wraps one `Persona` and generates one participant turn.
+
+Generation flow:
+
+```text
+build prompt
+call LLM
+strip accidental name prefix
+verify output
+repair once if needed
+enforce word budget
+return text + token counts
+```
+
+Important methods:
+
+```text
+generate_turn()
+_generate_raw()
+_verify_and_repair()
+_build_repair_prompt()
+_deterministic_fallback()
+_enforce_word_budget()
+```
+
+`Simulator` should generate exactly one message from exactly one speaker.
+
+### `verifier.py`
+
+Deterministic post-generation validation.
+
+It does not call the LLM.
+
+Participant checks include:
+
+```text
+EMPTY_OR_SILENCE
+NAME_PREFIX
+INVALID_OPTION_REFERENCE
+VALID_OPTION_DENIED
+INVENTED_OPTION_FACT
+SELF_REPETITION
+ACK_LOOP
+SEMANTIC_POINT_REPEAT
+FACT_CHASING_QUESTION
+MISSING_EXPLICIT_VOTE
+UNCLEAR_CONFIRMATION
+```
+
+Moderator checks include:
+
+```text
+MODERATOR_NEW_OPTION
+MODERATOR_MIXED_SOLUTION
+FAKE_CONSENSUS
+```
+
+If repair is needed, `simulator.py` performs one repair attempt with a targeted
+repair prompt. The verifier prevents common failures, but it should not become
+a full evaluator or another reasoning engine.
+
+### `prompt_context.py`
+
+Assembles prompt sections from structured state.
+
+Important functions:
+
+```text
+build_speaker_card()
+build_relevant_options()
+build_group_state()
+build_memory_block()
+pick_surface_move_kind()
+build_local_context()
+build_move_instruction()
+build_output_contract()
+```
+
+Despite the historical name `build_relevant_options()`, the function now returns
+**all options**. Option filtering was removed because it caused participants to
+deny valid options.
+
+### `prompts.py`
+
+Single registry of LLM-facing prose.
+
+Contains:
+
+- phase instructions;
+- interaction instructions;
+- position-discipline instructions;
+- surface-move hints;
+- setup prompts;
+- simulation prompts;
+- moderator prompts;
+- repair prompts.
+
+Important functions:
+
+```text
+option_generation()
+names_and_roles()
+persona_group_generation()
+agent_beliefs_group()
+sim_turn_compact()
+surface_move_hint()
+repair_repetition()
+repair_ack_loop()
+repair_semantic_repeat()
+repair_invalid_option()
+repair_vote()
+repair_confirmation()
+repair_invented_fact()
+moderator_ask_holdout()
+moderator_force_close()
+```
+
+Prompting should avoid forcing every turn into:
+
+```text
+acknowledge previous point -> name option -> state pro/con -> restate preference
+```
+
+Surface moves are only lightweight form hints. They are not a return to a heavy
+dialogue-act planner.
+
+`option_generation()` now creates self-contained fictional scenario facts. For
+logistics topics it may generate concrete values such as prices, durations,
+walking times, difficulty scores, wait estimates, or comfort ratings. For
+abstract topics it uses scored dimensions such as policy relevance, clarity,
+hands-on potential, and scope difficulty. These values are scenario facts only;
+they are not real-time claims. The purpose is to give Sims enough grounded
+material to discuss without asking fake lookup questions.
+
+### `state.py`
+
+Tracks structured dialogue information.
+
+Still contains rich structures from earlier versions:
+
+```text
+DialogueAct
+StanceUpdate
+StanceTable
+OptionState
+DiscourseGraph
+ChallengeRecord
+ParticipantState
+StructuredState
+StateTracker
+```
+
+Important current distinction:
+
+- these structures are useful for logging, context, and evaluation;
+- they are **not** the main live consensus authority.
+
+The live decision path in `orchestrator.py` uses explicit votes/acceptances and
+private acceptability.
+
+`StateTracker` still extracts useful facts:
+
+- mentioned options;
+- explicit votes;
+- addressees;
+- question targets;
+- stance-like signals for evaluation;
+- point signatures;
+- stated priorities.
+
+### `reasoning.py`
+
+Contains consensus helpers, fact-checking, and evaluation metrics.
+
+Important functions/classes:
+
+```text
+ConsensusEngine
+fisher_ratios()
+deliberation_metrics()
+fact_check()
+repair_directive()
+evaluation_summary()
+```
+
+Current rule:
+
+- `fact_check()` remains runtime-relevant for option-grounding and repairs;
+- Fisher and deliberation metrics are evaluation-only;
+- `ConsensusEngine` may still compute context/evaluation states, but final live
+  decisions should rely on explicit control state in `orchestrator.py`.
+
+### `moderation.py`
+
+Controls moderator interventions and moderator text.
+
+Important methods:
+
+```text
+should_narrow()
+should_intervene()
+detect_info_chase()
+detect_facilitatable_disagreement()
+run_intervention()
+_detect_outlier()
+```
+
+The moderator is constrained by `verifier.verify_moderator_turn()`.
+
+Allowed moderator behaviour:
+
+- introduce the task;
+- ask for priorities;
+- ask for explicit votes;
+- ask a named holdout whether they can live with a candidate;
+- reframe missing information into a judgment call;
+- announce success, compromise, force-close, or failure honestly.
+
+Forbidden moderator behaviour:
+
+- invent new options;
+- combine options unless config explicitly allows it;
+- claim consensus before enough acceptance exists;
+- force-close while a targeted compromise path remains.
+
+### `utils.py`
+
+Deterministic helper module.
+
+Main class:
+
+```text
+OptionResolver
+```
+
+Important functions:
+
+```text
+options_referenced()
+participant_turn_count()
+last_n_turns_for()
+current_votes()
+```
+
+`OptionResolver` maps natural option mentions to option labels. It supports:
+
+- `Option A`;
+- bare letters such as `A` or `B` in vote/acceptance contexts;
+- aliases from option titles;
+- vote extraction.
+
+It is intentionally not a full semantic stance parser.
+
+### `logger.py`
+
+Writes two outputs per dialogue:
+
+```text
+.txt
+.eval.json
+```
+
+The transcript file contains the readable chat and persona block.
+
+The eval JSON contains structured metadata, including:
+
+- topic;
+- outcome;
+- final option;
+- tokens;
+- participants;
+- traits;
+- beliefs;
+- turns;
+- verification results;
+- explicit votes;
+- explicit accepts;
+- explicit rejects;
+- outcome reason;
+- evaluation metrics.
+
+The logger may still include older rich traces for analysis. Those traces are
+not live-control instructions. `outcome_valid` is based on the explicit live
+control state, not on the old `StanceTable` consensus label.
+
+---
+
+## Runtime flow
+
+The intended current loop is:
+
+```text
+setup
+opening
+negotiation/discussion
+narrowing/vote
+targeted compromise
+finalize
+optional closure
+logging
+```
+
+More concretely:
+
+1. `Orchestrator` generates four options and an opening question.
+2. `PersonaBuilder` creates participants and private beliefs.
+3. The moderator introduces the topic and options.
+4. Each participant states a priority in opening.
+5. The group discusses for a bounded number of turns.
+6. The moderator asks where everyone is landing.
+7. Each participant gives an explicit vote.
+8. If votes match, finalize success.
+9. If votes split, choose a candidate from votes and/or private acceptability.
+10. Ask named holdouts whether they can live with the candidate.
+11. If every participant voted for or explicitly accepted the candidate, finalize
+    `compromise_success`.
+12. If no candidate can be accepted and the budget is exhausted, force-close or
+    fail honestly.
+13. Write transcript and evaluation output.
+
+The most important runtime improvement is that compromise can close immediately
+once explicit acceptance exists. The system should not continue talking after a
+valid compromise has already been reached.
+
+---
+
+## Live decision model
+
+The live decision model is explicit.
+
+Important fields in `DialogueState`:
+
+```text
+explicit_votes
+explicit_accepts
+explicit_rejects
+candidate_option
+preferred_option
+outcome_reason
+pending_confirmation_target
+pending_confirmation_candidate
+required_reason_target
+```
+
+Examples:
+
+```text
+"I'd go with Option B."       -> explicit vote for B
+"I can live with B."          -> explicit acceptance of B
+"Not sold on B."              -> explicit rejection/soft rejection of B
+"No, B doesn't work for me."  -> explicit rejection of B
+```
+
+A candidate is accepted when every participant has either:
+
+- voted for it; or
+- explicitly accepted it.
+
+This is the key rule behind `compromise_success`.
+
+Short confirmation replies are bound to moderator context. If the moderator asks
+"Léa, could you live with Option C?", then "that's fine", "yeah", or
+"I'd still prefer A, but yeah" is recorded as Léa accepting C. "Not really"
+or "no" is recorded as rejecting C. This avoids the earlier bug where
+context-free parsing ignored bare confirmation answers.
+
+Before voting, the orchestrator can request one concrete option-specific reason
+from participants who have not yet contributed one. This prevents dialogues from
+narrowing after only logistics questions or shallow rule-out fragments.
+
+Private acceptability is used to choose a plausible candidate to test, not to
+pretend that the public transcript already contains agreement.
+
+---
+
+## Question routing
+
+Questions are allowed, but they must not dominate the chat.
+
+Earlier versions allowed too many random participant questions, which caused
+chains such as:
+
+```text
+question -> answer -> question -> answer -> question -> answer
+```
+
+Current policy:
+
+- random question surface moves are disabled or strongly reduced;
+- open participant questions do not create hard obligations for arbitrary
+  non-askers;
+- direct questions still route to the addressed speaker;
+- implicit previous-speaker questions route to the previous speaker if the
+  question repeats their priority/keyword.
+
+This preserves useful question-answer behaviour without turning the discussion
+into an interrogation sequence.
+
+---
+
+## Surface moves
+
+Surface moves are lightweight hints for local style variation.
+
+They are meant to create outputs such as:
+
+```text
+Yeah.
+Not sold.
+That might work.
+Can we rule that one out?
+I still prefer C, but I can live with B.
+Then we're basically between A and D.
+```
+
+They are **not** a heavy dialogue-act planner.
+
+Typical surface moves:
+
+```text
+ACK_ONLY
+SHORT_NO
+ANSWER
+NEW_REASON
+PUSHBACK
+COMPROMISE
+DECISION_MOVE
+QUESTION
+```
+
+Questions should be rare in normal discussion. Compromise and decision-move
+turns are especially important because they let the chat progress.
+
+---
+
+## Verifier and repair philosophy
+
+The verifier exists because prompting alone is not enough.
+
+It catches common failures after generation:
+
+- invalid options;
+- option denial;
+- invented option facts;
+- fact-chasing questions about live availability, waitlists, exact schedules, or things someone would need to call/check;
+- repeated points;
+- acknowledgement loops;
+- missing votes;
+- unclear confirmation;
+- fake moderator consensus.
+
+Repair is limited to one attempt. The system should not enter repair loops.
+If a phase-critical message still fails, the simulator can use a deterministic
+fallback.
+
+The verifier is a correctness and quality guardrail, not a replacement for
+good state design.
+
+---
+
+## Moderator philosophy
+
+The moderator helps the group finish.
+
+It should not be an overcreative participant.
+
+Good moderator behaviour:
+
+```text
+Okay, where is everyone landing?
+Luna, you picked C. Could you live with B, or is that a no?
+So B works for everyone as a compromise. Going with B.
+```
+
+Bad moderator behaviour:
+
+```text
+Let's combine B and C.
+Maybe choose B but add features from D.
+No consensus, but I'm calling this agreement.
+```
+
+Force-close is allowed, but it must be honest.
+
+---
+
+## Logging and evaluation
+
+The project is intended to generate many dialogues, so logging matters.
+
+The `.txt` file is for human inspection.
+
+The `.eval.json` file is for systematic analysis.
+
+Important evaluation dimensions:
+
+- valid final option;
+- outcome type;
+- token cost;
+- turn counts;
+- participation balance;
+- explicit votes;
+- explicit accepts/rejects;
+- repair attempts;
+- failed repairs;
+- self-repetition;
+- acknowledgement loops;
+- response-length fit;
+- persona consistency;
+- compromise plausibility.
+
+Later, an external LLM can evaluate transcript quality using the saved persona
+and belief metadata. That should remain offline evaluation, not part of the live
+generation loop.
+
+---
+
+## Expected outcomes
+
+Possible outcomes:
+
+```text
+success
+compromise_success
+force_close
+failed_no_viable_compromise
+```
+
+Definitions:
+
+- `success`: everyone explicitly voted for the same option.
+- `compromise_success`: everyone voted for or explicitly accepted the same
+  option.
+- `force_close`: no full acceptance was reached, but the moderator selected the
+  best available option after the discussion budget was exhausted.
+- `failed_no_viable_compromise`: no honest compromise exists, usually because of
+  explicit rejection or a rare true hard-blocker case.
+
+`force_close` must never be presented as consensus.
+
+---
+
+## Current known priorities
+
+The code is now closer to the intended architecture, but the following areas
+should remain under observation:
+
+1. **Compromise parsing**
+   - Ensure lines like "I can live with B" and "B works for me" are detected.
+   - Ensure soft rejection like "not sold on B" is not counted as acceptance.
+
+2. **Question frequency**
+   - Keep participant questions rare.
+   - Directed and implicit questions should route to the right speaker.
+
+3. **Option generation**
+   - Options should be rich enough to discuss and may include concrete
+     fictional scenario values when the topic supports them.
+   - Flights, hotels, restaurants, hiking trips, and similar logistics topics
+     should usually include a few stable attributes such as price, duration,
+     travel time, wait estimate, difficulty, comfort, or flexibility.
+   - Abstract topics should use scored dimensions instead of fake logistics.
+   - Values are scenario facts, not real-time claims. Do not generate fields
+     that invite live checking such as "availability unknown", "waitlist
+     unknown", "exact refund policy unclear", or "schedule uncertain".
+
+4. **Closure length**
+   - Do not force every participant to produce a closing line if the decision is
+     already clear.
+   - After `force_close` or `failed_no_viable_compromise`, the moderator's
+     terminal line should usually be the end. Participant closings can imply
+     agreement that does not exist.
+
+5. **Old state structures**
+   - `StanceTable`, `DialogueAct`, and `ChallengeRecord` are still present for
+     logging/evaluation compatibility.
+   - They should not regain control over the live outcome path.
+
+6. **Documentation alignment**
+   - If runtime control changes, update this file.
+   - This document should describe what the code actually does, not the older
+     planned architecture.
+
+---
+
+## What not to reintroduce
+
+Do not reintroduce:
+
+- a large dialogue-act planner;
+- challenge-gated narrowing;
+- stance-table-only consensus;
+- heavy reflection memory;
+- unlimited moderator creativity;
+- random question-heavy surface moves;
+- new literature layers before the explicit control loop is stable.
+
+The intended system is not "maximally theoretical". It is a bounded, evaluable,
+literature-informed simulator that produces valid and reasonably natural group
+decision chats.
+
+
+## Round 4 control refinements
+
+The current version adds several dialogue-control refinements:
+
+- The vote round now collects **fresh narrowing-phase votes from every participant**. Discussion-phase support no longer counts as a final vote.
+- Narrowing is delayed by a lightweight discussion-readiness gate. This is not a checklist over all options; one issue may take several turns. The gate requires enough participant turns, at least one concrete option-linked reason from each participant, at least two substantively discussed options, and no active local thread that still needs an answer.
+- The moderator now gives a short rationale before asking a holdout about a compromise candidate instead of always using the same mechanical line.
+- Non-preferred compromise confirmations should include one short reason. Bare lines such as "That's fine" are repaired when the candidate is not the speaker's preferred option.
+- Restaurant option cards now may include `allergen_safety_1_5` and `local_business_1_5`, so safety/local-business concerns can be discussed from scenario facts instead of fake call-ahead questions.
+- Fact-chasing detection now blocks more lookup-like moves, including call-ahead suggestions, rough external cost estimates, allergen-protocol lookup questions, and missing-budget questions.
+- Opening option cards are displayed in a more readable form in the transcript while the structured attribute form remains available internally to the LLM.
+
+---
+
+## Round 5 control fixes
+
+The latest runtime patch focuses on the remaining consensus and question-chain
+failures observed after the Round 4 discussion-control update.
+
+### Consensus / compromise selection
+
+The live compromise path now ranks candidates with an explicit candidate order:
+
+```text
+fresh vote count
+explicit acceptance count
+private acceptability count
+primary-speaker acceptability
+private rejection penalty
+```
+
+If a candidate is explicitly rejected during confirmation, it is excluded from
+later fallback selection. This prevents the earlier bug where the moderator
+asked holdouts about Option B, received acceptance, but then recomputed Option A
+as the closest option and failed the dialogue.
+
+Confirmation parsing now recognizes compromise phrases such as:
+
+```text
+I still prefer Option A, but Option B works well enough.
+Option B works as a compromise.
+Option B is acceptable.
+```
+
+These are bound to the current pending confirmation candidate and recorded as
+explicit acceptance.
+
+### Moderator holdout wording
+
+The moderator no longer repeats the misleading phrase "has the most current
+support" for every tested fallback. Holdout prompts now use more neutral wording
+such as:
+
+```text
+Option B is worth testing as the current candidate.
+Option B looks like the best shared fallback from what everyone said.
+```
+
+This avoids promising that a candidate already has consensus before holdouts
+have answered.
+
+### Question-chain repair
+
+A new verifier issue `QUESTION_CHAIN` repairs messages that ask another question
+when recent participant turns are already question-heavy. The repair prompt asks
+for a short answer, reaction, comparison, or decision move instead of another
+question.
+
+Questions are still allowed, but the system should avoid runs like:
+
+```text
+question -> question -> question -> abstract discussion -> another question
+```
+
+The intended pattern is closer to:
+
+```text
+question -> short answer/reaction -> concrete comparison or decision move
+```
+
+### Good-question acknowledgement loop
+
+The anti-acknowledgement rules now also cover "good question" openings. These
+were starting to replace the earlier "valid point" loop.
+
+
+---
+
+## Round 6 local coherence and shared-compromise fixes
+
+The Round 6 patch addresses the remaining local coherence problems found after
+Round 5.
+
+### Local self-consistency
+
+A participant who has explicitly rejected or ruled out an option should not vote
+for that same option later unless they explicitly say they changed their mind.
+The simulator now repairs narrowing votes such as:
+
+```text
+Earlier: Given the layover, I'd rule out Option B.
+Later:   I'd go with Option B.
+```
+
+Valid alternatives are:
+
+```text
+I'd go with Option A.
+```
+
+or, if the speaker genuinely changes position:
+
+```text
+I know I ruled out B earlier, but I've changed my mind because ...
+```
+
+The live state now treats clear non-question rule-out statements as explicit
+rejections. Question-shaped exploratory lines such as "Can we rule out A?" are
+not automatically treated as final rejection.
+
+### Peer compromise before moderator holdout sequence
+
+When votes split, the moderator no longer immediately performs a repeated
+holdout interrogation. The system first gives participants a short opportunity
+to surface a shared fallback themselves:
+
+```text
+Votes are split. Before I check people one by one, does anyone see a compromise everyone could live with?
+```
+
+One or two Sims may then propose or accept a compromise. The moderator still
+verifies explicit acceptance afterward, but compromise is no longer entirely
+moderator-imposed.
+
+### Less repetitive holdout prompts
+
+Holdout prompts now vary by candidate. The first prompt gives one short
+rationale. Later prompts for the same candidate use a shorter "same fallback"
+form instead of repeating the full explanation.
+
+Example first prompt:
+
+```text
+Option A is a possible fallback from the votes. Liam, you picked Option B; could Option A work for you as a compromise, or is it a no?
+```
+
+Example follow-up:
+
+```text
+Noah, same fallback: you picked Option C. Could Option A work for you too, or is it a no?
+```
+
+### Candidate-specific final rationale
+
+Final compromise explanations now describe actual support for the final
+candidate only. The moderator should no longer finalize Option A by mentioning
+an unrelated rejection of Option D.
+
+Expected final form:
+
+```text
+Option A is the shared fallback: Ava picked it, and Liam, Noah can live with it. Compromise works -- Option A.
+```
+
+### Stronger question handling
+
+Open participant questions are now treated as answer-worthy by the next selected
+speaker, even when the question is not explicitly addressed by name. This nudges
+turns toward short answers or reactions instead of another broad question.
+
+`QUESTION_CHAIN` detection is also stricter: another participant question is
+repaired if a recent participant question is still active. The repair prompt
+asks for a short answer, concrete comparison, or compromise move.
+
+### Option attribute mismatch detection
+
+The verifier now catches direct changes to listed scenario facts. Example:
+
+```text
+Option B says: departs 14:00
+Generated: the 3 pm departure for Option B
+```
+
+This now raises `OPTION_ATTRIBUTE_MISMATCH` and is repaired. The same check also
+covers obvious price mismatches when a listed price exists.
+
+### Rule-out repetition
+
+Repeated "rule out X" moves are repaired when an option was already rejected or
+ruled out. This reduces pruning-tree conversations and pushes later turns toward
+comparison, compromise, or a concrete decision move.
+
+## Round 7 conditional compromise update
+
+The system now distinguishes between three compromise types:
+
+1. A plain single-option decision, e.g. `Option C`.
+2. A single option with execution terms, e.g. `Option C, if we split it over two nights`.
+3. A true multi-option/hybrid plan, which remains disallowed unless the task explicitly supports multi-step planning.
+
+Runtime compromise state now includes:
+
+```text
+compromise_terms: dict[option, list[str]]
+confirmation_rejected_options: set[option]
+```
+
+Important control changes:
+
+- Discussion-phase objections such as `not sold on C` no longer hard-exclude a candidate. Only a targeted confirmation rejection does that.
+- The moderator tests the best public candidate first, especially if it has majority support, and may include emerged terms like `split it over two nights`, `add a brief intro`, or `go early`.
+- Peer compromise turns now try to make the current candidate work before drifting to unrelated fallbacks.
+- Final compromise rationale mentions the actual final candidate, who voted for it, who accepted it, and any accepted terms.
+- A participant may not vote for an option outside their preferred/acceptable set unless the line explicitly marks a change of mind.
+
+The final decision is still one of A-D. Conditional terms are attached to that option and logged, but they do not create Option E.
+

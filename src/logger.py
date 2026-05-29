@@ -199,8 +199,16 @@ class DialogueLogger:
                 "vote_flips_per_speaker": dict(state.vote_changes),
                 "confirmation_rejection_count": state.confirmation_rejection_count,
                 "rejected_options_by_speaker": dict(state.rejected_options_by_speaker),
+                "explicit_votes": dict(getattr(state, "explicit_votes", {})),
+                "explicit_accepts": {
+                    k: sorted(v) for k, v in getattr(state, "explicit_accepts", {}).items()
+                },
+                "explicit_rejects": getattr(state, "explicit_rejects", {}),
+                "confirmation_rejected_options": sorted(getattr(state, "confirmation_rejected_options", set())),
+                "compromise_terms": getattr(state, "compromise_terms", {}),
                 "final_candidate_option": state.candidate_option,
                 "final_preferred_option": state.preferred_option,
+                "outcome_reason": getattr(state, "outcome_reason", ""),
             },
             "personas": [s.persona.as_dict() for s in sims],
             "turns": self._turn_records,
@@ -233,10 +241,34 @@ class DialogueLogger:
             turn_records=self._turn_records,
         )
 
+        # Live control no longer uses StanceTable consensus as the source of
+        # truth. Outcome validity must therefore be evaluated against the
+        # explicit control state: final option is valid and, for success /
+        # compromise_success, every participant either voted for or explicitly
+        # accepted it.
+        valid_letters = {"A", "B", "C", "D"}
+        final_candidate = state.preferred_option or state.candidate_option
+        if outcome in {"success", "compromise_success"} and final_candidate in valid_letters:
+            all_accepted = True
+            for sim in sims:
+                name = sim.name
+                voted = getattr(state, "explicit_votes", {}).get(name) == final_candidate
+                accepted = final_candidate in getattr(state, "explicit_accepts", {}).get(name, set())
+                if not (voted or accepted):
+                    all_accepted = False
+                    break
+            meta["evaluation"]["outcome_valid"] = all_accepted
+        elif outcome == "force_close":
+            meta["evaluation"]["outcome_valid"] = final_candidate in valid_letters
+        elif outcome == "failed_no_viable_compromise":
+            meta["evaluation"]["outcome_valid"] = True
+        else:
+            meta["evaluation"]["outcome_valid"] = False
+
         if structured is not None:
             names = [s.name for s in sims]
             meta["fisher_ratios"] = fisher_ratios(structured)              # eval-only
-            meta["deliberation"] = deliberation_metrics(structured, names) # gating signals
+            meta["deliberation"] = deliberation_metrics(structured, names) # eval-only; no live control
             meta["consensus_state_final"] = structured.consensus_state
             meta["is_hard_blocker"] = {
                 name: ps.is_true_hard_blocker

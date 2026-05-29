@@ -32,7 +32,7 @@ from prompt_context import (
     pick_surface_move_kind,
 )
 from utils import OptionResolver
-from verifier import VerificationResult, verify_participant_turn
+from verifier import VerificationIssue, VerificationResult, verify_participant_turn
 
 if TYPE_CHECKING:
     from orchestrator import DialogueState
@@ -105,6 +105,12 @@ class Simulator:
             phase=state.phase, has_voted=self._has_voted(history),
             final_option=getattr(state, "preferred_option", None) if is_closure else None,
         )
+        if getattr(state, "required_reason_target", None) == self.name:
+            phase_instr += (
+                "\nBefore the group votes, add ONE concrete reason about a specific option. "
+                "Do not ask for live availability, waitlists, schedules, guarantees, or things "
+                "someone would need to call/check. Decide from the listed trade-offs."
+            )
 
         n_recent = cfg.prompt_budget.recent_turns_short
 
@@ -126,7 +132,9 @@ class Simulator:
         # pending question) so we don't fight the existing instruction.
         last_line = self._last_participant_line(history)
         last_has_question = bool(
-            last_line and "?" in last_line and last_line.split(":", 1)[0].strip() != self.name
+            last_line and "?" in last_line
+            and last_line.split(":", 1)[0].strip() != self.name
+            and (state.pending_question_target in (None, self.name))
         )
         surface_kind = None if is_closure else pick_surface_move_kind(
             phase=state.phase,
@@ -172,8 +180,13 @@ class Simulator:
     ) -> str:
         """Verify the generated text; repair once if needed.
 
-        Stores a summary dict in self._last_verification for the logger.
-        Returns the (possibly repaired) text.
+        The logger should reflect the text that is actually emitted. Earlier
+        versions logged the *original* failed verification even when a repair or
+        deterministic fallback produced a valid final line. That made obvious
+        fallback votes such as "I'd go with Option A" appear as
+        MISSING_EXPLICIT_VOTE in .eval.json. This method now re-verifies the
+        emitted text and stores final-result metadata, with original issue codes
+        preserved separately for diagnostics.
         """
         if not cfg.verification.enabled:
             self._last_verification = None
@@ -182,54 +195,78 @@ class Simulator:
         ps = structured.participants.get(self.name) if structured else None
         candidate = state.candidate_option or state.current_leading_option
 
-        result: VerificationResult = verify_participant_turn(
-            text=text,
-            speaker_name=self.name,
-            phase=state.phase,
-            options=self.options,
-            history=history,
-            persona_state=ps,
-            resolver=self._resolver,
-            candidate=candidate,
-        )
+        def _verify(candidate_text: str) -> VerificationResult:
+            return verify_participant_turn(
+                text=candidate_text,
+                speaker_name=self.name,
+                phase=state.phase,
+                options=self.options,
+                history=history,
+                persona_state=ps,
+                resolver=self._resolver,
+                candidate=candidate,
+            )
+
+        result = _verify(text)
+        extra_issue = self._local_consistency_issue(text, state)
+        if extra_issue:
+            result.issues.append(extra_issue)
+            result.ok = False
+            result.needs_repair = True
+        if getattr(state, "required_reason_target", None) == self.name:
+            weak_reason = self._reason_floor_issue(text)
+            if weak_reason:
+                result.issues.append(weak_reason)
+                result.ok = False
+                result.needs_repair = True
 
         if not result.needs_repair:
             self._last_verification = result.as_dict() if result.issues else None
             return text
 
-        # --- Attempt repair -----------------------------------------------
+        original_codes = [i.code for i in result.issues if i.severity == "repair"]
+
+        # --- Attempt LLM repair -----------------------------------------
         repair_prompt = self._build_repair_prompt(text, gen_prompt, result, state)
         repaired = self._llm.generate(repair_prompt).strip()
-
-        # Strip name prefix again
         if repaired.lower().startswith(f"{self.name.lower()}:"):
             repaired = repaired.split(":", 1)[1].strip()
 
-        # Verify the repaired text
-        result2: VerificationResult = verify_participant_turn(
-            text=repaired,
-            speaker_name=self.name,
-            phase=state.phase,
-            options=self.options,
-            history=history,
-            persona_state=ps,
-            resolver=self._resolver,
-            candidate=candidate,
-        )
+        if repaired:
+            result2 = _verify(repaired)
+            extra2 = self._local_consistency_issue(repaired, state)
+            if extra2:
+                result2.issues.append(extra2)
+                result2.ok = False
+                result2.needs_repair = True
+            if not result2.needs_repair:
+                final_meta = result2.as_dict()
+                final_meta["repair_attempted"] = True
+                final_meta["repair_succeeded"] = True
+                final_meta["original_issues"] = original_codes
+                self._last_verification = final_meta
+                return repaired
 
-        result.repair_attempted = True
-        result.repair_succeeded = not result2.needs_repair
-        self._last_verification = result.as_dict()
-
-        if not result2.needs_repair and repaired:
-            return repaired
-
-        # --- Deterministic fallback for phase-critical failures -----------
+        # --- Deterministic fallback for phase-critical failures ----------
         fallback = self._deterministic_fallback(state, result)
         if fallback:
+            fallback_result = _verify(fallback)
+            extra_fb = self._local_consistency_issue(fallback, state)
+            if extra_fb:
+                fallback_result.issues.append(extra_fb)
+                fallback_result.ok = False
+                fallback_result.needs_repair = True
+            final_meta = fallback_result.as_dict()
+            final_meta["repair_attempted"] = True
+            final_meta["repair_succeeded"] = not fallback_result.needs_repair
+            final_meta["original_issues"] = original_codes
+            self._last_verification = final_meta
             return fallback
 
-        # Accept original if no fallback is applicable
+        # Accept original if no fallback is applicable; log the failed result.
+        result.repair_attempted = True
+        result.repair_succeeded = False
+        self._last_verification = result.as_dict()
         return text
 
     def _build_repair_prompt(
@@ -247,10 +284,23 @@ class Simulator:
         """
         repair_codes = {i.code for i in result.issues if i.severity == "repair"}
 
+        if "INCONSISTENT_VOTE_WITH_PRIOR_REJECTION" in repair_codes or "INCONSISTENT_VOTE_WITH_PERSONA" in repair_codes:
+            rejected = self._rejected_options_for_self(state)
+            return prompts.repair_inconsistent_vote(original_text, self.options, rejected)
+
+        if "REPEATED_RULE_OUT" in repair_codes:
+            return prompts.repair_repeated_rule_out(original_text)
+
+        if "OPTION_ATTRIBUTE_MISMATCH" in repair_codes:
+            return prompts.repair_attribute_mismatch(original_text, self.options)
+
         if "MISSING_EXPLICIT_VOTE" in repair_codes:
             return prompts.repair_vote(self.options)
 
-        if "UNCLEAR_CONFIRMATION" in repair_codes:
+        if "WEAK_REASON_FLOOR" in repair_codes:
+            return prompts.repair_reason_floor(original_text, self.options)
+
+        if "UNCLEAR_CONFIRMATION" in repair_codes or "WEAK_COMPROMISE_CONFIRMATION" in repair_codes:
             candidate = state.candidate_option or state.current_leading_option or "?"
             return prompts.repair_confirmation(candidate)
 
@@ -259,6 +309,12 @@ class Simulator:
 
         if "INVENTED_OPTION_FACT" in repair_codes:
             return prompts.repair_invented_fact(gen_prompt)
+
+        if "FACT_CHASING_QUESTION" in repair_codes:
+            return prompts.repair_fact_chasing_question(original_text, self.options)
+
+        if "QUESTION_CHAIN" in repair_codes:
+            return prompts.repair_question_chain(original_text)
 
         # Update.md §4.3 -- group-level acknowledgement loop.
         if "ACK_LOOP" in repair_codes:
@@ -280,6 +336,95 @@ class Simulator:
         # Default: treat like repetition
         return prompts.repair_repetition(original_text)
 
+    def _reason_floor_issue(self, text: str) -> Optional[VerificationIssue]:
+        """Require a concrete option-linked reason during the pre-vote floor."""
+        if len(text.split()) < 8:
+            return VerificationIssue(
+                code="WEAK_REASON_FLOOR",
+                severity="repair",
+                message="Reason-floor turn is too short or vague.",
+            )
+        refs = self._resolver.options_in(text)
+        if not refs:
+            return VerificationIssue(
+                code="WEAK_REASON_FLOOR",
+                severity="repair",
+                message="Reason-floor turn does not mention a specific option.",
+            )
+        markers = re.compile(
+            r"\b(because|since|due to|so |offers?|helps?|fits?|matters?|"
+            r"worth|useful|better|worse|risk|tradeoff|drawback|concern|"
+            r"price|cost|wait|time|travel|noise|menu|variety|safety|"
+            r"allergen|local|quiet|loud|comfort|amenit|flexib|reliable)\b",
+            re.I,
+        )
+        if not markers.search(text):
+            return VerificationIssue(
+                code="WEAK_REASON_FLOOR",
+                severity="repair",
+                message="Reason-floor turn lacks a concrete attribute/trade-off marker.",
+            )
+        return None
+
+    def _vote_ref(self, text: str) -> Optional[str]:
+        vote = self._resolver.vote_in(text)
+        if vote:
+            return vote
+        m = re.search(
+            r"\b(?:i\s*(?:'d|would)?\s*(?:go\s+with|pick|choose|prefer|vote\s+for)|"
+            r"i\s*(?:'m|am)\s*(?:leaning\s+(?:toward|towards)|going\s+with)|"
+            r"my\s+(?:pick|choice|vote)\s+(?:is|would\s+be))\s+(?:Option\s+)?([A-D])\b",
+            text,
+            re.I,
+        )
+        return m.group(1).upper() if m else None
+
+    def _rejected_options_for_self(self, state: "DialogueState") -> set[str]:
+        rejects = getattr(state, "explicit_rejects", {}).get(self.name, {}) or {}
+        return set(rejects.keys())
+
+    def _changed_mind_marker(self, text: str) -> bool:
+        return bool(re.search(
+            r"\b(?:changed my mind|change my mind|reconsidered|after thinking|on second thought|actually|despite what I said|I know I ruled it out)\b",
+            text,
+            re.I,
+        ))
+
+    def _local_consistency_issue(self, text: str, state: "DialogueState") -> Optional[VerificationIssue]:
+        """Checks that need live dialogue state rather than only the verifier inputs."""
+        if state.phase == "narrowing":
+            vote = self._vote_ref(text)
+            beliefs = self.persona.beliefs
+            if vote and vote in self._rejected_options_for_self(state) and not self._changed_mind_marker(text):
+                return VerificationIssue(
+                    code="INCONSISTENT_VOTE_WITH_PRIOR_REJECTION",
+                    severity="repair",
+                    message=f"Speaker previously ruled out Option {vote} but now votes for it without saying they changed their mind.",
+                )
+            if vote and beliefs:
+                allowed = {beliefs.preferred, *(beliefs.acceptable or [])}
+                if vote not in allowed and not self._changed_mind_marker(text):
+                    return VerificationIssue(
+                        code="INCONSISTENT_VOTE_WITH_PERSONA",
+                        severity="repair",
+                        message=f"Speaker voted for Option {vote}, which is neither preferred nor acceptable in their private belief state.",
+                    )
+        # Do not keep asking to rule out the same option once the discussion has
+        # already locally rejected it. This was producing pruning-tree chats.
+        m = re.search(r"\b(?:can we |let(?:'s| us) |we should |i(?:'d| would) )?rule out\s+(?:Option\s+)?([A-D])\b", text, re.I)
+        if m and state.phase == "negotiation":
+            opt = m.group(1).upper()
+            recent = "\n".join(self.options[-0:] + [])  # dummy to keep type simple
+            # Look at raw dialogue history via state is unavailable here; use
+            # explicit rejections already parsed by orchestrator.
+            if any(opt in rejects for rejects in getattr(state, "explicit_rejects", {}).values()):
+                return VerificationIssue(
+                    code="REPEATED_RULE_OUT",
+                    severity="repair",
+                    message=f"Option {opt} was already ruled out or rejected recently.",
+                )
+        return None
+
     def _deterministic_fallback(
         self,
         state: "DialogueState",
@@ -289,14 +434,24 @@ class Simulator:
         codes = {i.code for i in result.issues}
         beliefs = self.persona.beliefs
 
-        if "MISSING_EXPLICIT_VOTE" in codes and state.phase == "narrowing":
+        if ("MISSING_EXPLICIT_VOTE" in codes or "INCONSISTENT_VOTE_WITH_PRIOR_REJECTION" in codes or "INCONSISTENT_VOTE_WITH_PERSONA" in codes) and state.phase == "narrowing":
+            rejected = self._rejected_options_for_self(state)
+            options = []
+            if beliefs:
+                options.extend([beliefs.preferred] + list(beliefs.acceptable or []))
+            options.extend(list(self._resolver.letters or []))
+            for opt in options:
+                if opt and opt not in rejected:
+                    return f"I'd go with Option {opt}."
             preferred = beliefs.preferred if beliefs else (self._resolver.letters[0] if self._resolver.letters else "A")
             return f"I'd go with Option {preferred}."
 
-        if "UNCLEAR_CONFIRMATION" in codes and state.phase == "confirmation":
+        if ("UNCLEAR_CONFIRMATION" in codes or "WEAK_COMPROMISE_CONFIRMATION" in codes) and state.phase == "confirmation":
             candidate = state.candidate_option or state.current_leading_option
             if candidate and beliefs and candidate in (beliefs.rejected or []):
                 return "No, I'm still not convinced."
+            if candidate and beliefs and candidate != beliefs.preferred:
+                return f"I still prefer Option {beliefs.preferred}, but Option {candidate} works well enough."
             return "Yeah, that works for me."
 
         return None
@@ -324,7 +479,9 @@ class Simulator:
 
         last = self._last_participant_line(history)
         last_has_question = bool(
-            last and "?" in last and last.split(":", 1)[0].strip() != self.name
+            last and "?" in last
+            and last.split(":", 1)[0].strip() != self.name
+            and state.pending_question_target in (None, self.name)
         )
 
         last_claim_speaker: Optional[str] = None
@@ -343,7 +500,7 @@ class Simulator:
         )
 
     def _position_discipline(self, state: "DialogueState") -> str:
-        if state.phase not in ("negotiation", "narrowing", "emergence", "confirmation"):
+        if state.phase not in ("negotiation", "compromise", "narrowing", "emergence", "confirmation"):
             return ""
         beliefs = self.persona.beliefs
         if not beliefs:

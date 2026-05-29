@@ -42,10 +42,10 @@ _CATEGORY_WORDS = {
 _FIRST_PERSON_VOTE = re.compile(
     r"\b("
     r"i\s+(?:prefer|pick|choose|want|vote(?:\s+for)?|like|say|favou?r|voted|picked|chose)|"
-    r"i(?:'m|\s+am)\s+(?:voting(?:\s+for)?|going\s+with|for|leaning(?:\s+toward(?:s)?)?|sold\s+on|set\s+on)|"
-    r"i(?:'d|\s+would)\s+(?:go\s+with|choose|prefer|say|pick|vote(?:\s+for)?)|"
-    r"i'?ll\s+(?:go\s+with|pick|take|vote(?:\s+for)?)|"
-    r"let'?s\s+(?:go\s+with|do|pick|book|try)|"
+    r"i(?:['’]m|\s+am)\s+(?:voting(?:\s+for)?|going\s+with|for|leaning(?:\s+toward(?:s)?)?|sold\s+on|set\s+on)|"
+    r"i(?:['’]d|\s+would)\s+(?:go\s+with|choose|prefer|say|pick|vote(?:\s+for)?)|"
+    r"i['’]?ll\s+(?:go\s+with|pick|take|vote(?:\s+for)?)|"
+    r"let['’]?s\s+(?:go\s+with|do|pick|book|try)|"
     r"going\s+with|"
     r"my\s+(?:pick|choice|vote|preference)\s+(?:is|would\s+be)|"
     r"count\s+me\s+(?:in|for)"
@@ -55,7 +55,7 @@ _FIRST_PERSON_VOTE = re.compile(
 
 _NEGATION_BEFORE = re.compile(
     r"\b(not|never|rather\s+not|anything\s+but|except|avoid|skip|hate|"
-    r"dislike|reject|refuse|no\s+to|nope\s+to|don'?t\s+(?:want|like))\s*$",
+    r"dislike|reject|refuse|no\s+to|nope\s+to|don['’]?t\s+(?:want|like))\s*$",
     re.I,
 )
 
@@ -63,7 +63,7 @@ _NEGATION_BEFORE = re.compile(
 _VOTE_AFTER = re.compile(
     r"^\W*(?:"
     r"works?(?:\s+for\s+me|\s+best)?|sounds?\s+good|for\s+me|it\s+is|"
-    r"all\s+the\s+way|i'?m\s+in|gets?\s+my\s+vote|is\s+my\s+pick|wins?"
+    r"all\s+the\s+way|i['’]?m\s+in|gets?\s+my\s+vote|is\s+my\s+pick|wins?"
     r")\b",
     re.I,
 )
@@ -139,11 +139,29 @@ class OptionResolver:
     def _match(self, letter: str, text: str) -> Optional[re.Match]:
         return self._regex[letter].search(text)
 
+    def _bare_letter_matches(self, text: str) -> list[tuple[int, int, str]]:
+        """Conservative chat shorthand: bare uppercase A-D.
+
+        OptionResolver's main aliases avoid bare letters to reduce false positives,
+        but generated chats often say "I can live with B" or "still prefer C".
+        We add uppercase-only single-letter matches for live chat parsing.
+        """
+        matches: list[tuple[int, int, str]] = []
+        for letter in self.letters:
+            for m in re.finditer(rf"(?<![A-Za-z]){letter}(?![A-Za-z])", text):
+                matches.append((m.start(), m.end(), letter))
+        return matches
+
     def options_in(self, text: str) -> list[str]:
-        """All options referenced in the text, by letter or alias."""
-        hits = [(m.start(), l) for l in self.letters if (m := self._match(l, text))]
+        """All options referenced in the text, by letter, bare shorthand, or alias."""
+        hits = [(m.start(), m.end(), l) for l in self.letters if (m := self._match(l, text))]
+        hits.extend(self._bare_letter_matches(text))
         hits.sort(key=lambda x: x[0])
-        return [l for _, l in hits]
+        result: list[str] = []
+        for _, _, l in hits:
+            if l not in result:
+                result.append(l)
+        return result
 
     def option_mention_spans(self, text: str) -> list[tuple[int, int]]:
         """All (start, end) spans where any option letter or alias appears.
@@ -153,6 +171,35 @@ class OptionResolver:
             for m in self._regex[letter].finditer(text):
                 spans.append(m.span())
         return spans
+
+
+    def _vote_refs(self, text: str) -> list[tuple[int, int, str]]:
+        """Option references for vote parsing, deduplicated.
+
+        The normal regex can match both "Option A" and the bare shorthand "A"
+        inside the same phrase. If we keep both, "Option A for me" looks like
+        a comparison with two references and is rejected. For voting we merge
+        overlapping same-letter spans and keep the widest/earliest span.
+        """
+        refs = [(m.start(), m.end(), l) for l in self.letters if (m := self._match(l, text.lower()))]
+        refs.extend(self._bare_letter_matches(text))
+        refs.sort(key=lambda x: (x[0], -(x[1] - x[0])))
+
+        merged: list[tuple[int, int, str]] = []
+        for start, end, letter in refs:
+            duplicate = False
+            for i, (s0, e0, l0) in enumerate(merged):
+                overlaps = not (end <= s0 or start >= e0)
+                if letter == l0 and overlaps:
+                    # Keep the wider span; this preserves "Option A" over "A".
+                    if (end - start) > (e0 - s0):
+                        merged[i] = (start, end, letter)
+                    duplicate = True
+                    break
+            if not duplicate:
+                merged.append((start, end, letter))
+        merged.sort(key=lambda x: x[0])
+        return merged
 
     def vote_in(self, text: str) -> Optional[str]:
         """The single option this turn commits to, or None.
@@ -168,10 +215,9 @@ class OptionResolver:
         words = t.split()
         lead = words[0].strip(",.!'") if words else ""
 
-        refs = [(m.start(), m.end(), l) for l in self.letters if (m := self._match(l, t))]
+        refs = self._vote_refs(text)
         if not refs:
             return None
-        refs.sort(key=lambda x: x[0])
 
         pref = _FIRST_PERSON_VOTE.search(t)
         soft = _SOFT_SUGGEST.search(t)

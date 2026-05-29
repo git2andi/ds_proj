@@ -1,24 +1,24 @@
 """
 orchestrator.py
 ---------------
-Orchestrator -- coordinates a single dialogue run.
+Coordinates one dialogue run.
 
-Responsibilities:
-  1. Setup       generate options + opening (one LLM call)
-  2. State       phase, leading option, turn counts
-  3. Main loop   drive rounds, detect consensus, fire moderator lines
-  4. Conclusion  narrowing, confirmation, closure, force-close
+Refactored runtime model:
+  - The LLM only writes the next utterance.
+  - `policy.select_next_speakers()` only routes speakers.
+  - Live decisions use explicit votes + explicit accept/reject statements.
+  - The older rich `StateTracker` still exists for logging/evaluation, but it no
+    longer decides when the dialogue is done.
 
-Single decision path:
-  - Speaker selection : policy.select_next_speakers (SSJ cascade, one speaker/round)
-  - Consensus         : reasoning.ConsensusEngine (public stances only)
-  - Turn prompt       : prompts.sim_turn_compact via simulator
+This removes the previous failure mode where stance-table inference, open
+question invitations, challenge gates, and force-close logic kept a dialogue
+running after a workable compromise already existed.
 """
 
 from __future__ import annotations
 
 import datetime
-import random
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Optional
@@ -27,24 +27,14 @@ import prompts
 from config_loader import cfg
 from llm_client import get_llm_client
 from logger import DialogueLogger
-from moderation import ModerationEngine, clean_moderator_line
-from policy import (
-    repetition_pressure as compute_repetition_pressure,
-    sample_hard_blocker,
-    select_next_speakers,
-)
-from reasoning import ConsensusEngine
+from moderation import ModerationEngine
+from policy import extract_discourse, repetition_pressure as compute_repetition_pressure, sample_hard_blocker, select_next_speakers
 from state import StateTracker
-from utils import (
-    OptionResolver,
-    current_votes,
-    last_n_turns_for,
-    participant_turn_count,
-)
+from utils import OptionResolver, participant_turn_count
 
 
 # ---------------------------------------------------------------------------
-# DialogueState
+# Live dialogue state
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -57,37 +47,87 @@ class DialogueState:
 
     preferred_option: Optional[str] = None
     current_leading_option: Optional[str] = None
+    candidate_option: Optional[str] = None
 
     last_addressed: Optional[str] = None
     pending_question_target: Optional[str] = None
-
-    repetition_pressure: float = 0.0
-
-    stall_rounds: int = 0
-    post_narrowing_rounds: int = 0
-
-    last_rejected_option: Optional[str] = None
-    last_rejecting_speaker: Optional[str] = None
-    rejected_options_by_speaker: dict = field(default_factory=dict)
-    consensus_cooldown: int = 0
-
-    nudged_participants: set[str] = field(default_factory=set)
     priority_next_speaker: Optional[str] = None
 
-    vote_changes: dict = field(default_factory=dict)
-    last_known_vote: dict = field(default_factory=dict)
-
-    has_entered_emergence: bool = False
-    candidate_option: Optional[str] = None
-
-    info_gap_cooldown: int = 0
-    facilitate_cooldown: int = 0
+    repetition_pressure: float = 0.0
+    stall_rounds: int = 0
+    post_narrowing_rounds: int = 0
     confirmation_rejection_count: int = 0
 
+    # Live-control state. These are the authoritative decision signals.
+    explicit_votes: dict[str, str] = field(default_factory=dict)
+    explicit_accepts: dict[str, set[str]] = field(default_factory=dict)
+    explicit_rejects: dict[str, dict[str, str]] = field(default_factory=dict)
 
-# ---------------------------------------------------------------------------
-# Orchestrator
-# ---------------------------------------------------------------------------
+    # Context for short confirmation replies. When the moderator asks
+    # "Léa, could you live with Option C?", a bare "that's fine" must be
+    # recorded as Léa accepting C.
+    pending_confirmation_target: Optional[str] = None
+    pending_confirmation_candidate: Optional[str] = None
+
+    # One-shot prompt nudge used before voting if a participant has not yet
+    # contributed a concrete option-specific reason.
+    required_reason_target: Optional[str] = None
+
+    # Kept for logger compatibility.
+    vote_changes: dict = field(default_factory=dict)
+    last_known_vote: dict = field(default_factory=dict)
+    rejected_options_by_speaker: dict = field(default_factory=dict)
+    last_rejected_option: Optional[str] = None
+    last_rejecting_speaker: Optional[str] = None
+    consensus_cooldown: int = 0
+    nudged_participants: set[str] = field(default_factory=set)
+    has_entered_emergence: bool = False
+    info_gap_cooldown: int = 0
+    facilitate_cooldown: int = 0
+    outcome_reason: str = ""
+
+    # Moderator style/control: avoid repeating the same full holdout prompt.
+    candidate_prompt_counts: dict[str, int] = field(default_factory=dict)
+
+    # Conditional compromise support, e.g. Option C + "split it over two nights".
+    # These are execution terms attached to an existing option, not new options.
+    compromise_terms: dict[str, list[str]] = field(default_factory=dict)
+
+    # Only a targeted confirmation "no" hard-excludes a candidate. Discussion-
+    # phase "not sold" lines remain useful context but should not prevent the
+    # moderator from testing a condition-backed compromise.
+    confirmation_rejected_options: set[str] = field(default_factory=set)
+
+
+_ACCEPT_RE = re.compile(
+    r"\b(?:can\s+live\s+with|could\s+live\s+with|works?\s+for\s+me|"
+    r"works?\s+for\s+us|works?\s+(?:well\s+enough|fine|okay|ok)|"
+    r"works?\s+(?:as\s+)?(?:a\s+)?compromise|is\s+acceptable|acceptable\s+as\s+compromise|"
+    r"(?:is|seems|sounds)\s+(?:okay|ok|fine|workable|acceptable)|"
+    r"good\s+with|fine\s+with|okay\s+with|ok\s+with|"
+    r"i'?m\s+good\s+with|i'?m\s+fine\s+with|i\s+can\s+accept|"
+    r"i'?d\s+accept|i\s+could\s+accept|i\s+can\s+do|i\s+could\s+do|"
+    r"i'?m\s+in\s+for|i\s+can\s+go\s+with|could\s+go\s+with)\b",
+    re.I,
+)
+_RULE_OUT_RE = re.compile(r"\b(?:i(?:\'d| would)?|we should|let(?:\'s| us)|given .{0,40}i(?:\'d| would)?)\s+rule\s+out\s+(?:Option\s+)?([A-D])\b", re.I)
+_CHANGED_MIND_RE = re.compile(r"\b(?:changed my mind|change my mind|reconsidered|after thinking|on second thought|actually|despite what I said|I know I ruled it out)\b", re.I)
+
+_REJECT_RE = re.compile(
+    r"\b(?:not\s+sold\s+on|can'?t\s+live\s+with|couldn'?t\s+live\s+with|"
+    r"not\s+okay\s+with|not\s+good\s+with|not\s+fine\s+with|"
+    r"don'?t\s+want|wouldn'?t\s+do|can'?t\s+do|no\s+to|rather\s+not|"
+    r"still\s+not\s+convinced|doesn'?t\s+work\s+for\s+me|won'?t\s+work)\b",
+    re.I,
+)
+_YES_RE = re.compile(
+    r"(?:^\s*(?:yes|yeah|yep|sure|ok|okay|fine|agreed|works|works\s+for\s+me|"
+    r"that\s+works|that'?s\s+fine|that\s+is\s+fine|sounds\s+good|good\s+with\s+me|"
+    r"i\s+can\s+live\s+with\s+that)\b|\bbut\s+yeah\b|\byeah\s*$)",
+    re.I,
+)
+_NO_RE = re.compile(r"^\s*(?:no|nope|nah|not\s+really|not\s+sold|still\s+not)\b", re.I)
+
 
 class Orchestrator:
 
@@ -106,9 +146,8 @@ class Orchestrator:
         self.history: list[str] = self._build_opening_history()
 
         self._logger = DialogueLogger(self.dialogue_id, topic)
-        self._mod: ModerationEngine = None  # type: ignore[assignment]
+        self._mod: Optional[ModerationEngine] = None
         self._tracker: Optional[StateTracker] = None
-        self._consensus_engine: Optional[ConsensusEngine] = None
 
     def add_sim(self, sim: Any) -> None:
         self.sims.append(sim)
@@ -141,531 +180,809 @@ class Orchestrator:
             print(f"  [options] decision_kind={decision_kind}")
         return cleaned, question
 
+    def _display_option(self, option: str) -> str:
+        """Readable transcript form for option cards.
+
+        Internally the simulator keeps the structured `attrs: key=value` form for
+        prompts and parsing. The public transcript should not look like a raw
+        database row, so opening lines are lightly humanised here.
+        """
+        if ": attrs:" not in option:
+            return option
+        head, rest = option.split(": attrs:", 1)
+        attrs_part, sep, tail = rest.partition("; upside:")
+
+        labels = {
+            "price_per_person_eur": lambda v: f"about €{v}/person",
+            "price_per_night_eur": lambda v: f"about €{v}/night",
+            "price_eur": lambda v: f"about €{v}",
+            "travel_time_min": lambda v: f"{v} min away",
+            "expected_wait_min": lambda v: f"{v} min expected wait",
+            "city_center_min": lambda v: f"{v} min from center",
+            "transit_walk_min": lambda v: f"{v} min walk to transit",
+            "room_size_m2": lambda v: f"{v} m² room",
+            "noise_level_1_5": lambda v: f"noise {v}/5",
+            "menu_variety_1_5": lambda v: f"menu variety {v}/5",
+            "vegetarian_options_1_5": lambda v: f"vegetarian options {v}/5",
+            "allergen_safety_1_5": lambda v: f"allergen safety {v}/5",
+            "local_business_1_5": lambda v: f"local-business fit {v}/5",
+            "reservation_possible": lambda v: "reservations possible" if str(v).lower() == "true" else "no reservations",
+            "cancellation_flexibility_1_5": lambda v: f"cancellation flexibility {v}/5",
+            "breakfast_included": lambda v: "breakfast included" if str(v).lower() == "true" else "breakfast not included",
+            "departure_time": lambda v: f"departs {v}",
+            "duration_min": lambda v: f"{v} min flight",
+            "stops": lambda v: f"{v} stops",
+            "baggage_included": lambda v: "baggage included" if str(v).lower() == "true" else "baggage extra",
+            "change_fee_eur": lambda v: f"€{v} change fee",
+            "comfort_1_5": lambda v: f"comfort {v}/5",
+            "schedule_buffer_1_5": lambda v: f"schedule buffer {v}/5",
+            "cost_1_5": lambda v: f"cost {v}/5",
+            "effort_1_5": lambda v: f"effort {v}/5",
+            "novelty_1_5": lambda v: f"novelty {v}/5",
+            "group_fit_1_5": lambda v: f"group fit {v}/5",
+            "risk_1_5": lambda v: f"risk {v}/5",
+            "impact_1_5": lambda v: f"impact {v}/5",
+            "feasibility_1_5": lambda v: f"feasibility {v}/5",
+            "safety_1_5": lambda v: f"safety {v}/5",
+        }
+        details: list[str] = []
+        for item in attrs_part.split(","):
+            if "=" not in item:
+                continue
+            key, val = [x.strip() for x in item.split("=", 1)]
+            formatter = labels.get(key)
+            if formatter:
+                details.append(formatter(val))
+            else:
+                details.append(f"{key.replace('_', ' ')} {val}")
+        detail_text = ", ".join(details[:8])
+        if sep:
+            tail_text = "upside:" + tail
+            # Keep only the human-readable qualitative part after attributes.
+            return f"{head}: {detail_text}; {tail_text}" if detail_text else f"{head}: {tail_text}"
+        return f"{head}: {detail_text}" if detail_text else option
+
     def _build_opening_history(self) -> list[str]:
         lines = [
             "Moderator: Hey everyone, let's get started.",
             f"Moderator: Today we are deciding: {self.topic}",
             "Moderator: Here are the options on the table:",
         ]
-        lines.extend(f"Moderator: {opt}" for opt in self.options)
+        lines.extend(f"Moderator: {self._display_option(opt)}" for opt in self.options)
         lines.append(f"Moderator: {self.opening_question}")
         return lines
 
     # ------------------------------------------------------------------
-    # Logging
+    # Logging / state update
     # ------------------------------------------------------------------
 
-    def _store_line(self, line: str, selected_reason: str = "",
-                    tokens_in: int = 0, tokens_out: int = 0,
-                    verification_result: Optional[dict] = None) -> None:
+    def _store_line(
+        self,
+        line: str,
+        selected_reason: str = "",
+        tokens_in: int = 0,
+        tokens_out: int = 0,
+        verification_result: Optional[dict] = None,
+    ) -> None:
         self.history.append(line)
         print(f"-> {line}")
         self._logger.append_chat_line(line)
-        self._logger.buffer(line, selected_reason, self.state,
-                            tokens_in=tokens_in, tokens_out=tokens_out,
-                            verification_result=verification_result)
+        self._logger.buffer(
+            line, selected_reason, self.state,
+            tokens_in=tokens_in, tokens_out=tokens_out,
+            verification_result=verification_result,
+        )
 
         if self._tracker is not None:
-            self._tracker.update(line, self.state.phase,
-                                 selected_reason=selected_reason,
-                                 tokens_in=tokens_in, tokens_out=tokens_out)
-            if self._consensus_engine is not None:
-                names = [s.name for s in self.sims]
-                self._tracker.state.consensus_state = self._consensus_engine.compute_state(
-                    self._tracker.state, names
-                )
-                if not self._tracker.state.candidate_option:
-                    self._tracker.state.candidate_option = self._consensus_engine.leading_candidate(
-                        self._tracker.state, names
-                    )
+            self._tracker.update(
+                line, self.state.phase,
+                selected_reason=selected_reason,
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+            )
+        # Keep the lightweight public discourse fields in sync for prompts and
+        # speaker selection. This now includes implicit-address detection.
+        disc = extract_discourse(self.history, {s.name for s in self.sims})
+        self.state.last_addressed = disc.get("last_addressed")
+        self.state.pending_question_target = disc.get("pending_question_target")
+        self._update_control_from_line(line)
 
     def _store_moderator(self, text: str, tokens_in: int = 0, tokens_out: int = 0) -> None:
-        self._store_line(f"Moderator: {text}", selected_reason="moderator",
-                         tokens_in=tokens_in, tokens_out=tokens_out)
+        self._store_line(f"Moderator: {text}", selected_reason="moderator", tokens_in=tokens_in, tokens_out=tokens_out)
+
+    def _option_refs(self, text: str) -> list[str]:
+        """Option references for live control.
+
+        OptionResolver intentionally avoids many bare-letter matches for general
+        text safety. Live control needs common chat shorthand too: "I can live
+        with B", "still prefer C". We therefore add conservative uppercase
+        single-letter references on top of resolver aliases.
+        """
+        refs = list(self.resolver.options_in(text))
+        for letter in self.resolver.letters:
+            if letter not in refs and re.search(rf"(?<![A-Za-z]){letter}(?![A-Za-z])", text):
+                refs.append(letter)
+        return refs
+
+    def _vote_ref(self, text: str) -> Optional[str]:
+        vote = self.resolver.vote_in(text)
+        if vote:
+            return vote
+        # Common shorthand: "I'd go with C", "I'm leaning toward D", "my pick is B".
+        m = re.search(
+            r"\b(?:i\s*(?:'d|would)?\s*(?:go\s+with|pick|choose|prefer|vote\s+for)|"
+            r"i\s*(?:'m|am)\s*(?:leaning\s+(?:toward|towards)|going\s+with)|"
+            r"my\s+(?:pick|choice|vote)\s+(?:is|would\s+be))\s+(?:Option\s+)?([A-D])\b",
+            text,
+            re.I,
+        )
+        return m.group(1).upper() if m else None
+
+    def _mentions_option(self, text: str, option: str) -> bool:
+        return option in self._option_refs(text)
+
+    def _is_hard_rejected(self, option: str) -> bool:
+        return option in self.state.confirmation_rejected_options
+
+    def _terms_for(self, option: str) -> list[str]:
+        return list(dict.fromkeys(self.state.compromise_terms.get(option, [])))
+
+    def _terms_text(self, option: str) -> str:
+        terms = self._terms_for(option)
+        if not terms:
+            return ""
+        if len(terms) == 1:
+            return f" if we {terms[0]}"
+        return " if we " + " and ".join(terms[:2])
+
+    def _add_compromise_term(self, option: str, term: str) -> None:
+        term = re.sub(r"\s+", " ", term.strip(" .,!?:;\"'")).lower()
+        if not term:
+            return
+        # Keep terms short and implementation-like. They must not create a new option.
+        term = re.sub(r"^(we|you|they|someone)\s+", "", term)
+        if len(term.split()) > 9:
+            term = " ".join(term.split()[:9])
+        terms = self.state.compromise_terms.setdefault(option, [])
+        if term not in terms:
+            terms.append(term)
+
+    def _extract_compromise_terms(self, text: str) -> list[str]:
+        """Extract feasible execution conditions from natural compromise talk.
+
+        These terms keep the final decision as Option A-D while allowing human
+        compromises such as \"Option C, but split it over two nights\".
+        """
+        lower = text.lower()
+        terms: list[str] = []
+        if re.search(r"\b(split|break\s+up|two\s+nights?|two-part|two\s+sessions?)\b", lower):
+            terms.append("split it over two nights")
+        if re.search(r"\b(brief|short)\s+intro\b|\bset\s+context\b|\bintro\s+first\b", lower):
+            terms.append("add a brief intro first")
+        if re.search(r"\b(go|arrive|leave|get\s+there)\s+early\b|\bearlier\b", lower):
+            terms.append("go early")
+        if re.search(r"\bdiscussion\s+guide\b", lower):
+            terms.append("use a discussion guide")
+        if re.search(r"\bkeep\s+(?:the\s+)?(?:next\s+)?morning\s+light\b", lower):
+            terms.append("keep the next morning light")
+        if re.search(r"\bavoid\s+(?:the\s+)?(?:peak|crowd|crowds|busy\s+time)\b", lower):
+            terms.append("avoid peak crowds")
+
+        for pat in (
+            r"\bas long as\s+([^.;!?]+)",
+            r"\bonly if\s+([^.;!?]+)",
+            r"\bif we\s+([^.;!?]+)",
+            r"\bif it\s+([^.;!?]+)",
+            r"\bprovided\s+that\s+([^.;!?]+)",
+        ):
+            for m in re.finditer(pat, lower):
+                phrase = m.group(1).strip()
+                # Avoid treating clear rejection conditions as accepted terms.
+                if re.match(r"^(had|has|gets|becomes|is)\s+better\b", phrase):
+                    continue
+                phrase = re.sub(r"^(we\s+)?", "", phrase)
+                if phrase and len(phrase.split()) <= 9:
+                    terms.append(phrase)
+        return list(dict.fromkeys(terms))
+
+    def _maybe_store_compromise_terms(self, text: str, candidate_hint: Optional[str] = None) -> None:
+        terms = self._extract_compromise_terms(text)
+        if not terms:
+            return
+        refs = self._option_refs(text)
+        if candidate_hint and candidate_hint not in refs:
+            refs.append(candidate_hint)
+        # If the speaker talks about a named option title such as \"the sci-fi epic\",
+        # OptionResolver should already resolve it. Otherwise keep terms only when
+        # there is a live candidate, to avoid attaching vague conditions randomly.
+        for opt in refs:
+            for term in terms:
+                self._add_compromise_term(opt, term)
+
+    def _context_accepts_candidate(self, text: str, candidate: str) -> bool:
+        """Confirmation-specific acceptance.
+
+        A sentence such as "I still prefer A, but Option B works well enough"
+        must count as accepting B. Generic vote parsing cannot infer this
+        reliably because the sentence mentions two options.
+        """
+        if _YES_RE.search(text) or _ACCEPT_RE.search(text):
+            if not self._option_refs(text) or self._mentions_option(text, candidate):
+                return True
+        if self._mentions_option(text, candidate) and re.search(
+            r"\b(?:works?|acceptable|fine|okay|ok|good)\b.{0,30}\b(?:enough|compromise|for\s+me|for\s+us)?\b",
+            text,
+            re.I,
+        ):
+            return True
+        return False
+
+    def _update_control_from_line(self, line: str) -> None:
+        if ":" not in line:
+            return
+        speaker, text = line.split(":", 1)
+        speaker, text = speaker.strip(), text.strip()
+        if speaker in cfg.EXCLUDED_SPEAKERS:
+            return
+
+        # Context-bound confirmation handling. A reply like "That's fine" or
+        # "I'd still prefer B, but yeah" is meaningless without the moderator's
+        # previous candidate question; with that context it is an explicit
+        # acceptance of the pending candidate. This must run before generic
+        # option-reference parsing.
+        pending_target = self.state.pending_confirmation_target
+        pending_candidate = self.state.pending_confirmation_candidate
+        if (
+            self.state.phase == "confirmation"
+            and pending_target == speaker
+            and pending_candidate
+        ):
+            if _NO_RE.search(text):
+                self.state.explicit_rejects.setdefault(speaker, {})[pending_candidate] = text[:120]
+                self.state.confirmation_rejected_options.add(pending_candidate)
+                self.state.rejected_options_by_speaker[speaker] = pending_candidate
+                self.state.last_rejected_option = pending_candidate
+                self.state.last_rejecting_speaker = speaker
+                self.state.explicit_accepts.setdefault(speaker, set()).discard(pending_candidate)
+                self._maybe_store_compromise_terms(text, pending_candidate)
+            elif self._context_accepts_candidate(text, pending_candidate):
+                self.state.explicit_accepts.setdefault(speaker, set()).add(pending_candidate)
+                self.state.explicit_rejects.setdefault(speaker, {}).pop(pending_candidate, None)
+                if self.state.rejected_options_by_speaker.get(speaker) == pending_candidate:
+                    self.state.rejected_options_by_speaker.pop(speaker, None)
+                self._maybe_store_compromise_terms(text, pending_candidate)
+            # Clear only after the addressed speaker replies.
+            self.state.pending_confirmation_target = None
+            self.state.pending_confirmation_candidate = None
+
+        self._maybe_store_compromise_terms(text, self.state.candidate_option)
+
+        vote = self._vote_ref(text)
+        if vote and self.state.phase == "narrowing":
+            prev = self.state.explicit_votes.get(speaker)
+            if prev and prev != vote:
+                self.state.vote_changes[speaker] = self.state.vote_changes.get(speaker, 0) + 1
+            self.state.explicit_votes[speaker] = vote
+            self.state.last_known_vote[speaker] = vote
+            self.state.explicit_accepts.setdefault(speaker, set()).add(vote)
+            # If the speaker explicitly changed their mind, clear a prior local
+            # rejection. Otherwise the verifier should already have repaired
+            # this before it reached the state update.
+            if _CHANGED_MIND_RE.search(text):
+                self.state.explicit_rejects.setdefault(speaker, {}).pop(vote, None)
+
+        rule_out_match = None if "?" in text else _RULE_OUT_RE.search(text)
+        explicit_rule_out = rule_out_match.group(1).upper() if rule_out_match else None
+
+        for opt in self._option_refs(text):
+            # Outside a targeted confirmation, a leading "No update..." or
+            # "No idea..." must not become a rejection of every option named
+            # in the sentence. Only explicit rejection phrases count here.
+            is_reject = bool(_REJECT_RE.search(text)) or (explicit_rule_out == opt)
+            if is_reject:
+                self.state.explicit_rejects.setdefault(speaker, {})[opt] = text[:120]
+                self.state.rejected_options_by_speaker[speaker] = opt
+                self.state.last_rejected_option = opt
+                self.state.last_rejecting_speaker = speaker
+                self.state.explicit_accepts.setdefault(speaker, set()).discard(opt)
+            elif _ACCEPT_RE.search(text) or (_YES_RE.search(text) and self.state.candidate_option == opt):
+                self.state.explicit_accepts.setdefault(speaker, set()).add(opt)
+                self.state.explicit_rejects.setdefault(speaker, {}).pop(opt, None)
+                if self.state.rejected_options_by_speaker.get(speaker) == opt:
+                    self.state.rejected_options_by_speaker.pop(speaker, None)
 
     # ------------------------------------------------------------------
-    # State helpers
+    # Small helpers
     # ------------------------------------------------------------------
 
     def _primary_sim(self) -> Optional[Any]:
         return next((s for s in self.sims if s.persona.is_primary), None)
 
-    def _update_leading_option(self) -> None:
-        mentions: list[str] = []
-        limit = max(5, len(self.sims) * 2)
-        for line in reversed(self.history):
-            if ":" not in line:
-                continue
-            speaker, msg = line.split(":", 1)
-            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
-                continue
-            mentions.extend(self.resolver.options_in(msg))
-            if len(mentions) >= limit:
-                break
-        if mentions:
-            self.state.current_leading_option = Counter(mentions).most_common(1)[0][0]
+    def _ordered_sims(self) -> list[Any]:
+        primary = self._primary_sim()
+        return ([primary] if primary else []) + [s for s in self.sims if s is not primary]
 
-        votes = current_votes(self.history, self.resolver)
-        if votes:
-            self.state.candidate_option = Counter(votes.values()).most_common(1)[0][0]
+    def _structured(self):
+        return self._tracker.state if self._tracker else None
 
-    def _update_phase(self) -> None:
-        if self.state.agreement_reached:
-            self.state.phase = "closure"
-            return
-        turns = participant_turn_count(self.history)
-        n = len(self.sims)
-        if turns < n:
-            self.state.phase = "opening"
-        elif self.state.has_entered_emergence:
-            self.state.phase = "emergence"
-        elif self.state.has_asked_narrowing:
-            self.state.phase = "narrowing"
-        else:
-            self.state.phase = "negotiation"
+    def _all_names(self) -> list[str]:
+        return [s.name for s in self.sims]
 
-    def _update_discourse(self) -> None:
-        from policy import extract_discourse
-        sim_names = {s.name for s in self.sims}
-        result = extract_discourse(self.history, sim_names)
-        self.state.last_addressed = result["last_addressed"]
-        self.state.pending_question_target = result["pending_question_target"]
+    def _participant_for_name(self, name: str) -> Optional[Any]:
+        return next((s for s in self.sims if s.name == name), None)
 
-    def _update_repetition(self) -> None:
+    def _update_repetition_and_candidate(self) -> None:
         self.state.repetition_pressure = compute_repetition_pressure(self.history)
+        if self.state.explicit_votes:
+            self.state.candidate_option = Counter(self.state.explicit_votes.values()).most_common(1)[0][0]
+            self.state.current_leading_option = self.state.candidate_option
 
-    def _decrement_cooldowns(self) -> None:
-        self.state.facilitate_cooldown = max(0, self.state.facilitate_cooldown - 1)
-        self.state.info_gap_cooldown = max(0, self.state.info_gap_cooldown - 1)
-        self.state.consensus_cooldown = max(0, self.state.consensus_cooldown - 1)
-
-    def _set_priority_to_holdout(self) -> None:
-        """Route priority_next_speaker to the dissenter (vote != current majority).
-        Used by stall + outlier interventions so the moderator nudge actually
-        lands on the person whose movement would unblock things -- not on the
-        person who just spoke."""
-        sv = current_votes(self.history, self.resolver)
-        if not sv:
-            return
-        top_opt = Counter(sv.values()).most_common(1)[0][0]
-        for sim in self.sims:
-            if sv.get(sim.name) != top_opt:
-                self.state.priority_next_speaker = sim.name
-                return
-
-    def _max_dissenters(self) -> int:
-        """Dissenters tolerated before a vote split counts as deadlock.
-        Scales with group size: 0 for a pair, 1 for 3-4, up to (n-1)//2 capped
-        by the config ceiling."""
-        n = len(self.sims)
-        return min(cfg.consensus.max_dissenters, (n - 1) // 2)
-
-    def _is_split_deadlock(self) -> bool:
-        if not self.state.has_asked_narrowing:
+    def _private_accepts(self, sim: Any, option: str) -> bool:
+        beliefs = getattr(sim.persona, "beliefs", None)
+        if not beliefs:
             return False
-        votes = current_votes(self.history, self.resolver)
-        if len(votes) < len(self.sims):
-            return False
-        n = len(self.sims)
-        required = n - self._max_dissenters()
-        counts = Counter(votes.values())
-        return counts.most_common(1)[0][1] < required
+        return option in (beliefs.acceptable or []) and option not in (beliefs.rejected or [])
 
-    def _sim_vote_is_stuck(self, name: str, window: int = 4) -> bool:
-        turns = last_n_turns_for(name, self.history, n=window)
-        if len(turns) < window:
-            return False
-        options_per_turn = [self.resolver.options_in(t) for t in turns]
-        if not all(opts for opts in options_per_turn):
-            return False
-        first = options_per_turn[0][0]
-        return all(opts[0] == first for opts in options_per_turn)
-
-    def _any_sim_stuck(self) -> bool:
-        return any(self._sim_vote_is_stuck(s.name) for s in self.sims)
-
-    # ------------------------------------------------------------------
-    # Round
-    # ------------------------------------------------------------------
-
-    def _run_participant_round(self) -> bool:
-        priority_name = self.state.priority_next_speaker
-        self.state.priority_next_speaker = None
-
-        self._update_discourse()
-        self._update_repetition()
-        self._update_phase()
-        self._update_leading_option()
-
-        discourse = self._tracker.state.discourse if self._tracker else None
-        structured = self._tracker.state if self._tracker else None
-
-        # During narrowing, prefer unvoted sims -- "stalest first".
-        if self.state.phase == "narrowing":
-            votes = current_votes(self.history, self.resolver)
-            unvoted = [s for s in self.sims if s.name not in votes]
-            if unvoted:
-                def _stale(sim: Any) -> int:
-                    for i, line in enumerate(reversed(self.history)):
-                        if line.startswith(f"{sim.name}:"):
-                            return i
-                    return len(self.history)
-                unvoted.sort(key=_stale, reverse=True)
-                selected = [unvoted[0]]
-            else:
-                selected = select_next_speakers(self.sims, self.history, self.state, discourse)
-        else:
-            selected = select_next_speakers(self.sims, self.history, self.state, discourse)
-
-        if priority_name:
-            priority_sim = next((s for s in self.sims if s.name == priority_name), None)
-            if priority_sim:
-                selected = [priority_sim]
-
-        all_names = [s.name for s in self.sims]
-        active = False
-
-        for sim in selected:
-            text, tok_in, tok_out = sim.generate_turn(
-                self.history, self.state,
-                all_names=all_names,
-                structured=structured,
-            )
-            if text and "[SILENCE]" not in text.upper():
-                reason = "forced" if sim.name == self.state.last_addressed else "weighted"
-                v_result = getattr(sim, "_last_verification", None)
-                self._store_line(f"{sim.name}: {text}", selected_reason=reason,
-                                 tokens_in=tok_in, tokens_out=tok_out,
-                                 verification_result=v_result)
-                active = True
-                self.state.nudged_participants.discard(sim.name)
-
-            if self.state.phase == "narrowing":
-                votes = current_votes(self.history, self.resolver)
-                if len(votes) >= len(self.sims):
-                    self.state.has_entered_emergence = True
-                    break
-
-        self._update_discourse()
-        self._update_repetition()
-        self._track_vote_flips()
-        return active
-
-    def _track_vote_flips(self) -> None:
-        for sim in self.sims:
-            turns = last_n_turns_for(sim.name, self.history, n=1)
-            if not turns:
-                continue
-            current_vote = self.resolver.vote_in(turns[0])
-            if not current_vote:
-                continue
-            previous = self.state.last_known_vote.get(sim.name)
-            if previous is None:
-                self.state.last_known_vote[sim.name] = current_vote
-            elif current_vote != previous:
-                flips = self.state.vote_changes.get(sim.name, 0) + 1
-                self.state.vote_changes[sim.name] = flips
-                self.state.last_known_vote[sim.name] = current_vote
-            if self.state.rejected_options_by_speaker.get(sim.name) == current_vote:
-                self.state.rejected_options_by_speaker.pop(sim.name, None)
-
-    # ------------------------------------------------------------------
-    # Consensus check -- explicit votes first; private acceptability for compromise
-    # ------------------------------------------------------------------
-
-    def _private_acceptable_for(self, option: str, dissenters: list) -> bool:
-        """True if every dissenter has `option` in their private acceptable list."""
-        if not dissenters:
+    def _has_accepted(self, name: str, option: str) -> bool:
+        if self.state.explicit_votes.get(name) == option:
             return True
-        for sim in dissenters:
-            if not sim.persona.beliefs:
-                return False
-            if option not in sim.persona.beliefs.acceptable:
-                return False
+        if option in self.state.explicit_accepts.get(name, set()):
+            return True
+        sim = self._participant_for_name(name)
+        return bool(sim and self._private_accepts(sim, option) and self.state.phase in {"confirmation", "closure"})
+
+    def _explicit_accepts_all(self, option: str) -> bool:
+        for sim in self.sims:
+            if self.state.explicit_votes.get(sim.name) == option:
+                continue
+            if option in self.state.explicit_accepts.get(sim.name, set()):
+                continue
+            return False
         return True
 
-    def _detect_consensus(self) -> Optional[str]:
-        if participant_turn_count(self.history) < len(self.sims) * 2:
+    def _rejected_by_anyone(self, option: str) -> bool:
+        # Only targeted confirmation no's hard-exclude a candidate. Earlier
+        # discussion-phase objections are context and score penalties, not final
+        # blockers, because they may be resolved by a condition.
+        return option in self.state.confirmation_rejected_options
+
+    def _candidate_from_votes(self) -> Optional[str]:
+        if not self.state.explicit_votes:
             return None
+        counts = Counter(self.state.explicit_votes.values())
+        return counts.most_common(1)[0][0]
 
-        names = [s.name for s in self.sims]
-        votes = current_votes(self.history, self.resolver)
-        n = len(self.sims)
+    def _candidate_from_private_acceptability(self) -> Optional[str]:
+        order = self._candidate_order()
+        return order[0] if order else None
 
-        # 1. All explicit votes agree → clean consensus (works before and after narrowing).
-        if len(votes) == n and len(set(votes.values())) == 1:
-            return next(iter(votes.values()))
+    def _candidate_order(self, exclude_rejected_live: bool = True) -> list[str]:
+        """Rank candidates for compromise testing.
 
-        # 2. Vote majority + all dissenters privately accept the leading option → compromise.
-        if len(votes) >= n:
-            counts = Counter(votes.values())
-            top_opt, top_n = counts.most_common(1)[0]
-            if top_n > n // 2:   # strict majority (>50%)
-                dissenters = [s for s in self.sims if votes.get(s.name) != top_opt]
-                if self._private_acceptable_for(top_opt, dissenters):
-                    return top_opt
-
-        if self._tracker is None or self._consensus_engine is None:
-            return None
-
-        cs = self._tracker.state.consensus_state
-
-        # 3. Full stance consensus (everyone explicitly supports the same option).
-        #    Note: conditional_consensus is NOT used here — vague conditionals are not
-        #    treated as real support; only unconditional "support" stance counts.
-        if cs == "full_consensus":
-            return self._consensus_engine.leading_candidate(self._tracker.state, names)
-
-        # 4. Vote plurality after narrowing with tolerated dissent count.
-        if self.state.has_asked_narrowing and cs == "majority_candidate":
-            if len(votes) >= n:
-                counts = Counter(votes.values())
-                top_opt, top_n = counts.most_common(1)[0]
-                if n - top_n <= self._max_dissenters():
-                    return top_opt
-
-        return None
-
-    # ------------------------------------------------------------------
-    # Conclusion helpers
-    # ------------------------------------------------------------------
-
-    def _narrowing_prompt(self) -> None:
-        self.state.has_asked_narrowing = True
-        self.state.phase = "narrowing"
-        self._store_moderator(random.choice(prompts.narrowing_lines()))
-
-    def _run_confirmation(self) -> None:
-        """Confirmation pass.
-
-        Update.md §4.8: when votes are split going into confirmation, ask each
-        holdout BY NAME (not the whole group generically). Generic "everyone
-        good with X?" produces weak fake-consensus.
+        The first attempted candidate is usually the plurality vote. If it is
+        explicitly rejected, it must not be selected again during finalization.
+        Ranking combines fresh votes, explicit accepts, private acceptability,
+        and primary-speaker acceptability. It intentionally does not use the old
+        stance table.
         """
-        self.state.phase = "confirmation"
-        preferred = self.state.preferred_option
-        if preferred is None:
-            return
+        letters = list(self.resolver.letters or ["A", "B", "C", "D"])
+        primary = self._primary_sim()
+        vote_counts = Counter(self.state.explicit_votes.values())
 
-        votes = current_votes(self.history, self.resolver)
-        holdouts = [
-            s for s in self.sims
-            if votes.get(s.name) and votes.get(s.name) != preferred
+        def score(opt: str) -> tuple[int, int, int, int, int, int, int, int]:
+            if exclude_rejected_live and self._rejected_by_anyone(opt):
+                return (-999, -999, -999, -999, -999, -999, -999, -999)
+            explicit_accepts = sum(1 for opts in self.state.explicit_accepts.values() if opt in opts)
+            votes = vote_counts.get(opt, 0)
+            private_accepts = sum(1 for s in self.sims if self._private_accepts(s, opt))
+            primary_ok = int(primary is not None and self._private_accepts(primary, opt))
+            compromise_terms = len(self._terms_for(opt))
+            discussion_rejects = sum(1 for rejects in self.state.explicit_rejects.values() if opt in rejects)
+            private_rejects = sum(
+                1 for s in self.sims
+                if opt in (getattr(s.persona.beliefs, "rejected", []) if s.persona.beliefs else [])
+            )
+            # Explicit votes/accepts are public evidence; private acceptability
+            # and compromise terms decide which fallback to test next. Discussion
+            # objections penalize but do not block a candidate.
+            return (votes, explicit_accepts, private_accepts, compromise_terms, primary_ok, -discussion_rejects, -private_rejects, -letters.index(opt))
+
+        ranked = sorted(letters, key=score, reverse=True)
+        return [o for o in ranked if score(o)[0] > -999]
+
+    def _holdouts_for(self, option: str) -> list[Any]:
+        holdouts: list[Any] = []
+        for sim in self.sims:
+            name = sim.name
+            if self.state.explicit_votes.get(name) == option:
+                continue
+            if option in self.state.explicit_accepts.get(name, set()):
+                continue
+            holdouts.append(sim)
+        return holdouts
+
+    def _compromise_rationale(self, option: str) -> str:
+        """Explain the final candidate using only actual support for it.
+
+        Do not mention unrelated rejected options here. Earlier versions said
+        things like "Option D did not work" while finalizing Option A, which
+        made the moderator sound confused.
+        """
+        voted_for = [name for name, v in self.state.explicit_votes.items() if v == option]
+        accepted = [
+            name for name, opts in self.state.explicit_accepts.items()
+            if option in opts and self.state.explicit_votes.get(name) != option
+        ]
+        terms = self._terms_for(option)
+        term_text = ""
+        if terms:
+            term_text = " with the condition that we " + " and ".join(terms[:2])
+        if voted_for and accepted:
+            return f"Option {option} is the shared fallback{term_text}: {', '.join(voted_for)} picked it, and {', '.join(accepted)} can live with it."
+        if accepted:
+            return f"Option {option} is the shared fallback{term_text}: {', '.join(accepted)} can live with it."
+        if voted_for:
+            return f"Option {option} has the clearest support from {', '.join(voted_for)}{term_text}."
+        return f"Option {option} is the option everyone can live with{term_text}."
+
+    def _participant_turn_records(self, phase: Optional[str] = None):
+        structured = self._structured()
+        if not structured:
+            return []
+        return [
+            t for t in structured.turns
+            if not t.is_moderator
+            and t.speaker not in cfg.EXCLUDED_SPEAKERS
+            and (phase is None or t.phase == phase)
         ]
 
-        structured = self._tracker.state if self._tracker else None
-        all_names = [s.name for s in self.sims]
-
-        if holdouts:
-            # Targeted holdout questions FIRST -- one moderator line per
-            # holdout, with the holdout responding to it directly.
-            for holdout in holdouts:
-                self._mod.run_intervention(
-                    f"ask_holdout:{preferred}|{holdout.name}|{votes.get(holdout.name, '')}",
-                    self.state, self.history,
-                    lambda t, ti, to: self._store_moderator(t, ti, to),
-                    structured=structured,
-                )
-                # Holdout speaks next
-                text, tok_in, tok_out = holdout.generate_turn(
-                    self.history, self.state,
-                    all_names=all_names, structured=structured,
-                )
-                if text and "[SILENCE]" not in text.upper():
-                    v_result = getattr(holdout, "_last_verification", None)
-                    self._store_line(
-                        f"{holdout.name}: {text}", selected_reason="confirmation_holdout",
-                        tokens_in=tok_in, tokens_out=tok_out,
-                        verification_result=v_result,
-                    )
-
-            # Then the rest of the group confirms briefly.
-            remaining = [s for s in self.sims if s not in holdouts]
-            primary = self._primary_sim()
-            if primary and primary not in remaining and primary in holdouts:
-                # Holdout already spoke; skip
-                pass
-            ordered = (
-                [primary] if (primary and primary in remaining) else []
-            ) + [s for s in remaining if s is not primary]
-            for sim in ordered:
-                text, tok_in, tok_out = sim.generate_turn(
-                    self.history, self.state,
-                    all_names=all_names, structured=structured,
-                )
-                if text and "[SILENCE]" not in text.upper():
-                    v_result = getattr(sim, "_last_verification", None)
-                    self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
-                                     tokens_in=tok_in, tokens_out=tok_out,
-                                     verification_result=v_result)
-        else:
-            # Clean consensus -- one generic confirmation question, everyone reacts briefly.
-            self._store_moderator(random.choice([
-                f"sounds like we're landing on Option {preferred} -- everyone good with that?",
-                f"ok, so Option {preferred}? anyone not on board, now's the time.",
-                f"looks like Option {preferred} is where we're at. that work for everyone?",
-                f"feels like Option {preferred} -- any last objections before we lock it in?",
-            ]))
-
-            primary = self._primary_sim()
-            ordered = ([primary] if primary else []) + [s for s in self.sims if s is not primary]
-            for sim in ordered:
-                text, tok_in, tok_out = sim.generate_turn(
-                    self.history, self.state, all_names=all_names, structured=structured,
-                )
-                if text and "[SILENCE]" not in text.upper():
-                    v_result = getattr(sim, "_last_verification", None)
-                    self._store_line(f"{sim.name}: {text}", selected_reason="confirmation",
-                                     tokens_in=tok_in, tokens_out=tok_out,
-                                     verification_result=v_result)
-
-        rejection_signals = (
-            "no,", "no.", "not quite", "not yet", "still weighing",
-            "not sure", "don't agree", "disagree", "not ready",
-        )
-        checked = 0
-        for line in reversed(self.history):
-            if ":" not in line:
+    def _discussion_option_coverage(self) -> set[str]:
+        opts: set[str] = set()
+        for t in self._participant_turn_records("negotiation"):
+            text = t.text
+            if len(text.split()) < 7:
                 continue
-            speaker, msg = line.split(":", 1)
-            if speaker.strip() in cfg.EXCLUDED_SPEAKERS:
+            if not t.mentioned_options:
                 continue
-            lower = msg.strip().lower().rstrip("!?.")
-            words = lower.split()
-            first_word = words[0] if words else ""
-            bare_no = lower in {"no", "nope", "nah"} or first_word in {"no", "nope", "nah"}
-            if bare_no or any(s in msg.lower() for s in rejection_signals):
-                self.state.confirmation_rejection_count += 1
-                self.state.last_rejected_option = preferred
-                self.state.last_rejecting_speaker = speaker.strip()
-                self.state.rejected_options_by_speaker[speaker.strip()] = preferred
-                self.state.priority_next_speaker = speaker.strip()
-                self.state.consensus_cooldown = 4
-                self.state.agreement_reached = False
-                self.state.preferred_option = None
-                self.state.stall_rounds = 0
-                self._store_moderator(
-                    f"OK, Option {preferred} doesn't have buy-in. "
-                    f"{speaker.strip()}, what's the blocker?"
-                )
-                return
-            checked += 1
-            if checked >= len(self.sims) * 2:
-                break
+            # Count an option as substantively discussed only if the turn
+            # contains a reason/trade-off style marker, not just "rule out X".
+            if re.search(
+                r"\b(because|since|due to|so |offers?|helps?|fits?|matters?|"
+                r"worth|useful|better|worse|risk|tradeoff|drawback|concern|"
+                r"price|cost|wait|time|travel|noise|menu|variety|safety|"
+                r"allergen|local|quiet|loud|comfort|amenit|flexib|reliable)\b",
+                text,
+                re.I,
+            ):
+                opts.update(t.mentioned_options)
+        return opts
 
-    def _run_closure(self) -> None:
-        """Update.md §4.9 -- don't force every sim to close.
+    def _recent_thread_active(self) -> bool:
+        """Whether the current local thread should get one more turn.
 
-        Real chats often end after the decision, with maybe one or two short
-        sign-offs. Configurable via `cfg.closure.participants_to_close`
-        (default 2). The primary always gets one slot if any are spoken
-        (`cfg.closure.always_close_primary`).
+        This is deliberately not a coverage checklist. If the last turn is a
+        directed question or the last few turns are still developing the same
+        concrete issue, let it breathe instead of immediately moving to a vote.
         """
-        self.state.phase = "closure"
-        primary = self._primary_sim()
-        all_names = [s.name for s in self.sims]
-        structured = self._tracker.state if self._tracker else None
+        recs = self._participant_turn_records("negotiation")[-3:]
+        if not recs:
+            return False
+        last = recs[-1]
+        if last.is_question and (last.addressees or self.state.pending_question_target):
+            return True
+        opt_counts = Counter(o for t in recs for o in t.mentioned_options)
+        if opt_counts and opt_counts.most_common(1)[0][1] >= 2:
+            # A short same-option thread is active if it has not yet produced a
+            # compromise/decision-move. Do not continue forever.
+            recent_text = " ".join(t.text.lower() for t in recs)
+            if not re.search(r"\b(can live with|works for me|between|landing|go with|pick|vote)\b", recent_text):
+                return True
+        return False
 
-        cap = int(getattr(cfg.closure, "participants_to_close", 2))
-        always_primary = bool(getattr(cfg.closure, "always_close_primary", True))
+    def _discussion_ready_for_narrowing(self) -> bool:
+        """Minimum quality gate before asking for votes.
 
-        if cap <= 0:
-            return  # moderator-only closure
+        This is not "touch every option once". One issue may deserve several
+        turns. The gate only requires enough substance: each participant has had
+        room to speak, each has contributed at least one concrete option-linked
+        reason, and at least two options have been substantively compared.
+        """
+        n = max(1, len(self.sims))
+        recs = self._participant_turn_records("negotiation")
+        turns_by_speaker = Counter(t.speaker for t in recs)
+        min_per = 3
+        if any(turns_by_speaker.get(s.name, 0) < min_per for s in self.sims):
+            return False
+        if any(not self._has_substantive_reason(s.name) for s in self.sims):
+            return False
+        if len(self._discussion_option_coverage()) < 2:
+            return False
+        if self._recent_thread_active():
+            return False
+        return len(recs) >= n * int(getattr(cfg.turns, "min_before_narrowing_per_participant", 4))
 
-        ordered: list = []
-        if always_primary and primary is not None:
-            ordered.append(primary)
+    def _has_substantive_reason(self, name: str) -> bool:
+        """Whether a participant has made at least one option-linked reason.
 
-        # Add others (in declared order) up to the cap.
-        others = [s for s in self.sims if s is not primary]
-        for s in others:
-            if len(ordered) >= cap:
-                break
-            ordered.append(s)
+        This is intentionally simple. It prevents voting after only shallow
+        fragments like "Can we rule out C?" or "Still think A is worth it".
+        """
+        reason_markers = re.compile(
+            r"\b(because|since|due to|as |so |offers?|helps?|fits?|matters?|"
+            r"worth|useful|better|worse|risk|tradeoff|drawback|concern|"
+            r"comfortable|convenient|authentic|quality|price|cost|location|"
+            r"atmosphere|service|quiet|loud|flexib|reliable|wait|time|travel|menu|variety|safety|allergen|local|amenit)\b",
+            re.I,
+        )
+        for line in self.history:
+            if not line.startswith(f"{name}:"):
+                continue
+            text = line.split(":", 1)[1].strip()
+            if len(text.split()) < 8:
+                continue
+            if self._option_refs(text) and reason_markers.search(text):
+                return True
+        return False
 
-        # If primary slot wasn't taken, fall back to the first sim.
-        if not ordered and self.sims:
-            ordered.append(self.sims[0])
+    def _run_reason_floor(self) -> None:
+        """Before voting, give missing participants one chance to add substance.
 
-        for sim in ordered[:cap]:
-            text, tok_in, tok_out = sim.generate_turn(
-                self.history, self.state, all_names=all_names, structured=structured,
+        This is a safety net, not a checklist-driven mini-round. Normal
+        discussion should do most of the work; the floor only prevents a vote
+        after someone contributed only rule-outs or vague preference fragments.
+        """
+        self.state.phase = "negotiation"
+        for sim in self._ordered_sims():
+            if self._has_substantive_reason(sim.name):
+                continue
+            self.state.required_reason_target = sim.name
+            before = self._has_substantive_reason(sim.name)
+            self._speaker_turn(sim, "reason_floor")
+            # If still not substantive, do not loop. The prompt/verifier should
+            # make this rare, and endless repair-like turns hurt naturalness.
+            after = self._has_substantive_reason(sim.name)
+            self.state.required_reason_target = None
+
+    # ------------------------------------------------------------------
+    # Participant turn helpers
+    # ------------------------------------------------------------------
+
+    def _speaker_turn(self, sim: Any, reason: str) -> None:
+        self.state.turn_index += 1
+        text, tok_in, tok_out = sim.generate_turn(
+            self.history,
+            self.state,
+            all_names=self._all_names(),
+            structured=self._structured(),
+        )
+        if text and "[SILENCE]" not in text.upper():
+            v_result = getattr(sim, "_last_verification", None)
+            self._store_line(
+                f"{sim.name}: {text}", selected_reason=reason,
+                tokens_in=tok_in, tokens_out=tok_out,
+                verification_result=v_result,
             )
-            if text and "[SILENCE]" not in text.upper():
-                v_result = getattr(sim, "_last_verification", None)
-                self._store_line(f"{sim.name}: {text}", selected_reason="closure",
-                                 tokens_in=tok_in, tokens_out=tok_out,
-                                 verification_result=v_result)
 
-    def _conclude(self, option: str) -> None:
+    def _run_opening(self) -> None:
+        self.state.phase = "opening"
+        for sim in self._ordered_sims():
+            self._speaker_turn(sim, "opening")
+
+    def _run_discussion(self) -> None:
+        self.state.phase = "negotiation"
+        n = max(1, len(self.sims))
+        min_turns = max(n * int(getattr(cfg.turns, "min_before_narrowing_per_participant", 4)), n * 3)
+        max_turns = max(n * int(getattr(cfg.turns, "narrow_after_per_participant", 5)), min_turns)
+
+        for _ in range(max_turns):
+            self._update_repetition_and_candidate()
+            discourse = self._structured().discourse if self._structured() else None
+            selected = select_next_speakers(self.sims, self.history, self.state, discourse)
+            if not selected:
+                break
+            self._speaker_turn(selected[0], "discussion")
+
+            discussion_turns = len(self._participant_turn_records("negotiation"))
+            if discussion_turns < min_turns:
+                continue
+
+            self._update_repetition_and_candidate()
+            # If the local thread is still active, allow it to finish unless the
+            # hard maximum has been reached. This avoids the "one point, move on"
+            # failure while still keeping generation bounded.
+            if self._recent_thread_active():
+                continue
+
+            # Stop early only when the discussion is substantively ready and is
+            # beginning to repeat. Otherwise use the configured max for a little
+            # more natural elaboration.
+            if self._discussion_ready_for_narrowing() and self.state.repetition_pressure >= 0.50:
+                break
+
+    def _run_vote_round(self) -> None:
+        self.state.phase = "narrowing"
+        self.state.has_asked_narrowing = True
+        # Fresh vote round: discussion-phase support is useful context, but it
+        # must not replace a current explicit vote after the moderator asks.
+        self.state.explicit_votes.clear()
+        self.state.vote_changes.clear()
+        self.state.last_known_vote.clear()
+        self.state.pending_confirmation_target = None
+        self.state.pending_confirmation_candidate = None
+        self._store_moderator("Okay, we have enough on the table now. Where is everyone landing -- which option is your current pick?")
+
+        for sim in self._ordered_sims():
+            self._speaker_turn(sim, "vote")
+        self._update_repetition_and_candidate()
+
+    def _candidate_test_rationale(self, candidate: str) -> str:
+        """One short moderator rationale before testing a compromise candidate."""
+        voters = [name for name, opt in self.state.explicit_votes.items() if opt == candidate]
+        accepts = [
+            name for name, opts in self.state.explicit_accepts.items()
+            if candidate in opts and self.state.explicit_votes.get(name) != candidate
+        ]
+        terms = self._terms_text(candidate)
+        if voters and accepts:
+            return f"Option {candidate} is worth checking{terms}: {', '.join(voters)} picked it and {', '.join(accepts)} can live with it."
+        if voters:
+            return f"Option {candidate} is worth checking{terms} because it has current vote support."
+        return f"Option {candidate} is worth checking{terms} as a possible shared fallback."
+
+    def _ask_holdout(self, candidate: str, holdout: Any) -> None:
+        current = self.state.explicit_votes.get(holdout.name, "")
+        self.state.phase = "confirmation"
+        self.state.candidate_option = candidate
+        self.state.current_leading_option = candidate
+        self.state.pending_confirmation_target = holdout.name
+        self.state.pending_confirmation_candidate = candidate
+
+        count = self.state.candidate_prompt_counts.get(candidate, 0)
+        self.state.candidate_prompt_counts[candidate] = count + 1
+        term_text = self._terms_text(candidate)
+        if count == 0:
+            rationale = self._candidate_test_rationale(candidate)
+            if current and current != candidate:
+                text = (f"{rationale} {holdout.name}, you picked Option {current}. "
+                        f"Could Option {candidate}{term_text} work for you, or is that still a no?")
+            else:
+                text = f"{rationale} {holdout.name}, could Option {candidate}{term_text} work for you?"
+        else:
+            # Same candidate, next holdout: avoid repeating the full rationale.
+            if current and current != candidate:
+                text = (f"{holdout.name}, same candidate: you picked Option {current}. "
+                        f"Could Option {candidate}{term_text} work too, or no?")
+            else:
+                text = f"{holdout.name}, same candidate: could Option {candidate}{term_text} work too?"
+        self._store_moderator(text)
+        self._speaker_turn(holdout, "targeted_holdout")
+
+    def _run_peer_compromise_probe(self) -> None:
+        """Let participants surface a compromise before moderator holdout checks.
+
+        This keeps compromise from feeling entirely moderator-imposed. It is
+        intentionally short: one or two Sims may propose/accept a fallback, then
+        explicit confirmation still verifies it.
+        """
+        if not bool(getattr(getattr(cfg, "compromise", object()), "peer_probe_enabled", True)):
+            return
+        candidate = self._candidate_order(exclude_rejected_live=True)[0] if self._candidate_order(exclude_rejected_live=True) else None
+        if not candidate:
+            return
+        self.state.phase = "compromise"
+        self.state.candidate_option = candidate
+        self.state.current_leading_option = candidate
+        self._store_moderator(f"Votes are split. Before I check one by one, can we make Option {candidate} work with a simple condition, or is there a better fallback?")
+        # Ask holdouts first so compromise is not only moderator-imposed. A
+        # supporter may then suggest a condition that addresses the objection.
+        speakers: list[Any] = []
+        for h in self._holdouts_for(candidate):
+            speakers.append(h)
+            if len(speakers) >= 2:
+                break
+        if len(speakers) < 2:
+            for s in self._ordered_sims():
+                if s not in speakers and self.state.explicit_votes.get(s.name) == candidate:
+                    speakers.append(s)
+                    break
+        for sim in speakers[:2]:
+            self._speaker_turn(sim, "peer_compromise")
+            if self._explicit_accepts_all(candidate):
+                break
+        self.state.phase = "confirmation"
+
+    def _run_compromise(self) -> Optional[str]:
+        """Test compromise candidates until one is explicitly accepted by all.
+
+        Earlier versions tested a vote winner, then a single fallback, and then
+        finalization recomputed the original winner after rejection. That caused
+        logs where B was accepted by all holdouts but the moderator still failed
+        on A. This loop keeps a tested/excluded set and never returns to an
+        explicitly rejected candidate.
+        """
+        tested: set[str] = set()
+        while True:
+            order = [c for c in self._candidate_order(exclude_rejected_live=True) if c not in tested]
+            if not order:
+                return None
+            candidate = order[0]
+            tested.add(candidate)
+            self.state.candidate_option = candidate
+            self.state.current_leading_option = candidate
+
+            # If votes/accepts already imply agreement, finish immediately.
+            if self._explicit_accepts_all(candidate):
+                return candidate
+
+            rejected_before = set(self.state.explicit_rejects.get(n, {}).get(candidate) for n in self._all_names())
+            for holdout in list(self._holdouts_for(candidate)):
+                self._ask_holdout(candidate, holdout)
+                if self._rejected_by_anyone(candidate):
+                    break
+                if self._explicit_accepts_all(candidate):
+                    return candidate
+
+            if self._explicit_accepts_all(candidate):
+                return candidate
+            # Candidate was rejected or remained unaccepted; try the next best
+            # public/private fallback. Do not force or loop endlessly here.
+            continue
+
+    # ------------------------------------------------------------------
+    # Ending
+    # ------------------------------------------------------------------
+
+    def _finalize_success(self, option: str, outcome: str) -> None:
+        self.outcome = outcome
+        self.state.outcome_reason = "all participants explicitly voted for or accepted the final option"
         self.state.preferred_option = option
         self.state.candidate_option = option
+        self.state.current_leading_option = option
         self.state.agreement_reached = True
-        self._run_confirmation()
-        if self.state.agreement_reached:
-            self.outcome = "success"
+        if outcome == "success":
             self._store_moderator(f"Agreed -- Option {option}. Done.")
-            self._run_closure()
-
-    def _force_conclusion(self) -> None:
-        names = [s.name for s in self.sims]
-        votes = current_votes(self.history, self.resolver)
-        final: Optional[str] = None
-        if self._tracker is not None and self._consensus_engine is not None:
-            final = self._consensus_engine.best_available_decision(
-                self._tracker.state, names, explicit_votes=votes
-            )
-
-        if final is None:
-            if votes:
-                final = Counter(votes.values()).most_common(1)[0][0]
-            else:
-                final = self.state.candidate_option or self.state.current_leading_option or "A"
-
-        self.outcome = "force_close"
-        self.state.preferred_option = final
-        line = self._llm.generate(
-            prompts.moderator_force_close(
-                topic=self.topic,
-                participant_names=names,
-                final_option=final,
-                recent_dialogue="\n".join(self.history[-cfg.moderation.recent_window_force_close:]),
-            )
-        ).strip()
-        self._store_moderator(
-            clean_moderator_line(line, names) or f"No full agreement -- calling Option {final}. Done.",
-            tokens_in=self._llm.last_tokens_in,
-            tokens_out=self._llm.last_tokens_out,
-        )
+        else:
+            rationale = self._compromise_rationale(option)
+            self._store_moderator(f"{rationale} Compromise works -- Option {option}.")
         self._run_closure()
 
-    def _fresh_unanswered_question(self) -> bool:
-        for line in reversed(self.history):
-            if ":" not in line:
-                continue
-            speaker, msg = line.split(":", 1)
-            speaker = speaker.strip()
-            if speaker in cfg.EXCLUDED_SPEAKERS:
-                continue
-            if "?" not in msg:
-                return False
-            others = [s.name for s in self.sims if s.name != speaker]
-            if others:
-                self.state.priority_next_speaker = random.choice(others)
-            return True
-        return False
+    def _run_closure(self) -> None:
+        self.state.phase = "closure"
+        cap = int(getattr(getattr(cfg, "closure", object()), "participants_to_close", 1))
+        if cap <= 0:
+            return
+        ordered = self._ordered_sims()
+        for sim in ordered[:min(cap, len(ordered))]:
+            self._speaker_turn(sim, "closure")
+
+    def _finalize_force_or_failure(self) -> None:
+        order = self._candidate_order(exclude_rejected_live=True)
+        candidate = (order[0] if order else (self.state.candidate_option or self._candidate_from_votes() or "A"))
+        self.state.candidate_option = candidate
+        self.state.preferred_option = candidate
+        if self._rejected_by_anyone(candidate):
+            self.outcome = "failed_no_viable_compromise"
+            self.state.outcome_reason = "a tested candidate was explicitly rejected and no shared fallback reached all participants"
+            terms = self._terms_text(candidate)
+            self._store_moderator(f"No full agreement. Option {candidate}{terms} was the closest tested fallback, but this is not real consensus.")
+        else:
+            self.outcome = "force_close"
+            self.state.outcome_reason = "maximum turn budget reached without explicit acceptance from every participant"
+            terms = self._terms_text(candidate)
+            self._store_moderator(f"No full agreement. The closest workable option is Option {candidate}{terms}, so I'm stopping there.")
+        # Do not ask participants to close after force-close/failure. That
+        # produced contradictory lines like "sounds good" after a failed
+        # compromise. The moderator's terminal line is the honest ending.
 
     # ------------------------------------------------------------------
     # Main loop
     # ------------------------------------------------------------------
 
     def run_simulation(self, setup_tokens_in: int = 0, setup_tokens_out: int = 0) -> None:
-        n = len(self.sims)
-        hard_ceiling = max(cfg.turns.min_ceiling, n * cfg.turns.ceiling_per_participant)
-
         self._mod = ModerationEngine(self.topic, self.options, self.sims, self.resolver)
         self._tracker = StateTracker(
-            participant_names=[s.name for s in self.sims], options=self.options,
+            participant_names=[s.name for s in self.sims],
+            options=self.options,
             resolver=self.resolver,
         )
         self._tracker.attach_personas(self.sims)
@@ -673,8 +990,6 @@ class Orchestrator:
             self._tracker.update(line, "opening", selected_reason="moderator")
 
         sample_hard_blocker(list(self._tracker.state.participants.values()))
-
-        self._consensus_engine = ConsensusEngine()
 
         self._logger.write_header(
             participant_names=[s.name for s in self.sims],
@@ -684,114 +999,35 @@ class Orchestrator:
         for line in self.history:
             self._logger.buffer(line, "moderator", self.state)
 
-        print(f"\n--- Dialogue started ---")
+        print("\n--- Dialogue started ---")
         for line in self.history:
             print(f"-> {line}")
         print()
 
-        def _intervene(reason: str) -> None:
-            self._mod.run_intervention(
-                reason, self.state, self.history,
-                lambda t, ti, to: self._store_moderator(t, ti, to),
-                structured=(self._tracker.state if self._tracker else None),
-            )
-
         try:
-            for _ in range(hard_ceiling):
-                self.state.turn_index += 1
-                self._decrement_cooldowns()
+            self._run_opening()
+            self._run_discussion()
+            self._run_reason_floor()
+            self._run_vote_round()
 
-                active = self._run_participant_round()
-                if not active:
-                    self.outcome = "failed"
-                    self._store_moderator("No responses. Discussion concluded.")
-                    break
-
-                if self.state.has_asked_narrowing:
-                    self.state.post_narrowing_rounds += 1
-                if self.state.has_asked_narrowing and not self.state.has_entered_emergence:
-                    if len(current_votes(self.history, self.resolver)) >= len(self.sims):
-                        self.state.has_entered_emergence = True
-
-                # 1. Natural consensus
-                final = self._detect_consensus()
-                if final and self.state.consensus_cooldown > 0 \
-                        and final == self.state.last_rejected_option:
-                    final = None
-                if final and final in set(self.state.rejected_options_by_speaker.values()):
-                    final = None
-                if final:
-                    self._conclude(final)
-                    if self.state.agreement_reached:
-                        break
-                    continue
-
-                # 1b. Info-chase (sims fishing for a specific missing attribute).
-                # Stage 3: the moderator REFRAMES rather than shuts down.
-                if self.state.info_gap_cooldown == 0 \
-                        and self.state.phase in ("negotiation", "narrowing", "emergence") \
-                        and self._mod.detect_info_chase(self.history):
-                    _intervene("clarify")
-                    self.state.info_gap_cooldown = len(self.sims) + 1
-                    continue
-
-                # 2. Narrowing -- deliberation-gated.
-                ptc = participant_turn_count(self.history)
-                structured = self._tracker.state if self._tracker else None
-                if self._mod.should_narrow(self.state, ptc, structured=structured):
-                    if self._fresh_unanswered_question():
-                        continue
-                    self._narrowing_prompt()
-                    continue
-
-                # 3. Post-narrowing stall + deadlock
-                if self.state.has_asked_narrowing:
-                    if self.state.repetition_pressure >= cfg.repetition.stall_increment_threshold:
-                        self.state.stall_rounds += 1
-                    else:
-                        self.state.stall_rounds = 0
-
-                    level = self._mod.escalation_level(self.state)
-                    if level >= 3:
-                        self._force_conclusion()
-                        break
-
-                    stall_limit = cfg.consensus.stall_rounds_to_force
-                    if self._is_split_deadlock() and self._any_sim_stuck():
-                        stall_limit = max(1, stall_limit - 1)
-
-                    if self.state.stall_rounds >= stall_limit:
-                        _intervene("stall")
-                        self.state.stall_rounds = 0
-                        self._set_priority_to_holdout()
-                        continue
-
-                # 4. Regular interventions (Stage 3 includes facilitation moves).
-                ptc = participant_turn_count(self.history)
-                intervention = self._mod.should_intervene(
-                    self.state, self.history, self._any_sim_stuck(), ptc,
-                    structured=(self._tracker.state if self._tracker else None),
-                )
-                if intervention:
-                    if intervention == "stall" and self._fresh_unanswered_question():
-                        continue
-                    _intervene(intervention)
-                    # Route priority to the HOLDOUT (dissenter), never to the
-                    # outlier itself. The outlier nudge exists to break a repeat
-                    # loop; forcing the repeater to speak again recreates the loop.
-                    if intervention == "stall" or intervention.startswith("outlier:"):
-                        self._set_priority_to_holdout()
-
+            votes = self.state.explicit_votes
+            if len(votes) == len(self.sims) and len(set(votes.values())) == 1:
+                self._finalize_success(next(iter(votes.values())), "success")
             else:
-                # Hard ceiling hit.
-                self._force_conclusion()
+                self._run_peer_compromise_probe()
+                candidate = self._run_compromise()
+                if candidate:
+                    self._finalize_success(candidate, "compromise_success")
+                else:
+                    self._finalize_force_or_failure()
 
         finally:
             dialogue_in = self._llm.session_tokens_in
             dialogue_out = self._llm.session_tokens_out
             self._logger.flush(
                 outcome=self.outcome,
-                sims=self.sims, state=self.state,
+                sims=self.sims,
+                state=self.state,
                 structured=(self._tracker.state if self._tracker else None),
                 setup_tokens_in=setup_tokens_in,
                 setup_tokens_out=setup_tokens_out,

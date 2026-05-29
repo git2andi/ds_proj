@@ -51,7 +51,7 @@ def phase_instruction_text(phase: str, has_voted: bool = False,
             "This is the discussion phase. You do NOT have to evaluate the last message. "
             "Reply only if you actually have something to add. Natural moves include:\n"
             "- a short yes or no reaction (\"yeah\", \"not sold\", \"that might work\");\n"
-            "- a brief question if you're genuinely unsure about something;\n"
+            "- a brief preference question only if it helps choose between options;\n"
             "- a genuinely new reason (not a rephrase of a point already made);\n"
             "- a compromise framed as one (\"I still prefer X, but I can live with Y\");\n"
             "- moving the decision forward (\"then we're basically between A and D\");\n"
@@ -60,8 +60,17 @@ def phase_instruction_text(phase: str, has_voted: bool = False,
             "or \"X is right\" -- they make the chat sound robotic. Don't restate something you "
             "(or someone else) already said. Name an option only when you're making a real point "
             "about that specific option, voting, or clarifying a candidate -- not for every short "
-            "reaction. You may use your own knowledge and lived experience as reasons; do NOT "
-            "invent specific facts about the OPTIONS themselves."
+            "reaction. Avoid starting a new question when a recent question has not been answered; often a short answer or decision move is better. "
+            "Ask about people's priorities only when needed, not missing outside facts. Do NOT ask anyone "
+            "to call/check/look up exact prices, policies, availability, schedules, or guarantees. "
+            "Use the listed scenario facts and decide under those constraints. You may use your own "
+            "knowledge and lived experience as reasons; do NOT invent specific facts about the OPTIONS themselves."
+        ),
+        "compromise": (
+            "The votes are split. Help the group make ONE existing option work, ideally by adding a simple execution condition. "
+            "Do not invent a new option. If you can accept the current candidate, say so and name the condition/reason. "
+            "If you cannot, say the concrete blocker and suggest the closest existing fallback. "
+            "Useful forms: 'I still prefer X, but Y works if we ...' or 'Y works as long as ...'."
         ),
         "emergence": (
             "The group is closing in on one option. Say whether it works for you, what would make it "
@@ -102,8 +111,8 @@ def interaction_instruction_block(
             f"your mind. Do not open with \"valid point\" or \"fair point\"."
         )
     elif last_has_question:
-        parts.append(" There's an open question -- answer it directly first. If the options "
-                     "don't say enough to answer, say that plainly.")
+        parts.append(" There's an open question -- answer it directly first. Do not ask another question. "
+                     "If the options don't say enough to answer, make a short judgment from the listed facts.")
 
     if repetition_high:
         parts.append(
@@ -135,12 +144,12 @@ def position_discipline_block(
     ("I still prefer X, but I can live with Y"). This makes preference movement
     visible instead of looking like a sudden flip.
     """
-    if phase not in ("negotiation", "narrowing", "emergence", "confirmation"):
+    if phase not in ("negotiation", "compromise", "narrowing", "emergence", "confirmation"):
         return ""
 
     cond = f" The condition that would move you: {reconsider_text}." if reconsider_text else ""
 
-    if phase in ("emergence", "confirmation", "narrowing") and candidate:
+    if phase in ("emergence", "confirmation", "narrowing", "compromise") and candidate:
         if candidate_is_anchor:
             return (f"\nYou lean Option {anchor}, and that's what's on the table. Say so briefly "
                     f"and concretely.")
@@ -181,7 +190,7 @@ _SURFACE_MOVE_HINTS: dict[str, str] = {
         "if you don't agree. Keep it short; don't justify unless asked."
     ),
     "question": (
-        "If you're genuinely unsure about something, ask ONE short, useful question."
+        "Questions are rare. Ask only if the answer is needed to decide and no one is already answering a question."
     ),
     "compromise": (
         "If you're moving toward something you don't actually prefer, mark it as a "
@@ -218,66 +227,72 @@ def narrowing_lines() -> list[str]:
 # =============================================================================
 
 def option_generation(topic: str) -> str:
-    """Two-step generation: classify the decision kind, then produce options
-    that ARE the thing being chosen.
+    """Generate four self-contained decision options.
 
-    Update.md §4.6: options now carry FIVE bounded qualitative fields instead
-    of three. Thin option cards (upside + tradeoff + best_for) gave sims so
-    little to chew on that they kept rephrasing the same two attributes. The
-    richer card -- adding a practical concern, a fit hint, and an uncertainty
-    -- gives real material for disagreement without inviting fabricated
-    numbers.
+    Round 3: options may include topic-specific scenario attributes. For
+    logistics topics (flights, hotels, restaurants, hikes, trips), concrete
+    fictional-but-plausible values reduce fake fact-chasing because the group
+    can reason from the given cards. For abstract topics (presentation topics,
+    strategies, study plans), use scored qualitative dimensions instead of
+    fake prices/times.
     """
-    return f"""You are preparing a small-group chat about a decision.
+    return f"""You are preparing a self-contained fictional decision scenario for a small-group chat.
 
 Topic: {topic}
 
-STEP 1 -- classify the decision:
-  - "concrete_pick"  : the group is choosing one of N real-world items
-                       (restaurant, hotel, book, product, movie, destination).
-  - "abstract_pick"  : the group is choosing a topic, approach, strategy,
-                       theme, policy, or angle (a presentation topic, a research
-                       direction, a marketing approach, a study method).
+The group will only know the option cards you generate. Therefore the cards must
+contain enough grounded information for a discussion without asking for live
+outside facts.
 
-STEP 2 -- generate four options that ARE valid answers to the literal decision.
+STEP 1 -- classify the topic into ONE decision_kind:
+  - flight_booking
+  - hotel_booking
+  - restaurant_choice
+  - hiking_trip
+  - travel_destination
+  - presentation_topic
+  - study_or_work_plan
+  - tool_or_product_choice
+  - game_or_activity_choice
+  - generic_decision
 
-Each option must be RICHER than just upside + tradeoff. Use this single-line
-shape with semicolon-separated fields (do not break across lines):
+STEP 2 -- choose fitting scenario attributes for that kind.
+Use concrete values only when the topic naturally supports them.
+Examples:
+- flight_booking: price_eur, departure_time, duration_min, stops, baggage_included, change_fee_eur, comfort_1_5, schedule_buffer_1_5
+- hotel_booking: price_per_night_eur, city_center_min, transit_walk_min, room_size_m2, noise_level_1_5, cancellation_flexibility_1_5, breakfast_included
+- restaurant_choice: price_per_person_eur, travel_time_min, expected_wait_min, noise_level_1_5, menu_variety_1_5, vegetarian_options_1_5, reservation_possible, allergen_safety_1_5, local_business_1_5
+- hiking_trip: distance_km, elevation_gain_m, duration_h, difficulty_1_5, scenic_value_1_5, crowding_risk_1_5, transit_access_1_5
+- presentation_topic: research_material_1_5, local_examples_1_5, policy_relevance_1_5, hands_on_potential_1_5, clarity_1_5, controversy_risk_1_5, scope_difficulty_1_5
+- generic_decision: cost_1_5, effort_1_5, risk_1_5, group_fit_1_5, novelty_1_5, practicality_1_5, flexibility_1_5
 
-  Option X - [Name or Topic]: [upside]; tradeoff: [qualitative]; concern: [practical worry]; fit: [who/when it suits]; uncertainty: [what's unclear]; best for: [priority]
+STEP 3 -- generate four options that ARE valid answers to the literal decision.
+Each option must be one single line with this shape:
+
+  Option X - [Name or Topic]: attrs: key=value, key=value, key=value; upside: ...; tradeoff: ...; concern: ...; fit: ...; risk: ...; best for: ...
 
 Hard rules:
-- Each option line is the ONLY information the group will have. Self-contained
-  and decision-ready.
-- For "concrete_pick": each option gets a real-sounding proper name (a venue,
-  product, etc.). Example: "The Marriott Downtown".
-- For "abstract_pick": do NOT force a proper-noun venue. The option IS the
-  topic/approach/theme. Example for "biology presentation topic":
-    "CRISPR gene-editing ethics" -- NOT "The Helix Institute".
-- Use QUALITATIVE descriptors only. Do NOT invent numbers, prices, dates,
-  durations, or fake percentages. Trade-offs and concerns are in plain words
-  ("higher cost", "narrower scope", "less flexible if plans change").
-- The four options must be MEANINGFULLY DIFFERENT -- each upside should serve a
-  distinct priority a reasonable person could weight differently.
-- "concern" is a real, practical worry distinct from the tradeoff (the tradeoff
-  is the headline cost; concern is the second-order worry: "less flexibility if
-  plans change", "depends on one person showing up", "social pressure to join").
-- "fit" names the kind of priority or person this suits best -- "low-disruption
-  travellers", "people who want depth", "anyone bringing kids".
-- "uncertainty" is the honest thing the group can't be sure about from the
-  option alone -- "baggage policy unclear", "weather dependent", "vendor
-  reliability is variable".
-- "best for" is a short priority phrase ("depth-over-breadth"), never a
-  person's name.
+- The values are fictional scenario facts, not real-time claims. They define the decision world.
+- Do not imply the group can check/call/look up additional facts during the chat.
+- For concrete logistics topics, include 4-7 useful attributes per option.
+- For abstract topics, include 4-7 scored dimensions per option using 1-5 scales.
+- Do NOT use values that invite live checking: availability, booking status, current waitlist status, current schedule uncertainty, exact real-time prices, live weather, refund-policy lookup, call-ahead policy lookup.
+- If you include a value, make it stable inside the fictional scenario.
+- Do not overload the card with too many numbers. The point is grounded discussion, not a spreadsheet.
+- If the topic may involve safety, allergies, accessibility, local ownership, or dietary needs, include one stable scenario attribute for it instead of leaving it as something to call/check.
+- The four options must differ meaningfully across priorities.
+- "risk" is a decision risk/trade-off, not a missing external fact. Good: "could be too loud for conversation". Bad: "availability unknown".
+- For abstract_pick / presentation_topic, the option itself is the topic/approach, not a fake venue or institute.
+- "best for" is a short priority phrase, not a person's name.
 
 Opening question:
-- One short, natural moderator question inviting priorities (not a vote).
+- One short, natural moderator question inviting priorities. Do not ask for a vote.
 
 Return JSON only:
 {{
-  "decision_kind": "concrete_pick" | "abstract_pick",
+  "decision_kind": "flight_booking" | "hotel_booking" | "restaurant_choice" | "hiking_trip" | "travel_destination" | "presentation_topic" | "study_or_work_plan" | "tool_or_product_choice" | "game_or_activity_choice" | "generic_decision",
   "options": [
-    "Option A - [Name or Topic]: [upside]; tradeoff: [qualitative]; concern: [practical worry]; fit: [who/when it suits]; uncertainty: [what's unclear]; best for: [priority]",
+    "Option A - [Name or Topic]: attrs: key=value, key=value, key=value; upside: ...; tradeoff: ...; concern: ...; fit: ...; risk: ...; best for: ...",
     "Option B - ...",
     "Option C - ...",
     "Option D - ..."
@@ -449,7 +464,7 @@ Voice rules (apply every turn):
 - Don't restate a point you (or someone else) already made. Each turn should add something: an answer, a reaction, a new consideration, a compromise, or a decision move.
 - Name an option (its name or letter) only when you're making a real point about it, voting, or clarifying a candidate -- not for short reactions.
 - No corporate-speak ("great point", "absolutely", "I completely agree"). No name prefix. No markdown. No em dashes.
-- You may use your own knowledge and lived experience to back a point -- that's how real arguments work. Do NOT invent specific facts about the OPTIONS themselves (no fake prices, fake names of services, fake dates tied to an option).
+- You may use exact values that appear in the option cards. Do NOT invent new option facts that are not listed (no fake prices, times, policies, services, dates, or guarantees).
 
 SPEAKER CARD
 {speaker_card}
@@ -701,14 +716,32 @@ Original (rejected):
 {original_text}
 
 Rewrite this as a DIFFERENT natural move (pick ONE):
-- ask one short, useful question;
+- ask one short, useful question only if it can be answered from the chat or listed options;
 - say a brief yes or no ("not sold", "yeah, that works", "not for me");
 - add a genuinely new reason (something NOT yet said);
 - compromise explicitly ("I'd still prefer X, but I can live with Y");
 - or push the decision forward ("then we're basically between A and D").
 
-Do NOT start with "valid point", "good point", "fair point", "I agree",
+Do NOT start with "valid point", "good point", "good question", "fair point", "I agree",
 "that's a concern", "X is right", or "makes sense".
+No name prefix. No markdown. Under 22 words.
+
+Write only the rewritten message."""
+
+
+def repair_question_chain(original_text: str) -> str:
+    return f"""A chat message was rejected because it asks another question while the discussion already has recent unanswered or repeated questions.
+
+Original rejected message:
+{original_text}
+
+Rewrite as ONE natural message that does NOT ask a question. Pick one:
+- give a brief answer or reaction, not just "good question";
+- say yes/no/uncertain;
+- make a concrete decision statement;
+- compare two options using listed facts;
+- or move toward compromise.
+
 No name prefix. No markdown. Under 22 words.
 
 Write only the rewritten message."""
@@ -731,7 +764,7 @@ Rewrite this turn so it does NOT restate the same option-attribute argument.
 Pick ONE genuinely new move:
 - respond to what someone ELSE said, with a specific reason or pushback;
 - name a trade-off you haven't raised;
-- ask one short useful question;
+- ask one short useful question only if it can be answered from the chat or listed options;
 - or move toward a pick.
 
 No name prefix. No markdown. Under 22 words.
@@ -757,6 +790,23 @@ them as genuinely available. No name prefix. Similar length.
 Write only the rewritten message."""
 
 
+def repair_reason_floor(original_text: str, options: list[str]) -> str:
+    options_block = "\n".join(options)
+    return f"""A pre-vote discussion message was rejected because it did not give a concrete option-linked reason.
+
+Available options:
+{options_block}
+
+Original rejected message:
+{original_text}
+
+Rewrite as ONE natural chat message that mentions a specific option and connects one listed attribute/trade-off to your priority.
+Good shape: "Option B is quieter and still affordable, so it fits my sleep concern."
+Do not ask a new question. Do not only say you prefer something. No name prefix. Under 28 words.
+
+Write only the message."""
+
+
 def repair_vote(options: list[str]) -> str:
     """Prompt for a missing vote during narrowing."""
     letters = ", ".join(
@@ -778,17 +828,70 @@ No name prefix. Under 22 words.
 Write only the message."""
 
 
+def repair_inconsistent_vote(original_text: str, options: list[str], rejected_options: set[str]) -> str:
+    options_block = "\n".join(options)
+    rejected = ", ".join(f"Option {o}" for o in sorted(rejected_options)) or "the earlier ruled-out option"
+    return f"""A vote message was rejected because it votes for an option the same speaker already ruled out earlier: {rejected}.
+
+Available options:
+{options_block}
+
+Original rejected message:
+{original_text}
+
+Rewrite as ONE natural vote. Pick an option you have not ruled out, OR explicitly say you changed your mind and why.
+Good shapes:
+- "I'd go with Option A."
+- "I know I ruled out B earlier, but I've changed my mind because ..."
+No name prefix. Under 24 words.
+
+Write only the message."""
+
+
+def repair_repeated_rule_out(original_text: str) -> str:
+    return f"""A chat message was rejected because it tries to rule out an option that was already rejected or ruled out.
+
+Original rejected message:
+{original_text}
+
+Rewrite as ONE natural message that does not repeat the rule-out. Pick one:
+- give a short answer to the current thread;
+- compare the remaining options using listed facts;
+- say which option you could live with;
+- or move toward a compromise.
+No new question. No name prefix. Under 22 words.
+
+Write only the message."""
+
+
+def repair_attribute_mismatch(original_text: str, options: list[str]) -> str:
+    options_block = "\n".join(options)
+    return f"""A chat message was rejected because it changed a listed option attribute, such as a time or price.
+
+Available options and their scenario facts:
+{options_block}
+
+Original rejected message:
+{original_text}
+
+Rewrite the same turn using only the listed values. Do not invent or change times, prices, stops, fees, waits, or scores.
+No name prefix. Under 24 words.
+
+Write only the message."""
+
+
 def repair_confirmation(candidate: str) -> str:
-    """Prompt for an unclear confirmation (must be yes or no)."""
-    return f"""A confirmation message was rejected because it was unclear.
+    """Prompt for an unclear or too-thin confirmation (must be yes/no with context)."""
+    return f"""A confirmation message was rejected because it was unclear or too thin.
 
 The group is deciding on Option {candidate}.
 
 Write one clear response -- pick one:
-  YES: "yeah, works for me" / "that's fine" / "I'm on board" / etc.
-  NO: "no, [specific one-line reason]"
+  YES: "I still prefer my pick, but Option {candidate} works because [one short reason]."
+  NO: "No, [specific one-line reason]."
 
-Only say no if you have a real objection. No name prefix. Under 18 words.
+If this is not your top choice, do NOT answer only "that's fine" or "works for me".
+Give one short reason why you can or cannot live with it. No name prefix. Under 24 words.
 
 Write only the message."""
 
@@ -803,6 +906,33 @@ def repair_invented_fact(original_prompt: str) -> str:
         "You may use general knowledge and personal experience as reasons, "
         "but do NOT attach specific numbers or fake named features to any option."
     )
+
+
+
+def repair_fact_chasing_question(original_text: str, options: list[str]) -> str:
+    options_block = "\n".join(options)
+    return f"""A chat message was rejected because it asks for outside facts the group cannot know or check during this simulated decision.
+
+Examples of rejected behaviour:
+- asking for live availability, waitlists, current schedules, refund policies, exact probabilities, actual cost differences, or calling/checking/looking something up.
+
+The group only knows these option cards:
+{options_block}
+
+Original rejected message:
+{original_text}
+
+Rewrite as ONE natural chat message that decides from the listed option attributes and trade-offs.
+Use wording like:
+- "Given what's listed, ..."
+- "Without exact extra details, I'd treat ... as ..."
+- "Based on the listed trade-off, ..."
+- "Then I'd rule out / keep / compromise on ..."
+
+Do not ask a new question. Do not suggest calling, checking, looking up, or waiting for updates.
+No name prefix. Under 24 words.
+
+Write only the rewritten message."""
 
 
 def moderator_force_close(

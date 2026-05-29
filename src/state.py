@@ -188,26 +188,20 @@ class DiscourseGraph:
     challenges: list[ChallengeRecord]       = field(default_factory=list)
 
     def has_obligation_for(self, name: str) -> bool:
-        """A directed pending question always obligates its addressee. An open
-        invitation only obligates non-askers when it is the OLDEST one -- if
-        questions pile up, only the first remains obligating, so a rapid-fire
-        hypothetical-question loop doesn't force the cascade indefinitely."""
-        if any(name in addressees for addressees in self.pending_questions.values()):
-            return True
-        if not self.open_invitations:
-            return False
-        oldest_id = min(self.open_invitations)
-        return self.open_invitations[oldest_id] != name
+        """Only directed questions create turn-taking obligations.
+
+        Earlier versions treated every open participant question as an
+        obligation for some arbitrary non-asker. That created question/answer
+        chains and let the wrong person answer implicit questions. Open
+        invitations are still recorded for evaluation, but they do not force
+        speaker selection.
+        """
+        return any(name in addressees for addressees in self.pending_questions.values())
 
     def oldest_pending_addressees(self) -> list[str]:
-        candidates: list[tuple[int, list[str]]] = []
-        for q_id, addressees in self.pending_questions.items():
-            candidates.append((q_id, addressees))
-        for q_id, asker in self.open_invitations.items():
-            candidates.append((q_id, [f"!{asker}"]))
-        if not candidates:
+        if not self.pending_questions:
             return []
-        return min(candidates, key=lambda c: c[0])[1]
+        return self.pending_questions[min(self.pending_questions)]
 
     def resolve_question(self, answering_turn_id: int, speaker: str) -> Optional[int]:
         for q_id, addressees in list(self.pending_questions.items()):
@@ -470,12 +464,14 @@ class StateTracker:
             self.state.discourse.add_question(turn_id, addressees)
             if not is_moderator:
                 self.state.discourse.last_addressed = addressees[0]
-        elif is_question and not is_moderator:
-            self.state.discourse.add_question(turn_id, [], asker=speaker)
         elif is_question and is_moderator:
             self.state.discourse.add_question(turn_id, list(self._participant_names))
         elif addressees and not is_moderator:
             self.state.discourse.last_addressed = addressees[0]
+        # Participant open questions are deliberately NOT added as obligations.
+        # They are often rhetorical or exploratory. If the question implicitly
+        # targets the previous speaker, _extract_addressees() resolves it before
+        # this branch. Otherwise speaker selection should remain free.
 
         # Stage 5 -- challenge / answer detection. Only meaningful between sims.
         challenges_turn_id: Optional[int] = None
@@ -579,7 +575,53 @@ class StateTracker:
         for name in targets:
             if _is_addressing(name, text, is_question=is_question, has_challenge=has_challenge):
                 result.append(name)
+
+        # Implicit addressee: if B asks a question immediately after A introduced
+        # a priority/concern and the question repeats that keyword, route the
+        # answer back to A. Example: "Julian: eco-friendly spot" -> "Liam: How
+        # important is being eco-friendly?" should obligate Julian, not a random
+        # third speaker.
+        if is_question and not result and not is_moderator:
+            implicit = self._implicit_previous_speaker_target(text, speaker)
+            if implicit and implicit in targets:
+                result.append(implicit)
         return result
+
+    def _implicit_previous_speaker_target(self, question_text: str, speaker: str) -> Optional[str]:
+        """Infer target from the immediately previous participant turn.
+
+        This is intentionally conservative: it only fires when the current
+        question reuses a non-trivial token from the previous speaker's text.
+        It fixes the common "A states priority, B asks how important that is,
+        C answers" failure without turning all open questions into obligations.
+        """
+        previous = None
+        for t in reversed(self.state.turns):
+            if t.is_moderator or t.speaker == speaker:
+                continue
+            previous = t
+            break
+        if previous is None:
+            return None
+
+        def toks(x: str) -> set[str]:
+            stop = {
+                "what", "about", "which", "option", "important", "choice", "really",
+                "still", "think", "would", "could", "should", "there", "their", "your",
+                "with", "that", "this", "from", "have", "does", "need", "want", "like",
+                "nice", "spot", "place", "choice", "decision", "best", "good",
+            }
+            return {
+                re.sub(r"[^a-z0-9]", "", w.lower())
+                for w in re.findall(r"[A-Za-z][A-Za-z'-]{3,}", x)
+                if re.sub(r"[^a-z0-9]", "", w.lower()) not in stop
+            }
+
+        q = toks(question_text)
+        p = toks(previous.text)
+        if q and p and (q & p):
+            return previous.speaker
+        return None
 
     def _estimate_act(self, text: str, phase: str, is_moderator: bool,
                       is_question: bool, mentioned_options: list[str],

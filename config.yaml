@@ -40,8 +40,8 @@ simulation:
 # values are floors/ceilings around that gate.
 # ---------------------------------------------------------------------------
 turns:
-  ceiling_per_participant: 11              # hard ceiling = max(min_ceiling, n * this)
-  min_ceiling: 22
+  ceiling_per_participant: 7               # legacy hard ceiling; refactored loop uses bounded phases
+  min_ceiling: 18
 
   # Floor: don't even consider narrowing before each sim has had at least this
   # many turns. Lets opening + at least one real round of exchange happen.
@@ -50,7 +50,7 @@ turns:
   # Ceiling: force narrowing once everyone's had this many turns, even if
   # deliberation signals haven't fired (otherwise contested topics could
   # never close).
-  narrow_after_per_participant: 7
+  narrow_after_per_participant: 5
 
   # Rounds AFTER narrowing before escalation triggers a moderator nudge or
   # force-close. A grace of n rounds is added at runtime so larger groups
@@ -85,7 +85,7 @@ consensus:
 # Repetition / stall detection (single Jaccard-based check)
 # ---------------------------------------------------------------------------
 repetition:
-  pressure_window: 8
+  pressure_window: 10
   min_word_length: 3
   jaccard_threshold_self: 0.45
   stall_increment_threshold: 0.70
@@ -292,6 +292,8 @@ verification:
   check_moderator_options: true            # moderator introducing new options / fake consensus
   check_votes: true                        # missing explicit vote during narrowing
   check_confirmation: true                 # unclear yes/no during confirmation
+  check_fact_chasing_questions: true
+  check_question_chains: true       # block fake live availability/waitlist/checking questions
 
   # Jaccard thresholds for self-repetition detection.
   own_last_turn_jaccard: 0.55             # last own turn similarity -> repair
@@ -329,21 +331,27 @@ surface_moves:
   weights_normal:
     ack_only: 1.0
     short_no: 1.0
-    question: 1.0
-    compromise: 1.0
-    new_reason: 1.0
+    # Questions are no longer sampled as casual surface moves. They create
+    # obligations and caused question/answer chains. Questions still happen
+    # when prompted by the moderator or genuinely required by the LLM.
+    question: 0.0
+    compromise: 1.2
+    decision_move: 1.4
+    new_reason: 0.8
   weights_high_repetition:
-    decision_move: 3.0                     # bias hard toward forward motion
-    short_no: 1.5
-    ack_only: 1.0
-    new_reason: 0.5
+    decision_move: 4.0                     # bias hard toward forward motion
+    compromise: 2.0
+    short_no: 1.0
+    ack_only: 0.4
+    question: 0.0
+    new_reason: 0.4
 
 # ---------------------------------------------------------------------------
 # Closure (update.md §4.9) -- don't force every sim to produce a sign-off line.
 # Moderator success line + a small number of participant reactions is enough.
 # ---------------------------------------------------------------------------
 closure:
-  participants_to_close: 2                 # 0..n; how many sims close. 0 = mod only.
+  participants_to_close: 1                 # 0..n; how many sims close. 0 = mod only.
   always_close_primary: true               # primary always gets a slot if >=1
 
 # ---------------------------------------------------------------------------

@@ -139,11 +139,43 @@ _FAKE_CONSENSUS = re.compile(
 
 # Acknowledgement phrases -- the "valid point / fair point / I agree" family
 # that produces the loop pattern described in update.md §2.2 / §4.3.
+
+# Fact-chasing questions ask the group to resolve unavailable external facts
+# (availability, waitlists, booking status, exact schedules). Those questions
+# pushed chats into fake planning: "will check again today", "call ahead", etc.
+_FACT_CHASING_QUESTION = re.compile(
+    r"\b(?:"
+    # Live updates / availability / booking-state checks
+    r"what['’]?s\s+the\s+latest\s+on|any\s+update\s+on|availability|available\s+rooms?|"
+    r"fully\s+booked|booked\s+out|reservation\s+status|wait\s*list|waitlist|call\s*-?\s*ahead|"
+    # Asking people to look up or call for information
+    r"do\s+we\s+know\s+(?:if|whether|what)|does\s+anyone\s+know\s+(?:if|whether|what)|"
+    r"can\s+we\s+(?:check|call|ask|find\s+out|look\s+into)|"
+    r"could\s+we\s+(?:check|call|ask|find\s+out|look\s+into)|"
+    r"should\s+we\s+(?:check|call|ask|find\s+out|look\s+into)|"
+    r"let['’]?s\s+(?:check|call|ask|find\s+out|look\s+into)|"
+    r"look\s+into\s+that|check\s+that|find\s+that\s+out|"
+    # Exact missing external values
+    r"actual\s+(?:\w+\s+){0,3}(?:probability|probabilities|chance|cost|price|difference|fee|fees|duration|time)|"
+    r"exact\s+(?:\w+\s+){0,3}(?:probability|probabilities|chance|cost|price|difference|fee|fees|duration|time|wait|schedule)|"
+    r"compare\s+(?:across|between)\s+(?:these\s+)?options|"
+    r"policy\s+on\s+(?:refunds?|changes?|cancellations?|baggage)|"
+    r"refund\s+policy|change\s+policy|cancellation\s+policy|baggage\s+(?:fee|fees|policy)|"
+    r"rough\s+estimate|transport(?:ation)?\s+costs?|max\s+budget|maximum\s+budget|"
+    r"allergen\s+(?:protocols?|handling|safety)|food\s+safety\s+(?:protocols?|handling)|"
+    r"does\s+(?:it|that|Option\s+[A-D]).{0,35}\b(?:have|offer|provide)\b.{0,35}\b(?:better|clear|explicit|safer)\b|"
+    # Guarantees / external services
+    r"guarantee\s+(?:a|an|the)?|partnerships?\s+with|equipment\s+rentals?"
+    r")\b",
+    re.I,
+)
+
+
 _ACK_PHRASES = re.compile(
     r"\b(?:"
     r"valid\s+(?:point|concern)|"
     r"fair\s+(?:point|enough)|"
-    r"good\s+(?:point|call)|"
+    r"good\s+(?:point|call|question)|"
     r"great\s+point|"
     r"makes?\s+sense|"
     r"i\s+(?:totally\s+)?(?:agree|hear\s+you|see\s+(?:your\s+)?point)|"
@@ -157,6 +189,98 @@ _ACK_PHRASES = re.compile(
     re.I,
 )
 
+
+
+# ---------------------------------------------------------------------------
+# Option attribute helpers
+# ---------------------------------------------------------------------------
+
+def _option_letter_from_text(option: str) -> Optional[str]:
+    m = re.match(r"\s*Option\s+([A-D])\b", option, re.I)
+    return m.group(1).upper() if m else None
+
+
+def _option_attrs(options: list[str]) -> dict[str, dict[str, str]]:
+    """Parse `attrs: key=value` pairs from generated option cards."""
+    out: dict[str, dict[str, str]] = {}
+    for opt in options:
+        letter = _option_letter_from_text(opt)
+        if not letter:
+            continue
+        attrs: dict[str, str] = {}
+        if ": attrs:" in opt:
+            raw = opt.split(": attrs:", 1)[1].split("; upside:", 1)[0]
+            for item in raw.split(","):
+                if "=" not in item:
+                    continue
+                key, value = [x.strip() for x in item.split("=", 1)]
+                attrs[key] = value
+        out[letter] = attrs
+    return out
+
+
+def _time_to_minutes(value: str) -> Optional[int]:
+    value = value.strip().lower()
+    m = re.match(r"^(\d{1,2}):(\d{2})$", value)
+    if m:
+        return int(m.group(1)) * 60 + int(m.group(2))
+    m = re.match(r"^(\d{1,2})\s*(am|pm)$", value)
+    if m:
+        h = int(m.group(1)) % 12
+        if m.group(2) == "pm":
+            h += 12
+        return h * 60
+    return None
+
+
+def _mentioned_times(text: str) -> list[int]:
+    times: list[int] = []
+    for m in re.finditer(r"\b(\d{1,2}:\d{2})\b", text):
+        val = _time_to_minutes(m.group(1))
+        if val is not None:
+            times.append(val)
+    for m in re.finditer(r"\b(\d{1,2})\s*(am|pm)\b", text, re.I):
+        val = _time_to_minutes(f"{m.group(1)}{m.group(2).lower()}")
+        if val is not None:
+            times.append(val)
+    return times
+
+
+def detect_option_attribute_mismatch(text: str, options: list[str], resolver: OptionResolver) -> Optional[VerificationIssue]:
+    """Catch changing listed scenario values, currently mainly departure time.
+
+    Example: option card says B departs 14:00, but the utterance says "3 pm
+    departure for Option B". This is not external lookup; it is direct mutation
+    of a scenario fact and should be repaired.
+    """
+    attrs_by_letter = _option_attrs(options)
+    refs = resolver.options_in(text)
+    if not refs:
+        return None
+    said_times = _mentioned_times(text)
+    if said_times:
+        for letter in refs:
+            dep = attrs_by_letter.get(letter, {}).get("departure_time")
+            dep_min = _time_to_minutes(dep) if dep else None
+            if dep_min is not None and all(abs(t - dep_min) > 10 for t in said_times):
+                return VerificationIssue(
+                    code="OPTION_ATTRIBUTE_MISMATCH",
+                    severity="repair",
+                    message=f"Text changes Option {letter}'s listed departure time ({dep}).",
+                )
+    # Price mismatch near a referenced option. Conservative: only flag euro
+    # amounts when the exact listed price exists and no mentioned amount matches.
+    prices = [int(x) for x in re.findall(r"€\s*(\d{2,4})", text)]
+    if prices:
+        for letter in refs:
+            price = attrs_by_letter.get(letter, {}).get("price_eur") or attrs_by_letter.get(letter, {}).get("price_per_night_eur") or attrs_by_letter.get(letter, {}).get("price_per_person_eur")
+            if price and all(int(price) != p for p in prices):
+                return VerificationIssue(
+                    code="OPTION_ATTRIBUTE_MISMATCH",
+                    severity="repair",
+                    message=f"Text changes Option {letter}'s listed price (€{price}).",
+                )
+    return None
 
 # ---------------------------------------------------------------------------
 # Participant checks
@@ -412,6 +536,59 @@ def detect_semantic_point_repeat(
     return None
 
 
+
+def detect_fact_chasing_question(text: str, phase: str) -> Optional[VerificationIssue]:
+    """Flag questions that try to resolve unavailable outside facts.
+
+    The simulator has only the option cards. It should decide from listed
+    trade-offs, not invent calls, booking checks, availability updates, or
+    live waitlist information.
+    """
+    if phase not in ("negotiation", "narrowing", "emergence"):
+        return None
+    # This covers both literal questions ("what is the refund policy?") and
+    # planning/request moves ("let's look into that", "we should call ahead").
+    # Both push the simulated chat toward unavailable external facts.
+    if _FACT_CHASING_QUESTION.search(text):
+        return VerificationIssue(
+            code="FACT_CHASING_QUESTION",
+            severity="repair",
+            message="Question asks for unavailable outside facts instead of deciding from listed option trade-offs.",
+        )
+    return None
+
+def detect_question_chain(text: str, phase: str, history: list[str]) -> Optional[VerificationIssue]:
+    """Flag new questions when the local thread is already question-heavy.
+
+    The simulator should not become Q -> Q -> Q. A new question is allowed
+    occasionally, but after a recent participant question the next useful move
+    is usually a short answer, reaction, or decision statement.
+    """
+    if phase != "negotiation" or "?" not in text:
+        return None
+    recent_participant_msgs: list[str] = []
+    for line in reversed(history):
+        if ":" not in line:
+            continue
+        spk, msg = line.split(":", 1)
+        if spk.strip() == "Moderator":
+            continue
+        recent_participant_msgs.append(msg.strip())
+        if len(recent_participant_msgs) >= 4:
+            break
+    if not recent_participant_msgs:
+        return None
+    q_count_last3 = sum("?" in m for m in recent_participant_msgs[:3])
+    q_count_last4 = sum("?" in m for m in recent_participant_msgs[:4])
+    if q_count_last3 >= 1 or q_count_last4 >= 2:
+        return VerificationIssue(
+            code="QUESTION_CHAIN",
+            severity="repair",
+            message="Another question would create a question-after-question chain; answer or make a decision move instead.",
+        )
+    return None
+
+
 def detect_missing_vote(
     text: str, phase: str, resolver: OptionResolver,
 ) -> Optional[VerificationIssue]:
@@ -441,6 +618,42 @@ def detect_unclear_confirmation(
             code="UNCLEAR_CONFIRMATION",
             severity="repair",
             message="Confirmation turn is neither clear yes nor clear no.",
+        )
+    return None
+
+
+def detect_weak_compromise_confirmation(
+    text: str, phase: str, candidate: Optional[str], persona_state: Optional["ParticipantState"],
+) -> Optional[VerificationIssue]:
+    """Flag bare yes-lines when accepting a non-preferred compromise.
+
+    A plain "that's fine" is mechanically clear, but it made compromises feel
+    unearned. If the candidate is not the speaker's preferred option, ask for
+    one short reason why they can live with it.
+    """
+    if phase != "confirmation" or not candidate or persona_state is None:
+        return None
+    persona = getattr(persona_state, "persona_ref", None)
+    beliefs = getattr(persona, "beliefs", None)
+    if not beliefs or candidate == getattr(beliefs, "preferred", None):
+        return None
+    lower = text.strip().lower()
+    is_yes = bool(_YES_PAT.search(lower))
+    is_no = bool(_NO_PAT.match(lower))
+    if not is_yes or is_no:
+        return None
+    words = re.findall(r"\b\w+\b", lower)
+    reason_markers = re.compile(
+        r"\b(because|since|as|given|quiet|price|cost|wait|time|travel|noise|"
+        r"menu|variety|safety|allergen|local|comfort|flexib|reliable|"
+        r"works?\s+because|still\s+prefer|but)\b",
+        re.I,
+    )
+    if len(words) <= 6 or not reason_markers.search(text):
+        return VerificationIssue(
+            code="WEAK_COMPROMISE_CONFIRMATION",
+            severity="repair",
+            message="Non-preferred compromise acceptance needs one short reason, not only a bare yes.",
         )
     return None
 
@@ -534,6 +747,20 @@ def verify_participant_turn(
         if inv_fact:
             issues.append(inv_fact)
 
+        attr_mismatch = detect_option_attribute_mismatch(text, options, resolver)
+        if attr_mismatch:
+            issues.append(attr_mismatch)
+
+        if _vcfg("check_fact_chasing_questions", True):
+            fact_q = detect_fact_chasing_question(text, phase)
+            if fact_q:
+                issues.append(fact_q)
+
+        if _vcfg("check_question_chains", True):
+            q_chain = detect_question_chain(text, phase, history)
+            if q_chain:
+                issues.append(q_chain)
+
     if _vcfg("check_repetition", True):
         rep = detect_self_repetition(text, speaker_name, history, persona_state)
         if rep:
@@ -561,6 +788,9 @@ def verify_participant_turn(
         uc = detect_unclear_confirmation(text, phase, candidate)
         if uc:
             issues.append(uc)
+        wc = detect_weak_compromise_confirmation(text, phase, candidate, persona_state)
+        if wc:
+            issues.append(wc)
 
     needs_repair = any(i.severity == "repair" for i in issues)
     return VerificationResult(ok=not needs_repair, issues=issues, needs_repair=needs_repair)
