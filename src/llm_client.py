@@ -25,8 +25,6 @@ class LLMClient:
         self.last_tokens_out = 0
         self.session_tokens_in = 0
         self.session_tokens_out = 0
-        # Per-profile token accumulation, e.g. {"setup": [in, out], ...}.
-        self._profile_tokens: dict[str, list[int]] = {}
 
     def _build_client(self) -> Any:
         if self.provider == "gemini":
@@ -48,24 +46,6 @@ class LLMClient:
     def reset_session(self) -> None:
         self.session_tokens_in = 0
         self.session_tokens_out = 0
-        self._profile_tokens = {}
-
-    def token_summary(self) -> dict[str, list[int]]:
-        """Tokens grouped into setup vs dialogue buckets, plus total.
-
-        ``setup`` covers scenario/persona/belief generation; ``dialogue`` covers
-        utterance generation and repairs.  Values are ``[tokens_in, tokens_out]``.
-        """
-        setup = self._profile_tokens.get("setup", [0, 0])
-        dialogue_in = sum(v[0] for k, v in self._profile_tokens.items() if k != "setup")
-        dialogue_out = sum(v[1] for k, v in self._profile_tokens.items() if k != "setup")
-        total_in = sum(v[0] for v in self._profile_tokens.values())
-        total_out = sum(v[1] for v in self._profile_tokens.values())
-        return {
-            "setup": [setup[0], setup[1]],
-            "dialogue": [dialogue_in, dialogue_out],
-            "total": [total_in, total_out],
-        }
 
     def _record_tokens(self, tokens_in: int, tokens_out: int) -> None:
         self.last_tokens_in = int(tokens_in or 0)
@@ -82,13 +62,6 @@ class LLMClient:
         }
 
     def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
-        text = self._generate_raw(prompt, profile)
-        bucket = self._profile_tokens.setdefault(profile, [0, 0])
-        bucket[0] += self.last_tokens_in
-        bucket[1] += self.last_tokens_out
-        return text
-
-    def _generate_raw(self, prompt: str, profile: str) -> str:
         self.last_tokens_in = 0
         self.last_tokens_out = 0
         sampling = self._sampling(profile)

@@ -29,9 +29,9 @@ _ACCEPT_CUES = re.compile(
 )
 
 _REJECT_CUES = re.compile(
-    r"\b(?:can['’]?t\s+live\s+with|couldn['’]?t\s+live\s+with|doesn['’]?t\s+work\s+for\s+me|"
-    r"not\s+(?:okay|ok|fine|good|sold|convinced)|i\s+wouldn['’]?t\s+do|i\s+can['’]?t\s+do|"
-    r"no\s+to|rather\s+not|rule\s+out|hard\s+no)\b",
+    r"\b(?:can['’]?t\s+live\s+with|couldn['’]?t\s+live\s+with|(?:doesn['’]?t|does\s+not)\s+work\s+for\s+me|"
+    r"not\s+(?:okay|ok|fine|good|sold|convinced)|not\s+quite\s+there|not\s+there\s+yet|"
+    r"i\s+wouldn['’]?t\s+do|i\s+can['’]?t\s+do|no\s+to|rather\s+not|rule\s+out|hard\s+no)\b",
     re.I,
 )
 
@@ -89,10 +89,14 @@ def _extract_vote(text: str, option_refs: list[str]) -> Optional[str]:
 
 def _extract_accepts(text: str, option_refs: list[str], intent: Optional[MoveIntent]) -> list[str]:
     candidate = intent.option_focus[0] if intent and intent.option_focus else None
-    if option_refs and _ACCEPT_CUES.search(text):
-        return option_refs
+    lower = text.lower().strip()
+    asks_group = "?" in text and re.search(r"\b(?:everyone|anyone|we|you all|all of us)\b", lower)
+    if asks_group and not re.match(r"^\s*(?:yes|yeah|yep|sure|ok|okay|fine|i\s+can|i['’]?m\s+(?:ok|okay|fine|good))\b", lower):
+        return []
     if candidate and intent and intent.act in {ActType.ACCEPT, ActType.VOTE} and (_ACCEPT_CUES.search(text) or _YES_ONLY.search(text)):
         return [candidate]
+    if option_refs and _ACCEPT_CUES.search(text):
+        return option_refs
     return []
 
 
@@ -100,16 +104,15 @@ def _extract_rejects(text: str, option_refs: list[str], intent: Optional[MoveInt
     candidate = intent.option_focus[0] if intent and intent.option_focus else None
     if option_refs and _REJECT_CUES.search(text):
         return option_refs
-    if candidate and intent and intent.act == ActType.ACCEPT and (_REJECT_CUES.search(text) or _NO_ONLY.search(text)):
+    if candidate and intent and intent.act in {ActType.ACCEPT, ActType.REJECT} and (_REJECT_CUES.search(text) or _NO_ONLY.search(text)):
         return [candidate]
     return []
 
 
 def _extract_proposal(text: str, option_refs: list[str], intent: Optional[MoveIntent]) -> Optional[str]:
-    if option_refs and re.search(r"\b(?:middle\s+ground|compromise|maybe\s+we\s+could|what\s+if\s+we|could\s+we\s+do)\b", text, re.I):
+    del intent
+    if option_refs and re.search(r"\b(?:middle\s+ground|compromise|maybe\s+we\s+could|what\s+if\s+we|could\s+we\s+do|could\s+work\s+for\s+everyone|shared\s+fallback)\b", text, re.I):
         return option_refs[0]
-    if intent and intent.act == ActType.PROPOSE_COMPROMISE and intent.option_focus:
-        return intent.option_focus[0]
     return None
 
 

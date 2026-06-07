@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
+import re
 
 import prompts
 from config_loader import cfg
@@ -83,3 +84,24 @@ class ScenarioBuilder:
             required = [option.name, option.upside, option.tradeoff, option.concern, option.fit, option.risk, option.best_for]
             if any(not str(field).strip() for field in required):
                 raise ValueError(f"Option {option.id} is missing one or more required fields.")
+            attr_min = int(cfg.scenario.attr_min)
+            if len(option.attrs) < attr_min:
+                raise ValueError(f"Option {option.id} needs at least {attr_min} stable attributes; got {len(option.attrs)}.")
+            bad_attrs = [k for k, v in option.attrs.items() if _looks_like_placeholder(k) or _looks_like_placeholder(v)]
+            if bad_attrs:
+                raise ValueError(f"Option {option.id} contains placeholder/generic attributes: {bad_attrs}")
+            if _too_short(option.upside) or _too_short(option.tradeoff) or _too_short(option.concern):
+                raise ValueError(f"Option {option.id} has underspecified upside/tradeoff/concern.")
+
+
+def _looks_like_placeholder(text: str) -> bool:
+    lower = str(text).strip().lower()
+    if not lower:
+        return True
+    if re.fullmatch(r"stable[_ -]?attribute[_ -]?\d+", lower):
+        return True
+    return lower in {"concrete value", "n/a", "none", "unknown", "not specified", "tbd", "generic"}
+
+
+def _too_short(text: str) -> bool:
+    return len(str(text).split()) < int(cfg.scenario.min_field_words)

@@ -1,8 +1,12 @@
-"""Move-intent routing for the next dialogue turn."""
+"""Move-intent routing for the next dialogue turn.
+
+The router returns a concrete local move, not just a speaker. It also protects
+against the early-vote failure mode by routing discussion toward under-covered
+options before narrowing is allowed.
+"""
 
 from __future__ import annotations
 
-import random
 from collections import Counter
 from typing import Optional
 
@@ -47,7 +51,7 @@ class TurnRouter:
         return self._discussion_move(state)
 
     def _vote_move(self, state: DialogueState) -> MoveIntent:
-        for persona in state.personas:
+        for persona in self._least_recent_personas(state):
             if not state.runtimes[persona.id].explicit_vote:
                 return MoveIntent(
                     speaker_id=persona.id,
@@ -56,7 +60,6 @@ class TurnRouter:
                     reason="the discussion is developed enough to name a current pick",
                     length_hint="medium",
                 )
-        # All voted: set candidate to leading option and test it.
         candidate = self._leading_vote(state) or state.candidate_option or state.personas[0].preferred_option
         state.candidate_option = candidate
         state.phase = Phase.CONFIRMATION
@@ -67,23 +70,44 @@ class TurnRouter:
         if not candidate:
             return None
         state.candidate_option = candidate
-        for persona in state.personas:
+        for persona in self._least_recent_personas(state):
             rt = state.runtimes[persona.id]
+            # A vote for the candidate is already public support. Do not make the
+            # same participant ask the group whether their own pick is acceptable.
+            if rt.explicit_vote == candidate:
+                continue
             if candidate in rt.accepted_options or candidate in rt.rejected_options:
                 continue
             act = ActType.ACCEPT
-            if persona.is_hard_blocker and candidate in persona.hard_rejections:
+            if candidate in persona.hard_rejections or (persona.is_hard_blocker and candidate != persona.preferred_option):
+                act = ActType.REJECT
+            elif candidate not in persona.acceptable_options and candidate != persona.preferred_option:
                 act = ActType.REJECT
             return MoveIntent(
                 speaker_id=persona.id,
                 act=act,
                 option_focus=[candidate],
-                reason=f"check whether Option {candidate} is acceptable as the current compromise",
+                reason=f"answer whether Option {candidate} works for you as the current compromise",
                 length_hint="short",
             )
         return None
 
     def _discussion_move(self, state: DialogueState, forced_act: Optional[ActType] = None) -> MoveIntent:
+        gap = self._coverage_gap_option(state)
+        if gap:
+            speaker = self._speaker_for_option(state, gap)
+            act = forced_act or self._act_for_gap(state, speaker, gap)
+            focus = [gap]
+            if act == ActType.COMPARE and state.persona_by_id(speaker).preferred_option not in focus:
+                focus.append(state.persona_by_id(speaker).preferred_option)
+            return MoveIntent(
+                speaker_id=speaker,
+                act=act,
+                option_focus=focus[:2],
+                reason=f"bring under-discussed Option {gap} into the conversation",
+                length_hint=sample_length_hint(cfg.routing.length_hint_probabilities),
+            )
+
         speaker = self._select_discussion_speaker(state)
         act = forced_act or self._sample_discussion_act(state, speaker)
         focus = self._focus_for_act(state, speaker, act)
@@ -132,7 +156,6 @@ class TurnRouter:
             ActType.PROPOSE_COMPROMISE: float(cfg.routing.compromise_intent_probability),
             ActType.REACT: float(cfg.routing.react_intent_probability),
         }
-        # More cooperative people move toward compromise slightly more often.
         persona = state.persona_by_id(speaker_id)
         probs[ActType.PROPOSE_COMPROMISE] += max(0.0, persona.traits.compromise_willingness - 0.6) * 0.12
         acts = list(probs.keys())
@@ -141,8 +164,7 @@ class TurnRouter:
     def _focus_for_act(self, state: DialogueState, speaker_id: str, act: ActType) -> list[str]:
         persona = state.persona_by_id(speaker_id)
         if act == ActType.PROPOSE_COMPROMISE:
-            candidate = self._best_compromise_option(state, speaker_id)
-            return [candidate]
+            return [self._best_compromise_option(state, speaker_id)]
         if act in {ActType.REACT, ActType.PUSH_BACK, ActType.COMPARE, ActType.ASK}:
             recent_refs = [oid for turn in reversed(state.turns) for oid in turn.act.option_refs]
             if recent_refs:
@@ -160,20 +182,72 @@ class TurnRouter:
     def _best_compromise_option(self, state: DialogueState, speaker_id: str) -> str:
         persona = state.persona_by_id(speaker_id)
         counts: Counter[str] = Counter()
+        rejected_any = {oid for rt in state.runtimes.values() for oid in rt.rejected_options}
         for runtime in state.runtimes.values():
             if runtime.explicit_vote:
                 counts[runtime.explicit_vote] += 2
             for option_id in runtime.accepted_options:
                 counts[option_id] += 1
+            for option_id in runtime.rejected_options:
+                counts[option_id] -= 4
         for option_id in persona.acceptable_options:
             counts[option_id] += 1
+        viable = [(oid, score) for oid, score in counts.items() if oid not in rejected_any]
+        if viable:
+            return sorted(viable, key=lambda x: x[1], reverse=True)[0][0]
         if counts:
             return counts.most_common(1)[0][0]
         return persona.acceptable_options[0] if persona.acceptable_options else persona.preferred_option
 
+    def _coverage_gap_option(self, state: DialogueState) -> Optional[str]:
+        # First make sure every option is at least touched once, then deepen the
+        # weakest options until the controller's coverage gates can pass.
+        options = list(state.scenario.option_ids)
+        untouched = [oid for oid in options if state.coverage[oid].mentions == 0]
+        if untouched:
+            return sorted(untouched, key=lambda oid: (state.coverage[oid].mentions, state.coverage[oid].reasons, oid))[0]
+        weak = [oid for oid in options if state.coverage[oid].reasons == 0]
+        if weak:
+            return sorted(weak, key=lambda oid: (state.coverage[oid].mentions, oid))[0]
+        return None
+
+    def _speaker_for_option(self, state: DialogueState, option_id: str) -> str:
+        recent = [turn.speaker_id for turn in state.turns[-int(cfg.routing.recent_speaker_window):] if turn.speaker_id != "moderator"]
+        last = recent[-1] if recent else None
+        candidates = state.participant_ids()
+        weights: list[float] = []
+        min_turns = min(rt.turn_count for rt in state.runtimes.values())
+        for pid in candidates:
+            p = state.persona_by_id(pid)
+            rt = state.runtimes[pid]
+            score = 1.0
+            if option_id == p.preferred_option:
+                score += float(cfg.routing.option_gap_boost)
+            if option_id in p.acceptable_options:
+                score += float(cfg.routing.option_gap_boost) * 0.55
+            if option_id in p.soft_rejections:
+                score += float(cfg.routing.option_gap_boost) * 0.45
+            if rt.turn_count == min_turns:
+                score += float(cfg.routing.low_turn_count_boost)
+            if pid == last:
+                score -= float(cfg.routing.last_speaker_penalty)
+            weights.append(max(0.01, score))
+        return weighted_choice(candidates, weights)
+
+    def _act_for_gap(self, state: DialogueState, speaker_id: str, option_id: str) -> ActType:
+        persona = state.persona_by_id(speaker_id)
+        if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
+            return ActType.PUSH_BACK
+        if persona.preferred_option != option_id and state.coverage[persona.preferred_option].mentions > 0:
+            return ActType.COMPARE
+        return ActType.REACT
+
     def _leading_vote(self, state: DialogueState) -> Optional[str]:
         counts = Counter(rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote)
         return counts.most_common(1)[0][0] if counts else None
+
+    def _least_recent_personas(self, state: DialogueState):
+        return sorted(state.personas, key=lambda p: (state.runtimes[p.id].last_spoke_turn or -1, state.runtimes[p.id].turn_count))
 
     def _reason_for_act(self, act: ActType) -> str:
         return {

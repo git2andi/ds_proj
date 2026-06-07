@@ -1,0 +1,795 @@
+{
+  "run_id": "20260607_164601_234690",
+  "topic": "Book a Flight to Stockholm",
+  "scenario": {
+    "topic": "Book a Flight to Stockholm",
+    "decision_kind": "flight_booking",
+    "opening_question": "What matters most to you for our flight to Stockholm: cost, travel time, comfort, flexibility, or a specific airline?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Early Bird",
+        "attrs": {
+          "cost_or_effort": "$250",
+          "time_or_duration": "6 hours 30 minutes",
+          "main_benefit_metric": "4/5 comfort score",
+          "comfort_or_difficulty": "3/5 difficulty score for early morning departure",
+          "flexibility_or_risk_control": "2/5 flexibility score due to non-refundable tickets",
+          "topic_specific_factor": "30 kg luggage allowance"
+        },
+        "upside": "Save $100 compared to other options with similar comfort",
+        "tradeoff": "Early 6:00 AM departure might be tiring for some",
+        "concern": "Non-refundable tickets could be a problem if plans change",
+        "fit": "Best for travelers prioritizing cost savings and willing to wake up early",
+        "risk": "Potential fatigue due to early morning travel",
+        "best_for": "Budget-conscious travelers"
+      },
+      {
+        "id": "B",
+        "name": "Luxury Flight",
+        "attrs": {
+          "cost_or_effort": "$550",
+          "time_or_duration": "5 hours 45 minutes",
+          "main_benefit_metric": "5/5 comfort score with lie-flat seats",
+          "comfort_or_difficulty": "1/5 difficulty score for spacious seating and priority boarding",
+          "flexibility_or_risk_control": "4/5 flexibility score due to refundable tickets and flexible scheduling",
+          "topic_specific_factor": "40 kg luggage allowance"
+        },
+        "upside": "High comfort level with lie-flat seats and extra legroom",
+        "tradeoff": "Significantly higher cost compared to other options",
+        "concern": "Luxury might not be worth the high price for some travelers",
+        "fit": "Best for travelers prioritizing comfort above all else",
+        "risk": "High cost might not fit within everyone's budget",
+        "best_for": "Travelers seeking premium experience"
+      },
+      {
+        "id": "C",
+        "name": "Balanced Choice",
+        "attrs": {
+          "cost_or_effort": "$380",
+          "time_or_duration": "6 hours 15 minutes",
+          "main_benefit_metric": "4/5 comfort score with decent legroom",
+          "comfort_or_difficulty": "2/5 difficulty score for standard seating and departure time",
+          "flexibility_or_risk_control": "3/5 flexibility score due to partially refundable tickets",
+          "topic_specific_factor": "35 kg luggage allowance"
+        },
+        "upside": "Balances cost, comfort, and travel time effectively",
+        "tradeoff": "Does not excel in any particular aspect but is well-rounded",
+        "concern": "Might not be the best choice for those with specific priorities like ultra-low cost or high comfort",
+        "fit": "Best for travelers looking for a middle ground that satisfies most needs",
+        "risk": "Potential dissatisfaction from travelers with strong preferences for cost, comfort, or flexibility",
+        "best_for": "Travelers seeking a balanced experience"
+      },
+      {
+        "id": "D",
+        "name": "Budget Flyer",
+        "attrs": {
+          "cost_or_effort": "$180",
+          "time_or_duration": "7 hours 30 minutes with layover",
+          "main_benefit_metric": "3/5 comfort score due to less legroom and more stops",
+          "comfort_or_difficulty": "4/5 difficulty score for tight seating and longer travel time",
+          "flexibility_or_risk_control": "1/5 flexibility score due to very restrictive ticket policies",
+          "topic_specific_factor": "20 kg luggage allowance"
+        },
+        "upside": "Significantly cheaper than all other options, ideal for those on a tight budget",
+        "tradeoff": "Longer travel time with layovers and less comfort during the flight",
+        "concern": "Very restrictive ticket policies could pose problems if changes are needed",
+        "fit": "Best for extremely budget-conscious travelers willing to sacrifice comfort and flexibility",
+        "risk": "Potential discomfort and stress due to long travel times and tight seating",
+        "best_for": "Travelers on a very tight budget"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Lena",
+      "role": "Travel Planner",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 3,
+        "response_length": 2,
+        "compromise_willingness": 0.759145721120401,
+        "patience": 0.6901121946616391,
+        "initiative": 0.651029136309787,
+        "conflict_directness": 0.5952882184798011,
+        "detail_level": 0.7704050908504823
+      },
+      "speech_style": "brief, uses concrete option details",
+      "private_goal": "Book a flight to Stockholm while saving money without sacrificing too much comfort",
+      "backstory": "Lena once had to wake up early for a cheap flight and didn't mind it, so she thinks an early morning departure is manageable if it saves her.",
+      "main_concern": "cost",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "soft_rejections": [
+        "D"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "Save $100 compared to other options with similar comfort",
+          "The 6:00 AM departure, although early, is manageable for the cost savings",
+          "30 kg luggage allowance is sufficient for her needs"
+        ],
+        "C": [
+          "Balances cost, comfort, and travel time effectively",
+          "Partially refundable tickets offer some flexibility"
+        ]
+      },
+      "reservation": "Concerned that Option D's very restrictive ticket policies could pose problems if changes are needed",
+      "reconsider_if": "if the group prioritizes comfort over cost and is willing to pay more for it",
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Kai",
+      "role": "Frequent Flyer",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3,
+        "response_length": 2,
+        "compromise_willingness": 0.875664343758006,
+        "patience": 0.6270295103051807,
+        "initiative": 0.7124778041299861,
+        "conflict_directness": 0.2519004399460799,
+        "detail_level": 0.6810716144092
+      },
+      "speech_style": "brief, softens disagreement, uses concrete option details",
+      "private_goal": "Have a comfortable flight experience without breaking the bank",
+      "backstory": "Kai had a bad experience with tight seating on a budget flight, so he now prioritizes comfort when flying.",
+      "main_concern": "comfort",
+      "preferred_option": "B",
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "B": [
+          "High comfort level with lie-flat seats and extra legroom",
+          "Refundable tickets offer flexibility in case plans change",
+          "40 kg luggage allowance is generous"
+        ],
+        "C": [
+          "Decent legroom and standard seating are more comfortable than budget options",
+          "Partially refundable tickets provide some flexibility"
+        ]
+      },
+      "reservation": "Worried that Option A's early morning departure might be tiring",
+      "reconsider_if": "if the group is on a very tight budget and comfort can be sacrificed for cost savings",
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nix",
+      "role": "Group Organizer",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 2,
+        "response_length": 5,
+        "compromise_willingness": 0.654918964685319,
+        "patience": 0.6035455082965471,
+        "initiative": 0.4356061069742822,
+        "conflict_directness": 0.27450137187263957,
+        "detail_level": 0.7773243192278596
+      },
+      "speech_style": "a bit chatty, softens disagreement, uses concrete option details",
+      "private_goal": "Organize a flight that works well for everyone in the group, balancing needs and preferences",
+      "backstory": "Nix has experience organizing group trips and knows that finding a middle ground usually leads to higher overall satisfaction.",
+      "main_concern": "feasibility",
+      "preferred_option": "C",
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "soft_rejections": [
+        "D"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "C": [
+          "Balances cost, comfort, and travel time effectively for most group members",
+          "Partially refundable tickets offer some flexibility for individuals with changing plans"
+        ],
+        "A": [
+          "Saves $100 compared to other options with similar comfort, which could be beneficial for the group budget",
+          "Early morning departure might not be ideal but is manageable for many"
+        ]
+      },
+      "reservation": "Concerned about Option D's restrictive policies and potential discomfort for some group members",
+      "reconsider_if": "if the group decides that either cost or comfort should be prioritized over finding a balanced option",
+      "is_hard_blocker": false
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We need to decide: Book a Flight to Stockholm. Here are the options I have: - Option A - Early Bird: cost or effort=$250, time or duration=6 hours 30 minutes, main benefit metric=4/5 comfort score, comfort or difficulty=3/5 difficulty score for early morning departure, flexibility or risk control=2/5 flexibility score due to non-refundable tickets, topic specific factor=30 kg luggage allowance; upside: Save $100 compared to other options with similar comfort; tradeoff: Early 6:00 AM departure might be tiring for some; concern: Non-refundable tickets could be a problem if plans change; fit: Best for travelers prioritizing cost savings and willing to wake up early; risk: Potential fatigue due to early morning travel; best for: Budget-conscious travelers - Option B - Luxury Flight: cost or effort=$550, time or duration=5 hours 45 minutes, main benefit metric=5/5 comfort score with lie-flat seats, comfort or difficulty=1/5 difficulty score for spacious seating and priority boarding, flexibility or risk control=4/5 flexibility score due to refundable tickets and flexible scheduling, topic specific factor=40 kg luggage allowance; upside: High comfort level with lie-flat seats and extra legroom; tradeoff: Significantly higher cost compared to other options; concern: Luxury might not be worth the high price for some travelers; fit: Best for travelers prioritizing comfort above all else; risk: High cost might not fit within everyone's budget; best for: Travelers seeking premium experience - Option C - Balanced Choice: cost or effort=$380, time or duration=6 hours 15 minutes, main benefit metric=4/5 comfort score with decent legroom, comfort or difficulty=2/5 difficulty score for standard seating and departure time, flexibility or risk control=3/5 flexibility score due to partially refundable tickets, topic specific factor=35 kg luggage allowance; upside: Balances cost, comfort, and travel time effectively; tradeoff: Does not excel in any particular aspect but is well-rounded; concern: Might not be the best choice for those with specific priorities like ultra-low cost or high comfort; fit: Best for travelers looking for a middle ground that satisfies most needs; risk: Potential dissatisfaction from travelers with strong preferences for cost, comfort, or flexibility; best for: Travelers seeking a balanced experience - Option D - Budget Flyer: cost or effort=$180, time or duration=7 hours 30 minutes with layover, main benefit metric=3/5 comfort score due to less legroom and more stops, comfort or difficulty=4/5 difficulty score for tight seating and longer travel time, flexibility or risk control=1/5 flexibility score due to very restrictive ticket policies, topic specific factor=20 kg luggage allowance; upside: Significantly cheaper than all other options, ideal for those on a tight budget; tradeoff: Longer travel time with layovers and less comfort during the flight; concern: Very restrictive ticket policies could pose problems if changes are needed; fit: Best for extremely budget-conscious travelers willing to sacrifice comfort and flexibility; risk: Potential discomfort and stress due to long travel times and tight seating; best for: Travelers on a very tight budget What matters most to you for our flight to Stockholm: cost, travel time, comfort, flexibility, or a specific airline?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "We need to decide: Book a Flight to Stockholm. Here are the options I have: - Option A - Early Bird: cost or effort=$250, time or duration=6 hours 30 minutes, main benefit metric=4/5 comfort score, comfort or difficulty=3/5 difficulty score for early morning departure, flexibility or risk control=2/5 flexibility score due to non-refundable tickets, topic specific factor=30 kg luggage allowance; upside: Save $100 compared to other options with similar comfort; tradeoff: Early 6:00 AM departure might be tiring for some; concern: Non-refundable tickets could be a problem if plans change; fit: Best for travelers prioritizing cost savings and willing to wake up early; risk: Potential fatigue due to early morning travel; best for: Budget-conscious travelers - Option B - Luxury Flight: cost or effort=$550, time or duration=5 hours 45 minutes, main benefit metric=5/5 comfort score with lie-flat seats, comfort or difficulty=1/5 difficulty score for spacious seating and priority boarding, flexibility or risk control=4/5 flexibility score due to refundable tickets and flexible scheduling, topic specific factor=40 kg luggage allowance; upside: High comfort level with lie-flat seats and extra legroom; tradeoff: Significantly higher cost compared to other options; concern: Luxury might not be worth the high price for some travelers; fit: Best for travelers prioritizing comfort above all else; risk: High cost might not fit within everyone's budget; best for: Travelers seeking premium experience - Option C - Balanced Choice: cost or effort=$380, time or duration=6 hours 15 minutes, main benefit metric=4/5 comfort score with decent legroom, comfort or difficulty=2/5 difficulty score for standard seating and departure time, flexibility or risk control=3/5 flexibility score due to partially refundable tickets, topic specific factor=35 kg luggage allowance; upside: Balances cost, comfort, and travel time effectively; tradeoff: Does not excel in any particular aspect but is well-rounded; concern: Might not be the best choice for those with specific priorities like ultra-low cost or high comfort; fit: Best for travelers looking for a middle ground that satisfies most needs; risk: Potential dissatisfaction from travelers with strong preferences for cost, comfort, or flexibility; best for: Travelers seeking a balanced experience - Option D - Budget Flyer: cost or effort=$180, time or duration=7 hours 30 minutes with layover, main benefit metric=3/5 comfort score due to less legroom and more stops, comfort or difficulty=4/5 difficulty score for tight seating and longer travel time, flexibility or risk control=1/5 flexibility score due to very restrictive ticket policies, topic specific factor=20 kg luggage allowance; upside: Significantly cheaper than all other options, ideal for those on a tight budget; tradeoff: Longer travel time with layovers and less comfort during the flight; concern: Very restrictive ticket policies could pose problems if changes are needed; fit: Best for extremely budget-conscious travelers willing to sacrifice comfort and flexibility; risk: Potential discomfort and stress due to long travel times and tight seating; best for: Travelers on a very tight budget What matters most to you for our flight to Stockholm: cost, travel time, comfort, flexibility, or a specific airline?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": "A"
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": []
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Cost is my top priority, looking at Option A as a good balance of price and comfort",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cost is my top priority, looking at Option A as a good balance of price and comfort",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 2215,
+      "tokens_out": 19,
+      "validation_issues": []
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "Comfort is key for me on this flight to Stockholm, thinking Option B could be the way to go",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Comfort is key for me on this flight to Stockholm, thinking Option B could be the way to go",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 2221,
+      "tokens_out": 21,
+      "validation_issues": []
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Finding a balance between cost and comfort is key for our group trip to Stockholm, Option C seems like a good middle ground to explore",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Finding a balance between cost and comfort is key for our group trip to Stockholm, Option C seems like a good middle ground to explore",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 2267,
+      "tokens_out": 27,
+      "validation_issues": []
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "What about Option D, it's really cheap but the layover and restrictive policies might be a hassle for some of us, worth discussing?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "What about Option D, it's really cheap but the layover and restrictive policies might be a hassle for some of us, worth discussing?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "push_back",
+        "reason": "bring under-discussed Option D into the conversation",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "long",
+        "is_moderator": false
+      },
+      "tokens_in": 2289,
+      "tokens_out": 29,
+      "validation_issues": []
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Option D's layover and restrictions seem like too much hassle",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Option D's layover and restrictions seem like too much hassle",
+        "act_type": "react",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "add a useful reaction without restating old points",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 2299,
+      "tokens_out": 13,
+      "validation_issues": []
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "How about Option B, it offers high comfort and flexibility, worth the extra cost for a good flight experience?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How about Option B, it offers high comfort and flexibility, worth the extra cost for a good flight experience?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a realistic middle ground if possible",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "is_moderator": false
+      },
+      "tokens_in": 2299,
+      "tokens_out": 23,
+      "validation_issues": []
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Option B's cost is a bit steep for me",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Option B's cost is a bit steep for me",
+        "act_type": "react",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "add a useful reaction without restating old points",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 2340,
+      "tokens_out": 11,
+      "validation_issues": []
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Option B's high cost is still a concern, can we explore if its benefits outweigh the extra expense?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Option B's high cost is still a concern, can we explore if its benefits outweigh the extra expense?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "add a useful reaction without restating old points",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "is_moderator": false
+      },
+      "tokens_in": 2354,
+      "tokens_out": 22,
+      "validation_issues": []
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "How about we split the difference between Option B's comfort and Option C's cost, see if the airline can offer any discounts or upgrades to make it more feasible?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How about we split the difference between Option B's comfort and Option C's cost, see if the airline can offer any discounts or upgrades to make it more feasible?",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a realistic middle ground if possible",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "long",
+        "is_moderator": false
+      },
+      "tokens_in": 2362,
+      "tokens_out": 34,
+      "validation_issues": []
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Option C looks like our best bet, balancing cost and comfort with some flexibility, a pretty good middle ground overall",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Option C looks like our best bet, balancing cost and comfort with some flexibility, a pretty good middle ground overall",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a realistic middle ground if possible",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "long",
+        "is_moderator": false
+      },
+      "tokens_in": 4911,
+      "tokens_out": 52,
+      "validation_issues": []
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Yes, Option C works for me",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Yes, Option C works for me",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "answer whether Option C works for you as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1772,
+      "tokens_out": 8,
+      "validation_issues": []
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "Yes, I'm okay with Option C",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Yes, I'm okay with Option C",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "answer whether Option C works for you as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 3552,
+      "tokens_out": 17,
+      "validation_issues": []
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Yeah, Option C works for me.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Yeah, Option C works for me.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "answer whether Option C works for you as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 3584,
+      "tokens_out": 18,
+      "validation_issues": [
+        "GROUP_REPETITION"
+      ]
+    },
+    {
+      "index": 15,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright, then we’ll go with Option C, Balanced Choice. Sounds like that works as the compromise.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Alright, then we’ll go with Option C, Balanced Choice. Sounds like that works as the compromise.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": "C"
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": []
+    }
+  ],
+  "outcome": {
+    "status": "consensus",
+    "final_option": "C",
+    "reason": "all participants accepted or voted for the same compromise",
+    "turns": 14,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 13,
+    "moderator_turns": 2,
+    "moderator_ratio": 0.133,
+    "turn_counts": {
+      "Lena": 5,
+      "Kai": 4,
+      "Nix": 4
+    },
+    "question_density": 0.308,
+    "sim_compromise_proposals": 2,
+    "readiness_score_final": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 5,
+        "reasons": 5,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 3
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "consensus",
+    "final_option": "C",
+    "setup_tokens_in": 3159,
+    "setup_tokens_out": 1834,
+    "dialogue_tokens_in": 34465,
+    "dialogue_tokens_out": 294,
+    "total_tokens_in": 37624,
+    "total_tokens_out": 2128,
+    "total_tokens": 39752
+  }
+}

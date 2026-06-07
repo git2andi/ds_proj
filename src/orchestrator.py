@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import datetime as _dt
-from typing import Optional
 
 import prompts
 from config_loader import cfg
 from consensus import ConsensusManager
 from controller import DialogueController
 from llm_client import get_llm_client
-from logger import DialogueLogger
+from logger import DialogueLogger, token_summary_for
 from persona import PersonaBuilder
 from router import TurnRouter
 from scenario_builder import ScenarioBuilder
@@ -33,13 +32,21 @@ class Orchestrator:
         self.router = TurnRouter()
         self.generator = UtteranceGenerator()
         self.consensus = ConsensusManager()
+        self._llm = get_llm_client()
 
     def run(self) -> DialogueRunResult:
-        # Zero token counters so each dialogue reports its own usage, even in batch runs.
-        get_llm_client().reset_session()
+        self._llm.reset_session()
         scenario = self.scenario_builder.build(self.topic)
         personas = PersonaBuilder(self.topic).build(int(cfg.simulation.num_participants), scenario.options)
+
+        setup_in = self._llm.session_tokens_in
+        setup_out = self._llm.session_tokens_out
+        self._llm.reset_session()
+
         state = initialise_state(scenario, personas)
+        state.setup_tokens_in = setup_in
+        state.setup_tokens_out = setup_out
+
         tracker = StateTracker(scenario, personas)
         validator = MessageValidator(OptionResolver(scenario.options))
 
@@ -69,13 +76,14 @@ class Orchestrator:
                 validation_issues=issue_codes,
             )
 
+        state.dialogue_tokens_in = self._llm.session_tokens_in
+        state.dialogue_tokens_out = self._llm.session_tokens_out
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
         self._append_moderator_closure(state, tracker, outcome)
-        tokens = get_llm_client().token_summary()
-        paths = self.logger.finish(state, outcome, tokens)
+        paths = self.logger.finish(state, outcome)
         transcript = [f"{turn.speaker_name}: {turn.text}" for turn in state.turns]
-        return DialogueRunResult(scenario, personas, transcript, outcome, paths, tokens)
+        return DialogueRunResult(scenario, personas, transcript, outcome, paths, token_summary_for(state))
 
     def _generate_validated_turn(
         self,

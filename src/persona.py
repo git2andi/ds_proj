@@ -120,21 +120,31 @@ class PersonaBuilder:
                 return {str(row.get("id")): row for row in rows if isinstance(row, dict)}
         except Exception:
             pass
-        # Deterministic fallback: varied preferences, broad acceptability.
+        # Deterministic fallback: varied preferences, broad acceptability, and
+        # useful argument material grounded in the option cards.
         labels = [o.id for o in options]
+        by_id = {o.id: o for o in options}
         fallback: dict[str, dict[str, Any]] = {}
         for idx, row in enumerate(participant_summaries):
             preferred = labels[idx % len(labels)]
-            acceptable = list(dict.fromkeys([preferred, labels[(idx + 1) % len(labels)]]))
+            fallback_option = labels[(idx + 1) % len(labels)]
+            acceptable = list(dict.fromkeys([preferred, fallback_option]))
+            pref_card = by_id[preferred]
+            fallback_card = by_id[fallback_option]
             fallback[row["id"]] = {
-                "private_goal": "find something that works for the group without overcomplicating it",
+                "private_goal": f"push for a choice that serves {pref_card.best_for or pref_card.fit or 'their main priority'} while keeping the group decision workable",
+                "backstory": f"They have had to make a similar choice before, so they pay attention to {pref_card.concern or pref_card.tradeoff or 'the main trade-off'}.",
+                "main_concern": pref_card.best_for or pref_card.fit or pref_card.concern or "the main trade-off",
                 "preferred_option": preferred,
                 "acceptable_options": acceptable,
                 "soft_rejections": [],
                 "hard_rejections": [],
-                "reasons": {preferred: [f"Option {preferred} fits their main priority."], acceptable[-1]: ["It could work as a compromise."]},
-                "reservation": "they do not want the group to ignore the main trade-off",
-                "reconsider_if": "the others show another option covers the main concern well enough",
+                "reasons": {
+                    preferred: _default_reasons(pref_card, preferred, int(cfg.personas.min_reasons_preferred)),
+                    fallback_option: _default_reasons(fallback_card, fallback_option, int(cfg.personas.min_reasons_acceptable)),
+                },
+                "reservation": fallback_card.concern or fallback_card.tradeoff or "they do not want the group to ignore the main trade-off",
+                "reconsider_if": f"the group decides that {fallback_card.best_for or fallback_card.fit or 'the fallback priority'} matters more than their first choice",
             }
         return fallback
 
@@ -174,9 +184,15 @@ class PersonaBuilder:
                         reasons[oid] = [str(t).strip() for t in texts if str(t).strip()]
                     elif str(texts).strip():
                         reasons[oid] = [str(texts).strip()]
+        by_id = {o.id: o for o in options}
         if preferred not in reasons or not reasons[preferred]:
-            reasons[preferred] = [f"Option {preferred} best matches what they care about."]
+            reasons[preferred] = _default_reasons(by_id[preferred], preferred, int(cfg.personas.min_reasons_preferred))
+        for option_id in acceptable:
+            if option_id not in reasons or not reasons[option_id]:
+                reasons[option_id] = _default_reasons(by_id[option_id], option_id, int(cfg.personas.min_reasons_acceptable))
         style = self._speech_style(traits)
+        main_concern = str(belief.get("main_concern") or by_id[preferred].best_for or by_id[preferred].concern or "the main trade-off").strip()
+        backstory = str(belief.get("backstory") or f"They have had to weigh similar trade-offs before, so {main_concern.lower()} stands out to them.").strip()
         return Persona(
             id=entry["id"],
             name=entry["name"],
@@ -184,6 +200,8 @@ class PersonaBuilder:
             traits=traits,
             speech_style=style,
             private_goal=str(belief.get("private_goal") or "find a workable group decision").strip(),
+            backstory=_limit_words(backstory, int(cfg.personas.backstory_max_words)),
+            main_concern=main_concern,
             preferred_option=preferred,
             acceptable_options=acceptable,
             soft_rejections=soft_rej,
@@ -243,4 +261,32 @@ class PersonaBuilder:
         for p in personas:
             if not p.is_hard_blocker and common not in p.acceptable_options:
                 p.acceptable_options.append(common)
-                p.reasons.setdefault(common, [f"Option {common} could work as a compromise."])
+                card = next(o for o in options if o.id == common)
+                p.reasons.setdefault(common, _default_reasons(card, common, int(cfg.personas.min_reasons_acceptable)))
+
+
+def _default_reasons(option: OptionCard, option_id: str, minimum: int) -> list[str]:
+    candidates = [
+        option.upside,
+        option.best_for,
+        option.fit,
+        option.tradeoff,
+        option.concern,
+    ]
+    reasons: list[str] = []
+    for text in candidates:
+        text = str(text).strip()
+        if text and text.lower() not in {r.lower() for r in reasons}:
+            reasons.append(text)
+        if len(reasons) >= max(1, minimum):
+            break
+    if not reasons:
+        reasons.append(f"Option {option_id} matches one of their priorities.")
+    return reasons
+
+
+def _limit_words(text: str, max_words: int) -> str:
+    words = text.split()
+    if max_words <= 0 or len(words) <= max_words:
+        return text
+    return " ".join(words[:max_words]).rstrip(",.;") + "."

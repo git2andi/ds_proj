@@ -1,5 +1,5 @@
 # Group discussion simulator configuration.
-# Tunable numbers live here. LLM-facing prose lives in prompts.py.
+# Tunable numbers live here. LLM-facing prose lives in src/prompts.py.
 
 llm:
   provider: "uni"
@@ -11,17 +11,17 @@ llm:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   sampling:
     setup:
-      temperature: 0.25
-      top_k: 40
-      top_p: 0.85
+      temperature: 0.32
+      top_k: 45
+      top_p: 0.88
     dialogue:
-      temperature: 0.72
-      top_k: 50
-      top_p: 0.92
+      temperature: 0.78
+      top_k: 60
+      top_p: 0.94
     repair:
-      temperature: 0.25
-      top_k: 30
-      top_p: 0.8
+      temperature: 0.20
+      top_k: 25
+      top_p: 0.75
     validator:
       temperature: 0.0
       top_k: 1
@@ -42,10 +42,12 @@ scenario:
   option_count: 4
   option_labels: ["A", "B", "C", "D"]
   max_generation_attempts: 3
-  attr_min: 3
-  attr_max: 7
+  attr_min: 6
+  attr_max: 9
   score_min: 1
   score_max: 5
+  display_attr_limit: 7
+  min_field_words: 3
   forbidden_live_fact_terms:
     - "availability"
     - "available rooms"
@@ -72,63 +74,70 @@ personas:
     neuroticism: [1, 3]
     response_length: [1, 5]
   cooperative_defaults:
-    compromise_willingness_range: [0.58, 0.92]
-    patience_range: [0.45, 0.88]
+    compromise_willingness_range: [0.62, 0.92]
+    patience_range: [0.55, 0.90]
     initiative_range: [0.35, 0.82]
-    conflict_directness_range: [0.20, 0.78]
-    detail_level_range: [0.30, 0.88]
-  hard_blocker_dialogue_probability: 0.05
+    conflict_directness_range: [0.18, 0.72]
+    detail_level_range: [0.36, 0.90]
+  hard_blocker_dialogue_probability: 0.04
   hard_blocker_max_count: 1
   non_blocker_min_acceptable: 2
   non_blocker_max_soft_rejections: 1
   require_group_common_acceptable: true
   preferred_diversity_min_unique: 2
+  min_reasons_preferred: 2
+  min_reasons_acceptable: 1
+  backstory_max_words: 28
   fallback_names: ["Ava", "Liam", "Mia", "Noah", "Lena", "Jonas", "Sofia"]
 
 conversation:
-  min_turns_per_participant_before_close: 2
-  soft_min_total_turns: 7
-  hard_max_total_turns: 34
-  max_moderator_ratio: 0.28
+  min_turns_per_participant_before_close: 3
+  min_turns_per_participant_before_narrowing: 2
+  soft_min_total_turns: 10
+  hard_max_total_turns: 38
+  max_moderator_ratio: 0.24
   no_progress_window: 5
   recent_turn_window: 8
   participant_turn_balance_gini_max: 0.42
+  min_options_touched_before_narrowing: 4
   min_options_with_reason_before_narrowing: 3
-  min_total_option_reasons_before_narrowing: 5
+  min_total_option_reasons_before_narrowing: 7
+  min_tradeoff_or_objection_turns_before_narrowing: 2
   min_distinct_participants_before_narrowing: 2
-  readiness_threshold: 0.72
-  force_vote_after_readiness: 0.86
+  readiness_threshold: 0.78
+  force_vote_after_readiness: 0.92
   confirmation_max_rounds: 2
 
 routing:
   recent_speaker_window: 5
-  last_speaker_penalty: 0.45
-  recent_speaker_penalty: 0.20
-  unspoken_boost: 0.65
-  low_turn_count_boost: 0.28
+  last_speaker_penalty: 0.50
+  recent_speaker_penalty: 0.22
+  unspoken_boost: 0.70
+  low_turn_count_boost: 0.34
+  option_gap_boost: 0.55
   addressed_question_priority: 1.0
-  unresolved_objection_boost: 0.25
-  compromise_intent_probability: 0.18
-  pushback_intent_probability: 0.20
-  clarify_intent_probability: 0.12
-  compare_intent_probability: 0.22
-  react_intent_probability: 0.28
+  unresolved_objection_boost: 0.28
+  compromise_intent_probability: 0.12
+  pushback_intent_probability: 0.25
+  clarify_intent_probability: 0.10
+  compare_intent_probability: 0.30
+  react_intent_probability: 0.23
   length_hint_probabilities:
-    short: 0.32
-    medium: 0.53
-    long: 0.15
+    short: 0.24
+    medium: 0.56
+    long: 0.20
 
 utterances:
   word_budgets:
-    short: 14
-    medium: 32
-    long: 58
-    vote: 24
-    confirm: 22
-    opening: 30
-    closure: 18
-  hard_cap_extra_words: 8
-  max_recent_turns_in_prompt: 8
+    short: 18
+    medium: 42
+    long: 70
+    vote: 32
+    confirm: 24
+    opening: 34
+    closure: 20
+  hard_cap_extra_words: 10
+  max_recent_turns_in_prompt: 10
   max_option_cards_in_prompt: 4
   allow_rare_emoji: false
   banned_register_phrases:
@@ -138,16 +147,24 @@ utterances:
     - "emerging support"
     - "from my perspective"
     - "I understand your concern"
+    - "great starting point for our discussion"
+  discouraged_starts:
+    - "for me"
+    - "i'm leaning"
+    - "let's consider"
 
 validation:
   enabled: true
   own_turn_similarity_threshold: 0.55
+  group_turn_similarity_threshold: 0.58
+  repeated_start_window: 5
   semantic_repeat_threshold: 0.62
   option_fact_number_window_chars: 80
   max_new_numbers_without_option_source: 1
   multi_turn_prefix_pattern: "^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß .'-]{1,30}:"
   min_vote_clarity: true
   max_question_chain: 2
+  reject_confirmation_questions: true
   style_banned_phrase_is_fatal: false
   repair_on_warnings: true
 

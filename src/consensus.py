@@ -44,12 +44,9 @@ class ConsensusManager:
         return supporters / len(state.runtimes)
 
     def blockers_for(self, state: DialogueState, option_id: str) -> list[str]:
-        blockers: list[str] = []
-        for pid, runtime in state.runtimes.items():
-            persona = state.persona_by_id(pid)
-            if option_id in runtime.rejected_options and (persona.is_hard_blocker or option_id in persona.hard_rejections):
-                blockers.append(pid)
-        return blockers
+        # Any explicit current rejection blocks consensus. Hard-blocker status only
+        # matters for fallback decisions, not for consensus validity.
+        return [pid for pid, runtime in state.runtimes.items() if option_id in runtime.rejected_options]
 
     def _all_have_accepted_or_voted(self, state: DialogueState, option_id: str) -> bool:
         for runtime in state.runtimes.values():

@@ -109,6 +109,8 @@ class Persona:
     traits: TraitProfile
     speech_style: str
     private_goal: str
+    backstory: str
+    main_concern: str
     preferred_option: str
     acceptable_options: list[str]
     soft_rejections: list[str]
@@ -215,6 +217,10 @@ class DialogueState:
     no_progress_count: int = 0
     readiness_score: float = 0.0
     outcome: Optional["RunOutcome"] = None
+    setup_tokens_in: int = 0
+    setup_tokens_out: int = 0
+    dialogue_tokens_in: int = 0
+    dialogue_tokens_out: int = 0
 
     def persona_by_id(self, persona_id: str) -> Persona:
         for persona in self.personas:
@@ -266,4 +272,4 @@ class DialogueRunResult:
     transcript: list[str]
     outcome: RunOutcome
     log_paths: dict[str, str] = field(default_factory=dict)
-    tokens: dict[str, list[int]] = field(default_factory=dict)
+    token_summary: dict[str, int] = field(default_factory=dict)

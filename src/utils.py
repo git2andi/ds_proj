@@ -24,21 +24,6 @@ def normalise_ws(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def normalise_block(text: str) -> str:
-    """Collapse intra-line whitespace but keep line breaks.
-
-    Used for the deterministic moderator turns, which present option cards on
-    separate lines.  Participant turns still use ``normalise_ws`` (one line).
-    """
-    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
-    out: list[str] = []
-    for line in lines:
-        if not line and out and not out[-1]:
-            continue  # collapse runs of blank lines to a single one
-        out.append(line)
-    return "\n".join(out).strip()
-
-
 def strip_speaker_prefix(text: str, speaker_name: str) -> str:
     pattern = rf"^\s*{re.escape(speaker_name)}\s*:\s*"
     return re.sub(pattern, "", text, flags=re.I).strip()
@@ -81,16 +66,29 @@ def sample_length_hint(probabilities: dict[str, float]) -> str:
     return weighted_choice(keys, [float(probabilities.get(k, 0.0)) for k in keys])
 
 
+_WEAK_ALIAS_WORDS = {
+    "the", "and", "or", "with", "without", "for", "from", "into", "onto",
+    "option", "place", "choice", "topic", "plan", "trip", "flight", "hotel",
+    "restaurant", "budget", "direct", "short", "long", "fast", "slow",
+    "central", "local", "standard", "premium", "basic", "comfort", "convenient",
+}
+
+
 def option_aliases(option: OptionCard) -> set[str]:
-    aliases = {f"option {option.id.lower()}", option.id.lower(), option.name.lower()}
+    aliases = {f"option {option.id.lower()}", option.name.lower()}
     clean = re.sub(r"[^\wäöüÄÖÜß\s'-]", " ", option.name.lower())
-    words = [w for w in clean.split() if len(w) > 2]
+    words = [w for w in clean.split() if len(w) > 1]
+    # Keep the full name and meaningful multi-token chunks. Avoid weak single
+    # words such as "with" or "budget" that caused false Option C references in
+    # phrases like "okay with Option A".
     if len(words) >= 2:
         aliases.add(" ".join(words[:2]))
         aliases.add(" ".join(words[-2:]))
     for word in words:
-        if word not in {"hotel", "restaurant", "option", "place", "trip", "plan", "topic", "choice"}:
+        if len(word) >= 4 and word not in _WEAK_ALIAS_WORDS:
             aliases.add(word)
+        elif word.isupper() and len(word) >= 2:
+            aliases.add(word.lower())
     return {a.strip() for a in aliases if a.strip()}
 
 
