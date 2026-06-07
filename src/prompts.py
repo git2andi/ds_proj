@@ -53,6 +53,8 @@ Topic: {topic}
 
 Generate exactly {len(labels)} options with ids {labels}. The options are the full source of truth for the later chat.
 Each option must be distinct and must give people concrete trade-offs to discuss.
+Fill every field (upside, tradeoff, concern, fit, risk, best_for) with a concrete, self-contained clause. Do not leave any field vague, generic, or empty.
+Attributes must be specific and comparable across options: use numbers with units where it makes sense (price, time, distance, scores) so people can weigh options against each other.
 Use stable facts only. Do not include live-lookup or missing-information facts such as: {forbidden}.
 Concrete logistics topics should use {cfg.scenario.attr_min}-{cfg.scenario.attr_max} attributes. Abstract topics should use scored dimensions from {cfg.scenario.score_min} to {cfg.scenario.score_max}.
 The opening question should ask what people care about, not which option they vote for.
@@ -214,8 +216,13 @@ Rewrite the message once. Keep the same local move, fix the issues, and output o
 
 
 def moderator_opening(scenario: Scenario) -> str:
-    option_lines = "\n".join(f"- {o.short_text()}" for o in scenario.options)
-    return f"Moderator: We need to decide: {scenario.topic}. Here are the four options:\n{option_lines}\n{scenario.opening_question}"
+    option_lines = "\n".join(f"- {o.source_text()}" for o in scenario.options)
+    return (
+        f"Moderator: Hey everyone — let's get started. We need to decide: {scenario.topic}.\n"
+        f"Here are the {len(scenario.options)} options on the table:\n\n"
+        f"{option_lines}\n\n"
+        f"{scenario.opening_question}"
+    )
 
 
 def moderator_nudge(question: str) -> str:

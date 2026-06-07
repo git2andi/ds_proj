@@ -109,13 +109,17 @@ class Config(Section):
 
 def _find_config() -> Path:
     here = Path(__file__).resolve().parent
-    direct = here / "config.yaml"
-    if direct.exists():
-        return direct
-    cwd = Path.cwd() / "config.yaml"
-    if cwd.exists():
-        return cwd
-    raise FileNotFoundError("Could not find config.yaml next to config_loader.py or in the current working directory.")
+    # Look next to this module (src/), then the project root (parent of src/),
+    # then the current working directory.  This keeps config discovery stable
+    # regardless of where the process is launched from.
+    for candidate in (here / "config.yaml", here.parent / "config.yaml", Path.cwd() / "config.yaml"):
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError("Could not find config.yaml in src/, the project root, or the current working directory.")
 
 
 cfg = Config(_find_config())
+
+# Directory holding config.yaml.  Used to anchor relative paths (e.g. log_dir)
+# so artifacts land in the project root no matter the working directory.
+PROJECT_ROOT = cfg.path.parent

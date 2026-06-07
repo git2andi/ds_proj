@@ -24,6 +24,21 @@ def normalise_ws(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+def normalise_block(text: str) -> str:
+    """Collapse intra-line whitespace but keep line breaks.
+
+    Used for the deterministic moderator turns, which present option cards on
+    separate lines.  Participant turns still use ``normalise_ws`` (one line).
+    """
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    out: list[str] = []
+    for line in lines:
+        if not line and out and not out[-1]:
+            continue  # collapse runs of blank lines to a single one
+        out.append(line)
+    return "\n".join(out).strip()
+
+
 def strip_speaker_prefix(text: str, speaker_name: str) -> str:
     pattern = rf"^\s*{re.escape(speaker_name)}\s*:\s*"
     return re.sub(pattern, "", text, flags=re.I).strip()

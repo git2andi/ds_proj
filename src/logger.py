@@ -7,7 +7,7 @@ from dataclasses import asdict, is_dataclass
 from pathlib import Path
 from typing import Any
 
-from config_loader import cfg
+from config_loader import PROJECT_ROOT, cfg
 from schemas import DialogueRunResult, DialogueState, RunOutcome, Scenario
 
 
@@ -15,7 +15,10 @@ class DialogueLogger:
     def __init__(self, run_id: str, topic: str) -> None:
         self.run_id = run_id
         self.topic = topic
-        self.base_dir = Path(str(cfg.output.log_dir)) / run_id
+        log_root = Path(str(cfg.output.log_dir))
+        if not log_root.is_absolute():
+            log_root = PROJECT_ROOT / log_root
+        self.base_dir = log_root / run_id
         self.base_dir.mkdir(parents=True, exist_ok=True)
         self.prompt_dir = self.base_dir / "prompts"
         if bool(cfg.output.write_prompts):
@@ -30,17 +33,18 @@ class DialogueLogger:
         path.write_text(prompt, encoding="utf-8")
         return str(path)
 
-    def finish(self, state: DialogueState, outcome: RunOutcome) -> dict[str, str]:
-        transcript_lines = self._transcript_lines(state, outcome)
+    def finish(self, state: DialogueState, outcome: RunOutcome, tokens: dict | None = None) -> dict[str, str]:
+        tokens = tokens or {}
+        transcript_lines = self._transcript_lines(state, outcome, tokens)
         transcript_path = self.base_dir / "transcript.md"
         transcript_path.write_text("\n".join(transcript_lines) + "\n", encoding="utf-8")
 
         json_path = self.base_dir / "run.json"
-        payload = self._json_payload(state, outcome)
+        payload = self._json_payload(state, outcome, tokens)
         json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         return {"transcript": str(transcript_path), "json": str(json_path), "dir": str(self.base_dir)}
 
-    def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
+    def _transcript_lines(self, state: DialogueState, outcome: RunOutcome, tokens: dict) -> list[str]:
         lines = [f"# Dialogue run {self.run_id}", "", f"Topic: {state.scenario.topic}", "", "## Options", ""]
         for option in state.scenario.options:
             lines.append(f"- {option.source_text()}")
@@ -55,13 +59,14 @@ class DialogueLogger:
         for turn in state.turns:
             lines.append(f"**{turn.speaker_name}:** {turn.text}")
         lines += ["", "## Outcome", "", f"Status: {outcome.status}", f"Final option: {outcome.final_option}", f"Reason: {outcome.reason}"]
+        lines += ["", "## Tokens", "", _token_line(tokens)]
         lines += ["", "## Metrics", ""]
         metrics = self._metrics(state, outcome)
         for key, value in metrics.items():
             lines.append(f"- {key}: {value}")
         return lines
 
-    def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+    def _json_payload(self, state: DialogueState, outcome: RunOutcome, tokens: dict) -> dict[str, Any]:
         return {
             "run_id": self.run_id,
             "topic": self.topic,
@@ -69,6 +74,7 @@ class DialogueLogger:
             "personas": [_to_jsonable(p) for p in state.personas],
             "turns": [_to_jsonable(t) for t in state.turns],
             "outcome": _to_jsonable(outcome),
+            "tokens": tokens,
             "metrics": self._metrics(state, outcome),
         }
 
@@ -100,6 +106,16 @@ class DialogueLogger:
             "outcome_status": outcome.status,
             "final_option": outcome.final_option,
         }
+
+
+def _token_line(tokens: dict) -> str:
+    setup = tokens.get("setup", [0, 0])
+    dialogue = tokens.get("dialogue", [0, 0])
+    total = tokens.get("total", [0, 0])
+    return (
+        f"setup={setup[0]}/{setup[1]}  dialogue={dialogue[0]}/{dialogue[1]}  "
+        f"total={total[0]}/{total[1]} (in/out)"
+    )
 
 
 def _to_jsonable(obj: Any) -> Any:

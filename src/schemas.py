@@ -266,3 +266,4 @@ class DialogueRunResult:
     transcript: list[str]
     outcome: RunOutcome
     log_paths: dict[str, str] = field(default_factory=dict)
+    tokens: dict[str, list[int]] = field(default_factory=dict)

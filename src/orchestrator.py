@@ -9,6 +9,7 @@ import prompts
 from config_loader import cfg
 from consensus import ConsensusManager
 from controller import DialogueController
+from llm_client import get_llm_client
 from logger import DialogueLogger
 from persona import PersonaBuilder
 from router import TurnRouter
@@ -34,6 +35,8 @@ class Orchestrator:
         self.consensus = ConsensusManager()
 
     def run(self) -> DialogueRunResult:
+        # Zero token counters so each dialogue reports its own usage, even in batch runs.
+        get_llm_client().reset_session()
         scenario = self.scenario_builder.build(self.topic)
         personas = PersonaBuilder(self.topic).build(int(cfg.simulation.num_participants), scenario.options)
         state = initialise_state(scenario, personas)
@@ -69,9 +72,10 @@ class Orchestrator:
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
         self._append_moderator_closure(state, tracker, outcome)
-        paths = self.logger.finish(state, outcome)
+        tokens = get_llm_client().token_summary()
+        paths = self.logger.finish(state, outcome, tokens)
         transcript = [f"{turn.speaker_name}: {turn.text}" for turn in state.turns]
-        return DialogueRunResult(scenario, personas, transcript, outcome, paths)
+        return DialogueRunResult(scenario, personas, transcript, outcome, paths, tokens)
 
     def _generate_validated_turn(
         self,

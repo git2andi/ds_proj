@@ -18,7 +18,7 @@ from schemas import (
     Scenario,
     TurnRecord,
 )
-from utils import OptionResolver, jaccard_text, normalise_ws
+from utils import OptionResolver, jaccard_text, normalise_block, normalise_ws
 
 
 def initialise_state(scenario: Scenario, personas: list[Persona]) -> DialogueState:
@@ -56,7 +56,9 @@ class StateTracker:
         tokens_out: int = 0,
         validation_issues: Optional[list[str]] = None,
     ) -> TurnRecord:
-        text = normalise_ws(text)
+        # Moderator turns keep their line structure (option cards on separate lines);
+        # participant turns are single chat lines.
+        text = normalise_block(text) if speaker_id == "moderator" else normalise_ws(text)
         act = parse_dialogue_act(speaker_id, speaker_name, text, self.resolver, self.participant_names, intent)
         state.turn_index += 1
         record = TurnRecord(
@@ -122,7 +124,8 @@ class StateTracker:
             )
 
     def _update_questions(self, state: DialogueState, record: TurnRecord) -> None:
-        if record.act.act_type == ActType.ASK and record.act.question_target_id:
+        # The moderator opening is addressed to the whole group, never a directed question.
+        if record.speaker_id != "moderator" and record.act.act_type == ActType.ASK and record.act.question_target_id:
             state.open_questions.append(
                 OpenQuestion(record.speaker_id, record.act.question_target_id, record.text, record.index)
             )
