@@ -1,18 +1,9 @@
-"""
-llm_client.py
--------------
-Thin provider abstraction over Gemini, Groq, and a local Ollama endpoint.
-All provider details come from config. Exposes two methods: generate() and generate_json().
-
-Token tracking
-  last_tokens_in / last_tokens_out  -- counts for the most recent generate() call
-  session_tokens_in / session_tokens_out -- accumulated totals since last reset_session()
-  reset_session() -- call between setup phase and dialogue phase to separate the two
-"""
+"""Thin provider abstraction over Gemini, Groq, and a local Ollama endpoint."""
 
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from typing import Any, Optional
@@ -26,72 +17,62 @@ load_dotenv()
 
 
 class LLMClient:
-
     def __init__(self) -> None:
-        self.provider: str = cfg.llm.provider.lower()
+        self.provider: str = str(cfg.llm.provider).lower()
         self.model_id: str = getattr(cfg.llm.models, self.provider)
         self._client: Any = self._build_client()
-
-        self.last_tokens_in: int = 0
-        self.last_tokens_out: int = 0
-        self.session_tokens_in: int = 0
-        self.session_tokens_out: int = 0
+        self.last_tokens_in = 0
+        self.last_tokens_out = 0
+        self.session_tokens_in = 0
+        self.session_tokens_out = 0
 
     def _build_client(self) -> Any:
         if self.provider == "gemini":
-            import os
             from google import genai  # type: ignore
             api_key = os.environ.get("GOOGLE_API_KEY")
             if not api_key:
                 raise EnvironmentError("Missing GOOGLE_API_KEY.")
             return genai.Client(api_key=api_key)
-
         if self.provider == "groq":
-            import os
             from openai import OpenAI  # type: ignore
             api_key = os.environ.get("GROQ_API_KEY")
             if not api_key:
                 raise EnvironmentError("Missing GROQ_API_KEY.")
             return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
-
         if self.provider == "uni":
-            return None  # requests-based; no client object needed
-
-        raise ValueError(f"Unsupported LLM provider: '{self.provider}'")
-
-    # ------------------------------------------------------------------
-    # Token helpers
-    # ------------------------------------------------------------------
+            return None
+        raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
     def reset_session(self) -> None:
-        """Reset accumulated session totals. Call after setup phase, before dialogue loop."""
         self.session_tokens_in = 0
         self.session_tokens_out = 0
 
     def _record_tokens(self, tokens_in: int, tokens_out: int) -> None:
-        self.last_tokens_in = tokens_in
-        self.last_tokens_out = tokens_out
-        self.session_tokens_in += tokens_in
-        self.session_tokens_out += tokens_out
+        self.last_tokens_in = int(tokens_in or 0)
+        self.last_tokens_out = int(tokens_out or 0)
+        self.session_tokens_in += self.last_tokens_in
+        self.session_tokens_out += self.last_tokens_out
 
-    # ------------------------------------------------------------------
-    # Public interface
-    # ------------------------------------------------------------------
+    def _sampling(self, profile: str) -> dict[str, Any]:
+        section = getattr(cfg.llm.sampling, profile, cfg.llm.sampling.dialogue)
+        return {
+            "temperature": float(section.temperature),
+            "top_k": int(section.top_k),
+            "top_p": float(section.top_p),
+        }
 
-    def generate(self, prompt: str) -> str:
-        """Send a prompt and return the response text. Updates last_tokens_* and session totals."""
+    def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
         self.last_tokens_in = 0
         self.last_tokens_out = 0
+        sampling = self._sampling(profile)
 
         if self.provider == "gemini":
-            time.sleep(cfg.llm.gemini_rpm_delay)
-            response = self._client.models.generate_content(
-                model=self.model_id, contents=prompt
-            )
+            time.sleep(float(cfg.llm.gemini_rpm_delay))
+            response = self._client.models.generate_content(model=self.model_id, contents=prompt)
             meta = getattr(response, "usage_metadata", None)
             self._record_tokens(
-                tokens_in=getattr(meta, "prompt_token_count", 0) or 0,
-                tokens_out=getattr(meta, "candidates_token_count", 0) or 0,
+                getattr(meta, "prompt_token_count", 0) or 0,
+                getattr(meta, "candidates_token_count", 0) or 0,
             )
             return (response.text or "").strip()
 
@@ -99,11 +80,13 @@ class LLMClient:
             response = self._client.chat.completions.create(
                 model=self.model_id,
                 messages=[{"role": "user", "content": prompt}],
+                temperature=sampling["temperature"],
+                top_p=sampling["top_p"],
             )
             usage = getattr(response, "usage", None)
             self._record_tokens(
-                tokens_in=getattr(usage, "prompt_tokens", 0) or 0,
-                tokens_out=getattr(usage, "completion_tokens", 0) or 0,
+                getattr(usage, "prompt_tokens", 0) or 0,
+                getattr(usage, "completion_tokens", 0) or 0,
             )
             return (response.choices[0].message.content or "").strip()
 
@@ -112,103 +95,65 @@ class LLMClient:
                 "model": self.model_id,
                 "prompt": prompt,
                 "stream": False,
-                "temperature": cfg.llm.sampling.temperature,
-                "top_k": cfg.llm.sampling.top_k,
-                "top_p": cfg.llm.sampling.top_p,
+                # The target endpoint is Ollama-like.  Some deployments accept
+                # both root-level sampling keys and an options dict; send both.
+                "temperature": sampling["temperature"],
+                "top_k": sampling["top_k"],
+                "top_p": sampling["top_p"],
+                "options": sampling,
             }
             resp = requests.post(
                 cfg.llm.endpoints.uni,
                 data=json.dumps(payload),
-                timeout=cfg.llm.timeouts.request_seconds,
+                headers={"Content-Type": "application/json"},
+                timeout=float(cfg.llm.timeouts.request_seconds),
             )
             resp.raise_for_status()
             result = resp.json()
             if "response" not in result:
                 raise ValueError(f"Unexpected uni API response: {result}")
-            self._record_tokens(
-                tokens_in=result.get("prompt_eval_count", 0) or 0,
-                tokens_out=result.get("eval_count", 0) or 0,
-            )
-            return result["response"].strip()
+            self._record_tokens(result.get("prompt_eval_count", 0), result.get("eval_count", 0))
+            return str(result["response"]).strip()
 
-        raise ValueError(f"Unsupported provider: '{self.provider}'")
+        raise ValueError(f"Unsupported provider: {self.provider}")
 
-    def generate_json(self, prompt: str) -> dict[str, Any]:
-        """
-        Send a prompt and parse the response as JSON.
-        Strips markdown fences and applies a best-effort repair pass before failing.
-        """
-        text = self.generate(prompt)
-
-        # Strip markdown code fences.
-        text = re.sub(r"^```(?:json)?\s*", "", text.strip(), flags=re.MULTILINE)
-        text = re.sub(r"\s*```$", "", text.strip(), flags=re.MULTILINE)
-
-        # Extract the outermost JSON object.
-        start, end = text.find("{"), text.rfind("}")
-        if start != -1 and end > start:
-            candidate = text[start: end + 1]
+    def generate_json(self, prompt: str, *, profile: str = "setup") -> dict[str, Any]:
+        text = self.generate(prompt, profile=profile)
+        text = _strip_markdown_fence(text)
+        candidate = _extract_json_object(text)
+        if candidate is None:
+            raise ValueError(f"Model did not return a JSON object:\n{text}")
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            repaired = _repair_json(candidate)
             try:
-                return json.loads(candidate)
-            except json.JSONDecodeError:
-                try:
-                    return json.loads(_repair_json(candidate))
-                except json.JSONDecodeError:
-                    pass
-
-        raise ValueError(f"Model did not return valid JSON:\n{text}")
+                return json.loads(repaired)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"Model returned invalid JSON after repair: {exc}\n{candidate}") from exc
 
 
-# ---------------------------------------------------------------------------
-# JSON repair -- fixes the most common LLM mistakes
-# ---------------------------------------------------------------------------
+def _strip_markdown_fence(text: str) -> str:
+    text = text.strip()
+    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.I)
+    text = re.sub(r"\s*```$", "", text)
+    return text.strip()
+
+
+def _extract_json_object(text: str) -> Optional[str]:
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end <= start:
+        return None
+    return text[start : end + 1]
+
 
 def _repair_json(text: str) -> str:
-    """
-    Two-pass repair:
-    1. Swap ] or ) that close an object context -> }
-    2. Remove trailing commas before } or ]
-    """
-    result: list[str] = []
-    stack: list[str] = []
-    in_string = False
-    escape_next = False
-
-    for ch in text:
-        if escape_next:
-            result.append(ch)
-            escape_next = False
-            continue
-        if ch == "\\" and in_string:
-            result.append(ch)
-            escape_next = True
-            continue
-        if ch == '"':
-            in_string = not in_string
-
-        if not in_string:
-            if ch in ("{", "[", "("):
-                stack.append(ch)
-            elif ch == "}":
-                if stack and stack[-1] == "{":
-                    stack.pop()
-            elif ch in ("]", ")"):
-                if stack and stack[-1] == "{":
-                    ch = "}"
-                    stack.pop()
-                elif stack and stack[-1] in ("[", "("):
-                    stack.pop()
-
-        result.append(ch)
-
-    repaired = "".join(result)
+    # Conservative repairs only: trailing commas and smart quotes.
+    repaired = text.replace("“", '"').replace("”", '"').replace("’", "'")
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
     return repaired
 
-
-# ---------------------------------------------------------------------------
-# Module-level singleton
-# ---------------------------------------------------------------------------
 
 _instance: Optional[LLMClient] = None
 

@@ -1,322 +1,114 @@
-"""
-logger.py
----------
-DialogueLogger -- writes two files per dialogue:
-
-  .txt          chat with persona block at the top, Outcome/Tokens footer.
-  .eval.json    everything else for evaluation:
-                  - dialogue metadata + outcome + tokens
-                  - per-speaker / per-phase turn counts + Gini
-                  - vote flips, confirmation rejections
-                  - Fisher (1970) ratios  (eval-only)
-                  - Stage 5: justification / reciprocity / reflexivity rates
-                  - challenges + answered challenges
-                  - full personas (traits + beliefs + speech signature)
-                  - structured per-turn trace (acts, addressees, stance updates,
-                    challenge edges)
-"""
+"""Logging for simulator runs."""
 
 from __future__ import annotations
 
 import json
-import os
-from typing import Any, Optional, TYPE_CHECKING
+from dataclasses import asdict, is_dataclass
+from pathlib import Path
+from typing import Any
 
 from config_loader import cfg
-from reasoning import deliberation_metrics, evaluation_summary, fisher_ratios
-
-if TYPE_CHECKING:
-    from orchestrator import DialogueState
-    from persona import Persona
-    from simulator import Simulator
-    from state import StructuredState
-
-
-def _gini(values: list[int]) -> float:
-    """Gini coefficient of participation (0 = equal, 1 = one speaker dominates)."""
-    if not values or len(values) <= 1:
-        return 0.0
-    total = sum(values)
-    if total == 0:
-        return 0.0
-    n = len(values)
-    sorted_vals = sorted(values)
-    numer = sum((2 * (i + 1) - n - 1) * v for i, v in enumerate(sorted_vals))
-    return round(numer / (n * total), 4)
-
-
-def _persona_block(personas: list["Persona"]) -> str:
-    """Human-readable participant introductions for the top of the chat file."""
-    lines: list[str] = ["Participants"]
-    lines.append("-" * 50)
-    for p in personas:
-        primary_tag = " (primary)" if p.is_primary else ""
-        lines.append(f"{p.name}{primary_tag} -- {p.role}")
-        lines.append(
-            f"  traits: open={p.openness} consc={p.conscientiousness} "
-            f"extra={p.extraversion} agree={p.agreeableness} "
-            f"neuro={p.neuroticism} length={p.response_length}"
-        )
-        sig = p.speech_signature()
-        lines.append(
-            f"  voice: hedge={sig.hedge_propensity:.2f} direct={sig.directness:.2f} "
-            f"thinkaloud={sig.thinkaloud_propensity:.2f} detail={sig.detail_orientation:.2f}"
-        )
-        if p.goal:
-            lines.append(f"  goal: {p.goal}")
-        if p.backstory:
-            lines.append(f"  backstory: {p.backstory}")
-        if p.beliefs:
-            b = p.beliefs
-            accept_others = [x for x in b.acceptable if x != b.preferred]
-            accept_str = f", accepts {accept_others}" if accept_others else ""
-            rejects_str = f", rejects {b.rejected}" if b.rejected else ""
-            lines.append(f"  prefers Option {b.preferred}{accept_str}{rejects_str}")
-            lines.append(f"  concern: {b.key_concern}")
-            if b.reasons:
-                lines.append(f"  reasons: {' | '.join(b.reasons)}")
-            if b.reservation:
-                lines.append(f"  reservation: {b.reservation}")
-            if b.would_reconsider_if:
-                lines.append(f"  would reconsider if: {b.would_reconsider_if}")
-    lines.append("-" * 50)
-    return "\n".join(lines)
+from schemas import DialogueRunResult, DialogueState, RunOutcome, Scenario
 
 
 class DialogueLogger:
-
-    def __init__(self, dialogue_id: str, topic: str) -> None:
-        self.dialogue_id = dialogue_id
+    def __init__(self, run_id: str, topic: str) -> None:
+        self.run_id = run_id
         self.topic = topic
+        self.base_dir = Path(str(cfg.output.log_dir)) / run_id
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        self.prompt_dir = self.base_dir / "prompts"
+        if bool(cfg.output.write_prompts):
+            self.prompt_dir.mkdir(exist_ok=True)
+        self.prompt_counter = 0
 
-        log_dir = cfg.output.log_dir
-        os.makedirs(log_dir, exist_ok=True)
-        self.chat_file = os.path.join(log_dir, f"{dialogue_id}.txt")
-        self.eval_file = os.path.join(log_dir, f"{dialogue_id}.eval.json")
+    def write_prompt(self, prompt: str, kind: str) -> str:
+        if not bool(cfg.output.write_prompts):
+            return ""
+        self.prompt_counter += 1
+        path = self.prompt_dir / f"{self.prompt_counter:04d}_{kind}.txt"
+        path.write_text(prompt, encoding="utf-8")
+        return str(path)
 
-        self._turn_records: list[dict[str, Any]] = []
-        self._speaker_turn_counts: dict[str, int] = {}
-        self._phase_turn_counts: dict[str, int] = {}
+    def finish(self, state: DialogueState, outcome: RunOutcome) -> dict[str, str]:
+        transcript_lines = self._transcript_lines(state, outcome)
+        transcript_path = self.base_dir / "transcript.md"
+        transcript_path.write_text("\n".join(transcript_lines) + "\n", encoding="utf-8")
 
-    # ------------------------------------------------------------------
+        json_path = self.base_dir / "run.json"
+        payload = self._json_payload(state, outcome)
+        json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        return {"transcript": str(transcript_path), "json": str(json_path), "dir": str(self.base_dir)}
 
-    def write_header(self, participant_names: list[str],
-                     personas: list["Persona"], opening_lines: list[str]) -> None:
-        header = (
-            f"Dialogue ID : {self.dialogue_id}\n"
-            f"Participants: {', '.join(participant_names)}\n"
-            f"Topic       : {self.topic}\n"
-            + "=" * 50 + "\n\n"
-            + _persona_block(personas) + "\n\n"
-            + "=" * 50 + "\n"
-        )
-        with open(self.chat_file, "w", encoding="utf-8") as f:
-            f.write(header)
-            for line in opening_lines:
-                f.write(f"{line}\n")
-            f.write("\n")
-
-    def append_chat_line(self, line: str) -> None:
-        with open(self.chat_file, "a", encoding="utf-8") as f:
-            f.write(f"{line}\n\n")
-
-    def buffer(self, line: str, selected_reason: str, state: "DialogueState",
-               tokens_in: int = 0, tokens_out: int = 0,
-               verification_result: Optional[dict] = None) -> None:
-        if ":" not in line:
-            return
-        speaker, text = line.split(":", 1)
-        speaker = speaker.strip()
-        is_moderator = speaker == "Moderator"
-
-        record: dict = {
-            "turn_index": state.turn_index,
-            "phase": state.phase,
-            "speaker": speaker,
-            "is_moderator": is_moderator,
-            "text": text.strip(),
-            "selected_reason": selected_reason,
-            "tokens_in": tokens_in,
-            "tokens_out": tokens_out,
-        }
-        if verification_result is not None:
-            record["verification_issues"] = [
-                i["code"] for i in verification_result.get("issues", [])
-                if i["severity"] == "repair"
-            ]
-            record["repair_attempted"] = verification_result.get("repair_attempted", False)
-            record["repair_succeeded"] = verification_result.get("repair_succeeded", False)
-
-        self._turn_records.append(record)
-        if not is_moderator:
-            self._speaker_turn_counts[speaker] = self._speaker_turn_counts.get(speaker, 0) + 1
-            self._phase_turn_counts[state.phase] = self._phase_turn_counts.get(state.phase, 0) + 1
-
-    # ------------------------------------------------------------------
-
-    def flush(
-        self,
-        outcome: str,
-        sims: list["Simulator"],
-        state: "DialogueState",
-        structured: Optional["StructuredState"],
-        setup_tokens_in: int,
-        setup_tokens_out: int,
-        dialogue_tokens_in: int,
-        dialogue_tokens_out: int,
-    ) -> None:
-        total_in  = setup_tokens_in + dialogue_tokens_in
-        total_out = setup_tokens_out + dialogue_tokens_out
-
-        # --- .txt footer ------------------------------------------------
-        with open(self.chat_file, "a", encoding="utf-8") as f:
-            f.write(
-                f"\n--- Outcome: {outcome} ---\n"
-                f"--- Tokens : setup={setup_tokens_in}/{setup_tokens_out}  "
-                f"dialogue={dialogue_tokens_in}/{dialogue_tokens_out}  "
-                f"total={total_in}/{total_out} (in/out) ---\n"
+    def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
+        lines = [f"# Dialogue run {self.run_id}", "", f"Topic: {state.scenario.topic}", "", "## Options", ""]
+        for option in state.scenario.options:
+            lines.append(f"- {option.source_text()}")
+        lines += ["", "## Participants", ""]
+        for persona in state.personas:
+            hard = " hard-blocker" if persona.is_hard_blocker else ""
+            lines.append(
+                f"- {persona.name} ({persona.role}){hard}: prefers Option {persona.preferred_option}; "
+                f"acceptable {persona.acceptable_options}; soft rejections {persona.soft_rejections}; hard rejections {persona.hard_rejections}"
             )
+        lines += ["", "## Transcript", ""]
+        for turn in state.turns:
+            lines.append(f"**{turn.speaker_name}:** {turn.text}")
+        lines += ["", "## Outcome", "", f"Status: {outcome.status}", f"Final option: {outcome.final_option}", f"Reason: {outcome.reason}"]
+        lines += ["", "## Metrics", ""]
+        metrics = self._metrics(state, outcome)
+        for key, value in metrics.items():
+            lines.append(f"- {key}: {value}")
+        return lines
 
-        # --- .eval.json -------------------------------------------------
-        meta: dict[str, Any] = {
-            "dialogue_id": self.dialogue_id,
+    def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+        return {
+            "run_id": self.run_id,
             "topic": self.topic,
-            "outcome": outcome,
-            "tokens": {
-                "setup_in": setup_tokens_in,
-                "setup_out": setup_tokens_out,
-                "dialogue_in": dialogue_tokens_in,
-                "dialogue_out": dialogue_tokens_out,
-                "total_in": total_in,
-                "total_out": total_out,
-            },
-            "participation": {
-                "gini": _gini(list(self._speaker_turn_counts.values())),
-                "speaker_turn_counts": self._speaker_turn_counts,
-                "phase_turn_counts": self._phase_turn_counts,
-            },
-            "dynamics": {
-                "vote_flips_per_speaker": dict(state.vote_changes),
-                "confirmation_rejection_count": state.confirmation_rejection_count,
-                "rejected_options_by_speaker": dict(state.rejected_options_by_speaker),
-                "explicit_votes": dict(getattr(state, "explicit_votes", {})),
-                "explicit_accepts": {
-                    k: sorted(v) for k, v in getattr(state, "explicit_accepts", {}).items()
-                },
-                "explicit_rejects": getattr(state, "explicit_rejects", {}),
-                "confirmation_rejected_options": sorted(getattr(state, "confirmation_rejected_options", set())),
-                "compromise_terms": getattr(state, "compromise_terms", {}),
-                "final_candidate_option": state.candidate_option,
-                "final_preferred_option": state.preferred_option,
-                "outcome_reason": getattr(state, "outcome_reason", ""),
-            },
-            "personas": [s.persona.as_dict() for s in sims],
-            "turns": self._turn_records,
+            "scenario": _to_jsonable(state.scenario),
+            "personas": [_to_jsonable(p) for p in state.personas],
+            "turns": [_to_jsonable(t) for t in state.turns],
+            "outcome": _to_jsonable(outcome),
+            "metrics": self._metrics(state, outcome),
         }
 
-        # --- Verification aggregate stats ----------------------------------
-        repair_attempts = sum(
-            1 for t in self._turn_records if t.get("repair_attempted", False)
-        )
-        failed_repairs = sum(
-            1 for t in self._turn_records
-            if t.get("repair_attempted", False) and not t.get("repair_succeeded", True)
-        )
-        meta["verification"] = {
-            "repair_attempts": repair_attempts,
-            "failed_repairs": failed_repairs,
+    def _metrics(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        counts = {p.name: state.runtimes[p.id].turn_count for p in state.personas}
+        total = max(1, len(participant_turns))
+        question_turns = sum(1 for t in participant_turns if "?" in t.text)
+        compromise_turns = sum(1 for t in participant_turns if t.act.proposes_option)
+        moderator_turns = sum(1 for t in state.turns if t.speaker_id == "moderator")
+        option_coverage = {
+            oid: {
+                "mentions": c.mentions,
+                "reasons": c.reasons,
+                "objections": c.objections,
+                "acceptances": c.acceptances,
+            }
+            for oid, c in state.coverage.items()
+        }
+        return {
+            "participant_turns": len(participant_turns),
+            "moderator_turns": moderator_turns,
+            "moderator_ratio": round(moderator_turns / max(1, len(state.turns)), 3),
+            "turn_counts": counts,
+            "question_density": round(question_turns / total, 3),
+            "sim_compromise_proposals": compromise_turns,
+            "readiness_score_final": state.readiness_score,
+            "option_coverage": option_coverage,
+            "outcome_status": outcome.status,
+            "final_option": outcome.final_option,
         }
 
-        # --- Post-dialogue evaluation metrics ----------------------------------
-        word_budgets = cfg.response_length.word_budgets
-        speaker_targets = {
-            s.name: word_budgets[max(0, min(4, s.persona.response_length - 1))]
-            for s in sims
-        }
-        final_opt = state.preferred_option or state.candidate_option
-        meta["evaluation"] = evaluation_summary(
-            outcome=outcome,
-            final_option=final_opt,
-            speaker_targets=speaker_targets,
-            turn_records=self._turn_records,
-        )
 
-        # Live control no longer uses StanceTable consensus as the source of
-        # truth. Outcome validity must therefore be evaluated against the
-        # explicit control state: final option is valid and, for success /
-        # compromise_success, every participant either voted for or explicitly
-        # accepted it.
-        valid_letters = {"A", "B", "C", "D"}
-        final_candidate = state.preferred_option or state.candidate_option
-        if outcome in {"success", "compromise_success"} and final_candidate in valid_letters:
-            all_accepted = True
-            for sim in sims:
-                name = sim.name
-                voted = getattr(state, "explicit_votes", {}).get(name) == final_candidate
-                accepted = final_candidate in getattr(state, "explicit_accepts", {}).get(name, set())
-                if not (voted or accepted):
-                    all_accepted = False
-                    break
-            meta["evaluation"]["outcome_valid"] = all_accepted
-        elif outcome == "force_close":
-            meta["evaluation"]["outcome_valid"] = final_candidate in valid_letters
-        elif outcome == "failed_no_viable_compromise":
-            meta["evaluation"]["outcome_valid"] = True
-        else:
-            meta["evaluation"]["outcome_valid"] = False
-
-        if structured is not None:
-            names = [s.name for s in sims]
-            meta["fisher_ratios"] = fisher_ratios(structured)              # eval-only
-            meta["deliberation"] = deliberation_metrics(structured, names) # eval-only; no live control
-            meta["consensus_state_final"] = structured.consensus_state
-            meta["is_hard_blocker"] = {
-                name: ps.is_true_hard_blocker
-                for name, ps in structured.participants.items()
-            }
-            meta["public_preferences_final"] = {
-                name: ps.public_preference
-                for name, ps in structured.participants.items()
-            }
-            meta["stated_priorities"] = {
-                name: ps.stated_priority
-                for name, ps in structured.participants.items()
-            }
-            meta["challenges"] = [
-                {
-                    "turn_id": c.challenge_turn_id,
-                    "challenger": c.challenger,
-                    "target": c.target,
-                    "target_option": c.target_option,
-                    "answered_turn_id": c.answered_turn_id,
-                }
-                for c in structured.discourse.challenges
-            ]
-            meta["structured_turns"] = [
-                {
-                    "id": t.turn_id,
-                    "speaker": t.speaker,
-                    "phase": t.phase,
-                    "act": t.dialogue_act.value,
-                    "mentioned_options": t.mentioned_options,
-                    "is_question": t.is_question,
-                    "addressees": t.addressees,
-                    "reply_to": t.reply_to,
-                    "answers_question_id": t.answers_question_id,
-                    "challenges_turn_id": t.challenges_turn_id,
-                    "answered_challenge_id": t.answered_challenge_id,
-                    "stance_updates": [
-                        {"option": su.option, "stance": su.stance,
-                         "confidence": su.confidence, "condition": su.condition}
-                        for su in t.stance_updates
-                    ],
-                }
-                for t in structured.turns
-            ]
-
-        with open(self.eval_file, "w", encoding="utf-8") as f:
-            json.dump(meta, f, indent=2, default=str)
-
-    @property
-    def paths(self) -> tuple[str, str]:
-        return self.chat_file, self.eval_file
+def _to_jsonable(obj: Any) -> Any:
+    if is_dataclass(obj):
+        return {k: _to_jsonable(v) for k, v in asdict(obj).items()}
+    if isinstance(obj, dict):
+        return {str(k): _to_jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple, set)):
+        return [_to_jsonable(v) for v in obj]
+    if hasattr(obj, "value"):
+        return obj.value
+    return obj

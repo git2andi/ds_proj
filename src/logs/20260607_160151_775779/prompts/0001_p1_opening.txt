@@ -1,0 +1,94 @@
+You are generating one participant message in a synthetic group decision chat.
+
+Topic:
+Book a Flight to Stockholm
+
+Option cards, the only source of truth:
+Option A - SAS Direct; attrs: airline=SAS, travel_time=2 hours, price=400 USD, layovers=0; upside: Fast and convenient direct flight; tradeoff: Higher price point; concern: Expensive for budget travelers; fit: Business travelers or those short on time; risk: Less flexible refund policy; best for: Priority on speed and convenience
+Option B - Norwegian Budget; attrs: airline=Norwegian, travel_time=2.5 hours, price=250 USD, layovers=0; upside: Affordable option with no layovers; tradeoff: Less legroom and fewer amenities; concern: Comfort during the flight; fit: Budget-conscious travelers; risk: Additional fees for checked bags or food; best for: Priority on saving money
+Option C - Lufthansa with Layover; attrs: airline=Lufthansa, travel_time=4 hours, price=350 USD, layovers=1; upside: More amenities and services available; tradeoff: Longer overall travel time due to layover; concern: Potential for missed connections; fit: Travelers who value airline amenities; risk: Delays or cancellations of connecting flights; best for: Priority on in-flight experience
+Option D - KLM with Short Layover; attrs: airline=KLM, travel_time=3 hours, price=300 USD, layovers=1; upside: Balances travel time and price effectively; tradeoff: Short layover might be rushed for some; concern: Stress of a tight connection; fit: Travelers seeking a middle ground; risk: Limited time to grab food or stretch during the layover; best for: Priority on balancing cost and travel efficiency
+
+Speaker card:
+Name: Lena
+Role: Travel Planner
+Speech style: a bit chatty, speaks from priorities and impressions
+Private goal: Book a convenient and efficient flight to Stockholm
+Traits: openness=2, conscientiousness=3, extraversion=2, agreeableness=5, neuroticism=2
+Behavior controls: compromise_willingness=0.63, patience=0.56, initiative=0.73, conflict_directness=0.36, detail_level=0.44, hard_blocker=no
+Current private stance: prefers Option A; can probably live with ['A', 'D']; soft concerns about ['B']; hard rejects []
+Reasons available: {"A": ["Fast and convenient direct flight"], "D": ["Balances travel time and price effectively"]}
+Reservation: Concern about the short layover in option D being rushed
+Would reconsider if: If option B's price were to decrease significantly, making it a more competitive choice
+
+Recent chat:
+Moderator: We need to decide: Book a Flight to Stockholm. Here are the four options: - Option A: SAS Direct — Fast and convenient direct flight - Option B: Norwegian Budget — Affordable option with no layovers - Option C: Lufthansa with Layover — More amenities and services available - Option D: KLM with Short Layover — Balances travel time and price effectively What's most important to you when booking a flight to Stockholm - price, travel time, airline amenities, or layovers?
+
+Structured group state:
+{
+  "phase": "opening",
+  "candidate_option": null,
+  "readiness_score": 0.024,
+  "open_questions": [],
+  "participant_state": {
+    "Lena": {
+      "vote": null,
+      "accepted": [],
+      "rejected": [],
+      "turn_count": 0
+    },
+    "Kai": {
+      "vote": null,
+      "accepted": [],
+      "rejected": [],
+      "turn_count": 0
+    },
+    "Nix": {
+      "vote": null,
+      "accepted": [],
+      "rejected": [],
+      "turn_count": 0
+    }
+  },
+  "coverage": {
+    "A": {
+      "mentions": 0,
+      "reasons": 0,
+      "objections": 0,
+      "acceptances": 0
+    },
+    "B": {
+      "mentions": 0,
+      "reasons": 0,
+      "objections": 0,
+      "acceptances": 0
+    },
+    "C": {
+      "mentions": 0,
+      "reasons": 0,
+      "objections": 0,
+      "acceptances": 0
+    },
+    "D": {
+      "mentions": 0,
+      "reasons": 0,
+      "objections": 0,
+      "acceptances": 0
+    }
+  }
+}
+
+Move instruction:
+You are Lena. Generate exactly one chat message.
+Local move: opening
+Why you are speaking: briefly state an initial priority, not a final vote
+Address: the group
+Option focus: Option A
+Length hint: short
+
+Output contract:
+Output only the message text, without 'Lena:' and without quotation marks.
+Maximum 37 words.
+Sound like a normal casual friend-group chat: natural, compact, not corporate, not Gen-Z-heavy, not essay-like.
+Do not use numbered lists. Do not create multiple turns. Do not invent facts outside the option cards.
+Avoid these phrases unless genuinely unavoidable: valid point, I appreciate your perspective, as a compromise candidate, emerging support, from my perspective, I understand your concern.

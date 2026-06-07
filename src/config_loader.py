@@ -1,75 +1,121 @@
 """
-config_loader.py
-----------------
-Loads config.yaml once at import time and exposes a typed `cfg` object.
-All modules import `cfg` from here -- no magic numbers elsewhere.
+Configuration loader.
+
+The simulator treats config.yaml as the single place for tunable numbers.
+Modules import ``cfg`` from here.  The wrapper intentionally stays light: it
+provides attribute access while preserving the raw mapping for validation and
+logging.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 import yaml
 
 
-class _Section:
-    """Wraps a config dict so keys are accessible as attributes."""
-
-    def __init__(self, data: dict[str, Any]) -> None:
+class Section:
+    def __init__(self, data: Any) -> None:
         self._raw = data
-        for key, value in data.items():
-            if isinstance(key, str):
-                setattr(self, key, _Section(value) if isinstance(value, dict) else value)
-
-    def __getattr__(self, name: str) -> Any:
-        raise AttributeError(name)
+        if isinstance(data, dict):
+            for key, value in data.items():
+                if isinstance(key, str) and key.isidentifier():
+                    setattr(self, key, Section(value) if isinstance(value, dict) else value)
 
     def __getitem__(self, key: Any) -> Any:
-        """Allow integer-keyed access, e.g. cfg.some_section[2]."""
-        val = self._raw[key]
-        return _Section(val) if isinstance(val, dict) else val
+        if isinstance(self._raw, dict):
+            value = self._raw[key]
+        elif isinstance(self._raw, list):
+            value = self._raw[key]
+        else:
+            raise TypeError(f"Config section of type {type(self._raw).__name__} is not subscriptable")
+        return Section(value) if isinstance(value, dict) else value
+
+    def __contains__(self, key: Any) -> bool:
+        return isinstance(self._raw, dict) and key in self._raw
 
     def get(self, key: str, default: Any = None) -> Any:
-        return getattr(self, key, default)
+        if isinstance(self._raw, dict):
+            return self._raw.get(key, default)
+        return default
+
+    def items(self):
+        if not isinstance(self._raw, dict):
+            raise TypeError("Config section is not a mapping")
+        return self._raw.items()
+
+    def as_dict(self) -> Any:
+        return self._raw
 
 
-class Config(_Section):
-    # Speakers never treated as participants in turn logic.
-    EXCLUDED_SPEAKERS: frozenset[str] = frozenset({"Moderator"})
-
-    # Top-level YAML sections -- declared so Pylance can resolve cfg.<section>
-    llm: _Section
-    simulation: _Section
-    turns: _Section
-    consensus: _Section
-    repetition: _Section
-    personas: _Section
-    output: _Section
-    response_length: _Section
-    voice: _Section
-    argument_kit: _Section
-    divergence: _Section
-    memory: _Section
-    deliberation: _Section
-    turn_policy: _Section
-    stubbornness: _Section
-    fisher: _Section
-    grounding: _Section
-    moderation: _Section
-    evaluation: _Section
-    prompt_budget: _Section
-    verification: _Section
-    surface_moves: _Section
-    closure: _Section
-    compromise: _Section
+class Config(Section):
+    EXCLUDED_SPEAKERS = frozenset({"Moderator"})
 
     def __init__(self, path: Path) -> None:
-        with open(path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
+        self.path = path
+        with path.open("r", encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
         super().__init__(data)
+        self._validate()
+
+    def _require(self, dotted: str) -> Any:
+        value: Any = self._raw
+        for part in dotted.split("."):
+            if not isinstance(value, dict) or part not in value:
+                raise ValueError(f"Missing required config key: {dotted}")
+            value = value[part]
+        return value
+
+    def _validate_range(self, name: str, value: Iterable[Any], low: float, high: float) -> None:
+        vals = list(value)
+        if len(vals) != 2:
+            raise ValueError(f"{name} must contain [min, max].")
+        if not (low <= float(vals[0]) <= float(vals[1]) <= high):
+            raise ValueError(f"{name} must satisfy {low} <= min <= max <= {high}.")
+
+    def _validate(self) -> None:
+        for key in [
+            "llm.provider", "simulation.num_participants", "simulation.min_participants",
+            "simulation.max_participants", "scenario.option_count", "scenario.option_labels",
+            "conversation.hard_max_total_turns", "output.log_dir",
+        ]:
+            self._require(key)
+
+        n = int(self.simulation.num_participants)
+        min_n = int(self.simulation.min_participants)
+        max_n = int(self.simulation.max_participants)
+        if min_n > max_n:
+            raise ValueError("simulation.min_participants must be <= simulation.max_participants.")
+        if not (min_n <= n <= max_n):
+            raise ValueError(f"simulation.num_participants must be between {min_n} and {max_n}; got {n}.")
+
+        labels = list(self.scenario.option_labels)
+        if len(labels) != int(self.scenario.option_count):
+            raise ValueError("scenario.option_labels length must equal scenario.option_count.")
+        if len(set(labels)) != len(labels):
+            raise ValueError("scenario.option_labels must be unique.")
+
+        for trait, bounds in self.personas.trait_ranges.items():
+            self._validate_range(f"personas.trait_ranges.{trait}", bounds, 1, 5)
+        for name, bounds in self.personas.cooperative_defaults.items():
+            self._validate_range(f"personas.cooperative_defaults.{name}", bounds, 0.0, 1.0)
+
+        if int(self.conversation.soft_min_total_turns) > int(self.conversation.hard_max_total_turns):
+            raise ValueError("conversation.soft_min_total_turns must be <= hard_max_total_turns.")
+        if not (0.0 <= float(self.consensus.majority_fraction_to_test) <= 1.0):
+            raise ValueError("consensus.majority_fraction_to_test must be in [0, 1].")
 
 
-# config.yaml lives in the project root, one level above src/
-_CONFIG_PATH = Path(__file__).parent.parent / "config.yaml"
-cfg = Config(_CONFIG_PATH)
+def _find_config() -> Path:
+    here = Path(__file__).resolve().parent
+    direct = here / "config.yaml"
+    if direct.exists():
+        return direct
+    cwd = Path.cwd() / "config.yaml"
+    if cwd.exists():
+        return cwd
+    raise FileNotFoundError("Could not find config.yaml next to config_loader.py or in the current working directory.")
+
+
+cfg = Config(_find_config())

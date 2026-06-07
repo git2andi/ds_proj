@@ -1,0 +1,601 @@
+{
+  "run_id": "20260607_160151_775779",
+  "topic": "Book a Flight to Stockholm",
+  "scenario": {
+    "topic": "Book a Flight to Stockholm",
+    "decision_kind": "flight_booking",
+    "opening_question": "What's most important to you when booking a flight to Stockholm - price, travel time, airline amenities, or layovers?",
+    "options": [
+      {
+        "id": "A",
+        "name": "SAS Direct",
+        "attrs": {
+          "airline": "SAS",
+          "travel_time": "2 hours",
+          "price": "400 USD",
+          "layovers": "0"
+        },
+        "upside": "Fast and convenient direct flight",
+        "tradeoff": "Higher price point",
+        "concern": "Expensive for budget travelers",
+        "fit": "Business travelers or those short on time",
+        "risk": "Less flexible refund policy",
+        "best_for": "Priority on speed and convenience"
+      },
+      {
+        "id": "B",
+        "name": "Norwegian Budget",
+        "attrs": {
+          "airline": "Norwegian",
+          "travel_time": "2.5 hours",
+          "price": "250 USD",
+          "layovers": "0"
+        },
+        "upside": "Affordable option with no layovers",
+        "tradeoff": "Less legroom and fewer amenities",
+        "concern": "Comfort during the flight",
+        "fit": "Budget-conscious travelers",
+        "risk": "Additional fees for checked bags or food",
+        "best_for": "Priority on saving money"
+      },
+      {
+        "id": "C",
+        "name": "Lufthansa with Layover",
+        "attrs": {
+          "airline": "Lufthansa",
+          "travel_time": "4 hours",
+          "price": "350 USD",
+          "layovers": "1"
+        },
+        "upside": "More amenities and services available",
+        "tradeoff": "Longer overall travel time due to layover",
+        "concern": "Potential for missed connections",
+        "fit": "Travelers who value airline amenities",
+        "risk": "Delays or cancellations of connecting flights",
+        "best_for": "Priority on in-flight experience"
+      },
+      {
+        "id": "D",
+        "name": "KLM with Short Layover",
+        "attrs": {
+          "airline": "KLM",
+          "travel_time": "3 hours",
+          "price": "300 USD",
+          "layovers": "1"
+        },
+        "upside": "Balances travel time and price effectively",
+        "tradeoff": "Short layover might be rushed for some",
+        "concern": "Stress of a tight connection",
+        "fit": "Travelers seeking a middle ground",
+        "risk": "Limited time to grab food or stretch during the layover",
+        "best_for": "Priority on balancing cost and travel efficiency"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Lena",
+      "role": "Travel Planner",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 5,
+        "neuroticism": 2,
+        "response_length": 5,
+        "compromise_willingness": 0.6328723840283048,
+        "patience": 0.5649174976384487,
+        "initiative": 0.7329681586630505,
+        "conflict_directness": 0.36313069308940443,
+        "detail_level": 0.43781521937016665
+      },
+      "speech_style": "a bit chatty, speaks from priorities and impressions",
+      "private_goal": "Book a convenient and efficient flight to Stockholm",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "soft_rejections": [
+        "B"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "Fast and convenient direct flight"
+        ],
+        "D": [
+          "Balances travel time and price effectively"
+        ]
+      },
+      "reservation": "Concern about the short layover in option D being rushed",
+      "reconsider_if": "If option B's price were to decrease significantly, making it a more competitive choice",
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Kai",
+      "role": "Frequent Flyer",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 1,
+        "response_length": 3,
+        "compromise_willingness": 0.5833748905892968,
+        "patience": 0.5549244087877783,
+        "initiative": 0.79119370852777,
+        "conflict_directness": 0.6845639679714903,
+        "detail_level": 0.810495323678952
+      },
+      "speech_style": "normal length, direct when disagreeing, uses concrete option details",
+      "private_goal": "Find a flight that offers a good balance of speed and amenities",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "soft_rejections": [
+        "B"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "Fast and convenient direct flight"
+        ],
+        "C": [
+          "More amenities and services available"
+        ]
+      },
+      "reservation": "Concern about the potential for missed connections in option C",
+      "reconsider_if": "If option D's layover were to be longer, providing more time to grab food or stretch",
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nix",
+      "role": "Budget Expert",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 3,
+        "response_length": 3,
+        "compromise_willingness": 0.6867634026643966,
+        "patience": 0.731583694954625,
+        "initiative": 0.36350676873737564,
+        "conflict_directness": 0.3645240299908177,
+        "detail_level": 0.5152787610278364
+      },
+      "speech_style": "normal length, speaks from priorities and impressions",
+      "private_goal": "Book an affordable flight to Stockholm without sacrificing too much convenience",
+      "preferred_option": "B",
+      "acceptable_options": [
+        "B",
+        "D",
+        "A"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "B": [
+          "Affordable option with no layovers"
+        ],
+        "D": [
+          "Balances travel time and price effectively"
+        ],
+        "A": [
+          "Option A could work as a compromise."
+        ]
+      },
+      "reservation": "Concern about the limited legroom in option B",
+      "reconsider_if": "If option A's price were to decrease, making it a more viable choice for budget-conscious travelers",
+      "is_hard_blocker": false
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We need to decide: Book a Flight to Stockholm. Here are the four options: - Option A: SAS Direct — Fast and convenient direct flight - Option B: Norwegian Budget — Affordable option with no layovers - Option C: Lufthansa with Layover — More amenities and services available - Option D: KLM with Short Layover — Balances travel time and price effectively What's most important to you when booking a flight to Stockholm - price, travel time, airline amenities, or layovers?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "We need to decide: Book a Flight to Stockholm. Here are the four options: - Option A: SAS Direct — Fast and convenient direct flight - Option B: Norwegian Budget — Affordable option with no layovers - Option C: Lufthansa with Layover — More amenities and services available - Option D: KLM with Short Layover — Balances travel time and price effectively What's most important to you when booking a flight to Stockholm - price, travel time, airline amenities, or layovers?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": []
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "For me, convenience is key, so I'm leaning towards Option A for its direct flight and speed.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "For me, convenience is key, so I'm leaning towards Option A for its direct flight and speed.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1145,
+      "tokens_out": 22,
+      "validation_issues": []
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "For me, speed is key, so I'm leaning towards Option A for its direct flight and convenience.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "For me, speed is key, so I'm leaning towards Option A for its direct flight and convenience.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1177,
+      "tokens_out": 22,
+      "validation_issues": []
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Let's consider Norwegian Budget, it's affordable with no layovers, which seems like a great starting point for our discussion",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let's consider Norwegian Budget, it's affordable with no layovers, which seems like a great starting point for our discussion",
+        "act_type": "opening",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "briefly state an initial priority, not a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1215,
+      "tokens_out": 25,
+      "validation_issues": []
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "I vote for Option A, it's my top choice due to the direct flight",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Option A, it's my top choice due to the direct flight",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the discussion is developed enough to name a current pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "is_moderator": false
+      },
+      "tokens_in": 2503,
+      "tokens_out": 32,
+      "validation_issues": []
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Is everyone okay with Option A, it's still my top choice for convenience and speed?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Is everyone okay with Option A, it's still my top choice for convenience and speed?",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A",
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "check whether Option A is acceptable as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1243,
+      "tokens_out": 19,
+      "validation_issues": []
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "I'm okay with Option A, works for me",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'm okay with Option A, works for me",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A",
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "check whether Option A is acceptable as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1282,
+      "tokens_out": 11,
+      "validation_issues": []
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Is Option A okay for everyone given its higher price point?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Is Option A okay for everyone given its higher price point?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "check whether Option A is acceptable as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1320,
+      "tokens_out": 13,
+      "validation_issues": []
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Nix",
+      "text": "Is everyone okay with Option A's higher price point?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Is everyone okay with Option A's higher price point?",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A",
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "check whether Option A is acceptable as the current compromise",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "is_moderator": false
+      },
+      "tokens_in": 1335,
+      "tokens_out": 12,
+      "validation_issues": []
+    },
+    {
+      "index": 10,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright, then we’ll go with Option A, SAS Direct. Sounds like that works as the compromise.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Alright, then we’ll go with Option A, SAS Direct. Sounds like that works as the compromise.",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A",
+          "C"
+        ],
+        "rejects": [],
+        "proposes_option": "A"
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": []
+    }
+  ],
+  "outcome": {
+    "status": "consensus",
+    "final_option": "A",
+    "reason": "all participants accepted or voted for the same compromise",
+    "turns": 9,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 8,
+    "moderator_turns": 2,
+    "moderator_ratio": 0.2,
+    "turn_counts": {
+      "Lena": 3,
+      "Kai": 2,
+      "Nix": 3
+    },
+    "question_density": 0.375,
+    "sim_compromise_proposals": 0,
+    "readiness_score_final": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 7,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 3
+      },
+      "B": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 4,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 3
+      },
+      "D": {
+        "mentions": 0,
+        "reasons": 0,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "consensus",
+    "final_option": "A"
+  }
+}
