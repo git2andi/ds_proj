@@ -1,52 +1,64 @@
-"""Logging for simulator runs."""
+"""Run logging: transcript, JSON payload, and optional prompt files."""
 
 from __future__ import annotations
 
+import csv
 import json
 from dataclasses import asdict, is_dataclass
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
 from config_loader import cfg
-from schemas import DialogueRunResult, DialogueState, RunOutcome, Scenario
+from models import DialogueState, RunOutcome
 
 
 class DialogueLogger:
     def __init__(self, run_id: str, topic: str) -> None:
         self.run_id = run_id
         self.topic = topic
-        log_dir = Path(str(cfg.output.log_dir))
-        if not log_dir.is_absolute():
-            log_dir = cfg.path.parent / log_dir
-        self.base_dir = log_dir / run_id
+        base = Path(str(cfg.output.log_dir))
+        if not base.is_absolute():
+            base = cfg.root / base
+        self.log_root = base
+        self.base_dir = base / run_id
         self.base_dir.mkdir(parents=True, exist_ok=True)
-        self.prompt_dir = self.base_dir / "prompts"
-        if bool(cfg.output.write_prompts):
-            self.prompt_dir.mkdir(exist_ok=True)
         self.prompt_counter = 0
+        # All prompts for a run go to a single JSONL, written only when enabled.
+        self.prompt_path = self.base_dir / str(cfg.output.prompt_file)
 
     def write_prompt(self, prompt: str, kind: str) -> str:
         if not bool(cfg.output.write_prompts):
             return ""
         self.prompt_counter += 1
-        path = self.prompt_dir / f"{self.prompt_counter:04d}_{kind}.txt"
-        path.write_text(prompt, encoding="utf-8")
-        return str(path)
+        record = {"seq": self.prompt_counter, "kind": kind, "prompt": prompt}
+        with self.prompt_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        return str(self.prompt_path)
 
     def finish(self, state: DialogueState, outcome: RunOutcome) -> dict[str, str]:
-        transcript_lines = self._transcript_lines(state, outcome)
-        transcript_path = self.base_dir / "transcript.md"
-        transcript_path.write_text("\n".join(transcript_lines) + "\n", encoding="utf-8")
+        transcript_path = self.base_dir / str(cfg.output.transcript_file)
+        transcript_path.write_text("\n".join(self._transcript_lines(state, outcome)) + "\n", encoding="utf-8")
+        json_path = self.base_dir / str(cfg.output.json_file)
+        json_path.write_text(json.dumps(self._json_payload(state, outcome), ensure_ascii=False, indent=2), encoding="utf-8")
+        csv_path = self._append_metrics_csv(state, outcome)
+        return {"dir": str(self.base_dir), "transcript": str(transcript_path), "json": str(json_path), "metrics_csv": str(csv_path)}
 
-        json_path = self.base_dir / "run.json"
-        payload = self._json_payload(state, outcome)
-        json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        return {"transcript": str(transcript_path), "json": str(json_path), "dir": str(self.base_dir)}
+    def _append_metrics_csv(self, state: DialogueState, outcome: RunOutcome) -> Path:
+        path = self.log_root / str(cfg.output.metrics_csv)
+        row = flat_metrics_for(self.run_id, state, outcome)
+        write_header = not path.exists()
+        with path.open("a", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=list(row.keys()))
+            if write_header:
+                writer.writeheader()
+            writer.writerow(row)
+        return path
 
     def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
         lines = [f"# Dialogue run {self.run_id}", "", f"Topic: {state.scenario.topic}", "", "## Options", ""]
         for option in state.scenario.options:
-            lines.append(f"- {option.source_text()}")
+            lines.append(f"- {option.public_line()}")
         lines += ["", "## Participants", ""]
         for persona in state.personas:
             hard = " hard-blocker" if persona.is_hard_blocker else ""
@@ -54,12 +66,13 @@ class DialogueLogger:
             lines.append(
                 f"traits: open={persona.traits.openness} consc={persona.traits.conscientiousness} "
                 f"extra={persona.traits.extraversion} agree={persona.traits.agreeableness} "
-                f"neuro={persona.traits.neuroticism} length={persona.traits.response_length}"
+                f"neuro={persona.traits.neuroticism} length={persona.traits.response_length} "
+                f"compromise={persona.traits.compromise_willingness:.2f} initiative={persona.traits.initiative:.2f}"
             )
             lines.append(f"goal: {persona.private_goal}")
-            if persona.backstory:
-                lines.append(f"backstory: {persona.backstory}")
-            lines.append(f"prefers Option {persona.preferred_option}; accepts {persona.acceptable_options}; soft rejections {persona.soft_rejections}; hard rejections {persona.hard_rejections}")
+            lines.append(f"prefers Option {persona.preferred_option}; accepts {persona.acceptable_options}; soft concerns {persona.soft_rejections}; hard rejects {persona.hard_rejections}")
+            if persona.option_scores:
+                lines.append("hidden scores: " + ", ".join(f"{opt}={persona.option_scores[opt]}" for opt in sorted(persona.option_scores)))
             lines.append(f"concern: {persona.main_concern}")
             for option_id, reasons in persona.reasons.items():
                 if reasons:
@@ -74,16 +87,10 @@ class DialogueLogger:
             lines.append(f"**{turn.speaker_name}:** {turn.text}")
         lines += ["", "## Outcome", "", f"Status: {outcome.status}", f"Final option: {outcome.final_option}", f"Reason: {outcome.reason}"]
         lines += ["", "## Metrics", ""]
-        metrics = self._metrics(state, outcome)
-        for key, value in metrics.items():
+        for key, value in metrics_for(state, outcome).items():
             lines.append(f"- {key}: {value}")
         tokens = token_summary_for(state)
-        lines += [
-            "",
-            f"--- Tokens : setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']}  "
-            f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']}  "
-            f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out) ---",
-        ]
+        lines += ["", f"--- Tokens : setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']} dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out) ---"]
         return lines
 
     def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
@@ -94,64 +101,80 @@ class DialogueLogger:
             "personas": [_to_jsonable(p) for p in state.personas],
             "turns": [_to_jsonable(t) for t in state.turns],
             "outcome": _to_jsonable(outcome),
-            "metrics": self._metrics(state, outcome),
+            "metrics": metrics_for(state, outcome),
+            "tokens": token_summary_for(state),
         }
-
-    def _metrics(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
-        counts = {p.name: state.runtimes[p.id].turn_count for p in state.personas}
-        total = max(1, len(participant_turns))
-        question_turns = sum(1 for t in participant_turns if "?" in t.text)
-        compromise_turns = sum(1 for t in participant_turns if t.act.proposes_option)
-        moderator_turns = sum(1 for t in state.turns if t.speaker_id == "moderator")
-        option_coverage = {
-            oid: {
-                "mentions": c.mentions,
-                "reasons": c.reasons,
-                "objections": c.objections,
-                "acceptances": c.acceptances,
-            }
-            for oid, c in state.coverage.items()
-        }
-        token_summary = token_summary_for(state)
-        return {
-            "participant_turns": len(participant_turns),
-            "moderator_turns": moderator_turns,
-            "moderator_ratio": round(moderator_turns / max(1, len(state.turns)), 3),
-            "turn_counts": counts,
-            "question_density": round(question_turns / total, 3),
-            "sim_compromise_proposals": compromise_turns,
-            "readiness_score_final": state.readiness_score,
-            "option_coverage": option_coverage,
-            "outcome_status": outcome.status,
-            "final_option": outcome.final_option,
-            **token_summary,
-        }
-
-
-def _to_jsonable(obj: Any) -> Any:
-    if is_dataclass(obj):
-        return {k: _to_jsonable(v) for k, v in asdict(obj).items()}
-    if isinstance(obj, dict):
-        return {str(k): _to_jsonable(v) for k, v in obj.items()}
-    if isinstance(obj, (list, tuple, set)):
-        return [_to_jsonable(v) for v in obj]
-    if hasattr(obj, "value"):
-        return obj.value
-    return obj
 
 
 def token_summary_for(state: DialogueState) -> dict[str, int]:
-    setup_in = int(getattr(state, "setup_tokens_in", 0))
-    setup_out = int(getattr(state, "setup_tokens_out", 0))
-    dialogue_in = int(getattr(state, "dialogue_tokens_in", 0))
-    dialogue_out = int(getattr(state, "dialogue_tokens_out", 0))
     return {
-        "setup_tokens_in": setup_in,
-        "setup_tokens_out": setup_out,
-        "dialogue_tokens_in": dialogue_in,
-        "dialogue_tokens_out": dialogue_out,
-        "total_tokens_in": setup_in + dialogue_in,
-        "total_tokens_out": setup_out + dialogue_out,
-        "total_tokens": setup_in + setup_out + dialogue_in + dialogue_out,
+        "setup_tokens_in": int(state.setup_tokens_in),
+        "setup_tokens_out": int(state.setup_tokens_out),
+        "dialogue_tokens_in": int(state.dialogue_tokens_in),
+        "dialogue_tokens_out": int(state.dialogue_tokens_out),
+        "total_tokens_in": int(state.setup_tokens_in + state.dialogue_tokens_in),
+        "total_tokens_out": int(state.setup_tokens_out + state.dialogue_tokens_out),
     }
+
+
+def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+    participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+    moderator_turns = [t for t in state.turns if t.speaker_id == "moderator"]
+    turn_counts = {p.name: state.runtimes[p.id].turn_count for p in state.personas}
+    n_part = max(1, len(participant_turns))
+    question_density = round(sum(1 for t in participant_turns if "?" in t.text) / n_part, 3)
+    avg_words = round(sum(len(t.text.split()) for t in participant_turns) / n_part, 1)
+    repaired = sum(1 for t in participant_turns if t.validation_issues)
+    return {
+        "participant_turns": len(participant_turns),
+        "moderator_turns": len(moderator_turns),
+        "moderator_ratio": round(len(moderator_turns) / max(1, len(state.turns)), 3),
+        "turn_counts": turn_counts,
+        "question_density": question_density,
+        "avg_words_per_turn": avg_words,
+        "repaired_turns": repaired,
+        "repair_rate": round(repaired / n_part, 3),
+        # Fraction of participants who voted for or accepted the final option (1.0 = full consensus).
+        "final_support_fraction": _final_support_fraction(state, outcome),
+        "option_coverage": {opt: {"mentions": c.mentions, "reasons": c.reasons, "objections": c.objections, "acceptances": c.acceptances} for opt, c in state.coverage.items()},
+        "outcome_status": outcome.status,
+        "final_option": outcome.final_option,
+    } | token_summary_for(state)
+
+
+def _final_support_fraction(state: DialogueState, outcome: RunOutcome) -> float:
+    if not outcome.final_option:
+        return 0.0
+    final = outcome.final_option
+    backers = sum(
+        1 for p in state.personas
+        if state.runtimes[p.id].explicit_vote == final or final in state.runtimes[p.id].accepted_options
+    )
+    return round(backers / max(1, len(state.personas)), 3)
+
+
+def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+    """One-row-per-run, scalar-only view for the master metrics.csv."""
+    m = metrics_for(state, outcome)
+    scalar = {k: v for k, v in m.items() if not isinstance(v, dict)}
+    return {
+        "run_id": run_id,
+        "topic": state.scenario.topic,
+        "num_participants": len(state.personas),
+        "hard_blocker": any(p.is_hard_blocker for p in state.personas),
+        **scalar,
+    }
+
+
+def _to_jsonable(obj: Any) -> Any:
+    if isinstance(obj, Enum):
+        return obj.value
+    if is_dataclass(obj):
+        return {k: _to_jsonable(v) for k, v in asdict(obj).items()}
+    if isinstance(obj, set):
+        return sorted(obj)
+    if isinstance(obj, dict):
+        return {str(k): _to_jsonable(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_to_jsonable(v) for v in obj]
+    return obj

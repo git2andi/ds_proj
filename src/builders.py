@@ -1,0 +1,303 @@
+"""Scenario and persona construction.
+
+One setup LLM call creates both the option cards and participant belief states.
+If it cannot produce a valid world, build() raises rather than fabricating one.
+"""
+
+from __future__ import annotations
+
+import random
+from dataclasses import asdict
+from typing import Any
+
+import prompts
+from config_loader import cfg
+from llm_client import get_llm_client
+from models import OptionCard, Persona, Scenario, TraitProfile
+from utils import clamp, sample_int_range, sample_range
+
+# Last-resort names/role used only if the model omits them (it normally provides both).
+_DEFAULT_NAMES = ["Ava", "Liam", "Mia", "Noah", "Lena", "Jonas", "Sofia"]
+_DEFAULT_ROLE = "group member"
+
+
+class SetupBuilder:
+    def __init__(self, topic: str) -> None:
+        self.topic = topic.strip()
+        seed = cfg.simulation.get("random_seed", None)
+        if seed is not None:
+            random.seed(int(seed))
+        self._llm = get_llm_client()
+
+    def build(self, n: int) -> tuple[Scenario, list[Persona]]:
+        trait_rows = self._trait_rows(n)
+        attempts = max(1, int(cfg.simulation.setup_generation_attempts))
+        last_error = ""
+        for _ in range(attempts):
+            try:
+                data = self._llm.generate_json(prompts.setup_world(self.topic, n, trait_rows), profile="setup")
+                scenario = self._parse_scenario(data.get("scenario", {}))
+                personas = self._parse_personas(data.get("participants", []), trait_rows, scenario)
+                personas = self._postprocess_personas(personas, scenario)
+                self._validate_world(scenario, personas)
+                return scenario, personas
+            except Exception as exc:
+                last_error = f"{type(exc).__name__}: {exc}"
+        raise RuntimeError(
+            f"Scenario setup failed for topic {self.topic!r} after {attempts} attempt(s). "
+            f"Last error: {last_error}. Check the LLM endpoint/provider in config.yaml."
+        )
+
+    def _trait_rows(self, n: int) -> list[dict[str, Any]]:
+        hard_id = None
+        if n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
+            hard_id = f"p{random.randint(1, n)}"
+        rows: list[dict[str, Any]] = []
+        for idx in range(n):
+            pid = f"p{idx + 1}"
+            hard = pid == hard_id
+            traits = self._sample_traits(hard)
+            rows.append({
+                "id": pid,
+                "traits": asdict(traits),
+                "hard_blocker": hard,
+            })
+        return rows
+
+    def _sample_traits(self, hard_blocker: bool) -> TraitProfile:
+        controls = cfg.personas.cooperative_controls
+        compromise = sample_range(controls.compromise_willingness)
+        patience = sample_range(controls.patience)
+        agree = sample_int_range(cfg.personas.trait_ranges.agreeableness)
+        if hard_blocker:
+            compromise = sample_range(cfg.personas.hard_blocker_compromise)
+            patience = sample_range(cfg.personas.hard_blocker_patience)
+            agree = min(agree, int(cfg.personas.trait_min) + 1)
+        return TraitProfile(
+            openness=sample_int_range(cfg.personas.trait_ranges.openness),
+            conscientiousness=sample_int_range(cfg.personas.trait_ranges.conscientiousness),
+            extraversion=sample_int_range(cfg.personas.trait_ranges.extraversion),
+            agreeableness=agree,
+            neuroticism=sample_int_range(cfg.personas.trait_ranges.neuroticism),
+            response_length=sample_int_range(cfg.personas.trait_ranges.response_length),
+            compromise_willingness=clamp(compromise, 0.0, 1.0),
+            patience=clamp(patience, 0.0, 1.0),
+            initiative=clamp(sample_range(controls.initiative), 0.0, 1.0),
+            directness=clamp(sample_range(controls.directness), 0.0, 1.0),
+            detail=clamp(sample_range(controls.detail), 0.0, 1.0),
+        )
+
+    def _parse_scenario(self, raw: Any) -> Scenario:
+        if not isinstance(raw, dict):
+            raise ValueError("setup.scenario must be an object")
+        options_raw = raw.get("options")
+        if not isinstance(options_raw, list):
+            raise ValueError("scenario.options must be a list")
+        labels = [str(x) for x in cfg.scenario.option_labels]
+        options = [self._parse_option(item, labels[i]) for i, item in enumerate(options_raw[: len(labels)])]
+        if len(options) != len(labels):
+            raise ValueError("wrong number of options")
+        return Scenario(
+            topic=self.topic,
+            decision_kind=str(raw.get("decision_kind") or "generic_decision").strip(),
+            opening_question=str(raw.get("opening_question") or "What matters most to everyone here?").strip(),
+            options=options,
+        )
+
+    def _parse_option(self, raw: Any, expected_id: str) -> OptionCard:
+        if not isinstance(raw, dict):
+            raise ValueError("each option must be an object")
+        attrs = raw.get("attrs", {})
+        if not isinstance(attrs, dict):
+            attrs = {}
+        clean_attrs = {str(k).strip(): str(v).strip() for k, v in attrs.items() if str(k).strip() and str(v).strip()}
+        attr_min = int(cfg.scenario.public_attr_min)
+        attr_max = int(cfg.scenario.public_attr_max)
+        clean_attrs = dict(list(clean_attrs.items())[:attr_max])
+        if len(clean_attrs) < attr_min:
+            raise ValueError("option has too few attributes")
+        return OptionCard(
+            id=str(raw.get("id") or expected_id).strip().upper(),
+            name=self._clean_name(str(raw.get("name") or f"Option {expected_id}")),
+            attrs=clean_attrs,
+            upside=str(raw.get("upside") or "").strip(),
+            tradeoff=str(raw.get("tradeoff") or "").strip(),
+            concern=str(raw.get("concern") or "").strip(),
+            best_for=str(raw.get("best_for") or raw.get("best for") or "").strip(),
+        )
+
+    def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario) -> list[Persona]:
+        if not isinstance(rows, list):
+            raise ValueError("participants must be a list")
+        traits_by_id = {row["id"]: self._trait_from_row(row) for row in trait_rows}
+        hard_by_id = {row["id"]: bool(row.get("hard_blocker")) for row in trait_rows}
+        personas: list[Persona] = []
+        for idx, row in enumerate(rows[: len(trait_rows)]):
+            if not isinstance(row, dict):
+                raise ValueError("participant row must be an object")
+            pid = str(row.get("id") or f"p{idx + 1}")
+            if pid not in traits_by_id:
+                pid = f"p{idx + 1}"
+            personas.append(self._persona_from_row(row, traits_by_id[pid], hard_by_id.get(pid, False), scenario, idx, pid))
+        if len(personas) != len(trait_rows):
+            raise ValueError("wrong number of participants")
+        return personas
+
+    @staticmethod
+    def _trait_from_row(row: dict[str, Any]) -> TraitProfile:
+        raw = row["traits"]
+        return TraitProfile(**raw)
+
+    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, hard: bool, scenario: Scenario, idx: int, pid: str) -> Persona:
+        labels = scenario.option_ids
+        preferred = str(row.get("preferred_option") or labels[idx % len(labels)]).strip().upper()
+        if preferred not in labels:
+            preferred = labels[idx % len(labels)]
+        acceptable = self._clean_option_list(row.get("acceptable_options", []), labels)
+        if preferred not in acceptable:
+            acceptable.insert(0, preferred)
+        soft = self._clean_option_list(row.get("soft_rejections", []), labels)
+        hard_rej = self._clean_option_list(row.get("hard_rejections", []), labels) if hard else []
+        reasons_raw = row.get("reasons", {})
+        reasons: dict[str, list[str]] = {}
+        if isinstance(reasons_raw, dict):
+            for opt, vals in reasons_raw.items():
+                opt_id = str(opt).strip().upper()
+                if opt_id in labels and isinstance(vals, list):
+                    reasons[opt_id] = [str(v).strip() for v in vals if str(v).strip()]
+        name = str(row.get("name") or _DEFAULT_NAMES[idx % len(_DEFAULT_NAMES)]).strip()
+        role = str(row.get("role") or _DEFAULT_ROLE).strip()
+        acceptable = list(dict.fromkeys(acceptable))
+        soft = soft[: int(cfg.personas.non_blocker_max_soft_rejections) if not hard else len(soft)]
+        scores = self._build_scores(row.get("scores"), labels, preferred, acceptable, soft, hard_rej)
+        return Persona(
+            id=pid,
+            name=name,
+            role=role,
+            traits=traits,
+            speech_style=str(row.get("speech_style") or self._style_from_traits(traits)).strip(),
+            private_goal=str(row.get("private_goal") or f"help the group pick something that fits {preferred}").strip(),
+            backstory=str(row.get("backstory") or "They have made similar small group decisions before.").strip(),
+            main_concern=str(row.get("main_concern") or scenario.option(preferred).best_for or "a workable choice").strip(),
+            preferred_option=preferred,
+            acceptable_options=acceptable,
+            soft_rejections=soft,
+            hard_rejections=hard_rej,
+            reasons=reasons,
+            reservation=str(row.get("reservation") or scenario.option(preferred).concern or "one trade-off still matters").strip(),
+            reconsider_if=str(row.get("reconsider_if") or "if the group values another priority more").strip(),
+            option_scores=scores,
+            is_hard_blocker=hard,
+        )
+
+    @staticmethod
+    def _build_scores(raw: Any, labels: list[str], preferred: str, acceptable: list[str], soft: list[str], hard: list[str]) -> dict[str, int]:
+        # Take the model's 1..5 ratings where given, then force consistency with the
+        # labels so the hidden utility never contradicts the stated stance.
+        smin, smax = int(cfg.scenario.score_min), int(cfg.scenario.score_max)
+        thr = int(cfg.scenario.acceptance_score)
+        given = raw if isinstance(raw, dict) else {}
+        scores: dict[str, int] = {}
+        for opt in labels:
+            val = given.get(opt, given.get(opt.lower()))
+            try:
+                scores[opt] = max(smin, min(smax, int(val)))
+            except (TypeError, ValueError):
+                scores[opt] = thr  # neutral default when unrated
+        for opt in labels:
+            if opt == preferred:
+                scores[opt] = smax
+            elif opt in hard:
+                scores[opt] = smin
+            elif opt in acceptable:
+                scores[opt] = max(scores[opt], thr)
+            elif opt in soft:
+                scores[opt] = min(scores[opt], thr - 1)
+        return scores
+
+    @staticmethod
+    def _clean_name(raw: str) -> str:
+        # Cap over-long names without cutting mid-title or appending punctuation.
+        words = raw.split()
+        cap = int(cfg.scenario.option_name_max_words)
+        return " ".join(words[:cap]) if len(words) > cap else " ".join(words)
+
+    @staticmethod
+    def _clean_option_list(value: Any, labels: list[str]) -> list[str]:
+        if not isinstance(value, list):
+            return []
+        return list(dict.fromkeys(str(x).strip().upper() for x in value if str(x).strip().upper() in labels))
+
+    @staticmethod
+    def _style_from_traits(traits: TraitProfile) -> str:
+        parts = []
+        parts.append("brief" if traits.response_length <= 2 else "chatty" if traits.response_length >= 4 else "balanced")
+        if traits.directness > 0.55:
+            parts.append("direct")
+        elif traits.agreeableness >= 4:
+            parts.append("softens disagreement")
+        if traits.detail > 0.65:
+            parts.append("uses concrete details")
+        return ", ".join(parts)
+
+    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario) -> list[Persona]:
+        labels = scenario.option_ids
+        # Ensure useful reasons exist for preferred and acceptable options.
+        for persona in personas:
+            for opt in [persona.preferred_option] + persona.acceptable_options:
+                option = scenario.option(opt)
+                needed = int(cfg.personas.min_reasons_preferred if opt == persona.preferred_option else cfg.personas.min_reasons_acceptable)
+                current = persona.reasons.get(opt, [])
+                while len(current) < needed:
+                    current.append(self._default_reason(option, opt, len(current)))
+                persona.reasons[opt] = current
+        # Enforce minimum preference diversity by rotating preferences when all collapsed.
+        unique = {p.preferred_option for p in personas}
+        if len(unique) < int(cfg.personas.preferred_diversity_min_unique) and len(labels) >= int(cfg.personas.preferred_diversity_min_unique):
+            for idx, persona in enumerate(personas):
+                new_pref = labels[idx % len(labels)]
+                persona.preferred_option = new_pref
+                if new_pref not in persona.acceptable_options:
+                    persona.acceptable_options.insert(0, new_pref)
+                persona.reasons.setdefault(new_pref, [self._default_reason(scenario.option(new_pref), new_pref, 0)])
+        # Ensure a common compromise among non-hard-blockers when requested.
+        if bool(cfg.personas.require_common_compromise):
+            counts = {opt: 0 for opt in labels}
+            for persona in personas:
+                if persona.is_hard_blocker:
+                    continue
+                for opt in set(persona.acceptable_options + [persona.preferred_option]):
+                    counts[opt] += 1
+            common = max(labels, key=lambda opt: counts[opt])
+            for persona in personas:
+                if not persona.is_hard_blocker and common not in persona.acceptable_options:
+                    persona.acceptable_options.append(common)
+                    persona.reasons.setdefault(common, [self._default_reason(scenario.option(common), common, 0)])
+        # Re-sync hidden scores after any preference/acceptable-list changes above.
+        for persona in personas:
+            persona.option_scores = self._build_scores(
+                persona.option_scores, labels, persona.preferred_option,
+                persona.acceptable_options, persona.soft_rejections, persona.hard_rejections,
+            )
+        return personas
+
+    def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
+        labels = [str(x) for x in cfg.scenario.option_labels]
+        if scenario.option_ids != labels:
+            raise ValueError(f"option ids must be {labels}, got {scenario.option_ids}")
+        names = [p.name.lower() for p in personas]
+        if len(set(names)) != len(names):
+            raise ValueError("participant names must be unique")
+        for persona in personas:
+            if persona.preferred_option not in labels:
+                raise ValueError("invalid preferred option")
+            if not persona.is_hard_blocker and len(persona.acceptable_options) < int(cfg.personas.non_blocker_min_acceptable):
+                raise ValueError("normal participant has too few acceptable options")
+
+    @staticmethod
+    def _default_reason(option: OptionCard, option_id: str, idx: int) -> str:
+        if idx == 0 and option.upside:
+            return f"Option {option_id} has the upside that {option.upside}"
+        if option.tradeoff:
+            return f"Option {option_id}'s trade-off is manageable if the group values {option.best_for or 'that priority'}"
+        return f"Option {option_id} fits {option.best_for or 'one of the group priorities'}"

@@ -1,34 +1,32 @@
-# Group discussion simulator configuration.
-# Tunable numbers live here. LLM-facing prose lives in src/prompts.py.
+# Master group-discussion simulator configuration.
+# Rule: every tweakable numeric parameter used by the repo lives here.
+# Rule: every prompt/chat template lives in src/prompts.py.
 
 llm:
-  provider: "uni"
+  provider: "uni"                    # uni | groq | gemini | mock
   models:
     uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
+    mock: "mock"
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
+  timeouts:
+    request_seconds: 120
+  gemini_rpm_delay_seconds: 12
   sampling:
     setup:
-      temperature: 0.32
+      temperature: 0.34
       top_k: 45
       top_p: 0.88
     dialogue:
-      temperature: 0.78
+      temperature: 0.82
       top_k: 60
       top_p: 0.94
     repair:
-      temperature: 0.20
+      temperature: 0.22
       top_k: 25
-      top_p: 0.75
-    validator:
-      temperature: 0.0
-      top_k: 1
-      top_p: 1.0
-  gemini_rpm_delay: 12
-  timeouts:
-    request_seconds: 120
+      top_p: 0.78
 
 simulation:
   num_participants: 3
@@ -36,32 +34,19 @@ simulation:
   max_participants: 7
   random_seed: null
   max_repairs_per_turn: 1
-  allow_unresolved_result: true
+  setup_generation_attempts: 2
 
 scenario:
-  option_count: 4
   option_labels: ["A", "B", "C", "D"]
-  max_generation_attempts: 3
-  attr_min: 6
-  attr_max: 9
+  public_attr_min: 3
+  public_attr_max: 5
+  option_prompt_max_words: 34
+  option_name_max_words: 8
+  # Hidden per-participant utility: each persona privately rates every option in
+  # [score_min, score_max]; they can live with an option scoring >= acceptance_score.
   score_min: 1
   score_max: 5
-  display_attr_limit: 7
-  min_field_words: 3
-  forbidden_live_fact_terms:
-    - "availability"
-    - "available rooms"
-    - "waitlist"
-    - "wait list"
-    - "booking status"
-    - "call ahead"
-    - "check online"
-    - "look up"
-    - "live weather"
-    - "unknown"
-    - "uncertain"
-    - "not specified"
-    - "limited availability"
+  acceptance_score: 3
 
 personas:
   trait_min: 1
@@ -73,109 +58,98 @@ personas:
     agreeableness: [3, 5]
     neuroticism: [1, 3]
     response_length: [1, 5]
-  cooperative_defaults:
-    compromise_willingness_range: [0.62, 0.92]
-    patience_range: [0.55, 0.90]
-    initiative_range: [0.35, 0.82]
-    conflict_directness_range: [0.18, 0.72]
-    detail_level_range: [0.36, 0.90]
-  hard_blocker_dialogue_probability: 0.04
-  hard_blocker_max_count: 1
+  cooperative_controls:
+    compromise_willingness: [0.62, 0.92]
+    patience: [0.55, 0.90]
+    initiative: [0.35, 0.82]
+    directness: [0.18, 0.72]
+    detail: [0.36, 0.90]
+  hard_blocker_probability: 0.04
+  hard_blocker_compromise: [0.10, 0.35]
+  hard_blocker_patience: [0.25, 0.55]
   non_blocker_min_acceptable: 2
   non_blocker_max_soft_rejections: 1
-  require_group_common_acceptable: true
   preferred_diversity_min_unique: 2
+  require_common_compromise: true
   min_reasons_preferred: 2
   min_reasons_acceptable: 1
-  backstory_max_words: 28
-  fallback_names: ["Ava", "Liam", "Mia", "Noah", "Lena", "Jonas", "Sofia"]
 
 conversation:
-  min_turns_per_participant_before_close: 3
+  # Convergence is driven by how concentrated the group's leanings are, not by
+  # filling per-option reason counters. Keep these few knobs.
+  hard_max_participant_turns: 30
   min_turns_per_participant_before_narrowing: 2
-  soft_min_total_turns: 10
-  hard_max_total_turns: 38
-  max_moderator_ratio: 0.24
-  no_progress_window: 5
-  recent_turn_window: 8
-  participant_turn_balance_gini_max: 0.42
-  min_options_touched_before_narrowing: 4
-  min_options_with_reason_before_narrowing: 3
-  min_total_option_reasons_before_narrowing: 7
-  min_tradeoff_or_objection_turns_before_narrowing: 2
-  min_distinct_participants_before_narrowing: 2
-  readiness_threshold: 0.78
-  force_vote_after_readiness: 0.92
-  confirmation_max_rounds: 2
+  min_total_participant_turns: 9
+  min_options_touched_before_narrowing: 3
+  concentration_to_narrow: 0.6      # fraction of group sharing the leading lean
+  force_narrowing_turns: 22         # narrow regardless once this many turns pass
+  no_progress_window_turns: 6
+  # Moderator facilitation: step in when the discussion circles, and to nudge a lone holdout.
+  moderator_stall_window: 4         # consecutive no-progress turns before the mod steps in
+  moderator_cooldown_turns: 5       # min turns between moderator interventions
+  moderator_max_interventions: 3
 
 routing:
   recent_speaker_window: 5
-  last_speaker_penalty: 0.50
-  recent_speaker_penalty: 0.22
-  unspoken_boost: 0.70
-  low_turn_count_boost: 0.34
-  option_gap_boost: 0.55
-  addressed_question_priority: 1.0
-  unresolved_objection_boost: 0.28
-  compromise_intent_probability: 0.12
-  pushback_intent_probability: 0.25
-  clarify_intent_probability: 0.10
-  compare_intent_probability: 0.30
-  react_intent_probability: 0.23
+  last_speaker_penalty: 0.70
+  recent_speaker_penalty: 0.25
+  low_turn_count_boost: 0.45
+  unspoken_boost: 0.95
+  initiative_weight: 0.24
+  unresolved_objection_boost: 0.34
+  preferred_option_gap_boost: 0.40
+  acceptable_option_gap_boost: 0.22
+  direct_reply_probability: 0.62
+  act_probabilities:
+    react: 0.16
+    ask: 0.11
+    compare: 0.25
+    support: 0.16
+    object: 0.16
+    push_back: 0.09
+    propose_compromise: 0.07
+  late_discussion_compromise_bonus: 0.10
+  no_progress_compromise_probability: 0.55
   length_hint_probabilities:
-    short: 0.24
-    medium: 0.56
-    long: 0.20
+    short: 0.28
+    medium: 0.54
+    long: 0.18
 
 utterances:
+  recent_turns_in_prompt: 8
+  recent_turns_after_question: 8
+  max_focus_options_in_prompt: 3
+  max_public_board_lines: 8
   word_budgets:
+    opening: 32
     short: 18
     medium: 42
-    long: 70
-    vote: 32
-    confirm: 24
-    opening: 34
-    closure: 20
-  hard_cap_extra_words: 10
-  max_recent_turns_in_prompt: 10
-  max_option_cards_in_prompt: 4
-  allow_rare_emoji: false
-  banned_register_phrases:
-    - "valid point"
-    - "I appreciate your perspective"
-    - "as a compromise candidate"
-    - "emerging support"
-    - "from my perspective"
-    - "I understand your concern"
-    - "great starting point for our discussion"
-  discouraged_starts:
-    - "for me"
-    - "i'm leaning"
-    - "let's consider"
+    long: 68
+    answer: 36
+    ask: 32
+    vote: 34
+    confirm: 28
+    closure: 22
+  hard_cap_extra_words: 8
+  repair_issue_limit: 4
 
 validation:
-  enabled: true
-  own_turn_similarity_threshold: 0.55
-  group_turn_similarity_threshold: 0.58
+  enabled: true                   # master switch for all deterministic guardrails
+  own_similarity_threshold: 0.62  # repetition sensitivity vs the speaker's own turns
+  group_similarity_threshold: 0.72
   repeated_start_window: 5
-  semantic_repeat_threshold: 0.62
-  option_fact_number_window_chars: 80
-  max_new_numbers_without_option_source: 1
-  multi_turn_prefix_pattern: "^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß .'-]{1,30}:"
-  min_vote_clarity: true
+  repeated_start_word_count: 3
   max_question_chain: 2
-  reject_confirmation_questions: true
-  style_banned_phrase_is_fatal: false
-  repair_on_warnings: true
+  repair_on_warning: false        # whether warning-level issues also trigger a repair
+  max_new_numbers_without_source: 1
 
 consensus:
-  majority_fraction_to_test: 0.5
-  min_accept_fraction_for_consensus: 1.0
-  allow_majority_fallback_after_max_turns: true
-  majority_fallback_fraction: 0.67
-  unresolved_requires_hard_blocker_or_max_turns: true
+  majority_fallback_fraction: 0.67   # support fraction needed for a no-consensus fallback pick
 
 output:
   log_dir: "logs"
-  write_prompts: true
-  write_json: true
+  write_prompts: false          # when true, all prompts for a run go to one prompts.jsonl
+  prompt_file: "prompts.jsonl"
+  transcript_file: "transcript.md"
+  json_file: "run.json"
+  metrics_csv: "metrics.csv"    # master file, one appended row per run

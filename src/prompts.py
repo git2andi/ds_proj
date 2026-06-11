@@ -1,8 +1,7 @@
-"""All LLM-facing prose and dialogue templates.
+"""All LLM-facing prompts and all chat text templates.
 
-Project rule: every prompt sent to an LLM must be produced here.  Other modules
-may pass structured data into these functions, but they should not contain
-instructional wording for the model.
+No other module should contain prose that is sent to an LLM or printed as a
+moderator/chat message.  Other modules pass structured data into these functions.
 """
 
 from __future__ import annotations
@@ -11,303 +10,268 @@ import json
 from typing import Iterable, Optional
 
 from config_loader import cfg
-from schemas import MoveIntent, OptionCard, Persona, Phase, Scenario
+from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario
+from utils import compact_words
 
 
-def _json_schema_hint(obj: object) -> str:
+def _schema(obj: object) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=2)
 
 
-def render_option_card(option: OptionCard) -> str:
-    return option.source_text()
+def _option_cards(options: Iterable[OptionCard]) -> str:
+    limit = int(cfg.scenario.option_prompt_max_words)
+    return "\n".join(f"- {compact_words(option.prompt_card(), limit)}" for option in options)
 
 
-def render_options(options: Iterable[OptionCard]) -> str:
-    return "\n".join(render_option_card(o) for o in options)
+def _option_brief(option: OptionCard) -> str:
+    # Name + the comparable attributes only (no upside) so the moderator board stays
+    # a clean, scannable list of options.
+    attrs = ", ".join(f"{k.replace('_', ' ')} {v}" for k, v in option.attrs.items())
+    return f"{option.name}: {attrs}" if attrs else option.name
 
 
-def option_generation(topic: str) -> str:
+# ---------------------------------------------------------------------------
+# Setup prompt
+# ---------------------------------------------------------------------------
+
+
+def setup_world(topic: str, n: int, trait_rows: list[dict]) -> str:
     labels = list(cfg.scenario.option_labels)
     schema = {
-        "decision_kind": "restaurant_choice | travel_destination | hotel_booking | flight_booking | study_or_work_plan | presentation_topic | tool_or_product_choice | game_or_activity_choice | generic_decision",
-        "opening_question": "one casual moderator question asking for priorities and trade-offs, not votes",
-        "options": [
-            {
-                "id": label,
-                "name": "specific short option name",
-                "attrs": {
-                    "cost_or_effort": "concrete value",
-                    "time_or_duration": "concrete value",
-                    "main_benefit_metric": "concrete value or 1-5 score",
-                    "comfort_or_difficulty": "concrete value or 1-5 score",
-                    "flexibility_or_risk_control": "concrete value or 1-5 score",
-                    "topic_specific_factor": "concrete value"
-                },
-                "upside": "specific benefit people can argue for",
-                "tradeoff": "specific downside people can weigh against the upside",
-                "concern": "stable objection or worry, not missing information",
-                "fit": "which kind of group priority this option fits",
-                "risk": "stable risk from the fictional scenario",
-                "best_for": "one clear decision priority this option serves"
-            }
-            for label in labels
-        ],
-    }
-    forbidden = ", ".join(str(x) for x in cfg.scenario.forbidden_live_fact_terms)
-    return f"""Create a fictional but grounded decision scenario for a small casual group chat.
-
-Topic: {topic}
-
-Generate exactly {len(labels)} options with ids {labels}. The options are the full source of truth for the later chat.
-The goal is not a short menu; the goal is four compact option cards with enough concrete material for disagreement, comparison, and compromise.
-
-Required option-card quality:
-- Every option needs {cfg.scenario.attr_min}-{cfg.scenario.attr_max} stable attributes in attrs.
-- Attribute keys must be topic-specific, not placeholders like stable_attribute_1.
-- For logistics topics, include concrete values such as price/cost, duration, distance/time, comfort, flexibility, reliability, risk level, effort, capacity, or similar relevant factors.
-- For abstract topics, use concrete 1-{cfg.scenario.score_max} scores or clearly named qualitative levels for dimensions like societal impact, feasibility, cost, risk, accessibility, learning value, novelty, or long-term benefit.
-- Every option must expose a real trade-off: a clear upside, a clear downside, a stable concern, a fit, a risk, and a best_for priority.
-- Options must differ meaningfully. Do not make four variants of the same priority.
-- Do not use missing-info placeholders. The group must be able to decide from the cards alone.
-- Use stable fictional facts only. Do not include live-lookup or unknown facts such as: {forbidden}.
-- The opening question should ask what people care about and invite trade-offs, not votes.
-
-Return JSON only with this shape:
-{_json_schema_hint(schema)}"""
-
-
-def names_and_roles(topic: str, n: int) -> str:
-    schema = {
+        "scenario": {
+            "decision_kind": "restaurant_choice | travel_destination | hotel_booking | flight_booking | study_plan | presentation_topic | tool_choice | activity_choice | generic_decision",
+            "opening_question": "one casual question asking what matters most before choosing",
+            "options": [
+                {
+                    "id": label,
+                    "name": "short concrete option name",
+                    "attrs": {"cost/time/effort/etc": "stable value", "other_relevant_attribute": "stable value"},
+                    "upside": "specific benefit",
+                    "tradeoff": "specific downside or cost",
+                    "concern": "stable objection, not missing info",
+                    "best_for": "the priority this option serves",
+                }
+                for label in labels
+            ],
+        },
         "participants": [
-            {"id": f"p{i+1}", "name": "short first name", "role": "1-4 words, topic-relevant or friend-group role"}
-            for i in range(n)
-        ]
-    }
-    return f"""Create {n} participants for a casual friend-group discussion.
-
-Topic: {topic}
-
-Use plausible short first names. Do not use stereotypes or demographic labels. Roles should give light conversational variety, not professional expertise unless the topic requires it.
-Return JSON only:
-{_json_schema_hint(schema)}"""
-
-
-def belief_generation(topic: str, options: list[OptionCard], participant_summaries: list[dict]) -> str:
-    schema = {
-        "beliefs": [
             {
                 "id": "p1",
-                "private_goal": "what this participant wants from the decision",
-                "backstory": "one short prior experience or memory that explains the priority",
-                "main_concern": "the main decision criterion this participant cares about",
+                "name": "short first name",
+                "role": "1-4 word conversational role",
+                "speech_style": "plain style description",
+                "private_goal": "what they want from the decision",
+                "backstory": "one short prior experience or habit",
+                "main_concern": "budget | comfort | fairness | speed | feasibility | novelty | safety | ...",
                 "preferred_option": "A",
-                "acceptable_options": ["A", "B"],
+                "acceptable_options": ["A", "C"],
                 "soft_rejections": ["D"],
                 "hard_rejections": [],
-                "reasons": {
-                    "A": ["2-3 grounded reasons for the preferred option"],
-                    "B": ["1-2 grounded reasons why this fallback could work"]
-                },
-                "reservation": "one addressable concern about a non-preferred or fallback option",
-                "reconsider_if": "a realistic condition, based on group priorities/trade-offs, that would make them move from their favorite"
+                "scores": {"A": 5, "B": 3, "C": 4, "D": 2},
+                "reasons": {"A": ["grounded reason"], "C": ["grounded reason"]},
+                "reservation": "one addressable concern about another option",
+                "reconsider_if": "condition based on group priorities, not changed facts",
             }
-        ]
+        ],
     }
-    summaries = json.dumps(participant_summaries, ensure_ascii=False, indent=2)
-    return f"""Assign internally consistent private belief states for the participants.
+    return f"""Create one complete fictional group-decision scenario and participant state.
 
 Topic: {topic}
+Participants needed: {n}
+Option ids: {labels}
+Trait/control profiles to use exactly by id:
+{json.dumps(trait_rows, ensure_ascii=False, indent=2)}
 
-Option cards:
-{render_options(options)}
+Scenario requirements:
+- Create exactly {len(labels)} options.
+- Each option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} stable, topic-specific attributes.
+- Use concrete stable facts for comparison: cost, time, effort, comfort, risk, flexibility, distance, difficulty, score, or equivalent topic-specific dimensions.
+- Every attribute must be a fixed value known now. No placeholders, "unknown"/"TBD", or facts that require a live lookup (availability, current weather, booking status).
+- Options must differ meaningfully and expose real trade-offs.
+- The opening question must ask about priorities and trade-offs, not ask for votes.
 
-Participants with traits and behavioral controls:
-{summaries}
+Participant requirements:
+- Everyone should try to reach a workable group decision.
+- Normal participants need at least {cfg.personas.non_blocker_min_acceptable} acceptable options including their preferred option.
+- "scores" rates every option {cfg.scenario.score_min}-{cfg.scenario.score_max} for that person ({cfg.scenario.score_max}=loves it, {cfg.scenario.score_min}=cannot accept). Make scores consistent with the labels: preferred highest, acceptable options {cfg.scenario.acceptance_score} or above, rejected options below {cfg.scenario.acceptance_score}.
+- Hard blockers are allowed only when the supplied trait profile says hard_blocker=true.
+- Preferences should be diverse enough that the group has something to discuss.
+- At least one option should be acceptable to all non-hard-blockers so compromise is possible.
+- Reasons must be grounded only in the option cards.
+- Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
+- Names should be plausible short first names. Avoid stereotypes and demographic labels.
+- Conversation should later sound like friends/classmates deciding together, not a business meeting.
 
-Rules for useful persona state:
-- Everyone should try to reach a compromise if possible. A rare hard blocker is allowed only when hard_blocker=true.
-- Normal participants need at least two acceptable options, including their preferred option.
-- The backstory must be short and useful for chat behavior: one concrete prior experience, habit, or memory that explains the participant's priority. Do not add demographic identity labels or irrelevant biography.
-- main_concern should be a reusable decision criterion, such as budget, comfort, feasibility, social impact, safety, effort, fairness, speed, or novelty.
-- Reasons must be grounded in the option cards and should give the participant argument material, not slogans. Give {cfg.personas.min_reasons_preferred} or more reasons for the preferred option when possible and at least {cfg.personas.min_reasons_acceptable} reason for each acceptable fallback.
-- Soft rejections are addressable concerns, not permanent vetoes.
-- hard_rejections must usually be empty. Only use them for hard_blocker=true or a genuine dealbreaker grounded in the cards.
-- reconsider_if must not change fixed facts from the option cards. Do not write things like "if the price decreased" when the price is fixed. Instead use group-priority conditions, e.g. "if everyone cares more about speed than cost" or "if the group accepts the extra risk for the stronger benefit".
-- Use only facts from the option cards. Do not invent prices, times, availability, policies, weather, ratings, or external facts.
-
-Return JSON only:
-{_json_schema_hint(schema)}"""
-
-
-def speaker_card(persona: Persona) -> str:
-    t = persona.traits
-    hard = "yes" if persona.is_hard_blocker else "no"
-    reasons = json.dumps(persona.reasons, ensure_ascii=False)
-    return f"""Name: {persona.name}
-Role: {persona.role}
-Speech style: {persona.speech_style}
-Private goal: {persona.private_goal}
-Backstory/memory anchor: {persona.backstory}
-Main concern: {persona.main_concern}
-Traits: openness={t.openness}, conscientiousness={t.conscientiousness}, extraversion={t.extraversion}, agreeableness={t.agreeableness}, neuroticism={t.neuroticism}
-Behavior controls: compromise_willingness={t.compromise_willingness:.2f}, patience={t.patience:.2f}, initiative={t.initiative:.2f}, conflict_directness={t.conflict_directness:.2f}, detail_level={t.detail_level:.2f}, hard_blocker={hard}
-Current private stance: prefers Option {persona.preferred_option}; can probably live with {persona.acceptable_options}; soft concerns about {persona.soft_rejections}; hard rejects {persona.hard_rejections}
-Reasons available: {reasons}
-Reservation: {persona.reservation}
-Would reconsider if: {persona.reconsider_if}"""
+Return JSON only in this shape:
+{_schema(schema)}"""
 
 
-def recent_turns_block(lines: list[str]) -> str:
-    return "\n".join(lines) if lines else "No previous participant turns yet."
-
-
-def group_state_summary(state_summary: dict) -> str:
-    return json.dumps(state_summary, ensure_ascii=False, indent=2)
-
-
-def move_instruction(intent: MoveIntent, speaker_name: str, addressee_name: Optional[str]) -> str:
-    focus = ", ".join(f"Option {x}" for x in intent.option_focus) if intent.option_focus else "no specific option"
-    addressee = addressee_name or "the group"
-    extra = ""
-    if intent.act.value == "accept":
-        extra = "\nFor this move, answer for yourself only. Do not ask whether others are okay. Use a clear first-person yes/no."
-    elif intent.act.value == "vote":
-        extra = "\nFor this move, name your current pick, but keep it provisional unless the group has clearly converged."
-    elif intent.act.value == "push_back":
-        extra = "\nFor this move, raise one concrete concern while staying open to compromise."
-    elif intent.act.value == "compare":
-        extra = "\nFor this move, compare real trade-offs between the focused options, not just your favorite."
-    elif intent.act.value == "opening":
-        extra = "\nFor this move, state a priority in your own words. Do not copy the phrasing of earlier participants."
-    return f"""You are {speaker_name}. Generate exactly one chat message.
-Local move: {intent.act.value}
-Why you are speaking: {intent.reason}
-Address: {addressee}
-Option focus: {focus}
-Length hint: {intent.length_hint}{extra}"""
-
-
-def output_contract(max_words: int, speaker_name: str) -> str:
-    banned = ", ".join(str(x) for x in cfg.utterances.banned_register_phrases)
-    discouraged = ", ".join(str(x) for x in cfg.utterances.discouraged_starts)
-    return f"""Output only the message text, without '{speaker_name}:' and without quotation marks.
-Maximum {max_words} words.
-Sound like a normal adult friend-group chat: casual, compact, slightly imperfect, not corporate, not Gen-Z-heavy, not essay-like.
-Do not use numbered lists. Do not create multiple turns. Do not invent facts outside the option cards.
-Do not repeat the shape of recent turns. Avoid starting with: {discouraged}.
-Avoid these phrases unless genuinely unavoidable: {banned}."""
-
-
-def sim_utterance(
-    persona: Persona,
-    scenario: Scenario,
-    recent_lines: list[str],
-    state_summary: dict,
-    intent: MoveIntent,
-    addressee_name: Optional[str],
-    max_words: int,
-) -> str:
-    return f"""You are generating one participant message in a synthetic group decision chat.
-
-Topic:
-{scenario.topic}
-
-Option cards, the only source of truth:
-{render_options(scenario.options)}
-
-Speaker card:
-{speaker_card(persona)}
-
-Recent chat:
-{recent_turns_block(recent_lines)}
-
-Structured group state:
-{group_state_summary(state_summary)}
-
-Move instruction:
-{move_instruction(intent, persona.name, addressee_name)}
-
-Output contract:
-{output_contract(max_words, persona.name)}"""
-
-
-def repair_utterance(
-    original_text: str,
-    issue_codes: list[str],
-    persona: Persona,
-    scenario: Scenario,
-    recent_lines: list[str],
-    state_summary: dict,
-    intent: MoveIntent,
-    addressee_name: Optional[str],
-    max_words: int,
-) -> str:
-    base = sim_utterance(persona, scenario, recent_lines, state_summary, intent, addressee_name, max_words)
-    return f"""{base}
-
-The previous draft was invalid.
-Previous draft: {original_text}
-Issue codes: {issue_codes}
-Rewrite the message once. Keep the same local move, fix the issues, and output only the corrected message text."""
-
-
-def _moderator_option_line(option: OptionCard) -> str:
-    attrs = list(option.attrs.items())[: int(cfg.scenario.display_attr_limit)]
-    attr_text = ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in attrs)
-    parts = [
-        f"Option {option.id} - {option.name}: {attr_text}" if attr_text else f"Option {option.id} - {option.name}",
-        f"upside: {option.upside}" if option.upside else "",
-        f"tradeoff: {option.tradeoff}" if option.tradeoff else "",
-        f"concern: {option.concern}" if option.concern else "",
-        f"fit: {option.fit}" if option.fit else "",
-        f"risk: {option.risk}" if option.risk else "",
-        f"best for: {option.best_for}" if option.best_for else "",
-    ]
-    return "; ".join(p for p in parts if p)
+# ---------------------------------------------------------------------------
+# Chat templates
+# ---------------------------------------------------------------------------
 
 
 def moderator_opening(scenario: Scenario) -> str:
-    option_lines = "\n".join(f"- {_moderator_option_line(o)}" for o in scenario.options)
-    return f"Moderator: We need to decide: {scenario.topic}. Here are the options I have:\n{option_lines}\n{scenario.opening_question}"
+    lines = [f"Today we're deciding: {scenario.topic}. Here are the options:"]
+    for option in scenario.options:
+        lines.append(f"Option {option.id} - {_option_brief(option)}")
+    lines.append(scenario.opening_question)
+    return "\n".join(lines)
 
 
-def moderator_nudge(question: str) -> str:
-    return f"Moderator: {question}"
+def moderator_closure(outcome: RunOutcome, scenario: Scenario) -> str:
+    if outcome.final_option:
+        option = scenario.option(outcome.final_option)
+        if outcome.status == "consensus":
+            return f"Alright, then we’ll go with Option {option.id}, {option.name}. Sounds like everyone can live with that."
+        if outcome.status == "fallback":
+            return f"We did not get full agreement, but the strongest workable choice is Option {option.id}, {option.name}."
+    return "Looks like we do not have a clean agreement, so we’ll stop here rather than fake a consensus."
 
 
-def moderator_close_consensus(option: OptionCard) -> str:
-    return f"Moderator: Alright, then we’ll go with Option {option.id}, {option.name}. Sounds like that works as the compromise."
+def _lean_name(state: DialogueState, persona: Persona) -> str:
+    rt = state.runtimes[persona.id]
+    lean = rt.explicit_vote or rt.current_preference or persona.preferred_option
+    return state.scenario.option(lean).name if lean in state.scenario.option_ids else "no clear pick"
 
 
-def moderator_close_unresolved() -> str:
-    return "Moderator: Looks like we do not have a clean compromise this time, so let’s leave it unresolved for now."
+def moderator_stall_nudge(state: DialogueState) -> str:
+    summary = "; ".join(f"{p.name} likes {_lean_name(state, p)}" for p in state.personas)
+    return (
+        f"We're going round in circles a bit. Where we stand: {summary}. "
+        "Is anyone's view actually shifting, or should we start narrowing it down?"
+    )
 
 
-def deterministic_fallback(intent: MoveIntent, persona: Persona, candidate: Optional[str]) -> str:
-    preferred = persona.preferred_option
-    if intent.act.value == "vote":
-        return f"I’d pick Option {preferred} for now."
-    if intent.act.value == "accept" and candidate:
-        if candidate == preferred:
-            return f"Yeah, Option {candidate} works for me."
-        return f"I still prefer Option {preferred}, but I can live with Option {candidate}."
-    if intent.act.value == "reject" and candidate:
-        return f"No, Option {candidate} does not work for me yet; my main worry is {persona.reservation}."
-    if intent.act.value == "answer":
-        return f"For me it mostly comes down to Option {preferred} fitting what I care about, but I’m not trying to block alternatives."
-    if intent.act.value == "compare":
-        option = candidate or preferred
-        return f"Option {option} seems worth comparing properly against the others before we settle too quickly."
-    if intent.act.value == "push_back":
-        option = candidate or preferred
-        return f"My only hesitation with Option {option} is that the downside might matter more once we actually choose."
-    if intent.act.value == "react":
-        option = candidate or preferred
-        return f"I would keep Option {option} in the mix for now; it covers a different priority."
-    if intent.act.value == "ask":
-        option = candidate or preferred
-        return f"Would Option {option} solve enough of what people care about, or is the trade-off too annoying?"
-    if intent.act.value == "propose_compromise":
-        option = candidate or (persona.acceptable_options[0] if persona.acceptable_options else preferred)
-        return f"Maybe we could use Option {option} as the middle ground if everyone can live with it."
-    return f"I’m still leaning toward Option {preferred}, but I’m open to a workable compromise."
+def moderator_holdout_nudge(state: DialogueState, candidate_id: str, holdout_id: str) -> str:
+    option = state.scenario.option(candidate_id)
+    name = state.name_for(holdout_id)
+    return (
+        f"{name}, sounds like most of us could live with {option.name}. "
+        "What would make it work for you — or is there another one you'd all be fine with?"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Turn-generation prompt
+# ---------------------------------------------------------------------------
+
+
+def speaker_card(persona: Persona, focus_ids: Iterable[str]) -> str:
+    t = persona.traits
+    smin, smax, thr = int(cfg.scenario.score_min), int(cfg.scenario.score_max), int(cfg.scenario.acceptance_score)
+    ratings = ", ".join(f"{opt}={persona.score_for(opt)}" for opt in sorted(persona.option_scores))
+    # Only the reasons for options in play this turn, to keep the prompt small.
+    keep = {persona.preferred_option, *focus_ids}
+    reasons = {opt: vals for opt, vals in persona.reasons.items() if opt in keep}
+    return f"""{persona.name} ({persona.role})
+style: {persona.speech_style}
+goal: {persona.private_goal}; priority: {persona.main_concern}
+stance: prefers {persona.preferred_option}; can live with {persona.acceptable_options}; concerns {persona.soft_rejections}; hard rejects {persona.hard_rejections}
+private ratings (hidden, {smin}-{smax}, you can accept {thr}+): {ratings}
+traits: extra={t.extraversion}, agree={t.agreeableness}, direct={t.directness:.2f}, compromise={t.compromise_willingness:.2f}, detail={t.detail:.2f}
+reasons: {json.dumps(reasons, ensure_ascii=False)}
+reservation: {persona.reservation}; reconsider if: {persona.reconsider_if}"""
+
+
+def intent_line(intent: MoveIntent, state: DialogueState, addressee_name: Optional[str]) -> str:
+    focus = ", ".join(intent.option_focus) if intent.option_focus else "none"
+    to_part = f" to {addressee_name}" if addressee_name else ""
+    return f"move={intent.act.value}{to_part}; focus={focus}; reason={intent.reason}; length={intent.length_hint}"
+
+
+def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -> str:
+    t = persona.traits
+    high_compromise = t.compromise_willingness >= 0.6
+    if intent.act == ActType.OPENING:
+        # Vary the opening framing by trait so the first round isn't three identical lines.
+        if t.extraversion >= 4:
+            return "Open warmly: react to the topic, then say what you care about and which way you lean. Don't lock in."
+        if t.directness >= 0.55:
+            return "Open bluntly: your top priority and your lean in one line. Don't lock in."
+        if t.detail >= 0.6:
+            return "Open by pointing at one concrete attribute that matters to you, then your lean. Don't lock in."
+        return "Open in your own words: what matters to you and which option you lean to. Don't lock in."
+    if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+        if high_compromise:
+            return "Enough discussion. Commit to a workable choice; if a good case was made for an option you rate well enough, move to it instead of restating your first pick."
+        return "Enough discussion. State where you stand; only hold out if you are genuinely not convinced."
+    if high_compromise:
+        return "It's fine to be persuaded: if a point shifts you, say so. Otherwise add a new angle, don't repeat yourself."
+    return "Make your case with a concrete trade-off the others haven't covered yet. Don't repeat earlier points."
+
+
+def sim_utterance(
+    *,
+    persona: Persona,
+    state: DialogueState,
+    recent_lines: list[str],
+    public_board: str,
+    intent: MoveIntent,
+    focus_options: list[OptionCard],
+    addressee_name: Optional[str],
+    max_words: int,
+    own_recent: Optional[list[str]] = None,
+) -> str:
+    option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
+    focused = _option_cards(focus_options) if focus_options else "- none"
+    recent = "\n".join(recent_lines) if recent_lines else "(no recent turns)"
+    already = ""
+    if own_recent:
+        bullets = "\n".join(f"- {compact_words(line, 16)}" for line in own_recent[-3:])
+        already = f"\nYou already said this (do NOT repeat it; say something new or move toward deciding):\n{bullets}\n"
+    return f"""Write exactly one natural chat message for the next speaker.
+
+Topic: {state.scenario.topic}
+Available options: {option_names}
+Speaker:
+{speaker_card(persona, intent.option_focus)}
+
+Public state:
+{public_board}
+
+Relevant option cards for this move:
+{focused}
+
+Recent chat:
+{recent}
+{already}
+Next local move:
+{intent_line(intent, state, addressee_name)}
+Guidance: {_move_guidance(state, persona, intent)}
+
+Rules:
+- Write only {persona.name}'s message: one line, no name prefix, no quotes, under {max_words} words.
+- Casual group-chat tone: human, not corporate, not slang-heavy. Reply to the addressed person if one is given.
+- Do the local move only; don't re-evaluate every option.
+- Add something new: never restate a point already in the chat or copy the previous speaker's phrasing.
+- Use only facts from the option cards; invent nothing (no prices, ratings, availability, policies, weather).
+- Name options by name or "Option X". If you move to an option you didn't prefer, say so briefly in your own words.
+
+End with a hidden status tag on its own line: [act={intent.act.value}; opt=<{state.scenario.option_ids} or ->; stance=<vote|accept|object|reject|propose|neutral>] (vote=final pick, accept=agree to a compromise, object=mild concern, reject=dealbreaker, propose=offer a compromise, neutral=otherwise)."""
+
+
+def repair_utterance(
+    *,
+    original_text: str,
+    issue_codes: list[str],
+    persona: Persona,
+    state: DialogueState,
+    recent_lines: list[str],
+    public_board: str,
+    intent: MoveIntent,
+    focus_options: list[OptionCard],
+    addressee_name: Optional[str],
+    max_words: int,
+) -> str:
+    issue_text = ", ".join(issue_codes[: int(cfg.utterances.repair_issue_limit)])
+    return sim_utterance(
+        persona=persona,
+        state=state,
+        recent_lines=recent_lines,
+        public_board=public_board,
+        intent=intent,
+        focus_options=focus_options,
+        addressee_name=addressee_name,
+        max_words=max_words,
+    ) + f"\n\nRewrite the message because the previous version had these issues: {issue_text}. Previous version: {original_text}"

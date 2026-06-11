@@ -1,4 +1,4 @@
-"""Thin provider abstraction over Gemini, Groq, and a local Ollama endpoint."""
+"""Thin provider abstraction over Gemini, Groq, Ollama-style local endpoint, and mock."""
 
 from __future__ import annotations
 
@@ -6,20 +6,21 @@ import json
 import os
 import re
 import time
-from typing import Any, Optional
+from typing import Any
 
 import requests
 from dotenv import load_dotenv
 
 from config_loader import cfg
+from utils import extract_json_object
 
 load_dotenv()
 
 
 class LLMClient:
     def __init__(self) -> None:
-        self.provider: str = str(cfg.llm.provider).lower()
-        self.model_id: str = getattr(cfg.llm.models, self.provider)
+        self.provider = str(cfg.llm.provider).lower()
+        self.model_id = getattr(cfg.llm.models, self.provider)
         self._client: Any = self._build_client()
         self.last_tokens_in = 0
         self.last_tokens_out = 0
@@ -39,7 +40,7 @@ class LLMClient:
             if not api_key:
                 raise EnvironmentError("Missing GROQ_API_KEY.")
             return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
-        if self.provider == "uni":
+        if self.provider in {"uni", "mock"}:
             return None
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
@@ -47,11 +48,14 @@ class LLMClient:
         self.session_tokens_in = 0
         self.session_tokens_out = 0
 
-    def _record_tokens(self, tokens_in: int, tokens_out: int) -> None:
-        self.last_tokens_in = int(tokens_in or 0)
-        self.last_tokens_out = int(tokens_out or 0)
-        self.session_tokens_in += self.last_tokens_in
-        self.session_tokens_out += self.last_tokens_out
+    def _record_tokens(self, prompt: str, text: str, tokens_in: int | None = None, tokens_out: int | None = None) -> None:
+        # Fallback estimate is intentionally simple; provider usage metadata replaces it when available.
+        in_count = int(tokens_in if tokens_in is not None else max(1, len(prompt.split())))
+        out_count = int(tokens_out if tokens_out is not None else max(1, len(text.split())))
+        self.last_tokens_in = in_count
+        self.last_tokens_out = out_count
+        self.session_tokens_in += in_count
+        self.session_tokens_out += out_count
 
     def _sampling(self, profile: str) -> dict[str, Any]:
         section = getattr(cfg.llm.sampling, profile, cfg.llm.sampling.dialogue)
@@ -66,15 +70,23 @@ class LLMClient:
         self.last_tokens_out = 0
         sampling = self._sampling(profile)
 
+        if self.provider == "mock":
+            text = _mock_setup(prompt) if profile == "setup" else _mock_dialogue(prompt)
+            self._record_tokens(prompt, text)
+            return text
+
         if self.provider == "gemini":
-            time.sleep(float(cfg.llm.gemini_rpm_delay))
+            time.sleep(float(cfg.llm.gemini_rpm_delay_seconds))
             response = self._client.models.generate_content(model=self.model_id, contents=prompt)
+            text = (response.text or "").strip()
             meta = getattr(response, "usage_metadata", None)
             self._record_tokens(
-                getattr(meta, "prompt_token_count", 0) or 0,
-                getattr(meta, "candidates_token_count", 0) or 0,
+                prompt,
+                text,
+                getattr(meta, "prompt_token_count", None) if meta else None,
+                getattr(meta, "candidates_token_count", None) if meta else None,
             )
-            return (response.text or "").strip()
+            return text
 
         if self.provider == "groq":
             response = self._client.chat.completions.create(
@@ -83,83 +95,115 @@ class LLMClient:
                 temperature=sampling["temperature"],
                 top_p=sampling["top_p"],
             )
+            text = (response.choices[0].message.content or "").strip()
             usage = getattr(response, "usage", None)
             self._record_tokens(
-                getattr(usage, "prompt_tokens", 0) or 0,
-                getattr(usage, "completion_tokens", 0) or 0,
+                prompt,
+                text,
+                getattr(usage, "prompt_tokens", None) if usage else None,
+                getattr(usage, "completion_tokens", None) if usage else None,
             )
-            return (response.choices[0].message.content or "").strip()
+            return text
 
         if self.provider == "uni":
             payload = {
                 "model": self.model_id,
                 "prompt": prompt,
                 "stream": False,
-                # The target endpoint is Ollama-like.  Some deployments accept
-                # both root-level sampling keys and an options dict; send both.
                 "temperature": sampling["temperature"],
                 "top_k": sampling["top_k"],
                 "top_p": sampling["top_p"],
                 "options": sampling,
             }
-            resp = requests.post(
-                cfg.llm.endpoints.uni,
-                data=json.dumps(payload),
-                headers={"Content-Type": "application/json"},
+            response = requests.post(
+                str(cfg.llm.endpoints.uni),
+                json=payload,
                 timeout=float(cfg.llm.timeouts.request_seconds),
             )
-            resp.raise_for_status()
-            result = resp.json()
-            if "response" not in result:
-                raise ValueError(f"Unexpected uni API response: {result}")
-            self._record_tokens(result.get("prompt_eval_count", 0), result.get("eval_count", 0))
-            return str(result["response"]).strip()
+            response.raise_for_status()
+            data = response.json()
+            text = str(data.get("response", "")).strip()
+            self._record_tokens(
+                prompt,
+                text,
+                data.get("prompt_eval_count"),
+                data.get("eval_count"),
+            )
+            return text
 
-        raise ValueError(f"Unsupported provider: {self.provider}")
+        raise RuntimeError(f"Unsupported provider: {self.provider}")
 
     def generate_json(self, prompt: str, *, profile: str = "setup") -> dict[str, Any]:
-        text = self.generate(prompt, profile=profile)
-        text = _strip_markdown_fence(text)
-        candidate = _extract_json_object(text)
-        if candidate is None:
-            raise ValueError(f"Model did not return a JSON object:\n{text}")
-        try:
-            return json.loads(candidate)
-        except json.JSONDecodeError:
-            repaired = _repair_json(candidate)
-            try:
-                return json.loads(repaired)
-            except json.JSONDecodeError as exc:
-                raise ValueError(f"Model returned invalid JSON after repair: {exc}\n{candidate}") from exc
+        return extract_json_object(self.generate(prompt, profile=profile))
 
 
-def _strip_markdown_fence(text: str) -> str:
-    text = text.strip()
-    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.I)
-    text = re.sub(r"\s*```$", "", text)
-    return text.strip()
-
-
-def _extract_json_object(text: str) -> Optional[str]:
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end <= start:
-        return None
-    return text[start : end + 1]
-
-
-def _repair_json(text: str) -> str:
-    # Conservative repairs only: trailing commas and smart quotes.
-    repaired = text.replace("“", '"').replace("”", '"').replace("’", "'")
-    repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
-    return repaired
-
-
-_instance: Optional[LLMClient] = None
+_CLIENT: LLMClient | None = None
 
 
 def get_llm_client() -> LLMClient:
-    global _instance
-    if _instance is None:
-        _instance = LLMClient()
-    return _instance
+    global _CLIENT
+    if _CLIENT is None:
+        _CLIENT = LLMClient()
+    return _CLIENT
+
+
+# ---------------------------------------------------------------------------
+# Mock provider (provider: "mock") — deterministic, offline plumbing only.
+# It mirrors the prompt's requested move so the full pipeline can run without an
+# LLM endpoint. It is NOT a fallback for failed real calls.
+# ---------------------------------------------------------------------------
+
+_MOCK_NAMES = ["Ava", "Liam", "Mia", "Noah", "Lena", "Jonas", "Sofia"]
+_STANCE_BY_ACT = {"vote": "vote", "accept": "accept", "reject": "object", "propose_compromise": "propose"}
+
+
+def _mock_setup(prompt: str) -> str:
+    labels = [str(x) for x in cfg.scenario.option_labels]
+    n = len(re.findall(r'"id":\s*"p\d+"', prompt)) or int(cfg.simulation.num_participants)
+    names = ["Budget", "Comfort", "Balanced", "Flexible", "Premium", "Local"]
+    options = []
+    for idx, label in enumerate(labels):
+        options.append({
+            "id": label,
+            "name": f"{names[idx % len(names)]} Option {label}",
+            "attrs": {"cost": f"${100 + idx * 60}", "effort": ["Low", "Medium", "High", "Low"][idx % 4], "rating": f"{3 + idx % 3}/5"},
+            "upside": "clear strength on its main priority",
+            "tradeoff": "a real trade-off others may dislike",
+            "concern": "one stable downside to weigh",
+            "best_for": ["cost", "comfort", "balance", "flexibility"][idx % 4],
+        })
+    participants = []
+    for idx in range(n):
+        pref = labels[idx % len(labels)]
+        accept2 = labels[(idx + 2) % len(labels)]
+        participants.append({
+            "id": f"p{idx + 1}",
+            "name": _MOCK_NAMES[idx % len(_MOCK_NAMES)],
+            "role": "group member",
+            "speech_style": "plain",
+            "private_goal": f"land on a choice close to Option {pref}",
+            "backstory": "has made similar small decisions before",
+            "main_concern": ["cost", "comfort", "balance", "flexibility"][idx % 4],
+            "preferred_option": pref,
+            "acceptable_options": [pref, accept2],
+            "soft_rejections": [],
+            "hard_rejections": [],
+            "reasons": {pref: ["fits my main priority"], accept2: ["an acceptable backup"]},
+            "reservation": "one trade-off still matters",
+            "reconsider_if": "if the group values another priority more",
+        })
+    return json.dumps({"scenario": {"decision_kind": "generic_decision", "opening_question": "What matters most before we pick?", "options": options}, "participants": participants})
+
+
+def _mock_dialogue(prompt: str) -> str:
+    act_match = re.search(r"move=([a-z_]+)", prompt)
+    act = act_match.group(1) if act_match else "react"
+    focus_match = re.search(r"focus=([A-D])", prompt)
+    opt = focus_match.group(1) if focus_match else "-"
+    stance = _STANCE_BY_ACT.get(act, "neutral")
+    line = {
+        "vote": f"My pick is Option {opt}, it fits what I care about most.",
+        "accept": f"I still had my own lean, but Option {opt} works for me.",
+        "propose_compromise": f"Could Option {opt} be the middle ground we settle on?",
+    }.get(act, f"Fair point — Option {opt} has something going for it, though I'd weigh the trade-off.")
+    return f"{line}\n[act={act}; opt={opt}; stance={stance}]"

@@ -29,7 +29,20 @@
       "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); from policy import select_next_speakers, repetition_pressure, extract_discourse, sample_hard_blocker; from state import ParticipantState, StateTracker; from reasoning import evaluation_summary; from logger import DialogueLogger; print\\('all imports OK'\\)\")",
       "Bash(python -c \"import sys; sys.path.insert\\(0,'src'\\); from policy import select_next_speakers, repetition_pressure; from state import ParticipantState; from reasoning import evaluation_summary; print\\('OK'\\)\")",
       "Bash(python)",
-      "Bash(python -m py_compile *.py)"
+      "Bash(python -m py_compile *.py)",
+      "PowerShell(py _mock_check.py)",
+      "PowerShell(py -m compileall -q src main.py)",
+      "PowerShell(if \\($?\\) { \"COMPILE OK\" })",
+      "Bash(py -c ' *)",
+      "PowerShell(\"cleaned\")",
+      "Bash(ls \"C:/Users/andi/.claude/projects/c--Users-andi-Desktop-ds-proj/memory/\" 2>/dev/null && echo \"---\" && cat \"C:/Users/andi/.claude/projects/c--Users-andi-Desktop-ds-proj/memory/MEMORY.md\" 2>/dev/null || echo \"\\(no memory dir yet\\)\")",
+      "Read(//c/Users/andi/.claude/projects/c--Users-andi-Desktop-ds-proj/memory/**)",
+      "PowerShell(cd \"c:\\\\Users\\\\andi\\\\Desktop\\\\ds_proj\"; Remove-Item -Force _mock_check.py; Remove-Item -Recurse -Force \\(Get-ChildItem logs -Directory | Sort-Object LastWriteTime | Select-Object -Last 1\\).FullName; \\(Get-Content config.yaml | Measure-Object -Line\\).Lines)",
+      "Bash(xxd)",
+      "Bash(pip install *)",
+      "Bash(py -m pyflakes src/ main.py)",
+      "Bash(echo \"pyflakes exit=$?\")",
+      "Bash(py -m compileall -q src main.py)"
     ]
   }
 }

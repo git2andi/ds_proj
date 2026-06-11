@@ -1,6 +1,6 @@
-"""CLI entry point for the discussion simulator.
+"""CLI entry point for the group-discussion simulator.
 
-Recommended project layout:
+Project layout:
   root/
     main.py
     config.yaml
@@ -18,32 +18,39 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# Stream unicode (em-dashes, umlauts) to the console regardless of the OS codepage.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from orchestrator import Orchestrator  # noqa: E402
+from dialogue import Orchestrator  # noqa: E402
 
 
 def run_dialogue(topic: str) -> None:
-    result = Orchestrator(topic).run()
+    # The orchestrator streams the header and every turn to stdout as they happen,
+    # so here we only print the closing summary.
+    try:
+        result = Orchestrator(topic).run()
+    except Exception as exc:  # noqa: BLE001 - surface a clean message, not a traceback
+        print(f"\n[error] Could not complete dialogue for {topic!r}: {type(exc).__name__}: {exc}\n")
+        return
     tokens = result.token_summary
-    print("\n" + "=" * 70)
-    print(f"Topic       : {result.scenario.topic}")
+    print("\n" + "-" * 72)
     print(f"Outcome     : {result.outcome.status}")
-    print(f"Final option: {result.outcome.final_option}")
+    print(f"Final option: {result.outcome.final_option or '-'}")
     print(f"Reason      : {result.outcome.reason}")
     print(
         "Tokens      : "
-        f"setup={tokens.get('setup_tokens_in', 0)}/{tokens.get('setup_tokens_out', 0)}  "
-        f"dialogue={tokens.get('dialogue_tokens_in', 0)}/{tokens.get('dialogue_tokens_out', 0)}  "
-        f"total={tokens.get('total_tokens_in', 0)}/{tokens.get('total_tokens_out', 0)} (in/out)"
+        f"setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']}  "
+        f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']}  "
+        f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out)"
     )
     print(f"Logs        : {result.log_paths.get('dir', '')}")
-    print("=" * 70 + "\n")
-    for line in result.transcript:
-        print(line)
+    print("-" * 72 + "\n")
 
 
 def run_batch(path: str) -> None:

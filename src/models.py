@@ -1,7 +1,7 @@
-"""Core dataclasses for the discussion simulator.
+"""Core typed objects for the simulator.
 
-The purpose of this module is to make the simulation state explicit.  LLM calls
-may produce text, but all control decisions operate over these typed objects.
+The LLM may generate text, but routing, consensus, logging, and validation operate
+on these objects only.
 """
 
 from __future__ import annotations
@@ -24,15 +24,14 @@ class ActType(str, Enum):
     ANSWER = "answer"
     REACT = "react"
     ASK = "ask"
+    SUPPORT = "support"
+    OBJECT = "object"
     COMPARE = "compare"
     PUSH_BACK = "push_back"
-    CONCEDE = "concede"
     PROPOSE_COMPROMISE = "propose_compromise"
     VOTE = "vote"
     ACCEPT = "accept"
     REJECT = "reject"
-    CLOSE = "close"
-    OTHER = "other"
 
 
 LengthHint = Literal["short", "medium", "long"]
@@ -46,26 +45,30 @@ class OptionCard:
     upside: str = ""
     tradeoff: str = ""
     concern: str = ""
-    fit: str = ""
-    risk: str = ""
     best_for: str = ""
 
-    def source_text(self) -> str:
-        attr_text = ", ".join(f"{k}={v}" for k, v in self.attrs.items())
+    def public_line(self) -> str:
+        attrs = ", ".join(f"{k}: {v}" for k, v in self.attrs.items())
+        parts = [f"{self.id}) {self.name}"]
+        if attrs:
+            parts.append(attrs)
+        if self.upside:
+            parts.append(f"plus: {self.upside}")
+        if self.tradeoff:
+            parts.append(f"trade-off: {self.tradeoff}")
+        return "; ".join(parts)
+
+    def prompt_card(self) -> str:
+        attrs = ", ".join(f"{k}={v}" for k, v in self.attrs.items())
         pieces = [
-            f"Option {self.id} - {self.name}",
-            f"attrs: {attr_text}" if attr_text else "attrs: none",
-            f"upside: {self.upside}",
-            f"tradeoff: {self.tradeoff}",
-            f"concern: {self.concern}",
-            f"fit: {self.fit}",
-            f"risk: {self.risk}",
-            f"best for: {self.best_for}",
+            f"Option {self.id}: {self.name}",
+            f"attrs: {attrs}" if attrs else "attrs: none",
+            f"upside: {self.upside}" if self.upside else "",
+            f"tradeoff: {self.tradeoff}" if self.tradeoff else "",
+            f"concern: {self.concern}" if self.concern else "",
+            f"best_for: {self.best_for}" if self.best_for else "",
         ]
         return "; ".join(p for p in pieces if p)
-
-    def short_text(self) -> str:
-        return f"Option {self.id}: {self.name} — {self.upside or self.fit or self.tradeoff}".strip()
 
 
 @dataclass(slots=True)
@@ -97,8 +100,8 @@ class TraitProfile:
     compromise_willingness: float
     patience: float
     initiative: float
-    conflict_directness: float
-    detail_level: float
+    directness: float
+    detail: float
 
 
 @dataclass(slots=True)
@@ -118,23 +121,22 @@ class Persona:
     reasons: dict[str, list[str]]
     reservation: str
     reconsider_if: str
+    option_scores: dict[str, int] = field(default_factory=dict)  # hidden 1..5 utility per option
     is_hard_blocker: bool = False
 
-    def can_accept_initially(self, option_id: str) -> bool:
-        return option_id in self.acceptable_options or option_id == self.preferred_option
+    def score_for(self, option_id: str) -> int:
+        return self.option_scores.get(option_id, 3)
 
 
 @dataclass(slots=True)
-class ParticipantRuntime:
-    persona_id: str
-    turn_count: int = 0
-    last_spoke_turn: Optional[int] = None
-    explicit_vote: Optional[str] = None
-    accepted_options: set[str] = field(default_factory=set)
-    rejected_options: set[str] = field(default_factory=set)
-    stated_reasons: list[str] = field(default_factory=list)
-    already_said: list[str] = field(default_factory=list)
-    current_preference: Optional[str] = None
+class MoveIntent:
+    speaker_id: str
+    act: ActType
+    reason: str
+    addressee_id: Optional[str] = None
+    option_focus: list[str] = field(default_factory=list)
+    length_hint: LengthHint = "medium"
+    respond_to_turn: Optional[int] = None
 
 
 @dataclass(slots=True)
@@ -147,31 +149,18 @@ class DialogueAct:
     question_target_id: Optional[str] = None
     explicit_vote: Optional[str] = None
     accepts: list[str] = field(default_factory=list)
-    rejects: list[str] = field(default_factory=list)
+    soft_rejects: dict[str, str] = field(default_factory=dict)
+    hard_rejects: dict[str, str] = field(default_factory=dict)
     proposes_option: Optional[str] = None
 
 
 @dataclass(slots=True)
-class TurnRecord:
-    index: int
-    speaker_id: str
-    speaker_name: str
-    text: str
-    phase: Phase
-    act: DialogueAct
-    intent: Optional["MoveIntent"] = None
-    tokens_in: int = 0
-    tokens_out: int = 0
-    validation_issues: list[str] = field(default_factory=list)
-
-
-@dataclass(slots=True)
 class OpenQuestion:
+    turn_id: int
     asked_by: str
     target_id: str
     text: str
-    turn_index: int
-    answered: bool = False
+    option_focus: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -183,22 +172,40 @@ class OptionCoverage:
 
 
 @dataclass(slots=True)
-class CompromiseProposal:
-    proposed_by: str
-    option_id: str
-    text: str
-    turn_index: int
+class ParticipantRuntime:
+    persona_id: str
+    turn_count: int = 0
+    last_spoke_turn: Optional[int] = None
+    stated_priority: str = ""
+    current_preference: Optional[str] = None
+    explicit_vote: Optional[str] = None
+    accepted_options: set[str] = field(default_factory=set)
+    soft_rejections: dict[str, str] = field(default_factory=dict)
+    hard_rejections: dict[str, str] = field(default_factory=dict)
+    already_said: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
-class MoveIntent:
+class TurnRecord:
+    index: int
     speaker_id: str
-    act: ActType
+    speaker_name: str
+    text: str
+    phase: Phase
+    act: DialogueAct
+    intent: Optional[MoveIntent] = None
+    tokens_in: int = 0
+    tokens_out: int = 0
+    validation_issues: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class RunOutcome:
+    status: str
+    final_option: Optional[str]
     reason: str
-    addressee_id: Optional[str] = None
-    option_focus: list[str] = field(default_factory=list)
-    length_hint: LengthHint = "medium"
-    is_moderator: bool = False
+    turns: int
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(slots=True)
@@ -206,21 +213,23 @@ class DialogueState:
     scenario: Scenario
     personas: list[Persona]
     phase: Phase = Phase.OPENING
-    turn_index: int = 0
     turns: list[TurnRecord] = field(default_factory=list)
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
-    open_questions: list[OpenQuestion] = field(default_factory=list)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
+    open_questions: list[OpenQuestion] = field(default_factory=list)
     candidate_option: Optional[str] = None
-    compromise_proposals: list[CompromiseProposal] = field(default_factory=list)
-    moderator_interventions: int = 0
-    no_progress_count: int = 0
+    outcome: Optional[RunOutcome] = None
+    turn_index: int = 0
     readiness_score: float = 0.0
-    outcome: Optional["RunOutcome"] = None
+    no_progress_count: int = 0
+    facilitator_force_narrow: bool = False
     setup_tokens_in: int = 0
     setup_tokens_out: int = 0
     dialogue_tokens_in: int = 0
     dialogue_tokens_out: int = 0
+
+    def participant_ids(self) -> list[str]:
+        return [p.id for p in self.personas]
 
     def persona_by_id(self, persona_id: str) -> Persona:
         for persona in self.personas:
@@ -228,41 +237,12 @@ class DialogueState:
                 return persona
         raise KeyError(persona_id)
 
-    def name_for(self, persona_id: str) -> str:
+    def name_for(self, persona_id: Optional[str]) -> str:
+        if persona_id is None:
+            return ""
+        if persona_id == "moderator":
+            return "Moderator"
         return self.persona_by_id(persona_id).name
-
-    def participant_ids(self) -> list[str]:
-        return [p.id for p in self.personas]
-
-
-@dataclass(slots=True)
-class ValidationIssue:
-    code: str
-    severity: Literal["warn", "repair", "fatal"]
-    message: str
-
-
-@dataclass(slots=True)
-class ValidationResult:
-    ok: bool
-    issues: list[ValidationIssue] = field(default_factory=list)
-    repaired_text: Optional[str] = None
-
-    @property
-    def needs_repair(self) -> bool:
-        return any(i.severity in {"repair", "fatal"} for i in self.issues)
-
-    def codes(self) -> list[str]:
-        return [i.code for i in self.issues]
-
-
-@dataclass(slots=True)
-class RunOutcome:
-    status: Literal["consensus", "fallback", "unresolved"]
-    final_option: Optional[str]
-    reason: str
-    turns: int
-    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(slots=True)
@@ -271,5 +251,21 @@ class DialogueRunResult:
     personas: list[Persona]
     transcript: list[str]
     outcome: RunOutcome
-    log_paths: dict[str, str] = field(default_factory=dict)
-    token_summary: dict[str, int] = field(default_factory=dict)
+    log_paths: dict[str, str]
+    token_summary: dict[str, int]
+
+
+@dataclass(slots=True)
+class ValidationIssue:
+    code: str
+    severity: str
+    message: str
+
+
+@dataclass(slots=True)
+class ValidationResult:
+    ok: bool
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def codes(self) -> list[str]:
+        return [issue.code for issue in self.issues]

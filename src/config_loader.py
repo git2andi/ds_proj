@@ -1,10 +1,8 @@
-"""
-Configuration loader.
+"""Configuration loader.
 
-The simulator treats config.yaml as the single place for tunable numbers.
-Modules import ``cfg`` from here.  The wrapper intentionally stays light: it
-provides attribute access while preserving the raw mapping for validation and
-logging.
+`config.yaml` is the only location for tunable numeric parameters.  Modules import
+`cfg` from here.  The wrapper deliberately stays small: attribute access for
+readability, raw mapping preservation for logging/validation.
 """
 
 from __future__ import annotations
@@ -50,10 +48,11 @@ class Section:
 
 
 class Config(Section):
-    EXCLUDED_SPEAKERS = frozenset({"Moderator"})
+    EXCLUDED_SPEAKERS = frozenset({"moderator"})
 
     def __init__(self, path: Path) -> None:
         self.path = path
+        self.root = path.parent
         with path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         super().__init__(data)
@@ -67,55 +66,43 @@ class Config(Section):
             value = value[part]
         return value
 
-    def _validate_range(self, name: str, value: Iterable[Any], low: float, high: float) -> None:
-        vals = list(value)
+    @staticmethod
+    def _validate_range(name: str, values: Iterable[Any], low: float, high: float) -> None:
+        vals = list(values)
         if len(vals) != 2:
             raise ValueError(f"{name} must contain [min, max].")
-        if not (low <= float(vals[0]) <= float(vals[1]) <= high):
+        lo, hi = float(vals[0]), float(vals[1])
+        if not (low <= lo <= hi <= high):
             raise ValueError(f"{name} must satisfy {low} <= min <= max <= {high}.")
 
     def _validate(self) -> None:
-        for key in [
-            "llm.provider", "simulation.num_participants", "simulation.min_participants",
-            "simulation.max_participants", "scenario.option_count", "scenario.option_labels",
-            "conversation.hard_max_total_turns", "output.log_dir",
-        ]:
+        required = [
+            "llm.provider",
+            "llm.models",
+            "simulation.num_participants",
+            "simulation.min_participants",
+            "simulation.max_participants",
+            "scenario.option_labels",
+            "conversation.hard_max_participant_turns",
+            "output.log_dir",
+        ]
+        for key in required:
             self._require(key)
 
         n = int(self.simulation.num_participants)
         min_n = int(self.simulation.min_participants)
         max_n = int(self.simulation.max_participants)
-        if min_n > max_n:
-            raise ValueError("simulation.min_participants must be <= simulation.max_participants.")
         if not (min_n <= n <= max_n):
-            raise ValueError(f"simulation.num_participants must be between {min_n} and {max_n}; got {n}.")
+            raise ValueError("simulation.num_participants must satisfy min <= n <= max.")
 
         labels = list(self.scenario.option_labels)
-        if len(labels) != int(self.scenario.option_count):
-            raise ValueError("scenario.option_labels length must equal scenario.option_count.")
         if len(set(labels)) != len(labels):
             raise ValueError("scenario.option_labels must be unique.")
 
-        for trait, bounds in self.personas.trait_ranges.items():
-            self._validate_range(f"personas.trait_ranges.{trait}", bounds, 1, 5)
-        for name, bounds in self.personas.cooperative_defaults.items():
-            self._validate_range(f"personas.cooperative_defaults.{name}", bounds, 0.0, 1.0)
-
-        if int(self.conversation.soft_min_total_turns) > int(self.conversation.hard_max_total_turns):
-            raise ValueError("conversation.soft_min_total_turns must be <= hard_max_total_turns.")
-        if not (0.0 <= float(self.consensus.majority_fraction_to_test) <= 1.0):
-            raise ValueError("consensus.majority_fraction_to_test must be in [0, 1].")
+        for name, rng in self.personas.trait_ranges.items():
+            self._validate_range(f"personas.trait_ranges.{name}", rng, int(self.personas.trait_min), int(self.personas.trait_max))
+        for name, rng in self.personas.cooperative_controls.items():
+            self._validate_range(f"personas.cooperative_controls.{name}", rng, 0.0, 1.0)
 
 
-def _find_config() -> Path:
-    here = Path(__file__).resolve().parent
-    direct = here / "config.yaml"
-    if direct.exists():
-        return direct
-    cwd = Path.cwd() / "config.yaml"
-    if cwd.exists():
-        return cwd
-    raise FileNotFoundError("Could not find config.yaml next to config_loader.py or in the current working directory.")
-
-
-cfg = Config(_find_config())
+cfg = Config(Path(__file__).resolve().parents[1] / "config.yaml")
