@@ -98,7 +98,6 @@ class TraitProfile:
     neuroticism: int
     response_length: int
     compromise_willingness: float
-    patience: float
     initiative: float
     directness: float
     detail: float
@@ -196,7 +195,8 @@ class TurnRecord:
     intent: Optional[MoveIntent] = None
     tokens_in: int = 0
     tokens_out: int = 0
-    validation_issues: list[str] = field(default_factory=list)
+    validation_issues: list[str] = field(default_factory=list)  # issues remaining after any repair
+    repaired: bool = False  # whether a repair attempt actually ran for this turn
 
 
 @dataclass(slots=True)
@@ -223,6 +223,7 @@ class DialogueState:
     readiness_score: float = 0.0
     no_progress_count: int = 0
     facilitator_force_narrow: bool = False
+    confirmation_start_turns: Optional[int] = None  # participant-turn count when confirmation began
     setup_tokens_in: int = 0
     setup_tokens_out: int = 0
     dialogue_tokens_in: int = 0

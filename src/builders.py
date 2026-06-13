@@ -31,14 +31,16 @@ class SetupBuilder:
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
         trait_rows = self._trait_rows(n)
+        plan = self._preference_plan(n)
+        pref_groups = self._preference_groups(plan)
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         last_error = ""
         for _ in range(attempts):
             try:
-                data = self._llm.generate_json(prompts.setup_world(self.topic, n, trait_rows), profile="setup")
+                data = self._llm.generate_json(prompts.setup_world(self.topic, n, trait_rows, pref_groups), profile="setup")
                 scenario = self._parse_scenario(data.get("scenario", {}))
                 personas = self._parse_personas(data.get("participants", []), trait_rows, scenario)
-                personas = self._postprocess_personas(personas, scenario)
+                personas = self._postprocess_personas(personas, scenario, plan)
                 self._validate_world(scenario, personas)
                 return scenario, personas
             except Exception as exc:
@@ -64,14 +66,39 @@ class SetupBuilder:
             })
         return rows
 
+    def _preference_plan(self, n: int) -> dict[str, int]:
+        """Assign each participant id to a preference "camp". Most runs keep everyone in
+        their own camp (all distinct), but with coalition_probability two or more share a
+        camp, producing 2v1 / 3v1 / 5v2-style splits. Always at least two camps so there
+        is something to discuss."""
+        labels = [str(x) for x in cfg.scenario.option_labels]
+        max_camps = min(n, len(labels))
+        if max_camps <= 2 or n <= 2:
+            camps = max(2, max_camps) if n >= 2 else 1
+        elif random.random() < float(cfg.personas.coalition_probability):
+            camps = random.randint(2, max_camps - 1)   # force at least one shared pair
+        else:
+            camps = max_camps
+        ids = [f"p{i + 1}" for i in range(n)]
+        random.shuffle(ids)
+        plan: dict[str, int] = {}
+        for idx, pid in enumerate(ids):
+            plan[pid] = idx if idx < camps else random.randint(0, camps - 1)
+        return plan
+
+    @staticmethod
+    def _preference_groups(plan: dict[str, int]) -> list[list[str]]:
+        camps: dict[int, list[str]] = {}
+        for pid, camp in plan.items():
+            camps.setdefault(camp, []).append(pid)
+        return [sorted(members, key=lambda p: int(p[1:])) for _, members in sorted(camps.items())]
+
     def _sample_traits(self, hard_blocker: bool) -> TraitProfile:
         controls = cfg.personas.cooperative_controls
         compromise = sample_range(controls.compromise_willingness)
-        patience = sample_range(controls.patience)
         agree = sample_int_range(cfg.personas.trait_ranges.agreeableness)
         if hard_blocker:
             compromise = sample_range(cfg.personas.hard_blocker_compromise)
-            patience = sample_range(cfg.personas.hard_blocker_patience)
             agree = min(agree, int(cfg.personas.trait_min) + 1)
         return TraitProfile(
             openness=sample_int_range(cfg.personas.trait_ranges.openness),
@@ -81,7 +108,6 @@ class SetupBuilder:
             neuroticism=sample_int_range(cfg.personas.trait_ranges.neuroticism),
             response_length=sample_int_range(cfg.personas.trait_ranges.response_length),
             compromise_willingness=clamp(compromise, 0.0, 1.0),
-            patience=clamp(patience, 0.0, 1.0),
             initiative=clamp(sample_range(controls.initiative), 0.0, 1.0),
             directness=clamp(sample_range(controls.directness), 0.0, 1.0),
             detail=clamp(sample_range(controls.detail), 0.0, 1.0),
@@ -240,8 +266,11 @@ class SetupBuilder:
             parts.append("uses concrete details")
         return ", ".join(parts)
 
-    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario) -> list[Persona]:
+    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario, plan: dict[str, int]) -> list[Persona]:
         labels = scenario.option_ids
+        # Enforce the sampled coalition plan: members of one camp share a preferred option,
+        # different camps differ. Done first so the diversity floor below never fights it.
+        self._apply_preference_plan(personas, plan, labels)
         # Ensure useful reasons exist for preferred and acceptable options.
         for persona in personas:
             for opt in [persona.preferred_option] + persona.acceptable_options:
@@ -280,6 +309,26 @@ class SetupBuilder:
                 persona.acceptable_options, persona.soft_rejections, persona.hard_rejections,
             )
         return personas
+
+    @staticmethod
+    def _apply_preference_plan(personas: list[Persona], plan: dict[str, int], labels: list[str]) -> None:
+        camps: dict[int, list[Persona]] = {}
+        for persona in personas:
+            camps.setdefault(plan.get(persona.id, -hash(persona.id)), []).append(persona)
+        used: set[str] = set()
+        # Largest camps choose first so a coalition gets its best-fitting shared option.
+        for members in sorted(camps.values(), key=len, reverse=True):
+            ranked = sorted(labels, key=lambda o: sum(m.score_for(o) for m in members), reverse=True)
+            choice = next((o for o in ranked if o not in used), None) or next((o for o in labels if o not in used), members[0].preferred_option)
+            used.add(choice)
+            for member in members:
+                member.preferred_option = choice
+                if choice not in member.acceptable_options:
+                    member.acceptable_options.insert(0, choice)
+                if choice in member.soft_rejections:
+                    member.soft_rejections.remove(choice)
+                if choice in member.hard_rejections:
+                    member.hard_rejections.remove(choice)
 
     def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
         labels = [str(x) for x in cfg.scenario.option_labels]

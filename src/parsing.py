@@ -33,7 +33,16 @@ _INTENT_FALLBACK_STANCE = {
     ActType.PROPOSE_COMPROMISE: "propose",
 }
 
-_TRAILER = re.compile(r"\[([^\[\]]*?(?:act|stance|opt)\s*=[^\[\]]*?)\]", re.I)
+# The trailer starts at a "[" immediately followed by act=/opt=/stance= and runs to the
+# final "]". The greedy ".*" deliberately swallows any inner brackets the model emits
+# (e.g. opt=[C, D]); without it such a trailer would leak into the chat unparsed.
+_TRAILER = re.compile(r"\[\s*((?:act|stance|opt)\s*=.*)\]", re.I | re.S)
+# Same trailer with its surrounding brackets dropped (some models omit them): a trailing
+# run of key=value fields at the very end of the message, with an optional stray bracket.
+_BARE_TRAILER = re.compile(
+    r"\[?\s*((?:act|opt|stance)\s*=\s*[^\s;,\]]+(?:\s*[;,]\s*(?:act|opt|stance)\s*=\s*[^\s;,\]]+)*)\s*\]?\s*$",
+    re.I,
+)
 _QUESTION = re.compile(r"\?")
 
 
@@ -105,16 +114,26 @@ class OptionResolver:
 
 def parse_trailer(raw: str, option_ids: list[str]) -> tuple[str, TurnMove]:
     """Split a raw generation into (clean message, TurnMove). Tolerant of a
-    missing or malformed trailer."""
+    trailer that is bracketed, missing its brackets, malformed, or absent."""
     move = TurnMove()
-    matches = list(_TRAILER.finditer(raw))
-    if not matches:
-        return normalise_ws(raw), move
-    match = matches[-1]
+    body: Optional[str] = None
+    message = raw
+    bracketed = list(_TRAILER.finditer(raw))
+    if bracketed:
+        match = bracketed[-1]
+        body = match.group(1)
+        message = raw[: match.start()] + raw[match.end():]
+    else:
+        bare = _BARE_TRAILER.search(raw)
+        if bare:
+            body = bare.group(1)
+            message = raw[: bare.start()]
+    if body is None:
+        # No tag at all: clean up a lone option letter the model may have left dangling.
+        return normalise_ws(_strip_dangling_option_letter(raw, option_ids)), move
     move.present = True
-    message = (raw[: match.start()] + raw[match.end():]).strip()
     fields: dict[str, str] = {}
-    for part in re.split(r"[;,]", match.group(1)):
+    for part in re.split(r"[;,]", body):
         if "=" in part:
             key, value = part.split("=", 1)
             fields[key.strip().lower()] = value.strip().lower()
@@ -130,6 +149,16 @@ def parse_trailer(raw: str, option_ids: list[str]) -> tuple[str, TurnMove]:
     stance = fields.get("stance", "neutral")
     move.stance = stance if stance in _STANCES else "neutral"
     return normalise_ws(message), move
+
+
+def _strip_dangling_option_letter(text: str, option_ids: list[str]) -> str:
+    """Remove a trailing isolated option letter left over from a malformed tag,
+    e.g. '...for in-depth analysis C' -> '...for in-depth analysis'."""
+    stripped = text.rstrip()
+    m = re.search(r"(?:^|\s)([A-Za-z])[.\s]*$", stripped)
+    if m and m.group(1).upper() in option_ids:
+        return stripped[: m.start(1)].rstrip(" .,;:-")
+    return text
 
 
 def parse_dialogue_act(

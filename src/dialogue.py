@@ -74,15 +74,16 @@ class Orchestrator:
                 self._emit(tracker.apply_moderator(state, nudge, phase=state.phase))
                 continue
             intent = self.router.next_intent(state)
-            text, move, prompt, tokens_in, tokens_out, issues = self._generate_turn(state, intent, validator)
+            text, move, prompt, tokens_in, tokens_out, issues, repaired = self._generate_turn(state, intent, validator)
             self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_{intent.act.value}")
-            self._emit(tracker.apply_participant(state, intent, text, move, tokens_in, tokens_out, issues))
+            self._emit(tracker.apply_participant(state, intent, text, move, tokens_in, tokens_out, issues, repaired))
 
-        state.dialogue_tokens_in = self._llm.session_tokens_in
-        state.dialogue_tokens_out = self._llm.session_tokens_out
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
-        self._emit(tracker.apply_moderator(state, prompts.moderator_closure(outcome, scenario), phase=Phase.CLOSURE))
+        closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario))
+        state.dialogue_tokens_in = self._llm.session_tokens_in
+        state.dialogue_tokens_out = self._llm.session_tokens_out
+        self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
         paths = self.logger.finish(state, outcome)
         transcript = [f"{turn.speaker_name}: {turn.text}" for turn in state.turns]
         return DialogueRunResult(scenario, personas, transcript, outcome, paths, token_summary_for(state))
@@ -98,7 +99,12 @@ class Orchestrator:
     def _emit(record: TurnRecord) -> None:
         print(f"{record.speaker_name}: {record.text}")
 
-    def _generate_turn(self, state: DialogueState, intent: MoveIntent, validator: MessageValidator) -> tuple[str, TurnMove, str, int, int, list[str]]:
+    def _moderator_say(self, prompt: str) -> str:
+        """Generate a moderator facilitation line via the LLM and clean it to one line."""
+        raw = self._llm.generate(prompt, profile="dialogue")
+        return clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
+
+    def _generate_turn(self, state: DialogueState, intent: MoveIntent, validator: MessageValidator) -> tuple[str, TurnMove, str, int, int, list[str], bool]:
         persona = state.persona_by_id(intent.speaker_id)
         max_words = max_words_for(intent, persona)
         recent_lines = recent_lines_for_prompt(state, intent)
@@ -123,8 +129,10 @@ class Orchestrator:
         result = validator.validate(text, state, intent, move)
         issues = result.codes()
         attempts = int(cfg.simulation.max_repairs_per_turn)
+        repaired = False
         while self._needs_repair(result) and attempts > 0:
             attempts -= 1
+            repaired = True
             repair_prompt = prompts.repair_utterance(
                 original_text=text,
                 issue_codes=issues,
@@ -144,7 +152,7 @@ class Orchestrator:
             issues = result.codes()
         # No fabricated fallback: keep the model's real (possibly imperfect) message and
         # record the remaining issues so they are visible in the logs and metrics.
-        return text, move, prompt, self._llm.last_tokens_in, self._llm.last_tokens_out, issues
+        return text, move, prompt, self._llm.last_tokens_in, self._llm.last_tokens_out, issues, repaired
 
     @staticmethod
     def _needs_repair(result) -> bool:
@@ -162,22 +170,30 @@ class Orchestrator:
         if (state.turn_index - self._last_intervention_turn) < int(conv.moderator_cooldown_turns):
             return None
 
-        if (
-            state.phase == Phase.DISCUSSION
-            and everyone_spoke_once(state)
-            and state.no_progress_count >= int(conv.moderator_stall_window)
-        ):
-            self._register_intervention(state)
-            state.no_progress_count = 0
-            state.facilitator_force_narrow = True  # mod steps in -> move toward a decision
-            return prompts.moderator_stall_nudge(state)
+        if state.phase == Phase.DISCUSSION and everyone_spoke_once(state):
+            # Recognise genuine early agreement (everyone leaning the same way) and move to
+            # lock it in, rather than always firing the generic "we're circling" line.
+            if concentration_score(state) >= 1.0:
+                candidate = leading_option(state)
+                if candidate:
+                    self._register_intervention(state)
+                    state.no_progress_count = 0
+                    state.facilitator_force_narrow = True
+                    return self._moderator_say(prompts.moderator_agreement_prompt(state, candidate))
+            if state.no_progress_count >= int(conv.moderator_stall_window):
+                self._register_intervention(state)
+                state.no_progress_count = 0
+                state.facilitator_force_narrow = True  # mod steps in -> move toward a decision
+                return self._moderator_say(prompts.moderator_stall_prompt(state))
 
         if state.phase == Phase.CONFIRMATION and state.candidate_option:
-            holdouts = _candidate_holdouts(state, state.candidate_option)
-            if len(holdouts) == 1 and holdouts[0] not in self._nudged_holdouts:
-                self._nudged_holdouts.add(holdouts[0])
+            holdouts = [h for h in _candidate_holdouts(state, state.candidate_option) if h not in self._nudged_holdouts]
+            # Nudge one or two standouts directly; the confirmation router then has each of
+            # them answer in turn. With three or more, leave it to normal routing.
+            if 1 <= len(holdouts) <= 2:
+                self._nudged_holdouts.update(holdouts)
                 self._register_intervention(state)
-                return prompts.moderator_holdout_nudge(state, state.candidate_option, holdouts[0])
+                return self._moderator_say(prompts.moderator_holdout_prompt(state, state.candidate_option, holdouts))
         return None
 
     def _register_intervention(self, state: DialogueState) -> None:
@@ -214,11 +230,11 @@ class StateTracker:
         self._last_progress_snapshot: Optional[tuple] = None
 
     def apply_moderator(self, state: DialogueState, text: str, phase: Phase) -> TurnRecord:
-        return self._apply_turn(state, "moderator", "Moderator", text, phase, intent=None, move=None, tokens_in=0, tokens_out=0, validation_issues=[])
+        return self._apply_turn(state, "moderator", "Moderator", text, phase, intent=None, move=None, tokens_in=0, tokens_out=0, validation_issues=[], repaired=False)
 
-    def apply_participant(self, state: DialogueState, intent: MoveIntent, text: str, move: TurnMove, tokens_in: int, tokens_out: int, validation_issues: list[str]) -> TurnRecord:
+    def apply_participant(self, state: DialogueState, intent: MoveIntent, text: str, move: TurnMove, tokens_in: int, tokens_out: int, validation_issues: list[str], repaired: bool) -> TurnRecord:
         persona = state.persona_by_id(intent.speaker_id)
-        return self._apply_turn(state, persona.id, persona.name, text, state.phase, intent, move, tokens_in, tokens_out, validation_issues)
+        return self._apply_turn(state, persona.id, persona.name, text, state.phase, intent, move, tokens_in, tokens_out, validation_issues, repaired)
 
     def _apply_turn(
         self,
@@ -232,6 +248,7 @@ class StateTracker:
         tokens_in: int,
         tokens_out: int,
         validation_issues: list[str],
+        repaired: bool,
     ) -> TurnRecord:
         # Moderator messages (e.g. the option board) keep their line breaks; participant
         # turns are single-line.
@@ -259,6 +276,7 @@ class StateTracker:
             tokens_in=tokens_in,
             tokens_out=tokens_out,
             validation_issues=validation_issues,
+            repaired=repaired,
         )
         state.turns.append(record)
         if speaker_id != "moderator":
@@ -373,6 +391,15 @@ class DialogueController:
         if state.phase == Phase.NARROWING and everyone_voted(state):
             state.candidate_option = ConsensusManager().leading_candidate(state)
             state.phase = Phase.CONFIRMATION
+        if state.phase == Phase.CONFIRMATION:
+            # Once a candidate is on the table, bound the confirmation churn: after
+            # max_confirmation_turns of accept/reject/compromise without everyone agreeing,
+            # close out (finalize picks consensus/fallback/unresolved) instead of looping
+            # back into fresh compromise proposals that flip the group around.
+            if state.confirmation_start_turns is None:
+                state.confirmation_start_turns = participant_turns
+            elif participant_turns - state.confirmation_start_turns >= int(cfg.conversation.max_confirmation_turns):
+                state.phase = Phase.CLOSURE
         if participant_turns >= int(cfg.conversation.hard_max_participant_turns):
             state.phase = Phase.CLOSURE
 

@@ -196,6 +196,8 @@ def _mock_setup(prompt: str) -> str:
 
 
 def _mock_dialogue(prompt: str) -> str:
+    if "facilitator" in prompt.lower():
+        return "Okay, where are we all at on this — anything shifting, or shall we move toward a decision?"
     act_match = re.search(r"move=([a-z_]+)", prompt)
     act = act_match.group(1) if act_match else "react"
     focus_match = re.search(r"focus=([A-D])", prompt)

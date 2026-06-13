@@ -100,7 +100,7 @@ class TurnRouter:
                 speaker_id=persona.id,
                 act=act,
                 option_focus=[candidate],
-                reason=f"say whether Option {candidate} works as the current compromise",
+                reason=f"say whether Option {candidate} works for you; if you accept, give the one thing that makes it okay",
                 length_hint="short",
             )
         return None
@@ -184,13 +184,12 @@ class TurnRouter:
         return weighted_choice(ids, weights)
 
     def _coverage_gap_option(self, state: DialogueState) -> Optional[str]:
-        # Make sure every option gets at least one mention and one reason, then stop
-        # steering: free discussion and convergence take over (no reason-count padding).
+        # Make sure every option gets at least one mention, then stop steering: free
+        # discussion and convergence take over. We deliberately do NOT force a "reason"
+        # for every option — making someone advocate an option nobody cares about
+        # produces filler ("let's also consider D") that doesn't sound like real talk.
         for option_id, coverage in state.coverage.items():
             if coverage.mentions == 0:
-                return option_id
-        for option_id, coverage in state.coverage.items():
-            if coverage.reasons == 0:
                 return option_id
         return None
 
@@ -300,7 +299,7 @@ class TurnRouter:
         return {
             ActType.REACT: "react naturally to the last useful point",
             ActType.ASK: "ask one targeted question that helps the decision",
-            ActType.COMPARE: "compare real trade-offs between options",
+            ActType.COMPARE: "weigh the real trade-offs between options and say which side you land on",
             ActType.SUPPORT: "add a concrete reason for an option",
             ActType.OBJECT: "raise a soft objection without derailing the group",
             ActType.PUSH_BACK: "push back on a point while staying cooperative",

@@ -1,76 +1,154 @@
-# Master Group Discussion Simulator
+# Group Discussion Simulator
 
-Layout:
+Generates natural, casual multi-party discussions where several LLM-driven personas
+talk through a decision from a one-line topic and try to reach a workable group choice.
+A deterministic controller decides **who speaks, when, and with what intent**; the LLM
+only renders the surface text of each turn. This split keeps the chat coherent and
+on-topic instead of letting agents free-run.
+
+## Layout
 
 ```text
 root/
-  main.py
-  config.yaml
-  logs/
+  main.py            # CLI entry point
+  config.yaml        # every tunable number (see "Configuration")
+  logs/              # one folder per run + master metrics.csv
+  papers/            # background literature
   src/
-    builders.py
-    config_loader.py
-    dialogue.py
-    llm_client.py
-    logger.py
-    models.py
-    parsing.py
-    prompts.py
-    router.py
-    utils.py
-    validation.py
+    builders.py      # one LLM call builds the scenario + persona belief states
+    config_loader.py # loads config.yaml, exposes `cfg`, validates ranges
+    dialogue.py      # orchestration: phases, moderator, consensus, state tracking
+    llm_client.py    # provider abstraction (uni | groq | gemini | mock)
+    logger.py        # transcript.md, run.json, metrics.csv, optional prompts.jsonl
+    models.py        # typed state objects (the only things routing/consensus operate on)
+    parsing.py       # option resolution + dialogue-act trailer parsing
+    prompts.py       # ALL LLM prompts and moderator/chat text
+    router.py        # turn-taking: who speaks, addressee, local move
+    scoring.py       # shared "how much does the group back option X"
+    utils.py         # deterministic helpers (sampling, token overlap, JSON)
+    validation.py    # deterministic guardrails on generated messages
 ```
 
-Design boundaries:
+Design boundaries (kept deliberately): `config.yaml` holds every tunable number;
+`src/prompts.py` holds every piece of prose sent to an LLM or printed as moderator text;
+`src/models.py` holds typed state; `src/validation.py` is guardrails only, not a second
+policy engine.
 
-- `config.yaml` stores tweakable numeric parameters.
-- `src/prompts.py` stores all LLM prompts and moderator/chat templates.
-- `src/models.py` stores typed state objects.
-- `src/router.py` selects who speaks, when, to whom, and with what local move.
-- `src/dialogue.py` owns orchestration, phase control, consensus, and state updates.
-- `src/parsing.py` owns option resolution and trailer parsing.
-- `src/validation.py` provides deterministic guardrails only; it should not become a second policy engine.
+## How a run works
 
-State extraction (the structured trailer):
+1. **Setup** (`builders.py`): a single LLM call produces the scenario (4 option cards with
+   stable, comparable attributes) and each participant's hidden belief state (preferred /
+   acceptable / rejected options, a 1–5 private utility per option, reasons, goal,
+   backstory, reservation). The builder samples Big-Five + cooperative-control traits in
+   code and tells the model to use them. If setup can't produce a valid world it raises —
+   there is no fabricated fallback scenario.
 
-Each generated turn ends with a small machine tag the chat reader never sees, e.g.
-`[act=accept; opt=C; stance=accept]`. `parsing.parse_trailer` strips it and turns it
-into a `TurnMove`. This replaces phrase "cue" regexes — deciding whether a message is a
-vote/accept/reject is the model's job. If a turn omits the trailer, the parser falls back
-to the routed intent. The option resolver only matches distinctive option names/ids
-(shared words like "Night" in "Bowling Night"/"Game Night" are dropped automatically).
+2. **Coalitions** (`builders.py`): before setup, a code-side *preference plan* decides this
+   run's split. Most runs are all-distinct (1-1-1), but with `personas.coalition_probability`
+   two or more participants share a preferred option (2v1, 3v1, 5v2 …). The plan is both
+   described to the setup LLM and enforced afterwards, so coalitions actually appear.
 
-Convergence:
+3. **Dialogue loop** (`dialogue.py` + `router.py`): the controller advances through phases
+   — opening → discussion → narrowing → confirmation → closure. Each turn the router emits
+   a `MoveIntent` (speaker, addressee, local move such as compare/support/object/propose,
+   length hint). `prompts.sim_utterance` turns that into a prompt; the LLM writes one chat
+   line ending in a hidden status trailer.
 
-Agents have movable leanings. Strong arguments plus traits (compromise willingness) let a
-persona move toward an option they can live with; the group narrows once leanings
-concentrate (`conversation.concentration_to_narrow`), not by filling per-option counters.
+4. **State extraction (the trailer)**: every generated turn ends with a machine tag the
+   chat reader never sees, e.g. `[act=accept; opt=C; stance=accept]`. `parsing.parse_trailer`
+   strips it and produces a `TurnMove`. The parser is tolerant — it handles the tag with or
+   without surrounding brackets and ignores a stray option letter — and if the tag is
+   missing it falls back to the routed intent. Deciding whether a message is a
+   vote/accept/reject is the model's job, reported via the trailer, not guessed from prose.
 
-Moderator facilitation:
+5. **Convergence**: personas have movable leanings. A strong point plus a cooperative
+   personality lets someone shift toward an option they can live with. The group narrows
+   once leanings concentrate (`conversation.concentration_to_narrow`), not by filling
+   per-option counters.
 
-The moderator does more than open/close. When the discussion circles (no *new*
-information for `conversation.moderator_stall_window` turns) it summarizes where everyone
-stands and pushes toward narrowing; in confirmation, if there is a single holdout, it asks
-what would make the option work or whether another fits everyone. Interventions are
-rate-limited (`moderator_cooldown_turns`, `moderator_max_interventions`).
+6. **Moderator** (`dialogue.py` + `prompts.py`): beyond opening/closing, the moderator
+   steps in when the discussion circles, when everyone has clearly converged ("sounds like
+   we all want X — lock it in?"), or to nudge one or two holdouts in confirmation (each then
+   answers in turn). **All moderator lines except the fixed opening option board are
+   generated by the LLM** from the current standings, so they vary run to run. Interventions
+   are rate-limited (`moderator_cooldown_turns`, `moderator_max_interventions`).
 
-Outputs (per run, under `logs/<run_id>/`):
+7. **Consensus / outcome** (`dialogue.py`): `consensus` when everyone votes/accepts the same
+   option, `fallback` when a strong majority backs one and nobody hard-rejects it, otherwise
+   `unresolved`. Confirmation churn is bounded (`conversation.max_confirmation_turns`) so the
+   group can't flip-flop forever. Stubborn trait draws can legitimately end a chat unresolved
+   — that's intended, just kept rare by the trait ranges.
+
+8. **Validation** (`validation.py`): deterministic guardrails repair turns that are empty,
+   carry a speaker prefix, reference an invalid option, invent numbers, repeat the speaker,
+   duplicate another speaker's line verbatim, trail off mid-thought, or pose a question on a
+   non-question move. Warn-level flags (e.g. a repeated sentence start) are recorded but not
+   repaired by default.
+
+## Configuration
+
+`config.yaml` opens with a **"DIALS THAT MATTER"** guide. The ~12 knobs worth touching:
+
+| Dial | Effect |
+|---|---|
+| `llm.sampling.dialogue.temperature` | variety / looseness of the chat |
+| `utterances.word_budgets` | length and feel of each turn kind |
+| `simulation.num_participants` | group size |
+| `personas.cooperative_controls.compromise_willingness` | the main "do chats conclude" dial |
+| `personas.hard_blocker_probability` | how often a chat *can't* conclude |
+| `personas.coalition_probability` | how often participants share a preference |
+| `scenario.acceptance_score` | bar for "I can live with this" |
+| `conversation.concentration_to_narrow` | how aligned before it goes to a vote |
+| `conversation.force_narrowing_turns` / `hard_max_participant_turns` | narrow-anyway / hard stop |
+| `conversation.moderator_stall_window` / `moderator_max_interventions` | moderator presence |
+
+Everything below the guide is a structural constant (routing weights, validation
+thresholds, prompt-window sizes) you normally set once.
+
+Provider is `llm.provider`: `uni` (Bamberg Ollama endpoint), `groq`, `gemini`, or `mock`.
+`mock` returns a schema-valid scenario and trailer-tagged turns so the whole pipeline runs
+offline — it is a test double for plumbing, **not** a fallback for failed real calls. API
+keys (`GROQ_API_KEY`, `GOOGLE_API_KEY`) come from `.env`.
+
+## Outputs (per run, under `logs/<run_id>/`)
 
 - `transcript.md` — human-readable setup, chat, outcome, metrics, token totals.
-- `run.json` — full structured run (scenario, personas, every turn, metrics).
+- `run.json` — full structured run (scenario, personas, every turn with its act/issues).
 - `logs/metrics.csv` — master file, one appended row per run for cross-run evaluation.
-- `prompts.jsonl` — every prompt for the run, written only when `output.write_prompts: true`.
+- `prompts.jsonl` — every prompt for the run, only when `output.write_prompts: true`.
 
-Failures are surfaced, not faked: if setup or generation fails there is no fabricated
-fallback scenario/turn — you get a clear error.
+Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns` (turns an actual
+repair ran on), `flagged_turns` (turns left with any validation flag — usually warn-level),
+`question_density`, `avg_words_per_turn`, `option_coverage`, token totals.
 
-Run:
+## Running
 
-```bash
-py main.py
-py main.py scenarios.txt
+Use the project virtualenv (`dspro`). Interactive single run:
+
+```powershell
+(dspro) PS C:\Users\Andi\Desktop\ds_proj> py .\main.py
+Topic: Plan a weekend team offsite
 ```
 
-For local dry tests without an LLM endpoint, set `llm.provider: "mock"` in `config.yaml`.
-The mock provider returns a schema-valid scenario and trailer-tagged turns so the whole
-pipeline runs offline (it is a test double, not a fallback for failed real calls).
+Batch from a file (one topic per line, `#` comments ignored):
+
+```powershell
+(dspro) PS C:\Users\Andi\Desktop\ds_proj> py .\main.py scenarios.txt
+```
+
+Offline dry run without an LLM endpoint: set `llm.provider: "mock"` in `config.yaml`.
+
+### Running and evaluating from the assistant
+
+When the VPN is connected, `uni` runs work end to end, so the assistant can drive a run
+itself instead of asking for transcripts:
+
+```powershell
+# pipe a topic into the interactive prompt, using the dspro venv directly
+"Decide which board game to play at game night" | & .\dspro\Scripts\python.exe .\main.py
+```
+
+The run streams the header and every turn to stdout and writes the full logs under
+`logs/<run_id>/`. After it finishes, read the newest `logs/<run_id>/transcript.md` (and
+`run.json` for per-turn acts and validation issues) to evaluate naturalness, convergence,
+and any remaining errors.

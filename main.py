@@ -53,11 +53,16 @@ def run_dialogue(topic: str) -> None:
     print("-" * 72 + "\n")
 
 
+def _clean_topic(text: str) -> str:
+    # Strip a UTF-8 BOM (from piped stdin or utf-8-sig files) that .strip() leaves behind.
+    return text.replace("﻿", "").strip()
+
+
 def run_batch(path: str) -> None:
     topics = [
-        line.strip()
-        for line in Path(path).read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.strip().startswith("#")
+        cleaned
+        for line in Path(path).read_text(encoding="utf-8-sig").splitlines()
+        if (cleaned := _clean_topic(line)) and not cleaned.startswith("#")
     ]
     for topic in topics:
         run_dialogue(topic)
@@ -67,7 +72,7 @@ def main() -> None:
     if len(sys.argv) > 1:
         run_batch(sys.argv[1])
         return
-    topic = input("Topic: ").strip()
+    topic = _clean_topic(input("Topic: "))
     if not topic:
         raise SystemExit("No topic provided.")
     run_dialogue(topic)

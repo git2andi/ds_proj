@@ -124,7 +124,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     n_part = max(1, len(participant_turns))
     question_density = round(sum(1 for t in participant_turns if "?" in t.text) / n_part, 3)
     avg_words = round(sum(len(t.text.split()) for t in participant_turns) / n_part, 1)
-    repaired = sum(1 for t in participant_turns if t.validation_issues)
+    repaired = sum(1 for t in participant_turns if t.repaired)
+    flagged = sum(1 for t in participant_turns if t.validation_issues)
     return {
         "participant_turns": len(participant_turns),
         "moderator_turns": len(moderator_turns),
@@ -134,6 +135,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "avg_words_per_turn": avg_words,
         "repaired_turns": repaired,
         "repair_rate": round(repaired / n_part, 3),
+        # Turns left with a (often warn-level) validation flag after any repair — informational.
+        "flagged_turns": flagged,
         # Fraction of participants who voted for or accepted the final option (1.0 = full consensus).
         "final_support_fraction": _final_support_fraction(state, outcome),
         "option_coverage": {opt: {"mentions": c.mentions, "reasons": c.reasons, "objections": c.objections, "acceptances": c.acceptances} for opt, c in state.coverage.items()},

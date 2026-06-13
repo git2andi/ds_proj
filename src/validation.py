@@ -28,6 +28,8 @@ class MessageValidator:
         self._check_repetition(stripped, state, intent, issues)
         self._check_decision_clarity(stripped, intent, move, issues)
         self._check_question_chain(stripped, state, intent, issues)
+        self._check_completeness(stripped, issues)
+        self._check_unwanted_question(stripped, intent, issues)
         ok = not any(issue.severity in {"repair", "fatal"} for issue in issues)
         return ValidationResult(ok=ok, issues=issues)
 
@@ -59,7 +61,14 @@ class MessageValidator:
             issues.append(ValidationIssue("INVENTED_OPTION_ATTRIBUTE", "repair", f"Numbers not found in option source: {invented}"))
 
     def _check_repetition(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
-        # Confirmations are naturally similar to each other, so we don't flag repetition there.
+        # A near-verbatim copy of another speaker's recent line is never natural — flag it
+        # even for confirmations (two people shouldn't say the exact same sentence).
+        others = [t for t in reversed(state.turns) if t.speaker_id not in {"moderator", intent.speaker_id}]
+        for turn in others[: int(cfg.validation.repeated_start_window)]:
+            if jaccard_text(text, turn.text) >= float(cfg.validation.duplicate_threshold):
+                issues.append(ValidationIssue("DUPLICATE_TURN", "repair", "Near-identical to another speaker's recent turn."))
+                break
+        # Confirmations are otherwise naturally similar, so we don't flag ordinary repetition there.
         if intent.act in {ActType.ACCEPT, ActType.REJECT}:
             return
         rt = state.runtimes[intent.speaker_id]
@@ -92,6 +101,25 @@ class MessageValidator:
         if intent.act == ActType.ACCEPT and "?" in text:
             issues.append(ValidationIssue("QUESTION_IN_CONFIRMATION", "repair", "Confirmation should be an answer, not a new question."))
 
+    def _check_completeness(self, text: str, issues: list[ValidationIssue]) -> None:
+        # Catch turns that trail off mid-thought, e.g. "...compare to Kyoto Delight's"
+        # or "let's go with the". A casual line may skip a final period, so we only flag
+        # when it ALSO ends on a possessive or a word a sentence cannot end on.
+        words = re.findall(r"[\w'’]+", text)
+        if not words:
+            return
+        ends_punct = text.rstrip()[-1:] in ".!?…\"'’)"
+        last = words[-1].lower()
+        dangling = last.endswith("'s") or last.endswith("’s") or last in _DANGLING_END
+        if dangling and not ends_punct:
+            issues.append(ValidationIssue("INCOMPLETE_TURN", "repair", "Message appears cut off mid-thought."))
+
+    def _check_unwanted_question(self, text: str, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
+        # Only ask/answer/propose moves may pose a question; other moves coming out as
+        # questions read as interrogation rather than discussion.
+        if "?" in text and intent.act not in {ActType.ASK, ActType.ANSWER, ActType.PROPOSE_COMPROMISE}:
+            issues.append(ValidationIssue("UNWANTED_QUESTION", "repair", "This move should be a statement, not a question."))
+
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         if "?" not in text:
             return
@@ -105,6 +133,14 @@ class MessageValidator:
                 break
         if recent_questions >= int(cfg.validation.max_question_chain) and intent.act != ActType.ANSWER:
             issues.append(ValidationIssue("QUESTION_CHAIN", "repair", "Too many consecutive questions."))
+
+
+# Words a complete sentence cannot end on; a turn ending here (without punctuation) is cut off.
+_DANGLING_END = {
+    "to", "of", "for", "and", "but", "or", "with", "the", "a", "an", "than", "vs", "versus",
+    "compared", "between", "while", "because", "so", "that", "is", "are", "its", "their",
+    "our", "my", "your", "his", "her", "in", "on", "at", "as", "if", "over", "from",
+}
 
 
 def _normalise_number(text: str) -> str:
