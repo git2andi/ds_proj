@@ -18,9 +18,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Stream unicode (em-dashes, umlauts) to the console regardless of the OS codepage.
+# Read/stream unicode (em-dashes, umlauts) regardless of the OS codepage. Reading stdin as
+# UTF-8 means a piped topic's leading byte-order mark decodes to a single ﻿ that
+# _clean_topic strips, instead of the cp1252 mojibake "ï»¿" that used to leak into the topic.
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stdin, "reconfigure"):
+    sys.stdin.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
@@ -54,8 +58,9 @@ def run_dialogue(topic: str) -> None:
 
 
 def _clean_topic(text: str) -> str:
-    # Strip a UTF-8 BOM (from piped stdin or utf-8-sig files) that .strip() leaves behind.
-    return text.replace("﻿", "").strip()
+    # Strip a UTF-8 BOM, whether it arrived as the real char (U+FEFF) or as the cp1252
+    # mojibake "ï»¿" (UTF-8 BOM bytes misread under a legacy codepage).
+    return text.replace("﻿", "").replace("ï»¿", "").strip()
 
 
 def run_batch(path: str) -> None:

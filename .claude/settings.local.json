@@ -46,7 +46,27 @@
       "Bash(grep -v -E '\\\\.\\(pyc\\)$')",
       "Bash(python -m pyflakes .)",
       "Bash(python -m pip install pyflakes -q)",
-      "Bash(python -m pyflakes c:/Users/Andi/Desktop/ds_proj/src)"
+      "Bash(python -m pyflakes c:/Users/Andi/Desktop/ds_proj/src)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -c \"import ast; ast.parse\\(open\\('src/prompts.py',encoding='utf-8'\\).read\\(\\)\\); ast.parse\\(open\\('src/builders.py',encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m py_compile src/builders.py src/parsing.py src/router.py src/prompts.py src/llm_client.py src/config_loader.py src/dialogue.py)",
+      "PowerShell(if \\($?\\) { \"compile OK\" })",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe _verify_mock.py)",
+      "Bash(python -c 'import json;r=json.load\\(open\\('\\\\''logs/20260614_175910_516620/run.json'\\\\'',encoding='\\\\''utf-8'\\\\''\\)\\);print\\('\\\\''turns'\\\\'',len\\(r.get\\('\\\\''turns'\\\\'',[]\\)\\),'\\\\''outcome'\\\\'',r.get\\('\\\\''outcome'\\\\''\\)\\)')",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m py_compile src/router.py src/prompts.py src/validation.py src/config_loader.py)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe _verify_mock.py 2>&1)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m py_compile src/llm_client.py)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m pyflakes src 2>&1)",
+      "PowerShell(if \\(-not $?\\) { \"pyflakes not available - trying compileall+manual\" })",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe _audit.py)",
+      "Bash(./dspro/Scripts/python.exe -m compileall -q src)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'src'\\); import config_loader, dialogue, router, prompts, validation, builders, llm_client, models, parsing, scoring, utils, logger; print\\('imports + config load OK'\\)\")",
+      "Bash(./dspro/Scripts/python.exe -c ' *)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe _eval2.py)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m compileall -q src)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'src'\\); import dialogue, prompts, models, config_loader; print\\('imports OK'\\)\")",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe _eval3.py)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -m compileall -q src main.py)",
+      "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'.'\\); import main; print\\('clean1:', repr\\(main._clean_topic\\('?Pick a venue'\\)\\)\\); print\\('clean2:', repr\\(main._clean_topic\\('���Pick a venue'\\)\\)\\)\")"
     ]
   }
 }

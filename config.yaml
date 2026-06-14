@@ -20,8 +20,8 @@
 #   When/whether it concludes
 #     scenario.acceptance_score           bar for "I can live with this"
 #     conversation.concentration_to_narrow   how aligned before it goes to a vote
-#     conversation.force_narrowing_turns      narrow no matter what after N turns
-#     conversation.hard_max_participant_turns  hard stop
+#     conversation.discussion_depth           shapes the (derived, varying) discussion length
+#     conversation.*_per_participant           narrow-anyway / hard-stop caps, scaled by group size
 #
 #   Moderator presence
 #     conversation.moderator_stall_window      how soon the mod breaks a circle
@@ -29,12 +29,11 @@
 # ============================================================================
 
 llm:
-  provider: "uni"                    # uni | groq | gemini | mock
+  provider: "uni"                    # uni | groq | gemini
   models:
     uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
-    mock: "mock"
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   timeouts:
@@ -101,20 +100,26 @@ personas:
   non_blocker_max_soft_rejections: 1
   preferred_diversity_min_unique: 2
   require_common_compromise: true
-  min_reasons_preferred: 2
-  min_reasons_acceptable: 1
 
 conversation:
   # --- core dials: pacing and when the discussion turns into a decision ---
   concentration_to_narrow: 0.6      # fraction of group sharing the leading lean before narrowing
-  force_narrowing_turns: 22         # narrow regardless once this many participant turns pass
-  hard_max_participant_turns: 30    # hard stop for the whole discussion
+  # How long the discussion runs is NOT a fixed number of turns. It is derived per run from
+  # group size and composition (+ jitter), so a quick-agreeing trio is short while a big,
+  # split, stubborn group runs long. All three caps below scale with participant count.
+  force_narrow_turns_per_participant: 8   # narrow regardless after this * participants
+  hard_max_turns_per_participant: 12      # hard stop after this * participants
+  discussion_depth:                  # shapes the derived "talk this much before narrowing" target
+    base_per_participant: 2.0
+    contention_weight: 1.5           # more distinct starting preferences -> longer
+    stubbornness_weight: 1.0         # lower mean compromise_willingness -> longer
+    detail_weight: 1.0               # higher mean detail trait -> longer
+    jitter_per_participant: [0.0, 1.5]   # random spread so runs differ even with similar groups
   moderator_stall_window: 4         # consecutive no-progress turns before the mod steps in
   moderator_max_interventions: 3    # cap on moderator nudges per run
   # --- structural: convergence/moderator fine print, set once ---
   min_turns_per_participant_before_narrowing: 2
-  min_total_participant_turns: 9
-  min_options_touched_before_narrowing: 3
+  min_options_touched_before_narrowing: 2   # alternatives worth airing; dead options aren't forced in
   no_progress_window_turns: 6
   moderator_cooldown_turns: 5       # min turns between moderator interventions
   max_confirmation_turns: 8         # cap on accept/reject churn before forcing a close (anti flip-flop)
@@ -123,7 +128,6 @@ conversation:
 
 routing:
   recent_speaker_window: 5
-  last_speaker_penalty: 0.70
   recent_speaker_penalty: 0.25
   low_turn_count_boost: 0.45
   unspoken_boost: 0.95
@@ -133,19 +137,23 @@ routing:
   acceptable_option_gap_boost: 0.22
   direct_reply_probability: 0.62
   act_probabilities:                # mix of local moves the router samples in free discussion
-    react: 0.16
-    ask: 0.11
-    compare: 0.25
-    support: 0.16
+    react: 0.15
+    ask: 0.16                        # base only; scaled per-speaker by openness (curious people ask more)
+    compare: 0.22
+    support: 0.15
     object: 0.16
     push_back: 0.09
     propose_compromise: 0.07
+  ask_after_question_damping: 0.25    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
+  ask_quiet_window: 3                  # turns to look back for a recent question before damping asking
+  persuasion_probability_factor: 0.55  # scales compromise_willingness into a per-turn chance of being won over
   late_discussion_compromise_bonus: 0.10
   no_progress_compromise_probability: 0.55
   length_hint_probabilities:
     short: 0.28
     medium: 0.54
     long: 0.18
+  length_trait_slope: 0.5             # how strongly response_length pulls the length hint toward short/long
 
 utterances:
   # word_budgets is a core feel dial; the rest is prompt-window bookkeeping.
@@ -159,7 +167,10 @@ utterances:
     vote: 34
     confirm: 28
     closure: 22
+    greeting: 14                     # quick hello as the group gathers
+    farewell: 18                     # quick sign-off acknowledging the outcome
   hard_cap_extra_words: 8
+  length_trait_word_step: 6         # words added/removed per point of response_length above/below the trait midpoint
   recent_turns_in_prompt: 8
   recent_turns_after_question: 8
   max_focus_options_in_prompt: 3
@@ -178,7 +189,7 @@ validation:
   max_new_numbers_without_source: 1
 
 consensus:
-  majority_fallback_fraction: 0.67   # support fraction needed for a no-consensus fallback pick
+  majority_fallback_fraction: 0.66   # support needed for a fallback pick; a clear 2/3 majority carries
 
 output:
   log_dir: "logs"

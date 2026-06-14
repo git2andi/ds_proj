@@ -224,6 +224,11 @@ class DialogueState:
     no_progress_count: int = 0
     facilitator_force_narrow: bool = False
     confirmation_start_turns: Optional[int] = None  # participant-turn count when confirmation began
+    # Pacing targets derived once per run (group size + composition), so length varies
+    # and scales with the number of participants instead of using one fixed floor.
+    min_discussion_turns: int = 0
+    force_narrow_turns: int = 0
+    hard_max_turns: int = 0
     setup_tokens_in: int = 0
     setup_tokens_out: int = 0
     dialogue_tokens_in: int = 0

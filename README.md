@@ -1,10 +1,63 @@
 # Group Discussion Simulator
 
+## What this is
+
+This is a university project exploring how well LLMs can simulate a small group of
+people having a real discussion and arriving at a decision together. Give it a topic
+("decide which board game to play at game night", "plan a weekend team offsite", "pick
+a restaurant for the team dinner") and it generates a full multi-party chat: 2-7
+personas with their own backstories, goals, and opinions talk it through, react to each
+other, change their minds (sometimes), and either land on a shared choice or fail to.
+
+The motivation is that LLM-driven "user simulators" are increasingly used to test and
+train dialogue systems, recommender agents, and group-decision tools — but only if the
+simulated conversations actually *behave* like group discussions: people have different
+starting preferences, some form natural coalitions, opinions shift when a good point
+lands, and a discussion converges (or doesn't) for understandable reasons. A simulator
+that just has every persona repeat "I prefer X because Y" until a counter hits a
+threshold isn't useful for that. This project is an attempt to get closer to the real
+thing while staying fully topic-agnostic — nothing here is tuned for one scenario.
+
+## How it works
+
 Generates natural, casual multi-party discussions where several LLM-driven personas
 talk through a decision from a one-line topic and try to reach a workable group choice.
 A deterministic controller decides **who speaks, when, and with what intent**; the LLM
 only renders the surface text of each turn. This split keeps the chat coherent and
 on-topic instead of letting agents free-run.
+
+Concretely: one LLM call builds the scenario (a handful of named options with
+comparable attributes, e.g. four board games with playtime/players/complexity) and a
+hidden belief state for each persona — what they privately prefer, what they could
+live with, what they'd reject, why, and a short backstory. From there, every turn of
+the chat is driven by code: a router picks who speaks next and what kind of thing they
+should do (open, react, compare two options, support or push back on a point, propose
+a compromise, vote, accept, ask/answer). Only the *wording* of that turn comes from the
+LLM — it writes one chat-style line, plus a hidden tag reporting what it actually did
+(which option, what stance), which the controller reads to update the group's state.
+A moderator (also LLM-voiced, but only triggered by code) opens the discussion, steps
+in if the group is going in circles or has clearly converged, nudges the last one or
+two holdouts near the end, and closes things out once there's a decision (or once it's
+clear there won't be one).
+
+## What a chat should look like
+
+A good run reads like a short, casual group chat: people state a leaning early without
+over-explaining it, then actually respond to each other — agreeing, disagreeing,
+building on a point, occasionally getting persuaded and shifting position. Some
+participants may walk in already aligned (a 2v1 or 3v1 split is normal, not everyone
+needs a unique favorite), and that alignment can still shift during the conversation.
+The moderator's voice should vary run to run rather than reciting the same stock
+phrases. By the end, the group either lands on one option for reasons that emerged in
+the chat (consensus, or a majority fallback nobody hard-objects to), or — more rarely,
+when someone is a genuine hard blocker — ends without an agreement. Throughout, the
+text should stay grounded in the scenario's actual facts (no invented numbers), avoid
+repeating itself or other speakers, and never leak the internal `[act=...]` bookkeeping
+tag into the visible chat.
+Chats should work for the various topics and any fix should not be tailored to fit the 
+current specific topic only. Any update/change should be done witht the thought that it 
+must also work for any other topic given. It should work for various amounts of Sims 
+aswell.
 
 ## Layout
 
@@ -18,7 +71,7 @@ root/
     builders.py      # one LLM call builds the scenario + persona belief states
     config_loader.py # loads config.yaml, exposes `cfg`, validates ranges
     dialogue.py      # orchestration: phases, moderator, consensus, state tracking
-    llm_client.py    # provider abstraction (uni | groq | gemini | mock)
+    llm_client.py    # provider abstraction (uni | groq | gemini)
     logger.py        # transcript.md, run.json, metrics.csv, optional prompts.jsonl
     models.py        # typed state objects (the only things routing/consensus operate on)
     parsing.py       # option resolution + dialogue-act trailer parsing
@@ -41,7 +94,11 @@ policy engine.
    acceptable / rejected options, a 1–5 private utility per option, reasons, goal,
    backstory, reservation). The builder samples Big-Five + cooperative-control traits in
    code and tells the model to use them. If setup can't produce a valid world it raises —
-   there is no fabricated fallback scenario.
+   no required field is silently defaulted (names, roles, goals, option names/upsides,
+   reasons, per-option scores, …) and there is no fabricated fallback scenario. The only
+   reasons the code ever derives are for options it *structurally* assigns itself (a
+   coalition-reassigned preference or a forced common compromise), never as a stand-in for
+   content the model was asked for but omitted.
 
 2. **Coalitions** (`builders.py`): before setup, a code-side *preference plan* decides this
    run's split. Most runs are all-distinct (1-1-1), but with `personas.coalition_probability`
@@ -49,10 +106,23 @@ policy engine.
    described to the setup LLM and enforced afterwards, so coalitions actually appear.
 
 3. **Dialogue loop** (`dialogue.py` + `router.py`): the controller advances through phases
-   — opening → discussion → narrowing → confirmation → closure. Each turn the router emits
+   — opening → discussion → narrowing → confirmation → closure. The chat opens with a quick,
+   optional greeting from a trait-driven subset (more extraverted personas are likelier to
+   chime in, at least one always does) and ends with short sign-offs that acknowledge the
+   outcome; these social beats are cosmetic — they don't affect stance, coverage, or
+   convergence. Each turn the router emits
    a `MoveIntent` (speaker, addressee, local move such as compare/support/object/propose,
    length hint). `prompts.sim_utterance` turns that into a prompt; the LLM writes one chat
-   line ending in a hidden status trailer.
+   line ending in a hidden status trailer. Asking is emergent, not quota'd: the `ask` move's
+   weight is scaled per speaker by their openness (curious people ask more) and damped right
+   after a question, and a direct question gets answered before the thread moves on. Turns
+   may also carry the occasional rhetorical/open question that others simply pick up on.
+   Turn length follows the speaker's traits — `response_length`/`detail` bias the length hint
+   and the prompt's verbosity guidance, so a terse persona and a chatty one read differently
+   instead of every line landing on the same one-liner. The router also makes sure real
+   *alternatives* get aired before the group settles, but only options at least one person
+   prefers or could accept; an option nobody wants is left unmentioned rather than forced in
+   as filler.
 
 4. **State extraction (the trailer)**: every generated turn ends with a machine tag the
    chat reader never sees, e.g. `[act=accept; opt=C; stance=accept]`. `parsing.parse_trailer`
@@ -62,9 +132,19 @@ policy engine.
    vote/accept/reject is the model's job, reported via the trailer, not guessed from prose.
 
 5. **Convergence**: personas have movable leanings. A strong point plus a cooperative
-   personality lets someone shift toward an option they can live with. The group narrows
-   once leanings concentrate (`conversation.concentration_to_narrow`), not by filling
-   per-option counters.
+   personality lets someone shift toward an option they can live with — when the group is
+   rallying behind an option a persona privately rates acceptable, the router can hand them
+   an explicit "won over" turn (chance scaled by their `compromise_willingness` via
+   `routing.persuasion_probability_factor`) that voices the change of mind and moves their
+   lean, rather than the shift only ever surfacing as a silent tally at vote time. Opening
+   turns are clamped to a stated leaning only, so a first-round line can never be miscounted
+   as a vote/accept. The group narrows once leanings concentrate
+   (`conversation.concentration_to_narrow`), not by filling per-option counters. How long the
+   discussion runs before that is **derived per run, not a fixed floor**: a target is computed
+   from group size and composition — more distinct starting preferences, lower mean
+   compromise, and more detail-oriented personas all lengthen it, plus per-run jitter — and
+   the force-narrow and hard-stop caps scale per participant, so a quick-agreeing trio is
+   short while a large, split, stubborn group runs proportionally longer.
 
 6. **Moderator** (`dialogue.py` + `prompts.py`): beyond opening/closing, the moderator
    steps in when the discussion circles, when everyone has clearly converged ("sounds like
@@ -74,16 +154,17 @@ policy engine.
    are rate-limited (`moderator_cooldown_turns`, `moderator_max_interventions`).
 
 7. **Consensus / outcome** (`dialogue.py`): `consensus` when everyone votes/accepts the same
-   option, `fallback` when a strong majority backs one and nobody hard-rejects it, otherwise
-   `unresolved`. Confirmation churn is bounded (`conversation.max_confirmation_turns`) so the
+   option, `fallback` when a strong majority backs one and nobody hard-rejects it (a clear
+   2/3 majority counts, via `consensus.majority_fallback_fraction`), otherwise `unresolved`. Confirmation churn is bounded (`conversation.max_confirmation_turns`) so the
    group can't flip-flop forever. Stubborn trait draws can legitimately end a chat unresolved
    — that's intended, just kept rare by the trait ranges.
 
 8. **Validation** (`validation.py`): deterministic guardrails repair turns that are empty,
    carry a speaker prefix, reference an invalid option, invent numbers, repeat the speaker,
-   duplicate another speaker's line verbatim, trail off mid-thought, or pose a question on a
-   non-question move. Warn-level flags (e.g. a repeated sentence start) are recorded but not
-   repaired by default.
+   duplicate another speaker's line verbatim, trail off mid-thought, turn a *decision* move
+   (vote/accept/reject) or an opening into a question, or stack too many questions in a row.
+   Discussion turns may still carry the occasional rhetorical/open question. Warn-level flags
+   (e.g. a repeated sentence start) are recorded but not repaired by default.
 
 ## Configuration
 
@@ -99,16 +180,18 @@ policy engine.
 | `personas.coalition_probability` | how often participants share a preference |
 | `scenario.acceptance_score` | bar for "I can live with this" |
 | `conversation.concentration_to_narrow` | how aligned before it goes to a vote |
-| `conversation.force_narrowing_turns` / `hard_max_participant_turns` | narrow-anyway / hard stop |
+| `conversation.discussion_depth` | shapes the derived, per-run discussion length |
+| `conversation.force_narrow_turns_per_participant` / `hard_max_turns_per_participant` | narrow-anyway / hard-stop caps, scaled by group size |
 | `conversation.moderator_stall_window` / `moderator_max_interventions` | moderator presence |
 
 Everything below the guide is a structural constant (routing weights, validation
 thresholds, prompt-window sizes) you normally set once.
 
-Provider is `llm.provider`: `uni` (Bamberg Ollama endpoint), `groq`, `gemini`, or `mock`.
-`mock` returns a schema-valid scenario and trailer-tagged turns so the whole pipeline runs
-offline — it is a test double for plumbing, **not** a fallback for failed real calls. API
-keys (`GROQ_API_KEY`, `GOOGLE_API_KEY`) come from `.env`.
+Provider is `llm.provider`: `uni` (Bamberg Ollama endpoint), `groq`, or `gemini`. There is
+no offline/mock provider and no fabricated fallback anywhere — every scenario, persona, and
+turn comes from a real model call, and if a call returns something unusable the run raises
+rather than papering over it. Evaluate and test against a real provider (`uni`). API keys
+(`GROQ_API_KEY`, `GOOGLE_API_KEY`) come from `.env`.
 
 ## Outputs (per run, under `logs/<run_id>/`)
 
@@ -136,7 +219,8 @@ Batch from a file (one topic per line, `#` comments ignored):
 (dspro) PS C:\Users\Andi\Desktop\ds_proj> py .\main.py scenarios.txt
 ```
 
-Offline dry run without an LLM endpoint: set `llm.provider: "mock"` in `config.yaml`.
+A run needs a reachable provider: `uni` requires the Bamberg VPN; `groq`/`gemini` need their
+API key in `.env`. There is no offline mode — if the endpoint is unreachable the run raises.
 
 ### Running and evaluating from the assistant
 
@@ -145,10 +229,60 @@ itself instead of asking for transcripts:
 
 ```powershell
 # pipe a topic into the interactive prompt, using the dspro venv directly
-"Decide which board game to play at game night" | & .\dspro\Scripts\python.exe .\main.py
+"Example (1-liner) Topic" | & .\dspro\Scripts\python.exe .\main.py
 ```
 
 The run streams the header and every turn to stdout and writes the full logs under
 `logs/<run_id>/`. After it finishes, read the newest `logs/<run_id>/transcript.md` (and
 `run.json` for per-turn acts and validation issues) to evaluate naturalness, convergence,
 and any remaining errors.
+
+## Status & next steps (evaluation as of 2026-06-14)
+
+Evaluated across fresh 2-, 3-, 4-, 5-, and 7-person runs on varied topics. Recording state
+here so the next session can continue without re-deriving it.
+
+### Known issues to fix next (highest-impact first)
+1. **Convergence/agreement chorus (biggest naturalness problem).** As the group coalesces —
+   especially the narrowing/vote round and in large groups — nearly everyone restates the
+   *same* reason for the winning option (e.g. n=7 "spacious + affordable" repeated by most;
+   n=2 "balance / cost and control"). It's *thematic* repetition, so the validators (which
+   catch near-verbatim/own-repetition) don't flag it. **To do:** in the vote/confirmation
+   guidance (`prompts._move_guidance` + `sim_utterance`), when others have already backed the
+   same option, instruct the speaker to either briefly affirm ("yeah, X works for me") OR add a
+   *new* angle — not re-state the headline reason. Consider tracking which attributes/reasons
+   were already voiced for the candidate and telling the model to avoid them. Possibly let the
+   narrowing round accept short "+1"-style agreement instead of a full vote sentence each.
+2. **"X makes me consider/think Y" acknowledgment template.** Many discussion turns follow
+   "Your point about X makes me think Y" — formulaic acknowledge-then-pivot. **To do:** add this
+   frame to the banned-template list in `sim_utterance` rules; push varied reactions (a direct
+   counter, a concrete example, a question) instead.
+3. **"Your..." opener tic (verify).** The new direct-address rule was refined to forbid starting
+   a line with "Your..."; confirm in the next runs it didn't just move the tic. If it persists,
+   harden (e.g. disallow "you/your" as the first word on consecutive addressed turns).
+4. **Thematic monotony / shallow exploration.** Discussions circle one or two headline
+   attributes rather than exploring distinct dimensions (cost vs risk vs timeline vs team-fit).
+   **To do:** consider an "attribute coverage" nudge (analogous to option coverage in
+   `router._coverage_gap_option`) that steers a turn toward an under-discussed dimension, and/or
+   prompt personas to argue from their own `main_concern`/`backstory` rather than the option's
+   headline spec.
+5. **Backstory/goal underused.** Role shows, but the specific `backstory`/`private_goal` rarely
+   surfaces. **To do:** light prompt nudge to occasionally ground a point in personal experience.
+
+### Polish (lower priority)
+- **Moderator phrasing for n=2**: "Most of us are okay with…", "we're all on the same page"
+  read oddly for two people. Make `prompts.moderator_*_prompt` group-size-aware (address the
+  one holdout by name; avoid "most of us"/"all" when n==2).
+- **Greeting/farewell sameness**: farewells don't see each other, so big groups get several
+  "Looks like we've got our direction". **To do:** pass already-said greetings/farewells into
+  the prompt to vary them.
+- **Possessive "X's <feature>" construction** is still a general tic even when not addressing a
+  person; worth discouraging more broadly in the rules.
+
+### How to reproduce the evaluation
+Run a spread of group sizes (`simulation.num_participants` 2/4/7) and topics from different
+domains, then read the newest transcripts. Useful signals already logged: `min_discussion_turns`
+(pacing), `question_density`, `avg_words_per_turn`, `flagged_turns`, `outcome_status`. For
+repetition, scan participant turns for high word-overlap pairs (jaccard ≥ 0.6) and count distinct
+first-3-word openers — both were near-clean lexically; the remaining problem is *thematic*.
+

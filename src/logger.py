@@ -142,6 +142,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "option_coverage": {opt: {"mentions": c.mentions, "reasons": c.reasons, "objections": c.objections, "acceptances": c.acceptances} for opt, c in state.coverage.items()},
         "outcome_status": outcome.status,
         "final_option": outcome.final_option,
+        # Per-run pacing target derived from group size/composition (see dialogue.derive_pacing).
+        "min_discussion_turns": state.min_discussion_turns,
     } | token_summary_for(state)
 
 

@@ -43,9 +43,6 @@ class Section:
             raise TypeError("Config section is not a mapping")
         return self._raw.items()
 
-    def as_dict(self) -> Any:
-        return self._raw
-
 
 class Config(Section):
     def __init__(self, path: Path) -> None:
@@ -81,7 +78,7 @@ class Config(Section):
             "simulation.min_participants",
             "simulation.max_participants",
             "scenario.option_labels",
-            "conversation.hard_max_participant_turns",
+            "conversation.hard_max_turns_per_participant",
             "output.log_dir",
         ]
         for key in required:

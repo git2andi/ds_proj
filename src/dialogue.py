@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import random
 from collections import Counter
 from typing import Optional
 
@@ -13,12 +14,14 @@ from llm_client import get_llm_client
 from logger import DialogueLogger, token_summary_for
 from models import (
     ActType,
+    DialogueAct,
     DialogueRunResult,
     DialogueState,
     MoveIntent,
     OpenQuestion,
     OptionCoverage,
     ParticipantRuntime,
+    Persona,
     Phase,
     RunOutcome,
     TurnRecord,
@@ -60,6 +63,7 @@ class Orchestrator:
 
         self._print_header(scenario, personas)
         self._emit(tracker.apply_moderator(state, prompts.moderator_opening(scenario), phase=Phase.OPENING))
+        self._greeting_round(state, tracker)  # options board first, then people say hi, then opinions
 
         while not self.controller.should_stop(state):
             self.controller.update_phase(state)
@@ -81,9 +85,10 @@ class Orchestrator:
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
         closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario))
+        self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
+        self._farewell_round(state, tracker, outcome)
         state.dialogue_tokens_in = self._llm.session_tokens_in
         state.dialogue_tokens_out = self._llm.session_tokens_out
-        self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
         paths = self.logger.finish(state, outcome)
         transcript = [f"{turn.speaker_name}: {turn.text}" for turn in state.turns]
         return DialogueRunResult(scenario, personas, transcript, outcome, paths, token_summary_for(state))
@@ -103,6 +108,44 @@ class Orchestrator:
         """Generate a moderator facilitation line via the LLM and clean it to one line."""
         raw = self._llm.generate(prompt, profile="dialogue")
         return clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
+
+    def _greeting_round(self, state: DialogueState, tracker: "StateTracker") -> None:
+        """A quick, optional hello from a trait-driven subset, right after the options board."""
+        budget = int(cfg.utterances.word_budgets.greeting)
+        for persona in self._social_speakers(state.personas):
+            others = [p.name for p in state.personas if p.id != persona.id]
+            line = self._social_say(prompts.greeting_line(persona, state.scenario.topic, others, budget), persona, budget)
+            if line:
+                self._emit(tracker.apply_social(state, persona, line, Phase.OPENING, self._llm.last_tokens_in, self._llm.last_tokens_out))
+
+    def _farewell_round(self, state: DialogueState, tracker: "StateTracker", outcome: RunOutcome) -> None:
+        """A quick, optional sign-off from a trait-driven subset once it's decided."""
+        budget = int(cfg.utterances.word_budgets.farewell)
+        for persona in self._social_speakers(state.personas):
+            others = [p.name for p in state.personas if p.id != persona.id]
+            line = self._social_say(prompts.farewell_line(persona, state.scenario, outcome, others, budget), persona, budget)
+            if line:
+                self._emit(tracker.apply_social(state, persona, line, Phase.CLOSURE, self._llm.last_tokens_in, self._llm.last_tokens_out))
+
+    def _social_say(self, prompt: str, persona: Persona, budget: int) -> Optional[str]:
+        # Greetings/goodbyes are cosmetic; a hiccup on one shouldn't sink the whole run, so
+        # we skip that persona's line rather than fabricate or abort.
+        try:
+            raw = self._llm.generate(prompt, profile="dialogue")
+        except Exception:
+            return None
+        text = clean_generated(raw, persona.name, budget)
+        return text or None
+
+    @staticmethod
+    def _social_speakers(personas: list[Persona]) -> list[Persona]:
+        """Pick who joins a social beat: more extraverted people are likelier to chime in,
+        but at least one always does, so greetings/goodbyes feel like 'some, sometimes all'."""
+        trait_max = float(cfg.personas.trait_max)
+        chosen = [p for p in personas if random.random() < p.traits.extraversion / trait_max]
+        if not chosen:
+            chosen = [max(personas, key=lambda p: p.traits.extraversion)]
+        return chosen
 
     def _generate_turn(self, state: DialogueState, intent: MoveIntent, validator: MessageValidator) -> tuple[str, TurnMove, str, int, int, list[str], bool]:
         persona = state.persona_by_id(intent.speaker_id)
@@ -207,6 +250,7 @@ class Orchestrator:
 
 
 def initialise_state(scenario, personas) -> DialogueState:
+    min_discussion, force_narrow, hard_max = derive_pacing(personas)
     return DialogueState(
         scenario=scenario,
         personas=personas,
@@ -220,7 +264,36 @@ def initialise_state(scenario, personas) -> DialogueState:
             for persona in personas
         },
         coverage={option.id: OptionCoverage() for option in scenario.options},
+        min_discussion_turns=min_discussion,
+        force_narrow_turns=force_narrow,
+        hard_max_turns=hard_max,
     )
+
+
+def derive_pacing(personas) -> tuple[int, int, int]:
+    """Derive this run's pacing from group size and composition so length varies and
+    scales with the number of participants instead of hitting one fixed floor. A more
+    split, more stubborn, more detail-oriented group talks longer; jitter keeps even
+    similar groups from running identical lengths. Returns
+    (min discussion turns before narrowing, force-narrow cap, hard stop)."""
+    n = len(personas)
+    dd = cfg.conversation.discussion_depth
+    distinct = len({p.preferred_option for p in personas})
+    contention = distinct / max(1, n)
+    avg_compromise = sum(p.traits.compromise_willingness for p in personas) / n
+    avg_detail = sum(p.traits.detail for p in personas) / n
+    lo, hi = (float(x) for x in dd.jitter_per_participant)
+    per_participant = (
+        float(dd.base_per_participant)
+        + contention * float(dd.contention_weight)
+        + (1.0 - avg_compromise) * float(dd.stubbornness_weight)
+        + avg_detail * float(dd.detail_weight)
+        + random.uniform(lo, hi)
+    )
+    force_narrow = int(cfg.conversation.force_narrow_turns_per_participant) * n
+    hard_max = int(cfg.conversation.hard_max_turns_per_participant) * n
+    min_discussion = min(round(per_participant * n), force_narrow)
+    return min_discussion, force_narrow, hard_max
 
 
 class StateTracker:
@@ -231,6 +304,24 @@ class StateTracker:
 
     def apply_moderator(self, state: DialogueState, text: str, phase: Phase) -> TurnRecord:
         return self._apply_turn(state, "moderator", "Moderator", text, phase, intent=None, move=None, tokens_in=0, tokens_out=0, validation_issues=[], repaired=False)
+
+    def apply_social(self, state: DialogueState, persona: Persona, text: str, phase: Phase, tokens_in: int, tokens_out: int) -> TurnRecord:
+        """Append a cosmetic greeting/goodbye: shown and logged, but it carries no dialogue
+        act and must not touch stance, coverage, convergence, or turn-taking counts."""
+        text = normalise_ws(text)
+        state.turn_index += 1
+        record = TurnRecord(
+            index=state.turn_index,
+            speaker_id=persona.id,
+            speaker_name=persona.name,
+            text=text,
+            phase=phase,
+            act=DialogueAct(speaker_id=persona.id, text=text, act_type=ActType.REACT),
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+        )
+        state.turns.append(record)
+        return record
 
     def apply_participant(self, state: DialogueState, intent: MoveIntent, text: str, move: TurnMove, tokens_in: int, tokens_out: int, validation_issues: list[str], repaired: bool) -> TurnRecord:
         persona = state.persona_by_id(intent.speaker_id)
@@ -400,13 +491,13 @@ class DialogueController:
                 state.confirmation_start_turns = participant_turns
             elif participant_turns - state.confirmation_start_turns >= int(cfg.conversation.max_confirmation_turns):
                 state.phase = Phase.CLOSURE
-        if participant_turns >= int(cfg.conversation.hard_max_participant_turns):
+        if participant_turns >= state.hard_max_turns:
             state.phase = Phase.CLOSURE
 
     def should_stop(self, state: DialogueState) -> bool:
         if state.outcome is not None:
             return True
-        return participant_turn_count(state) >= int(cfg.conversation.hard_max_participant_turns)
+        return participant_turn_count(state) >= state.hard_max_turns
 
     def readiness_score(self, state: DialogueState) -> float:
         # "Readiness" is now how concentrated the group's leanings are: the fraction
@@ -421,13 +512,13 @@ class DialogueController:
             return False
         if min((rt.turn_count for rt in state.runtimes.values()), default=0) < int(cfg.conversation.min_turns_per_participant_before_narrowing):
             return False
-        if participant_turn_count(state) < int(cfg.conversation.min_total_participant_turns):
+        if participant_turn_count(state) < state.min_discussion_turns:
             return False
         if sum(1 for c in state.coverage.values() if c.mentions > 0) < int(cfg.conversation.min_options_touched_before_narrowing):
             return False
         if state.facilitator_force_narrow:  # moderator stepped in on a stall
             return True
-        if participant_turn_count(state) >= int(cfg.conversation.force_narrowing_turns):
+        if participant_turn_count(state) >= state.force_narrow_turns:
             return True
         return state.readiness_score >= float(cfg.conversation.concentration_to_narrow)
 
@@ -542,9 +633,11 @@ def max_words_for(intent: MoveIntent, persona) -> int:
         base = int(budgets.ask)
     else:
         base = int(getattr(budgets, intent.length_hint))
-    # Traits shift length mildly without overriding the routed length hint.
-    shift = persona.traits.response_length - 3
-    return max(8, base + shift * 4)
+    # Traits shift the word budget around the routed length hint, so a terse and a chatty
+    # persona read a bit more differently (without overriding the hint).
+    mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
+    shift = persona.traits.response_length - mid
+    return max(8, int(base + shift * int(cfg.utterances.length_trait_word_step)))
 
 
 def clean_generated(text: str, speaker_name: str, max_words: int) -> str:

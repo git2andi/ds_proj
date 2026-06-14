@@ -16,9 +16,18 @@ from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
 from utils import clamp, sample_int_range, sample_range
 
-# Last-resort names/role used only if the model omits them (it normally provides both).
-_DEFAULT_NAMES = ["Ava", "Liam", "Mia", "Noah", "Lena", "Jonas", "Sofia"]
-_DEFAULT_ROLE = "group member"
+
+def _require(value: Any, field: str) -> str:
+    """Return the stripped string value, or raise if the model omitted it.
+
+    Setup never fabricates chat content: a missing/blank required field means the
+    LLM response is unusable, so we raise (the build() retry loop then re-tries and,
+    failing that, aborts the run with a clear message) instead of papering over it
+    with a canned default."""
+    text = "" if value is None else str(value).strip()
+    if not text:
+        raise ValueError(f"setup response missing required field: {field}")
+    return text
 
 
 class SetupBuilder:
@@ -125,8 +134,8 @@ class SetupBuilder:
             raise ValueError("wrong number of options")
         return Scenario(
             topic=self.topic,
-            decision_kind=str(raw.get("decision_kind") or "generic_decision").strip(),
-            opening_question=str(raw.get("opening_question") or "What matters most to everyone here?").strip(),
+            decision_kind=_require(raw.get("decision_kind"), "scenario.decision_kind"),
+            opening_question=_require(raw.get("opening_question"), "scenario.opening_question"),
             options=options,
         )
 
@@ -144,12 +153,12 @@ class SetupBuilder:
             raise ValueError("option has too few attributes")
         return OptionCard(
             id=str(raw.get("id") or expected_id).strip().upper(),
-            name=self._clean_name(str(raw.get("name") or f"Option {expected_id}")),
+            name=self._clean_name(_require(raw.get("name"), f"option {expected_id} name")),
             attrs=clean_attrs,
-            upside=str(raw.get("upside") or "").strip(),
-            tradeoff=str(raw.get("tradeoff") or "").strip(),
-            concern=str(raw.get("concern") or "").strip(),
-            best_for=str(raw.get("best_for") or raw.get("best for") or "").strip(),
+            upside=_require(raw.get("upside"), f"option {expected_id} upside"),
+            tradeoff=_require(raw.get("tradeoff"), f"option {expected_id} tradeoff"),
+            concern=_require(raw.get("concern"), f"option {expected_id} concern"),
+            best_for=_require(raw.get("best_for") or raw.get("best for"), f"option {expected_id} best_for"),
         )
 
     def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario) -> list[Persona]:
@@ -176,9 +185,9 @@ class SetupBuilder:
 
     def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, hard: bool, scenario: Scenario, idx: int, pid: str) -> Persona:
         labels = scenario.option_ids
-        preferred = str(row.get("preferred_option") or labels[idx % len(labels)]).strip().upper()
+        preferred = str(row.get("preferred_option") or "").strip().upper()
         if preferred not in labels:
-            preferred = labels[idx % len(labels)]
+            raise ValueError(f"participant {pid} has invalid/missing preferred_option: {row.get('preferred_option')!r}")
         acceptable = self._clean_option_list(row.get("acceptable_options", []), labels)
         if preferred not in acceptable:
             acceptable.insert(0, preferred)
@@ -191,35 +200,38 @@ class SetupBuilder:
                 opt_id = str(opt).strip().upper()
                 if opt_id in labels and isinstance(vals, list):
                     reasons[opt_id] = [str(v).strip() for v in vals if str(v).strip()]
-        name = str(row.get("name") or _DEFAULT_NAMES[idx % len(_DEFAULT_NAMES)]).strip()
-        role = str(row.get("role") or _DEFAULT_ROLE).strip()
+        # The model must justify its own preferred pick; an empty reason set means the
+        # setup response is unusable rather than something we silently fill in.
+        if not reasons.get(preferred):
+            raise ValueError(f"participant {pid} gave no reason for preferred option {preferred}")
         acceptable = list(dict.fromkeys(acceptable))
         soft = soft[: int(cfg.personas.non_blocker_max_soft_rejections) if not hard else len(soft)]
-        scores = self._build_scores(row.get("scores"), labels, preferred, acceptable, soft, hard_rej)
+        scores = self._build_scores(row.get("scores"), labels, preferred, acceptable, soft, hard_rej, pid)
         return Persona(
             id=pid,
-            name=name,
-            role=role,
+            name=_require(row.get("name"), f"participant {pid} name"),
+            role=_require(row.get("role"), f"participant {pid} role"),
             traits=traits,
-            speech_style=str(row.get("speech_style") or self._style_from_traits(traits)).strip(),
-            private_goal=str(row.get("private_goal") or f"help the group pick something that fits {preferred}").strip(),
-            backstory=str(row.get("backstory") or "They have made similar small group decisions before.").strip(),
-            main_concern=str(row.get("main_concern") or scenario.option(preferred).best_for or "a workable choice").strip(),
+            speech_style=_require(row.get("speech_style"), f"participant {pid} speech_style"),
+            private_goal=_require(row.get("private_goal"), f"participant {pid} private_goal"),
+            backstory=_require(row.get("backstory"), f"participant {pid} backstory"),
+            main_concern=_require(row.get("main_concern"), f"participant {pid} main_concern"),
             preferred_option=preferred,
             acceptable_options=acceptable,
             soft_rejections=soft,
             hard_rejections=hard_rej,
             reasons=reasons,
-            reservation=str(row.get("reservation") or scenario.option(preferred).concern or "one trade-off still matters").strip(),
-            reconsider_if=str(row.get("reconsider_if") or "if the group values another priority more").strip(),
+            reservation=_require(row.get("reservation"), f"participant {pid} reservation"),
+            reconsider_if=_require(row.get("reconsider_if"), f"participant {pid} reconsider_if"),
             option_scores=scores,
             is_hard_blocker=hard,
         )
 
     @staticmethod
-    def _build_scores(raw: Any, labels: list[str], preferred: str, acceptable: list[str], soft: list[str], hard: list[str]) -> dict[str, int]:
-        # Take the model's 1..5 ratings where given, then force consistency with the
-        # labels so the hidden utility never contradicts the stated stance.
+    def _build_scores(raw: Any, labels: list[str], preferred: str, acceptable: list[str], soft: list[str], hard: list[str], pid: str) -> dict[str, int]:
+        # Take the model's 1..5 ratings (required for every option), then force
+        # consistency with the labels so the hidden utility never contradicts the
+        # stated stance. A missing rating means the setup response is unusable.
         smin, smax = int(cfg.scenario.score_min), int(cfg.scenario.score_max)
         thr = int(cfg.scenario.acceptance_score)
         given = raw if isinstance(raw, dict) else {}
@@ -229,7 +241,7 @@ class SetupBuilder:
             try:
                 scores[opt] = max(smin, min(smax, int(val)))
             except (TypeError, ValueError):
-                scores[opt] = thr  # neutral default when unrated
+                raise ValueError(f"participant {pid} has no valid score for option {opt}")
         for opt in labels:
             if opt == preferred:
                 scores[opt] = smax
@@ -254,32 +266,20 @@ class SetupBuilder:
             return []
         return list(dict.fromkeys(str(x).strip().upper() for x in value if str(x).strip().upper() in labels))
 
-    @staticmethod
-    def _style_from_traits(traits: TraitProfile) -> str:
-        parts = []
-        parts.append("brief" if traits.response_length <= 2 else "chatty" if traits.response_length >= 4 else "balanced")
-        if traits.directness > 0.55:
-            parts.append("direct")
-        elif traits.agreeableness >= 4:
-            parts.append("softens disagreement")
-        if traits.detail > 0.65:
-            parts.append("uses concrete details")
-        return ", ".join(parts)
-
     def _postprocess_personas(self, personas: list[Persona], scenario: Scenario, plan: dict[str, int]) -> list[Persona]:
         labels = scenario.option_ids
         # Enforce the sampled coalition plan: members of one camp share a preferred option,
         # different camps differ. Done first so the diversity floor below never fights it.
         self._apply_preference_plan(personas, plan, labels)
-        # Ensure useful reasons exist for preferred and acceptable options.
+        # Make sure every preferred/acceptable option carries at least one reason so the
+        # turn prompts can render it. We do NOT pad the model's own reasons: a derived
+        # reason is only ever added for an option the model was never asked to justify
+        # (one this code structurally assigned above, e.g. a coalition-reassigned
+        # preference). Options the model itself picked are validated upstream.
         for persona in personas:
             for opt in [persona.preferred_option] + persona.acceptable_options:
-                option = scenario.option(opt)
-                needed = int(cfg.personas.min_reasons_preferred if opt == persona.preferred_option else cfg.personas.min_reasons_acceptable)
-                current = persona.reasons.get(opt, [])
-                while len(current) < needed:
-                    current.append(self._default_reason(option, opt, len(current)))
-                persona.reasons[opt] = current
+                if not persona.reasons.get(opt):
+                    persona.reasons[opt] = [self._default_reason(scenario.option(opt), opt, 0)]
         # Enforce minimum preference diversity by rotating preferences when all collapsed.
         unique = {p.preferred_option for p in personas}
         if len(unique) < int(cfg.personas.preferred_diversity_min_unique) and len(labels) >= int(cfg.personas.preferred_diversity_min_unique):
@@ -306,7 +306,7 @@ class SetupBuilder:
         for persona in personas:
             persona.option_scores = self._build_scores(
                 persona.option_scores, labels, persona.preferred_option,
-                persona.acceptable_options, persona.soft_rejections, persona.hard_rejections,
+                persona.acceptable_options, persona.soft_rejections, persona.hard_rejections, persona.id,
             )
         return personas
 
@@ -347,6 +347,11 @@ class SetupBuilder:
     def _default_reason(option: OptionCard, option_id: str, idx: int) -> str:
         if idx == 0 and option.upside:
             return f"Option {option_id} has the upside that {option.upside}"
+        if option.best_for:
+            # best_for is a noun phrase ("Those prioritizing scenery"); lowercase the
+            # lead so it reads as a clause, not a broken mid-sentence capital.
+            fit = option.best_for[0].lower() + option.best_for[1:]
+            return f"Option {option_id} works for {fit}"
         if option.tradeoff:
-            return f"Option {option_id}'s trade-off is manageable if the group values {option.best_for or 'that priority'}"
-        return f"Option {option_id} fits {option.best_for or 'one of the group priorities'}"
+            return f"Option {option_id}'s trade-off feels manageable to me"
+        return f"Option {option_id} fits one of the group priorities"

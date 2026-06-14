@@ -7,6 +7,7 @@ MoveIntent objects rather than bare speaker IDs.
 
 from __future__ import annotations
 
+import random
 from collections import Counter
 from typing import Optional
 
@@ -78,27 +79,25 @@ class TurnRouter:
         if not candidate:
             return None
         state.candidate_option = candidate
+        threshold = int(cfg.scenario.acceptance_score)
         for persona in self._least_recent_personas(state):
             rt = state.runtimes[persona.id]
             if rt.explicit_vote == candidate or candidate in rt.accepted_options:
+                continue  # already on board
+            # Can this persona live with the candidate? (utility-based, not a flat threshold)
+            can_accept = (
+                (candidate in persona.acceptable_options or candidate == persona.preferred_option
+                 or persona.score_for(candidate) >= threshold)
+                and candidate not in persona.hard_rejections
+                and not (persona.is_hard_blocker and candidate != persona.preferred_option)
+            )
+            # A genuine holdout who has already voiced a rejection has given their answer —
+            # don't keep re-asking the same person (that produced 8 identical lines in a row).
+            if (candidate in rt.hard_rejections or candidate in rt.soft_rejections) and not can_accept:
                 continue
-            if candidate in rt.hard_rejections:
-                continue
-            if candidate in rt.soft_rejections and candidate not in persona.acceptable_options:
-                act = ActType.REJECT
-            elif candidate in persona.hard_rejections:
-                act = ActType.REJECT
-            elif persona.is_hard_blocker and candidate != persona.preferred_option:
-                act = ActType.REJECT
-            elif candidate in persona.acceptable_options or candidate == persona.preferred_option:
-                act = ActType.ACCEPT
-            else:
-                # Not initially acceptable: accept only if the candidate clears the persona's
-                # private acceptance score (utility-based, not a flat willingness threshold).
-                act = ActType.ACCEPT if persona.score_for(candidate) >= int(cfg.scenario.acceptance_score) else ActType.REJECT
             return MoveIntent(
                 speaker_id=persona.id,
-                act=act,
+                act=ActType.ACCEPT if can_accept else ActType.REJECT,
                 option_focus=[candidate],
                 reason=f"say whether Option {candidate} works for you; if you accept, give the one thing that makes it okay",
                 length_hint="short",
@@ -118,10 +117,16 @@ class TurnRouter:
                 act=act,
                 option_focus=focus,
                 reason=f"develop under-discussed Option {gap} with a real trade-off",
-                length_hint=self._length_hint(),
+                length_hint=self._length_hint(state.persona_by_id(speaker_id)),
             )
 
         speaker_id = self._select_speaker(state)
+        # Give the chosen speaker a chance to actually be won over by the case the group
+        # is building, instead of only ever restating their first pick.
+        if forced_act is None and state.phase == Phase.DISCUSSION:
+            persuasion = self._persuasion_intent(state, speaker_id)
+            if persuasion is not None:
+                return persuasion
         act = forced_act or self._sample_discussion_act(state, speaker_id)
         focus = self._focus_for_act(state, speaker_id, act, None)
         addressee = self._target_for_act(state, speaker_id, act, focus[0] if focus else None)
@@ -131,7 +136,7 @@ class TurnRouter:
             act=act,
             option_focus=focus,
             reason=self._reason_for_act(act),
-            length_hint=self._length_hint(),
+            length_hint=self._length_hint(state.persona_by_id(speaker_id)),
         )
 
     # ------------------------------------------------------------------
@@ -153,10 +158,9 @@ class TurnRouter:
                 score += float(cfg.routing.low_turn_count_boost)
             score += persona.traits.initiative * float(cfg.routing.initiative_weight)
             score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
-            if pid == last:
-                score -= float(cfg.routing.last_speaker_penalty)
             score -= recent_counts[pid] * float(cfg.routing.recent_speaker_penalty)
-            weights.append(max(0.01, score))
+            # Never let the same person speak twice in a row when someone else can go.
+            weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
         return weighted_choice(ids, weights)
 
     def _speaker_for_gap(self, state: DialogueState, option_id: str) -> str:
@@ -178,18 +182,19 @@ class TurnRouter:
             if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
                 score += float(cfg.routing.unresolved_objection_boost)
             score += persona.traits.initiative * float(cfg.routing.initiative_weight)
-            if pid == last:
-                score -= float(cfg.routing.last_speaker_penalty)
-            weights.append(max(0.01, score))
+            # Never let the same person speak twice in a row when someone else can go.
+            weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
         return weighted_choice(ids, weights)
 
     def _coverage_gap_option(self, state: DialogueState) -> Optional[str]:
-        # Make sure every option gets at least one mention, then stop steering: free
-        # discussion and convergence take over. We deliberately do NOT force a "reason"
-        # for every option — making someone advocate an option nobody cares about
-        # produces filler ("let's also consider D") that doesn't sound like real talk.
+        # Surface a real alternative that hasn't come up yet — but only one that at least
+        # one person actually prefers or could live with. Options nobody wants are left
+        # unmentioned on purpose: forcing talk about a dead option ("let's also consider
+        # D") is exactly the filler that doesn't sound like real group conversation.
+        with_stake = {p.preferred_option for p in state.personas}
+        with_stake.update(opt for p in state.personas for opt in p.acceptable_options)
         for option_id, coverage in state.coverage.items():
-            if coverage.mentions == 0:
+            if coverage.mentions == 0 and option_id in with_stake:
                 return option_id
         return None
 
@@ -210,9 +215,62 @@ class TurnRouter:
         probs = dict(cfg.routing.act_probabilities.items())
         if state.readiness_score >= float(cfg.conversation.concentration_to_narrow):
             probs[ActType.PROPOSE_COMPROMISE.value] = float(probs.get(ActType.PROPOSE_COMPROMISE.value, 0.0)) + float(cfg.routing.late_discussion_compromise_bonus)
+        # Asking is a personality thing, not a quota: curious/open people ask more, and we
+        # damp it right after a question so the chat doesn't turn into an interrogation.
+        persona = state.persona_by_id(speaker_id)
+        trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
+        curiosity = persona.traits.openness / trait_mid
+        probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * curiosity
+        # Space questions out: if anyone asked within the recent window, damp asking so the
+        # chat doesn't collapse into back-to-back question/answer pairs.
+        window = int(cfg.routing.ask_quiet_window)
+        recent = [turn for turn in reversed(state.turns) if turn.speaker_id != "moderator"][:window]
+        if any("?" in turn.text for turn in recent):
+            probs[ActType.ASK.value] *= float(cfg.routing.ask_after_question_damping)
         keys = [ActType(key) for key in probs.keys()]
         weights = [float(probs[key.value]) for key in keys]
         return weighted_choice(keys, weights)
+
+    def _persuasion_intent(self, state: DialogueState, speaker_id: str) -> Optional[MoveIntent]:
+        """If the group is rallying behind an option this speaker can genuinely live with
+        (more than their current lean), give them a chance to be won over — a real change
+        of mind voiced in the chat, not just a silent tally shift. Routed as SUPPORT of
+        that option so the state tracker moves their leaning toward it."""
+        persona = state.persona_by_id(speaker_id)
+        if persona.is_hard_blocker:
+            return None
+        rt = state.runtimes[speaker_id]
+        lean = rt.current_preference or persona.preferred_option
+        threshold = int(cfg.scenario.acceptance_score)
+        best, best_support = None, option_support(state, lean)
+        for opt in persona.acceptable_options:
+            if opt == lean or persona.score_for(opt) < threshold:
+                continue
+            support = option_support(state, opt)
+            if support > best_support:
+                best, best_support = opt, support
+        if best is None:
+            return None
+        chance = persona.traits.compromise_willingness * float(cfg.routing.persuasion_probability_factor)
+        if random.random() >= chance:
+            return None
+        return MoveIntent(
+            speaker_id=speaker_id,
+            addressee_id=self._supporter_of(state, best, speaker_id),
+            act=ActType.SUPPORT,
+            option_focus=[best],
+            reason="a good case was made for an option you can live with; move toward it",
+            length_hint=self._length_hint(persona),
+        )
+
+    def _supporter_of(self, state: DialogueState, option_id: str, exclude: str) -> Optional[str]:
+        for turn in reversed(state.turns):
+            if turn.speaker_id in {"moderator", exclude}:
+                continue
+            rt = state.runtimes.get(turn.speaker_id)
+            if rt and (rt.explicit_vote == option_id or option_id in rt.accepted_options or rt.current_preference == option_id):
+                return turn.speaker_id
+        return None
 
     def _target_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: Optional[str]) -> Optional[str]:
         if not state.turns:
@@ -289,10 +347,17 @@ class TurnRouter:
                 return turn
         return None
 
-    def _length_hint(self) -> str:
-        probs = cfg.routing.length_hint_probabilities
-        keys = ["short", "medium", "long"]
-        return weighted_choice(keys, [float(probs.get(k, 0.0)) for k in keys])
+    def _length_hint(self, persona: Persona) -> str:
+        # Bias length toward the persona's verbosity so a terse speaker and a chatty one
+        # read differently, instead of every turn drawing the same random length.
+        base = cfg.routing.length_hint_probabilities
+        trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
+        slope = float(cfg.routing.length_trait_slope)
+        rl = persona.traits.response_length
+        w_short = float(base.get("short", 0.0)) * max(0.0, 1.0 + (trait_mid - rl) * slope)
+        w_long = float(base.get("long", 0.0)) * max(0.0, 1.0 + (rl - trait_mid) * slope)
+        w_medium = float(base.get("medium", 0.0))
+        return weighted_choice(["short", "medium", "long"], [w_short, w_medium, w_long])
 
     @staticmethod
     def _reason_for_act(act: ActType) -> str:

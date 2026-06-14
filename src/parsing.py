@@ -213,6 +213,13 @@ def _resolve_move(
     elif intent and len(intent.option_focus) == 1:
         focus_opt = intent.option_focus[0]
 
+    # An opening turn only states an initial leaning — it can never be a vote, accept,
+    # or compromise proposal, no matter what stance the model put in its trailer.
+    # Clamp to a neutral opening so the first round can't be miscounted as commitments
+    # (which used to inflate option acceptances and skew consensus).
+    if intent and intent.act == ActType.OPENING:
+        return "neutral", focus_opt, ActType.OPENING
+
     stance = move.stance if move and move.stance != "neutral" else "neutral"
     if stance == "neutral" and intent:
         stance = _INTENT_FALLBACK_STANCE.get(intent.act, "neutral")

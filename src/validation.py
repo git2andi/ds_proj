@@ -115,9 +115,11 @@ class MessageValidator:
             issues.append(ValidationIssue("INCOMPLETE_TURN", "repair", "Message appears cut off mid-thought."))
 
     def _check_unwanted_question(self, text: str, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
-        # Only ask/answer/propose moves may pose a question; other moves coming out as
-        # questions read as interrogation rather than discussion.
-        if "?" in text and intent.act not in {ActType.ASK, ActType.ANSWER, ActType.PROPOSE_COMPROMISE}:
+        # Decision and opening turns must commit or state, not deflect into a question.
+        # Discussion moves may carry an occasional rhetorical or open question that invites
+        # others in — the question-chain check still stops it becoming an interrogation.
+        statement_only = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT, ActType.OPENING}
+        if "?" in text and intent.act in statement_only:
             issues.append(ValidationIssue("UNWANTED_QUESTION", "repair", "This move should be a statement, not a question."))
 
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
