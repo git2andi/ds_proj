@@ -21,6 +21,13 @@ class MessageValidator:
         phrases = [o.name.lower() for o in resolver.options]
         phrases += [n.lower() for n in participant_names.values()]
         self._mask_phrases = sorted({p for p in phrases if p.strip()}, key=lambda s: len(s.split()), reverse=True)
+        # Line-initial "<Option>'s <feature>" is the single most robotic, repetitive tic the
+        # model falls into (it opened ~40% of turns in large-group runs). Catch it from the
+        # actual option names so the check stays topic-agnostic.
+        self._possessive_openers = [
+            re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(o.name)}\s*['’]s\b", re.I)
+            for o in resolver.options if o.name.strip()
+        ]
 
     def validate(self, text: str, state: DialogueState, intent: MoveIntent, move: TurnMove) -> ValidationResult:
         if not bool(cfg.validation.enabled):
@@ -37,6 +44,7 @@ class MessageValidator:
         self._check_question_chain(stripped, state, intent, issues)
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)
+        self._check_robotic_phrasing(stripped, issues)
         ok = not any(issue.severity in {"repair", "fatal"} for issue in issues)
         return ValidationResult(ok=ok, issues=issues)
 
@@ -141,6 +149,15 @@ class MessageValidator:
         if "?" in text and intent.act in statement_only:
             issues.append(ValidationIssue("UNWANTED_QUESTION", "repair", "This move should be a statement, not a question."))
 
+    def _check_robotic_phrasing(self, text: str, issues: list[ValidationIssue]) -> None:
+        # The prompt bans these formulaic frames, but the model still reaches for them often
+        # enough to read as a template. A deterministic backstop forces the worst ones to be
+        # rewritten instead of leaking into the chat. Topic-agnostic: no scenario words.
+        if any(p.search(text) for p in _ROBOTIC_TEMPLATES):
+            issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "repair", "Uses a banned formulaic template."))
+        if any(p.match(text) for p in self._possessive_openers):
+            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
+
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         if "?" not in text:
             return
@@ -174,6 +191,19 @@ class MessageValidator:
 
 # Sentinel for masked name words in the echo guard; cannot occur in real tokenised text.
 _MASK = "\x00"
+
+# Formulaic frames the prompt forbids but the model still emits. Kept small and word-based
+# (no option/topic words) so it generalises across every scenario. Repair-level: the worst
+# offenders get rewritten rather than reaching the transcript.
+_ROBOTIC_TEMPLATES = [
+    re.compile(r"\bout ?weigh", re.I),                                            # "X outweighs Y"
+    re.compile(r"\bmakes? me (?:think|consider|reconsider|wonder|real[iz]se)\b", re.I),
+    re.compile(r"\b(?:point|points|concern|concerns|argument|idea)\b.{0,75}\b(?:valid|fair|well[- ]taken|compelling|spot[- ]on|resonate)\b", re.I),
+    re.compile(r"\bgiven the discussion\b", re.I),
+    re.compile(r"^\s*considering\b", re.I),                                       # "Considering ..." opener
+    re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),  # stock vote closer
+    re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),  # meeting-minutes recap
+]
 
 
 def _longest_run(a: list[str], b: list[str]) -> int:

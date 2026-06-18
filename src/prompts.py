@@ -11,6 +11,7 @@ from typing import Iterable, Optional
 
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario
+from scoring import current_lean
 from utils import compact_words
 
 
@@ -134,15 +135,21 @@ _MODERATOR_RULES = (
 )
 
 
-def _standings(state: DialogueState) -> str:
-    return "; ".join(f"{p.name} leans {_lean_name(state, p)}" for p in state.personas)
+def _camp_split(state: DialogueState) -> str:
+    """A compact tally of how the room is divided right now, e.g.
+    '3 for City Break, 3 for Mountain Resort, 1 undecided' — so the moderator can name the
+    actual split instead of a vague 'we're going in circles'."""
+    from collections import Counter
+    counts = Counter(_lean_name(state, p) for p in state.personas)
+    parts = [f"{n} for {name}" if name != "no clear pick" else f"{n} undecided" for name, n in counts.most_common()]
+    return ", ".join(parts)
 
 
 def moderator_stall_prompt(state: DialogueState) -> str:
-    return f"""{_MODERATOR_VOICE} (max 30 words) for this moment.
+    return f"""{_MODERATOR_VOICE} (max 32 words) for this moment.
 Topic: {state.scenario.topic}
-The discussion is going in circles. Where people stand: {_standings(state)}.
-Gently point out we're repeating ourselves, reflect roughly where things stand, and ask whether anyone's view is shifting or if it's time to start narrowing down. {_MODERATOR_RULES}"""
+The discussion is going in circles. The split right now: {_camp_split(state)}.
+Name that split plainly (who's where), note we're repeating the same points, then push toward a decision — propose setting aside any option nobody backs and choosing between the front-runners, or ask a specific holdout what would actually change their mind. Don't just ask 'is anyone's view changing?' again. {_MODERATOR_RULES}"""
 
 
 def moderator_agreement_prompt(state: DialogueState, candidate_id: str) -> str:
@@ -169,17 +176,22 @@ Topic: {state.scenario.topic}
 Acknowledge where things stand, then ask {names} what would make {option.name} work for them — or whether there's another option everyone could accept. {_MODERATOR_RULES}"""
 
 
-def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario) -> str:
+def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
     if outcome.final_option and outcome.status == "consensus":
         situation = f"The group agreed on {scenario.option(outcome.final_option).name}."
+        instruction = "Wrap it up warmly and plainly, naming the chosen option."
     elif outcome.final_option and outcome.status == "fallback":
         situation = f"There was no full agreement, but the strongest workable choice is {scenario.option(outcome.final_option).name}."
+        instruction = "Close by naming that as the group's pick, acknowledging it wasn't unanimous."
     else:
-        situation = "The group could not agree on any option."
-    return f"""{_MODERATOR_VOICE} (max 26 words) to close the conversation.
+        situation = f"The group stayed split and couldn't agree. The split: {_camp_split(state)}."
+        instruction = ("Close by naming the actual split (who wants what) and a concrete next step — "
+                       "e.g. revisit it later, take a quick vote next time, or settle one open question first. "
+                       "Don't just say 'we couldn't decide'.")
+    return f"""{_MODERATOR_VOICE} (max 28 words) to close the conversation.
 Topic: {scenario.topic}
 Situation: {situation}
-Wrap it up warmly and plainly, naming the chosen option if there is one. {_MODERATOR_RULES}"""
+{instruction} {_MODERATOR_RULES}"""
 
 
 def _audience_clause(others: list[str]) -> str:
@@ -220,8 +232,7 @@ Do NOT re-argue, raise new points, or name other options. No name prefix, no quo
 
 
 def _lean_name(state: DialogueState, persona: Persona) -> str:
-    rt = state.runtimes[persona.id]
-    lean = rt.explicit_vote or rt.current_preference or persona.preferred_option
+    lean = current_lean(state, persona)
     return state.scenario.option(lean).name if lean in state.scenario.option_ids else "no clear pick"
 
 
@@ -314,8 +325,10 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         # already set aside or swing back to a pick they've moved off.
         consistent = " If you already said an option works for you, back that one now — don't revert to your first pick or re-air worries you'd let go."
         # Anti-chorus: when others already backed this same option, don't pile on the same
-        # headline reason; affirm in a few words or bring a fresh angle.
-        chorus = (" Others already backed this exact option — don't reuse their wording or sentence stem. Either keep it to a brief '+1' in your own words ('yeah, that one works for me') or add a reason nobody has raised yet."
+        # headline reason; affirm in a few words or bring a fresh angle. Name the worst stock
+        # closers explicitly — three "X works for me because..." / "seems like the best fit"
+        # lines in a row is the clearest tell that the ending was generated.
+        chorus = (" Others already backed this exact option — don't reuse their wording or sentence stem, and DON'T use 'works for me because...', 'seems/feels like the best fit', or 'X is key'. Either keep it to a brief, plain '+1' ('yeah, I'm good with that', 'okay, count me in') or add a reason nobody has raised yet."
                   if _others_back(state, persona, intent.option_focus) else "")
         if high_compromise:
             return "Enough discussion. Commit to a workable choice; if a good case was made for an option you rate well enough, move to it instead of restating your first pick." + consistent + chorus + no_template
@@ -339,7 +352,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         " You don't shift easily, but acknowledge a fair point before you push back."
     )
     by_act = {
-        ActType.REACT: "React to what was just said specifically — agree with part of it or say why it doesn't move you. Don't change the subject to your own pick." + persuadable,
+        ActType.REACT: "React to what was just said specifically — agree with part of it or say why it doesn't move you. A short, casual reaction or sentence fragment is fine here ('fair, but it's pricey', 'eh, not sold', 'true'), you don't need a full argument. Don't change the subject to your own pick." + persuadable,
         ActType.ASK: "Ask one real question about the other person's reasoning or what matters to them — not a rhetorical one.",
         ActType.COMPARE: "Genuinely weigh their option against yours — name a real strength of theirs and where yours still wins on what matters most to you, in your own words; don't fall into a 'nice, but I prefer mine' shape." + persuadable,
         ActType.SUPPORT: "Back an option from your own angle — your main concern or a quick bit of your experience — and try a dimension others haven't dwelt on, not the headline everyone's repeating.",
@@ -411,20 +424,41 @@ Guidance: {_move_guidance(state, persona, intent)}
 Length & voice: {_verbosity_note(persona)}
 
 Rules:
-- Write only {persona.name}'s message: one line, no name prefix, no quotes, under {max_words} words.
-- Casual group-chat tone: human, not corporate, not slang-heavy. Sound like {persona.name}, speaking from what you want and who you are — not like a brochure listing features.
-- Build on the chat: engage with the most recent point (agree, build on it, or push back on that specific thing). Don't ignore others and re-pitch your option.{address_rule}
-- This is ONE shared decision for the whole group, not advice to one person. Never frame an option as good "for you"/"for them" or as benefiting one individual ("works for you", "great for you", "would benefit you") — weigh it for the group, or say what it means to you.
-- You can be persuaded when a point genuinely lands — say so and shift. But you don't have to be: holding your ground and explaining why is just as real. Don't fold in your first couple of turns.
-- Refer to options by their name (e.g. "the contest", "the valley walk"), not "Option B" — only use a letter if you truly need it to disambiguate.
-- Don't open with an option's name, and vary your sentence shape from the previous speakers — don't reuse their opener or rhythm.
-- Avoid stock templates and acknowledge-then-pivot frames: "X's <feature> beats/outweighs Y's", "<option> is appealing/nice, but I still prefer mine", "Given the discussion, I think...", "your point about X makes me think/consider Y", "you make/made a good/valid/compelling point/case", "<name>'s point/concern is valid/fair/well taken/resonates", "that makes me reconsider". Don't open a line with "Considering ...". Speak like a person, not a spec comparison or a fill-in-the-blank.
-- Don't default to "<option>'s <feature>" as your subject ("the cafe's variety...", "Asana's reporting..."); an occasional one is fine, but more often lead with the team or yourself, or use the option as a plain subject — "the cafe has way more variety", "with the park we'd have room to spare", "I'd get more done in Notion".
-- Don't restate a point already made (yours or anyone's) or copy the previous speaker's phrasing.
-- Default to statements, but an occasional open or rhetorical question that invites the others in is fine — just don't turn every turn into a question or end on one out of habit.
-- Use only facts from the option cards; invent nothing (no prices, ratings, availability, policies, weather).
+- One line only, as {persona.name}: no name prefix, no quotes, under {max_words} words. Casual, human group-chat tone (not corporate or slang-heavy); sound like {persona.name}, not a brochure.
+- Build on the latest point (agree, extend, or push back on that specific thing); don't ignore it to re-pitch your option.{address_rule}
+- It's ONE shared group decision, not advice to one person — never frame an option as good "for you/them" or benefiting one individual; weigh it for the group or say what it means to you.
+- Voice what you care about naturally; don't shoehorn your one-word concern in as a literal noun if it reads oddly (no "comfort for our community" about a charity).
+- Be persuaded only when a point genuinely lands (then say so and shift) — holding your ground is just as valid; don't fold in your first couple of turns.
+- Name options naturally ("the valley walk"), not "Option B" unless needed to disambiguate. Don't open with an option's name, especially its possessive ("Beach Town's cost..."); lead with the team or yourself ("the cafe has way more variety", "I'd get more done in Notion"). Vary your sentence shape from prior speakers.
+- Don't restate a point already made or copy another speaker's phrasing. Avoid stock/acknowledge-then-pivot frames: "X outweighs Y", "X's point is valid, but...", "makes me think/reconsider", "Given the discussion...", "seems like the best fit", opening with "Considering...".
+- Default to statements; an occasional question that invites others in is fine, but don't end every turn on one. Use only facts from the option cards — invent no prices, ratings, availability, or weather.
 
-End your message with a status tag on its own line, copied in this exact shape — keep the square brackets, and put a single option letter in opt (never a list): [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral (vote=final pick, accept=agree to a compromise, object=mild concern, reject=dealbreaker, propose=offer a compromise, neutral=otherwise)."""
+End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral (vote=final pick, accept=agree to a compromise, object=mild concern, reject=dealbreaker, propose=offer a compromise, neutral=otherwise)."""
+
+
+# Short, human fix-instructions per validation code. Used to build a focused repair prompt
+# instead of re-sending the whole generation prompt (which roughly doubled the tokens of every
+# repaired turn). Naming the concrete problem also makes the rewrite land more reliably.
+_REPAIR_HINTS = {
+    "SPEAKER_PREFIX": "drop the 'Name:' prefix",
+    "MULTI_TURN_OUTPUT": "write only one single line",
+    "INVALID_OPTION_REFERENCE": "only mention the real options listed",
+    "UNGROUNDED_NUMERIC_FACT": "don't state numbers that aren't in the option cards",
+    "INVENTED_OPTION_ATTRIBUTE": "don't state numbers/facts that aren't in the option cards",
+    "DUPLICATE_TURN": "don't repeat another speaker's line — say it in your own words",
+    "ECHOED_PHRASE": "don't reuse another speaker's phrasing — reword it your way",
+    "GROUP_REPETITION": "don't echo a recent turn — add your own angle",
+    "SELF_REPETITION": "you already made this point — add something new or move toward deciding",
+    "UNCLEAR_VOTE": "clearly name your final pick",
+    "UNCLEAR_ACCEPT": "clearly say you're agreeing to this option",
+    "UNCLEAR_REJECT": "clearly state your objection",
+    "QUESTION_IN_CONFIRMATION": "make it a statement, not a question",
+    "UNWANTED_QUESTION": "make it a statement, not a question",
+    "QUESTION_CHAIN": "don't ask another question — react or state instead",
+    "INCOMPLETE_TURN": "finish the thought; don't trail off",
+    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing ('outweighs', 'point is valid', 'makes me think', 'Given the discussion', 'seems like the best fit') — say it plainly",
+    "POSSESSIVE_SUBJECT": "don't start with an option's possessive ('X's ...') — lead with the team or yourself",
+}
 
 
 def repair_utterance(
@@ -434,20 +468,21 @@ def repair_utterance(
     persona: Persona,
     state: DialogueState,
     recent_lines: list[str],
-    public_board: str,
     intent: MoveIntent,
-    focus_options: list[OptionCard],
-    addressee_name: Optional[str],
     max_words: int,
 ) -> str:
-    issue_text = ", ".join(issue_codes[: int(cfg.utterances.repair_issue_limit)])
-    return sim_utterance(
-        persona=persona,
-        state=state,
-        recent_lines=recent_lines,
-        public_board=public_board,
-        intent=intent,
-        focus_options=focus_options,
-        addressee_name=addressee_name,
-        max_words=max_words,
-    ) + f"\n\nRewrite the message because the previous version had these issues: {issue_text}. Previous version: {original_text}"
+    """A focused rewrite prompt: just the speaker's voice, the recent chat for context, the bad
+    line, and concrete fixes — not the full generation prompt. Keeps the meaning and stance,
+    fixes the flagged problems."""
+    fixes = "; ".join(dict.fromkeys(_REPAIR_HINTS.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
+    option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
+    opt_choices = "|".join(state.scenario.option_ids)
+    recent = "\n".join(recent_lines[-4:]) if recent_lines else "(no recent turns)"
+    return f"""Rewrite this one chat line from {persona.name} ({persona.role}). Keep their meaning and stance, but fix the problems. Style: {persona.speech_style}.
+Options: {option_names}
+Recent chat:
+{recent}
+Original line: {original_text}
+Fix: {fixes}.
+Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the options; don't copy others' wording.
+End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral."""

@@ -32,6 +32,9 @@ _INTENT_FALLBACK_STANCE = {
     ActType.REJECT: "object",  # ambiguous reject -> soft; hard blocks come from persona data
     ActType.PROPOSE_COMPROMISE: "propose",
 }
+# Routed moves on which a binding commitment (a final vote or accepting the group's pick)
+# is actually meaningful — the narrowing vote and the confirmation round.
+_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}
 
 # The trailer starts at a "[" immediately followed by act=/opt=/stance= and runs to the
 # final "]". The greedy ".*" deliberately swallows any inner brackets the model emits
@@ -44,6 +47,14 @@ _BARE_TRAILER = re.compile(
     re.I,
 )
 _QUESTION = re.compile(r"\?")
+# A tentative/conditional acceptance ("might be okay", "works if we leave early", "I guess
+# that's fine") is not a firm commitment. Detected only to gate a confirmation ACCEPT so a
+# hedged line can't be miscounted as a clean acceptance and close the decision prematurely.
+_HEDGED_ACCEPT = re.compile(
+    r"\b(?:might|maybe|perhaps|possibly|i guess|i suppose|"
+    r"(?:okay|fine|work|works|good)\s+(?:for\s+\w+\s+)?if|as long as|provided that|only if)\b",
+    re.I,
+)
 
 
 @dataclass(slots=True)
@@ -180,7 +191,8 @@ def parse_dialogue_act(
             addressee_id = previous_speaker_id
     question_target = addressee_id if _QUESTION.search(text) and addressee_id else None
 
-    stance, focus_opt, act_type = _resolve_move(move, intent, option_refs, question_target)
+    hedged = bool(_HEDGED_ACCEPT.search(text))
+    stance, focus_opt, act_type = _resolve_move(move, intent, option_refs, question_target, hedged)
     if focus_opt and focus_opt not in option_refs:
         option_refs = [focus_opt, *option_refs]
 
@@ -204,6 +216,7 @@ def _resolve_move(
     intent: Optional[MoveIntent],
     option_refs: list[str],
     question_target: Optional[str],
+    hedged: bool = False,
 ) -> tuple[str, Optional[str], ActType]:
     focus_opt: Optional[str] = None
     if move and move.option:
@@ -224,9 +237,27 @@ def _resolve_move(
     if stance == "neutral" and intent:
         stance = _INTENT_FALLBACK_STANCE.get(intent.act, "neutral")
 
+    # A binding commitment is only real on a routed decision turn (the vote round or
+    # confirmation). If the model tags an ordinary discussion line as a vote/accept, drop
+    # it to neutral: a mid-discussion "accept" used to be counted as a real acceptance,
+    # inflating the tally into a premature, often fake-unanimous outcome while the chat was
+    # still openly arguing. We also discard the trailer's act so the turn falls back to its
+    # routed move (e.g. SUPPORT), which still moves the lean — persuasion isn't lost, only
+    # the spurious binding accept.
+    clamped = bool(intent and intent.act not in _DECISION_ACTS and stance in {"vote", "accept"})
+    if clamped:
+        stance = "neutral"
+
+    # A hedged/conditional acceptance ("might be okay", "works if we leave early") is not a
+    # firm commitment, so it must not close the decision. Keep it neutral: the persona stays
+    # an open holdout until the condition is actually resolved, instead of the chat declaring
+    # consensus off a tentative line.
+    if hedged and intent and intent.act == ActType.ACCEPT and stance == "accept":
+        stance = "neutral"
+
     if stance in _STANCE_TO_ACT:
         act_type = _STANCE_TO_ACT[stance]
-    elif move and move.act:
+    elif move and move.act and not clamped:
         act_type = move.act
     elif intent and intent.act == ActType.OPENING:
         act_type = ActType.OPENING

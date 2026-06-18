@@ -8,7 +8,6 @@ MoveIntent objects rather than bare speaker IDs.
 from __future__ import annotations
 
 import random
-from collections import Counter
 from typing import Optional
 
 from config_loader import cfg
@@ -141,50 +140,48 @@ class TurnRouter:
 
     # ------------------------------------------------------------------
 
-    def _select_speaker(self, state: DialogueState) -> str:
+    def _pick_speaker(self, state: DialogueState, extra_score) -> str:
+        """Weighted speaker choice shared by free discussion and gap-filling. Every speaker
+        starts from a base (catch-up boost for the least-spoken + initiative), the same speaker
+        never goes twice in a row, and `extra_score(persona, rt, recent)` adds the move-specific
+        bias (recency penalty / objections, or the option-gap boosts)."""
         ids = state.participant_ids()
         recent = self._recent_speaker_ids(state)
         last = recent[-1] if recent else None
-        recent_counts = Counter(recent)
         min_turns = min((state.runtimes[pid].turn_count for pid in ids), default=0)
         weights: list[float] = []
         for pid in ids:
             persona = state.persona_by_id(pid)
             rt = state.runtimes[pid]
             score = 1.0
-            if rt.turn_count == 0:
-                score += float(cfg.routing.unspoken_boost)
             if rt.turn_count == min_turns:
                 score += float(cfg.routing.low_turn_count_boost)
             score += persona.traits.initiative * float(cfg.routing.initiative_weight)
-            score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
-            score -= recent_counts[pid] * float(cfg.routing.recent_speaker_penalty)
-            # Never let the same person speak twice in a row when someone else can go.
+            score += extra_score(persona, rt, recent)
             weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
         return weighted_choice(ids, weights)
 
+    def _select_speaker(self, state: DialogueState) -> str:
+        def extra(persona: Persona, rt, recent: list[str]) -> float:
+            score = 0.0
+            if rt.turn_count == 0:
+                score += float(cfg.routing.unspoken_boost)
+            score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
+            score -= recent.count(persona.id) * float(cfg.routing.recent_speaker_penalty)
+            return score
+        return self._pick_speaker(state, extra)
+
     def _speaker_for_gap(self, state: DialogueState, option_id: str) -> str:
-        ids = state.participant_ids()
-        recent = self._recent_speaker_ids(state)
-        last = recent[-1] if recent else None
-        min_turns = min((state.runtimes[pid].turn_count for pid in ids), default=0)
-        weights: list[float] = []
-        for pid in ids:
-            persona = state.persona_by_id(pid)
-            rt = state.runtimes[pid]
-            score = 1.0
-            if rt.turn_count == min_turns:
-                score += float(cfg.routing.low_turn_count_boost)
+        def extra(persona: Persona, rt, recent: list[str]) -> float:
+            score = 0.0
             if option_id == persona.preferred_option:
                 score += float(cfg.routing.preferred_option_gap_boost)
             if option_id in persona.acceptable_options:
                 score += float(cfg.routing.acceptable_option_gap_boost)
             if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
                 score += float(cfg.routing.unresolved_objection_boost)
-            score += persona.traits.initiative * float(cfg.routing.initiative_weight)
-            # Never let the same person speak twice in a row when someone else can go.
-            weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
-        return weighted_choice(ids, weights)
+            return score
+        return self._pick_speaker(state, extra)
 
     def _coverage_gap_option(self, state: DialogueState) -> Optional[str]:
         # Surface a real alternative that hasn't come up yet — but only one that at least

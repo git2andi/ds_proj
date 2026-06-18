@@ -69,7 +69,24 @@
       "PowerShell(& .\\\\dspro\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'.'\\); import main; print\\('clean1:', repr\\(main._clean_topic\\('?Pick a venue'\\)\\)\\); print\\('clean2:', repr\\(main._clean_topic\\('���Pick a venue'\\)\\)\\)\")",
       "Bash(./dspro/Scripts/python.exe -m py_compile main.py src/*.py)",
       "Bash(../dspro/Scripts/python.exe -c ' *)",
-      "Bash(./dspro/Scripts/python.exe ./main.py)"
+      "Bash(./dspro/Scripts/python.exe ./main.py)",
+      "Bash(curl -s -m 8 -o /dev/null -w \"%{http_code}\" http://ursa.ds.uni-bamberg.de:11434/api/tags)",
+      "Bash(./dspro/Scripts/python.exe _eval_runs.py)",
+      "Bash([ -s \"$F\" ])",
+      "Bash(ps -W)",
+      "Bash(xargs ls -la)",
+      "Bash(./dspro/Scripts/python.exe -)",
+      "Bash(echo \"EVAL DONE exit=$?\")",
+      "Bash(./dspro/Scripts/python.exe -c \"import json,glob,os; d=sorted\\(glob.glob\\('logs/*/'\\),key=os.path.getmtime\\)[0]; j=json.load\\(open\\(d+'run.json',encoding='utf-8'\\)\\); print\\(list\\(j.keys\\(\\)\\)\\); print\\('---turn0 keys---'\\); print\\(list\\(j['turns'][0].keys\\(\\)\\) if 'turns' in j else 'no turns'\\)\")",
+      "Bash(./dspro/Scripts/python.exe -c \"import json,glob,os; d=sorted\\(glob.glob\\('logs/*/'\\),key=os.path.getmtime\\)[0]; j=json.load\\(open\\(d+'run.json',encoding='utf-8'\\)\\); print\\('persona keys:',list\\(j['personas'][0].keys\\(\\)\\)\\); print\\('option keys:',list\\(j['scenario']['options'][0].keys\\(\\)\\)\\)\")",
+      "Bash(./dspro/Scripts/python.exe _eval_check.py 4)",
+      "Bash(./dspro/Scripts/python.exe -m py_compile src/*.py main.py)",
+      "Bash(./dspro/Scripts/python.exe _eval2.py)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(rm -f _n2test.txt _eval2_out.txt)",
+      "Bash(ls _*.txt _eval*.py _n2*.txt)",
+      "Bash(rm -f _evalc.py _evalc_out.txt)",
+      "Bash(./dspro/Scripts/python.exe -c \"import sys; sys.path.insert\\(0,'src'\\); import dialogue,router,prompts,scoring,parsing,validation,builders,logger,models; print\\('all imports OK'\\)\")"
     ]
   }
 }

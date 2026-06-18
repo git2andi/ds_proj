@@ -28,7 +28,7 @@ from models import (
 )
 from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
-from scoring import leading_option
+from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
 from validation import MessageValidator
 
@@ -63,7 +63,9 @@ class Orchestrator:
 
         self._print_header(scenario, personas)
         self._emit(tracker.apply_moderator(state, prompts.moderator_opening(scenario), phase=Phase.OPENING))
-        self._greeting_round(state, tracker)  # options board first, then people say hi, then opinions
+        # Options board first, then people say hi, then opinions.
+        self._social_round(state, tracker, Phase.OPENING, int(cfg.utterances.word_budgets.greeting),
+                           lambda p, others, b, said: prompts.greeting_line(p, scenario.topic, others, b, said))
 
         while not self.controller.should_stop(state):
             self.controller.update_phase(state)
@@ -84,9 +86,10 @@ class Orchestrator:
 
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
-        closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario))
+        closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
         self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
-        self._farewell_round(state, tracker, outcome)
+        self._social_round(state, tracker, Phase.CLOSURE, int(cfg.utterances.word_budgets.farewell),
+                           lambda p, others, b, said: prompts.farewell_line(p, scenario, outcome, others, b, said))
         state.dialogue_tokens_in = self._llm.session_tokens_in
         state.dialogue_tokens_out = self._llm.session_tokens_out
         paths = self.logger.finish(state, outcome)
@@ -104,32 +107,28 @@ class Orchestrator:
     def _emit(record: TurnRecord) -> None:
         print(f"{record.speaker_name}: {record.text}")
 
-    def _moderator_say(self, prompt: str) -> str:
-        """Generate a moderator facilitation line via the LLM and clean it to one line."""
+    def _moderator_say(self, prompt: str, state: DialogueState) -> str:
+        """Generate a moderator facilitation line via the LLM and clean it to one line.
+        Prior facilitator lines are fed back in so the moderator doesn't recite the same
+        stock phrasing twice (e.g. two identical 'anyone object or lock it in?' nudges)."""
+        prior = [t.text for t in state.turns if t.speaker_id == "moderator"][1:]  # skip the fixed option board
+        if prior:
+            bullets = "; ".join(compact_words(p, 12) for p in prior[-3:])
+            prompt += f"\n\nYou already said, earlier: {bullets}. Say this in different words — don't reuse that phrasing."
         raw = self._llm.generate(prompt, profile="dialogue")
         return clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
 
-    def _greeting_round(self, state: DialogueState, tracker: "StateTracker") -> None:
-        """A quick, optional hello from a trait-driven subset, right after the options board."""
-        budget = int(cfg.utterances.word_budgets.greeting)
-        said: list[str] = []  # shown to later speakers so greetings don't all read alike
+    def _social_round(self, state: DialogueState, tracker: "StateTracker", phase: Phase, budget: int, build_prompt) -> None:
+        """A quick, optional social beat (greeting at the start, sign-off at the end) from a
+        trait-driven subset. Cosmetic only; each speaker is shown the prior lines so they don't
+        all read alike. `build_prompt(persona, others, budget, said)` returns the LLM prompt."""
+        said: list[str] = []
         for persona in self._social_speakers(state.personas):
             others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(prompts.greeting_line(persona, state.scenario.topic, others, budget, said), persona, budget)
+            line = self._social_say(build_prompt(persona, others, budget, said), persona, budget)
             if line:
                 said.append(line)
-                self._emit(tracker.apply_social(state, persona, line, Phase.OPENING, self._llm.last_tokens_in, self._llm.last_tokens_out))
-
-    def _farewell_round(self, state: DialogueState, tracker: "StateTracker", outcome: RunOutcome) -> None:
-        """A quick, optional sign-off from a trait-driven subset once it's decided."""
-        budget = int(cfg.utterances.word_budgets.farewell)
-        said: list[str] = []  # shown to later speakers so sign-offs don't all read alike
-        for persona in self._social_speakers(state.personas):
-            others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(prompts.farewell_line(persona, state.scenario, outcome, others, budget, said), persona, budget)
-            if line:
-                said.append(line)
-                self._emit(tracker.apply_social(state, persona, line, Phase.CLOSURE, self._llm.last_tokens_in, self._llm.last_tokens_out))
+                self._emit(tracker.apply_social(state, persona, line, phase, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
     def _social_say(self, prompt: str, persona: Persona, budget: int) -> Optional[str]:
         # Greetings/goodbyes are cosmetic; a hiccup on one shouldn't sink the whole run, so
@@ -186,10 +185,7 @@ class Orchestrator:
                 persona=persona,
                 state=state,
                 recent_lines=recent_lines,
-                public_board=board,
                 intent=intent,
-                focus_options=focus_options,
-                addressee_name=addressee_name,
                 max_words=max_words,
             )
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_repair")
@@ -226,12 +222,12 @@ class Orchestrator:
                     self._register_intervention(state)
                     state.no_progress_count = 0
                     state.facilitator_force_narrow = True
-                    return self._moderator_say(prompts.moderator_agreement_prompt(state, candidate))
+                    return self._moderator_say(prompts.moderator_agreement_prompt(state, candidate), state)
             if state.no_progress_count >= int(conv.moderator_stall_window):
                 self._register_intervention(state)
                 state.no_progress_count = 0
                 state.facilitator_force_narrow = True  # mod steps in -> move toward a decision
-                return self._moderator_say(prompts.moderator_stall_prompt(state))
+                return self._moderator_say(prompts.moderator_stall_prompt(state), state)
 
         if state.phase == Phase.CONFIRMATION and state.candidate_option:
             holdouts = [h for h in _candidate_holdouts(state, state.candidate_option) if h not in self._nudged_holdouts]
@@ -240,7 +236,7 @@ class Orchestrator:
             if 1 <= len(holdouts) <= 2:
                 self._nudged_holdouts.update(holdouts)
                 self._register_intervention(state)
-                return self._moderator_say(prompts.moderator_holdout_prompt(state, state.candidate_option, holdouts))
+                return self._moderator_say(prompts.moderator_holdout_prompt(state, state.candidate_option, holdouts), state)
         return None
 
     def _register_intervention(self, state: DialogueState) -> None:
@@ -392,17 +388,25 @@ class StateTracker:
         persona = state.persona_by_id(record.speaker_id)
         if act.act_type == ActType.OPENING and not rt.stated_priority:
             rt.stated_priority = record.text
+        # A hard blocker is immovable by design: they can only ever back their own preferred
+        # option, so any vote/accept/lean shift toward a different option is ignored. Without
+        # this guard the model would happily have them "accept" the group's pick, silently
+        # turning a deadlock into a fake consensus.
+        def _can_back(option_id: str) -> bool:
+            return not persona.is_hard_blocker or option_id == persona.preferred_option
         # Leanings move on genuine commitment (vote / propose / support of an option
         # the persona can live with), not merely because the router asked them to
         # discuss a gap option (e.g. a COMPARE turn).
-        if act.explicit_vote:
+        if act.explicit_vote and _can_back(act.explicit_vote):
             rt.explicit_vote = act.explicit_vote
             rt.current_preference = act.explicit_vote
-        elif act.proposes_option:
+        elif act.proposes_option and _can_back(act.proposes_option):
             rt.current_preference = act.proposes_option
-        elif act.act_type == ActType.SUPPORT and act.option_refs and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option}:
+        elif act.act_type == ActType.SUPPORT and act.option_refs and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option} and _can_back(act.option_refs[0]):
             rt.current_preference = act.option_refs[0]
         for option_id in act.accepts:
+            if not _can_back(option_id):
+                continue
             rt.accepted_options.add(option_id)
             rt.soft_rejections.pop(option_id, None)
             rt.current_preference = option_id  # accepting a compromise moves the lean toward it
@@ -659,11 +663,6 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
 
 def participant_turn_count(state: DialogueState) -> int:
     return sum(rt.turn_count for rt in state.runtimes.values())
-
-
-def current_lean(state: DialogueState, persona) -> Optional[str]:
-    rt = state.runtimes[persona.id]
-    return rt.explicit_vote or rt.current_preference or persona.preferred_option
 
 
 def concentration_score(state: DialogueState) -> float:

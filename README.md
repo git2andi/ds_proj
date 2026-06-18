@@ -245,17 +245,95 @@ and any remaining errors.
 
 ## Status & next steps (evaluation as of 2026-06-18)
 
-A naturalness pass (more-friction target) landed and was verified on fresh 2-, 3-, 4-, and
-7-person runs across varied topics. The previously-listed issues are addressed; recording the
-current state here so the next session can continue without re-deriving it.
+Three passes have landed. A naturalness pass (more-friction target) came first; a
+**state-integrity + robotic-phrasing pass** then fixed issues that fresh 2/3/4/7-person runs
+exposed; finally an **external-LLM naturalness-review pass** addressed conditional-consensus and
+moderator-synthesis problems found by feeding the transcripts to a separate model. All changes
+were verified on live `uni` runs across group sizes 2/3/4/5/6/7 and many topics (board games,
+offsite, restaurant, road trip, charity, holiday venue, study-abroad, coffee machine).
 
-### Fixed in this pass
+### Fixed in this pass (state integrity + phrasing)
+- **Mid-discussion "accept"/"vote" no longer counts as a binding commitment.** The model
+  liberally tagged ordinary discussion lines `stance=accept`; these were recorded as real
+  acceptances, silently inflating support into premature, often fake-unanimous outcomes while
+  the chat was still openly arguing (12/19 accepts in an n=7 run happened mid-discussion).
+  A commitment is now only honoured on a routed decision turn (the narrowing vote /
+  confirmation). Leanings still move through `SUPPORT`, so persuasion is intact. Across a
+  re-run of the same four topics, mid-discussion binding accepts dropped 38 → 0.
+  (`parsing._resolve_move`, gated by `_DECISION_ACTS`.)
+- **Hard blockers are actually immovable.** A "hard blocker" persona could be talked into
+  accepting a non-preferred/non-acceptable option, turning a deadlock into a fake consensus
+  (e.g. a hard-blocker who preferred A "accepted" C then B). A hard blocker now only ever
+  backs their own preferred option; any vote/accept/lean shift elsewhere is ignored.
+  (`dialogue.StateTracker._update_runtime`, `_can_back`.)
+- **Possessive "X's `<feature>`" opener** (the dominant robotic tic — ~40% of turns in an n=7
+  run) is now a deterministic repair-level check on a *line-initial* option possessive, built
+  from the scenario's own option names so it stays topic-agnostic. 27 → 1 across the four-topic
+  re-run. (`validation._check_robotic_phrasing` / `_possessive_openers`.)
+- **Leaked formulaic templates** ("X outweighs Y", "X's point is valid, but", "makes me
+  think…", "Given the discussion…", "Considering…" opener, "Since X mentioned…, I think…")
+  now have a small word-based repair-level catch (`_ROBOTIC_TEMPLATES`). 6 → ~1.
+- **Moderator no longer repeats a stock line verbatim** (two identical "anyone object or lock
+  it in?" nudges in one run): prior facilitator lines are fed back into the moderator prompt
+  with a "say it differently" rider, reusing the greeting/farewell `_distinct_from_prior`
+  approach. (`dialogue._moderator_say`.)
+
+### Fixed in this pass (external-LLM naturalness review)
+- **Consensus no longer closes on a hedged/conditional acceptance.** "might be okay if there's
+  free time" / "works if we leave early" was recorded as a firm accept and closed the chat. A
+  confirmation `accept` whose text is tentative/conditional now stays neutral, so the persona
+  remains an open holdout until the condition is actually resolved (the run then reaches genuine
+  consensus, a majority fallback, or stays unresolved). (`parsing._HEDGED_ACCEPT`.)
+- **The moderator now synthesizes instead of looping.** Stall lines name the actual split
+  ("two want Conference Center, one Local Park, one Brewery") and push a concrete move (drop
+  options nobody backs; choose between the front-runners; ask a named holdout what would change
+  their mind) rather than re-asking "is anyone's view changing?". (`prompts.moderator_stall_prompt`,
+  `_camp_split`.)
+- **The unresolved closing states the concrete split + a next step** ("Paris three, Barcelona
+  three — let's revisit next time") instead of a generic "we couldn't decide".
+  (`prompts.moderator_closure_prompt`, now passed `state`.)
+- **Vote-round chorus** ("X works for me because…", "seems/feels like the best fit" ×3) pushed
+  harder: the anti-chorus guidance names those stock closers, and "seems/feels like the best/right
+  fit/choice" is now a deterministic repair-level catch.
+- **Smaller naturalness nudges:** `REACT` turns may be short fragments ("fair, but it's pricey"),
+  and a rule discourages shoehorning a one-word persona concern into the text ("comfort for our
+  community" about a charity).
+
+### Efficiency / code-quality pass
+Dialogue input-token cost was high because each turn is a **stateless** LLM call (the Ollama
+endpoint keeps no memory between calls, so the full prompt is re-sent every time) and two things
+bloated that prompt:
+- The static rules/trailer block was ~64% of every `sim_utterance` prompt — tightened (every
+  constraint kept, just terser): **815 → 604 words/turn**.
+- The repair prompt **re-sent the entire generation prompt**; it's now a focused rewrite (speaker
+  voice + recent chat + the bad line + concrete per-issue fixes from `_REPAIR_HINTS`):
+  **819 → 162 words/repair**, and the explicit fix-hints make rewrites land more reliably.
+
+Net: input tokens dropped from **~1500/LLM-call to ~860/call (~45%)** on fresh runs, with chat
+quality and all the fixes above intact. Alongside this, dead/duplicate code was removed: a single
+`scoring.current_lean` now feeds routing/consensus/moderator (was duplicated in `dialogue` and
+`prompts._lean_name`); `router._select_speaker`/`_speaker_for_gap` share one `_pick_speaker`;
+`dialogue._greeting_round`/`_farewell_round` merged into `_social_round`; dead `_standings`
+removed.
+
 ### Remaining (lower priority)
-- **Thematic opener similarity** in the vote round (warn-level `REPEATED_START`): lexically varied
-  but same theme — the genuinely hard, *thematic* part. Pushing it harder risks over-repair or
-  stilted text.
-- **Possessive "X's <feature>"** still appears (now alongside varied constructions); discouraged
-  in the prompt but natural enough that it isn't forced out.
+- **Thematic content spread**: a shared persona theme (e.g. "balance study and leisure") can recur
+  across several speakers — lexically varied, same idea. The genuinely hard, *thematic* part;
+  pushing it harder risks stilted text.
+- **Softer template variants** ("seems like a great choice", "makes sense to me", "wins out for
+  me") are left uncaught on purpose — broadening the regex to them over-fires on natural usage.
+- **Rare template leak (~1 per run):** a flagged template is occasionally *reproduced* by the
+  single repair attempt (`max_repairs_per_turn: 1`). Detection works; more attempts would remove
+  more at the cost of extra calls. Repair rate now runs ~30-40% with the added checks.
+- **Out of scope (turn-based, fact-grounded design):** true interruptions/overlap aren't possible
+  in a turn-taking controller, and personas can't negotiate facts not on the option cards
+  (parking, spice level, reservations) because inventing facts is a hard guardrail.
+- **Occasional setup failure (by design, not a bug):** the single setup LLM call sometimes returns
+  an invalid world (e.g. an option with too few attributes). The builder retries
+  (`setup_generation_attempts`) and, if still invalid, *raises* rather than fabricating a scenario —
+  so a run can abort with a clear message. This is variance in the model, not a size-specific
+  problem: re-running the same topic (verified on a coffee-machine n=2 case that first failed, then
+  succeeded on retry) produces a valid world. Raise `setup_generation_attempts` if it bites often.
 
 ### How to reproduce the evaluation
 Run a spread of group sizes (`simulation.num_participants`, e.g. 3 and 7) and topics from

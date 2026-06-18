@@ -9,7 +9,15 @@ from __future__ import annotations
 from typing import Optional
 
 from config_loader import cfg
-from models import DialogueState
+from models import DialogueState, Persona
+
+
+def current_lean(state: DialogueState, persona: Persona) -> Optional[str]:
+    """The option a persona effectively backs right now: an explicit vote wins, then their
+    moved leaning, falling back to their original preferred option. One definition shared by
+    routing, consensus, concentration, and the moderator's standings."""
+    rt = state.runtimes[persona.id]
+    return rt.explicit_vote or rt.current_preference or persona.preferred_option
 
 
 def option_support(state: DialogueState, option_id: str) -> float:
