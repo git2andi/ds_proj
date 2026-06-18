@@ -37,7 +37,7 @@ llm:
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   timeouts:
-    request_seconds: 120
+    request_seconds: 240   # headroom for the larger n=6/7 setup call (one big JSON) on a slow endpoint
   gemini_rpm_delay_seconds: 12
   sampling:
     # dialogue.temperature is the main naturalness dial; setup/repair are kept
@@ -79,7 +79,7 @@ scenario:
 personas:
   # --- core dials: these decide whether/how easily a chat resolves ---
   cooperative_controls:
-    compromise_willingness: [0.62, 0.92]   # range sampled per persona; lower = more deadlock
+    compromise_willingness: [0.45, 0.9]    # range sampled per persona; lower = more deadlock / more friction
     initiative: [0.35, 0.82]
     directness: [0.18, 0.72]
     detail: [0.36, 0.90]
@@ -135,7 +135,7 @@ routing:
   unresolved_objection_boost: 0.34
   preferred_option_gap_boost: 0.40
   acceptable_option_gap_boost: 0.22
-  direct_reply_probability: 0.62
+  direct_reply_probability: 0.35    # chance a reply/conflict turn is addressed at one person; most lines go to the room
   act_probabilities:                # mix of local moves the router samples in free discussion
     react: 0.15
     ask: 0.16                        # base only; scaled per-speaker by openness (curious people ask more)
@@ -146,7 +146,9 @@ routing:
     propose_compromise: 0.07
   ask_after_question_damping: 0.25    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
   ask_quiet_window: 3                  # turns to look back for a recent question before damping asking
-  persuasion_probability_factor: 0.55  # scales compromise_willingness into a per-turn chance of being won over
+  persuasion_probability_factor: 0.40  # scales compromise_willingness into a per-turn chance of being won over
+  persuasion_min_speaker_turns: 2      # a persona must have spoken (defended) at least this many times before being won over
+  persuasion_support_margin: 1.0       # a rival option must beat the speaker's current lean by this much support to pull them
   late_discussion_compromise_bonus: 0.10
   no_progress_compromise_probability: 0.55
   length_hint_probabilities:
@@ -182,6 +184,7 @@ validation:
   own_similarity_threshold: 0.62  # repetition sensitivity vs the speaker's own turns
   group_similarity_threshold: 0.72
   duplicate_threshold: 0.85       # near-identical to another speaker's recent turn -> repair (even for accepts)
+  max_shared_phrase_words: 6      # reusing a 6+ word run from another speaker's recent turn -> repair (echo guard; option/participant names excluded)
   repeated_start_window: 5
   repeated_start_word_count: 3
   max_question_chain: 2

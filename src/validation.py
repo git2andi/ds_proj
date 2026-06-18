@@ -14,6 +14,13 @@ class MessageValidator:
     def __init__(self, resolver: OptionResolver, participant_names: dict[str, str]) -> None:
         self.resolver = resolver
         self.participant_names = participant_names
+        # Whole option/participant-name phrases are masked in the echo guard so two turns
+        # that merely name the same option/person don't read as a lifted phrase. Masking
+        # the phrase (not each word) keeps a common word that happens to sit inside a name
+        # (e.g. "research" in "National Cancer Research") catchable when it stands alone.
+        phrases = [o.name.lower() for o in resolver.options]
+        phrases += [n.lower() for n in participant_names.values()]
+        self._mask_phrases = sorted({p for p in phrases if p.strip()}, key=lambda s: len(s.split()), reverse=True)
 
     def validate(self, text: str, state: DialogueState, intent: MoveIntent, move: TurnMove) -> ValidationResult:
         if not bool(cfg.validation.enabled):
@@ -64,10 +71,22 @@ class MessageValidator:
         # A near-verbatim copy of another speaker's recent line is never natural — flag it
         # even for confirmations (two people shouldn't say the exact same sentence).
         others = [t for t in reversed(state.turns) if t.speaker_id not in {"moderator", intent.speaker_id}]
-        for turn in others[: int(cfg.validation.repeated_start_window)]:
+        window = int(cfg.validation.repeated_start_window)
+        for turn in others[:window]:
             if jaccard_text(text, turn.text) >= float(cfg.validation.duplicate_threshold):
                 issues.append(ValidationIssue("DUPLICATE_TURN", "repair", "Near-identical to another speaker's recent turn."))
                 break
+        # Echo guard: catch a long verbatim phrase lifted from another speaker even when an
+        # added clause keeps overall jaccard low (the vote-round "...feels like our most
+        # practical choice overall" echo). Runs through accepts/votes too, where chorusing
+        # is worst; option/participant-name words are masked so naming the same pick is fine.
+        masked = self._masked_tokens(text)
+        min_run = int(cfg.validation.max_shared_phrase_words)
+        if not any(i.code == "DUPLICATE_TURN" for i in issues):
+            for turn in others[:window]:
+                if _longest_run(masked, self._masked_tokens(turn.text)) >= min_run:
+                    issues.append(ValidationIssue("ECHOED_PHRASE", "repair", "Reuses a long phrase from another speaker's recent turn."))
+                    break
         # Confirmations are otherwise naturally similar, so we don't flag ordinary repetition there.
         if intent.act in {ActType.ACCEPT, ActType.REJECT}:
             return
@@ -135,6 +154,46 @@ class MessageValidator:
                 break
         if recent_questions >= int(cfg.validation.max_question_chain) and intent.act != ActType.ANSWER:
             issues.append(ValidationIssue("QUESTION_CHAIN", "repair", "Too many consecutive questions."))
+
+    def _masked_tokens(self, text: str) -> list[str]:
+        # Replace whole name phrases with a sentinel that never matches, then tokenise, so
+        # the echo guard measures shared *phrasing* rather than a shared option/person name.
+        low = text.lower()
+        for phrase in self._mask_phrases:
+            low = re.sub(rf"\b{re.escape(phrase)}\b", f" {_MASK} ", low)
+        toks: list[str] = []
+        for raw in re.findall(rf"{re.escape(_MASK)}|[\w'’]+", low):
+            if raw == _MASK:
+                toks.append(_MASK)
+                continue
+            base = raw[:-2] if raw.endswith(("'s", "’s")) else raw
+            if base:
+                toks.append(base)
+        return toks
+
+
+# Sentinel for masked name words in the echo guard; cannot occur in real tokenised text.
+_MASK = "\x00"
+
+
+def _longest_run(a: list[str], b: list[str]) -> int:
+    """Length of the longest contiguous run of tokens shared by a and b. Masked tokens
+    never match, so a run cannot be built from — or span across — a name word."""
+    if not a or not b:
+        return 0
+    prev = [0] * (len(b) + 1)
+    best = 0
+    for i in range(1, len(a) + 1):
+        cur = [0] * (len(b) + 1)
+        ai = a[i - 1]
+        if ai != _MASK:
+            for j in range(1, len(b) + 1):
+                if ai == b[j - 1]:
+                    cur[j] = prev[j - 1] + 1
+                    if cur[j] > best:
+                        best = cur[j]
+        prev = cur
+    return best
 
 
 # Words a complete sentence cannot end on; a turn ending here (without punctuation) is cut off.

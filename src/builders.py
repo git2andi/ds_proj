@@ -279,7 +279,7 @@ class SetupBuilder:
         for persona in personas:
             for opt in [persona.preferred_option] + persona.acceptable_options:
                 if not persona.reasons.get(opt):
-                    persona.reasons[opt] = [self._default_reason(scenario.option(opt), opt, 0)]
+                    persona.reasons[opt] = [self._default_reason(scenario.option(opt))]
         # Enforce minimum preference diversity by rotating preferences when all collapsed.
         unique = {p.preferred_option for p in personas}
         if len(unique) < int(cfg.personas.preferred_diversity_min_unique) and len(labels) >= int(cfg.personas.preferred_diversity_min_unique):
@@ -288,7 +288,7 @@ class SetupBuilder:
                 persona.preferred_option = new_pref
                 if new_pref not in persona.acceptable_options:
                     persona.acceptable_options.insert(0, new_pref)
-                persona.reasons.setdefault(new_pref, [self._default_reason(scenario.option(new_pref), new_pref, 0)])
+                persona.reasons.setdefault(new_pref, [self._default_reason(scenario.option(new_pref))])
         # Ensure a common compromise among non-hard-blockers when requested.
         if bool(cfg.personas.require_common_compromise):
             counts = {opt: 0 for opt in labels}
@@ -301,7 +301,7 @@ class SetupBuilder:
             for persona in personas:
                 if not persona.is_hard_blocker and common not in persona.acceptable_options:
                     persona.acceptable_options.append(common)
-                    persona.reasons.setdefault(common, [self._default_reason(scenario.option(common), common, 0)])
+                    persona.reasons.setdefault(common, [self._default_reason(scenario.option(common))])
         # Re-sync hidden scores after any preference/acceptable-list changes above.
         for persona in personas:
             persona.option_scores = self._build_scores(
@@ -344,14 +344,18 @@ class SetupBuilder:
                 raise ValueError("normal participant has too few acceptable options")
 
     @staticmethod
-    def _default_reason(option: OptionCard, option_id: str, idx: int) -> str:
-        if idx == 0 and option.upside:
-            return f"Option {option_id} has the upside that {option.upside}"
+    def _default_reason(option: OptionCard) -> str:
+        # Used only for options this code structurally assigned (a coalition-reassigned
+        # preference or the forced common compromise) that the model never justified.
+        # Phrased as a plain personal reason, not a templated "Option X has the upside
+        # that ..." line that reads robotic when it surfaces in the chat.
+        if option.upside:
+            return option.upside
         if option.best_for:
             # best_for is a noun phrase ("Those prioritizing scenery"); lowercase the
             # lead so it reads as a clause, not a broken mid-sentence capital.
             fit = option.best_for[0].lower() + option.best_for[1:]
-            return f"Option {option_id} works for {fit}"
+            return f"it works for {fit}"
         if option.tradeoff:
-            return f"Option {option_id}'s trade-off feels manageable to me"
-        return f"Option {option_id} fits one of the group priorities"
+            return "the trade-off feels manageable to me"
+        return "it fits what the group is after"

@@ -147,19 +147,26 @@ Gently point out we're repeating ourselves, reflect roughly where things stand, 
 
 def moderator_agreement_prompt(state: DialogueState, candidate_id: str) -> str:
     option = state.scenario.option(candidate_id)
+    # "everyone"/"the group" reads oddly for two people; address the pair directly instead.
+    whole = "you both" if len(state.personas) == 2 else "the group"
     return f"""{_MODERATOR_VOICE} (max 28 words) for this moment.
 Topic: {state.scenario.topic}
-It looks like everyone is converging on {option.name}.
-Note that the group seems agreed on {option.name} and ask if anyone objects or if you should lock it in. {_MODERATOR_RULES}"""
+It looks like {whole} are converging on {option.name}.
+Note that {whole} seem agreed on {option.name} and ask if anyone objects or if you should lock it in. {_MODERATOR_RULES}"""
 
 
 def moderator_holdout_prompt(state: DialogueState, candidate_id: str, holdout_ids: list[str]) -> str:
     option = state.scenario.option(candidate_id)
     names = " and ".join(state.name_for(h) for h in holdout_ids)
+    # Avoid "most of us" when it's really one-on-one.
+    if len(state.personas) == 2:
+        standing = f"You're okay with {option.name}, but {names} isn't sure yet."
+    else:
+        standing = f"Most of the group can live with {option.name}; the holdout(s): {names}."
     return f"""{_MODERATOR_VOICE} (max 32 words) addressed to {names}.
 Topic: {state.scenario.topic}
-Most of the group can live with {option.name}; the holdout(s): {names}.
-Acknowledge most are fine with {option.name}, then ask {names} what would make it work for them — or whether there's another option everyone could accept. {_MODERATOR_RULES}"""
+{standing}
+Acknowledge where things stand, then ask {names} what would make {option.name} work for them — or whether there's another option everyone could accept. {_MODERATOR_RULES}"""
 
 
 def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario) -> str:
@@ -182,14 +189,24 @@ def _audience_clause(others: list[str]) -> str:
     return " Greet the group casually (e.g. 'hey all', 'hi everyone')."
 
 
-def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int) -> str:
+def _distinct_from_prior(prior: list[str], what: str) -> str:
+    # Greetings/farewells are generated one at a time and otherwise can't see each other,
+    # so big groups produce several near-identical "hey all" / "sounds good, talk soon"
+    # lines. Showing each speaker what's already been said keeps them varied.
+    if not prior:
+        return ""
+    bullets = "; ".join(compact_words(line, 10) for line in prior[-4:])
+    return f" Others already {what}: {bullets}. Say yours differently — don't reuse their words, structure, or opener."
+
+
+def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int, prior: list[str]) -> str:
     return f"""The options have just been laid out and the group is about to discuss: {topic}.
 Write a quick, natural hello from {persona.name} ({persona.role}) — at most {max_words} words, in their voice ({persona.speech_style}).
-A simple greeting, optionally a few words of light anticipation about deciding this.{_audience_clause(others)}
+A simple greeting, optionally a few words of light anticipation about deciding this.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
 Do NOT name or favour any option, state any opinion, or ask about the decision yet. No name prefix, no quotes, no emoji."""
 
 
-def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int) -> str:
+def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
     if outcome.final_option and outcome.status in {"consensus", "fallback"}:
         result = f"the group is going with {scenario.option(outcome.final_option).name}"
     else:
@@ -198,7 +215,7 @@ def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, oth
                 if len(others) == 1 else "")
     return f"""The discussion just wrapped: {result}.
 Write a short, casual sign-off from {persona.name} ({persona.role}) — at most {max_words} words, in their voice ({persona.speech_style}).
-A quick goodbye that briefly acknowledges the outcome (pleased, relieved, or fine with it; mild disappointment is okay if there was no decision).{audience}
+A quick goodbye that briefly acknowledges the outcome (pleased, relieved, or fine with it; mild disappointment is okay if there was no decision).{audience}{_distinct_from_prior(prior, 'signed off')}
 Do NOT re-argue, raise new points, or name other options. No name prefix, no quotes, no emoji."""
 
 
@@ -245,6 +262,22 @@ def intent_line(intent: MoveIntent, state: DialogueState, addressee_name: Option
     return f"move={intent.act.value}{to_part}; focus={focus}; reason={intent.reason}; length={intent.length_hint}"
 
 
+def _others_back(state: DialogueState, persona: Persona, option_focus: list[str]) -> bool:
+    """True if another participant already votes/accepts/leans the focused option. Used to
+    steer the speaker toward a brief affirmation or a genuinely new angle instead of
+    repeating the same headline reason — the convergence 'chorus' problem."""
+    if not option_focus:
+        return False
+    opt = option_focus[0]
+    for other in state.personas:
+        if other.id == persona.id:
+            continue
+        rt = state.runtimes[other.id]
+        if rt.explicit_vote == opt or opt in rt.accepted_options or rt.current_preference == opt:
+            return True
+    return False
+
+
 def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -> str:
     t = persona.traits
     high_compromise = t.compromise_willingness >= 0.6
@@ -269,6 +302,9 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             return "Point at one concrete detail of the option you lean to that catches your eye, and why." + common
         return "Say casually which option you're leaning toward and roughly why." + common
     if intent.act == ActType.ACCEPT:
+        if _others_back(state, persona, intent.option_focus):
+            return ("Others already agreed to this — keep it short. Either just affirm ('yeah, that works for me') "
+                    "or add one genuinely new angle from what you care about; don't repeat the reason already given or reuse their wording.")
         return "Agree to this option as the group's pick, and name the one concrete thing about it you can genuinely live with — don't just say 'works for me'."
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act in {ActType.VOTE, ActType.REJECT}:
         # Stop the vote round from collapsing into a stock template — several
@@ -277,9 +313,13 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         # A commit turn states a choice cleanly; it must not re-open a worry the speaker
         # already set aside or swing back to a pick they've moved off.
         consistent = " If you already said an option works for you, back that one now — don't revert to your first pick or re-air worries you'd let go."
+        # Anti-chorus: when others already backed this same option, don't pile on the same
+        # headline reason; affirm in a few words or bring a fresh angle.
+        chorus = (" Others already backed this exact option — don't reuse their wording or sentence stem. Either keep it to a brief '+1' in your own words ('yeah, that one works for me') or add a reason nobody has raised yet."
+                  if _others_back(state, persona, intent.option_focus) else "")
         if high_compromise:
-            return "Enough discussion. Commit to a workable choice; if a good case was made for an option you rate well enough, move to it instead of restating your first pick." + consistent + no_template
-        return "Enough discussion. State where you stand; only hold out if you are genuinely not convinced." + consistent + no_template
+            return "Enough discussion. Commit to a workable choice; if a good case was made for an option you rate well enough, move to it instead of restating your first pick." + consistent + chorus + no_template
+        return "Enough discussion. State where you stand; only hold out if you are genuinely not convinced." + consistent + chorus + no_template
     # Discussion phase: every line should engage the conversation, not re-pitch your option.
     # A SUPPORT move aimed at an option the speaker can live with but isn't currently
     # leaning toward is a genuine change of mind — frame it as being won over, not as a
@@ -301,9 +341,9 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     by_act = {
         ActType.REACT: "React to what was just said specifically — agree with part of it or say why it doesn't move you. Don't change the subject to your own pick." + persuadable,
         ActType.ASK: "Ask one real question about the other person's reasoning or what matters to them — not a rhetorical one.",
-        ActType.COMPARE: "Genuinely weigh their option against yours — name a real strength of theirs and where yours still wins for you, in your own words; don't fall into a 'nice, but I prefer mine' shape." + persuadable,
-        ActType.SUPPORT: "Back an option with a reason rooted in who you are (your goal or your experience), not just its spec sheet.",
-        ActType.OBJECT: "Raise a genuine worry about the specific point or option just discussed, staying friendly; don't dismiss the person.",
+        ActType.COMPARE: "Genuinely weigh their option against yours — name a real strength of theirs and where yours still wins on what matters most to you, in your own words; don't fall into a 'nice, but I prefer mine' shape." + persuadable,
+        ActType.SUPPORT: "Back an option from your own angle — your main concern or a quick bit of your experience — and try a dimension others haven't dwelt on, not the headline everyone's repeating.",
+        ActType.OBJECT: "Raise a genuine worry — grounded in what you care about most — about the specific point or option just discussed, staying friendly; don't dismiss the person.",
         ActType.PUSH_BACK: "Push back on the exact point just made — quote or paraphrase it — and say why, while staying cooperative." + persuadable,
         ActType.PROPOSE_COMPROMISE: "Offer a compromise that actually answers others' concerns, not just a relabel of your favourite. Say why it could work for them.",
     }
@@ -344,9 +384,9 @@ def sim_utterance(
     # When the turn is aimed at one person, talk TO them ("you") rather than narrating them
     # in the third person ("Liam's point about ..."), which reads stilted between two people.
     address_rule = (
-        f"\n- You're speaking directly to {addressee_name}: refer to them as 'you'/'your', not in the "
-        f"third person ('{addressee_name}'s point') — but do NOT start your line with 'Your...'; lead with "
-        f"your own reaction or thought and weave the 'you' in naturally."
+        f"\n- You're reacting to {addressee_name}: you can use 'you' once for your reaction to their point, "
+        f"but don't start the line with 'Your...' and don't narrate them in the third person "
+        f"('{addressee_name}'s point'). Lead with your own thought, not with them."
         if addressee_name else ""
     )
     return f"""Write exactly one natural chat message for the next speaker.
@@ -374,10 +414,12 @@ Rules:
 - Write only {persona.name}'s message: one line, no name prefix, no quotes, under {max_words} words.
 - Casual group-chat tone: human, not corporate, not slang-heavy. Sound like {persona.name}, speaking from what you want and who you are — not like a brochure listing features.
 - Build on the chat: engage with the most recent point (agree, build on it, or push back on that specific thing). Don't ignore others and re-pitch your option.{address_rule}
-- It's good to be persuaded: if someone's point genuinely lands, say so and shift — people change their minds in real discussions.
+- This is ONE shared decision for the whole group, not advice to one person. Never frame an option as good "for you"/"for them" or as benefiting one individual ("works for you", "great for you", "would benefit you") — weigh it for the group, or say what it means to you.
+- You can be persuaded when a point genuinely lands — say so and shift. But you don't have to be: holding your ground and explaining why is just as real. Don't fold in your first couple of turns.
 - Refer to options by their name (e.g. "the contest", "the valley walk"), not "Option B" — only use a letter if you truly need it to disambiguate.
 - Don't open with an option's name, and vary your sentence shape from the previous speakers — don't reuse their opener or rhythm.
-- Avoid stock templates: "X's <feature> beats/outweighs Y's", "Considering <X>, <Y> could be...", "<option> is appealing/nice, but I still prefer mine", "Given the discussion, I think...". Speak like a person, not a spec comparison or a fill-in-the-blank.
+- Avoid stock templates and acknowledge-then-pivot frames: "X's <feature> beats/outweighs Y's", "<option> is appealing/nice, but I still prefer mine", "Given the discussion, I think...", "your point about X makes me think/consider Y", "you make/made a good/valid/compelling point/case", "<name>'s point/concern is valid/fair/well taken/resonates", "that makes me reconsider". Don't open a line with "Considering ...". Speak like a person, not a spec comparison or a fill-in-the-blank.
+- Don't default to "<option>'s <feature>" as your subject ("the cafe's variety...", "Asana's reporting..."); an occasional one is fine, but more often lead with the team or yourself, or use the option as a plain subject — "the cafe has way more variety", "with the park we'd have room to spare", "I'd get more done in Notion".
 - Don't restate a point already made (yours or anyone's) or copy the previous speaker's phrasing.
 - Default to statements, but an occasional open or rhetorical question that invites the others in is fine — just don't turn every turn into a question or end on one out of habit.
 - Use only facts from the option cards; invent nothing (no prices, ratings, availability, policies, weather).

@@ -112,19 +112,23 @@ class Orchestrator:
     def _greeting_round(self, state: DialogueState, tracker: "StateTracker") -> None:
         """A quick, optional hello from a trait-driven subset, right after the options board."""
         budget = int(cfg.utterances.word_budgets.greeting)
+        said: list[str] = []  # shown to later speakers so greetings don't all read alike
         for persona in self._social_speakers(state.personas):
             others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(prompts.greeting_line(persona, state.scenario.topic, others, budget), persona, budget)
+            line = self._social_say(prompts.greeting_line(persona, state.scenario.topic, others, budget, said), persona, budget)
             if line:
+                said.append(line)
                 self._emit(tracker.apply_social(state, persona, line, Phase.OPENING, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
     def _farewell_round(self, state: DialogueState, tracker: "StateTracker", outcome: RunOutcome) -> None:
         """A quick, optional sign-off from a trait-driven subset once it's decided."""
         budget = int(cfg.utterances.word_budgets.farewell)
+        said: list[str] = []  # shown to later speakers so sign-offs don't all read alike
         for persona in self._social_speakers(state.personas):
             others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(prompts.farewell_line(persona, state.scenario, outcome, others, budget), persona, budget)
+            line = self._social_say(prompts.farewell_line(persona, state.scenario, outcome, others, budget, said), persona, budget)
             if line:
+                said.append(line)
                 self._emit(tracker.apply_social(state, persona, line, Phase.CLOSURE, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
     def _social_say(self, prompt: str, persona: Persona, budget: int) -> Optional[str]:

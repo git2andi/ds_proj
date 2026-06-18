@@ -28,7 +28,10 @@ def option_support(state: DialogueState, option_id: str) -> float:
             score += 2.0
         if persona.preferred_option == option_id:
             score += 1.0
-        score += (persona.score_for(option_id) - acceptance) * 0.6
+        # Latent acceptability is weighted lightly so an option only a few people *could*
+        # live with doesn't out-rank options people are actively backing — otherwise the
+        # group drifts onto a bland common compromise nobody actually argued for.
+        score += (persona.score_for(option_id) - acceptance) * 0.4
         if option_id in rt.hard_rejections:
             score -= 5.0
         elif option_id in rt.soft_rejections:

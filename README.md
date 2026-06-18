@@ -131,12 +131,16 @@ policy engine.
    missing it falls back to the routed intent. Deciding whether a message is a
    vote/accept/reject is the model's job, reported via the trailer, not guessed from prose.
 
-5. **Convergence**: personas have movable leanings. A strong point plus a cooperative
-   personality lets someone shift toward an option they can live with — when the group is
-   rallying behind an option a persona privately rates acceptable, the router can hand them
-   an explicit "won over" turn (chance scaled by their `compromise_willingness` via
-   `routing.persuasion_probability_factor`) that voices the change of mind and moves their
-   lean, rather than the shift only ever surfacing as a silent tally at vote time. Opening
+5. **Convergence**: personas have movable leanings, but they don't fold on a dime. A strong
+   point plus a cooperative personality lets someone shift toward an option they can live with —
+   when the group is rallying behind an option a persona privately rates acceptable, the router
+   can hand them an explicit "won over" turn that voices the change of mind and moves their lean.
+   That shift is **gated for friction**: it only fires once they've actually spoken and held
+   their pick a couple of times (`routing.persuasion_min_speaker_turns`), when a rival option
+   *clearly* out-pulls their current lean (`routing.persuasion_support_margin`) and someone has
+   genuinely argued for it — the chance itself then scales with `compromise_willingness` via
+   `routing.persuasion_probability_factor`. So nobody capitulates in the first exchange, and the
+   shift is voiced rather than only ever surfacing as a silent tally at vote time. Opening
    turns are clamped to a stated leaning only, so a first-round line can never be miscounted
    as a vote/accept. The group narrows once leanings concentrate
    (`conversation.concentration_to_narrow`), not by filling per-option counters. How long the
@@ -161,10 +165,12 @@ policy engine.
 
 8. **Validation** (`validation.py`): deterministic guardrails repair turns that are empty,
    carry a speaker prefix, reference an invalid option, invent numbers, repeat the speaker,
-   duplicate another speaker's line verbatim, trail off mid-thought, turn a *decision* move
-   (vote/accept/reject) or an opening into a question, or stack too many questions in a row.
-   Discussion turns may still carry the occasional rhetorical/open question. Warn-level flags
-   (e.g. a repeated sentence start) are recorded but not repaired by default.
+   duplicate another speaker's line verbatim, reuse a long verbatim phrase from another speaker
+   (the *echo guard* — a shared 6+ word run with option/participant names masked, so naming the
+   same pick is fine but lifting their sentence stem is not), trail off mid-thought, turn a
+   *decision* move (vote/accept/reject) or an opening into a question, or stack too many
+   questions in a row. Discussion turns may still carry the occasional rhetorical/open question.
+   Warn-level flags (e.g. a repeated sentence start) are recorded but not repaired by default.
 
 ## Configuration
 
@@ -237,52 +243,25 @@ The run streams the header and every turn to stdout and writes the full logs und
 `run.json` for per-turn acts and validation issues) to evaluate naturalness, convergence,
 and any remaining errors.
 
-## Status & next steps (evaluation as of 2026-06-14)
+## Status & next steps (evaluation as of 2026-06-18)
 
-Evaluated across fresh 2-, 3-, 4-, 5-, and 7-person runs on varied topics. Recording state
-here so the next session can continue without re-deriving it.
+A naturalness pass (more-friction target) landed and was verified on fresh 2-, 3-, 4-, and
+7-person runs across varied topics. The previously-listed issues are addressed; recording the
+current state here so the next session can continue without re-deriving it.
 
-### Known issues to fix next (highest-impact first)
-1. **Convergence/agreement chorus (biggest naturalness problem).** As the group coalesces —
-   especially the narrowing/vote round and in large groups — nearly everyone restates the
-   *same* reason for the winning option (e.g. n=7 "spacious + affordable" repeated by most;
-   n=2 "balance / cost and control"). It's *thematic* repetition, so the validators (which
-   catch near-verbatim/own-repetition) don't flag it. **To do:** in the vote/confirmation
-   guidance (`prompts._move_guidance` + `sim_utterance`), when others have already backed the
-   same option, instruct the speaker to either briefly affirm ("yeah, X works for me") OR add a
-   *new* angle — not re-state the headline reason. Consider tracking which attributes/reasons
-   were already voiced for the candidate and telling the model to avoid them. Possibly let the
-   narrowing round accept short "+1"-style agreement instead of a full vote sentence each.
-2. **"X makes me consider/think Y" acknowledgment template.** Many discussion turns follow
-   "Your point about X makes me think Y" — formulaic acknowledge-then-pivot. **To do:** add this
-   frame to the banned-template list in `sim_utterance` rules; push varied reactions (a direct
-   counter, a concrete example, a question) instead.
-3. **"Your..." opener tic (verify).** The new direct-address rule was refined to forbid starting
-   a line with "Your..."; confirm in the next runs it didn't just move the tic. If it persists,
-   harden (e.g. disallow "you/your" as the first word on consecutive addressed turns).
-4. **Thematic monotony / shallow exploration.** Discussions circle one or two headline
-   attributes rather than exploring distinct dimensions (cost vs risk vs timeline vs team-fit).
-   **To do:** consider an "attribute coverage" nudge (analogous to option coverage in
-   `router._coverage_gap_option`) that steers a turn toward an under-discussed dimension, and/or
-   prompt personas to argue from their own `main_concern`/`backstory` rather than the option's
-   headline spec.
-5. **Backstory/goal underused.** Role shows, but the specific `backstory`/`private_goal` rarely
-   surfaces. **To do:** light prompt nudge to occasionally ground a point in personal experience.
-
-### Polish (lower priority)
-- **Moderator phrasing for n=2**: "Most of us are okay with…", "we're all on the same page"
-  read oddly for two people. Make `prompts.moderator_*_prompt` group-size-aware (address the
-  one holdout by name; avoid "most of us"/"all" when n==2).
-- **Greeting/farewell sameness**: farewells don't see each other, so big groups get several
-  "Looks like we've got our direction". **To do:** pass already-said greetings/farewells into
-  the prompt to vary them.
-- **Possessive "X's <feature>" construction** is still a general tic even when not addressing a
-  person; worth discouraging more broadly in the rules.
+### Fixed in this pass
+### Remaining (lower priority)
+- **Thematic opener similarity** in the vote round (warn-level `REPEATED_START`): lexically varied
+  but same theme — the genuinely hard, *thematic* part. Pushing it harder risks over-repair or
+  stilted text.
+- **Possessive "X's <feature>"** still appears (now alongside varied constructions); discouraged
+  in the prompt but natural enough that it isn't forced out.
 
 ### How to reproduce the evaluation
-Run a spread of group sizes (`simulation.num_participants` 2/4/7) and topics from different
-domains, then read the newest transcripts. Useful signals already logged: `min_discussion_turns`
-(pacing), `question_density`, `avg_words_per_turn`, `flagged_turns`, `outcome_status`. For
-repetition, scan participant turns for high word-overlap pairs (jaccard ≥ 0.6) and count distinct
-first-3-word openers — both were near-clean lexically; the remaining problem is *thematic*.
+Run a spread of group sizes (`simulation.num_participants`, e.g. 3 and 7) and topics from
+different domains, then read the newest transcripts. Useful signals already logged:
+`min_discussion_turns` (pacing), `question_density`, `avg_words_per_turn`, `repaired_turns`,
+`flagged_turns`, `outcome_status`. For repetition, scan participant turns for high word-overlap
+pairs (jaccard ≥ 0.6) and count distinct first-3-word openers; the echo guard now catches verbatim
+cross-speaker lifts, so the remaining signal to watch is *thematic* (same dimension, varied words).
 

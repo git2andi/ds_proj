@@ -240,9 +240,15 @@ class TurnRouter:
         if persona.is_hard_blocker:
             return None
         rt = state.runtimes[speaker_id]
+        # Nobody folds before they've actually voiced and held their pick a couple of times —
+        # instant capitulation in the first exchange is the main thing that read as fake.
+        if rt.turn_count < int(cfg.routing.persuasion_min_speaker_turns):
+            return None
         lean = rt.current_preference or persona.preferred_option
         threshold = int(cfg.scenario.acceptance_score)
-        best, best_support = None, option_support(state, lean)
+        margin = float(cfg.routing.persuasion_support_margin)
+        # A rival option has to clearly out-pull the current lean, not just edge it.
+        best, best_support = None, option_support(state, lean) + margin
         for opt in persona.acceptable_options:
             if opt == lean or persona.score_for(opt) < threshold:
                 continue
@@ -251,12 +257,17 @@ class TurnRouter:
                 best, best_support = opt, support
         if best is None:
             return None
+        # Only fold when someone actually made the case in the chat (real expressed support),
+        # not on latent utility alone — and address that person when voicing the change.
+        supporter = self._supporter_of(state, best, speaker_id)
+        if supporter is None:
+            return None
         chance = persona.traits.compromise_willingness * float(cfg.routing.persuasion_probability_factor)
         if random.random() >= chance:
             return None
         return MoveIntent(
             speaker_id=speaker_id,
-            addressee_id=self._supporter_of(state, best, speaker_id),
+            addressee_id=supporter,
             act=ActType.SUPPORT,
             option_focus=[best],
             reason="a good case was made for an option you can live with; move toward it",
@@ -273,18 +284,20 @@ class TurnRouter:
         return None
 
     def _target_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: Optional[str]) -> Optional[str]:
+        # Most lines in a real group chat are said to the room, not aimed at one person.
+        # Only reply-style and conflict moves get an explicit addressee, and even those
+        # only sometimes (direct_reply_probability) — over-addressing was what made every
+        # turn read as second-person advice ("X works for you").
         if not state.turns:
             return None
+        reply_prob = float(cfg.routing.direct_reply_probability)
         last_participant = self._last_participant_turn(state)
-        if act in {ActType.ANSWER, ActType.REACT, ActType.PUSH_BACK} and last_participant and last_participant.speaker_id != speaker_id:
-            return last_participant.speaker_id
-        if act == ActType.ASK and last_participant and last_participant.speaker_id != speaker_id:
-            return last_participant.speaker_id
+        has_other_last = bool(last_participant and last_participant.speaker_id != speaker_id)
         if act in {ActType.OBJECT, ActType.PUSH_BACK, ActType.COMPARE} and option_id:
             target = self._conflicting_person_for_option(state, speaker_id, option_id)
-            if target:
+            if target and random.random() < reply_prob:
                 return target
-        if float(cfg.routing.direct_reply_probability) > 0 and last_participant and last_participant.speaker_id != speaker_id:
+        if act in {ActType.ANSWER, ActType.REACT, ActType.PUSH_BACK, ActType.ASK} and has_other_last and random.random() < reply_prob:
             return last_participant.speaker_id
         return None
 
