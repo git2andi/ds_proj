@@ -45,6 +45,7 @@ class MessageValidator:
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)
         self._check_robotic_phrasing(stripped, issues)
+        self._check_collective_voice(stripped, issues)
         ok = not any(issue.severity in {"repair", "fatal"} for issue in issues)
         return ValidationResult(ok=ok, issues=issues)
 
@@ -158,6 +159,16 @@ class MessageValidator:
         if any(p.match(text) for p in self._possessive_openers):
             issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
 
+    def _check_collective_voice(self, text: str, issues: list[ValidationIssue]) -> None:
+        # "We consider...", "We prioritize...", "We're drawn to...", "We can appreciate..." —
+        # an individual stating a *private* view as the committee "we" was the most consistent
+        # robotic tell across runs (ANALYSIS #6). The 'we'-led case is corrected deterministically
+        # upstream (fix_collective_voice in clean_generated), so this is a warn-level backstop:
+        # it surfaces anything that slips through (e.g. an 'our group prioritizes ...' form) in
+        # the logs without spending an LLM repair on a flaky rewrite.
+        if _COLLECTIVE_VOICE.search(text):
+            issues.append(ValidationIssue("COLLECTIVE_VOICE", "warn", "States a personal view as the committee 'we'."))
+
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         if "?" not in text:
             return
@@ -204,6 +215,46 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),  # stock vote closer
     re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),  # meeting-minutes recap
 ]
+
+# Line-initial "we/our + cognition/preference verb": an individual hiding a private stance
+# behind the committee "we". Cognition verbs only (consider/prioritize/value/appreciate/
+# believe/think/feel/prefer/favour/drawn) so collective *action* framing ("we should...",
+# "we need...", "we can split the cost") is not touched. The {0,18} window lets contractions
+# and a modal sit between ("we're drawn", "we can appreciate", "we'd prioritise").
+_COLLECTIVE_VOICE = re.compile(
+    r"^\s*(?:we|our)\b[^.?!]{0,18}?\b(?:consider|prioriti[sz]e|value|appreciate|"
+    r"believe|think|feel|prefer|favou?r|drawn)\b",
+    re.I,
+)
+
+# The leading "we[ aux]" of a committee-voiced cognition statement, used to rewrite it to the
+# first person. Only the pronoun (+ its auxiliary) is matched; the rest of the line is kept
+# verbatim, so this corrects register without touching content.
+_WE_LEAD = re.compile(r"^(\s*)[Ww]e(’re|'re|’ve|'ve|’ll|'ll|’d|'d| are| have| will)?\b")
+_WE_AUX_TO_I = {
+    "'re": "I'm", "’re": "I'm", " are": "I am",
+    "'ve": "I've", "’ve": "I've", " have": "I have",
+    "'ll": "I'll", "’ll": "I'll", " will": "I will",
+    "'d": "I'd", "’d": "I'd",
+}
+
+
+def fix_collective_voice(text: str) -> str:
+    """Deterministically rewrite a 'we'-led personal-opinion line to the first person
+    ('We prioritize comfort' -> 'I prioritize comfort', "We're drawn to X" -> "I'm drawn to X").
+
+    Only fires on the same line-initial we+cognition-verb pattern the validator flags, and only
+    for the 'we'-led form (an 'our group ...' phrasing is genuinely ambiguous and left alone).
+    The LLM reliably ignores a "say 'I' not 'we'" repair hint, so this fixes the single most
+    common robotic tell in code — no extra LLM call, content fully preserved."""
+    if not _COLLECTIVE_VOICE.search(text):
+        return text
+    m = _WE_LEAD.match(text)
+    if not m:
+        return text  # 'our ...' or an odd form -> leave for the warn-level backstop
+    indent, aux = m.group(1), (m.group(2) or "")
+    head = _WE_AUX_TO_I.get(aux.lower(), "I")
+    return f"{indent}{head}{text[m.end():]}"
 
 
 def _longest_run(a: list[str], b: list[str]) -> int:

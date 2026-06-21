@@ -1,0 +1,1327 @@
+{
+  "run_id": "20260620_203452_022505",
+  "topic": "Book a Flight to Stockholm",
+  "scenario": {
+    "topic": "Book a Flight to Stockholm",
+    "decision_kind": "flight_booking",
+    "opening_question": "What matters most to us when booking a flight to Stockholm - price, departure time, or in-flight amenities?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Morning SAS Flight",
+        "attrs": {
+          "cost": "$250",
+          "departure_time": "8:00 AM",
+          "flight_duration": "2 hours",
+          "in_flight_meals": "included"
+        },
+        "upside": "Early arrival in Stockholm",
+        "tradeoff": "Higher cost compared to other options",
+        "concern": "Limited seat selection",
+        "best_for": "Those who value early arrival and don't mind paying more"
+      },
+      {
+        "id": "B",
+        "name": "Afternoon Norwegian Flight",
+        "attrs": {
+          "cost": "$180",
+          "departure_time": "2:00 PM",
+          "flight_duration": "2.5 hours",
+          "in_flight_meals": "not included"
+        },
+        "upside": "Lower cost compared to other options",
+        "tradeoff": "Later arrival in Stockholm and no in-flight meals",
+        "concern": "Less comfortable seating",
+        "best_for": "Those on a tight budget who don't mind a later arrival"
+      },
+      {
+        "id": "C",
+        "name": "Evening Lufthansa Flight",
+        "attrs": {
+          "cost": "$220",
+          "departure_time": "6:00 PM",
+          "flight_duration": "2 hours",
+          "in_flight_meals": "included"
+        },
+        "upside": "Comfortable seating and in-flight meals",
+        "tradeoff": "Later arrival in Stockholm",
+        "concern": "Potential delays due to evening flights",
+        "best_for": "Those who value comfort and don't mind a later arrival"
+      },
+      {
+        "id": "D",
+        "name": "Budget Ryanair Flight",
+        "attrs": {
+          "cost": "$150",
+          "departure_time": "10:00 AM",
+          "flight_duration": "2.5 hours",
+          "in_flight_meals": "not included"
+        },
+        "upside": "Lowest cost option",
+        "tradeoff": "Less comfortable seating, no in-flight meals, and potential extra fees",
+        "concern": "Hidden fees for services like checked bags or seat selection",
+        "best_for": "Those on an extremely tight budget who are willing to sacrifice comfort"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Lena",
+      "role": "Budget Conscious Traveler",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 3,
+        "response_length": 1,
+        "compromise_willingness": 0.6127244846221951,
+        "initiative": 0.41704282827046246,
+        "directness": 0.4200725106438489,
+        "detail": 0.7123589568598827
+      },
+      "speech_style": "Direct and to the point",
+      "private_goal": "Find a affordable flight that meets my needs",
+      "backstory": "Always looks for ways to save money on travel",
+      "main_concern": "budget",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "soft_rejections": [
+        "D"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "I prefer the early morning departure and the included in-flight meals."
+        ],
+        "C": [
+          "The evening flight is a good alternative if I can get a comfortable seat."
+        ]
+      },
+      "reservation": "I'm concerned about the limited seat selection on option A.",
+      "reconsider_if": "If everyone prioritizes comfort over price, I'd consider option C more seriously.",
+      "option_scores": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Kai",
+      "role": "Comfort Seeker",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 5,
+        "neuroticism": 3,
+        "response_length": 3,
+        "compromise_willingness": 0.5995580238190921,
+        "initiative": 0.6777799290228147,
+        "directness": 0.44213139203910945,
+        "detail": 0.4024756583684905
+      },
+      "speech_style": "Detailed and thoughtful",
+      "private_goal": "Ensure a comfortable flight experience",
+      "backstory": "Has had negative experiences with budget airlines in the past",
+      "main_concern": "comfort",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "soft_rejections": [
+        "B"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "The morning SAS flight offers the best balance of comfort and convenience."
+        ],
+        "C": [
+          "While not my first choice, the evening Lufthansa flight is acceptable due to its comfortable seating."
+        ]
+      },
+      "reservation": "I'm worried about the potential delays with option C.",
+      "reconsider_if": "If the group decides that price is the top priority, I might have to reconsider my stance on option B.",
+      "option_scores": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 1
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "role": "Practical Planner",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 2,
+        "response_length": 4,
+        "compromise_willingness": 0.59522362366823,
+        "initiative": 0.4789414001138398,
+        "directness": 0.5153955253989351,
+        "detail": 0.7855268825459496
+      },
+      "speech_style": "Analytical and organized",
+      "private_goal": "Find a flight that balances cost, time, and comfort",
+      "backstory": "Always researches and compares options before making a decision",
+      "main_concern": "feasibility",
+      "preferred_option": "C",
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "C": [
+          "The evening Lufthansa flight offers a good balance of cost, comfort, and convenience."
+        ],
+        "B": [
+          "While not ideal, the afternoon Norwegian flight is a viable alternative if we prioritize saving money."
+        ]
+      },
+      "reservation": "I'm concerned that option A might be too expensive for some group members.",
+      "reconsider_if": "If the group decides that an early arrival is crucial, I'd be willing to reconsider option A.",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Book a Flight to Stockholm. Here are the options:\nOption A - Morning SAS Flight: cost $250, departure time 8:00 AM, flight duration 2 hours, in flight meals included\nOption B - Afternoon Norwegian Flight: cost $180, departure time 2:00 PM, flight duration 2.5 hours, in flight meals not included\nOption C - Evening Lufthansa Flight: cost $220, departure time 6:00 PM, flight duration 2 hours, in flight meals included\nOption D - Budget Ryanair Flight: cost $150, departure time 10:00 AM, flight duration 2.5 hours, in flight meals not included\nWhat matters most to us when booking a flight to Stockholm - price, departure time, or in-flight amenities?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Book a Flight to Stockholm. Here are the options: Option A - Morning SAS Flight: cost $250, departure time 8:00 AM, flight duration 2 hours, in flight meals included Option B - Afternoon Norwegian Flight: cost $180, departure time 2:00 PM, flight duration 2.5 hours, in flight meals not included Option C - Evening Lufthansa Flight: cost $220, departure time 6:00 PM, flight duration 2 hours, in flight meals included Option D - Budget Ryanair Flight: cost $150, departure time 10:00 AM, flight duration 2.5 hours, in flight meals not included What matters most to us when booking a flight to Stockholm - price, departure time, or in-flight amenities?",
+        "act_type": "react",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Hi everyone, let's get started",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Hi everyone, let's get started",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 123,
+      "tokens_out": 8,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Morning flights are usually more convenient for me because I prefer the early start",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Morning flights are usually more convenient for me because I prefer the early start",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1199,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "The morning SAS flight offers the best balance of comfort and convenience for me.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The morning SAS flight offers the best balance of comfort and convenience for me.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1226,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Evening flights like the Lufthansa one often have more comfortable seating and included meals.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Evening flights like the Lufthansa one often have more comfortable seating and included meals.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1287,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "I'm a bit concerned that the afternoon Norwegian flight's lack of in-flight meals could make for an uncomfortable ride.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'm a bit concerned that the afternoon Norwegian flight's lack of in-flight meals could make for an uncomfortable ride.",
+        "act_type": "object",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "I'm a bit concerned that the afternoon Norwegian flight's lack of in-flight meals could make for an uncomfortable ride."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "object",
+        "reason": "develop under-discussed Option B with a real trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1363,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Lufthansa's in-flight meals and comfortable seating would make our travel experience more enjoyable after a long day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Lufthansa's in-flight meals and comfortable seating would make our travel experience more enjoyable after a long day.",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1369,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "The Lufthansa flight's potential delays worry me more than its comfortable seating.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The Lufthansa flight's potential delays worry me more than its comfortable seating.",
+        "act_type": "object",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "The Lufthansa flight's potential delays worry me more than its comfortable seating."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1377,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Limited seat selection is a concern though",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Limited seat selection is a concern though",
+        "act_type": "object",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "Limited seat selection is a concern though"
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1452,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "The morning SAS flight offers more comfort and amenities, making it a better choice despite some limitations.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The morning SAS flight offers more comfort and amenities, making it a better choice despite some limitations.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null
+      },
+      "tokens_in": 346,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Delays are possible but comfort matters more to me",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Delays are possible but comfort matters more to me",
+        "act_type": "react",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1402,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Lufthansa's comfort would be nice but I still think the morning SAS flight is better value.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lufthansa's comfort would be nice but I still think the morning SAS flight is better value.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1297,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Our group may prioritize comfort over potential delays with the Evening Lufthansa Flight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Our group may prioritize comfort over potential delays with the Evening Lufthansa Flight.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 335,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 14,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Two of us are on the morning SAS flight and one is holding out for evening Lufthansa, let's focus on these two since they have backers.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Two of us are on the morning SAS flight and one is holding out for evening Lufthansa, let's focus on these two since they have backers.",
+        "act_type": "react",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Lufthansa's comfort is appealing but the morning SAS flight still offers better value for our group.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lufthansa's comfort is appealing but the morning SAS flight still offers better value for our group.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1333,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "We gain a full day in Stockholm with an early arrival.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We gain a full day in Stockholm with an early arrival.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 320,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I'm voting for the Evening Lufthansa Flight because it balances cost and comfort well.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'm voting for the Evening Lufthansa Flight because it balances cost and comfort well.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1358,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Morning SAS flight still gives us the best value overall.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Morning SAS flight still gives us the best value overall.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1448,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Nina, most of us are okay with the morning SAS flight, what would make it work for you?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Nina, most of us are okay with the morning SAS flight, what would make it work for you?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I'm concerned about the higher cost of the Morning SAS flight.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'm concerned about the higher cost of the Morning SAS flight.",
+        "act_type": "object",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "I'm concerned about the higher cost of the Morning SAS flight."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "reject",
+        "reason": "say whether Option A works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 292,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "We can explore Stockholm without feeling rushed with an early arrival.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We can explore Stockholm without feeling rushed with an early arrival.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 301,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Early arrival in Stockholm gives us a full day to explore.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Early arrival in Stockholm gives us a full day to explore.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1448,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "Early arrival lets us set our own pace in Stockholm.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Early arrival lets us set our own pace in Stockholm.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1378,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The evening Lufthansa flight still looks like the best balance of cost and comfort for our group, considering we'll all arrive feeling more rested.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The evening Lufthansa flight still looks like the best balance of cost and comfort for our group, considering we'll all arrive feeling more rested.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1484,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "Morning SAS flight still offers the best overall experience for our group.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Morning SAS flight still offers the best overall experience for our group.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1379,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Afternoon Norwegian saves us money.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Afternoon Norwegian saves us money.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null
+      },
+      "tokens_in": 291,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Kai",
+      "text": "I'm still on board with the morning SAS flight for its overall experience.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'm still on board with the morning SAS flight for its overall experience.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null
+      },
+      "tokens_in": 1370,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Morning SAS flight seems to be the most agreed upon option for now.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Morning SAS flight seems to be the most agreed upon option for now.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Lena",
+      "text": "Fine with me, see you on the Morning SAS Flight",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Fine with me, see you on the Morning SAS Flight",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 111,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Decision made, looking forward to finalizing details.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Decision made, looking forward to finalizing details.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 141,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false
+    }
+  ],
+  "outcome": {
+    "status": "fallback",
+    "final_option": "A",
+    "reason": "majority fallback with support fraction 0.67",
+    "turns": 23,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 26,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.133,
+    "turn_counts": {
+      "Lena": 7,
+      "Kai": 9,
+      "Nina": 7
+    },
+    "question_density": 0.0,
+    "avg_words_per_turn": 12.4,
+    "repaired_turns": 6,
+    "repair_rate": 0.231,
+    "flagged_turns": 0,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 15,
+        "reasons": 14,
+        "objections": 3,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 2,
+        "reasons": 1,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 9,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 0,
+        "reasons": 0,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "fallback",
+    "final_option": "A",
+    "min_discussion_turns": 12,
+    "setup_tokens_in": 1575,
+    "setup_tokens_out": 1356,
+    "dialogue_tokens_in": 34332,
+    "dialogue_tokens_out": 982,
+    "total_tokens_in": 35907,
+    "total_tokens_out": 2338
+  },
+  "tokens": {
+    "setup_tokens_in": 1575,
+    "setup_tokens_out": 1356,
+    "dialogue_tokens_in": 34332,
+    "dialogue_tokens_out": 982,
+    "total_tokens_in": 35907,
+    "total_tokens_out": 2338
+  }
+}

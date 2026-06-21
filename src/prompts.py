@@ -11,7 +11,7 @@ from typing import Iterable, Optional
 
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario
-from scoring import current_lean
+from scoring import best_overlap_option, current_lean
 from utils import compact_words
 
 
@@ -146,10 +146,22 @@ def _camp_split(state: DialogueState) -> str:
 
 
 def moderator_stall_prompt(state: DialogueState) -> str:
+    # If a single option actually bridges the split (people in different camps can all live
+    # with it), steer the moderator to surface THAT as the common ground rather than just
+    # pitting the loudest front-runners against each other (ANALYSIS #4: the mod missed the
+    # real overlap candidate). Otherwise fall back to a plain "pick between the front-runners".
+    overlap = best_overlap_option(state)
+    if overlap is not None:
+        push = (f"Point out that {state.scenario.option(overlap).name} may be the common ground — "
+                "people on different sides can live with it — and ask if everyone can get behind it, "
+                "or ask a specific holdout what would make it work.")
+    else:
+        push = ("Push toward a decision: propose setting aside any option nobody backs and choosing "
+                "between the front-runners, or ask a specific holdout what would actually change their mind.")
     return f"""{_MODERATOR_VOICE} (max 32 words) for this moment.
 Topic: {state.scenario.topic}
 The discussion is going in circles. The split right now: {_camp_split(state)}.
-Name that split plainly (who's where), note we're repeating the same points, then push toward a decision — propose setting aside any option nobody backs and choosing between the front-runners, or ask a specific holdout what would actually change their mind. Don't just ask 'is anyone's view changing?' again. {_MODERATOR_RULES}"""
+Name that split plainly (who's where), note we're repeating the same points, then move things forward. {push} Don't just ask 'is anyone's view changing?' again. {_MODERATOR_RULES}"""
 
 
 def moderator_agreement_prompt(state: DialogueState, candidate_id: str) -> str:
@@ -212,10 +224,10 @@ def _distinct_from_prior(prior: list[str], what: str) -> str:
 
 
 def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int, prior: list[str]) -> str:
-    return f"""The options have just been laid out and the group is about to discuss: {topic}.
-Write a quick, natural hello from {persona.name} ({persona.role}) — at most {max_words} words, in their voice ({persona.speech_style}).
-A simple greeting, optionally a few words of light anticipation about deciding this.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
-Do NOT name or favour any option, state any opinion, or ask about the decision yet. No name prefix, no quotes, no emoji."""
+    return f"""The group is gathering to chat about a decision (casual group chat, friends/colleagues).
+Write a quick, natural hello from {persona.name} — at most {max_words} words, in their voice ({persona.speech_style}).
+Just a plain casual greeting, like a real person dropping into a chat ('hey', 'hi all', 'morning').{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
+Keep it short and unforced. Do NOT use seminar/meeting openers ('looking forward to', 'excited to dive in', 'great to be here', "can't wait", 'eager to'), do NOT mention the topic or any option, state no opinion, ask nothing. No name prefix, no quotes, no emoji."""
 
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
@@ -226,9 +238,9 @@ def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, oth
     audience = (f" It's just you and {others[0]} — sign off to {others[0]} directly; don't say 'all', 'everyone', 'team', or 'you all'."
                 if len(others) == 1 else "")
     return f"""The discussion just wrapped: {result}.
-Write a short, casual sign-off from {persona.name} ({persona.role}) — at most {max_words} words, in their voice ({persona.speech_style}).
-A quick goodbye that briefly acknowledges the outcome (pleased, relieved, or fine with it; mild disappointment is okay if there was no decision).{audience}{_distinct_from_prior(prior, 'signed off')}
-Do NOT re-argue, raise new points, or name other options. No name prefix, no quotes, no emoji."""
+Write a short, casual sign-off from {persona.name} — at most {max_words} words, in their voice ({persona.speech_style}).
+A quick goodbye with a touch of feeling about how it ended (pleased, relieved, or fine with it; mild disappointment is okay if there was no decision).{audience}{_distinct_from_prior(prior, 'signed off')}
+You may name the chosen option plainly, but do NOT describe it or invent any detail about it (no genre, author, plot, attributes, dates, or timeframe like 'next week/next month') — you'd risk getting it wrong. Do NOT re-argue, raise new points, or name other options. No name prefix, no quotes, no emoji."""
 
 
 def _lean_name(state: DialogueState, persona: Persona) -> str:
@@ -427,10 +439,12 @@ Rules:
 - One line only, as {persona.name}: no name prefix, no quotes, under {max_words} words. Casual, human group-chat tone (not corporate or slang-heavy); sound like {persona.name}, not a brochure.
 - Build on the latest point (agree, extend, or push back on that specific thing); don't ignore it to re-pitch your option.{address_rule}
 - It's ONE shared group decision, not advice to one person — never frame an option as good "for you/them" or benefiting one individual; weigh it for the group or say what it means to you.
+- This is YOUR own view: say 'I' (I'd, I prefer, I'm drawn to, I worry). Don't dress a personal opinion up as the committee 'we' ('we prioritize', 'we're drawn to', 'we consider'). Reserve 'we' for a genuine joint suggestion ('we could split it', 'maybe we cap the budget').
 - Voice what you care about naturally; don't shoehorn your one-word concern in as a literal noun if it reads oddly (no "comfort for our community" about a charity).
 - Be persuaded only when a point genuinely lands (then say so and shift) — holding your ground is just as valid; don't fold in your first couple of turns.
 - Name options naturally ("the valley walk"), not "Option B" unless needed to disambiguate. Don't open with an option's name, especially its possessive ("Beach Town's cost..."); lead with the team or yourself ("the cafe has way more variety", "I'd get more done in Notion"). Vary your sentence shape from prior speakers.
 - Don't restate a point already made or copy another speaker's phrasing. Avoid stock/acknowledge-then-pivot frames: "X outweighs Y", "X's point is valid, but...", "makes me think/reconsider", "Given the discussion...", "seems like the best fit", opening with "Considering...".
+- When you give a reason, tie it to a concrete detail from the option cards (a number, attribute, or trade-off) and what it'd actually mean for you/the group ("a 2-hour flight, I'd rather not pay extra just for a meal") — not a bare value word ("it's relaxing", "more impactful").
 - Default to statements; an occasional question that invites others in is fine, but don't end every turn on one. Use only facts from the option cards — invent no prices, ratings, availability, or weather.
 
 End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral (vote=final pick, accept=agree to a compromise, object=mild concern, reject=dealbreaker, propose=offer a compromise, neutral=otherwise)."""
@@ -458,6 +472,7 @@ _REPAIR_HINTS = {
     "INCOMPLETE_TURN": "finish the thought; don't trail off",
     "ROBOTIC_TEMPLATE": "drop the formulaic phrasing ('outweighs', 'point is valid', 'makes me think', 'Given the discussion', 'seems like the best fit') — say it plainly",
     "POSSESSIVE_SUBJECT": "don't start with an option's possessive ('X's ...') — lead with the team or yourself",
+    "COLLECTIVE_VOICE": "this is your own view — say 'I' (I'd, I prefer, I'm drawn to), not 'we'/'our'",
 }
 
 

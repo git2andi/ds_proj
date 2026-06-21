@@ -51,3 +51,32 @@ def leading_option(state: DialogueState) -> Optional[str]:
     if not state.scenario.option_ids:
         return None
     return max(state.scenario.option_ids, key=lambda opt: option_support(state, opt))
+
+
+def best_overlap_option(state: DialogueState) -> Optional[str]:
+    """The option that best bridges the room: one that people currently in *different*
+    lean-camps can all live with (it's their lean, an accepted option, or in their
+    acceptable set) and that nobody hard-rejects. This is the common-ground candidate a
+    facilitator should surface when the group is split — e.g. a Mountain Retreat both the
+    beach person and the road-trip person can accept. Returns None if the group has already
+    converged (one camp) or no single option bridges two camps."""
+    leans = {p.id: current_lean(state, p) for p in state.personas}
+    if len({l for l in leans.values() if l}) <= 1:
+        return None
+    best: Optional[str] = None
+    best_key: tuple[int, int] = (1, 0)  # require strictly more than one bridged camp
+    for opt in state.scenario.option_ids:
+        backers = 0
+        camps: set[str] = set()
+        for persona in state.personas:
+            rt = state.runtimes[persona.id]
+            if opt in rt.hard_rejections or opt in persona.hard_rejections:
+                continue
+            if leans[persona.id] == opt or opt in rt.accepted_options or opt in persona.acceptable_options:
+                backers += 1
+                if leans[persona.id]:
+                    camps.add(leans[persona.id])
+        key = (len(camps), backers)
+        if len(camps) >= 2 and key > best_key:
+            best, best_key = opt, key
+    return best

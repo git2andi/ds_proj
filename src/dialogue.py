@@ -30,7 +30,7 @@ from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
 from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
-from validation import MessageValidator
+from validation import MessageValidator, fix_collective_voice
 
 
 class Orchestrator:
@@ -211,6 +211,15 @@ class Orchestrator:
         if self._intervention_count >= int(conv.moderator_max_interventions):
             return None
         if (state.turn_index - self._last_intervention_turn) < int(conv.moderator_cooldown_turns):
+            return None
+        # A question is owed an answer before anything else (ANALYSIS #5 — a holdout's "what
+        # does low-key mean?" was steamrolled by an immediate narrowing). Yield if a direct
+        # question is registered, or if the very last participant line was itself a question,
+        # so the room gets one turn to respond before the moderator narrows.
+        if state.open_questions:
+            return None
+        last_turn = next((t for t in reversed(state.turns) if t.speaker_id != "moderator"), None)
+        if last_turn is not None and "?" in last_turn.text:
             return None
 
         if state.phase == Phase.DISCUSSION and everyone_spoke_once(state):
@@ -394,15 +403,22 @@ class StateTracker:
         # turning a deadlock into a fake consensus.
         def _can_back(option_id: str) -> bool:
             return not persona.is_hard_blocker or option_id == persona.preferred_option
-        # Leanings move on genuine commitment (vote / propose / support of an option
-        # the persona can live with), not merely because the router asked them to
-        # discuss a gap option (e.g. a COMPARE turn).
+        # Leanings move on genuine commitment (vote / propose / accept), not merely because
+        # the router asked the speaker to air an option. A SUPPORT turn shifts the lean ONLY
+        # when the router explicitly handed over a change-of-mind (intent.moves_lean, set by
+        # the persuasion path). Otherwise supporting a gap/under-discussed option the persona
+        # happens to find acceptable would silently drift their stance — the bug that had a
+        # Mountain-Retreat-preferring persona "leaning" Road Trip just because the coverage
+        # gap routed them to talk about it.
+        moves_lean = bool(record.intent and record.intent.moves_lean)
         if act.explicit_vote and _can_back(act.explicit_vote):
             rt.explicit_vote = act.explicit_vote
             rt.current_preference = act.explicit_vote
         elif act.proposes_option and _can_back(act.proposes_option):
             rt.current_preference = act.proposes_option
-        elif act.act_type == ActType.SUPPORT and act.option_refs and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option} and _can_back(act.option_refs[0]):
+        elif (moves_lean and act.act_type == ActType.SUPPORT and act.option_refs
+              and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option}
+              and _can_back(act.option_refs[0])):
             rt.current_preference = act.option_refs[0]
         for option_id in act.accepts:
             if not _can_back(option_id):
@@ -652,6 +668,9 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = strip_speaker_prefix(normalise_ws(text), speaker_name).strip().strip('"')
     if "\n" in text:
         text = next((line.strip() for line in text.splitlines() if line.strip()), text.strip())
+    # Mechanically convert a committee-voiced personal opinion ("We prioritize ...") to the
+    # first person before the word cap — surface register only, content untouched.
+    text = fix_collective_voice(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
     return compact_words(text, hard_cap)
 

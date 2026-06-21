@@ -196,10 +196,16 @@ class TurnRouter:
         return None
 
     def _act_for_gap(self, state: DialogueState, speaker_id: str, option_id: str) -> ActType:
+        # Surface an under-discussed option in a way that stays true to the speaker's stance:
+        #  - their own preferred pick -> SUPPORT (champion it)
+        #  - merely acceptable (not preferred) -> COMPARE, so they weigh it against their pick
+        #    and stay anchored, instead of advocating it as if it were their favourite
+        #  - rejected -> OBJECT, which surfaces the option *and* gives an explicit reason to drop
+        #    it (so an option isn't just silently forgotten — ANALYSIS #8)
         persona = state.persona_by_id(speaker_id)
         if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
             return ActType.OBJECT
-        if option_id == persona.preferred_option or option_id in persona.acceptable_options:
+        if option_id == persona.preferred_option:
             return ActType.SUPPORT
         return ActType.COMPARE
 
@@ -269,6 +275,7 @@ class TurnRouter:
             option_focus=[best],
             reason="a good case was made for an option you can live with; move toward it",
             length_hint=self._length_hint(persona),
+            moves_lean=True,  # the only SUPPORT that legitimately shifts the speaker's lean
         )
 
     def _supporter_of(self, state: DialogueState, option_id: str, exclude: str) -> Optional[str]:

@@ -302,6 +302,15 @@ class SetupBuilder:
                 if not persona.is_hard_blocker and common not in persona.acceptable_options:
                     persona.acceptable_options.append(common)
                     persona.reasons.setdefault(common, [self._default_reason(scenario.option(common))])
+        # Resolve contradictory stance: an option can't be both "acceptable" and "rejected".
+        # The model occasionally emits both (ANALYSIS #3: accepting and soft-rejecting the same
+        # option). Acceptable wins — a listed acceptable option means the persona can live with
+        # it — so drop it from the rejection lists, and never let the preferred option sit in a
+        # rejection list either.
+        for persona in personas:
+            acceptable = set(persona.acceptable_options) | {persona.preferred_option}
+            persona.soft_rejections = [o for o in persona.soft_rejections if o not in acceptable]
+            persona.hard_rejections = [o for o in persona.hard_rejections if o not in acceptable]
         # Re-sync hidden scores after any preference/acceptable-list changes above.
         for persona in personas:
             persona.option_scores = self._build_scores(

@@ -136,6 +136,11 @@ class MoveIntent:
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
     respond_to_turn: Optional[int] = None
+    # True only when the router is deliberately handing the speaker a change-of-mind
+    # (the persuasion "won over" turn). A SUPPORT move only moves the persona's lean
+    # when this is set, so ordinary discussion/coverage-gap support of an acceptable
+    # option no longer silently drifts their stance.
+    moves_lean: bool = False
 
 
 @dataclass(slots=True)
