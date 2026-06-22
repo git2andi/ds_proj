@@ -25,9 +25,18 @@ class MessageValidator:
         # model falls into (it opened ~40% of turns in large-group runs). Catch it from the
         # actual option names so the check stays topic-agnostic.
         self._possessive_openers = [
-            re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(o.name)}\s*['’]s\b", re.I)
+            re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(o.name)}\s*[\x27‘’]s\b", re.I)
             for o in resolver.options if o.name.strip()
         ]
+        # Phrases from option card prose fields (upside/tradeoff/concern/best_for) that
+        # are long enough to be distinctive. A turn parroting these verbatim sounds like
+        # someone reading the card aloud instead of speaking naturally.
+        self._card_phrases: list[str] = []
+        for o in resolver.options:
+            for field in (o.upside, o.tradeoff, o.concern, o.best_for):
+                words = field.strip().split()
+                if len(words) >= 4:
+                    self._card_phrases.append(field.strip().lower())
 
     def validate(self, text: str, state: DialogueState, intent: MoveIntent, move: TurnMove) -> ValidationResult:
         if not bool(cfg.validation.enabled):
@@ -40,12 +49,15 @@ class MessageValidator:
         self._check_option_refs(stripped, issues)
         self._check_grounding_numbers(stripped, intent, issues)
         self._check_repetition(stripped, state, intent, issues)
+        self._check_opener_variety(stripped, state, intent, issues)
         self._check_decision_clarity(stripped, intent, move, issues)
         self._check_question_chain(stripped, state, intent, issues)
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)
         self._check_robotic_phrasing(stripped, issues)
         self._check_collective_voice(stripped, issues)
+        self._check_card_reading(stripped, issues)
+        self._check_self_narration(stripped, issues)
         ok = not any(issue.severity in {"repair", "fatal"} for issue in issues)
         return ValidationResult(ok=ok, issues=issues)
 
@@ -113,8 +125,32 @@ class MessageValidator:
                 issues.append(ValidationIssue("GROUP_REPETITION", "warn", f"Similar to a recent participant turn: {score:.2f}"))
                 break
             if first and first == _first_words(turn.text, int(cfg.validation.repeated_start_word_count)):
-                issues.append(ValidationIssue("REPEATED_START", "warn", "Starts like a recent turn."))
+                issues.append(ValidationIssue("REPEATED_START", "repair", "Starts like a recent turn."))
                 break
+
+    def _check_opener_variety(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
+        # The dominant naturalness failure across runs: turn after turn opens with a self-anchored
+        # stance ("I'm drawn to X", "I worry that Y", "We need Z", "Our budget..."), so the chat
+        # reads as parallel monologues instead of people talking to each other. A few are fine; once
+        # several in a row have led that way, force the next one to open some other way (a reaction,
+        # the option/detail, a question, the prior point). Topic-agnostic — pronoun only, no scenario
+        # words. Commitment turns are exempt: a vote/accept/reject naturally states "I..." and the
+        # anti-chorus guidance + echo guard already handle the closing round.
+        if intent.act in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+            return
+        if not _STANCE_OPENER.match(text):
+            return
+        limit = int(cfg.validation.max_consecutive_first_person_openers)
+        streak = 0
+        for turn in reversed(state.turns):
+            if turn.speaker_id == "moderator":
+                continue
+            if _STANCE_OPENER.match(turn.text):
+                streak += 1
+            else:
+                break
+        if streak >= limit:
+            issues.append(ValidationIssue("REPETITIVE_OPENER", "repair", "Several turns in a row open with 'I'/'we' — vary the opening."))
 
     def _check_decision_clarity(self, text: str, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
         # Only flag a decision move when the model emitted a trailer that contradicts
@@ -169,6 +205,17 @@ class MessageValidator:
         if _COLLECTIVE_VOICE.search(text):
             issues.append(ValidationIssue("COLLECTIVE_VOICE", "warn", "States a personal view as the committee 'we'."))
 
+    def _check_card_reading(self, text: str, issues: list[ValidationIssue]) -> None:
+        low = text.lower()
+        for phrase in self._card_phrases:
+            if phrase in low:
+                issues.append(ValidationIssue("CARD_READING", "repair", "Parrots an option card's description verbatim."))
+                return
+
+    def _check_self_narration(self, text: str, issues: list[ValidationIssue]) -> None:
+        if _SELF_NARRATION.match(text):
+            issues.append(ValidationIssue("SELF_NARRATION", "repair", "Narrates own thinking instead of just saying it."))
+
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         if "?" not in text:
             return
@@ -203,6 +250,14 @@ class MessageValidator:
 # Sentinel for masked name words in the echo guard; cannot occur in real tokenised text.
 _MASK = "\x00"
 
+# A line-initial self-anchored opener: first person singular ("I", "I'm", "I'd", "I've",
+# "I'll") OR the committee plural ("we", "we're", "we've", "we'd", "we'll", "our"). Used to
+# detect a run of consecutive stance-led turns ("I'm drawn to...", "I worry...", "We need...",
+# "Our budget...") so the chat doesn't collapse into parallel monologues — the plural is
+# included because, once "I" is discouraged, the model otherwise just swaps in a "we"-wall.
+# Pronoun only — stays topic-agnostic.
+_STANCE_OPENER = re.compile(r"\s*(?:i(?:['’](?:m|d|ve|ll))?|we(?:['’](?:re|ve|d|ll))?|our)\b", re.I)
+
 # Formulaic frames the prompt forbids but the model still emits. Kept small and word-based
 # (no option/topic words) so it generalises across every scenario. Repair-level: the worst
 # offenders get rewritten rather than reaching the transcript.
@@ -217,13 +272,12 @@ _ROBOTIC_TEMPLATES = [
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance
-# behind the committee "we". Cognition verbs only (consider/prioritize/value/appreciate/
-# believe/think/feel/prefer/favour/drawn) so collective *action* framing ("we should...",
-# "we need...", "we can split the cost") is not touched. The {0,18} window lets contractions
-# and a modal sit between ("we're drawn", "we can appreciate", "we'd prioritise").
+# behind the committee "we". Genuine group actions ("we should...", "we could...", "we need to
+# decide") are not touched. The {0,18} window lets contractions and a modal sit between.
 _COLLECTIVE_VOICE = re.compile(
     r"^\s*(?:we|our)\b[^.?!]{0,18}?\b(?:consider|prioriti[sz]e|value|appreciate|"
-    r"believe|think|feel|prefer|favou?r|drawn)\b",
+    r"believe|think|feel|prefer|favou?r|drawn|love|enjoy|"
+    r"benefit|deserve)\b",
     re.I,
 )
 
@@ -276,6 +330,15 @@ def _longest_run(a: list[str], b: list[str]) -> int:
         prev = cur
     return best
 
+
+# "I should consider/prioritize/think about/look at/evaluate" — self-narration where the
+# speaker describes their own cognitive process instead of just stating their view. Nobody
+# talks like this in real conversation; it's an LLM tell.
+_SELF_NARRATION = re.compile(
+    r"^\s*I\s+(?:should|need to|have to|ought to|want to|must)\s+"
+    r"(?:consider|prioriti[sz]e|think about|look at|evaluate|weigh|assess|factor in|focus on|take into account)\b",
+    re.I,
+)
 
 # Words a complete sentence cannot end on; a turn ending here (without punctuation) is cut off.
 _DANGLING_END = {

@@ -56,7 +56,7 @@ llm:
       top_p: 0.78
 
 simulation:
-  num_participants: 2               # <-- core dial: group size
+  num_participants: 3               # <-- core dial: group size
   min_participants: 2               # structural: bounds checked at load time
   max_participants: 7
   random_seed: null                 # set an int for reproducible runs
@@ -138,13 +138,13 @@ routing:
   direct_reply_probability: 0.35    # chance a reply/conflict turn is addressed at one person; most lines go to the room
   act_probabilities:                # mix of local moves the router samples in free discussion
     react: 0.15
-    ask: 0.16                        # base only; scaled per-speaker by openness (curious people ask more)
+    ask: 0.20                        # base only; scaled per-speaker by openness (curious people ask more)
     compare: 0.22
     support: 0.15
     object: 0.16
     push_back: 0.09
     propose_compromise: 0.07
-  ask_after_question_damping: 0.25    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
+  ask_after_question_damping: 0.40    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
   ask_quiet_window: 3                  # turns to look back for a recent question before damping asking
   persuasion_probability_factor: 0.40  # scales compromise_willingness into a per-turn chance of being won over
   persuasion_min_speaker_turns: 2      # a persona must have spoken (defended) at least this many times before being won over
@@ -173,7 +173,7 @@ utterances:
     farewell: 18                     # quick sign-off acknowledging the outcome
   hard_cap_extra_words: 8
   length_trait_word_step: 6         # words added/removed per point of response_length above/below the trait midpoint
-  recent_turns_in_prompt: 6     # last N turns shown for context; 6 keeps adjacency while trimming input tokens
+  recent_turns_in_prompt: 8     # last N turns shown for context; enough to actually build on what others said (not just the last line)
   recent_turns_after_question: 8
   max_focus_options_in_prompt: 3
   max_public_board_lines: 8
@@ -187,6 +187,7 @@ validation:
   max_shared_phrase_words: 6      # reusing a 6+ word run from another speaker's recent turn -> repair (echo guard; option/participant names excluded)
   repeated_start_window: 5
   repeated_start_word_count: 3
+  max_consecutive_first_person_openers: 2  # how many turns in a row may open with a self-anchored stance ("I"/"I'm"/"we"/"our") before the next such opener is rewritten
   max_question_chain: 2
   repair_on_warning: false        # whether warning-level issues also trigger a repair
   max_new_numbers_without_source: 1

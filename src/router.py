@@ -47,15 +47,19 @@ class TurnRouter:
     # ------------------------------------------------------------------
 
     def _opening_intent(self, state: DialogueState) -> MoveIntent:
-        for persona in state.personas:
-            if state.runtimes[persona.id].turn_count == 0:
-                return MoveIntent(
-                    speaker_id=persona.id,
-                    act=ActType.OPENING,
-                    option_focus=[persona.preferred_option],
-                    reason="state an initial priority without voting yet",
-                    length_hint="short",
-                )
+        last = self._last_participant_turn(state)
+        last_pid = last.speaker_id if last else None
+        candidates = [p for p in state.personas if state.runtimes[p.id].turn_count == 0]
+        # Avoid the same speaker going twice in a row (e.g. after their greeting).
+        reordered = [p for p in candidates if p.id != last_pid] + [p for p in candidates if p.id == last_pid]
+        for persona in reordered:
+            return MoveIntent(
+                speaker_id=persona.id,
+                act=ActType.OPENING,
+                option_focus=[persona.preferred_option],
+                reason="state an initial priority without voting yet",
+                length_hint="short",
+            )
         return self._discussion_intent(state)
 
     def _vote_intent(self, state: DialogueState) -> MoveIntent:
@@ -147,7 +151,8 @@ class TurnRouter:
         bias (recency penalty / objections, or the option-gap boosts)."""
         ids = state.participant_ids()
         recent = self._recent_speaker_ids(state)
-        last = recent[-1] if recent else None
+        last_turn = self._last_participant_turn(state)
+        last = last_turn.speaker_id if last_turn else None
         min_turns = min((state.runtimes[pid].turn_count for pid in ids), default=0)
         weights: list[float] = []
         for pid in ids:
