@@ -1,56 +1,428 @@
 # Dialogue Quality Refactor Plan
 
-Completed 2026-06-23. This plan kept the explicit option board and targeted over-control in prompting, repair, routing, and closure behavior.
+This plan replaces the previous completed refactor plan.  
+The last refactor improved repair rate, prompt size, interaction grounding, and basic concession behavior. The remaining work is not to add more heavy repair layers, but to make the dialogue more socially realistic with simpler, more targeted control.
 
-## Core diagnosis
+Core rule: **less is more**. Prefer small deterministic state checks and compact prompt guidance over large prompts, repeated repair calls, or many overlapping validators.
 
-The simulator produced valid decision transcripts, but not sufficiently interactive dialogue. Root causes were: too many style repairs, too much static persona dumped into every prompt, phase-first speaker selection, option-card language dominating every turn, stance shifts without visible persuasion, and generic moderator nudges.
+---
 
-## Design rule: keep full persona, prompt compact persona
+## Current diagnosis after latest runs
 
-Full persona profile (traits, goals, backstory, concerns, scores) stays in state for consistency. Per-turn prompt gets only a compact `runtime_speaker_card`: current lean, one concern, one speaking habit, last 2 prior claims, concession state. Numeric traits converted to behavioral descriptions.
+The simulator now produces more coherent and more responsive discussions. The old problems of obvious self-narration and high repair rates are mostly reduced.
 
-## Implementation — all steps done
+The remaining quality problems are:
 
-### Step 1: Repair policy ✓
-10 style checks demoted from `repair` to `warn` severity in `validation.py`. Repair fires only for structural errors (missing trailer, invented option, malformed vote, multi-speaker, hard-blocker violation, invented numbers). Repair rate 30–52% → 0–4%. Config `repair_on_warning: false` can re-enable.
+1. The dialogue uses repeated social templates.
+2. Speakers still read too much from option cards.
+3. Semantic repetition persists even when exact repetition is gone.
+4. Concessions are visible but too smooth.
+5. The moderator sometimes pushes convergence before the conflict is resolved.
+6. Final closures are functional but socially thin.
+7. Fallback / consensus state can become inconsistent.
+8. Personas differ by preference more than by linguistic voice.
+9. Larger groups stay coherent but become repetitive.
+10. Token usage is still high relative to output.
 
-### Step 2: Runtime speaker card ✓
-`runtime_speaker_card()` in `prompts.py` replaces `speaker_card()` in generation. Includes: name/role/voice, current lean, active concern, speaking habit (from traits), last 2 prior claims with "don't repeat" directive, concession state. `sim_utterance` rewritten: public board → one-line `_group_leans`, own_recent section removed, rules trimmed from 6 to 4. Token reduction ~50%.
+The next work should target these issues in order.
 
-### Step 3: Adjacency-first routing ✓
-`_unanswered_challenge()` in `router.py` checks recent OBJECT/PUSH_BACK turns and routes the option champion to respond before gap/coverage logic. Uses `respond_to_turn` on MoveIntent. Combined with existing open-question handling, the router priority is: (1) answer question, (2) respond to challenge, (3) coverage gap, (4) weighted speaker selection.
+---
 
-### Step 4: Turn-response prompt ✓
-`_responding_to_line()` finds the most relevant prior turn and includes it as "Responding to X: '...'" in the prompt. Full option cards only for COMPARE/VOTE; all other acts get brief attrs-only lines via `_option_brief()`. Anti-possessive rule: "Don't open with an option name." Opening guidance: "lead with your reason, not the option description."
+## Step 1: Freeze the current good behavior
 
-### Step 5: Concession bridges ✓
-`_move_guidance` for ACCEPT/VOTE checks if the speaker is changing from their preferred option. If so, guidance explicitly names the original preference ("You started out wanting X — say what convinced you"). Fires before chorus detection. `runtime_speaker_card` shows "Started with X, now leaning Y." Runs produce visible bridges.
+Before changing generation again, keep regression coverage for what improved.
 
-### Step 6: Moderator improvements ✓
-`_conflict_dimension()` extracts the top 2 persona concerns and names the trade-off. Stall prompt uses "Name the actual disagreement" instead of "we're repeating." Holdout prompt includes the holdout's `main_concern`. Runs produce "The disagreement is between comfort and trying something new."
+Preserve:
 
-### Step 7: Outcome-specific closure ✓
-`moderator_closure_prompt` uses distinct language per outcome type. `farewell_line` sets persona-aware tone: got pick ("pleased but brief") / came around ("brief and genuine") / outvoted ("mild acceptance") / no decision ("oh well").
+- low repair rate,
+- no obvious `I should consider...` self-narration,
+- no same-speaker back-to-back unless structurally unavoidable,
+- direct response behavior,
+- concession bridges,
+- outcome-specific closure,
+- compact runtime speaker card.
 
-### Step 8: Interaction quality metrics ✓
-`evals/run_eval.py` reports per run: `named` (turns mentioning another participant), `responsive` (name + "you"/"your" + formal anchor), `self_rep` (SELF_REPETITION count), `echoed` (ECHOED_PHRASE count). Typical values: named 0–20%, responsive 8–40%, self_rep 0, echoed 0–4.
+Add or keep a small golden set of runs:
 
-## Results
+- n=2 restaurant / simple choice,
+- n=3 birthday or university project,
+- n=4 flight booking,
+- n=5 birthday or board game,
+- n=6 road trip.
 
-| Metric | Before | After |
-|--------|--------|-------|
-| Dialogue tokens (n=3) | ~28,000 | 12,000–17,000 |
-| Repair rate | 30–52% | 0–4% |
-| POSSESSIVE_SUBJECT/run | 9–14 | 1–2 |
-| Self-repetition | common | 0 |
-| Responsive rate | unmeasured | 8–40% |
-| Run time (n=3) | ~10–15 min | ~3–6 min |
+Do not optimize one case while breaking another.
 
-## Remaining limitations
+---
 
-- Semantic repetition (same idea, different words) not caught automatically.
-- Name-mention rate 0–20% — model prefers "you"/"your" over names (llama3.3 limitation).
-- Farewell differentiation model-dependent — llama3.3 often defaults to generic positive closings.
-- Cross-run moderator variety limited by model style.
-- Same-speaker back-to-back still occurs occasionally when the only unvoted person just spoke (edge case in narrowing phase).
+## Step 2: Add discourse-frame repetition tracking
+
+Problem: the model repeats social scaffolding such as `fair point`, `good point`, `wins me over`, `seals the deal`.
+
+Implementation direction:
+
+- Add a lightweight `discourse_frame` classifier for generated turns.
+- Start with simple regex / phrase-family buckets:
+  - agreement-preface,
+  - concession-preface,
+  - option-endorsement,
+  - compromise-acceptance,
+  - moderator-diagnostic,
+  - final-closure.
+- Track counts per run and per speaker.
+- If a frame was recently used, add a short prompt hint: `Do not use the same agreement/concession phrasing again. Respond directly.`
+
+Avoid immediate LLM repair. This should be a routing/prompt nudge first.
+
+Success signal:
+
+- Fewer repeated phrases like `fair point`, `good point`, `seals the deal`.
+- Same social function remains, but wording varies naturally.
+
+---
+
+## Step 3: Reduce card-reading further
+
+Problem: turns still repeat option-table attributes too often.
+
+Implementation direction:
+
+- For most acts, do not expose full option attributes.
+- Use full option details only for:
+  - COMPARE,
+  - explicit vote,
+  - moderator summary,
+  - first mention of an option.
+- For normal response turns, provide only:
+  - option name,
+  - one relevant concern,
+  - one relevant contrast.
+- Add an `attribute_budget` per turn:
+  - normal response: max 1 concrete attribute,
+  - compare: max 2 concrete attributes,
+  - moderator summary: max 3 concrete attributes.
+
+Prompt rule:
+
+> Use the option details as background. Do not restate the option card. Speak like someone discussing the choice, not reading a table.
+
+Success signal:
+
+- Fewer repeated numbers and labels.
+- More situated language, e.g. `That sounds too cramped for Friday` instead of `limited seating and may be crowded`.
+
+---
+
+## Step 4: Add semantic claim-slot tracking
+
+Problem: exact repetition is lower, but the same idea is repeated in different words.
+
+Implementation direction:
+
+Represent each option discussion as claim slots:
+
+- cost,
+- time/distance,
+- comfort,
+- flexibility,
+- group size,
+- novelty,
+- risk,
+- effort,
+- quality,
+- fairness.
+
+For each turn, infer a rough claim slot from the intent and option focus. This can be deterministic and approximate at first.
+
+Before generating a turn, pass:
+
+- `already_said_for_option`,
+- `unanswered_objections`,
+- `new_angle_needed`.
+
+If the speaker would repeat an already-covered slot, route them to one of:
+
+- answer an objection,
+- add a condition,
+- compare against another option,
+- concede,
+- ask a clarifying question.
+
+Success signal:
+
+- The discussion progresses by adding new angles.
+- Large groups do not repeat the same option benefit six times.
+
+---
+
+## Step 5: Strengthen concession bridges
+
+Problem: stance changes are visible, but too clean.
+
+Implementation direction:
+
+When a participant accepts or votes for a non-preferred option, require a concession bridge with one of these forms:
+
+1. residual concern:
+   - `I still worry about X, but...`
+2. condition:
+   - `I can accept it if we...`
+3. trade-off:
+   - `I prefer A, but B handles X better.`
+4. practical next step:
+   - `Let's check X before finalizing.`
+
+Add a `concession_type` field to the move intent.
+
+Do not make every concession long. One short sentence is enough.
+
+Success signal:
+
+- Consensus feels earned.
+- Holdouts do not suddenly become fully convinced without preserving their original concern.
+
+---
+
+## Step 6: Change moderator timing
+
+Problem: the moderator sometimes proposes a compromise too early.
+
+Implementation direction:
+
+Before the moderator proposes a target option, require the state to contain:
+
+- current leading option,
+- holdout speaker(s),
+- holdout concern,
+- possible condition that would satisfy the holdout.
+
+If not available, the moderator should ask a diagnostic question instead.
+
+Moderator intervention types:
+
+1. conflict diagnosis,
+2. targeted holdout question,
+3. option modification proposal,
+4. vote call,
+5. fallback framing,
+6. closure.
+
+Use the least forceful intervention that fits the state.
+
+Success signal:
+
+- The moderator no longer sounds like it is forcing an outcome.
+- Holdout concerns are handled before closure.
+
+---
+
+## Step 7: Add option modification as a compromise mechanism
+
+Problem: real groups often modify an option instead of merely choosing A/B/C/D.
+
+Implementation direction:
+
+Allow lightweight option modifications such as:
+
+- Restaurant Party + fixed budget cap,
+- Backyard BBQ + tent / backup plan,
+- Mountain Adventure + carpooling,
+- Ticket to Ride + short backup game,
+- Speedster + seat check / baggage check.
+
+Represent this as:
+
+```python
+proposal = {
+    "base_option": "B",
+    "condition": "if we can keep cost under $X",
+    "modification": "carpool to reduce travel cost"
+}
+```
+
+This should not create entirely new options. It should attach a condition or implementation detail to an existing option.
+
+Success signal:
+
+- Compromises feel practical.
+- Fallback decisions can include the remaining condition instead of pretending everyone fully agrees.
+
+---
+
+## Step 8: Improve final closure
+
+Problem: endings mark the decision but often do not feel socially complete.
+
+Implementation direction:
+
+Final closure should depend on outcome type.
+
+Consensus:
+
+- confirm the selected option,
+- mention why it worked for the group,
+- add one next step.
+
+Fallback:
+
+- state that it is a majority/fallback decision,
+- mention the unresolved concern,
+- add a condition or next step.
+
+No decision:
+
+- state what blocked agreement,
+- suggest what information is missing.
+
+Participant farewell should be optional and short. It does not always need a goodbye. Often a final practical acknowledgment is more natural.
+
+Success signal:
+
+- Endings sound like real decision closure, not just transcript termination.
+
+---
+
+## Step 9: Audit outcome-state consistency
+
+Problem: support fraction, outcome type, votes, and closure wording can diverge.
+
+Implementation direction:
+
+Add tests for:
+
+- explicit votes by participant,
+- final lean by participant,
+- support fraction,
+- outcome type,
+- closure prompt type,
+- final moderator wording.
+
+Rules:
+
+- consensus requires the configured consensus threshold.
+- fallback must be named as fallback/majority/working decision.
+- no-decision must not receive consensus wording.
+- support numbers in metrics and outcome must match.
+
+Success signal:
+
+- No run reports fallback with contradictory support fractions.
+- Final wording matches actual state.
+
+---
+
+## Step 10: Add persona voice constraints without expanding prompts
+
+Problem: personas differ in preference, but not enough in linguistic behavior.
+
+Implementation direction:
+
+Keep the compact runtime card, but make `speaking_habit` more operational.
+
+Examples:
+
+- direct speaker: short sentence, no long preface,
+- cautious speaker: hedge once, mention risk,
+- enthusiastic speaker: positive but not exaggerated,
+- analytical speaker: compare one concrete trade-off,
+- peacemaker: acknowledges two sides then asks/bridges.
+
+Do not pass the full backstory every turn. Convert traits into one stable behavior instruction.
+
+Success signal:
+
+- Speakers become identifiable without reading their names.
+- Voice difference does not become caricature.
+
+---
+
+## Step 11: Add large-group contribution roles
+
+Problem: n=5-7 discussions remain coherent but repetitive.
+
+Implementation direction:
+
+For larger groups, assign temporary contribution roles per phase:
+
+- first supporter,
+- objector,
+- evidence/detail provider,
+- bridge-builder,
+- holdout,
+- summarizer,
+- voter.
+
+A speaker should not be selected only to restate an already-covered point. If no novel contribution exists, skip them until vote/closure.
+
+Success signal:
+
+- Larger groups do not require everyone to comment on every option.
+- Turns become fewer but more purposeful.
+
+---
+
+## Step 12: Token and speed audit
+
+Problem: performance improved after repair reduction, but input/output ratio is still high.
+
+Implementation direction:
+
+Instrument every LLM call with:
+
+- act type,
+- speaker,
+- phase,
+- input tokens,
+- output tokens,
+- prompt section sizes,
+- option board mode: full / brief / none,
+- repair triggered: yes/no,
+- elapsed time.
+
+Then rank the largest time/token sources.
+
+Likely optimization order:
+
+1. option board text,
+2. runtime context history,
+3. repeated group state,
+4. moderator prompts,
+5. repair calls.
+
+Do not optimize by adding more post-processing first. Remove or shrink context before adding new logic.
+
+Success signal:
+
+- Lower input tokens per generated turn.
+- No quality regression in the golden set.
+- Fewer long prompts for simple response acts.
+
+---
+
+## Recommended implementation order
+
+1. Freeze regression tests and golden examples.
+2. Add discourse-frame repetition tracking.
+3. Reduce option-card exposure and add attribute budgets.
+4. Add semantic claim-slot tracking.
+5. Strengthen concession bridge types.
+6. Adjust moderator timing and intervention type.
+7. Add option modification as compromise.
+8. Improve closure with next steps / fallback framing.
+9. Audit outcome-state consistency.
+10. Improve compact persona voice behavior.
+11. Add large-group contribution roles.
+12. Run token/speed audit and simplify largest prompt sections.
+
+---
+
+## What not to do
+
+- Do not re-enable broad style repair loops.
+- Do not add many new validators that trigger extra LLM calls.
+- Do not put full persona profiles back into every turn prompt.
+- Do not solve realism by simply increasing turn count.
+- Do not force every participant to speak in every phase.
+- Do not treat majority fallback as consensus.
+- Do not overfit to one transcript.
+
+The goal is not more machinery. The goal is fewer, more purposeful turns with clearer social function.
