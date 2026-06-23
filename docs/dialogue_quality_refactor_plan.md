@@ -1,278 +1,56 @@
 # Dialogue Quality Refactor Plan
 
-This plan keeps the explicit option board. The options are useful control: they reduce hallucinated alternatives, make state tracking possible, and make evaluation easier. The refactor should target over-control in prompting, repair, routing, and closure behavior.
+Completed 2026-06-23. This plan kept the explicit option board and targeted over-control in prompting, repair, routing, and closure behavior.
 
 ## Core diagnosis
 
-The simulator currently produces valid decision transcripts, but not sufficiently interactive dialogue. Most runs follow the same visible sequence:
-
-```text
-option board -> opening preferences -> compare/support/object -> compromise/vote -> confirmation -> closure
-```
-
-This makes topics feel interchangeable. The code has many useful safeguards, but several of them now make the dialogue sound more generic:
-
-- too many style repairs
-- too much static persona/state dumped into every prompt
-- speaker selection driven by phase and fairness instead of local interaction
-- option-card language dominating human reply language
-- stance shifts without visible persuasion
-- moderator nudges that sound like a fixed meeting script
-
-The target is not more research machinery. The target is actual interaction: people answer, challenge, concede, invite, resist, and change position for visible reasons.
+The simulator produced valid decision transcripts, but not sufficiently interactive dialogue. Root causes were: too many style repairs, too much static persona dumped into every prompt, phase-first speaker selection, option-card language dominating every turn, stance shifts without visible persuasion, and generic moderator nudges.
 
 ## Design rule: keep full persona, prompt compact persona
 
-Do not remove traits, goals, backstory, or concerns from the data model. They give the agents depth. But do not include the full persona profile in every single turn prompt.
+Full persona profile (traits, goals, backstory, concerns, scores) stays in state for consistency. Per-turn prompt gets only a compact `runtime_speaker_card`: current lean, one concern, one speaking habit, last 2 prior claims, concession state. Numeric traits converted to behavioral descriptions.
 
-Use two persona representations:
+## Implementation — all steps done
 
-### 1. Full persona profile
+### Step 1: Repair policy ✓
+10 style checks demoted from `repair` to `warn` severity in `validation.py`. Repair fires only for structural errors (missing trailer, invented option, malformed vote, multi-speaker, hard-blocker violation, invented numbers). Repair rate 30–52% → 0–4%. Config `repair_on_warning: false` can re-enable.
 
-Stored in state. Used for consistency and long-range behavior.
+### Step 2: Runtime speaker card ✓
+`runtime_speaker_card()` in `prompts.py` replaces `speaker_card()` in generation. Includes: name/role/voice, current lean, active concern, speaking habit (from traits), last 2 prior claims with "don't repeat" directive, concession state. `sim_utterance` rewritten: public board → one-line `_group_leans`, own_recent section removed, rules trimmed from 6 to 4. Token reduction ~50%.
 
-Contains:
+### Step 3: Adjacency-first routing ✓
+`_unanswered_challenge()` in `router.py` checks recent OBJECT/PUSH_BACK turns and routes the option champion to respond before gap/coverage logic. Uses `respond_to_turn` on MoveIntent. Combined with existing open-question handling, the router priority is: (1) answer question, (2) respond to challenge, (3) coverage gap, (4) weighted speaker selection.
 
-- name and role
-- goal
-- preferred option
-- acceptable options
-- concerns
-- backstory
-- speaking style
-- relevant personality tendencies
-- hard blockers or reconsider conditions
+### Step 4: Turn-response prompt ✓
+`_responding_to_line()` finds the most relevant prior turn and includes it as "Responding to X: '...'" in the prompt. Full option cards only for COMPARE/VOTE; all other acts get brief attrs-only lines via `_option_brief()`. Anti-possessive rule: "Don't open with an option name." Opening guidance: "lead with your reason, not the option description."
 
-### 2. Runtime persona card
+### Step 5: Concession bridges ✓
+`_move_guidance` for ACCEPT/VOTE checks if the speaker is changing from their preferred option. If so, guidance explicitly names the original preference ("You started out wanting X — say what convinced you"). Fires before chorus detection. `runtime_speaker_card` shows "Started with X, now leaning Y." Runs produce visible bridges.
 
-Rendered into the prompt for one turn. Short and local.
+### Step 6: Moderator improvements ✓
+`_conflict_dimension()` extracts the top 2 persona concerns and names the trade-off. Stall prompt uses "Name the actual disagreement" instead of "we're repeating." Holdout prompt includes the holdout's `main_concern`. Runs produce "The disagreement is between comfort and trying something new."
 
-Contains only:
+### Step 7: Outcome-specific closure ✓
+`moderator_closure_prompt` uses distinct language per outcome type. `farewell_line` sets persona-aware tone: got pick ("pleased but brief") / came around ("brief and genuine") / outvoted ("mild acceptance") / no decision ("oh well").
 
-- current lean
-- one active concern
-- one speaking habit
-- one relevant prior claim
-- one relevant relationship/addressee cue
-- optional concession state
+### Step 8: Interaction quality metrics ✓
+`evals/run_eval.py` reports per run: `named` (turns mentioning another participant), `responsive` (name + "you"/"your" + formal anchor), `self_rep` (SELF_REPETITION count), `echoed` (ECHOED_PHRASE count). Typical values: named 0–20%, responsive 8–40%, self_rep 0, echoed 0–4.
 
-Example:
+## Results
 
-```text
-Speaker: Kai. Current lean: B.
-Active concern: avoids extra setup work.
-Speaking habit: asks practical feasibility questions before agreeing.
-Already said: he rejected C because it looked too risky.
-Now responding to: Ava argued C is safer because venue staff handle setup.
-```
+| Metric | Before | After |
+|--------|--------|-------|
+| Dialogue tokens (n=3) | ~28,000 | 12,000–17,000 |
+| Repair rate | 30–52% | 0–4% |
+| POSSESSIVE_SUBJECT/run | 9–14 | 1–2 |
+| Self-repetition | common | 0 |
+| Responsive rate | unmeasured | 8–40% |
+| Run time (n=3) | ~10–15 min | ~3–6 min |
 
-This preserves depth while avoiding prompt bloat.
+## Remaining limitations
 
-## Implementation steps
-
-### Step 1: Change repair policy
-
-Goal: reduce extra LLM calls and stop repair-generated generic phrasing.
-
-Change:
-
-- Keep repairs for structural errors only.
-- Convert style checks to diagnostics.
-- Log style failures but do not LLM-repair them.
-
-Structural repair examples:
-
-- missing machine trailer
-- invalid option
-- malformed vote
-- invented option
-- hard-blocker violation
-- multi-speaker output
-
-Diagnostic-only examples:
-
-- robotic phrase
-- repeated opener
-- self-narration
-- possessive option opener
-- awkward closing
-- mild semantic repetition
-
-Validation should become less responsible for making text natural. Routing and prompting should create naturalness earlier.
-
-### Step 2: Build `runtime_speaker_card()`
-
-Goal: keep persona depth but reduce per-turn prompt size.
-
-Add a function in `src/prompts.py` or a small helper module:
-
-```python
-def runtime_speaker_card(persona, state, intent, recent_turns) -> str:
-    ...
-```
-
-It should summarize:
-
-- current lean
-- active concern relevant to intent.focus_option
-- speaking habit
-- one previous claim by this speaker
-- addressee relationship or local target
-- concession bridge if needed
-
-Then replace the full `speaker_card()` in normal turn generation. Keep the full card only for debugging or setup validation.
-
-### Step 3: Add local interaction obligations
-
-Goal: make turns depend on previous turns.
-
-Add state for unresolved interaction obligations:
-
-```python
-@dataclass
-class InteractionObligation:
-    kind: str  # question, challenge, disagreement, confirmation_request
-    source_turn_id: str
-    source_speaker_id: str
-    target_speaker_id: str | None
-    option_id: str | None
-    claim: str
-    resolved: bool = False
-```
-
-Populate this when a turn asks a direct question, challenges a claim, or requests confirmation from a holdout.
-
-### Step 4: Change router priority
-
-Goal: route like conversation, not like a checklist.
-
-New priority:
-
-1. Answer pending direct question.
-2. Respond to a challenge.
-3. Let a relevant participant self-select.
-4. Invite a quiet participant only if they have relevant information.
-5. Use phase/coverage logic only as fallback.
-
-Add `source_turn_id` and `routing_reason` to `MoveIntent`.
-
-Example:
-
-```python
-MoveIntent(
-    speaker_id="kai",
-    act="answer",
-    addressee_id="ava",
-    source_turn_id="t12",
-    focus_option="C",
-    routing_reason="Ava asked Kai whether setup support would remove his blocker."
-)
-```
-
-### Step 5: Change prompt from board-response to turn-response
-
-Goal: make generated text answer a specific local move.
-
-The prompt should say:
-
-```text
-Respond to Ava's previous point: "..."
-Your job: answer her setup question and either keep or soften your objection.
-Do not restate the full option card.
-```
-
-Only provide full option facts when the act requires it, for example compare/vote. For support/object/ask/react, provide only the relevant option facts and prior claim.
-
-### Step 6: Add concession bridge logic
-
-Goal: make stance changes believable.
-
-Before changing `current_preference`, check whether there is a visible reason:
-
-- another participant gave a relevant argument
-- a blocker was resolved
-- a tradeoff changed
-- group priority shifted
-
-If no reason exists, route another discussion turn before allowing acceptance.
-
-Prompt structure for concession:
-
-```text
-You previously preferred A because <old reason>.
-Ava just argued for C because <new reason>.
-If you move toward C, explicitly show what changed.
-```
-
-### Step 7: Make closure outcome-specific
-
-Goal: avoid fake consensus language.
-
-Closure rules:
-
-- `consensus`: everyone accepted; brief agreement is fine.
-- `fallback`: majority decision; preserve dissent.
-- `unresolved`: state deadlock directly.
-
-Example fallback closure:
-
-```text
-We'll go with C as the majority pick, but Kai's setup concern is still unresolved, so that needs checking before it is final.
-```
-
-### Step 8: Add interaction quality metrics
-
-Goal: measure actual dialogue quality.
-
-Add to eval:
-
-- anchored turn rate
-- direct addressee rate
-- question-answer rate
-- stance-change evidence rate
-- semantic repetition rate
-- moderator dependency rate
-- closure honesty
-
-Use these next to existing structural metrics.
-
-## Suggested order of work
-
-1. Disable LLM repair for style-level issues.
-2. Implement compact runtime persona card.
-3. Add `source_turn_id` and `routing_reason` to `MoveIntent`.
-4. Add interaction obligations to state.
-5. Route pending questions/challenges before phase logic.
-6. Add concession bridge checks before preference changes.
-7. Make closure outcome-specific.
-8. Add the new eval metrics.
-9. Run the same scenarios and compare against the old logs.
-
-## What not to do yet
-
-Do not remove the option board.
-Do not remove persona depth.
-Do not add many more research-paper abstractions.
-Do not add more repair checks before fixing routing/prompting.
-Do not make the moderator responsible for solving every deadlock.
-
-## Link to failures file
-
-The detailed failure tracking lives in:
-
-```text
-docs/known_failures.md
-```
-
-The most relevant open problems for this refactor are:
-
-- O1: repair layer ineffective on persistent patterns
-- O2: repetition and content recycling
-- O3: slogan-like utterances / no interactional grounding
-- O4: under-motivated stance changes
-- O5: consensus vs fallback closure confusion
-- O6: mechanical moderator
-- O7: weak addressee handling
-- O8: awkward closings
-
-The new implementation should close these by changing routing and prompt design, not by adding a larger list of banned phrases.
+- Semantic repetition (same idea, different words) not caught automatically.
+- Name-mention rate 0–20% — model prefers "you"/"your" over names (llama3.3 limitation).
+- Farewell differentiation model-dependent — llama3.3 often defaults to generic positive closings.
+- Cross-run moderator variety limited by model style.
+- Same-speaker back-to-back still occurs occasionally when the only unvoted person just spoke (edge case in narrowing phase).
