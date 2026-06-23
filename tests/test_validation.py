@@ -157,8 +157,7 @@ class TestLongestRun:
 # ── OPENER VARIETY ───────────────────────────────────────────────────────
 
 class TestOpenerVariety:
-    def test_streak_triggers_repair(self, validator, state):
-        # Add turns that all start with "I" to exceed max_consecutive_first_person_openers
+    def test_streak_detected(self, validator, state):
         state.turns.append(make_turn(0, "p2", "Bob", "I think Beach Resort is the best."))
         state.turns.append(make_turn(1, "p3", "Carol", "I'm leaning toward City Tour."))
         r = _validate(
@@ -368,6 +367,22 @@ class TestCollectiveVoice:
         r = _validate(validator, "We deserve a place with better food.", state)
         assert "COLLECTIVE_VOICE" in r.codes()
 
+    def test_we_evaluate(self, validator, state):
+        r = _validate(validator, "We should evaluate the Mountain Retreat's cost.", state)
+        assert "COLLECTIVE_VOICE" in r.codes()
+
+    def test_we_weigh(self, validator, state):
+        r = _validate(validator, "We need to weigh comfort against price.", state)
+        assert "COLLECTIVE_VOICE" in r.codes()
+
+    def test_we_assess(self, validator, state):
+        r = _validate(validator, "We assess the options differently.", state)
+        assert "COLLECTIVE_VOICE" in r.codes()
+
+    def test_we_factor(self, validator, state):
+        r = _validate(validator, "We should factor in the travel time.", state)
+        assert "COLLECTIVE_VOICE" in r.codes()
+
 
 # ── fix_collective_voice ─────────────────────────────────────────────────
 
@@ -462,3 +477,49 @@ class TestSelfNarration:
         # "We should go with X" is a suggestion, not self-narration
         r = _validate(validator, "We should just pick the cheapest one.", state)
         assert "SELF_NARRATION" not in r.codes()
+
+
+# ── SEVERITY BOUNDARY ──────────────────────────────────────────────────
+# Style checks are diagnostics (warn), not repair triggers. Only structural
+# errors should set result.ok = False.
+
+class TestSeverityBoundary:
+    def test_style_issues_do_not_block(self, validator, state):
+        """A turn with only style-level issues should still pass (ok=True)."""
+        r = _validate(validator, "I should consider the budget carefully.", state)
+        assert "SELF_NARRATION" in r.codes()
+        assert r.ok
+
+    def test_structural_issue_blocks(self, validator, state):
+        """A turn with a structural error should fail (ok=False)."""
+        r = _validate(validator, "Alice: Mountain Retreat sounds nice.", state)
+        assert "SPEAKER_PREFIX" in r.codes()
+        assert not r.ok
+
+    def test_mixed_issues_still_block(self, validator, state):
+        """A turn with both a structural error and style issues should fail."""
+        r = _validate(
+            validator,
+            "Alice: The cost outweighs the benefits here.",
+            state,
+            intent=make_intent(speaker_id="p1", act=ActType.REACT),
+        )
+        assert "SPEAKER_PREFIX" in r.codes()
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+        assert not r.ok
+
+    def test_robotic_template_is_warn(self, validator, state):
+        r = _validate(validator, "The cost outweighs the benefits here.", state)
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+        assert r.ok
+
+    def test_duplicate_turn_is_warn(self, validator, state):
+        state.turns.append(make_turn(0, "p2", "Bob", "Mountain Retreat really appeals to me because of the fresh air and the remote location."))
+        r = _validate(
+            validator,
+            "Mountain Retreat really appeals to me because of the fresh air and the remote location.",
+            state,
+            intent=make_intent(speaker_id="p1"),
+        )
+        assert "DUPLICATE_TURN" in r.codes()
+        assert r.ok

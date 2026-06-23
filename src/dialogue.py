@@ -154,7 +154,6 @@ class Orchestrator:
         persona = state.persona_by_id(intent.speaker_id)
         max_words = max_words_for(intent, persona)
         recent_lines = recent_lines_for_prompt(state, intent)
-        board = public_board(state)
         focus_options = focus_options_for_prompt(state, intent)
         addressee_name = state.name_for(intent.addressee_id) if intent.addressee_id else None
         option_ids = state.scenario.option_ids
@@ -162,12 +161,10 @@ class Orchestrator:
             persona=persona,
             state=state,
             recent_lines=recent_lines,
-            public_board=board,
             intent=intent,
             focus_options=focus_options,
             addressee_name=addressee_name,
             max_words=max_words,
-            own_recent=state.runtimes[intent.speaker_id].already_said,
         )
         message, move = parse_trailer(self._llm.generate(prompt, profile="dialogue"), option_ids)
         text = clean_generated(message, persona.name, max_words)
@@ -414,6 +411,11 @@ class StateTracker:
         if act.explicit_vote and _can_back(act.explicit_vote):
             rt.explicit_vote = act.explicit_vote
             rt.current_preference = act.explicit_vote
+        elif act.explicit_vote and persona.is_hard_blocker:
+            # The model voted for the wrong option; auto-correct to the hard blocker's
+            # preferred option so the vote loop doesn't pick them again endlessly.
+            rt.explicit_vote = persona.preferred_option
+            rt.current_preference = persona.preferred_option
         elif act.proposes_option and _can_back(act.proposes_option):
             rt.current_preference = act.proposes_option
         elif (moves_lean and act.act_type == ActType.SUPPORT and act.option_refs

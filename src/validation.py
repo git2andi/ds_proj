@@ -95,7 +95,7 @@ class MessageValidator:
         window = int(cfg.validation.repeated_start_window)
         for turn in others[:window]:
             if jaccard_text(text, turn.text) >= float(cfg.validation.duplicate_threshold):
-                issues.append(ValidationIssue("DUPLICATE_TURN", "repair", "Near-identical to another speaker's recent turn."))
+                issues.append(ValidationIssue("DUPLICATE_TURN", "warn", "Near-identical to another speaker's recent turn."))
                 break
         # Echo guard: catch a long verbatim phrase lifted from another speaker even when an
         # added clause keeps overall jaccard low (the vote-round "...feels like our most
@@ -106,7 +106,7 @@ class MessageValidator:
         if not any(i.code == "DUPLICATE_TURN" for i in issues):
             for turn in others[:window]:
                 if _longest_run(masked, self._masked_tokens(turn.text)) >= min_run:
-                    issues.append(ValidationIssue("ECHOED_PHRASE", "repair", "Reuses a long phrase from another speaker's recent turn."))
+                    issues.append(ValidationIssue("ECHOED_PHRASE", "warn", "Reuses a long phrase from another speaker's recent turn."))
                     break
         # Confirmations are otherwise naturally similar, so we don't flag ordinary repetition there.
         if intent.act in {ActType.ACCEPT, ActType.REJECT}:
@@ -115,7 +115,7 @@ class MessageValidator:
         for prev in rt.already_said[-int(cfg.validation.repeated_start_window):]:
             score = jaccard_text(text, prev)
             if score >= float(cfg.validation.own_similarity_threshold):
-                issues.append(ValidationIssue("SELF_REPETITION", "repair", f"Too similar to own recent turn: {score:.2f}"))
+                issues.append(ValidationIssue("SELF_REPETITION", "warn", f"Too similar to own recent turn: {score:.2f}"))
                 break
         recent = [t for t in reversed(state.turns) if t.speaker_id != "moderator"][: int(cfg.validation.repeated_start_window)]
         first = _first_words(text, int(cfg.validation.repeated_start_word_count))
@@ -125,7 +125,7 @@ class MessageValidator:
                 issues.append(ValidationIssue("GROUP_REPETITION", "warn", f"Similar to a recent participant turn: {score:.2f}"))
                 break
             if first and first == _first_words(turn.text, int(cfg.validation.repeated_start_word_count)):
-                issues.append(ValidationIssue("REPEATED_START", "repair", "Starts like a recent turn."))
+                issues.append(ValidationIssue("REPEATED_START", "warn", "Starts like a recent turn."))
                 break
 
     def _check_opener_variety(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
@@ -150,7 +150,7 @@ class MessageValidator:
             else:
                 break
         if streak >= limit:
-            issues.append(ValidationIssue("REPETITIVE_OPENER", "repair", "Several turns in a row open with 'I'/'we' — vary the opening."))
+            issues.append(ValidationIssue("REPETITIVE_OPENER", "warn", "Several turns in a row open with 'I'/'we' — vary the opening."))
 
     def _check_decision_clarity(self, text: str, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
         # Only flag a decision move when the model emitted a trailer that contradicts
@@ -191,9 +191,9 @@ class MessageValidator:
         # enough to read as a template. A deterministic backstop forces the worst ones to be
         # rewritten instead of leaking into the chat. Topic-agnostic: no scenario words.
         if any(p.search(text) for p in _ROBOTIC_TEMPLATES):
-            issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "repair", "Uses a banned formulaic template."))
+            issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "warn", "Uses a banned formulaic template."))
         if any(p.match(text) for p in self._possessive_openers):
-            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
+            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "warn", "Opens with an option's possessive ('X's ...')."))
 
     def _check_collective_voice(self, text: str, issues: list[ValidationIssue]) -> None:
         # "We consider...", "We prioritize...", "We're drawn to...", "We can appreciate..." —
@@ -209,12 +209,12 @@ class MessageValidator:
         low = text.lower()
         for phrase in self._card_phrases:
             if phrase in low:
-                issues.append(ValidationIssue("CARD_READING", "repair", "Parrots an option card's description verbatim."))
+                issues.append(ValidationIssue("CARD_READING", "warn", "Parrots an option card's description verbatim."))
                 return
 
     def _check_self_narration(self, text: str, issues: list[ValidationIssue]) -> None:
         if _SELF_NARRATION.match(text):
-            issues.append(ValidationIssue("SELF_NARRATION", "repair", "Narrates own thinking instead of just saying it."))
+            issues.append(ValidationIssue("SELF_NARRATION", "warn", "Narrates own thinking instead of just saying it."))
 
     def _check_question_chain(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         if "?" not in text:
@@ -228,7 +228,7 @@ class MessageValidator:
             else:
                 break
         if recent_questions >= int(cfg.validation.max_question_chain) and intent.act != ActType.ANSWER:
-            issues.append(ValidationIssue("QUESTION_CHAIN", "repair", "Too many consecutive questions."))
+            issues.append(ValidationIssue("QUESTION_CHAIN", "warn", "Too many consecutive questions."))
 
     def _masked_tokens(self, text: str) -> list[str]:
         # Replace whole name phrases with a sentinel that never matches, then tokenise, so
@@ -277,7 +277,7 @@ _ROBOTIC_TEMPLATES = [
 _COLLECTIVE_VOICE = re.compile(
     r"^\s*(?:we|our)\b[^.?!]{0,18}?\b(?:consider|prioriti[sz]e|value|appreciate|"
     r"believe|think|feel|prefer|favou?r|drawn|love|enjoy|"
-    r"benefit|deserve)\b",
+    r"benefit|deserve|evaluate|weigh|assess|factor)\b",
     re.I,
 )
 

@@ -36,9 +36,8 @@ def _option_brief(option: OptionCard) -> str:
 # ---------------------------------------------------------------------------
 
 
-def setup_world(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]]) -> str:
+def setup_scenario(topic: str) -> str:
     labels = list(cfg.scenario.option_labels)
-    group_lines = "\n".join(f"- group {i + 1}: {', '.join(g)}" for i, g in enumerate(pref_groups))
     schema = {
         "scenario": {
             "decision_kind": "restaurant_choice | travel_destination | hotel_booking | flight_booking | study_plan | presentation_topic | tool_choice | activity_choice | generic_decision",
@@ -56,6 +55,28 @@ def setup_world(topic: str, n: int, trait_rows: list[dict], pref_groups: list[li
                 for label in labels
             ],
         },
+    }
+    return f"""Create a fictional group-decision scenario.
+
+Topic: {topic}
+Option ids: {labels}
+
+Requirements:
+- Create exactly {len(labels)} options.
+- Each option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} stable, topic-specific attributes.
+- Use concrete stable facts for comparison: cost, time, effort, comfort, risk, flexibility, distance, difficulty, score, or equivalent topic-specific dimensions.
+- Every attribute must be a fixed value known now. No placeholders, "unknown"/"TBD", or facts that require a live lookup (availability, current weather, booking status).
+- Options must differ meaningfully and expose real trade-offs.
+- The opening question must ask about priorities and trade-offs, not ask for votes.
+
+Return JSON only in this shape:
+{_schema(schema)}"""
+
+
+def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]], options_json: list[dict]) -> str:
+    labels = list(cfg.scenario.option_labels)
+    group_lines = "\n".join(f"- group {i + 1}: {', '.join(g)}" for i, g in enumerate(pref_groups))
+    schema = {
         "participants": [
             {
                 "id": "p1",
@@ -76,23 +97,16 @@ def setup_world(topic: str, n: int, trait_rows: list[dict], pref_groups: list[li
             }
         ],
     }
-    return f"""Create one complete fictional group-decision scenario and participant state.
+    return f"""Create {n} participants for this group decision.
 
 Topic: {topic}
-Participants needed: {n}
-Option ids: {labels}
+Options (already decided):
+{json.dumps(options_json, ensure_ascii=False, indent=2)}
+
 Trait/control profiles to use exactly by id:
 {json.dumps(trait_rows, ensure_ascii=False, indent=2)}
 
-Scenario requirements:
-- Create exactly {len(labels)} options.
-- Each option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} stable, topic-specific attributes.
-- Use concrete stable facts for comparison: cost, time, effort, comfort, risk, flexibility, distance, difficulty, score, or equivalent topic-specific dimensions.
-- Every attribute must be a fixed value known now. No placeholders, "unknown"/"TBD", or facts that require a live lookup (availability, current weather, booking status).
-- Options must differ meaningfully and expose real trade-offs.
-- The opening question must ask about priorities and trade-offs, not ask for votes.
-
-Participant requirements:
+Requirements:
 - Everyone should try to reach a workable group decision.
 - Normal participants need at least {cfg.personas.non_blocker_min_acceptable} acceptable options including their preferred option.
 - "scores" rates every option {cfg.scenario.score_min}-{cfg.scenario.score_max} for that person ({cfg.scenario.score_max}=loves it, {cfg.scenario.score_min}=cannot accept). Make scores consistent with the labels: preferred highest, acceptable options {cfg.scenario.acceptance_score} or above, rejected options below {cfg.scenario.acceptance_score}.
@@ -101,13 +115,14 @@ Participant requirements:
 {group_lines}
 - Even when participants share a preferred option, give them distinct roles, reasons, and concerns so they don't sound identical.
 - At least one option should be acceptable to all non-hard-blockers so compromise is possible.
-- Reasons must be grounded only in the option cards.
+- Reasons must be grounded only in the option cards above.
 - Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
 - Names should be plausible short first names. Avoid stereotypes and demographic labels.
 - Conversation should later sound like friends/classmates deciding together, not a business meeting.
 
 Return JSON only in this shape:
 {_schema(schema)}"""
+
 
 
 # ---------------------------------------------------------------------------
@@ -145,11 +160,18 @@ def _camp_split(state: DialogueState) -> str:
     return ", ".join(parts)
 
 
+def _conflict_dimension(state: DialogueState) -> str:
+    """Name the key concern driving the split (e.g. 'cost vs comfort') so the moderator
+    can diagnose the real trade-off instead of a generic 'we're going in circles'."""
+    from collections import Counter
+    concerns = Counter(p.main_concern for p in state.personas)
+    top = [c for c, _ in concerns.most_common(2)]
+    if len(top) >= 2:
+        return f"The real tension is {top[0]} vs {top[1]}."
+    return ""
+
+
 def moderator_stall_prompt(state: DialogueState) -> str:
-    # If a single option actually bridges the split (people in different camps can all live
-    # with it), steer the moderator to surface THAT as the common ground rather than just
-    # pitting the loudest front-runners against each other (ANALYSIS #4: the mod missed the
-    # real overlap candidate). Otherwise fall back to a plain "pick between the front-runners".
     overlap = best_overlap_option(state)
     if overlap is not None:
         push = (f"Point out that {state.scenario.option(overlap).name} may be the common ground — "
@@ -158,10 +180,11 @@ def moderator_stall_prompt(state: DialogueState) -> str:
     else:
         push = ("Push toward a decision: propose setting aside any option nobody backs and choosing "
                 "between the front-runners, or ask a specific holdout what would actually change their mind.")
+    conflict = _conflict_dimension(state)
     return f"""{_MODERATOR_VOICE} (max 32 words) for this moment.
 Topic: {state.scenario.topic}
-The discussion is going in circles. The split right now: {_camp_split(state)}.
-Name that split plainly (who's where), note we're repeating the same points, then move things forward. {push} Don't just ask 'is anyone's view changing?' again. {_MODERATOR_RULES}"""
+The split: {_camp_split(state)}. {conflict}
+Name the actual disagreement (not just who wants what), then move things forward. {push} Don't just ask 'is anyone's view changing?' again. {_MODERATOR_RULES}"""
 
 
 def moderator_agreement_prompt(state: DialogueState, candidate_id: str) -> str:
@@ -177,15 +200,15 @@ Note that {whole} seem agreed on {option.name} and ask if anyone objects or if y
 def moderator_holdout_prompt(state: DialogueState, candidate_id: str, holdout_ids: list[str]) -> str:
     option = state.scenario.option(candidate_id)
     names = " and ".join(state.name_for(h) for h in holdout_ids)
-    # Avoid "most of us" when it's really one-on-one.
     if len(state.personas) == 2:
         standing = f"You're okay with {option.name}, but {names} isn't sure yet."
     else:
         standing = f"Most of the group can live with {option.name}; the holdout(s): {names}."
+    concerns = ", ".join(f"{state.name_for(h)} cares about {state.persona_by_id(h).main_concern}" for h in holdout_ids)
     return f"""{_MODERATOR_VOICE} (max 32 words) addressed to {names}.
 Topic: {state.scenario.topic}
-{standing}
-Acknowledge where things stand, then ask {names} what would make {option.name} work for them — or whether there's another option everyone could accept. {_MODERATOR_RULES}"""
+{standing} ({concerns}.)
+Address their specific concern about {option.name} — or ask if there's another option everyone could accept. {_MODERATOR_RULES}"""
 
 
 def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
@@ -232,20 +255,101 @@ Keep it short and unforced. Do NOT use seminar/meeting openers ('looking forward
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
     if outcome.final_option and outcome.status in {"consensus", "fallback"}:
-        result = f"the group is going with {scenario.option(outcome.final_option).name}"
+        chosen = scenario.option(outcome.final_option).name
+        result = f"the group is going with {chosen}"
+        if outcome.final_option == persona.preferred_option:
+            tone = "You got your top pick — be pleased but brief."
+        elif outcome.status == "fallback":
+            tone = f"This wasn't your first choice — you can show mild acceptance ('fair enough', 'I can live with it') and keep your personality."
+        else:
+            tone = "You came around to this — brief and genuine."
     else:
         result = "the group couldn't land on a choice this time"
+        tone = "No decision — mild 'oh well' or 'we'll figure it out' is fine."
     audience = (f" It's just you and {others[0]} — sign off to {others[0]} directly; don't say 'all', 'everyone', 'team', or 'you all'."
                 if len(others) == 1 else "")
     return f"""The discussion just wrapped: {result}.
 Write a short, casual sign-off from {persona.name} — at most {max_words} words, in their voice ({persona.speech_style}).
-A quick goodbye with a touch of feeling about how it ended (pleased, relieved, or fine with it; mild disappointment is okay if there was no decision).{audience}{_distinct_from_prior(prior, 'signed off')}
+{tone}{audience}{_distinct_from_prior(prior, 'signed off')}
 You may name the chosen option plainly, but do NOT describe it or invent any detail about it (no genre, author, plot, attributes, dates, or timeframe like 'next week/next month') — you'd risk getting it wrong. Do NOT re-argue, raise new points, or name other options. No name prefix, no quotes, no emoji."""
 
 
 def _lean_name(state: DialogueState, persona: Persona) -> str:
     lean = current_lean(state, persona)
     return state.scenario.option(lean).name if lean in state.scenario.option_ids else "no clear pick"
+
+
+# ---------------------------------------------------------------------------
+# Compact runtime persona (replaces full speaker_card in generation prompt)
+# ---------------------------------------------------------------------------
+
+
+def _speaking_habit(persona: Persona) -> str:
+    t = persona.traits
+    parts: list[str] = []
+    if t.directness >= 0.55:
+        parts.append("direct")
+    if t.detail >= 0.6:
+        parts.append("detail-focused")
+    if t.agreeableness >= 4 and t.compromise_willingness >= 0.6:
+        parts.append("cooperative but names blockers")
+    elif t.compromise_willingness < 0.45:
+        parts.append("holds ground until convinced")
+    if t.openness >= 4:
+        parts.append("curious about alternatives")
+    return ", ".join(parts) if parts else "balanced"
+
+
+def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveIntent) -> str:
+    if intent.act in {ActType.OPENING, ActType.VOTE}:
+        return ""
+    if intent.respond_to_turn is not None:
+        for turn in state.turns:
+            if turn.index == intent.respond_to_turn:
+                return f"Responding to {turn.speaker_name}: \"{compact_words(turn.text, 20)}\""
+    target_id = intent.addressee_id
+    for turn in reversed(state.turns):
+        if turn.speaker_id == persona.id:
+            continue
+        if target_id and turn.speaker_id != target_id:
+            continue
+        return f"Responding to {turn.speaker_name}: \"{compact_words(turn.text, 20)}\""
+    return ""
+
+
+def _group_leans(state: DialogueState) -> str:
+    parts: list[str] = []
+    for persona in state.personas:
+        rt = state.runtimes[persona.id]
+        lean = rt.current_preference or persona.preferred_option
+        if lean in state.scenario.option_ids:
+            parts.append(f"{persona.name}→{state.scenario.option(lean).name}")
+    return "Group: " + ", ".join(parts)
+
+
+def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveIntent) -> str:
+    rt = state.runtimes[persona.id]
+    lean = rt.current_preference or persona.preferred_option
+    lean_name = state.scenario.option(lean).name if lean in state.scenario.option_ids else "undecided"
+
+    concern = persona.main_concern
+    if intent.option_focus:
+        focus = intent.option_focus[0]
+        if focus != persona.preferred_option and persona.reservation:
+            concern = persona.reservation
+
+    lines = [
+        f"Speaker: {persona.name}, {persona.role}. Lean: {lean_name}. Voice: {persona.speech_style}.",
+        f"Concern: {concern}. Style: {_speaking_habit(persona)}.",
+    ]
+    if rt.already_said:
+        recent = rt.already_said[-2:]
+        bullets = "; ".join(f'"{compact_words(s, 10)}"' for s in recent)
+        lines.append(f"You already said: {bullets} — don't repeat these points.")
+    if lean != persona.preferred_option:
+        old_name = state.scenario.option(persona.preferred_option).name
+        lines.append(f"Started with {old_name}, now leaning {lean_name}.")
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -305,7 +409,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     t = persona.traits
     high_compromise = t.compromise_willingness >= 0.6
     if intent.act == ActType.OPENING:
-        common = " Say which one caught your eye and why — one quick take, no vote yet. Lead with the detail, not 'I prefer'."
+        common = " Name your pick and say what about it matters to you — lead with your reason, not the option description."
         spoken_ids = {turn.speaker_id for turn in state.turns if turn.speaker_id != "moderator"}
         if any(p.id in spoken_ids and p.preferred_option == persona.preferred_option
                for p in state.personas if p.id != persona.id):
@@ -318,10 +422,22 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             return "Point at one concrete detail that catches your eye." + common
         return "Say casually which one you're leaning toward." + common
     if intent.act == ActType.ACCEPT:
+        focus = intent.option_focus[0] if intent.option_focus else None
+        if focus and focus != persona.preferred_option:
+            old = state.scenario.option(persona.preferred_option).name
+            return f"You started out wanting {old} — say what convinced you this one works instead."
         if _others_back(state, persona, intent.option_focus):
             return "Others already agreed — a quick 'yeah works for me' is fine, don't repeat their reason."
         return "Agree to this option — name the one thing that makes it okay for you."
-    if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act in {ActType.VOTE, ActType.REJECT}:
+    if intent.act == ActType.VOTE:
+        chorus = (" Others already voted this way — keep it brief, don't repeat their reason."
+                  if _others_back(state, persona, intent.option_focus) else "")
+        focus = intent.option_focus[0] if intent.option_focus else None
+        if focus and focus != persona.preferred_option:
+            old = state.scenario.option(persona.preferred_option).name
+            return f"Name your final pick. You started with {old} — briefly say what changed." + chorus
+        return "Name your final pick plainly and say why in one sentence. This is your vote — commit." + chorus
+    if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         consistent = " Back what you already said works — don't revert or re-air old worries."
         chorus = (" Others already backed this — brief '+1' or a new reason, don't reuse their words."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -340,7 +456,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     )
     by_act = {
         ActType.REACT: "React to what was just said — a short fragment is fine ('yeah that's fair', 'eh, not for me'). Don't re-pitch your option." + persuadable,
-        ActType.ASK: "Ask one real question you'd actually want answered before deciding. Keep it casual.",
+        ActType.ASK: "Ask one real question you'd actually want answered before deciding. Keep it casual, end with '?'.",
         ActType.COMPARE: "Weigh their option against yours — name a real strength of theirs and where yours still wins." + persuadable,
         ActType.SUPPORT: "Back this option from your own angle — your concern or experience. Try a dimension others haven't dwelt on.",
         ActType.OBJECT: "Raise a genuine worry about this option, grounded in what you care about. Stay friendly.",
@@ -365,59 +481,51 @@ def sim_utterance(
     persona: Persona,
     state: DialogueState,
     recent_lines: list[str],
-    public_board: str,
     intent: MoveIntent,
     focus_options: list[OptionCard],
     addressee_name: Optional[str],
     max_words: int,
-    own_recent: Optional[list[str]] = None,
 ) -> str:
     option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)
-    focused = _option_cards(focus_options) if focus_options else "- none"
+    card = runtime_speaker_card(persona, state, intent)
+    leans = _group_leans(state)
+    responding = _responding_to_line(state, persona, intent)
+    if intent.act in {ActType.COMPARE, ActType.VOTE, ActType.OPENING}:
+        focused = _option_cards(focus_options) if focus_options else "- none"
+    else:
+        focused = "\n".join(f"- {_option_brief(o)}" for o in focus_options) if focus_options else "- none"
     recent = "\n".join(recent_lines) if recent_lines else "(no recent turns)"
-    already = ""
-    if own_recent:
-        bullets = "\n".join(f"- {compact_words(line, 16)}" for line in own_recent[-3:])
-        already = f"\nYou already said this (do NOT repeat it; say something new or move toward deciding):\n{bullets}\n"
-    # When the turn is aimed at one person, talk TO them ("you") rather than narrating them
-    # in the third person ("Liam's point about ..."), which reads stilted between two people.
-    address_rule = (
-        f"\n- You're reacting to {addressee_name}: you can use 'you' once for your reaction to their point, "
-        f"but don't start the line with 'Your...' and don't narrate them in the third person "
-        f"('{addressee_name}'s point'). Lead with your own thought, not with them."
-        if addressee_name else ""
-    )
-    return f"""Write exactly one natural chat message for the next speaker.
+    focus_str = ", ".join(intent.option_focus) if intent.option_focus else "-"
+    guidance = _move_guidance(state, persona, intent)
+    responding_block = f"\n{responding}\n" if responding else "\n"
+    address_rule = (f"\n- Responding to {addressee_name}: use 'you' for their point, lead with your own thought."
+                    if addressee_name else "")
+    return f"""Write one natural chat message for the next speaker.
 
 Topic: {state.scenario.topic}
-Available options: {option_names}
-Speaker:
-{speaker_card(persona, intent.option_focus, state.runtimes[persona.id].current_preference)}
+Options: {option_names}
 
-Public state:
-{public_board}
-
-Relevant option cards for this move:
+{card}
+{leans}
+{responding_block}
+Option facts:
 {focused}
 
 Recent chat:
 {recent}
-{already}
-Next local move:
-{intent_line(intent, state, addressee_name)}
-Guidance: {_move_guidance(state, persona, intent)}
-Length & voice: {_verbosity_note(persona, max_words)}
+
+Act: {intent.act.value}; focus: {focus_str}
+Guidance: {guidance}
+{_verbosity_note(persona, max_words)}
 
 Rules:
-- One line only, no name prefix, no quotes. Talk like friends deciding something — short sentences, fragments OK, casual ('honestly', 'okay but', 'hmm', 'right?'). Your voice is {persona.speech_style}.
-- React first: pick up the specific thing just said before adding your own view.{address_rule}
-- Don't start with 'I' most of the time. Open with a reaction, the detail itself, or their point. Don't swap 'I' for committee 'we' either — say 'we' only for genuine joint suggestions.
-- Put things in your own words. Never copy the option card's description/upside/tradeoff text. Never narrate your thinking ('I should consider', 'I need to prioritize').
-- Tie reasons to concrete details from the cards and what they'd mean, not bare value words. Name options naturally, not "Option B". Use only facts from the cards.
-- Don't fold easily — hold your ground in the first few turns. Don't repeat points already made. No stock frames ('outweighs', 'point is valid', 'Given the discussion', 'Considering', 'seems like the best fit').
+- One line, no name prefix, no quotes. Talk like friends deciding — fragments OK, casual. Voice: {persona.speech_style}.
+- React to what was just said before adding your view. Don't open with an option name — start with a reaction, question, or your own thought.{address_rule}
+- Own words only. No card-reading, no narrating thinking ('I should consider'). No stock phrases ('outweighs', 'point is valid', 'Considering...').
+- Use only facts from the options. Name options naturally, not "Option B".
 
-End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral (vote=final pick, accept=agree to a compromise, object=mild concern, reject=dealbreaker, propose=offer a compromise, neutral=otherwise)."""
+End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 
 
 # Short, human fix-instructions per validation code. Used to build a focused repair prompt

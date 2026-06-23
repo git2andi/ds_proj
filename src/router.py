@@ -63,16 +63,26 @@ class TurnRouter:
         return self._discussion_intent(state)
 
     def _vote_intent(self, state: DialogueState) -> MoveIntent:
-        for persona in self._least_recent_personas(state):
-            if not state.runtimes[persona.id].explicit_vote:
+        last_turn = self._last_participant_turn(state)
+        last_pid = last_turn.speaker_id if last_turn else None
+        stuck = self._consecutive_same_speaker(state) >= 2
+        unvoted = [p for p in self._least_recent_personas(state) if not state.runtimes[p.id].explicit_vote]
+        if stuck:
+            unvoted = [p for p in unvoted if p.id != last_pid]
+        else:
+            unvoted = [p for p in unvoted if p.id != last_pid] + [p for p in unvoted if p.id == last_pid]
+        for persona in unvoted:
+            if persona.is_hard_blocker:
+                focus = [persona.preferred_option]
+            else:
                 focus = [state.runtimes[persona.id].current_preference or persona.preferred_option]
-                return MoveIntent(
-                    speaker_id=persona.id,
-                    act=ActType.VOTE,
-                    option_focus=focus,
-                    reason="the group has discussed enough, so name your current pick and why",
-                    length_hint="medium",
-                )
+            return MoveIntent(
+                speaker_id=persona.id,
+                act=ActType.VOTE,
+                option_focus=focus,
+                reason="the group has discussed enough, so name your current pick and why",
+                length_hint="medium",
+            )
         state.candidate_option = leading_option(state) or state.candidate_option
         state.phase = Phase.CONFIRMATION
         return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
@@ -83,21 +93,26 @@ class TurnRouter:
             return None
         state.candidate_option = candidate
         threshold = int(cfg.scenario.acceptance_score)
+        last_turn = self._last_participant_turn(state)
+        last_pid = last_turn.speaker_id if last_turn else None
+        stuck = self._consecutive_same_speaker(state) >= 2
+        candidates: list[tuple[Persona, bool]] = []
         for persona in self._least_recent_personas(state):
             rt = state.runtimes[persona.id]
             if rt.explicit_vote == candidate or candidate in rt.accepted_options:
-                continue  # already on board
-            # Can this persona live with the candidate? (utility-based, not a flat threshold)
+                continue
+            if candidate in rt.hard_rejections or candidate in rt.soft_rejections:
+                continue
+            if stuck and persona.id == last_pid:
+                continue
             can_accept = (
                 (candidate in persona.acceptable_options or candidate == persona.preferred_option
                  or persona.score_for(candidate) >= threshold)
                 and candidate not in persona.hard_rejections
                 and not (persona.is_hard_blocker and candidate != persona.preferred_option)
             )
-            # A genuine holdout who has already voiced a rejection has given their answer —
-            # don't keep re-asking the same person (that produced 8 identical lines in a row).
-            if (candidate in rt.hard_rejections or candidate in rt.soft_rejections) and not can_accept:
-                continue
+            candidates.append((persona, can_accept))
+        for persona, can_accept in candidates:
             return MoveIntent(
                 speaker_id=persona.id,
                 act=ActType.ACCEPT if can_accept else ActType.REJECT,
@@ -107,7 +122,48 @@ class TurnRouter:
             )
         return None
 
+    def _unanswered_challenge(self, state: DialogueState) -> Optional[MoveIntent]:
+        """If a recent OBJECT/PUSH_BACK hasn't been answered by the natural respondent
+        (champion of the targeted option or the explicit addressee), route them to
+        respond before phase/coverage logic picks someone else."""
+        last_turn = self._last_participant_turn(state)
+        last_pid = last_turn.speaker_id if last_turn else None
+        window = int(cfg.routing.recent_speaker_window)
+        recent = [t for t in state.turns if t.speaker_id != "moderator"][-window:]
+        for turn in reversed(recent):
+            if turn.act.act_type not in {ActType.OBJECT, ActType.PUSH_BACK}:
+                continue
+            target_id = turn.act.addressee_id
+            if not target_id and turn.act.option_refs:
+                opt = turn.act.option_refs[0]
+                for p in state.personas:
+                    if p.id == turn.speaker_id:
+                        continue
+                    if p.preferred_option == opt or state.runtimes[p.id].current_preference == opt:
+                        target_id = p.id
+                        break
+            if not target_id or target_id == last_pid:
+                continue
+            if any(t.speaker_id == target_id and t.index > turn.index for t in state.turns):
+                continue
+            persona = state.persona_by_id(target_id)
+            return MoveIntent(
+                speaker_id=target_id,
+                addressee_id=turn.speaker_id,
+                act=ActType.REACT,
+                option_focus=turn.act.option_refs or self._focus_for_person(state, target_id),
+                reason=f"respond to {state.name_for(turn.speaker_id)}'s objection",
+                length_hint=self._length_hint(persona),
+                respond_to_turn=turn.index,
+            )
+        return None
+
     def _discussion_intent(self, state: DialogueState, forced_act: Optional[ActType] = None) -> MoveIntent:
+        if forced_act is None:
+            challenge_response = self._unanswered_challenge(state)
+            if challenge_response is not None:
+                return challenge_response
+
         gap = self._coverage_gap_option(state)
         if gap:
             speaker_id = self._speaker_for_gap(state, gap)
@@ -368,6 +424,21 @@ class TurnRouter:
             if turn.speaker_id != "moderator":
                 return turn
         return None
+
+    @staticmethod
+    def _consecutive_same_speaker(state: DialogueState) -> int:
+        count = 0
+        for turn in reversed(state.turns):
+            if turn.speaker_id == "moderator":
+                continue
+            if count == 0:
+                count = 1
+                pid = turn.speaker_id
+            elif turn.speaker_id == pid:
+                count += 1
+            else:
+                break
+        return count
 
     def _length_hint(self, persona: Persona) -> str:
         # Bias length toward the persona's verbosity so a terse speaker and a chatty one

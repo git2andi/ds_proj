@@ -191,6 +191,32 @@ def check_run(run_dir: Path) -> list[str]:
     if dupes > MAX_DUPLICATE_MODERATOR_LINES:
         failures.append(f"  FAIL duplicate_moderator_lines: {dupes}")
 
+    # --- Same-speaker back-to-back ---
+    # Only flag when the router picks the same participant twice without any other turn
+    # (participant or moderator) in between. A moderator addressing a holdout legitimately
+    # triggers that person to respond next — that's not a router bug.
+    prev_pid = None
+    moderator_between = False
+    back_to_back = 0
+    for t in turns:
+        pid = t["speaker_id"]
+        if pid == "moderator":
+            moderator_between = True
+            continue
+        if pid == prev_pid and not moderator_between:
+            back_to_back += 1
+        prev_pid = pid
+        moderator_between = False
+    if back_to_back > 0:
+        failures.append(f"  FAIL same_speaker_back_to_back: {back_to_back} instance(s)")
+
+    # --- Question density ---
+    if participant_turns:
+        q_turns = sum(1 for t in participant_turns if "?" in t["text"])
+        q_density = q_turns / len(participant_turns)
+        if q_density == 0.0:
+            failures.append("  WARN zero_question_density: no questions in any participant turn")
+
     # --- Robotic template / possessive subject in final issues ---
     robotic_count = 0
     for t in participant_turns:
@@ -212,13 +238,51 @@ def check_run(run_dir: Path) -> list[str]:
     repair_rate = metrics.get("repair_rate", 0)
     flagged = metrics.get("flagged_turns", 0)
 
+    # --- Interaction quality metrics (P7) ---
+    participant_names_set = {p.get("name", "") for p in personas.values()}
+    _YOU_RE = re.compile(r"\byou(?:r|'re|'ve|'ll)?\b", re.I)
+    if participant_turns:
+        # Addressee rate: turns that mention another participant by name
+        named = 0
+        for t in participant_turns:
+            speaker_name = t.get("speaker_name", "")
+            others = participant_names_set - {speaker_name}
+            if any(name in t["text"] for name in others if name):
+                named += 1
+        named_rate = named / len(participant_turns)
+
+        # Responsive rate: turns containing name-mention, "you"/"your", or routed respond_to_turn
+        responsive = 0
+        for t in participant_turns:
+            speaker_name = t.get("speaker_name", "")
+            others = participant_names_set - {speaker_name}
+            has_name = any(name in t["text"] for name in others if name)
+            has_you = bool(_YOU_RE.search(t["text"]))
+            has_anchor = (t.get("intent") or {}).get("respond_to_turn") is not None
+            if has_name or has_you or has_anchor:
+                responsive += 1
+        responsive_rate = responsive / len(participant_turns)
+
+        # Self-repetition and echoed phrase counts
+        self_rep = sum(1 for t in participant_turns if "SELF_REPETITION" in t.get("validation_issues", []))
+        echoed = sum(1 for t in participant_turns if "ECHOED_PHRASE" in t.get("validation_issues", []))
+
+        interaction_line = (f"  INFO interaction: named={named_rate:.0%} responsive={responsive_rate:.0%} "
+                           f"self_rep={self_rep} echoed={echoed}")
+    else:
+        interaction_line = ""
+
     # --- Report ---
     if failures:
         print(f"\n{header}")
         for f in failures:
             print(f)
+        if interaction_line:
+            print(interaction_line)
     else:
-        print(f"  OK   {header}  (repair_rate={repair_rate:.2f}, flagged={flagged})")
+        print(f"  OK   {header}  (repair={repair_rate:.0%}, flagged={flagged})")
+        if interaction_line:
+            print(interaction_line)
 
     return failures
 

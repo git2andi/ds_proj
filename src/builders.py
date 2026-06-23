@@ -1,6 +1,8 @@
 """Scenario and persona construction.
 
-One setup LLM call creates both the option cards and participant belief states.
+Two sequential LLM calls: the first creates the option cards, the second creates
+participant belief states given those options.  Splitting keeps each call small
+enough to avoid timeouts on slower endpoints.
 If it cannot produce a valid world, build() raises rather than fabricating one.
 """
 
@@ -44,11 +46,10 @@ class SetupBuilder:
         pref_groups = self._preference_groups(plan)
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         last_error = ""
-        for _ in range(attempts):
+        for attempt in range(attempts):
             try:
-                data = self._llm.generate_json(prompts.setup_world(self.topic, n, trait_rows, pref_groups), profile="setup")
-                scenario = self._parse_scenario(data.get("scenario", {}))
-                personas = self._parse_personas(data.get("participants", []), trait_rows, scenario)
+                scenario, options_json = self._generate_scenario()
+                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario)
                 personas = self._postprocess_personas(personas, scenario, plan)
                 self._validate_world(scenario, personas)
                 return scenario, personas
@@ -58,6 +59,21 @@ class SetupBuilder:
             f"Scenario setup failed for topic {self.topic!r} after {attempts} attempt(s). "
             f"Last error: {last_error}. Check the LLM endpoint/provider in config.yaml."
         )
+
+    def _generate_scenario(self) -> tuple[Scenario, list[dict]]:
+        data = self._llm.generate_json(prompts.setup_scenario(self.topic), profile="setup")
+        raw_scenario = data.get("scenario", data)
+        scenario = self._parse_scenario(raw_scenario)
+        options_json = raw_scenario.get("options", [])
+        return scenario, options_json
+
+    def _generate_personas(self, n: int, trait_rows: list[dict], pref_groups: list[list[str]],
+                           options_json: list[dict], scenario: Scenario) -> list[Persona]:
+        data = self._llm.generate_json(
+            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json),
+            profile="setup",
+        )
+        return self._parse_personas(data.get("participants", []), trait_rows, scenario)
 
     def _trait_rows(self, n: int) -> list[dict[str, Any]]:
         hard_id = None
