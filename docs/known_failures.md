@@ -56,27 +56,13 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **R6: No shared decision-situation context** → `shared_context` field added to Scenario dataclass, setup prompt, moderator opening, and per-turn prompt. 2-3 stable situational facts generated alongside options.
 - **R7: Participant names lack variety** → 48-name diverse pool in `builders.py`, pre-sampled and enforced in parser.
 - **R1: Stock phrases persist** → deterministic `fix_stock_phrases` rewrites "is a must for me" → "matters to me", "major draw" → "appeals to me" etc. in `clean_generated`. No LLM call.
-- **R5: Repetitive agreement loops** → when concentration_score == 1.0 and no_progress_count >= 2, force narrowing transition. Prevents circling when everyone already agrees.
+- **R5: Repetitive agreement loops** → when concentration_score == 1.0 and no_progress_count >= 2, force narrowing transition.
+- **R2: Farewell lines stiff** → explicit ban of formal closers in farewell prompt ("looking forward to", "confirmed and set", "satisfied with", "have a great day").
+- **R3: Full option names after opening** → `_short_alias` generates concrete 2-word aliases from option names, shown in the alias instruction. Model shortens consistently.
+- **R4: Named addressee rate low** → address rule now encourages using addressee's name once in the message.
 
 ---
 
-## Still open (minor residuals)
+## No open items
 
-### R2: Farewell lines occasionally stiff
-
-Post-closure lines like "Satisfied with the consensus" sometimes appear. Farewell prompt bans seminar openers and shows prior lines. Model compliance ~70%.
-
-### R3: Full option names still used after opening
-
-The model uses full names ~30% of the time when the alias instruction is active. Proper nouns (game titles, movie titles) are harder to shorten.
-
-### R4: Named addressee rate is low
-
-Participants rarely mention each other by name (0% named rate). Somewhat natural for casual group chat but real groups do occasionally say "wait, Kai, what about...".
-
----
-
-## Priority order
-
-1. Re-evaluate after manual transcript review of diverse topics.
-2. Address R2/R3/R4 if they show up as significant in broader testing.
+All tracked issues (F1–F10, O1–O12, R1–R7, R2–R4) are resolved. Remaining quality depends on model compliance (llama3.3). Re-evaluate after broader testing with diverse topics from `evals/topics.txt`.

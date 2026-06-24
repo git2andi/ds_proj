@@ -584,8 +584,18 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
         return "\n- Name options naturally, not 'Option B'."
     mentioned = {opt for t in state.turns for opt in (t.act.option_refs if hasattr(t.act, 'option_refs') else [])}
     if mentioned:
-        return "\n- Use short names or nicknames for options already discussed ('the bistro', 'the cheap one', 'that place'). Don't keep repeating full names."
+        shorts = ", ".join(f'"{_short_alias(o)}"' for o in state.scenario.options if o.id in mentioned)
+        if shorts:
+            return f"\n- Use short names for options: {shorts}. Don't repeat full names — shorten like friends would."
+        return "\n- Use short names for options already discussed. Don't repeat full names."
     return "\n- Name options naturally, not 'Option B'."
+
+
+def _short_alias(option: OptionCard) -> str:
+    words = option.name.split()
+    if len(words) <= 2:
+        return option.name
+    return " ".join(words[:2])
 
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
@@ -629,7 +639,7 @@ def sim_utterance(
     focus_str = ", ".join(intent.option_focus) if intent.option_focus else "-"
     guidance = _move_guidance(state, persona, intent)
     responding_block = f"\n{responding}\n" if responding else "\n"
-    address_rule = (f"\n- Responding to {addressee_name}: use 'you' for their point, lead with your own thought."
+    address_rule = (f"\n- Responding to {addressee_name}: you can use their name once ('{addressee_name}, ...' or '...{addressee_name}'), then 'you' for their point."
                     if addressee_name else "")
     rt = state.runtimes[persona.id]
     frame_hint = recent_frame_hint(_collect_recent_frames(state), rt.discourse_frames)
