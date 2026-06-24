@@ -46,17 +46,21 @@ The split is deliberate and load-bearing:
 
 ### Prompt design
 
-The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state, and discourse-frame/claim-slot hints when repetition is detected. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get option names only. The prompt has 4 rules focused on voice, reactivity, originality, and grounding.
+The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state, and discourse-frame/claim-slot hints when repetition is detected. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get option names only. The prompt has 3 rules focused on voice, leading with own thought (not recapping), and no stock phrases. After the opening, an alias instruction tells the model to use shorthand for already-discussed options.
+
+Face-work modifiers are added to guidance for objection/push-back acts based on persona traits (agreeable speakers soften, neurotic speakers show anxiety, direct speakers skip diplomacy).
 
 ### Key design constraints
 
-- **Topic-agnostic**: nothing is tuned for a specific scenario. Any fix must work for arbitrary topics and group sizes 2–7.
 - **No fabricated fallbacks**: if setup or a turn call returns something unusable, the run raises rather than papering over it with defaults.
-- **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion.
+- **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion. Hedged accepts ("still not sure", "not fully sold") are clamped to neutral.
 - **Hard blockers are immovable**: a hard-blocker persona only ever backs their preferred option; any vote/accept elsewhere is ignored.
 - **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition.
-- **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance (residual worry, condition, trade-off, or next step) fires before chorus detection.
+- **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance fires.
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
+- **Contribution-based routing**: for n>=4, speakers are skipped when their only available move is restating a known preference. Extraversion and initiative drive turn frequency.
+- **Stall-to-concrete routing**: when discussion stalls (2+ turns no progress), ASK probability doubles and SUPPORT dampens, steering toward concrete questions instead of preference restating.
+- **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`.
 
 ## Outputs
 
@@ -80,7 +84,7 @@ Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flag
 & .\dspro\Scripts\python.exe evals\run_eval.py --run
 ```
 
-- `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (147 tests, including discourse-frame and claim-slot classification).
+- `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (essential cases for each check, plus discourse-frame and claim-slot classification).
 - `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
 - `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
 - `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, hard-blocker integrity, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).

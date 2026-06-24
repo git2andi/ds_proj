@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import random
+import re
 from collections import Counter
 from typing import Optional
 
@@ -220,8 +221,6 @@ class Orchestrator:
             return None
 
         if state.phase == Phase.DISCUSSION and everyone_spoke_once(state):
-            # Recognise genuine early agreement (everyone leaning the same way) and move to
-            # lock it in, rather than always firing the generic "we're circling" line.
             if concentration_score(state) >= 1.0:
                 candidate = leading_option(state)
                 if candidate:
@@ -229,10 +228,16 @@ class Orchestrator:
                     state.no_progress_count = 0
                     state.facilitator_force_narrow = True
                     return self._moderator_say(prompts.moderator_agreement_prompt(state, candidate), state)
-            if state.no_progress_count >= int(conv.moderator_stall_window):
+            # Scale stall window with group size: a 5-person group needs more turns
+            # before "no progress" actually means the discussion is circling.
+            n = len(state.personas)
+            stall_window = int(conv.moderator_stall_window) + max(0, n - 3)
+            min_turns_before_mod = n * 2
+            if (state.no_progress_count >= stall_window
+                    and participant_turn_count(state) >= min_turns_before_mod):
                 self._register_intervention(state)
                 state.no_progress_count = 0
-                state.facilitator_force_narrow = True  # mod steps in -> move toward a decision
+                state.facilitator_force_narrow = True
                 return self._moderator_say(prompts.moderator_stall_prompt(state), state)
 
         if state.phase == Phase.CONFIRMATION and state.candidate_option:
@@ -689,11 +694,18 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = strip_speaker_prefix(normalise_ws(text), speaker_name).strip().strip('"')
     if "\n" in text:
         text = next((line.strip() for line in text.splitlines() if line.strip()), text.strip())
-    # Mechanically convert a committee-voiced personal opinion ("We prioritize ...") to the
-    # first person before the word cap — surface register only, content untouched.
     text = fix_collective_voice(text)
+    text = _surface_cleanup(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
     return compact_words(text, hard_cap)
+
+
+def _surface_cleanup(text: str) -> str:
+    text = re.sub(r"\s+([.!?,;:])", r"\1", text)
+    text = re.sub(r"\.{2,}", ".", text)
+    text = re.sub(r"([!?])\1+", r"\1", text)
+    text = re.sub(r'^["\x27]+|["\x27]+$', "", text).strip()
+    return text
 
 
 # ---------------------------------------------------------------------------

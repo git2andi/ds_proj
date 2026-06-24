@@ -262,16 +262,18 @@ _STANCE_OPENER = re.compile(r"\s*(?:i(?:['’](?:m|d|ve|ll))?|we(?:['’](?:re|v
 # (no option/topic words) so it generalises across every scenario. Repair-level: the worst
 # offenders get rewritten rather than reaching the transcript.
 _ROBOTIC_TEMPLATES = [
-    re.compile(r"\bout ?weigh", re.I),                                            # "X outweighs Y"
+    re.compile(r"\bout ?weigh", re.I),
     re.compile(r"\bmakes? me (?:think|consider|reconsider|wonder|real[iz]se)\b", re.I),
     re.compile(r"\b(?:point|points|concern|concerns|argument|idea)\b.{0,75}\b(?:valid|fair|well[- ]taken|compelling|spot[- ]on|resonate)\b", re.I),
     re.compile(r"\bgiven the discussion\b", re.I),
-    re.compile(r"^\s*considering\b", re.I),                                       # "Considering ..." opener
-    re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),  # stock vote closer
-    re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),  # meeting-minutes recap
-    re.compile(r"\bwins? me over\b", re.I),                                       # "X wins me over"
-    re.compile(r"\bseals? the deal\b", re.I),                                     # "X seals the deal"
-    re.compile(r"\b(?:is|seems?\s+like)\s+(?:the\s+)?way\s+to\s+go\b", re.I),     # "X is the way to go"
+    re.compile(r"^\s*considering\b", re.I),
+    re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),
+    re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),
+    re.compile(r"\bwins? me over\b", re.I),
+    re.compile(r"\bseals? the deal\b", re.I),
+    re.compile(r"\b(?:is|seems?\s+like)\s+(?:the\s+)?way\s+to\s+go\b", re.I),
+    re.compile(r"\b(?:is|are)\s+a\s+(?:must|big draw|major draw|huge draw|key factor|top priority)\b", re.I),
+    re.compile(r"\b(?:is|are)\s+(?:key|crucial|essential|paramount)\s+(?:for|to)\s+me\b", re.I),
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance
@@ -365,9 +367,18 @@ def _first_words(text: str, n: int) -> str:
 # ---------------------------------------------------------------------------
 
 _FRAME_PATTERNS: dict[str, re.Pattern] = {
+    "echo_pivot": re.compile(
+        r"^\s*(?:\w[\w\s]{0,30}?)\s+"
+        r"(?:is|are|sounds?|seems?|feels?)\s+"
+        r"(?:really\s+|definitely\s+|certainly\s+|absolutely\s+)?"
+        r"(?:great|good|nice|fair|true|key|important|valid|solid|appealing|exciting|"
+        r"a\s+great\s+point|a\s+good\s+point|a\s+fair\s+point)"
+        r"(?:\s+(?:too|though|and\s+all))?"
+        r"\s*(?:,|but\b)", re.I,
+    ),
     "agreement_preface": re.compile(
-        r"\b(?:(?:that(?:[\x27‘’]s|\s+is))\s+a\s+(?:fair|good|great|valid|solid)\s+point|"
-        r"you(?:[\x27‘’]re| are)\s+right|"
+        r"\b(?:(?:that(?:[\x27’’]s|\s+is))\s+a\s+(?:fair|good|great|valid|solid)\s+point|"
+        r"you(?:[\x27’’]re| are)\s+right|"
         r"(?:fair|good|great)\s+point|"
         r"i\s+agree\s+(?:with|that)|"
         r"absolutely|exactly)\b", re.I,
@@ -409,7 +420,9 @@ def recent_frame_hint(recent_frames: list[str], speaker_frames: list[str]) -> st
     speaker = Counter(speaker_frames[-_FRAME_WINDOW:])
     overused: set[str] = set()
     for frame, count in recent.items():
-        if count >= 2:
+        if frame == "echo_pivot" and count >= 1:
+            overused.add(frame)
+        elif count >= 2:
             overused.add(frame)
     for frame, count in speaker.items():
         if count >= 1:
@@ -417,6 +430,7 @@ def recent_frame_hint(recent_frames: list[str], speaker_frames: list[str]) -> st
     if not overused:
         return ""
     labels = {
+        "echo_pivot": "echo-pivot openers (‘X is great, but’ / ‘X is key, but’) — skip the recap and lead with your own thought",
         "agreement_preface": "agreeing prefaces (‘good point’, ‘fair point’, ‘you’re right’)",
         "concession_preface": "concession prefaces (‘I can see’, ‘I understand’)",
         "option_endorsement": "stock endorsement phrases (‘seals the deal’, ‘way to go’, ‘best choice’)",

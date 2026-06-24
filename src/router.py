@@ -23,11 +23,12 @@ class TurnRouter:
 
         if state.open_questions:
             q = state.open_questions[0]
+            target = self._best_answerer(state, q)
             return MoveIntent(
-                speaker_id=q.target_id,
+                speaker_id=target,
                 addressee_id=q.asked_by,
                 act=ActType.ANSWER,
-                option_focus=q.option_focus or self._focus_for_person(state, q.target_id),
+                option_focus=q.option_focus or self._focus_for_person(state, target),
                 reason="answer the direct question before the thread moves on",
                 length_hint="medium",
                 respond_to_turn=q.turn_id,
@@ -179,13 +180,14 @@ class TurnRouter:
             )
 
         speaker_id = self._select_speaker(state)
-        # Give the chosen speaker a chance to actually be won over by the case the group
-        # is building, instead of only ever restating their first pick.
         if forced_act is None and state.phase == Phase.DISCUSSION:
             persuasion = self._persuasion_intent(state, speaker_id)
             if persuasion is not None:
                 return persuasion
         act = forced_act or self._sample_discussion_act(state, speaker_id)
+        if self._should_skip(state, speaker_id, act):
+            speaker_id = self._select_speaker_excluding(state, speaker_id)
+            act = forced_act or self._sample_discussion_act(state, speaker_id)
         focus = self._focus_for_act(state, speaker_id, act, None)
         addressee = self._target_for_act(state, speaker_id, act, focus[0] if focus else None)
         return MoveIntent(
@@ -197,26 +199,53 @@ class TurnRouter:
             length_hint=self._length_hint(state.persona_by_id(speaker_id)),
         )
 
+    def _should_skip(self, state: DialogueState, speaker_id: str, act: ActType) -> bool:
+        if len(state.personas) < 4:
+            return False
+        if act in {ActType.ASK, ActType.OBJECT, ActType.PUSH_BACK, ActType.PROPOSE_COMPROMISE}:
+            return False
+        rt = state.runtimes[speaker_id]
+        if rt.turn_count < 2:
+            return False
+        persona = state.persona_by_id(speaker_id)
+        focus = rt.current_preference or persona.preferred_option
+        covered = state.coverage.get(focus)
+        if covered and covered.reasons >= 3 and act == ActType.SUPPORT:
+            return True
+        return False
+
+    def _select_speaker_excluding(self, state: DialogueState, exclude: str) -> str:
+        def extra(persona: Persona, rt, recent: list[str]) -> float:
+            score = 0.0
+            if rt.turn_count == 0:
+                score += float(cfg.routing.unspoken_boost)
+            score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
+            score -= recent.count(persona.id) * float(cfg.routing.recent_speaker_penalty)
+            if persona.id == exclude:
+                score -= 10.0
+            return score
+        return self._pick_speaker(state, extra)
+
     # ------------------------------------------------------------------
 
     def _pick_speaker(self, state: DialogueState, extra_score) -> str:
-        """Weighted speaker choice shared by free discussion and gap-filling. Every speaker
-        starts from a base (catch-up boost for the least-spoken + initiative), the same speaker
-        never goes twice in a row, and `extra_score(persona, rt, recent)` adds the move-specific
-        bias (recency penalty / objections, or the option-gap boosts)."""
         ids = state.participant_ids()
         recent = self._recent_speaker_ids(state)
         last_turn = self._last_participant_turn(state)
         last = last_turn.speaker_id if last_turn else None
         min_turns = min((state.runtimes[pid].turn_count for pid in ids), default=0)
+        n = len(ids)
         weights: list[float] = []
         for pid in ids:
             persona = state.persona_by_id(pid)
             rt = state.runtimes[pid]
             score = 1.0
-            if rt.turn_count == min_turns:
-                score += float(cfg.routing.low_turn_count_boost)
+            if rt.turn_count == min_turns and rt.turn_count == 0:
+                score += float(cfg.routing.unspoken_boost)
+            elif rt.turn_count == min_turns:
+                score += float(cfg.routing.low_turn_count_boost) * (0.5 if n >= 5 else 1.0)
             score += persona.traits.initiative * float(cfg.routing.initiative_weight)
+            score += persona.traits.extraversion * 0.06
             score += extra_score(persona, rt, recent)
             weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
         return weighted_choice(ids, weights)
@@ -282,6 +311,12 @@ class TurnRouter:
         trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
         curiosity = persona.traits.openness / trait_mid
         probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * curiosity
+        # When discussion stalls (2-3 turns without progress), boost questions and
+        # comparisons to steer toward concrete details instead of restating preferences.
+        if state.no_progress_count >= 2:
+            probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * 2.0
+            probs[ActType.COMPARE.value] = float(probs.get(ActType.COMPARE.value, 0.0)) * 1.5
+            probs[ActType.SUPPORT.value] = float(probs.get(ActType.SUPPORT.value, 0.0)) * 0.3
         window = int(cfg.routing.ask_quiet_window)
         recent = [turn for turn in reversed(state.turns) if turn.speaker_id != "moderator"][:window]
         if any("?" in turn.text for turn in recent):
@@ -400,6 +435,25 @@ class TurnRouter:
             if candidate and candidate not in focus:
                 focus.insert(0, candidate)
         return focus[: int(cfg.utterances.max_focus_options_in_prompt)]
+
+    def _best_answerer(self, state: DialogueState, q) -> str:
+        """Pick the best person to answer an open question. If the question mentions
+        an option, prefer whoever champions that option. Otherwise use the registered
+        target (previous speaker or explicit addressee)."""
+        if q.option_focus:
+            opt = q.option_focus[0]
+            for p in state.personas:
+                if p.id == q.asked_by:
+                    continue
+                rt = state.runtimes[p.id]
+                if rt.current_preference == opt or p.preferred_option == opt:
+                    return p.id
+        if q.target_id and q.target_id != q.asked_by:
+            return q.target_id
+        for p in self._least_recent_personas(state):
+            if p.id != q.asked_by:
+                return p.id
+        return q.target_id
 
     def _focus_for_person(self, state: DialogueState, speaker_id: str) -> list[str]:
         rt = state.runtimes[speaker_id]

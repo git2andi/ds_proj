@@ -52,6 +52,7 @@ _QUESTION = re.compile(r"\?")
 # hedged line can't be miscounted as a clean acceptance and close the decision prematurely.
 _HEDGED_ACCEPT = re.compile(
     r"\b(?:might|maybe|perhaps|possibly|i guess|i suppose|"
+    r"still\s+not\s+(?:sure|sold|convinced)|not\s+fully\s+(?:sure|sold|convinced)|"
     r"(?:okay|fine|work|works|good)\s+(?:for\s+\w+\s+)?if|as long as|provided that|only if)\b",
     re.I,
 )
@@ -190,6 +191,13 @@ def parse_dialogue_act(
         if re.search(r"\b(?:you|your|that|what\s+about|how\s+about)\b", text, re.I):
             addressee_id = previous_speaker_id
     question_target = addressee_id if _QUESTION.search(text) and addressee_id else None
+    # Questions to the room ("How many can it seat?", "What's the vibe like?") have
+    # no explicit addressee but still deserve an answer. Pick the best respondent:
+    # whoever champions the mentioned option, or fall back to the previous speaker.
+    if question_target is None and _QUESTION.search(text) and _is_genuine_question(text):
+        best = _best_respondent(speaker_id, option_refs, participant_names, previous_speaker_id)
+        if best:
+            question_target = best
 
     hedged = bool(_HEDGED_ACCEPT.search(text))
     stance, focus_opt, act_type = _resolve_move(move, intent, option_refs, question_target, hedged)
@@ -268,6 +276,35 @@ def _resolve_move(
     else:
         act_type = ActType.REACT
     return stance, focus_opt, act_type
+
+
+_RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
+_GENUINE_QUESTION = re.compile(
+    r"\b(?:how\s+(?:many|much|long|far|about)|what(?:'s|\s+is|\s+are|\s+do|\s+does|\s+about|\s+if)"
+    r"|where|when|which|who|can\s+(?:we|it|they)|do\s+(?:we|they|you)|does\s+(?:it|that|this)"
+    r"|is\s+(?:it|there|that)|are\s+(?:there|they|we)|could\s+(?:we|it)|would\s+(?:it|that))\b",
+    re.I,
+)
+
+
+def _is_genuine_question(text: str) -> bool:
+    if _RHETORICAL_TAIL.search(text):
+        return False
+    return bool(_GENUINE_QUESTION.search(text))
+
+
+def _best_respondent(
+    speaker_id: str,
+    option_refs: list[str],
+    participant_names: dict[str, str],
+    previous_speaker_id: Optional[str],
+) -> Optional[str]:
+    others = [pid for pid in participant_names if pid != speaker_id]
+    if not others:
+        return None
+    if previous_speaker_id and previous_speaker_id in others:
+        return previous_speaker_id
+    return others[0] if others else None
 
 
 def _extract_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> Optional[str]:

@@ -16,7 +16,9 @@ def clamp(value: float, low: float, high: float) -> float:
 
 
 def normalise_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+([.!?,;:?!])", r"\1", text)
+    return text
 
 
 def normalise_lines(text: str) -> str:
