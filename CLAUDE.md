@@ -84,13 +84,26 @@ Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flag
 & .\dspro\Scripts\python.exe evals\run_eval.py --run
 ```
 
+### Implementation process
+
+Every fix follows this cycle (see `docs/known_failures.md` for the full protocol):
+
+1. Pick one item from the priority list in `docs/known_failures.md`.
+2. Implement the fix. Run `pytest tests/`.
+3. Validate: one n=3 run (mandatory), then 1-2 more from n=2–7 with a random topic from `evals/topics.txt`. Always use the `uni` provider.
+4. Read the transcripts. Check the fix works and nothing regressed.
+5. If new issues surface, add them to `docs/known_failures.md` before continuing.
+6. Only move to the next item when all runs are reviewed.
+
+### Test and eval files
+
 - `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (essential cases for each check, plus discourse-frame and claim-slot classification).
 - `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
 - `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
 - `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, hard-blocker integrity, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).
+- `evals/topics.txt` — ~40 diverse topics for random validation runs (everyday, travel, academic, work, creative, hypothetical).
 - `evals/scenarios.yaml` — the topic/size spread used for batch evaluation.
-- `docs/known_failures.md` — tracked failures with fix status and regression signals.
-- `docs/dialogue_quality_refactor_plan.md` — completed refactor plan with results.
+- `docs/known_failures.md` — single tracking file for open issues, fix priorities, and implementation protocol.
 - `docs/evaluation.md` — full evaluation workflow reference.
 
 ## Configuration quick reference

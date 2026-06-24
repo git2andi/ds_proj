@@ -1,96 +1,105 @@
 # Known Failures
 
-Tracked failures and quality issues in the dialogue simulator.
+Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-24, after implementing O1–O12 improvements and reviewing n=3 evaluation runs.
-
----
-
-## Current fulfillment state
-
-The simulator produces coherent, responsive, decision-oriented discussions with shorter, more natural turns. The major structural failures are resolved. Remaining issues are model-dependent (llama3.3 limitations) and fall into two categories: (a) residual formulaic patterns the model uses despite prompt bans, and (b) larger-group dynamics that need further tuning.
-
-In short:
-
-- **decision mechanics:** working,
-- **basic grounding:** working,
-- **repair / malformed output:** low repair rate (<5%),
-- **moderator role:** improved — diagnostic before directive, names participants,
-- **persona difference:** behavioral voice profiles active, distinguishable in n=3,
-- **human-like conversation:** significantly improved, still model-constrained.
+Last updated: 2026-06-24.
 
 ---
 
-## Fixed / mostly working
+## How to implement fixes
 
-- **F1: Mid-discussion acceptance counted as final commitment** — fixed. Binding final support gated to explicit decision/vote acts. Hedged accepts ("still not sure", "not fully sold") clamped to neutral.
-- **F2: Hard blockers folding incorrectly** — fixed. Blocker constraints preserved and invalid votes corrected.
-- **F3: Heavy `I think...` / personal-stance opener pattern** — reduced. Opener variety check limits consecutive "I"/"we" openers.
-- **F4: Visible self-narration** — fixed. Deterministic detection and prompt ban.
-- **F5: Duplicate moderator wording** — fixed. Prior moderator lines fed back to prevent reuse.
-- **F6: Setup instability / timeout sensitivity** — fixed. Separate scenario/persona generation.
-- **F7: Excessive repair loop** — fixed. Repair is structural only, not constant style rewriting.
-- **F8: Basic interaction grounding** — fixed. Speakers respond to previous points via responding-to anchoring.
-- **F9: Outcome categories** — fixed. Consensus, fallback, and unresolved endings are distinct.
-- **F10: Simple compromise mechanisms** — working. Concession bridges with persona-specific guidance.
-- **O10: Surface artifacts** — fixed. Space-before-punctuation, repeated punctuation, stray quotes cleaned deterministically.
-- **O1: Argument-card turns** — improved. Prompt guidance generates situated reactions, not structured debate paragraphs. Discourse-frame tracking avoids echo-pivot openers.
-- **O2: Option name overuse** — improved. After opening, prompt instructs shorthand ("the bistro", "the cheap one"). Model follows ~70% of the time.
-- **O3: Persona differences** — improved. Speaking habits are behavioral ("blunt — cuts to the chase", "worrier — flags what could go wrong"). Turn counts less balanced.
-- **O4: Social face-work** — improved. Face-work modifiers added for objections (softening for agreeable personas, anxiety for neurotic, directness for direct).
-- **O5: Preference shifts under-motivated** — improved. Concession bridges with persona-specific guidance (residual worry, condition, trade-off, next step).
-- **O7: Moderator too controller-imposed** — improved. Diagnostic questions before directive suggestions. Participant names included in prompt to prevent hallucination.
-- **O8: Practical constraints** — improved. Stall-to-concrete routing: when discussion stalls (2+ turns no progress), ASK probability doubled, SUPPORT dampened.
-- **O9: Endings socially thin** — improved. Unresolved closure names specific blocker. Farewell prompt encourages concrete reaction over "we'll figure it out".
-- **O11: Turn-taking too balanced** — improved. Extraversion/initiative weight increased. Low-turn-count boost reduced for n>=5.
-- **O12: Larger groups need contribution control** — improved. Skip-if-nothing-new check prevents low-information SUPPORT turns when option already has 3+ reasons.
+Every change follows this process — no exceptions:
+
+1. **Pick one item** from the priority list below.
+2. **Implement the fix.** Run `pytest tests/` to verify nothing breaks.
+3. **Validate with example runs.** One n=3 run is mandatory. Then pick 1-2 more from n=2–7, using a randomly selected topic from `evals/topics.txt`. Always use the `uni` provider.
+4. **Read the transcripts.** Evaluate whether the change actually improved things. Check for regressions — did something else get worse?
+5. **If new issues surface**, add them directly to this file before moving on.
+6. **Update** CLAUDE.md, known_failures.md, memories and/or skills to be always up to date with the latest changes.
+7. **Only when all runs are complete and reviewed**, move to the next item.
+
+Do not batch multiple fixes before validating. One fix, validate, evaluate, then next.
 
 ---
 
-## Still open (model-dependent residuals)
+## Current state
+
+The simulator produces coherent, responsive discussions with natural turn lengths, persona-specific voice, and concrete concessions. Decision mechanics work. Remaining issues are model-dependent (llama3.3 compliance with prompt instructions).
+
+- **decision mechanics:** working — consensus, fallback, unresolved outcomes distinct,
+- **grounding:** working — responding-to anchoring, room-questions routed to option champions,
+- **repair / malformed output:** low (<7%),
+- **moderator:** diagnostic before directive, stall window scales with group size, topic-appropriate closures,
+- **persona voice:** behavioral habits active, face-work modifiers for objections,
+- **concessions:** option-specific with persona's reservation referenced,
+- **option generation:** specific realistic names with concrete comparable attributes.
+
+---
+
+## Fixed
+
+- **F1–F10:** Structural issues (mid-discussion accept counting, hard-blocker folding, self-narration, duplicate moderator lines, setup instability, excessive repair, interaction grounding, outcome categories, compromise mechanisms) — all resolved.
+- **O1:** Argument-card turns → situated reactions via prompt rewrite and discourse-frame tracking.
+- **O2:** Option name overuse → alias instruction after opening (~70% model compliance).
+- **O3:** Persona differences → behavioral speaking habits ("blunt — cuts to the chase", "worrier — flags what could go wrong").
+- **O4:** Social face-work → trait-based modifiers for objection/push-back acts.
+- **O5:** Preference shifts → concrete concession bridges referencing option name and persona's reservation.
+- **O6:** Consensus too coarse → hedged accept detection ("still not sure", "not fully sold") clamped to neutral.
+- **O7:** Moderator imposed → diagnostic questions, participant names in prompts, stall window scales with n.
+- **O8:** Practical constraints late → stall-to-concrete routing (ASK doubled after 2+ no-progress turns).
+- **O9:** Endings thin → topic-appropriate closure (no generic "book it"), specific blocker naming.
+- **O10:** Surface artifacts → deterministic cleanup of space-before-punctuation, repeated punctuation, stray quotes.
+- **O11:** Turn-taking too balanced → extraversion/initiative weight, reduced catch-up boost for n>=5.
+- **O12:** Large groups → skip-if-nothing-new for n>=4 when option already well-covered.
+- **Room questions ignored** → genuine questions to the room now registered and routed to option champion.
+- **Moderator too early for large groups** → stall window = base + max(0, n-3), minimum participant turns = n*2.
+
+---
+
+## Still open
 
 ### R1: Stock phrases persist despite prompt bans
 
-**Symptom:**
-llama3.3 still occasionally outputs "X is a must for me", "a major draw", "is key for me" despite explicit prompt bans and validation warnings. These appear in ~10-20% of turns.
+llama3.3 still occasionally outputs "X is a must for me", "a major draw", "is key for me" (~10-20% of turns). Prompt bans + warn-level validation in place. Not worth repair-triggering for a stylistic issue.
 
-**Mitigation:**
-Prompt bans + warn-level validation logging. Not repair-triggered because the cost of an extra LLM call per turn outweighs the benefit for a stylistic issue.
+**Fix direction:** Deterministic rewrite (like `fix_collective_voice`) for the 3-4 most common stock phrases. Cheap, no LLM call.
 
-**Future fix:**
-Deterministic rewrite (like `fix_collective_voice`) for the 3-4 most common stock phrases. Deferred to avoid adding complexity.
+### R2: Farewell lines occasionally stiff
 
-### R2: Farewell lines can still sound stiff
+Post-closure lines like "Satisfied with the consensus" sometimes appear. Farewell prompt bans seminar openers and shows prior lines. Model compliance ~70%.
 
-**Symptom:**
-Post-closure lines like "Satisfied with the consensus" or "Looking forward to" are occasionally too formal for casual group chat.
+### R3: Full option names still used after opening
 
-**Mitigation:**
-Farewell prompt bans seminar openers. Prior farewell lines shown to prevent repetition. Model compliance is ~70%.
+The model uses full names ~30% of the time when the alias instruction is active. Proper nouns (game titles, movie titles) are harder to shorten.
 
-### R3: Moderator can hallucinate participant names
+### R4: Named addressee rate is low
 
-**Symptom:**
-Rare — the moderator once called a participant "Sarah" when no Sarah existed. Now mitigated by including participant names in the moderator prompt and the "don't invent names" rule.
+Participants rarely mention each other by name (0% named rate). Somewhat natural for casual group chat but real groups do occasionally say "wait, Kai, what about...".
 
-### R4: Full option names still used sometimes after opening
+### R5: Repetitive agreement loops
 
-**Symptom:**
-The model uses full names (~30% of the time) even when the alias instruction is active. Board game names are harder to shorten than restaurant names.
+When the group converges before narrowing, discussion can circle with multiple turns restating agreement. The stall-to-concrete routing helps for questions but doesn't prevent SUPPORT turns from repeating covered ground.
 
-### R5: Named addressee rate is low
+**Fix direction:** Detect when all leans match and no_progress_count >= 2, then force transition to narrowing instead of continuing free discussion.
 
-**Symptom:**
-Participants rarely mention each other by name (0% named rate across runs). This is somewhat natural for casual group chat but could be higher — real groups do say "wait, Kai, what about..." occasionally.
+### R6: No shared decision-situation context
 
-**Note:** n=5 evaluation verified — turn counts are uneven (10/7/8/7/9), question density 18.2%, face-work modifiers active, practical constraints surfaced (cost cap, guest list). Routing changes working.
+The scenario generates options with attributes, but the group lacks shared background facts about the decision itself (budget ceiling, group size, timing, recipient preferences). Without these, speakers either stay abstract or hallucinate facts.
+
+**Fix direction:** Add a `shared_context` list (2-3 stable situational facts) to the scenario JSON, generated alongside options in the existing setup call. Feed into moderator opening and per-turn prompt. Scenario-level only — interpersonal knowledge ("Kai is on a tight budget") should emerge during discussion, not be pre-loaded.
+
+### R7: Participant names lack variety
+
+The setup always generates the same handful of names (Lena, Kai, Ava, Nina, etc.). Real groups have diverse names.
+
+**Fix direction:** Add variety guidance to the persona setup prompt, or pass a pool of pre-sampled names so the LLM doesn't default to its favorites.
 
 ---
 
-## Current priority order
+## Priority order
 
-1. Verify n=5+ behavior with latest routing changes.
-2. Add deterministic stock-phrase rewrite for the 3-4 worst offenders.
-3. Improve farewell generation reliability.
-4. Consider commitment ladder (deferred from dialogue_quality_refactor_plan.md Step 4).
-5. Re-evaluate after manual transcript review.
+1. Add `shared_context` to scenario generation for decision-situation grounding (R6).
+2. Add participant name variety (R7).
+3. Add deterministic stock-phrase rewrite for the 3-4 worst offenders (R1).
+4. Improve agreement-loop detection to push toward narrowing faster when everyone agrees (R5).
+5. Re-evaluate after manual transcript review of diverse topics.
