@@ -316,6 +316,20 @@ def fix_collective_voice(text: str) -> str:
     return f"{indent}{head}{text[m.end():]}"
 
 
+_STOCK_PHRASE_REWRITES = [
+    (re.compile(r"\b(?:is|are)\s+a\s+must\s+for\s+me\b", re.I), "matters to me"),
+    (re.compile(r"\b(?:is|are)\s+a\s+(?:big|major|huge)\s+draw(?:\s+for\s+me)?\b", re.I), "appeals to me"),
+    (re.compile(r"\b(?:is|are)\s+(?:key|crucial|essential)\s+(?:for|to)\s+me\b", re.I), "matters to me"),
+    (re.compile(r"\b(?:is|are)\s+a\s+(?:key|top)\s+(?:factor|priority)(?:\s+for\s+me)?\b", re.I), "matters to me"),
+]
+
+
+def fix_stock_phrases(text: str) -> str:
+    for pattern, replacement in _STOCK_PHRASE_REWRITES:
+        text = pattern.sub(replacement, text)
+    return text
+
+
 def _longest_run(a: list[str], b: list[str]) -> int:
     """Length of the longest contiguous run of tokens shared by a and b. Masked tokens
     never match, so a run cannot be built from — or span across — a name word."""

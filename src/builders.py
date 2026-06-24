@@ -18,6 +18,19 @@ from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
 from utils import clamp, sample_int_range, sample_range
 
+_NAME_POOL = [
+    "Amir", "Beatriz", "Callum", "Daria", "Emeka", "Faye", "Goran", "Hana",
+    "Ivan", "Juno", "Kenji", "Lila", "Marco", "Nadia", "Oscar", "Priya",
+    "Quinn", "Rosa", "Sven", "Tala", "Uri", "Vera", "Wyatt", "Xena",
+    "Yuki", "Zara", "Anton", "Cleo", "Diego", "Elif", "Felix", "Gemma",
+    "Hugo", "Isla", "Jasper", "Kira", "Leo", "Mina", "Nico", "Olga",
+    "Pavel", "Rina", "Sami", "Thea", "Vince", "Wren", "Yara", "Zeke",
+]
+
+
+def _sample_names(n: int) -> list[str]:
+    return random.sample(_NAME_POOL, min(n, len(_NAME_POOL)))
+
 
 def _require(value: Any, field: str) -> str:
     """Return the stripped string value, or raise if the model omitted it.
@@ -79,6 +92,7 @@ class SetupBuilder:
         hard_id = None
         if n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
             hard_id = f"p{random.randint(1, n)}"
+        names = _sample_names(n)
         rows: list[dict[str, Any]] = []
         for idx in range(n):
             pid = f"p{idx + 1}"
@@ -86,6 +100,7 @@ class SetupBuilder:
             traits = self._sample_traits(hard)
             rows.append({
                 "id": pid,
+                "name": names[idx],
                 "traits": asdict(traits),
                 "hard_blocker": hard,
             })
@@ -148,11 +163,14 @@ class SetupBuilder:
         options = [self._parse_option(item, labels[i]) for i, item in enumerate(options_raw[: len(labels)])]
         if len(options) != len(labels):
             raise ValueError("wrong number of options")
+        ctx_raw = raw.get("shared_context", [])
+        shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
         return Scenario(
             topic=self.topic,
             decision_kind=_require(raw.get("decision_kind"), "scenario.decision_kind"),
             opening_question=_require(raw.get("opening_question"), "scenario.opening_question"),
             options=options,
+            shared_context=shared_context,
         )
 
     def _parse_option(self, raw: Any, expected_id: str) -> OptionCard:
@@ -182,6 +200,7 @@ class SetupBuilder:
             raise ValueError("participants must be a list")
         traits_by_id = {row["id"]: self._trait_from_row(row) for row in trait_rows}
         hard_by_id = {row["id"]: bool(row.get("hard_blocker")) for row in trait_rows}
+        names_by_id = {row["id"]: row.get("name", "") for row in trait_rows}
         personas: list[Persona] = []
         for idx, row in enumerate(rows[: len(trait_rows)]):
             if not isinstance(row, dict):
@@ -189,6 +208,8 @@ class SetupBuilder:
             pid = str(row.get("id") or f"p{idx + 1}")
             if pid not in traits_by_id:
                 pid = f"p{idx + 1}"
+            if names_by_id.get(pid):
+                row["name"] = names_by_id[pid]
             personas.append(self._persona_from_row(row, traits_by_id[pid], hard_by_id.get(pid, False), scenario, idx, pid))
         if len(personas) != len(trait_rows):
             raise ValueError("wrong number of participants")

@@ -31,7 +31,7 @@ from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
 from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
-from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice
+from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases
 
 
 class Orchestrator:
@@ -549,11 +549,15 @@ class DialogueController:
             return False
         if min((rt.turn_count for rt in state.runtimes.values()), default=0) < int(cfg.conversation.min_turns_per_participant_before_narrowing):
             return False
+        # Full convergence with stalled discussion: skip the min-turns floor and
+        # move to a vote instead of circling with agreement restating.
+        if concentration_score(state) >= 1.0 and state.no_progress_count >= 2:
+            return True
         if participant_turn_count(state) < state.min_discussion_turns:
             return False
         if sum(1 for c in state.coverage.values() if c.mentions > 0) < int(cfg.conversation.min_options_touched_before_narrowing):
             return False
-        if state.facilitator_force_narrow:  # moderator stepped in on a stall
+        if state.facilitator_force_narrow:
             return True
         if participant_turn_count(state) >= state.force_narrow_turns:
             return True
@@ -695,6 +699,7 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     if "\n" in text:
         text = next((line.strip() for line in text.splitlines() if line.strip()), text.strip())
     text = fix_collective_voice(text)
+    text = fix_stock_phrases(text)
     text = _surface_cleanup(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
     return compact_words(text, hard_cap)

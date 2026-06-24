@@ -77,6 +77,7 @@ class Scenario:
     decision_kind: str
     opening_question: str
     options: list[OptionCard]
+    shared_context: list[str] = field(default_factory=list)
 
     @property
     def option_ids(self) -> list[str]:

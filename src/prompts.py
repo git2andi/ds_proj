@@ -45,6 +45,7 @@ def setup_scenario(topic: str) -> str:
         "scenario": {
             "decision_kind": "restaurant_choice | travel_destination | hotel_booking | flight_booking | study_plan | presentation_topic | tool_choice | activity_choice | generic_decision",
             "opening_question": "one casual question asking what matters most before choosing",
+            "shared_context": ["2-3 stable background facts about the decision situation that all participants would know (budget, group size, timing, who it's for, key constraints)"],
             "options": [
                 {
                     "id": label,
@@ -71,6 +72,7 @@ Requirements:
 - Every attribute must be a fixed value known now. No placeholders, "unknown"/"TBD", or facts that require a live lookup (availability, current weather, booking status).
 - Options must differ meaningfully and expose real trade-offs.
 - The opening question must ask about priorities and trade-offs, not ask for votes.
+- shared_context: 2-3 stable facts about the decision situation (not about specific options). These are things all participants would know going in.
 
 Return JSON only in this shape:
 {_schema(schema)}"""
@@ -120,7 +122,7 @@ Requirements:
 - At least one option should be acceptable to all non-hard-blockers so compromise is possible.
 - Reasons must be grounded only in the option cards above.
 - Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
-- Names should be plausible short first names. Avoid stereotypes and demographic labels.
+- Use the exact name given in each trait profile row. Do not change or substitute names.
 - Conversation should later sound like friends/classmates deciding together, not a business meeting.
 
 Return JSON only in this shape:
@@ -137,6 +139,8 @@ def moderator_opening(scenario: Scenario) -> str:
     lines = [f"Today we're deciding: {scenario.topic}. Here are the options:"]
     for option in scenario.options:
         lines.append(f"Option {option.id} - {_option_brief(option)}")
+    if scenario.shared_context:
+        lines.append("Some things we know: " + "; ".join(scenario.shared_context) + ".")
     lines.append(scenario.opening_question)
     return "\n".join(lines)
 
@@ -336,7 +340,8 @@ def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, oth
     return f"""The discussion just wrapped: {result}.
 Write a short, casual sign-off from {persona.name} — at most {max_words} words, in their voice ({persona.speech_style}).
 {tone}{audience}{_distinct_from_prior(prior, 'signed off')}
-You may name the chosen option plainly, but do NOT describe it or invent any detail about it (no genre, author, plot, attributes, dates, or timeframe like 'next week/next month') — you'd risk getting it wrong. Do NOT re-argue, raise new points, or name other options. No name prefix, no quotes, no emoji."""
+You may name the chosen option plainly, but do NOT describe it or invent any detail about it (no genre, author, plot, attributes, dates, or timeframe like 'next week/next month') — you'd risk getting it wrong. Do NOT re-argue, raise new points, or name other options.
+Do NOT use stiff/formal closers like 'looking forward to', 'confirmed and set', 'satisfied with', 'have a great day', 'talk to you soon'. Just a quick casual bye like a real person leaving a chat. No name prefix, no quotes, no emoji."""
 
 
 def _lean_name(state: DialogueState, persona: Persona) -> str:
@@ -638,10 +643,13 @@ def sim_utterance(
             if slot_hint_text:
                 frame_line += f"\n{slot_hint_text}"
     alias_rule = _alias_rule(state, intent)
+    ctx_line = ""
+    if state.scenario.shared_context:
+        ctx_line = "\nContext: " + "; ".join(state.scenario.shared_context) + "."
     return f"""Write one natural chat message for the next speaker.
 
 Topic: {state.scenario.topic}
-Options: {option_names}
+Options: {option_names}{ctx_line}
 
 {card}
 {leans}

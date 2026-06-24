@@ -53,16 +53,14 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **O12:** Large groups → skip-if-nothing-new for n>=4 when option already well-covered.
 - **Room questions ignored** → genuine questions to the room now registered and routed to option champion.
 - **Moderator too early for large groups** → stall window = base + max(0, n-3), minimum participant turns = n*2.
+- **R6: No shared decision-situation context** → `shared_context` field added to Scenario dataclass, setup prompt, moderator opening, and per-turn prompt. 2-3 stable situational facts generated alongside options.
+- **R7: Participant names lack variety** → 48-name diverse pool in `builders.py`, pre-sampled and enforced in parser.
+- **R1: Stock phrases persist** → deterministic `fix_stock_phrases` rewrites "is a must for me" → "matters to me", "major draw" → "appeals to me" etc. in `clean_generated`. No LLM call.
+- **R5: Repetitive agreement loops** → when concentration_score == 1.0 and no_progress_count >= 2, force narrowing transition. Prevents circling when everyone already agrees.
 
 ---
 
-## Still open
-
-### R1: Stock phrases persist despite prompt bans
-
-llama3.3 still occasionally outputs "X is a must for me", "a major draw", "is key for me" (~10-20% of turns). Prompt bans + warn-level validation in place. Not worth repair-triggering for a stylistic issue.
-
-**Fix direction:** Deterministic rewrite (like `fix_collective_voice`) for the 3-4 most common stock phrases. Cheap, no LLM call.
+## Still open (minor residuals)
 
 ### R2: Farewell lines occasionally stiff
 
@@ -76,30 +74,9 @@ The model uses full names ~30% of the time when the alias instruction is active.
 
 Participants rarely mention each other by name (0% named rate). Somewhat natural for casual group chat but real groups do occasionally say "wait, Kai, what about...".
 
-### R5: Repetitive agreement loops
-
-When the group converges before narrowing, discussion can circle with multiple turns restating agreement. The stall-to-concrete routing helps for questions but doesn't prevent SUPPORT turns from repeating covered ground.
-
-**Fix direction:** Detect when all leans match and no_progress_count >= 2, then force transition to narrowing instead of continuing free discussion.
-
-### R6: No shared decision-situation context
-
-The scenario generates options with attributes, but the group lacks shared background facts about the decision itself (budget ceiling, group size, timing, recipient preferences). Without these, speakers either stay abstract or hallucinate facts.
-
-**Fix direction:** Add a `shared_context` list (2-3 stable situational facts) to the scenario JSON, generated alongside options in the existing setup call. Feed into moderator opening and per-turn prompt. Scenario-level only — interpersonal knowledge ("Kai is on a tight budget") should emerge during discussion, not be pre-loaded.
-
-### R7: Participant names lack variety
-
-The setup always generates the same handful of names (Lena, Kai, Ava, Nina, etc.). Real groups have diverse names.
-
-**Fix direction:** Add variety guidance to the persona setup prompt, or pass a pool of pre-sampled names so the LLM doesn't default to its favorites.
-
 ---
 
 ## Priority order
 
-1. Add `shared_context` to scenario generation for decision-situation grounding (R6).
-2. Add participant name variety (R7).
-3. Add deterministic stock-phrase rewrite for the 3-4 worst offenders (R1).
-4. Improve agreement-loop detection to push toward narrowing faster when everyone agrees (R5).
-5. Re-evaluate after manual transcript review of diverse topics.
+1. Re-evaluate after manual transcript review of diverse topics.
+2. Address R2/R3/R4 if they show up as significant in broader testing.

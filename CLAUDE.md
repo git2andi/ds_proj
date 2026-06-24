@@ -35,7 +35,7 @@ The split is deliberate and load-bearing:
 
 ### Run flow
 
-1. **`builders.py`** — two sequential LLM calls: first generates the option cards, second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits are sampled in code and passed to the model. Invalid worlds raise, never silently default.
+1. **`builders.py`** — two sequential LLM calls: first generates the option cards (with `shared_context`), second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits and names are sampled in code from a diverse pool and passed to the model. Invalid worlds raise, never silently default.
 2. **`router.py`** — emits a `MoveIntent` each turn. Priority: (1) answer pending question, (2) respond to unanswered challenge via `_unanswered_challenge`, (3) fill coverage gaps, (4) weighted speaker selection. Drives phases: opening → discussion → narrowing → confirmation → closure.
 3. **`dialogue.py`** — orchestration: calls the router, renders the turn via `prompts.sim_utterance`, parses the trailer, updates state, checks consensus. Contains `Orchestrator`, `DialogueController`, `StateTracker`, `ConsensusManager`.
 4. **`parsing.py`** — extracts the machine trailer `[act=…; opt=…; stance=…]` from each generated turn, resolves option references.
