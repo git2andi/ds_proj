@@ -269,6 +269,9 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"^\s*considering\b", re.I),                                       # "Considering ..." opener
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),  # stock vote closer
     re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),  # meeting-minutes recap
+    re.compile(r"\bwins? me over\b", re.I),                                       # "X wins me over"
+    re.compile(r"\bseals? the deal\b", re.I),                                     # "X seals the deal"
+    re.compile(r"\b(?:is|seems?\s+like)\s+(?:the\s+)?way\s+to\s+go\b", re.I),     # "X is the way to go"
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance
@@ -353,5 +356,107 @@ def _normalise_number(text: str) -> str:
 
 
 def _first_words(text: str, n: int) -> str:
-    words = re.findall(r"[\w'’]+", text.lower())
+    words = re.findall(r"[\w’’]+", text.lower())
     return " ".join(words[:n])
+
+
+# ---------------------------------------------------------------------------
+# Discourse-frame classification (O1)
+# ---------------------------------------------------------------------------
+
+_FRAME_PATTERNS: dict[str, re.Pattern] = {
+    "agreement_preface": re.compile(
+        r"\b(?:(?:that(?:[\x27‘’]s|\s+is))\s+a\s+(?:fair|good|great|valid|solid)\s+point|"
+        r"you(?:[\x27‘’]re| are)\s+right|"
+        r"(?:fair|good|great)\s+point|"
+        r"i\s+agree\s+(?:with|that)|"
+        r"absolutely|exactly)\b", re.I,
+    ),
+    "concession_preface": re.compile(
+        r"\b(?:i\s+(?:can\s+see|understand|hear\s+you|get\s+(?:that|where))|"
+        r"you\s+(?:make|raise)\s+a\s+(?:good|fair|valid|strong|great|solid|compelling)\s+(?:point|case|argument))\b", re.I,
+    ),
+    "option_endorsement": re.compile(
+        r"\b(?:seals?\s+the\s+deal|wins?\s+me\s+over|"
+        r"(?:is|seems?|feels?)\s+like\s+(?:the\s+)?(?:way\s+to\s+go|(?:best|right|top|clear)\s+(?:choice|pick|option))|"
+        r"(?:is\s+)?a\s+major\s+draw|"
+        r"(?:is|seems?)\s+(?:like\s+)?(?:a\s+)?(?:no[- ]brainer|slam[- ]dunk)|"
+        r"can’?t\s+(?:go|argue)\s+wrong\s+with)\b", re.I,
+    ),
+    "given_the_x": re.compile(
+        r"^\s*(?:given\s+(?:the|our|that)|considering\s+(?:the|our|that)|"
+        r"with\s+(?:the|our)\s+\w+\s+(?:in\s+mind|constraint|requirement))\b", re.I,
+    ),
+    "compromise_acceptance": re.compile(
+        r"\b(?:(?:i\s+)?can\s+live\s+with|works?\s+for\s+me|"
+        r"(?:i’?m|i\s+am)\s+on\s+board|"
+        r"(?:i’?m|i\s+am)\s+(?:fine|okay|ok)\s+with)\b", re.I,
+    ),
+}
+
+_FRAME_WINDOW = 4
+
+
+def classify_discourse_frames(text: str) -> list[str]:
+    return [name for name, pat in _FRAME_PATTERNS.items() if pat.search(text)]
+
+
+def recent_frame_hint(recent_frames: list[str], speaker_frames: list[str]) -> str:
+    """If a discourse frame was used recently (by anyone) or by this speaker,
+    return a short prompt hint asking for variety. Empty string if no issue."""
+    from collections import Counter
+    recent = Counter(recent_frames[-_FRAME_WINDOW * 2:])
+    speaker = Counter(speaker_frames[-_FRAME_WINDOW:])
+    overused: set[str] = set()
+    for frame, count in recent.items():
+        if count >= 2:
+            overused.add(frame)
+    for frame, count in speaker.items():
+        if count >= 1:
+            overused.add(frame)
+    if not overused:
+        return ""
+    labels = {
+        "agreement_preface": "agreeing prefaces (‘good point’, ‘fair point’, ‘you’re right’)",
+        "concession_preface": "concession prefaces (‘I can see’, ‘I understand’)",
+        "option_endorsement": "stock endorsement phrases (‘seals the deal’, ‘way to go’, ‘best choice’)",
+        "given_the_x": "’given the...’ / ‘considering the...’ openers",
+        "compromise_acceptance": "acceptance clichés (‘works for me’, ‘can live with’)",
+    }
+    avoid = "; ".join(labels.get(f, f) for f in sorted(overused))
+    return f"Avoid: {avoid}. Vary your phrasing — react directly instead."
+
+
+# ---------------------------------------------------------------------------
+# Semantic claim-slot tracking (O3)
+# ---------------------------------------------------------------------------
+
+_CLAIM_SLOT_PATTERNS: dict[str, re.Pattern] = {
+    "cost": re.compile(r"\b(?:cost|price|budget|cheap|expensive|afford|spend|money|\$\d|per\s+person|dollars?|euros?)\b", re.I),
+    "time": re.compile(r"\b(?:time|duration|playtime|hours?|minutes?|quick|fast|slow|long|short|speed)\b", re.I),
+    "comfort": re.compile(r"\b(?:comfort|cozy|intimate|ambiance|atmosphere|vibe|setting|room|seat|space|upscale|relaxed)\b", re.I),
+    "flexibility": re.compile(r"\b(?:flexib\w*|refund\w*|cancel\w*|adaptab\w*|versatil\w*|variety|wide\s+(?:range|variety|selection))\b", re.I),
+    "quality": re.compile(r"\b(?:quality|premium|high[- ]end|gourmet|authentic|fresh|craft|artisan)\b", re.I),
+    "effort": re.compile(r"\b(?:effort|difficulty|hard|easy|complex|simple|learn|beginner|casual|demanding)\b", re.I),
+    "distance": re.compile(r"\b(?:distance|far|close|near|walk|drive|travel|commute|location|convenient)\b", re.I),
+    "group_fit": re.compile(r"\b(?:group|team|everyone|together|player|social|crowd|people|friend|party)\b", re.I),
+    "novelty": re.compile(r"\b(?:novel|new|unique|different|exciting|fun|creative|interesting|boring|fresh)\b", re.I),
+    "risk": re.compile(r"\b(?:risk|safe|danger|worry|concern|reliable|trust|proven|unknown)\b", re.I),
+}
+
+
+def classify_claim_slots(text: str) -> list[str]:
+    return [slot for slot, pat in _CLAIM_SLOT_PATTERNS.items() if pat.search(text)]
+
+
+def covered_slots_hint(option_id: str, covered: set[str], text_slots: list[str]) -> str:
+    """If the speaker is about to repeat an already-covered slot for this option,
+    return a hint nudging toward a new angle."""
+    repeated = [s for s in text_slots if s in covered]
+    if not repeated or len(covered) < 2:
+        return ""
+    uncovered = [s for s in _CLAIM_SLOT_PATTERNS if s not in covered]
+    if uncovered:
+        suggestions = ", ".join(uncovered[:3])
+        return f"Already discussed for this option: {', '.join(sorted(covered))}. Try a new angle: {suggestions}."
+    return f"Already discussed for this option: {', '.join(sorted(covered))}. Add a new detail or respond to an objection instead of restating."

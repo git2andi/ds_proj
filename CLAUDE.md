@@ -31,7 +31,7 @@ The split is deliberate and load-bearing:
 - **`config.yaml`** — every tunable number lives here, nowhere else.
 - **`src/prompts.py`** — every piece of prose sent to an LLM or printed as moderator text lives here, nowhere else.
 - **`src/models.py`** — typed state objects (`dataclass(slots=True)`). Routing, consensus, logging, and validation operate on these, not raw dicts.
-- **`src/validation.py`** — deterministic guardrails (detection + logging). Style checks are warn-level diagnostics; only structural errors trigger LLM repair.
+- **`src/validation.py`** — deterministic guardrails (detection + logging). Style checks are warn-level diagnostics; only structural errors trigger LLM repair. Also houses discourse-frame classification and claim-slot tracking used by prompts to nudge variety.
 
 ### Run flow
 
@@ -40,13 +40,13 @@ The split is deliberate and load-bearing:
 3. **`dialogue.py`** — orchestration: calls the router, renders the turn via `prompts.sim_utterance`, parses the trailer, updates state, checks consensus. Contains `Orchestrator`, `DialogueController`, `StateTracker`, `ConsensusManager`.
 4. **`parsing.py`** — extracts the machine trailer `[act=…; opt=…; stance=…]` from each generated turn, resolves option references.
 5. **`scoring.py`** — shared `current_lean` / `leading_option` used by routing, consensus, and moderator prompts.
-6. **`validation.py`** — deterministic checks. Structural errors (missing trailer, invented option, malformed vote) trigger repair. Style issues (robotic phrasing, self-narration, possessive openers, card-reading, repeated starts) are logged as warnings only.
+6. **`validation.py`** — deterministic checks. Structural errors (missing trailer, invented option, malformed vote) trigger repair. Style issues (robotic phrasing, self-narration, possessive openers, card-reading, repeated starts) are logged as warnings only. Discourse-frame classification (`classify_discourse_frames`) and claim-slot tracking (`classify_claim_slots`) provide variety hints to the prompt layer.
 7. **`llm_client.py`** — thin provider abstraction (uni/groq/gemini). Each turn is a stateless call; the full prompt is re-sent every time (no session memory on the endpoint side).
 8. **`logger.py`** — writes `transcript.md`, `run.json`, `metrics.csv`, and optional `prompts.jsonl` per run under `logs/<run_id>/`.
 
 ### Prompt design
 
-The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get brief attrs-only lines. The prompt has 4 rules focused on voice, reactivity, originality, and grounding.
+The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state, and discourse-frame/claim-slot hints when repetition is detected. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get option names only. The prompt has 4 rules focused on voice, reactivity, originality, and grounding.
 
 ### Key design constraints
 
@@ -55,7 +55,7 @@ The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona 
 - **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion.
 - **Hard blockers are immovable**: a hard-blocker persona only ever backs their preferred option; any vote/accept elsewhere is ignored.
 - **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition.
-- **Concession bridges**: when a speaker accepts/votes for a non-preferred option, the guidance names their original preference and asks what changed. Fires before chorus detection.
+- **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance (residual worry, condition, trade-off, or next step) fires before chorus detection.
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
 
 ## Outputs
@@ -80,7 +80,8 @@ Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flag
 & .\dspro\Scripts\python.exe evals\run_eval.py --run
 ```
 
-- `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (119 tests).
+- `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (147 tests, including discourse-frame and claim-slot classification).
+- `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
 - `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
 - `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, hard-blocker integrity, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).
 - `evals/scenarios.yaml` — the topic/size spread used for batch evaluation.

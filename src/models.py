@@ -173,6 +173,7 @@ class OptionCoverage:
     reasons: int = 0
     objections: int = 0
     acceptances: int = 0
+    covered_slots: set[str] = field(default_factory=set)
 
 
 @dataclass(slots=True)
@@ -187,6 +188,7 @@ class ParticipantRuntime:
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
     already_said: list[str] = field(default_factory=list)
+    discourse_frames: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)

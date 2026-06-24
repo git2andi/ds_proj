@@ -30,7 +30,7 @@ from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
 from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
-from validation import MessageValidator, fix_collective_voice
+from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice
 
 
 class Orchestrator:
@@ -390,6 +390,10 @@ class StateTracker:
         rt.already_said.append(record.text)
         if len(rt.already_said) > int(cfg.utterances.recent_turns_after_question):
             rt.already_said = rt.already_said[-int(cfg.utterances.recent_turns_after_question):]
+        frames = classify_discourse_frames(record.text)
+        rt.discourse_frames.extend(frames)
+        if len(rt.discourse_frames) > 8:
+            rt.discourse_frames = rt.discourse_frames[-8:]
         act = record.act
         persona = state.persona_by_id(record.speaker_id)
         if act.act_type == ActType.OPENING and not rt.stated_priority:
@@ -436,12 +440,14 @@ class StateTracker:
 
     def _update_coverage(self, state: DialogueState, record: TurnRecord) -> None:
         act = record.act
+        slots = classify_claim_slots(record.text)
         for option_id in act.option_refs:
             if option_id in state.coverage:
                 cov = state.coverage[option_id]
                 cov.mentions += 1
                 if _looks_like_reason(record.text):
                     cov.reasons += 1
+                cov.covered_slots.update(slots)
         for option_id in set(act.soft_rejects) | set(act.hard_rejects):
             if option_id in state.coverage:
                 state.coverage[option_id].objections += 1
@@ -584,7 +590,13 @@ class ConsensusManager:
         supporters = 0
         for persona in state.personas:
             rt = state.runtimes[persona.id]
-            if rt.explicit_vote == option_id or option_id in rt.accepted_options or option_id == persona.preferred_option:
+            if rt.explicit_vote == option_id:
+                supporters += 1
+            elif option_id in rt.accepted_options:
+                supporters += 1
+            elif rt.explicit_vote is None and rt.current_preference == option_id:
+                supporters += 1
+            elif rt.explicit_vote is None and not rt.accepted_options and option_id == persona.preferred_option:
                 supporters += 1
         return supporters / max(1, len(state.personas))
 
@@ -629,7 +641,14 @@ def public_board(state: DialogueState) -> str:
 
 
 def recent_lines_for_prompt(state: DialogueState, intent: MoveIntent) -> list[str]:
-    n = int(cfg.utterances.recent_turns_after_question if intent.act == ActType.ANSWER else cfg.utterances.recent_turns_in_prompt)
+    if intent.act == ActType.ANSWER:
+        n = int(cfg.utterances.recent_turns_after_question)
+    elif intent.act in {ActType.ACCEPT, ActType.REJECT, ActType.VOTE}:
+        n = 4
+    elif intent.act == ActType.REACT:
+        n = 4
+    else:
+        n = int(cfg.utterances.recent_turns_in_prompt)
     turns = state.turns[-n:]
     return [f"{turn.speaker_name}: {turn.text}" for turn in turns]
 

@@ -9,7 +9,11 @@ from parsing import OptionResolver, TurnMove
 from validation import (
     MessageValidator,
     _longest_run,
+    classify_claim_slots,
+    classify_discourse_frames,
+    covered_slots_hint,
     fix_collective_voice,
+    recent_frame_hint,
 )
 
 
@@ -320,6 +324,18 @@ class TestRoboticPhrasing:
         r = _validate(validator, "Since Bob mentioned the budget, I think A works.", state)
         assert "ROBOTIC_TEMPLATE" in r.codes()
 
+    def test_wins_me_over(self, validator, state):
+        r = _validate(validator, "The low cost wins me over.", state)
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+
+    def test_seals_the_deal(self, validator, state):
+        r = _validate(validator, "That flexibility seals the deal for me.", state)
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+
+    def test_way_to_go(self, validator, state):
+        r = _validate(validator, "Mountain Retreat is the way to go.", state)
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+
     def test_normal_text_passes(self, validator, state):
         r = _validate(validator, "Five days in the mountains sounds perfect.", state)
         assert "ROBOTIC_TEMPLATE" not in r.codes()
@@ -523,3 +539,111 @@ class TestSeverityBoundary:
         )
         assert "DUPLICATE_TURN" in r.codes()
         assert r.ok
+
+
+# ── DISCOURSE FRAME CLASSIFICATION ─────────────────────────────────────
+
+class TestDiscourseFrames:
+    def test_agreement_preface_fair_point(self):
+        assert "agreement_preface" in classify_discourse_frames("That's a fair point, but I still prefer the beach.")
+
+    def test_agreement_preface_good_point(self):
+        assert "agreement_preface" in classify_discourse_frames("Good point about the budget.")
+
+    def test_agreement_preface_youre_right(self):
+        assert "agreement_preface" in classify_discourse_frames("You're right, the cost is high.")
+
+    def test_concession_preface(self):
+        assert "concession_preface" in classify_discourse_frames("I can see why you'd want more comfort.")
+
+    def test_option_endorsement_seals_deal(self):
+        assert "option_endorsement" in classify_discourse_frames("The flexibility seals the deal for me.")
+
+    def test_option_endorsement_way_to_go(self):
+        assert "option_endorsement" in classify_discourse_frames("Mountain Retreat seems like the way to go.")
+
+    def test_option_endorsement_wins_me_over(self):
+        assert "option_endorsement" in classify_discourse_frames("The low cost wins me over.")
+
+    def test_given_the_x(self):
+        assert "given_the_x" in classify_discourse_frames("Given the budget constraint, I'll go with A.")
+
+    def test_considering_the_x(self):
+        assert "given_the_x" in classify_discourse_frames("Considering the tradeoffs, B is better.")
+
+    def test_compromise_acceptance(self):
+        assert "compromise_acceptance" in classify_discourse_frames("I can live with that option.")
+
+    def test_works_for_me(self):
+        assert "compromise_acceptance" in classify_discourse_frames("Works for me, let's do it.")
+
+    def test_no_frame_plain_text(self):
+        assert classify_discourse_frames("The price difference is only twenty bucks.") == []
+
+    def test_no_frame_question(self):
+        assert classify_discourse_frames("How long does it take to get there?") == []
+
+
+class TestRecentFrameHint:
+    def test_no_overuse_returns_empty(self):
+        assert recent_frame_hint(["agreement_preface"], []) == ""
+
+    def test_recent_overuse_triggers_hint(self):
+        recent = ["agreement_preface", "agreement_preface", "option_endorsement"]
+        hint = recent_frame_hint(recent, [])
+        assert "Avoid" in hint
+        assert "agreeing prefaces" in hint
+
+    def test_speaker_repeat_triggers_hint(self):
+        hint = recent_frame_hint([], ["given_the_x"])
+        assert "Avoid" in hint
+        assert "given the" in hint
+
+    def test_empty_lists_no_hint(self):
+        assert recent_frame_hint([], []) == ""
+
+
+# ── CLAIM SLOT CLASSIFICATION ──────────────────────────────────────────
+
+class TestClaimSlots:
+    def test_cost_detection(self):
+        assert "cost" in classify_claim_slots("The price is $50 per person.")
+
+    def test_time_detection(self):
+        assert "time" in classify_claim_slots("It takes 2 hours to get there.")
+
+    def test_comfort_detection(self):
+        assert "comfort" in classify_claim_slots("The cozy atmosphere is really nice.")
+
+    def test_flexibility_detection(self):
+        assert "flexibility" in classify_claim_slots("It's refundable which gives us flexibility.")
+
+    def test_quality_detection(self):
+        assert "quality" in classify_claim_slots("The food quality is premium there.")
+
+    def test_novelty_detection(self):
+        assert "novelty" in classify_claim_slots("Trying something unique and exciting.")
+
+    def test_group_fit(self):
+        assert "group_fit" in classify_claim_slots("It works well for the whole group.")
+
+    def test_no_slots_plain(self):
+        assert classify_claim_slots("Yeah I think so too.") == []
+
+    def test_multiple_slots(self):
+        slots = classify_claim_slots("The price is low and the atmosphere is cozy.")
+        assert "cost" in slots
+        assert "comfort" in slots
+
+
+class TestCoveredSlotsHint:
+    def test_no_hint_when_few_covered(self):
+        assert covered_slots_hint("A", {"cost"}, ["cost"]) == ""
+
+    def test_hint_when_repeating_covered(self):
+        hint = covered_slots_hint("A", {"cost", "time", "comfort"}, ["cost"])
+        assert "Already discussed" in hint
+        assert "new angle" in hint.lower() or "new detail" in hint.lower()
+
+    def test_no_hint_on_fresh_slot(self):
+        assert covered_slots_hint("A", {"cost", "time"}, ["novelty"]) == ""

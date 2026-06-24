@@ -97,8 +97,19 @@ def extract_numbers(text: str) -> list[str]:
     return re.findall(r"(?:[$€£]\s*)?\d+(?:[.,:]\d+)?(?:\s*(?:kg|km|h|hr|hrs|hours?|min|minutes?|%|/\s*5))?", text, flags=re.I)
 
 
+_DANGLING_TRAIL = {
+    "to", "of", "for", "and", "but", "or", "with", "the", "a", "an", "than",
+    "because", "so", "that", "is", "are", "in", "on", "at", "as", "if", "from",
+}
+
+
 def compact_words(text: str, max_words: int) -> str:
     words = normalise_ws(text).split()
     if len(words) <= max_words:
         return " ".join(words)
-    return " ".join(words[:max_words]).rstrip(" ,;:") + "."
+    trimmed = words[:max_words]
+    while trimmed and trimmed[-1].lower().rstrip(".,;:") in _DANGLING_TRAIL:
+        trimmed.pop()
+    if not trimmed:
+        trimmed = words[:max_words]
+    return " ".join(trimmed).rstrip(" ,;:") + "."

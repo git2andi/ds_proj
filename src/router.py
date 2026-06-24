@@ -95,7 +95,6 @@ class TurnRouter:
         threshold = int(cfg.scenario.acceptance_score)
         last_turn = self._last_participant_turn(state)
         last_pid = last_turn.speaker_id if last_turn else None
-        stuck = self._consecutive_same_speaker(state) >= 2
         candidates: list[tuple[Persona, bool]] = []
         for persona in self._least_recent_personas(state):
             rt = state.runtimes[persona.id]
@@ -103,7 +102,7 @@ class TurnRouter:
                 continue
             if candidate in rt.hard_rejections or candidate in rt.soft_rejections:
                 continue
-            if stuck and persona.id == last_pid:
+            if persona.id == last_pid and len(state.personas) > 1:
                 continue
             can_accept = (
                 (candidate in persona.acceptable_options or candidate == persona.preferred_option
@@ -279,18 +278,22 @@ class TurnRouter:
         probs = dict(cfg.routing.act_probabilities.items())
         if state.readiness_score >= float(cfg.conversation.concentration_to_narrow):
             probs[ActType.PROPOSE_COMPROMISE.value] = float(probs.get(ActType.PROPOSE_COMPROMISE.value, 0.0)) + float(cfg.routing.late_discussion_compromise_bonus)
-        # Asking is a personality thing, not a quota: curious/open people ask more, and we
-        # damp it right after a question so the chat doesn't turn into an interrogation.
         persona = state.persona_by_id(speaker_id)
         trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
         curiosity = persona.traits.openness / trait_mid
         probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * curiosity
-        # Space questions out: if anyone asked within the recent window, damp asking so the
-        # chat doesn't collapse into back-to-back question/answer pairs.
         window = int(cfg.routing.ask_quiet_window)
         recent = [turn for turn in reversed(state.turns) if turn.speaker_id != "moderator"][:window]
         if any("?" in turn.text for turn in recent):
             probs[ActType.ASK.value] *= float(cfg.routing.ask_after_question_damping)
+        if len(state.personas) >= 5:
+            focus_opt = state.runtimes[speaker_id].current_preference or persona.preferred_option
+            covered = state.coverage.get(focus_opt)
+            if covered and len(covered.covered_slots) >= 3:
+                probs[ActType.COMPARE.value] = float(probs.get(ActType.COMPARE.value, 0.0)) * 1.5
+                probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * 1.3
+                probs[ActType.OBJECT.value] = float(probs.get(ActType.OBJECT.value, 0.0)) * 1.3
+                probs[ActType.SUPPORT.value] = float(probs.get(ActType.SUPPORT.value, 0.0)) * 0.5
         keys = [ActType(key) for key in probs.keys()]
         weights = [float(probs[key.value]) for key in keys]
         return weighted_choice(keys, weights)
