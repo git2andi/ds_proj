@@ -1,0 +1,2381 @@
+{
+  "run_id": "20260625_010315_945468",
+  "topic": "Design the ideal space station recreation room",
+  "scenario": {
+    "topic": "Design the ideal space station recreation room",
+    "decision_kind": "activity_choice",
+    "opening_question": "What matters most when designing the ideal space station recreation room: entertainment options, physical activity spaces, social areas, or mental wellness features?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Galactic Gym",
+        "attrs": {
+          "space_allocation": "300 square meters",
+          "equipment_cost": "$120,000",
+          "staffing_requirement": "1 full-time trainer"
+        },
+        "upside": "Improves physical health and reduces muscle atrophy in microgravity environments.",
+        "tradeoff": "Takes up a significant amount of space and requires ongoing staffing costs.",
+        "concern": "May not cater to astronauts with disabilities or injuries.",
+        "best_for": "Astronauts prioritizing physical fitness."
+      },
+      {
+        "id": "B",
+        "name": "Stellar Lounge",
+        "attrs": {
+          "space_allocation": "250 square meters",
+          "furniture_cost": "$80,000",
+          "entertainment_options": "Virtual reality experiences and movie nights"
+        },
+        "upside": "Fosters social connections and relaxation among crew members.",
+        "tradeoff": "May not provide enough physical activity options.",
+        "concern": "Could become a distraction or source of noise pollution.",
+        "best_for": "Astronauts valuing social interaction and leisure time."
+      },
+      {
+        "id": "C",
+        "name": "Mindful Oasis",
+        "attrs": {
+          "space_allocation": "200 square meters",
+          "soundproofing_cost": "$50,000",
+          "wellness_programs": "Meditation classes and yoga sessions"
+        },
+        "upside": "Supports mental wellness and stress reduction.",
+        "tradeoff": "May not appeal to astronauts who prefer more active pursuits.",
+        "concern": "Could be underutilized if not properly promoted.",
+        "best_for": "Astronauts prioritizing mental health and self-care."
+      },
+      {
+        "id": "D",
+        "name": "Cosmic Playground",
+        "attrs": {
+          "space_allocation": "400 square meters",
+          "equipment_cost": "$200,000",
+          "activity_options": "Zero-gravity sports, puzzle rooms, and arcade games"
+        },
+        "upside": "Offers a unique and engaging entertainment experience.",
+        "tradeoff": "Requires significant space and equipment investments.",
+        "concern": "May be too noisy or chaotic for some crew members.",
+        "best_for": "Astronauts seeking fun and novel experiences."
+      }
+    ],
+    "shared_context": [
+      "The space station has a total of 1000 square meters available for the recreation room.",
+      "The room will be used by a crew of 20 astronauts who will be on the station for at least 6 months.",
+      "The budget for the recreation room is $500,000."
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Faye",
+      "role": "Fitness Enthusiast",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 1,
+        "response_length": 3,
+        "compromise_willingness": 0.7351044627135053,
+        "initiative": 0.6176169697106145,
+        "directness": 0.5222076566725071,
+        "detail": 0.5906735653824916
+      },
+      "speech_style": "Direct and to the point",
+      "private_goal": "Stay physically active in space",
+      "backstory": "Regularly worked out at the gym before joining the space program",
+      "main_concern": "feasibility",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "C",
+        "B"
+      ],
+      "soft_rejections": [
+        "D"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "Improves physical health and reduces muscle atrophy in microgravity environments"
+        ],
+        "C": [
+          "Supports mental wellness and stress reduction, which is also important for overall health"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members."
+        ]
+      },
+      "reservation": "I'm worried that option B might not provide enough physical activity options",
+      "reconsider_if": "if everyone values physical fitness over leisure time",
+      "option_scores": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Vince",
+      "role": "Practical Thinker",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 1,
+        "response_length": 3,
+        "compromise_willingness": 0.5267294560306697,
+        "initiative": 0.7615297807128631,
+        "directness": 0.38470420529782706,
+        "detail": 0.5387345823813565
+      },
+      "speech_style": "Analytical and logical",
+      "private_goal": "Make the most of our limited space and resources",
+      "backstory": "Had to optimize storage on previous missions",
+      "main_concern": "budget",
+      "preferred_option": "A",
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "soft_rejections": [
+        "D"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "A": [
+          "Improves physical health and reduces muscle atrophy in microgravity environments, which is essential for our mission"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which can improve morale"
+        ]
+      },
+      "reservation": "I'm concerned that option C might not be utilized enough to justify its cost",
+      "reconsider_if": "if the group prioritizes mental wellness over physical fitness",
+      "option_scores": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Ivan",
+      "role": "Wellness Advocate",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 5,
+        "neuroticism": 3,
+        "response_length": 4,
+        "compromise_willingness": 0.7917343233821004,
+        "initiative": 0.5712882387725386,
+        "directness": 0.3401997008383387,
+        "detail": 0.38391888536689245
+      },
+      "speech_style": "Empathetic and supportive",
+      "private_goal": "Promote mental health and self-care among the crew",
+      "backstory": "Struggled with anxiety on a previous mission",
+      "main_concern": "comfort",
+      "preferred_option": "C",
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "C": [
+          "Supports mental wellness and stress reduction, which is crucial for our well-being in space"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which can help reduce stress"
+        ]
+      },
+      "reservation": "I'm worried that option A might be too intense or competitive for some crew members",
+      "reconsider_if": "if the group values physical fitness over mental wellness",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Rina",
+      "role": "Social Butterfly",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 1,
+        "response_length": 5,
+        "compromise_willingness": 0.7543083664308065,
+        "initiative": 0.5762597752548033,
+        "directness": 0.33745803451241196,
+        "detail": 0.44372662415815445
+      },
+      "speech_style": "Outgoing and enthusiastic",
+      "private_goal": "Create a fun and social atmosphere on the space station",
+      "backstory": "Organized social events on previous missions",
+      "main_concern": "novelty",
+      "preferred_option": "D",
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "D": [
+          "Offers a unique and engaging entertainment experience, which can help keep us excited and motivated"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which is essential for our mental health"
+        ]
+      },
+      "reservation": "I'm concerned that option C might be too quiet or boring for some crew members",
+      "reconsider_if": "if the group prioritizes comfort over novelty",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Hugo",
+      "role": "Innovative Thinker",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 1,
+        "response_length": 5,
+        "compromise_willingness": 0.6212863276138922,
+        "initiative": 0.5129566369096307,
+        "directness": 0.49749444417006705,
+        "detail": 0.7227953867196311
+      },
+      "speech_style": "Creative and open-minded",
+      "private_goal": "Explore new ideas and possibilities for our space station",
+      "backstory": "Developed innovative solutions on previous missions",
+      "main_concern": "feasibility",
+      "preferred_option": "C",
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "C": [
+          "Supports mental wellness and stress reduction, which is essential for our well-being in space"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which can help improve morale"
+        ]
+      },
+      "reservation": "I'm worried that option D might be too expensive or resource-intensive",
+      "reconsider_if": "if the group prioritizes physical fitness over mental wellness",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Olga",
+      "role": "Practical Planner",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 1,
+        "response_length": 4,
+        "compromise_willingness": 0.7401130543934639,
+        "initiative": 0.6843397784604658,
+        "directness": 0.28036047320352164,
+        "detail": 0.5762288701879564
+      },
+      "speech_style": "Organized and detail-oriented",
+      "private_goal": "Ensure our space station is safe and functional",
+      "backstory": "Managed logistics on previous missions",
+      "main_concern": "safety",
+      "preferred_option": "D",
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "D": [
+          "Offers a unique and engaging entertainment experience, which can help keep us motivated and focused"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which can help reduce stress"
+        ]
+      },
+      "reservation": "I'm concerned that option C might not be utilized enough to justify its cost",
+      "reconsider_if": "if the group prioritizes comfort over safety",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "is_hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Juno",
+      "role": "Empathetic Listener",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 2,
+        "response_length": 3,
+        "compromise_willingness": 0.8456722471250226,
+        "initiative": 0.45810043117793586,
+        "directness": 0.2840580619654207,
+        "detail": 0.8979832768330713
+      },
+      "speech_style": "Compassionate and understanding",
+      "private_goal": "Support the emotional well-being of our crew members",
+      "backstory": "Provided counseling services on previous missions",
+      "main_concern": "fairness",
+      "preferred_option": "C",
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "soft_rejections": [
+        "A"
+      ],
+      "hard_rejections": [],
+      "reasons": {
+        "C": [
+          "Supports mental wellness and stress reduction, which is crucial for our well-being in space"
+        ],
+        "B": [
+          "Fosters social connections and relaxation among crew members, which can help improve morale"
+        ]
+      },
+      "reservation": "I'm worried that option D might be too intense or competitive for some crew members",
+      "reconsider_if": "if the group prioritizes physical fitness over mental wellness",
+      "option_scores": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "is_hard_blocker": false
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Design the ideal space station recreation room. Here are the options:\nOption A - Galactic Gym: space allocation 300 square meters, equipment cost $120,000, staffing requirement 1 full-time trainer\nOption B - Stellar Lounge: space allocation 250 square meters, furniture cost $80,000, entertainment options Virtual reality experiences and movie nights\nOption C - Mindful Oasis: space allocation 200 square meters, soundproofing cost $50,000, wellness programs Meditation classes and yoga sessions\nOption D - Cosmic Playground: space allocation 400 square meters, equipment cost $200,000, activity options Zero-gravity sports, puzzle rooms, and arcade games\nSome things we know: The space station has a total of 1000 square meters available for the recreation room.; The room will be used by a crew of 20 astronauts who will be on the station for at least 6 months.; The budget for the recreation room is $500,000..\nWhat matters most when designing the ideal space station recreation room: entertainment options, physical activity spaces, social areas, or mental wellness features?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Design the ideal space station recreation room. Here are the options: Option A - Galactic Gym: space allocation 300 square meters, equipment cost $120,000, staffing requirement 1 full-time trainer Option B - Stellar Lounge: space allocation 250 square meters, furniture cost $80,000, entertainment options Virtual reality experiences and movie nights Option C - Mindful Oasis: space allocation 200 square meters, soundproofing cost $50,000, wellness programs Meditation classes and yoga sessions Option D - Cosmic Playground: space allocation 400 square meters, equipment cost $200,000, activity options Zero-gravity sports, puzzle rooms, and arcade games Some things we know: The space station has a total of 1000 square meters available for the recreation room.; The room will be used by a crew of 20 astronauts who will be on the station for at least 6 months.; The budget for the recreation room is $500,000.. What matters most when designing the ideal space station recreation room: entertainment options, physical activity spaces, social areas, or mental wellness features?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "hi everyone",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "hi everyone",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 166,
+      "tokens_out": 3,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "hey guys",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "hey guys",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 190,
+      "tokens_out": 3,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "hello team",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "hello team",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 192,
+      "tokens_out": 3,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p7",
+      "speaker_name": "Juno",
+      "text": "hey folks",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p7",
+        "text": "hey folks",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 197,
+      "tokens_out": 3,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Galactic Gym seems like a good fit, I'd love a space to stay active during our long mission.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Galactic Gym seems like a good fit, I'd love a space to stay active during our long mission.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 754,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Galactic Gym seems like a solid choice, I'm leaning towards it since regular exercise is crucial for our physical health in space and it's a good use of the 300 square meters.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Galactic Gym seems like a solid choice, I'm leaning towards it since regular exercise is crucial for our physical health in space and it's a good use of the 300 square meters.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 773,
+      "tokens_out": 50,
+      "validation_issues": [
+        "REPEATED_START"
+      ],
+      "repaired": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Ivan",
+      "text": "I'm leaning towards Mindful Oasis, it feels like a calming escape from the stresses of space travel and I love that it includes meditation classes",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'm leaning towards Mindful Oasis, it feels like a calming escape from the stresses of space travel and I love that it includes meditation classes",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 602,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Cosmic Playground sounds amazing to me, I love the idea of zero-gravity sports and puzzle rooms for some fun downtime",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Cosmic Playground sounds amazing to me, I love the idea of zero-gravity sports and puzzle rooms for some fun downtime",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "Mindful Oasis really stands out to me because it offers a serene atmosphere that can help reduce stress, and I love the idea of meditation classes being part of our wellness routine",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Mindful Oasis really stands out to me because it offers a serene atmosphere that can help reduce stress, and I love the idea of meditation classes being part of our wellness routine",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 649,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Cosmic Playground seems like a great way to unwind, I love the idea of zero-gravity sports and puzzle rooms for some fun downtime, it's a unique experience",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Cosmic Playground seems like a great way to unwind, I love the idea of zero-gravity sports and puzzle rooms for some fun downtime, it's a unique experience",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 680,
+      "tokens_out": 46,
+      "validation_issues": [
+        "ECHOED_PHRASE"
+      ],
+      "repaired": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p7",
+      "speaker_name": "Juno",
+      "text": "Mindful Oasis feels really appealing to me because it provides a peaceful escape from the pressures of space life with meditation classes and yoga sessions",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Mindful Oasis feels really appealing to me because it provides a peaceful escape from the pressures of space life with meditation classes and yoga sessions",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 712,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Stellar Lounge does foster social connections, but Galactic Gym still offers better physical activity options",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Stellar Lounge does foster social connections, but Galactic Gym still offers better physical activity options",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "develop under-discussed Option B with a real trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 834,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "Galactic Gym's physical activity options are a real strength, but Mindful Oasis still offers a unique serene atmosphere that can't be replicated, which is crucial for mental wellness in a high-stress environment",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Galactic Gym's physical activity options are a real strength, but Mindful Oasis still offers a unique serene atmosphere that can't be replicated, which is crucial for mental wellness in a high-stress environment",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 748,
+      "tokens_out": 53,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Wait, what about the cost of equipment and maintenance for Galactic Gym?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Wait, what about the cost of equipment and maintenance for Galactic Gym?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 692,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Galactic Gym provides better physical activity options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Galactic Gym provides better physical activity options.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "moves_lean": false
+      },
+      "tokens_in": 346,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 17,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Not trying to be difficult, but I think Cosmic Playground could offer some physical activity too, like zero-gravity sports, which would be super fun and unique",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Not trying to be difficult, but I think Cosmic Playground could offer some physical activity too, like zero-gravity sports, which would be super fun and unique",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 702,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "How would zero-gravity sports in Cosmic Playground compare to Galactic Gym's traditional workout equipment in terms of space efficiency?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How would zero-gravity sports in Cosmic Playground compare to Galactic Gym's traditional workout equipment in terms of space efficiency?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 700,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Zero-gravity sports in Cosmic Playground would likely require less floor space than Galactic Gym's equipment, since they can utilize vertical areas and rotations, Vince, you'd have more flexibility with layout and activities.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Zero-gravity sports in Cosmic Playground would likely require less floor space than Galactic Gym's equipment, since they can utilize vertical areas and rotations, Vince, you'd have more flexibility with layout and activities.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 644,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Ivan",
+      "text": "What if we combine Cosmic Playground's zero-gravity sports with Mindful Oasis's calming atmosphere, using vertical space to minimize footprint, that way we get both relaxation and activity options, seems like a great way to prioritize comfort and mental wellness",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "What if we combine Cosmic Playground's zero-gravity sports with Mindful Oasis's calming atmosphere, using vertical space to minimize footprint, that way we get both relaxation and activity options, seems like a great way to prioritize comfort and mental wellness",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 709,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Considering the unique aspects of each space, a combination of Cosmic Playground and Mindful Oasis could provide a well-rounded experience.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Considering the unique aspects of each space, a combination of Cosmic Playground and Mindful Oasis could provide a well-rounded experience.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 406,
+      "tokens_out": 41,
+      "validation_issues": [
+        "ROBOTIC_TEMPLATE"
+      ],
+      "repaired": true
+    },
+    {
+      "index": 22,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The disagreement is about feasibility versus budget, can everyone get behind Stellar Lounge as a compromise or what would make it work for Ivan who hasn't committed to it yet",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The disagreement is about feasibility versus budget, can everyone get behind Stellar Lounge as a compromise or what would make it work for Ivan who hasn't committed to it yet",
+        "act_type": "react",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "What's the estimated cost of incorporating Cosmic Playground's zero-gravity sports into Mindful Oasis, Olga?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "What's the estimated cost of incorporating Cosmic Playground's zero-gravity sports into Mindful Oasis, Olga?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": "p6",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 776,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Combining Cosmic Playground's fun with Mindful Oasis's calm could be amazing!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Combining Cosmic Playground's fun with Mindful Oasis's calm could be amazing!",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "moves_lean": false
+      },
+      "tokens_in": 367,
+      "tokens_out": 30,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": true
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Galactic Gym still seems more efficient in terms of actual workout space per person, and while combining Cosmic Playground's fun with Mindful Oasis's calm sounds interesting, it's hard to see how that would beat the focused physical benefits of Galactic Gym",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Galactic Gym still seems more efficient in terms of actual workout space per person, and while combining Cosmic Playground's fun with Mindful Oasis's calm sounds interesting, it's hard to see how that would beat the focused physical benefits of Galactic Gym",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Cosmic Playground still offers the most novel activities, and while Galactic Gym is efficient, Hugo, you can't replicate the thrill of zero-gravity sports in a traditional workout space, which is why I think Cosmic Playground is worth the investment.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Cosmic Playground still offers the most novel activities, and while Galactic Gym is efficient, Hugo, you can't replicate the thrill of zero-gravity sports in a traditional workout space, which is why I think Cosmic Playground is worth the investment.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 823,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Faye, Galactic Gym does offer more intense workout options, but Cosmic Playground's variety of activities still provides a better overall recreational experience because it caters to different interests and moods.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Faye, Galactic Gym does offer more intense workout options, but Cosmic Playground's variety of activities still provides a better overall recreational experience because it caters to different interests and moods.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 837,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Galactic Gym's efficiency is key for intense workouts.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Galactic Gym's efficiency is key for intense workouts.",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 379,
+      "tokens_out": 24,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": true
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Ivan",
+      "text": "Let's balance activities with Mindful Oasis's calm and Cosmic Playground's fun.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let's balance activities with Mindful Oasis's calm and Cosmic Playground's fun.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 382,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 30,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Zero-gravity sports in Cosmic Playground offer a unique thrill, and while Mindful Oasis has its calming benefits, Hugo, you can't deny the excitement factor still tips the scale towards Cosmic Playground for overall recreational value.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Zero-gravity sports in Cosmic Playground offer a unique thrill, and while Mindful Oasis has its calming benefits, Hugo, you can't deny the excitement factor still tips the scale towards Cosmic Playground for overall recreational value.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 831,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The main sticking point seems to be practicality versus cost, so is there a way for those backing Mindful Oasis and Galactic Gym to compromise on Stellar Lounge?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The main sticking point seems to be practicality versus cost, so is there a way for those backing Mindful Oasis and Galactic Gym to compromise on Stellar Lounge?",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p6",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "What if we allocate a section of Cosmic Playground for meditation to merge its fun with Mindful Oasis's calm, would that work?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "What if we allocate a section of Cosmic Playground for meditation to merge its fun with Mindful Oasis's calm, would that work?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": "p6",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 729,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Allocating a meditation section in Cosmic Playground could work, you'd still need to ensure safety features are in place for both meditation and play areas.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Allocating a meditation section in Cosmic Playground could work, you'd still need to ensure safety features are in place for both meditation and play areas.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D"
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p4",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 32,
+        "moves_lean": false
+      },
+      "tokens_in": 865,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Mindful Oasis has a calming atmosphere, but Cosmic Playground's unique activities still offer more excitement and novelty, which is crucial for our long-term stay, Hugo, you can't deny the thrill factor",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Mindful Oasis has a calming atmosphere, but Cosmic Playground's unique activities still offer more excitement and novelty, which is crucial for our long-term stay, Hugo, you can't deny the thrill factor",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 784,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p7",
+      "speaker_name": "Juno",
+      "text": "Safety concerns arise if meditation and play areas aren't clearly separated in Cosmic Playground, why risk accidents.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Safety concerns arise if meditation and play areas aren't clearly separated in Cosmic Playground, why risk accidents.",
+        "act_type": "object",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Safety concerns arise if meditation and play areas aren't clearly separated in Cosmic Playground, why risk accidents."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "object",
+        "reason": "raise a soft objection without derailing the group",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 728,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "Mindful Oasis is my pick because its meditation classes and yoga sessions can help reduce stress, which is crucial for our mental health during long-term space missions.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Mindful Oasis is my pick because its meditation classes and yoga sessions can help reduce stress, which is crucial for our mental health during long-term space missions.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 660,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Galactic Gym's equipment cost seems relatively low at $120,000, given the long-term benefits for physical health, so I'll go with Galactic Gym",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Galactic Gym's equipment cost seems relatively low at $120,000, given the long-term benefits for physical health, so I'll go with Galactic Gym",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 645,
+      "tokens_out": 44,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Galactic Gym is a good fit due to its equipment.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Galactic Gym is a good fit due to its equipment.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 358,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 39,
+      "speaker_id": "p3",
+      "speaker_name": "Ivan",
+      "text": "Mindful Oasis offers a serene escape, its soundproofing will ensure we can meditate without distractions",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Mindful Oasis offers a serene escape, its soundproofing will ensure we can meditate without distractions",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 642,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 40,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Cosmic Playground's diverse activities will keep our crew engaged, I choose it for its variety of entertainment options",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Cosmic Playground's diverse activities will keep our crew engaged, I choose it for its variety of entertainment options",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 665,
+      "tokens_out": 34,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false
+    },
+    {
+      "index": 41,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "I'll love the variety at Cosmic Playground, it's perfect for entertainment",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I'll love the variety at Cosmic Playground, it's perfect for entertainment",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 355,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": true
+    },
+    {
+      "index": 42,
+      "speaker_id": "p7",
+      "speaker_name": "Juno",
+      "text": "Mindful Oasis gets my vote because it provides a calming atmosphere, perfect for unwinding after long shifts",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Mindful Oasis gets my vote because it provides a calming atmosphere, perfect for unwinding after long shifts",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 612,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 43,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Giving up intense workouts, we gain a calming atmosphere with Mindful Oasis",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Giving up intense workouts, we gain a calming atmosphere with Mindful Oasis",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "say whether Option C works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 621,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 44,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Wait, what about physical activity in Mindful Oasis, should we check if they have any low-impact options.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Wait, what about physical activity in Mindful Oasis, should we check if they have any low-impact options.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "say whether Option C works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 614,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 45,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Rina and Olga, what's the main issue with Mindful Oasis, is there another concept that balances novelty and safety for everyone?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Rina and Olga, what's the main issue with Mindful Oasis, is there another concept that balances novelty and safety for everyone?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 46,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Mindful Oasis works for me, I still worry about utilization rates though, so many calm areas might go unused.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Mindful Oasis works for me, I still worry about utilization rates though, so many calm areas might go unused.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "accept",
+        "reason": "say whether Option C works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 688,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 47,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "If we add interactive art installations to Mindful Oasis, it'll likely boost engagement and prevent boredom.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p4",
+        "text": "If we add interactive art installations to Mindful Oasis, it'll likely boost engagement and prevent boredom.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "accept",
+        "reason": "say whether Option C works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 660,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 48,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "Interactive art could really draw people to Mindful Oasis, I'm still thinking about how often it'll get used though.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Interactive art could really draw people to Mindful Oasis, I'm still thinking about how often it'll get used though.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "accept",
+        "reason": "say whether Option C works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 704,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 49,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Mindful Oasis is the decision, let's start outlining equipment needs.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Mindful Oasis is the decision, let's start outlining equipment needs.",
+        "act_type": "react",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 50,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "later, Mindful Oasis it is then",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "later, Mindful Oasis it is then",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 183,
+      "tokens_out": 9,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 51,
+      "speaker_id": "p4",
+      "speaker_name": "Rina",
+      "text": "Later, see you at Mindful Oasis",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Later, see you at Mindful Oasis",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 213,
+      "tokens_out": 9,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 52,
+      "speaker_id": "p5",
+      "speaker_name": "Hugo",
+      "text": "Mindful Oasis it is, catch you there",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Mindful Oasis it is, catch you there",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 222,
+      "tokens_out": 10,
+      "validation_issues": [],
+      "repaired": false
+    },
+    {
+      "index": 53,
+      "speaker_id": "p6",
+      "speaker_name": "Olga",
+      "text": "all set for Mindful Oasis then bye",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p6",
+        "text": "all set for Mindful Oasis then bye",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 233,
+      "tokens_out": 9,
+      "validation_issues": [],
+      "repaired": false
+    }
+  ],
+  "outcome": {
+    "status": "consensus",
+    "final_option": "C",
+    "reason": "all participants accepted or voted for the same option",
+    "turns": 40,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 48,
+    "moderator_turns": 5,
+    "moderator_ratio": 0.094,
+    "turn_counts": {
+      "Faye": 6,
+      "Vince": 6,
+      "Ivan": 4,
+      "Rina": 8,
+      "Hugo": 4,
+      "Olga": 9,
+      "Juno": 3
+    },
+    "question_density": 0.083,
+    "avg_words_per_turn": 18.8,
+    "repaired_turns": 7,
+    "repair_rate": 0.146,
+    "flagged_turns": 8,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 14,
+        "reasons": 13,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 22,
+        "reasons": 22,
+        "objections": 1,
+        "acceptances": 4
+      },
+      "D": {
+        "mentions": 20,
+        "reasons": 20,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "consensus",
+    "final_option": "C",
+    "min_discussion_turns": 28,
+    "setup_tokens_in": 2850,
+    "setup_tokens_out": 2471,
+    "dialogue_tokens_in": 33556,
+    "dialogue_tokens_out": 2076,
+    "total_tokens_in": 36406,
+    "total_tokens_out": 4547
+  },
+  "tokens": {
+    "setup_tokens_in": 2850,
+    "setup_tokens_out": 2471,
+    "dialogue_tokens_in": 33556,
+    "dialogue_tokens_out": 2076,
+    "total_tokens_in": 36406,
+    "total_tokens_out": 4547
+  }
+}
