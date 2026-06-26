@@ -188,6 +188,7 @@ class SetupBuilder:
         return OptionCard(
             id=str(raw.get("id") or expected_id).strip().upper(),
             name=self._clean_name(_require(raw.get("name"), f"option {expected_id} name")),
+            short_name=self._clean_short_name(str(raw.get("short_name") or "")),
             attrs=clean_attrs,
             upside=_require(raw.get("upside"), f"option {expected_id} upside"),
             tradeoff=_require(raw.get("tradeoff"), f"option {expected_id} tradeoff"),
@@ -296,6 +297,21 @@ class SetupBuilder:
         words = raw.split()
         cap = int(cfg.scenario.option_name_max_words)
         return " ".join(words[:cap]) if len(words) > cap else " ".join(words)
+
+    _SHORT_NAME_STOPWORDS = frozenset({"and", "or", "of", "to", "a", "an", "in", "on", "at", "for", "by", "with", "the"})
+
+    @staticmethod
+    def _clean_short_name(raw: str) -> str:
+        """Validate LLM-provided short_name; return empty string if unusable so the
+        deterministic fallback in _short_alias takes over."""
+        s = raw.strip().strip('"\'').strip()
+        if not s:
+            return ""
+        words = s.split()
+        # Reject if too long or ends on a dangling stopword
+        if len(words) > 3 or words[-1].lower() in SetupBuilder._SHORT_NAME_STOPWORDS:
+            return ""
+        return s
 
     @staticmethod
     def _clean_option_list(value: Any, labels: list[str]) -> list[str]:

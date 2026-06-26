@@ -268,6 +268,8 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\bgiven the discussion\b", re.I),
     re.compile(r"^\s*considering\b", re.I),
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),
+    re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+a\s+(?:good|great|solid|natural|obvious|perfect|ideal|clear)\s+fit\b", re.I),
+    re.compile(r"\bstill\s+(?:beats?|wins?|comes?\s+out\s+(?:ahead|on\s+top)|edges?\s+out)\b", re.I),
     re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),
     re.compile(r"\bwins? me over\b", re.I),
     re.compile(r"\bseals? the deal\b", re.I),
@@ -417,6 +419,12 @@ _FRAME_PATTERNS: dict[str, re.Pattern] = {
         r"(?:i’?m|i\s+am)\s+on\s+board|"
         r"(?:i’?m|i\s+am)\s+(?:fine|okay|ok)\s+with)\b", re.I,
     ),
+    "what_if_opener": re.compile(
+        r"^\s*(?:what\s+if\s+(?:we|they|everyone|the\s+group)|how\s+about\s+we)\b", re.I,
+    ),
+    "wait_what_about": re.compile(
+        r"^\s*wait[,.]?\s+(?:but\s+)?what\s+about\b", re.I,
+    ),
 }
 
 _FRAME_WINDOW = 4
@@ -450,6 +458,8 @@ def recent_frame_hint(recent_frames: list[str], speaker_frames: list[str]) -> st
         "option_endorsement": "stock endorsement phrases (‘seals the deal’, ‘way to go’, ‘best choice’)",
         "given_the_x": "’given the...’ / ‘considering the...’ openers",
         "compromise_acceptance": "acceptance clichés (‘works for me’, ‘can live with’)",
+        "what_if_opener": "’What if we...’ / ‘How about we...’ openers — state the fix directly instead",
+        "wait_what_about": "’Wait, what about...’ openers — ask or react without the ‘wait’ setup",
     }
     avoid = "; ".join(labels.get(f, f) for f in sorted(overused))
     return f"Avoid: {avoid}. Vary your phrasing — react directly instead."

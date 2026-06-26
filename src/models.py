@@ -46,6 +46,7 @@ class OptionCard:
     tradeoff: str = ""
     concern: str = ""
     best_for: str = ""
+    short_name: str = ""  # LLM-generated casual nickname; fallback computed from name
 
     def public_line(self) -> str:
         attrs = ", ".join(f"{k}: {v}" for k, v in self.attrs.items())

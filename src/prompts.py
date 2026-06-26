@@ -50,6 +50,7 @@ def setup_scenario(topic: str) -> str:
                 {
                     "id": label,
                     "name": "specific realistic name, not a generic category",
+                    "short_name": "1-2 word casual nickname friends would use; must stand alone (never end with 'and', 'of', 'to', 'the', 'a', 'an')",
                     "attrs": {"cost/time/effort/etc": "stable value", "other_relevant_attribute": "stable value"},
                     "upside": "specific benefit",
                     "tradeoff": "specific downside or cost",
@@ -487,15 +488,15 @@ def _concession_bridge(persona: Persona, option_name: str = "", reservation: str
     worry = reservation or persona.main_concern
     opt = option_name or "this"
     bridges = [
-        f"Accept {opt} but name a specific condition that addresses your worry about {worry}.",
-        f"Say {opt} works for you, keep one residual concern visible about {worry}.",
-        f"Name what you gave up and what you gain with {opt} — one concrete trade-off.",
-        f"Accept {opt} and suggest one practical thing to check or do about {worry}.",
+        f"Take {opt} — name the one condition about {worry} that would make it fully work.",
+        f"Back {opt}: be honest that {worry} is the trade-off you're accepting.",
+        f"Go along with {opt} — leave one specific concern about {worry} on the table.",
+        f"Commit to {opt} and flag the one thing about {worry} you'd want handled.",
     ]
     if persona.traits.compromise_willingness < 0.5:
         bridges = [
-            f"Accept {opt} reluctantly with a hard condition about {worry} — you're not fully sold.",
-            f"Go along with {opt} only if {worry} is addressed — name what specifically needs to happen.",
+            f"Give {opt} a reluctant yes — only if there's a concrete plan for {worry}.",
+            f"You'll live with {opt} but not without a specific fix for {worry} named first.",
         ]
     return random.choice(bridges)
 
@@ -517,7 +518,7 @@ def _face_work(persona: Persona, intent: MoveIntent) -> str:
             return " Be direct but not rude — name the problem, skip the diplomacy."
     if intent.act == ActType.PROPOSE_COMPROMISE:
         if t.agreeableness >= 4:
-            return " Frame it as 'what if we...' not 'I think we should...'."
+            return " Frame it as a gentle condition or suggestion, not a direct push."
     return ""
 
 
@@ -543,7 +544,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return bridge
         if _others_back(state, persona, intent.option_focus):
-            return "Others agreed already — a quick '+1' or 'works for me' is enough."
+            return "Others agreed already — confirm briefly without echoing their phrasing."
         return "Say you're in — one reason why it's okay for you."
     if intent.act == ActType.VOTE:
         chorus = (" Others already voted this way — brief, don't echo them."
@@ -553,7 +554,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"Name your pick. {bridge}" + chorus
-        return "Name your pick and one reason. Commit." + chorus
+        return "State your pick without 'I'm voting for X because' — vary it. One brief reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -568,13 +569,13 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"You're warming up to this. {bridge}"
     by_act = {
-        ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'wait really?'). Don't re-pitch your option." + face,
+        ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'huh interesting'). Don't re-pitch your option." + face,
         ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
-        ActType.COMPARE: "Name one real strength of theirs and where yours still wins. Don't list attributes." + face,
+        ActType.COMPARE: "Name one real strength of theirs and where yours edges ahead. Don't list attributes." + face,
         ActType.SUPPORT: "Back this from your angle — a personal reason or past experience, not the spec sheet." + face,
         ActType.OBJECT: "Name your specific worry. One concrete thing, not a general critique." + face,
         ActType.PUSH_BACK: "Push back on the exact claim just made." + face,
-        ActType.PROPOSE_COMPROMISE: "Offer a concrete fix or condition — not just 'let's compromise'." + face,
+        ActType.PROPOSE_COMPROMISE: "Name the fix directly — skip 'What if we' and 'How about we'." + face,
     }
     return by_act.get(intent.act, "Respond to the last point directly.")
 
@@ -591,11 +592,20 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
     return "\n- Name options naturally, not 'Option B'."
 
 
+_ALIAS_STOPWORDS = frozenset({"and", "or", "of", "to", "a", "an", "in", "on", "at", "for", "by", "with", "the"})
+
+
 def _short_alias(option: OptionCard) -> str:
+    if option.short_name:
+        return option.short_name
     words = option.name.split()
-    if len(words) <= 2:
+    if len(words) <= 3:
         return option.name
-    return " ".join(words[:2])
+    # 4+ words: take first 2, but swap in word[2] if word[1] is a dangling stopword
+    alias = words[:2]
+    if alias[-1].lower() in _ALIAS_STOPWORDS and len(words) >= 3:
+        alias = [words[0], words[2]]
+    return " ".join(alias)
 
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
@@ -677,7 +687,7 @@ Guidance: {guidance}
 Rules:
 - One line, no name prefix, no quotes. Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
 - Lead with YOUR thought, not a recap of theirs. No 'X is great/important/key, but...' openers.{address_rule}
-- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'way to go', 'a must for me', 'a big draw'). No self-narration ('I should consider').{alias_rule}
+- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit'). You know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check', never a confident claim.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 
@@ -689,8 +699,8 @@ _REPAIR_HINTS = {
     "SPEAKER_PREFIX": "drop the 'Name:' prefix",
     "MULTI_TURN_OUTPUT": "write only one single line",
     "INVALID_OPTION_REFERENCE": "only mention the real options listed",
-    "UNGROUNDED_NUMERIC_FACT": "don't state numbers that aren't in the option cards",
-    "INVENTED_OPTION_ATTRIBUTE": "don't state numbers/facts that aren't in the option cards",
+    "UNGROUNDED_NUMERIC_FACT": "don't state numbers that aren't in the option cards — hedge as 'I think ~X' if unsure",
+    "INVENTED_OPTION_ATTRIBUTE": "don't state facts that aren't in the option cards — frame as 'I think they have...' or 'do they...?' instead",
     "DUPLICATE_TURN": "don't repeat another speaker's line — say it in your own words",
     "ECHOED_PHRASE": "don't reuse another speaker's phrasing — reword it your way",
     "GROUP_REPETITION": "don't echo a recent turn — add your own angle",
@@ -704,7 +714,7 @@ _REPAIR_HINTS = {
     "UNWANTED_QUESTION": "make it a statement, not a question",
     "QUESTION_CHAIN": "don't ask another question — react or state instead",
     "INCOMPLETE_TURN": "finish the thought; don't trail off",
-    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing ('outweighs', 'point is valid', 'makes me think', 'seems like the best fit') and DON'T open with a participial frame ('Considering...', 'Given the discussion...') — just say it plainly in your own voice",
+    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing ('outweighs', 'point is valid', 'makes me think', 'seems like a/the best fit', 'still beats') and DON'T open with a participial frame ('Considering...', 'Given the discussion...') — just say it plainly in your own voice",
     "POSSESSIVE_SUBJECT": "don't start with an option's possessive ('X's ...') — lead with the team or yourself",
     "COLLECTIVE_VOICE": "this is your own view, not the committee's — speak for yourself, not 'we'/'our'",
     "CARD_READING": "don't parrot the option card's description — put it in your own words",
@@ -735,5 +745,5 @@ Recent chat:
 {recent}
 Original line: {original_text}
 Fix: {fixes}.
-Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the options; don't copy others' wording.
+Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the option cards — anything else must be hedged ('I think...', 'do they...?'); don't copy others' wording.
 End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral."""

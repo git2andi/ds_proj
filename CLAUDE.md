@@ -6,6 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A university project: an LLM-driven group discussion simulator. Given a topic, it generates a multi-party chat where 2–7 personas debate and try to reach a decision. A deterministic controller (routing, state tracking, consensus) decides **who speaks, when, and with what intent**; the LLM only renders the surface text of each turn via a single stateless call per turn.
 
+## New machine setup
+
+Memory files are stored in `.claude/memory/` in the repo. On first use on a new machine, copy them to Claude's config directory so they load automatically:
+
+```powershell
+$dest = "$env:USERPROFILE\.claude\projects\C--Users-Andi-Desktop-ds-proj\memory"
+New-Item -ItemType Directory -Force $dest | Out-Null
+Copy-Item .\.claude\memory\* $dest -Force
+```
+
+(Assumes the repo is cloned to `C:\Users\Andi\Desktop\ds_proj`. If the path differs, adjust the `C--Users-Andi-Desktop-ds-proj` folder name to match: replace `\` with `-` and `:` with nothing, `_` with `-`.)
+
 ## Running
 
 Activate the `dspro` virtualenv. No requirements.txt install step — the venv is pre-built.
@@ -35,7 +47,7 @@ The split is deliberate and load-bearing:
 
 ### Run flow
 
-1. **`builders.py`** — two sequential LLM calls: first generates the option cards (with `shared_context`), second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits and names are sampled in code from a diverse pool and passed to the model. Invalid worlds raise, never silently default.
+1. **`builders.py`** — two sequential LLM calls: first generates the option cards (with `shared_context` and `short_name` per option), second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits and names are sampled in code from a diverse pool and passed to the model. Invalid worlds raise, never silently default. `_clean_short_name` validates LLM-provided short names (rejects if ending on a stopword or >3 words).
 2. **`router.py`** — emits a `MoveIntent` each turn. Priority: (1) answer pending question, (2) respond to unanswered challenge via `_unanswered_challenge`, (3) fill coverage gaps, (4) weighted speaker selection. Drives phases: opening → discussion → narrowing → confirmation → closure.
 3. **`dialogue.py`** — orchestration: calls the router, renders the turn via `prompts.sim_utterance`, parses the trailer, updates state, checks consensus. Contains `Orchestrator`, `DialogueController`, `StateTracker`, `ConsensusManager`.
 4. **`parsing.py`** — extracts the machine trailer `[act=…; opt=…; stance=…]` from each generated turn, resolves option references.
@@ -46,7 +58,7 @@ The split is deliberate and load-bearing:
 
 ### Prompt design
 
-The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state, and discourse-frame/claim-slot hints when repetition is detected. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get option names only. The prompt has 3 rules focused on voice, leading with own thought (not recapping), and no stock phrases. After the opening, an alias instruction tells the model to use shorthand for already-discussed options.
+The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona profile). It includes: current lean, one concern, one speaking habit derived from traits, last 2 prior claims, concession state, and discourse-frame/claim-slot hints when repetition is detected. A `_responding_to_line` anchors each turn to the most relevant prior turn. Full option cards are only rendered for COMPARE/VOTE acts; all other acts get option names only. The prompt has 3 rules focused on voice, leading with own thought (not recapping), and no stock phrases. After the opening, an alias instruction tells the model to use shorthand for already-discussed options; aliases come from `OptionCard.short_name` (LLM-generated at setup, e.g. "Ticket to Ride" → "Ride", "Settlers of Catan" → "Catan") with a deterministic fallback for missing/invalid short names.
 
 Face-work modifiers are added to guidance for objection/push-back acts based on persona traits (agreeable speakers soften, neurotic speakers show anxiety, direct speakers skip diplomacy).
 
@@ -61,6 +73,8 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 - **Contribution-based routing**: for n>=4, speakers are skipped when their only available move is restating a known preference. Extraversion and initiative drive turn frequency.
 - **Stall-to-concrete routing**: when discussion stalls (2+ turns no progress), ASK probability doubles and SUPPORT dampens, steering toward concrete questions instead of preference restating.
 - **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`.
+- **No example seeding in guidance**: guidance strings must describe desired behavior, never demonstrate it with quoted phrases (e.g., never `"Try: 'What if we...'"`) — the model copies examples verbatim across all topics.
+- **Epistemic grounding rule**: the per-turn prompt tells the model "you know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check'". This prevents confident invented facts about real-world named places (seating, pricing, amenities not in the cards).
 
 ## Outputs
 
