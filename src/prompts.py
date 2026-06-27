@@ -570,8 +570,8 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
-            return f"Name your pick. {bridge}" + chorus
-        return "State your pick without 'I'm voting for X because' — vary it. One brief reason." + chorus
+            return f"Say the option name explicitly — commit to it. {bridge}" + chorus
+        return "Say the option name out loud and commit to it — 'I'm going with [Name]', '[Name] gets my vote', or similar. One brief personal reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -732,8 +732,8 @@ _REPAIR_HINTS = {
     "REPETITIVE_OPENER": "don't open with 'I' (and not 'we'/'Considering'/'Given' either) — start with the other person's point, a reaction ('fair,', 'true,', 'okay but'), the option/detail itself, or a short question",
     "REPEATED_START": "open with different words than the recent turns — don't start the same way again",
     "SELF_REPETITION": "you already made this point — add something new or move toward deciding",
-    "UNCLEAR_VOTE": "clearly name your final pick",
-    "UNCLEAR_ACCEPT": "clearly say you're agreeing to this option",
+    "UNCLEAR_VOTE": "say the option name explicitly and commit — 'I'm going with [Name]' or '[Name] gets my vote' — no hedging",
+    "UNCLEAR_ACCEPT": "say the option name and confirm you're agreeing to it — 'I can work with [Name]' or '[Name] works for me'",
     "UNCLEAR_REJECT": "clearly state your objection",
     "QUESTION_IN_CONFIRMATION": "make it a statement, not a question",
     "UNWANTED_QUESTION": "don't respond with a question — if answering, give a direct answer or hedge; otherwise make a statement",
