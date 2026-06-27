@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-27 (R11-R28 all fixed; R29 open — low priority).
+Last updated: 2026-06-27 (R11-R28 all fixed; R29-R31 open).
 
 ---
 
@@ -103,3 +103,22 @@ The simulator produces coherent, responsive discussions with natural turn length
 **Root cause:** ROBOTIC_TEMPLATE is warn-only. The prompt forbids "Considering..." but llama3.3 complies inconsistently — some speakers get it, some don't. Without a repair enforcement layer, the phrase leaks into 1-7 turns per run depending on topic.
 
 **Fix candidate:** Escalate the `^\s*considering\b` pattern from warn to repair-level (same escalation used for POSSESSIVE_SUBJECT in R19, REPEATED_START in R20). This adds one LLM repair call per hit but closes the gap. Alternatively, add "Considering" to the REPEATED_START window so it's caught by the dynamic "don't start with X" hint if it appears twice.
+
+---
+
+### R30: ANSWER turns invent facts not in option cards
+
+**Symptom:** When an ANSWER-routed speaker is asked about a service or detail not present in the option's attributes, the model invents a confident answer instead of hedging. Observed: Lila asked "do they have kid-friendly restaurants?" (not in Hilton's card: golf, tennis, beach games); Rina responded "kid-friendly restaurants are available at Hilton, including some with play areas." The fabricated answer then influenced downstream discussion.
+
+**Root cause:** The ANSWER guidance said "Answer if the option cards cover it. If they don't, say you're not sure." But the model treats option cards as *partial* descriptions, not exhaustive ones — so it fills gaps from its own real-world knowledge about the named place (Hilton resorts often do have restaurants). The instruction wasn't explicit that what's not listed is definitively unknown.
+
+**Fix candidate:** Replace ANSWER guidance with: "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the question asks about a service, facility, or detail not in the card, say 'can't confirm that' or 'we'd have to look it up' — never invent facts." (Implemented — pending validation.)
+
+---
+
+### R31: response_length not in trait card; no correlation with extraversion
+
+**Symptom:** The trait card shows `Traits: extra=N agree=N neuro=N` but omits `len=N` (response_length). The model calibrates verbosity from the speaking-habit description and verbosity-note word-count target, but lacks the direct numeric signal. Additionally, response_length and extraversion are sampled independently, allowing combinations like extra=5 / len=1 (very frequent but always terse) or extra=1 / len=5 (rare speaker who gives speeches) — both valid character types but potentially surprising.
+
+**Fix candidate A:** Add `len=N` to the Traits line in `runtime_speaker_card`. Low token cost, gives model direct verbosity calibration. (Implemented — pending validation.)
+**Fix candidate B:** Soft-correlate response_length toward extraversion during sampling (e.g., bias 50/50 blend). Reduces extreme combos but also reduces persona diversity. Deferred — observe real runs first.

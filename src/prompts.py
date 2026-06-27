@@ -442,7 +442,7 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
     t = persona.traits
     lines = [
         f"Speaker: {persona.name}, {persona.role}. Lean: {lean_name}. Voice: {persona.speech_style}.",
-        f"Concern: {concern}. Style: {_speaking_habit(persona)}. Traits: extra={t.extraversion} agree={t.agreeableness} neuro={t.neuroticism}.",
+        f"Concern: {concern}. Style: {_speaking_habit(persona)}. Traits: extra={t.extraversion} agree={t.agreeableness} neuro={t.neuroticism} len={t.response_length}.",
     ]
     if rt.already_said:
         recent = rt.already_said[-2:]
@@ -582,7 +582,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"You're warming up to this. {bridge}"
     if intent.act == ActType.ANSWER:
-        return "Answer if the option cards cover it. If they don't, say you're not sure and move on — don't repeat the question back." + face
+        return "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the question asks about a service, facility, or detail not in the card, say 'can't confirm that' or 'we'd have to look it up' — never invent facts. Don't repeat the question." + face
     by_act = {
         ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'huh interesting'). Don't re-pitch your option." + face,
         ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
