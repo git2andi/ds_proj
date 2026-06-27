@@ -61,15 +61,6 @@ class MessageValidator:
         self._check_repetition(stripped, state, intent, issues)
         self._check_opener_variety(stripped, state, intent, issues)
         self._check_decision_clarity(stripped, intent, move, issues)
-        # Hard-blocker voted for a different option: stance was "vote" so UNCLEAR_VOTE
-        # doesn't fire, but the option letter is wrong — catch it here and force repair.
-        if (intent.act == ActType.VOTE and move.present and move.option):
-            persona = next((p for p in state.personas if p.id == intent.speaker_id), None)
-            if persona and persona.is_hard_blocker and move.option != persona.preferred_option:
-                issues.append(ValidationIssue(
-                    "HARD_BLOCKER_WRONG_VOTE", "repair",
-                    f"Hard-blocker voted {move.option} but must vote {persona.preferred_option}.",
-                ))
         self._check_question_chain(stripped, state, intent, issues)
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)

@@ -96,13 +96,12 @@ class SetupBuilder:
         rows: list[dict[str, Any]] = []
         for idx in range(n):
             pid = f"p{idx + 1}"
-            hard = pid == hard_id
-            traits = self._sample_traits(hard)
+            stubborn = pid == hard_id
+            traits = self._sample_traits(stubborn)
             rows.append({
                 "id": pid,
                 "name": names[idx],
                 "traits": asdict(traits),
-                "hard_blocker": hard,
             })
         return rows
 
@@ -133,13 +132,13 @@ class SetupBuilder:
             camps.setdefault(camp, []).append(pid)
         return [sorted(members, key=lambda p: int(p[1:])) for _, members in sorted(camps.items())]
 
-    def _sample_traits(self, hard_blocker: bool) -> TraitProfile:
+    def _sample_traits(self, stubborn: bool) -> TraitProfile:
         controls = cfg.personas.cooperative_controls
         compromise = sample_range(controls.compromise_willingness)
         agree = sample_int_range(cfg.personas.trait_ranges.agreeableness)
-        if hard_blocker:
+        if stubborn:
             compromise = sample_range(cfg.personas.hard_blocker_compromise)
-            agree = min(agree, int(cfg.personas.trait_min) + 1)
+            agree = int(cfg.personas.trait_min)  # agreeableness=1 signals extreme stubbornness
         return TraitProfile(
             openness=sample_int_range(cfg.personas.trait_ranges.openness),
             conscientiousness=sample_int_range(cfg.personas.trait_ranges.conscientiousness),
@@ -200,7 +199,6 @@ class SetupBuilder:
         if not isinstance(rows, list):
             raise ValueError("participants must be a list")
         traits_by_id = {row["id"]: self._trait_from_row(row) for row in trait_rows}
-        hard_by_id = {row["id"]: bool(row.get("hard_blocker")) for row in trait_rows}
         names_by_id = {row["id"]: row.get("name", "") for row in trait_rows}
         personas: list[Persona] = []
         for idx, row in enumerate(rows[: len(trait_rows)]):
@@ -211,7 +209,7 @@ class SetupBuilder:
                 pid = f"p{idx + 1}"
             if names_by_id.get(pid):
                 row["name"] = names_by_id[pid]
-            personas.append(self._persona_from_row(row, traits_by_id[pid], hard_by_id.get(pid, False), scenario, idx, pid))
+            personas.append(self._persona_from_row(row, traits_by_id[pid], scenario, idx, pid))
         if len(personas) != len(trait_rows):
             raise ValueError("wrong number of participants")
         return personas
@@ -221,7 +219,8 @@ class SetupBuilder:
         raw = row["traits"]
         return TraitProfile(**raw)
 
-    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, hard: bool, scenario: Scenario, idx: int, pid: str) -> Persona:
+    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, scenario: Scenario, idx: int, pid: str) -> Persona:
+        stubborn = traits.agreeableness == int(cfg.personas.trait_min)
         labels = scenario.option_ids
         preferred = str(row.get("preferred_option") or "").strip().upper()
         if preferred not in labels:
@@ -230,7 +229,7 @@ class SetupBuilder:
         if preferred not in acceptable:
             acceptable.insert(0, preferred)
         soft = self._clean_option_list(row.get("soft_rejections", []), labels)
-        hard_rej = self._clean_option_list(row.get("hard_rejections", []), labels) if hard else []
+        hard_rej = self._clean_option_list(row.get("hard_rejections", []), labels) if stubborn else []
         reasons_raw = row.get("reasons", {})
         reasons: dict[str, list[str]] = {}
         if isinstance(reasons_raw, dict):
@@ -243,7 +242,7 @@ class SetupBuilder:
         if not reasons.get(preferred):
             raise ValueError(f"participant {pid} gave no reason for preferred option {preferred}")
         acceptable = list(dict.fromkeys(acceptable))
-        soft = soft[: int(cfg.personas.non_blocker_max_soft_rejections) if not hard else len(soft)]
+        soft = soft[: int(cfg.personas.non_blocker_max_soft_rejections) if not stubborn else len(soft)]
         scores = self._build_scores(row.get("scores"), labels, preferred, acceptable, soft, hard_rej, pid)
         return Persona(
             id=pid,
@@ -262,7 +261,6 @@ class SetupBuilder:
             reservation=_require(row.get("reservation"), f"participant {pid} reservation"),
             reconsider_if=_require(row.get("reconsider_if"), f"participant {pid} reconsider_if"),
             option_scores=scores,
-            is_hard_blocker=hard,
         )
 
     @staticmethod
@@ -342,17 +340,17 @@ class SetupBuilder:
                 if new_pref not in persona.acceptable_options:
                     persona.acceptable_options.insert(0, new_pref)
                 persona.reasons.setdefault(new_pref, [self._default_reason(scenario.option(new_pref))])
-        # Ensure a common compromise among non-hard-blockers when requested.
+        # Ensure a common compromise among non-stubborn participants when requested.
         if bool(cfg.personas.require_common_compromise):
             counts = {opt: 0 for opt in labels}
             for persona in personas:
-                if persona.is_hard_blocker:
+                if persona.traits.agreeableness == 1:
                     continue
                 for opt in set(persona.acceptable_options + [persona.preferred_option]):
                     counts[opt] += 1
             common = max(labels, key=lambda opt: counts[opt])
             for persona in personas:
-                if not persona.is_hard_blocker and common not in persona.acceptable_options:
+                if persona.traits.agreeableness > 1 and common not in persona.acceptable_options:
                     persona.acceptable_options.append(common)
                     persona.reasons.setdefault(common, [self._default_reason(scenario.option(common))])
         # Resolve contradictory stance: an option can't be both "acceptable" and "rejected".
@@ -402,7 +400,7 @@ class SetupBuilder:
         for persona in personas:
             if persona.preferred_option not in labels:
                 raise ValueError("invalid preferred option")
-            if not persona.is_hard_blocker and len(persona.acceptable_options) < int(cfg.personas.non_blocker_min_acceptable):
+            if persona.traits.agreeableness > 1 and len(persona.acceptable_options) < int(cfg.personas.non_blocker_min_acceptable):
                 raise ValueError("normal participant has too few acceptable options")
 
     @staticmethod

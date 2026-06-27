@@ -114,13 +114,13 @@ Trait/control profiles to use exactly by id:
 
 Requirements:
 - Everyone should try to reach a workable group decision.
-- Normal participants need at least {cfg.personas.non_blocker_min_acceptable} acceptable options including their preferred option.
+- Participants with agreeableness ≥ 2 need at least {cfg.personas.non_blocker_min_acceptable} acceptable options including their preferred option.
+- A participant with agreeableness=1 is deeply resistant to compromise: they hold a strong personal conviction and their acceptable_options should contain only their preferred option. Their backstory must reflect this conviction.
 - "scores" rates every option {cfg.scenario.score_min}-{cfg.scenario.score_max} for that person ({cfg.scenario.score_max}=loves it, {cfg.scenario.score_min}=cannot accept). Make scores consistent with the labels: preferred highest, acceptable options {cfg.scenario.acceptance_score} or above, rejected options below {cfg.scenario.acceptance_score}.
-- Hard blockers are allowed only when the supplied trait profile says hard_blocker=true.
 - Preferred-option groups (participants in the SAME group share ONE preferred option; different groups must prefer DIFFERENT options):
 {group_lines}
 - Even when participants share a preferred option, give them distinct roles, reasons, and concerns so they don't sound identical.
-- At least one option should be acceptable to all non-hard-blockers so compromise is possible.
+- At least one option should be acceptable to all participants with agreeableness ≥ 2 so compromise is possible.
 - Reasons must be grounded only in the option cards above.
 - Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
 - Persona consistency: a participant's role, main_concern, and preferred_option must be compatible. A "quiet reader" prefers a calm low-key option; an "adventure seeker" prefers a high-energy option. Never assign someone a preferred option whose core attributes directly contradict their stated role and concern unless their backstory explicitly explains the contradiction.
@@ -744,7 +744,6 @@ _REPAIR_HINTS = {
     "COLLECTIVE_VOICE": "this is your own view, not the committee's — speak for yourself, not 'we'/'our'",
     "CARD_READING": "don't parrot the option card's description — put it in your own words",
     "SELF_NARRATION": "don't narrate your thinking ('I should consider', 'I need to prioritize') — just say the thing directly",
-    "HARD_BLOCKER_WRONG_VOTE": "vote for your own preferred option — you won't back any other choice",
 }
 
 
@@ -766,10 +765,6 @@ def repair_utterance(
         words = original_text.split()[:3]
         if words:
             hints["REPEATED_START"] = f"don't start with '{' '.join(words)}' — use a completely different first word or phrase"
-    if "HARD_BLOCKER_WRONG_VOTE" in issue_codes:
-        pref = persona.preferred_option
-        opt = state.scenario.option(pref)
-        hints["HARD_BLOCKER_WRONG_VOTE"] = f"vote for {opt.id}={opt.name} — that is your fixed position, you won't back any other choice"
     fixes = "; ".join(dict.fromkeys(hints.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
     option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)

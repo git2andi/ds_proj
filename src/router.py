@@ -81,10 +81,8 @@ class TurnRouter:
             return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
         ordered = others if others else unvoted
         for persona in ordered:
-            if persona.is_hard_blocker:
-                focus = [persona.preferred_option]
-            else:
-                focus = [state.runtimes[persona.id].current_preference or persona.preferred_option]
+            focus = ([persona.preferred_option] if persona.traits.agreeableness == 1
+                     else [state.runtimes[persona.id].current_preference or persona.preferred_option])
             return MoveIntent(
                 speaker_id=persona.id,
                 act=ActType.VOTE,
@@ -117,7 +115,7 @@ class TurnRouter:
                 (candidate in persona.acceptable_options or candidate == persona.preferred_option
                  or persona.score_for(candidate) >= threshold)
                 and candidate not in persona.hard_rejections
-                and not (persona.is_hard_blocker and candidate != persona.preferred_option)
+                and not (persona.traits.agreeableness == 1 and candidate != persona.preferred_option)
             )
             candidates.append((persona, can_accept))
         for persona, can_accept in candidates:
@@ -352,7 +350,7 @@ class TurnRouter:
         of mind voiced in the chat, not just a silent tally shift. Routed as SUPPORT of
         that option so the state tracker moves their leaning toward it."""
         persona = state.persona_by_id(speaker_id)
-        if persona.is_hard_blocker:
+        if persona.traits.agreeableness == 1:
             return None
         rt = state.runtimes[speaker_id]
         # Nobody folds before they've actually voiced and held their pick a couple of times —

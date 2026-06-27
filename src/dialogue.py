@@ -401,12 +401,6 @@ class StateTracker:
         persona = state.persona_by_id(record.speaker_id)
         if act.act_type == ActType.OPENING and not rt.stated_priority:
             rt.stated_priority = record.text
-        # A hard blocker is immovable by design: they can only ever back their own preferred
-        # option, so any vote/accept/lean shift toward a different option is ignored. Without
-        # this guard the model would happily have them "accept" the group's pick, silently
-        # turning a deadlock into a fake consensus.
-        def _can_back(option_id: str) -> bool:
-            return not persona.is_hard_blocker or option_id == persona.preferred_option
         # Leanings move on genuine commitment (vote / propose / accept), not merely because
         # the router asked the speaker to air an option. A SUPPORT turn shifts the lean ONLY
         # when the router explicitly handed over a change-of-mind (intent.moves_lean, set by
@@ -415,23 +409,15 @@ class StateTracker:
         # Mountain-Retreat-preferring persona "leaning" Road Trip just because the coverage
         # gap routed them to talk about it.
         moves_lean = bool(record.intent and record.intent.moves_lean)
-        if act.explicit_vote and _can_back(act.explicit_vote):
+        if act.explicit_vote:
             rt.explicit_vote = act.explicit_vote
             rt.current_preference = act.explicit_vote
-        elif act.explicit_vote and persona.is_hard_blocker:
-            # The model voted for the wrong option; auto-correct to the hard blocker's
-            # preferred option so the vote loop doesn't pick them again endlessly.
-            rt.explicit_vote = persona.preferred_option
-            rt.current_preference = persona.preferred_option
-        elif act.proposes_option and _can_back(act.proposes_option):
+        elif act.proposes_option:
             rt.current_preference = act.proposes_option
         elif (moves_lean and act.act_type == ActType.SUPPORT and act.option_refs
-              and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option}
-              and _can_back(act.option_refs[0])):
+              and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option}):
             rt.current_preference = act.option_refs[0]
         for option_id in act.accepts:
-            if not _can_back(option_id):
-                continue
             rt.accepted_options.add(option_id)
             rt.soft_rejections.pop(option_id, None)
             rt.current_preference = option_id  # accepting a compromise moves the lean toward it

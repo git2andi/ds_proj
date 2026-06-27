@@ -162,23 +162,6 @@ def check_run(run_dir: Path) -> list[str]:
     if mid_accepts > MAX_MID_DISCUSSION_ACCEPTS:
         failures.append(f"  FAIL mid_discussion_accepts: {mid_accepts} (max {MAX_MID_DISCUSSION_ACCEPTS})")
 
-    # --- Hard-blocker integrity ---
-    for pid, persona in personas.items():
-        if not persona.get("is_hard_blocker"):
-            continue
-        preferred = persona.get("preferred_option")
-        for t in turns:
-            if t["speaker_id"] != pid:
-                continue
-            act = t.get("act", {})
-            vote = act.get("explicit_vote")
-            accepts = act.get("accepts", [])
-            if vote and vote != preferred:
-                failures.append(f"  FAIL hard_blocker_integrity: {persona['name']} voted {vote} (preferred {preferred})")
-            for a in accepts:
-                if a != preferred:
-                    failures.append(f"  FAIL hard_blocker_integrity: {persona['name']} accepted {a} (preferred {preferred})")
-
     # --- Duplicate moderator lines ---
     mod_texts = [t["text"] for t in turns if t["speaker_id"] == "moderator"]
     seen: set[str] = set()

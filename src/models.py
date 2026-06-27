@@ -123,7 +123,6 @@ class Persona:
     reservation: str
     reconsider_if: str
     option_scores: dict[str, int] = field(default_factory=dict)  # hidden 1..5 utility per option
-    is_hard_blocker: bool = False
 
     def score_for(self, option_id: str) -> int:
         return self.option_scores.get(option_id, 3)

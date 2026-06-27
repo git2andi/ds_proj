@@ -61,8 +61,8 @@ class DialogueLogger:
             lines.append(f"- {option.public_line()}")
         lines += ["", "## Participants", ""]
         for persona in state.personas:
-            hard = " hard-blocker" if persona.is_hard_blocker else ""
-            lines.append(f"### {persona.name} ({persona.role}){hard}")
+            stubborn = " stubborn" if persona.traits.agreeableness == 1 else ""
+            lines.append(f"### {persona.name} ({persona.role}){stubborn}")
             lines.append(
                 f"traits: open={persona.traits.openness} consc={persona.traits.conscientiousness} "
                 f"extra={persona.traits.extraversion} agree={persona.traits.agreeableness} "
@@ -166,7 +166,7 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
         "run_id": run_id,
         "topic": state.scenario.topic,
         "num_participants": len(state.personas),
-        "hard_blocker": any(p.is_hard_blocker for p in state.personas),
+        "stubborn_participant": any(p.traits.agreeableness == 1 for p in state.personas),
         **scalar,
     }
 
