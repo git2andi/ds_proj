@@ -671,10 +671,15 @@ def sim_utterance(
     # Derive the name to address: explicit addressee first, then extract from the
     # responding line for ANSWER/REACT so the model always has a cue to name-drop.
     effective_address = addressee_name
+    derived_address = None
     if not effective_address and intent.act in {ActType.ANSWER, ActType.REACT} and responding.startswith("Responding to "):
-        effective_address = responding[len("Responding to "):].split(":")[0]
-    address_rule = (f"\n- Use {effective_address}'s name once in your response."
-                    if effective_address else "")
+        derived_address = responding[len("Responding to "):].split(":")[0]
+    if effective_address:
+        address_rule = f"\n- Use {effective_address}'s name once in your response."
+    elif derived_address:
+        address_rule = f"\n- You can use {derived_address}'s name if it flows naturally — don't force it."
+    else:
+        address_rule = ""
     rt = state.runtimes[persona.id]
     frame_hint = recent_frame_hint(_collect_recent_frames(state), rt.discourse_frames)
     frame_line = f"\n{frame_hint}" if frame_hint else ""
