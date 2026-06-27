@@ -77,6 +77,17 @@ Last updated: 2026-06-27. F1–F55 fixed (F14, F18, F50 removed — contradicted
 
 ---
 
+**F61** UNCLEAR_VOTE guidance confusing — "State your pick without 'I'm voting for X because'" read as "be vague" → rewritten: "Say the option name out loud and commit to it." Repair hint sharpened to match. (2026-06-27)
+**F62** "Considering X, Y" opener survives through repair (model regenerates it) → deterministic strip `_strip_considering_opener()` added to `clean_generated()`; removes the dependent clause before validation runs. (2026-06-27)
+
+---
+
 ## Open items
 
-No tracked open items. Add new observations here as they surface in validation runs.
+### R39 — Invented qualitative facts about rejected options (new, low priority)
+**Symptom:** Speaker rejects an option by inventing a flaw not in the cards: "Junction's slow refills". Epistemic check only catches numbers and specific attribute claims, not invented qualitative details about rejected options.
+**Fix candidate:** Extend `INVENTED_OPTION_ATTRIBUTE` detection to catch phrases like "[option]'s [noun]" or "[option]'s [adj] [noun]" when [noun] is not an attribute in the card. Difficult because it's hard to distinguish paraphrase from invention.
+
+### R40 — AI-filler phrases ("that's a great question", "great point") slip through
+**Symptom:** Appears ~1/run. Sounds AI-ish but not caught by current templates.
+**Fix candidate:** Add to `_ROBOTIC_TEMPLATES` + rule 3 banned list. Low priority — appears infrequently.
