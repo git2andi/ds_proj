@@ -592,7 +592,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
         ActType.COMPARE: "One genuine strength of theirs; one concrete reason yours fits you better. No attribute lists, no templates." + face,
         ActType.SUPPORT: "Back this from your angle — a personal reason or past experience, not the spec sheet." + face,
-        ActType.OBJECT: "Name your specific worry. One concrete thing, not a general critique." + face,
+        ActType.OBJECT: "Name your specific worry. One concrete thing from the option card — don't invent flaws not mentioned there." + face,
         ActType.PUSH_BACK: "Push back on the exact claim just made." + face,
         ActType.PROPOSE_COMPROMISE: "Name the fix directly — skip 'What if we' and 'How about we'." + face,
     }
@@ -711,7 +711,7 @@ Guidance: {guidance}
 Rules:
 - One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
 - Vary your opener each turn — fragments, reactions, direct points. Lead with your own thought, not a recap.{address_rule}
-- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick', 'do they offer', 'why that matters'). You know only what's in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
+- No stock phrases ('outweighs', 'great question', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick', 'do they offer', 'why that matters'). You know only what's in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 

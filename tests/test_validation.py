@@ -136,6 +136,8 @@ class TestRoboticPhrasing:
         "Ride edges ahead for me because of the playtime.",
         "Do they offer a group discount at Mountain Retreat?",
         "The views are stunning, why that matters is we have seniors.",
+        "That's a great question, I hadn't thought of that.",
+        "That is a good question actually.",
     ])
     def test_robotic_detected(self, validator, state, text):
         assert "ROBOTIC_TEMPLATE" in _validate(validator, text, state).codes()

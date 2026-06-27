@@ -297,6 +297,7 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\b(?:is|are)\s+(?:key|crucial|essential|paramount)\s+(?:for|to)\s+me\b", re.I),
     re.compile(r"\bdo they offer\b", re.I),
     re.compile(r"\bwhy that matters\b", re.I),
+    re.compile(r"\bthat(?:'?s|\s+is)\s+a\s+(?:great|good|fair|valid|excellent)\s+(?:question|point|observation|call)\b", re.I),
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance

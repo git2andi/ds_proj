@@ -28,7 +28,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 LOGS = ROOT / "logs"
 SCENARIOS = Path(__file__).resolve().parent / "scenarios.yaml"
-PYTHON = ROOT / "dspro" / "Scripts" / "python.exe"
+PYTHON = ROOT / "ds_proj" / "Scripts" / "python.exe"
 CONFIG = ROOT / "config.yaml"
 
 # ---------------------------------------------------------------------------
