@@ -110,6 +110,24 @@ class TestDecisionClarity:
                        move=TurnMove(present=True, stance="accept", option="A"))
         assert "QUESTION_IN_CONFIRMATION" in r.codes()
 
+    def test_hard_blocker_wrong_vote_triggers_repair(self, validator, state):
+        from dataclasses import replace
+        # Make p1 a hard-blocker who prefers A; model voted for B
+        state.personas[0] = replace(state.personas[0], is_hard_blocker=True, preferred_option="A")
+        r = _validate(validator, "Beach Resort gets my vote.", state,
+                       intent=make_intent(speaker_id="p1", act=ActType.VOTE),
+                       move=TurnMove(present=True, stance="vote", option="B"))
+        assert "HARD_BLOCKER_WRONG_VOTE" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "HARD_BLOCKER_WRONG_VOTE")
+
+    def test_hard_blocker_correct_vote_passes(self, validator, state):
+        from dataclasses import replace
+        state.personas[0] = replace(state.personas[0], is_hard_blocker=True, preferred_option="A")
+        r = _validate(validator, "Mountain Retreat gets my vote.", state,
+                       intent=make_intent(speaker_id="p1", act=ActType.VOTE),
+                       move=TurnMove(present=True, stance="vote", option="A"))
+        assert "HARD_BLOCKER_WRONG_VOTE" not in r.codes()
+
 
 # ── Question chain ─────────────────────────────────────────────────────
 

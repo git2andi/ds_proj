@@ -744,6 +744,7 @@ _REPAIR_HINTS = {
     "COLLECTIVE_VOICE": "this is your own view, not the committee's — speak for yourself, not 'we'/'our'",
     "CARD_READING": "don't parrot the option card's description — put it in your own words",
     "SELF_NARRATION": "don't narrate your thinking ('I should consider', 'I need to prioritize') — just say the thing directly",
+    "HARD_BLOCKER_WRONG_VOTE": "vote for your own preferred option — you won't back any other choice",
 }
 
 
@@ -765,6 +766,10 @@ def repair_utterance(
         words = original_text.split()[:3]
         if words:
             hints["REPEATED_START"] = f"don't start with '{' '.join(words)}' — use a completely different first word or phrase"
+    if "HARD_BLOCKER_WRONG_VOTE" in issue_codes:
+        pref = persona.preferred_option
+        opt = state.scenario.option(pref)
+        hints["HARD_BLOCKER_WRONG_VOTE"] = f"vote for {opt.id}={opt.name} — that is your fixed position, you won't back any other choice"
     fixes = "; ".join(dict.fromkeys(hints.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
     option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)

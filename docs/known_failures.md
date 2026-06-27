@@ -79,15 +79,14 @@ Last updated: 2026-06-27. F1–F55 fixed (F14, F18, F50 removed — contradicted
 
 **F61** UNCLEAR_VOTE guidance confusing — "State your pick without 'I'm voting for X because'" read as "be vague" → rewritten: "Say the option name out loud and commit to it." Repair hint sharpened to match. (2026-06-27)
 **F62** "Considering X, Y" opener survives through repair (model regenerates it) → deterministic strip `_strip_considering_opener()` added to `clean_generated()`; removes the dependent clause before validation runs. (2026-06-27)
+**F63** Hard-blocker voted for non-preferred option: UNCLEAR_VOTE didn't fire (stance was "vote", only option letter was wrong) → `HARD_BLOCKER_WRONG_VOTE` validation check added; fires repair with named option hint when hard-blocker trailer names a different option. (2026-06-27)
+**F64** R39: OBJECT guidance now says "from the option card — don't invent flaws not mentioned there". Closes gap where epistemic rule covered positive claims but not negative invented attributes. (2026-06-27)
+**F65** R40: "that's a great question / that is a good question" added to `_ROBOTIC_TEMPLATES`; "valid point" swapped for "great question" in sim_utterance rule 3 banned list (still 9 phrases; "valid point" already caught by broader pattern). (2026-06-27)
 
 ---
 
 ## Open items
 
-### R39 — Invented qualitative facts about rejected options (new, low priority)
-**Symptom:** Speaker rejects an option by inventing a flaw not in the cards: "Junction's slow refills". Epistemic check only catches numbers and specific attribute claims, not invented qualitative details about rejected options.
-**Fix candidate:** Extend `INVENTED_OPTION_ATTRIBUTE` detection to catch phrases like "[option]'s [noun]" or "[option]'s [adj] [noun]" when [noun] is not an attribute in the card. Difficult because it's hard to distinguish paraphrase from invention.
-
-### R40 — AI-filler phrases ("that's a great question", "great point") slip through
-**Symptom:** Appears ~1/run. Sounds AI-ish but not caught by current templates.
-**Fix candidate:** Add to `_ROBOTIC_TEMPLATES` + rule 3 banned list. Low priority — appears infrequently.
+None. All known issues resolved. New issues found in the 20-run verification batch (2026-06-27):
+- "do they offer" cascade persists in budget-heavy topics when multiple participants repeat the same pricing question. Warn-only (ROBOTIC_TEMPLATE + SELF_REPETITION caught but not always repairable in one pass). Not tracked as separate issue — inherent to the topic type.
+- `zero_question_density` WARN fires on fast-converging small groups where everyone agrees quickly. Not a structural problem.
