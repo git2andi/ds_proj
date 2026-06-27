@@ -1,117 +1,121 @@
 # Known Failures
 
-Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
-
-Last updated: 2026-06-27 (R11-R31 all fixed; R29 and R32 open — R29 is priority).
+Last updated: 2026-06-27. F1–F52 fixed. Open: R29, R32–R38.
 
 ---
 
-## How to implement fixes
+## Implementation process
 
-Every change follows this process — no exceptions:
-
-1. **Pick one item** from the priority list below.
-2. **Implement the fix.** Run `pytest tests/` to verify nothing breaks.
-3. **Validate with example runs.** One n=3 run is mandatory. Then pick 5-6 more from n=2–7, using a randomly selected topic from `evals/topics.txt`. Always use the `uni` provider.
-4. **Read the transcripts.** Evaluate whether the change actually improved things. Check for regressions — did something else get worse?
-5. **If new issues surface**, add them directly to this file before moving on.
-6. **Update** CLAUDE.md, known_failures.md, memories and/or skills to be always up to date with the latest changes.
-7. **Only when all runs are complete and reviewed**, move to the next item.
-
-Do not batch multiple fixes before validating. One fix, validate, evaluate, then next.
+1. Pick one item from the priority list.
+2. Implement. Run `pytest tests/`.
+3. Validate: one n=3 run mandatory, then 5-6 more from n=2–7 with random topics from `evals/topics.txt`. Provider: `uni` always.
+4. Read transcripts. Did it improve? Any regressions?
+5. New issues → add here before continuing.
+6. Update CLAUDE.md, memories. Only then move to next item.
 
 ---
 
-## Current state
+## Fixed (F1–F52)
 
-The simulator produces coherent, responsive discussions with natural turn lengths, persona-specific voice, and concrete concessions. Decision mechanics work. Remaining issues are model-dependent (llama3.3 compliance with prompt instructions).
-
-- **decision mechanics:** working — consensus, fallback, unresolved outcomes distinct,
-- **grounding:** working — responding-to anchoring, room-questions routed to option champions,
-- **repair / malformed output:** low on most topics (5–15%); some topic/persona combos reach 20–38% (model-dependent),
-- **moderator:** diagnostic before directive, stall window scales with group size, topic-appropriate closures,
-- **persona voice:** two-signal speaking habits (12 primary branches, all traits covered), face-work modifiers for REACT/SUPPORT/COMPARE/OBJECT/PUSH_BACK,
-- **concessions:** option-specific with persona's reservation referenced,
-- **option generation:** specific realistic names with concrete comparable attributes.
-
----
-
-## Fixed
-
-- **F1–F10:** Structural issues (mid-discussion accept counting, hard-blocker folding, self-narration, duplicate moderator lines, setup instability, excessive repair, interaction grounding, outcome categories, compromise mechanisms) — all resolved.
-- **O1:** Argument-card turns → situated reactions via prompt rewrite and discourse-frame tracking.
-- **O2:** Option name overuse → alias instruction after opening (~70% model compliance).
-- **O3:** Persona differences → behavioral speaking habits ("blunt — cuts to the chase", "worrier — flags what could go wrong").
-- **O4:** Social face-work → trait-based modifiers for objection/push-back acts.
-- **O5:** Preference shifts → concrete concession bridges referencing option name and persona's reservation.
-- **O6:** Consensus too coarse → hedged accept detection ("still not sure", "not fully sold") clamped to neutral.
-- **O7:** Moderator imposed → diagnostic questions, participant names in prompts, stall window scales with n.
-- **O8:** Practical constraints late → stall-to-concrete routing (ASK doubled after 2+ no-progress turns).
-- **O9:** Endings thin → topic-appropriate closure (no generic "book it"), specific blocker naming.
-- **O10:** Surface artifacts → deterministic cleanup of space-before-punctuation, repeated punctuation, stray quotes.
-- **O11:** Turn-taking too balanced → extraversion/initiative weight, reduced catch-up boost for n>=5.
-- **O12:** Large groups → skip-if-nothing-new for n>=4 when option already well-covered.
-- **Room questions ignored** → genuine questions to the room now registered and routed to option champion.
-- **Moderator too early for large groups** → stall window = base + max(0, n-3), minimum participant turns = n*2.
-- **R6: No shared decision-situation context** → `shared_context` field added to Scenario dataclass, setup prompt, moderator opening, and per-turn prompt. 2-3 stable situational facts generated alongside options.
-- **R7: Participant names lack variety** → 48-name diverse pool in `builders.py`, pre-sampled and enforced in parser.
-- **R1: Stock phrases persist** → deterministic `fix_stock_phrases` rewrites "is a must for me" → "matters to me", "major draw" → "appeals to me" etc. in `clean_generated`. No LLM call.
-- **R5: Repetitive agreement loops** → when concentration_score == 1.0 and no_progress_count >= 2, force narrowing transition.
-- **R2: Farewell lines stiff** → explicit ban of formal closers in farewell prompt ("looking forward to", "confirmed and set", "satisfied with", "have a great day").
-- **R3: Full option names after opening** → `_short_alias` generates concrete 2-word aliases from option names, shown in the alias instruction. Model shortens consistently.
-- **R8: Bad alias truncation** → `_short_alias` used to blindly take first 2 words, producing "Wine and", "Settlers of", "Ticket to". Fixed: `OptionCard` now has a `short_name` field generated by the setup LLM (e.g. "Ticket to Ride" → "Ride", "Settlers of Catan" → "Catan", "Carcassonne" → "Carc"). `_clean_short_name` in `builders.py` rejects any LLM output that ends on a stopword. Deterministic fallback upgraded: 3-word names use the full name; 4+ word names skip word[1] if it is a dangling conjunction/preposition.
-- **R4: Named addressee rate low** → address rule now encourages using addressee's name once in the message.
-- **R9: Linguistic template leakage** → seven turn-patterns ("X seems like a good fit", "X still beats Y", "What if we...", "Wait, what about...", "works for me", "Giving up X, gaining Y", "I'm voting for X because") repeated across unrelated topics, making all speakers sound like one hidden agent. Root cause: guidance strings in `_concession_bridge`, `_face_work`, and `_move_guidance` in `prompts.py` literally contained these phrases as examples, seeding them verbatim. Fixed by: (1) rewriting `_concession_bridge` to use persona-specific conditional bridges referencing `opt` and `worry` without template verbiage; (2) replacing `"Frame it as 'what if we...'"` with description-only guidance; (3) removing "Try: '...'" examples from PROPOSE_COMPROMISE; (4) removing seeded phrases from ACCEPT/VOTE/COMPARE/REACT guidance strings; (5) adding `seems like a good fit` and `still beats/wins` to `_ROBOTIC_TEMPLATES` in `validation.py`; (6) adding `what_if_opener` and `wait_what_about` patterns to `_FRAME_PATTERNS` for variety-hint injection. Validated: all seven patterns eliminated across 3 runs.
-- **R10: Invented context** → speakers asserted real-world facts not in the option cards ("big room in back", "group deals", "happy hour", etc.), especially for topics with named real-world places (cafes, restaurants). Root cause: model draws on training knowledge of real places rather than staying within the cards. Fixed by replacing the per-turn "hedge invented facts" rule with a stronger epistemic constraint: "You know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check', never a confident claim." Result: speakers now use "we'd need to check their seating capacity" and "if they have one" instead of asserting invented attributes. Also updated `_REPAIR_HINTS` for `INVENTED_OPTION_ATTRIBUTE` and `UNGROUNDED_NUMERIC_FACT` to suggest hedging. Validated: confident invented claims eliminated in re-run of cafe topic (hardest case for this issue).
-
-- **R11: "edges ahead" template** → phrase appeared 3× per run across different speakers (board game and restaurant topics). Root cause: `_move_guidance()` COMPARE guidance said "where yours edges ahead" — exact phrase the model copied verbatim (same class as R9). Fixed by: (1) rewriting COMPARE guidance to "Acknowledge one genuine plus of theirs, then say why you'd still pick yours. No attribute lists."; (2) adding `re.compile(r"\bedges?\s+ahead\b", re.I)` to `_ROBOTIC_TEMPLATES` in `validation.py`; (3) adding 'edges ahead' to the banned stock-phrases list in rule 3 of `sim_utterance`. Test added. Validated: phrase absent across 2 new runs (board game + restaurant).
-- **R12: Question echo in ANSWER turns** → when routed to answer an unanswerable question (not covered by option cards), the model copied the question back verbatim instead of hedging — producing 3-question echo chains (Tala→Diego→Tala all asking the same question about train car count). Root cause: `ActType.ANSWER` had no explicit guidance in `_move_guidance()`, falling through to the generic "Respond to the last point directly." Fixed by adding an explicit ANSWER case: "Answer if the option cards cover it. If they don't, say you're not sure and move on — don't repeat the question back." Validated: echo chain eliminated in board game re-run; residual mild echo (2 turns, warn-level only) in restaurant run when the echoing turn is not ANSWER-routed.
-- **R13: Question echo deterministic backstop** → prompt guidance alone (R12) didn't prevent 2-turn question echoes when the echoing turn is non-ANSWER-routed (GROUP_REPETITION fired as warn-only, so no repair). Fixed in `validation.py` `_check_repetition`: when GROUP_REPETITION fires and both the current and the matched turn contain "?", issue `QUESTION_ECHO` at repair level instead of GROUP_REPETITION at warn. Repair hint: "don't re-ask what was just asked — if the cards don't say, hedge and move on." Two tests added. Validated: QUESTION_ECHO repairs triggered=0 in restaurant re-run (echo never occurred; prompt+backstop together prevent it).
-- **R14: "still pick" template** → phrase "I'd still pick X because..." appeared 3–4× per run across all speakers in 4/6 new runs (farewell gift, sci-fi, framework, TV series). Root cause: R11's COMPARE guidance fix introduced the replacement phrase "why you'd still pick yours" — same R9/R11 class of template seeding. Fixed by: (1) rewriting COMPARE guidance to "One genuine strength of theirs; one concrete reason yours fits you better. No attribute lists, no templates." — no verb phrase that can be lifted as a sentence; (2) adding `re.compile(r"\bstill\s+pick\b", re.I)` to `_ROBOTIC_TEMPLATES`; (3) adding 'still pick' to banned stock-phrases list in rule 3. Validated: phrase absent in re-runs of farewell gift and sci-fi (both eval-clean, echoed dropped from 4→1 and 2→0 respectively).
-- **R15: Back-to-back routing at opening→answer boundary** → a speaker could get two consecutive turns when (a) they were next in the opening queue and (b) the router immediately routed them to ANSWER a question raised by someone else's opening statement. Root cause: `next_intent()` checks `state.open_questions` after the opening phase ends, with no guard for the last participant speaker. Fixed in `router.py`: before emitting a question-answer `MoveIntent`, check if `target == last_participant.speaker_id`; if so, skip (question stays queued and is picked up after someone else speaks). Validated: back-to-back eliminated in farewell gift re-run.
-
----
-
-- **R16: Moderator cuts off open question at closure** → when a participant generated a question on an ACCEPT-routed turn in the confirmation phase, two paths led to the moderator closing immediately after — cutting off the unanswered question. Root cause 1: `_INTENT_FALLBACK_STANCE[ActType.ACCEPT] = "accept"` in `parsing.py` — when the model produces no stance in its trailer, the fallback infers an accept; a question text with no trailer triggered this, silently crediting the speaker as having accepted the candidate option, triggering premature consensus. Root cause 2: the CONFIRMATION→CLOSURE timeout (`max_confirmation_turns`) in `DialogueController.update_phase()` had no guard against open questions, so even after fix 1 (question no longer credited as accept), the timeout could still fire and close mid-question. Fixed by: (1) in `_resolve_move()`, after applying `_INTENT_FALLBACK_STANCE`, override stance back to "neutral" if `question_target` is set (the model asked something, so it did not commit); (2) in `update_phase()`, guard the confirmation timeout with `if not state.open_questions:` — `hard_max_turns` still provides the unconditional backstop. Two tests added. Validated: question-before-closure pattern absent in sci-fi re-runs; `unresolved` outcome correctly issued when true disagreement exists.
-
----
-
-- **R17: Fallback outcome uses drifted leading option** → `finalize()` called `leading_candidate(state)` = `leading_option(state)`, which is the live `option_support` score at closure time. After a long confirmation phase with many PROPOSE_COMPROMISE turns, `current_preference` values can drift as speakers propose different options, causing `leading_option` to return an option that nobody explicitly voted for — one with <0.66 support — producing `unresolved` even when 2/3 explicitly voted for the true candidate. Root cause: `leading_option` is a real-time score that changes as preferences drift; the correct fallback target is the option the group narrowed to in the vote round (`state.candidate_option`). Fixed by replacing `self.leading_candidate(state)` with `state.candidate_option or self.leading_candidate(state)` — the confirmed candidate takes priority; `leading_option` is only the fallback when no candidate was set (e.g. if the group never reached narrowing). Validated: 3 runs with clear majority outcomes.
-
----
-
-- **R18: Back-to-back routing in narrowing** → `_vote_intent` moved last speaker to the END of the unvoted list in the `else` branch, but didn't hard-exclude them when others were available. Tightened to: `others = [p for p in unvoted if p.id != last_pid]`; `ordered = others if others else unvoted` — last speaker only votes when they're the sole remaining voter. Sub-fix: when `others` is empty and the only unvoted persona just had a VOTE-routed turn (UNCLEAR_VOTE — their trailer had no valid option, so `explicit_vote` was never set), routing them again immediately caused a consecutive VOTE pair. Guard added: if `not others` and `last_turn.intent.act == ActType.VOTE`, advance straight to CONFIRMATION rather than re-picking the same speaker.
-- **R19: POSSESSIVE_SUBJECT opener** → (a) Escalated from warn to repair level so the model is forced to rewrite possessive openers. (b) Fixed pattern-building: option names with parenthetical annotations (e.g. "Inception (2010)") were stripped of the parenthetical so "Inception's" matches. (c) Added `short_name` patterns so abbreviated forms ("Budapest's" for "The Grand Budapest Hotel") are also caught. Prompt rule moved to Rule 1 (higher weight). Named rate improved to 26–31%.
-- **R20: Repeated openers (REPEATED_START)** → (a) Opener feedback added to `runtime_speaker_card`: last 2 turn openers shown, with "start differently this time" instruction — gives the model concrete context about its own recent openers. (b) REPEATED_START escalated from warn to repair, triggering an LLM rewrite. (c) Repair hint made dynamic: instead of generic "open with different words", the hint now names the exact repeated phrase ("don't start with 'Do they offer' — use a completely different first word or phrase"). Result: REPEATED_START dropped from 11–25 per 10-run batch (warn-only) to 0–3 with repair triggered on each hit.
-- **R21: Named-addressee rate low** → Address rule now fires for ANSWER/REACT acts even without an explicit `addressee_id`: the responding-to name is extracted from the `_responding_to_line` string and injected as a compact "use their name once" instruction. Named rate improved from ~13% to 26–31%.
-- **R23: Back-to-back questions from different speakers** → Hard-zero the ASK act weight in `_select_act` when the immediately preceding participant turn contained "?". The prior `ask_after_question_damping=0.40` was too soft — reduced probability but didn't prevent routing another ASK turn immediately after a question. Hard veto (`probs[ActType.ASK.value] = 0.0`) closes the router-level case. Incidental questions appended to non-ASK turns (REACT/COMPARE) are caught by the QUESTION_ECHO repair backstop (R13). Validated: no back-to-back question pairs in holiday party or programming language runs.
-- **R22: Trait differences not perceptible** → Added compact `Traits: extra=N agree=N neuro=N` line to `runtime_speaker_card` so llama3.3 has numeric calibration signal alongside the speaking-habit description. Validated: terse vs verbose personas now read more distinctly across 5 runs (Isla/Nico terse, Jasper/Yara more elaborate).
-- **R24: Asker routed to answer own question** → In `_best_answerer`, built `other_askers` set from all open questions (excluding the current one), then added two-tier eligibility filter: first prefer non-asker non-other-asker candidates, then fall back to just non-asked_by. Tested with three cases: own question, option champion, cross-question exclusion.
-- **R25: Duplicate substance across speakers** → `covered_slots_hint` was broken — always received `text_slots=[]` so condition `not repeated` was always True and hint never fired. Removed `text_slots` parameter; now fires when `len(covered) >= 3`. Rewrote message to "The group already argued…". Call site updated.
-- **R26: ANSWER-turn echo loop (R13 gap)** → When an ANSWER-routed turn echoed its question (QUESTION_ECHO repair failed, message kept), `_update_questions` re-registered the kept "?" as a new OpenQuestion, cycling indefinitely. Fixed in `StateTracker._update_questions`: if the turn was ANSWER-routed AND `QUESTION_ECHO` is in `validation_issues`, suppress propagation. Validated: holiday party 3-question echo loop eliminated.
-- **R27: SELF_REPETITION skipped for ACCEPT/REJECT intents** → Validation returned early before consulting `already_said` for ACCEPT/REJECT acts ("Confirmations are naturally similar"). This let the exact same sentence repeat 3× on ACCEPT-routed turns without firing (seen: Leo's "Taco Loco offers a unique twist." in restaurant run). Fixed: removed the early-return exemption so SELF_REPETITION checks `already_said` regardless of act type. Added test.
-- **R28: "we'd need to check" epistemic phrase chorus in n=6 run** → Epistemic grounding guidance listed exactly two alternatives ("I'm not sure" or "we'd need to check"), making "we'd need to check" the model's default. 7 consecutive turns in the fictional world run all ended with it. Fixed: expanded to 5 alternatives ("I'm not sure", "can't say", "we'd have to check", "no idea", "unknown to me") with an explicit "vary the phrasing" instruction. Validated: variety improved across all 5 follow-up runs (e.g. "unknown to me", "can't say for sure", "no idea how that would play out").
-- **R30: ANSWER turns inventing facts not in option cards** → Model treated option cards as partial, filling gaps with real-world knowledge (Rina invented "kid-friendly restaurants available at Hilton, including some with play areas" — not in the card). Fixed: ANSWER guidance now explicitly states card attributes are exhaustive — anything not listed is unknown. "Answer only from what the card explicitly states … never invent facts." Validated across 7 runs: proper hedging appearing ("can't confirm that", "unknown to me", "we'd have to look it up", no invented service/facility claims observed).
-- **R31: response_length not in trait card** → Trait card showed `extra/agree/neuro` but omitted `len=N`, leaving the model to infer verbosity only from the speaking-habit description and verbosity-note word count. Added `len=N` to the Traits line. Validated: model now has direct numeric verbosity calibration. Fix candidate B (soft-correlating response_length with extraversion during sampling) deferred — independent sampling produces valid diverse character types.
+**F1** Mid-discussion accepts counted as binding → commitment gating; ACCEPT/VOTE binding only in narrowing/confirmation.
+**F2** Hard-blocker personas folded to non-preferred → only backs preferred; votes elsewhere ignored.
+**F3** Self-narration in turns → banned from prompt.
+**F4** Duplicate moderator lines → deduplication guard.
+**F5** Setup instability (invalid worlds silently defaulted) → raise on unusable setup output.
+**F6** Excessive repair → repair hints targeted; structural errors only trigger LLM repair.
+**F7** No grounding to prior turns → `_responding_to_line` anchors each turn to most relevant prior.
+**F8** Outcome categories too coarse → consensus / fallback / unresolved distinct.
+**F9** No compromise mechanism → PROPOSE_COMPROMISE act with bridge guidance.
+**F10** Argument-card recitation → discourse-frame/claim-slot tracking; situated reactions via prompt rewrite.
+**F11** Option name overuse → alias instruction after opening; ~70% compliance.
+**F12** Flat persona voice → behavioral speaking habits (12 branches covering all traits).
+**F13** No face-work on objections → trait-based modifiers for OBJECT/PUSH_BACK.
+**F14** Preference shifts too abrupt → concession bridges referencing option name + persona reservation.
+**F15** Hedged accepts counted as binding → "still not sure", "not fully sold" clamped to neutral.
+**F16** Moderator always directive → diagnostic questions; stall window scales with n.
+**F17** Practical constraints never surface → stall-to-concrete routing; ASK doubled after 2+ no-progress turns.
+**F18** Generic thin closures → topic-appropriate closure text; specific blocker naming.
+**F19** Surface artifacts (space-before-punctuation etc.) → deterministic cleanup in `clean_generated`.
+**F20** Turn-taking too balanced → extraversion/initiative weight; reduced catch-up boost for n>=5.
+**F21** Large groups repeat known positions → skip-if-nothing-new for n>=4.
+**F22** Room questions unrouted → registered as OpenQuestion; routed to option champion.
+**F23** Moderator interrupts too early for large groups → stall window = base + max(0, n-3).
+**F24** Stock phrases ("is a must for me", "major draw") → deterministic `fix_stock_phrases` in `clean_generated`.
+**F25** Farewell lines stiff → formal closers banned in farewell prompt.
+**F26** Option alias bad truncation ("Wine and", "Settlers of") → `short_name` LLM-generated (e.g. "Ticket to Ride"→"Ride"); `_clean_short_name` rejects stopword-ending; deterministic fallback upgraded.
+**F27** Named-addressee rate low → address rule encourages name once per turn.
+**F28** Repetitive agreement loops → when concentration==1.0 and no_progress>=2, force narrowing transition.
+**F29** No shared situational context → `shared_context` generated at setup; injected into moderator opening and per-turn prompt.
+**F30** Participant names repetitive → 48-name diverse pool pre-sampled in `builders.py`.
+**F31** Seven turn-patterns seeded by guidance strings ("X seems like a good fit", "still beats", "What if we...", etc.) → guidance strings rewritten to describe behavior without quoting phrases; patterns added to `_ROBOTIC_TEMPLATES`.
+**F32** Speakers assert real-world facts not in cards → epistemic constraint: "You know only what's in the option cards." Repair hints updated.
+**F33** "edges ahead" phrase seeded by COMPARE guidance → guidance rewritten; phrase added to `_ROBOTIC_TEMPLATES` + stock-phrases ban.
+**F34** Question echo in ANSWER turns → explicit ANSWER guidance: "don't repeat the question, hedge and move on."
+**F35** 2-turn question echo when non-ANSWER-routed → GROUP_REPETITION on question pairs escalated to QUESTION_ECHO repair.
+**F36** "still pick" phrase seeded by F33's COMPARE rewrite → guidance rewritten again (no verb phrases); "still pick" added to `_ROBOTIC_TEMPLATES`.
+**F37** Back-to-back at opening→answer boundary → guard in `next_intent()` skips ANSWER routing if target just spoke.
+**F38** Moderator closes mid-question in confirmation → (a) question stance override in `_resolve_move`; (b) confirmation timeout guards `if not state.open_questions`.
+**F39** Fallback targets drifted `leading_option` → `finalize()` prefers `state.candidate_option` over live lean score.
+**F40** Back-to-back votes in narrowing → last-speaker excluded from unvoted list; consecutive UNCLEAR_VOTE advances to CONFIRMATION.
+**F41** POSSESSIVE_SUBJECT opener warn→repair → escalated; pattern covers `short_name` forms and names with parentheticals. Named rate 26–31%.
+**F42** Repeated openers → opener feedback in speaker card (last 2 shown); REPEATED_START escalated to repair with dynamic hint naming exact repeated phrase.
+**F43** Named-addressee rate low in ANSWER/REACT without explicit `addressee_id` → responding-to name injected as "use their name once" instruction.
+**F44** Trait differences not perceptible → `Traits: extra=N agree=N neuro=N len=N` added to `runtime_speaker_card`.
+**F45** Back-to-back questions from different speakers → hard-zero ASK weight when preceding participant turn contained "?".
+**F46** Asker routed to answer own question → `_best_answerer` two-tier filter: prefer non-asker non-other-asker candidates first.
+**F47** `covered_slots_hint` never fired (dead code) → broken `text_slots` param removed; fires when `len(covered) >= 3`.
+**F48** ANSWER echo loop (F35 gap) → if ANSWER-routed turn has QUESTION_ECHO in issues, `_update_questions` suppresses propagation.
+**F49** SELF_REPETITION skipped for ACCEPT/REJECT → early-return exemption removed; `already_said` checked for all act types.
+**F50** "we'd need to check" chorus → epistemic alternatives expanded to 5 with "vary the phrasing" instruction.
+**F51** ANSWER turns invent non-card facts → ANSWER guidance states card attributes are exhaustive; "never invent facts."
+**F52** response_length absent from trait card → `len=N` added to Traits line.
 
 ---
 
 ## Open items (priority order)
 
-### R29: "Considering..." opener persisting (warn-only, model non-compliance) — TOP PRIORITY
-
-**Symptom:** Speakers open turns with "Considering the kids…", "Considering our group's size…", "Considering the vibrant arts scene…" despite it being in the prompt's no-stock-phrases list. Detected by `^\s*considering\b` in `_ROBOTIC_TEMPLATES` as warn-level but not repaired. Observed 1-4 hits per run consistently across 14 validation runs. Still present after R27-R31 fixes.
-
-**Root cause:** ROBOTIC_TEMPLATE is warn-only. Without a repair enforcement layer the phrase leaks into transcripts regardless of prompt guidance. Identical escalation pattern as R19 (POSSESSIVE_SUBJECT) and R20 (REPEATED_START) — both were warn-only and fixed by moving to repair.
-
-**Fix candidate:** In `validation.py`, change the `ValidationIssue("ROBOTIC_TEMPLATE", "warn", ...)` to `ValidationIssue("ROBOTIC_TEMPLATE", "repair", ...)` for the `^\s*considering\b` pattern specifically. Use same split approach as R19/R20: check all patterns, only escalate this one. Repair hint: "don't start with 'Considering' — open with the point itself, a reaction, or a question."
+### R29 — "Considering..." opener (TOP PRIORITY)
+`^\s*considering\b` in `_ROBOTIC_TEMPLATES` is warn-only. Appears 1-4×/run despite prompt ban. Same escalation pattern as F41/F42.
+**Fix:** Split from blanket warn → repair for this pattern only. Hint: "don't start with 'Considering' — open with the point itself, a reaction, or a question."
 
 ---
 
-### R32: ANSWER-routed turns that generate a "?" fall through all validation
+### R32 — ANSWER-routed "?" falls through validation
+ANSWER not in `statement_only`, so a question on an ANSWER turn never fires UNWANTED_QUESTION. The "?" re-registers as OpenQuestion → another ANSWER cycle.
+**Fix:** Add `ActType.ANSWER` to `statement_only`. Hint: "give an answer or say you can't confirm, don't re-ask."
 
-**Symptom:** When an ANSWER-routed speaker generates a question instead of an answer (model non-compliance), no validation issue fires. Observed: in the space station n=6 run, two ANSWER-routed speakers (Elif, Ivan) both generated "do they have enough entertainment?" questions in consecutive turns — visually three questions in a row, all undetected.
+---
 
-**Root cause:** `UNWANTED_QUESTION` fires only for `{VOTE, ACCEPT, REJECT, OPENING}` acts. `QUESTION_IN_CONFIRMATION` fires only for `ACCEPT`. ANSWER is not in either check, so a "?" in an ANSWER turn silently passes. The question then gets registered as a new OpenQuestion via `_update_questions`, spawning another ANSWER routing cycle.
+### R33 — Earned consensus / acceptance gate
+**Symptom:** Fallback outcomes phrased as clean wins (e.g. "Ruby wins" when support=0.667, outcome=fallback). Speakers jump from concern to accept in one sentence with no visible reasoning. System finalizes on hidden state tallies, not visible text quality.
+**Fix candidate:** (a) Before finalizing, verify each participant has a visible accept/vote or explicit "I can work with X" this round — otherwise re-route one more narrowing turn. (b) Fallback moderator closure text should reflect partial agreement, not unanimous language.
 
-**Fix candidate:** Add `ActType.ANSWER` to the `statement_only` set in `_check_question_presence` so a "?" in an ANSWER turn triggers `UNWANTED_QUESTION` (repair). Repair hint: "you were asked a question — don't re-ask it, give an answer or say you can't confirm."
+---
+
+### R34 — Open questions drift away unanswered
+**Symptom:** "Can it handle five players?" raised and never answered or deferred. Routing clears the question after one hedge ANSWER even though the question is still open. Moderator doesn't name lingering unknowns before closure.
+**Fix candidate:** Add `hedged=True` flag to OpenQuestion. If question hedged twice with no substantive answer, route moderator to name it explicitly ("We still don't know X — do we need this to decide?") rather than silently closing it.
+
+---
+
+### R35 — Persona/option setup contradiction
+**Symptom:** "Quiet Observer, wants a quiet reading spot" assigned Cosmic Playground (high-noise arcade) as preferred option. Role, concern, and preference internally inconsistent — poisons the whole discussion.
+**Fix candidate:** In `builders.py` belief-state prompt, add constraint: preferred option must plausibly match at least one stated concern. Post-generation check: if persona's concern cluster contradicts preferred option's attribute cluster, re-roll or raise.
+
+---
+
+### R36 — Hedge phrases became new templates
+**Symptom:** "do they offer", "we'd have to check", "no idea if", "why that matters is" repeat across multiple speakers per run. F51/F50 fixed hallucination but replacement phrases are now the chorus. Same-unknown raised twice in same form by different speakers.
+**Fix candidate:** (a) Add "do they offer", "why that matters is" to `_ROBOTIC_TEMPLATES`. (b) Track raised-unknowns per option in state; suppress re-raising already-hedged unknowns (or feed into `covered_slots_hint`). (c) Rewrite epistemic guidance to describe behavior without listing the exact phrases.
+
+---
+
+### R37 — Acceptance move too thin
+**Symptom:** Speaker who actively opposed an option accepts it in one vague sentence with no condition, no acknowledgment of prior objection. Consensus feels unearned; character feels inconsistent.
+**Fix candidate:** For ACCEPT on non-preferred option: bridge guidance must require (a) naming the concern that was addressed AND (b) a condition or trade-off making this workable — forces "I still prefer X, but since Y is handled, I'm okay with Z" over a single generic clause.
+
+---
+
+### R38 — Token usage regression (20k+ tokens/run)
+**Symptom:** Recent runs show 20k+ tokens. Earlier runs were substantially lower. Likely grew with F42 opener feedback, F44 trait block, F50 epistemic expansion, F51 ANSWER guidance additions.
+**Fix candidate:** (a) Profile `prompts.jsonl` token counts per turn. (b) Verify full option cards sent only on COMPARE/VOTE. (c) Trim `already_said` display to last 1 claim instead of 2. (d) Check if opener feedback + trait block + shared_context together bloat the card past useful size.
