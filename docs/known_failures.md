@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-27 (R11-R28 all fixed; R29-R31 open).
+Last updated: 2026-06-27 (R11-R31 all fixed; R29 and R32 open — R29 is priority).
 
 ---
 
@@ -91,34 +91,27 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **R26: ANSWER-turn echo loop (R13 gap)** → When an ANSWER-routed turn echoed its question (QUESTION_ECHO repair failed, message kept), `_update_questions` re-registered the kept "?" as a new OpenQuestion, cycling indefinitely. Fixed in `StateTracker._update_questions`: if the turn was ANSWER-routed AND `QUESTION_ECHO` is in `validation_issues`, suppress propagation. Validated: holiday party 3-question echo loop eliminated.
 - **R27: SELF_REPETITION skipped for ACCEPT/REJECT intents** → Validation returned early before consulting `already_said` for ACCEPT/REJECT acts ("Confirmations are naturally similar"). This let the exact same sentence repeat 3× on ACCEPT-routed turns without firing (seen: Leo's "Taco Loco offers a unique twist." in restaurant run). Fixed: removed the early-return exemption so SELF_REPETITION checks `already_said` regardless of act type. Added test.
 - **R28: "we'd need to check" epistemic phrase chorus in n=6 run** → Epistemic grounding guidance listed exactly two alternatives ("I'm not sure" or "we'd need to check"), making "we'd need to check" the model's default. 7 consecutive turns in the fictional world run all ended with it. Fixed: expanded to 5 alternatives ("I'm not sure", "can't say", "we'd have to check", "no idea", "unknown to me") with an explicit "vary the phrasing" instruction. Validated: variety improved across all 5 follow-up runs (e.g. "unknown to me", "can't say for sure", "no idea how that would play out").
+- **R30: ANSWER turns inventing facts not in option cards** → Model treated option cards as partial, filling gaps with real-world knowledge (Rina invented "kid-friendly restaurants available at Hilton, including some with play areas" — not in the card). Fixed: ANSWER guidance now explicitly states card attributes are exhaustive — anything not listed is unknown. "Answer only from what the card explicitly states … never invent facts." Validated across 7 runs: proper hedging appearing ("can't confirm that", "unknown to me", "we'd have to look it up", no invented service/facility claims observed).
+- **R31: response_length not in trait card** → Trait card showed `extra/agree/neuro` but omitted `len=N`, leaving the model to infer verbosity only from the speaking-habit description and verbosity-note word count. Added `len=N` to the Traits line. Validated: model now has direct numeric verbosity calibration. Fix candidate B (soft-correlating response_length with extraversion during sampling) deferred — independent sampling produces valid diverse character types.
 
 ---
 
 ## Open items (priority order)
 
-### R29: "Considering..." opener persisting (warn-only, model non-compliance)
+### R29: "Considering..." opener persisting (warn-only, model non-compliance) — TOP PRIORITY
 
-**Symptom:** Speakers open turns with "Considering the kids…", "Considering our group's size…", "Considering the vibrant arts scene…" despite it being in the prompt's no-stock-phrases list. The ROBOTIC_TEMPLATE check detects it as warn-level but does not trigger repair. Observed 4+ hits per run in n=4 vacation run.
+**Symptom:** Speakers open turns with "Considering the kids…", "Considering our group's size…", "Considering the vibrant arts scene…" despite it being in the prompt's no-stock-phrases list. Detected by `^\s*considering\b` in `_ROBOTIC_TEMPLATES` as warn-level but not repaired. Observed 1-4 hits per run consistently across 14 validation runs. Still present after R27-R31 fixes.
 
-**Root cause:** ROBOTIC_TEMPLATE is warn-only. The prompt forbids "Considering..." but llama3.3 complies inconsistently — some speakers get it, some don't. Without a repair enforcement layer, the phrase leaks into 1-7 turns per run depending on topic.
+**Root cause:** ROBOTIC_TEMPLATE is warn-only. Without a repair enforcement layer the phrase leaks into transcripts regardless of prompt guidance. Identical escalation pattern as R19 (POSSESSIVE_SUBJECT) and R20 (REPEATED_START) — both were warn-only and fixed by moving to repair.
 
-**Fix candidate:** Escalate the `^\s*considering\b` pattern from warn to repair-level (same escalation used for POSSESSIVE_SUBJECT in R19, REPEATED_START in R20). This adds one LLM repair call per hit but closes the gap. Alternatively, add "Considering" to the REPEATED_START window so it's caught by the dynamic "don't start with X" hint if it appears twice.
-
----
-
-### R30: ANSWER turns invent facts not in option cards
-
-**Symptom:** When an ANSWER-routed speaker is asked about a service or detail not present in the option's attributes, the model invents a confident answer instead of hedging. Observed: Lila asked "do they have kid-friendly restaurants?" (not in Hilton's card: golf, tennis, beach games); Rina responded "kid-friendly restaurants are available at Hilton, including some with play areas." The fabricated answer then influenced downstream discussion.
-
-**Root cause:** The ANSWER guidance said "Answer if the option cards cover it. If they don't, say you're not sure." But the model treats option cards as *partial* descriptions, not exhaustive ones — so it fills gaps from its own real-world knowledge about the named place (Hilton resorts often do have restaurants). The instruction wasn't explicit that what's not listed is definitively unknown.
-
-**Fix candidate:** Replace ANSWER guidance with: "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the question asks about a service, facility, or detail not in the card, say 'can't confirm that' or 'we'd have to look it up' — never invent facts." (Implemented — pending validation.)
+**Fix candidate:** In `validation.py`, change the `ValidationIssue("ROBOTIC_TEMPLATE", "warn", ...)` to `ValidationIssue("ROBOTIC_TEMPLATE", "repair", ...)` for the `^\s*considering\b` pattern specifically. Use same split approach as R19/R20: check all patterns, only escalate this one. Repair hint: "don't start with 'Considering' — open with the point itself, a reaction, or a question."
 
 ---
 
-### R31: response_length not in trait card; no correlation with extraversion
+### R32: ANSWER-routed turns that generate a "?" fall through all validation
 
-**Symptom:** The trait card shows `Traits: extra=N agree=N neuro=N` but omits `len=N` (response_length). The model calibrates verbosity from the speaking-habit description and verbosity-note word-count target, but lacks the direct numeric signal. Additionally, response_length and extraversion are sampled independently, allowing combinations like extra=5 / len=1 (very frequent but always terse) or extra=1 / len=5 (rare speaker who gives speeches) — both valid character types but potentially surprising.
+**Symptom:** When an ANSWER-routed speaker generates a question instead of an answer (model non-compliance), no validation issue fires. Observed: in the space station n=6 run, two ANSWER-routed speakers (Elif, Ivan) both generated "do they have enough entertainment?" questions in consecutive turns — visually three questions in a row, all undetected.
 
-**Fix candidate A:** Add `len=N` to the Traits line in `runtime_speaker_card`. Low token cost, gives model direct verbosity calibration. (Implemented — pending validation.)
-**Fix candidate B:** Soft-correlate response_length toward extraversion during sampling (e.g., bias 50/50 blend). Reduces extreme combos but also reduces persona diversity. Deferred — observe real runs first.
+**Root cause:** `UNWANTED_QUESTION` fires only for `{VOTE, ACCEPT, REJECT, OPENING}` acts. `QUESTION_IN_CONFIRMATION` fires only for `ACCEPT`. ANSWER is not in either check, so a "?" in an ANSWER turn silently passes. The question then gets registered as a new OpenQuestion via `_update_questions`, spawning another ANSWER routing cycle.
+
+**Fix candidate:** Add `ActType.ANSWER` to the `statement_only` set in `_check_question_presence` so a "?" in an ANSWER turn triggers `UNWANTED_QUESTION` (repair). Repair hint: "you were asked a question — don't re-ask it, give an answer or say you can't confirm."

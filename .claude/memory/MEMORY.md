@@ -18,3 +18,5 @@
 - [R22: trait numbers in speaker card](project-r22-trait-numbers.md) — Traits: extra/agree/neuro added to runtime_speaker_card; llama3.3 now has numeric calibration for persona voice (2026-06-27)
 - [R24/R25/R26 fixes](project-r24-r25-r26-fixes.md) — asker-answers-own-question guard in _best_answerer; covered_slots_hint fixed (was dead code); ANSWER echo loop blocker in _update_questions (2026-06-27)
 - [R27/R28 fixes](project-r27-r28-fixes.md) — SELF_REPETITION now covers ACCEPT/REJECT intents; epistemic phrase expanded to 5 variants to prevent chorus (2026-06-27)
+- [R30/R31 fixes](project-r30-r31-fixes.md) — ANSWER guidance exhaustiveness rule (no inventing card facts); len=N added to trait card (2026-06-27)
+- [Open: R29+R32](project-r29-r32-open.md) — R29: "Considering..." opener needs repair escalation (top priority); R32: ANSWER-turn "?" not caught by any validation
