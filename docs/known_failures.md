@@ -1,6 +1,6 @@
 # Known Failures
 
-Last updated: 2026-06-27. F1–F52 fixed. Open: R29, R32–R38.
+Last updated: 2026-06-27. F1–F52 fixed (F14, F18, F50 removed — contradicted by R37, R33, R36). Open: R29, R32–R38.
 
 ---
 
@@ -30,11 +30,9 @@ Last updated: 2026-06-27. F1–F52 fixed. Open: R29, R32–R38.
 **F11** Option name overuse → alias instruction after opening; ~70% compliance.
 **F12** Flat persona voice → behavioral speaking habits (12 branches covering all traits).
 **F13** No face-work on objections → trait-based modifiers for OBJECT/PUSH_BACK.
-**F14** Preference shifts too abrupt → concession bridges referencing option name + persona reservation.
 **F15** Hedged accepts counted as binding → "still not sure", "not fully sold" clamped to neutral.
 **F16** Moderator always directive → diagnostic questions; stall window scales with n.
 **F17** Practical constraints never surface → stall-to-concrete routing; ASK doubled after 2+ no-progress turns.
-**F18** Generic thin closures → topic-appropriate closure text; specific blocker naming.
 **F19** Surface artifacts (space-before-punctuation etc.) → deterministic cleanup in `clean_generated`.
 **F20** Turn-taking too balanced → extraversion/initiative weight; reduced catch-up boost for n>=5.
 **F21** Large groups repeat known positions → skip-if-nothing-new for n>=4.
@@ -66,7 +64,6 @@ Last updated: 2026-06-27. F1–F52 fixed. Open: R29, R32–R38.
 **F47** `covered_slots_hint` never fired (dead code) → broken `text_slots` param removed; fires when `len(covered) >= 3`.
 **F48** ANSWER echo loop (F35 gap) → if ANSWER-routed turn has QUESTION_ECHO in issues, `_update_questions` suppresses propagation.
 **F49** SELF_REPETITION skipped for ACCEPT/REJECT → early-return exemption removed; `already_said` checked for all act types.
-**F50** "we'd need to check" chorus → epistemic alternatives expanded to 5 with "vary the phrasing" instruction.
 **F51** ANSWER turns invent non-card facts → ANSWER guidance states card attributes are exhaustive; "never invent facts."
 **F52** response_length absent from trait card → `len=N` added to Traits line.
 
