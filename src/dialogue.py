@@ -690,9 +690,24 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
         text = next((line.strip() for line in text.splitlines() if line.strip()), text.strip())
     text = fix_collective_voice(text)
     text = fix_stock_phrases(text)
+    text = _strip_considering_opener(text)
     text = _surface_cleanup(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
     return compact_words(text, hard_cap)
+
+
+_CONSIDERING_OPENER_STRIP = re.compile(r"^\s*considering\s+[^,]{1,60},\s+", re.I)
+
+
+def _strip_considering_opener(text: str) -> str:
+    """Deterministically remove 'Considering X, ' as a turn opener.
+    The validation layer escalates this to repair, but the model sometimes regenerates
+    it anyway. Strip it here so it can never survive into the final transcript."""
+    m = _CONSIDERING_OPENER_STRIP.match(text)
+    if not m:
+        return text
+    rest = text[m.end():]
+    return rest[0].upper() + rest[1:] if rest else text
 
 
 def _surface_cleanup(text: str) -> str:
