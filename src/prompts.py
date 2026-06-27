@@ -594,7 +594,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         ActType.SUPPORT: "Back this from your angle — a personal reason or past experience, not the spec sheet." + face,
         ActType.OBJECT: "Name your specific worry. One concrete thing from the option card — don't invent flaws not mentioned there." + face,
         ActType.PUSH_BACK: "Push back on the exact claim just made." + face,
-        ActType.PROPOSE_COMPROMISE: "Name the fix directly — skip 'What if we' and 'How about we'." + face,
+        ActType.PROPOSE_COMPROMISE: "Name the fix directly — skip 'What if we' and 'How about we'. No inventing specific prices, sizes, or details not in the cards." + face,
     }
     return by_act.get(intent.act, "Respond to the last point directly.")
 
@@ -627,9 +627,7 @@ def _short_alias(option: OptionCard) -> str:
     return " ".join(alias)
 
 
-def _verbosity_note(persona: Persona, max_words: int, short_react: bool = False) -> str:
-    if short_react:
-        return "Keep it to 1–4 words — a quick acknowledgment or brief reaction. No reasoning, no full sentence needed."
+def _verbosity_note(persona: Persona, max_words: int) -> str:
     t = persona.traits
     if t.response_length >= 4 or t.detail >= 0.66:
         return f"Aim for {max_words} words. You like to explain — make your point and add a quick why or detail."
@@ -697,7 +695,7 @@ def sim_utterance(
     ctx_line = ""
     if state.scenario.shared_context:
         ctx_line = "\nContext: " + "; ".join(state.scenario.shared_context) + "."
-    verbosity = _verbosity_note(persona, max_words, short_react=intent.short_react)
+    verbosity = _verbosity_note(persona, max_words)
     return f"""Write one natural chat message for the next speaker.
 
 Topic: {state.scenario.topic}
@@ -717,9 +715,9 @@ Guidance: {guidance}
 {verbosity}{frame_line}
 
 Rules:
-- One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
-- Vary your opener — fragments, reactions, direct points. Lead with 'I', a reaction, or a fragment. Don't open with just an option name.{address_rule}
-- No stock phrases ('outweighs', 'great question', 'this kind of worries me', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick', 'do they offer', 'why that matters'). You know only what's in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
+- One line. No name prefix, no quotes, not starting with an option name in possessive (‘X’s ...’). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
+- Vary your opener — fragments, reactions, direct points. Lead with ‘I’, a reaction, or a fragment. Don’t open with just an option name.{address_rule}
+- No stock phrases (‘outweighs’, ‘great question’, ‘this kind of worries me’, ‘Considering...’, ‘wins me over’, ‘seems like a good fit’, ‘edges ahead’, ‘still pick’, ‘do they offer’, ‘why that matters’, ‘brings up a good point’, ‘makes a strong point’). You know only what’s in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 

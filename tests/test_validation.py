@@ -140,6 +140,8 @@ class TestRoboticPhrasing:
         "That's a great question, I hadn't thought of that.",
         "That is a good question actually.",
         "This kind of worries me, what about the cost?",
+        "Jasper brings up a good point about the cost.",
+        "Sami makes a strong point there.",
     ])
     def test_robotic_detected(self, validator, state, text):
         assert "ROBOTIC_TEMPLATE" in _validate(validator, text, state).codes()

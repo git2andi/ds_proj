@@ -142,9 +142,6 @@ class MoveIntent:
     # when this is set, so ordinary discussion/coverage-gap support of an acceptable
     # option no longer silently drifts their stance.
     moves_lean: bool = False
-    # When True the router wants a very short backchannel react (≤4 words).
-    # Only fires in DISCUSSION for REACT acts; never back-to-back.
-    short_react: bool = False
 
 
 @dataclass(slots=True)
@@ -209,6 +206,7 @@ class TurnRecord:
     tokens_out: int = 0
     validation_issues: list[str] = field(default_factory=list)  # issues remaining after any repair
     repaired: bool = False  # whether a repair attempt actually ran for this turn
+    repair_trigger_codes: list[str] = field(default_factory=list)  # codes that triggered the repair (pre-repair)
 
 
 @dataclass(slots=True)

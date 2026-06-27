@@ -72,6 +72,7 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
 - **Contribution-based routing**: for n>=4, speakers are skipped when their only available move is restating a known preference. Extraversion and initiative drive turn frequency.
 - **Stall-to-concrete routing**: when discussion stalls (2+ turns no progress), ASK probability doubles and SUPPORT dampens, steering toward concrete questions instead of preference restating.
+- **Backchannel injection**: 5% chance per discussion turn that the router injects a `short_react=True` REACT intent (skips act sampling entirely). Guard: previous turn must be ≥10 words and not itself a backchannel. Validation enforces ≤8-word limit via `BACKCHANNEL_TOO_LONG` repair code.
 - **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`.
 - **No example seeding in guidance**: guidance strings must describe desired behavior, never demonstrate it with quoted phrases (e.g., never `"Try: 'What if we...'"`) — the model copies examples verbatim across all topics.
 - **Epistemic grounding rule**: the per-turn prompt tells the model "you know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check'". This prevents confident invented facts about real-world named places (seating, pricing, amenities not in the cards).
@@ -80,7 +81,7 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 
 Each run writes to `logs/<run_id>/`:
 - `transcript.md` — human-readable chat + outcome + metrics
-- `run.json` — full structured run (per-turn acts, validation issues)
+- `run.json` — full structured run (per-turn acts, validation issues, `repair_trigger_codes` on repaired turns)
 - `logs/metrics.csv` — master file, one row appended per run
 
 Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flagged_turns`, `question_density`, `avg_words_per_turn`, `option_coverage`.

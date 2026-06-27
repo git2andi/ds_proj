@@ -196,12 +196,6 @@ class TurnRouter:
             act = forced_act or self._sample_discussion_act(state, speaker_id)
         focus = self._focus_for_act(state, speaker_id, act, None)
         addressee = self._target_for_act(state, speaker_id, act, focus[0] if focus else None)
-        short_react = False
-        if act == ActType.REACT and state.phase == Phase.DISCUSSION:
-            prev = [t for t in reversed(state.turns) if t.speaker_id != "moderator"]
-            last_words = len(prev[0].text.split()) if prev else 0
-            if last_words >= 8 and random.random() < float(cfg.utterances.backchannel_probability):
-                short_react = True
         return MoveIntent(
             speaker_id=speaker_id,
             addressee_id=addressee,
@@ -209,7 +203,6 @@ class TurnRouter:
             option_focus=focus,
             reason=self._reason_for_act(act),
             length_hint=self._length_hint(state.persona_by_id(speaker_id)),
-            short_react=short_react,
         )
 
     def _should_skip(self, state: DialogueState, speaker_id: str, act: ActType) -> bool:

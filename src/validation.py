@@ -325,6 +325,7 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\bwhy that matters\b", re.I),
     re.compile(r"\bthat(?:'?s|\s+is)\s+a\s+(?:great|good|fair|valid|excellent)\s+(?:question|point|observation|call)\b", re.I),
     re.compile(r"\bthis\s+kind\s+of\s+worries\s+me\b", re.I),
+    re.compile(r"\b(?:brings?\s+up|makes?|raises?)\s+(?:a|an)\s+(?:great|good|fair|valid|strong|excellent|interesting|important)\s+(?:point|concern|question|issue)\b", re.I),
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance

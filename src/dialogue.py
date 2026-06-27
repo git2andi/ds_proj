@@ -79,9 +79,9 @@ class Orchestrator:
                 self._emit(tracker.apply_moderator(state, nudge, phase=state.phase))
                 continue
             intent = self.router.next_intent(state)
-            text, move, prompt, tokens_in, tokens_out, issues, repaired = self._generate_turn(state, intent, validator)
+            text, move, prompt, tokens_in, tokens_out, issues, repaired, trigger_codes = self._generate_turn(state, intent, validator)
             self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_{intent.act.value}")
-            self._emit(tracker.apply_participant(state, intent, text, move, tokens_in, tokens_out, issues, repaired))
+            self._emit(tracker.apply_participant(state, intent, text, move, tokens_in, tokens_out, issues, repaired, trigger_codes))
 
         outcome = state.outcome or self.consensus.finalize(state)
         state.outcome = outcome
@@ -170,9 +170,12 @@ class Orchestrator:
 
         result = validator.validate(text, state, intent, move)
         issues = result.codes()
+        trigger_codes: list[str] = []
         attempts = int(cfg.simulation.max_repairs_per_turn)
         repaired = False
         while self._needs_repair(result) and attempts > 0:
+            if not repaired:
+                trigger_codes = list(issues)
             attempts -= 1
             repaired = True
             repair_prompt = prompts.repair_utterance(
@@ -191,7 +194,7 @@ class Orchestrator:
             issues = result.codes()
         # No fabricated fallback: keep the model's real (possibly imperfect) message and
         # record the remaining issues so they are visible in the logs and metrics.
-        return text, move, prompt, self._llm.last_tokens_in, self._llm.last_tokens_out, issues, repaired
+        return text, move, prompt, self._llm.last_tokens_in, self._llm.last_tokens_out, issues, repaired, trigger_codes
 
     @staticmethod
     def _needs_repair(result) -> bool:
@@ -332,9 +335,9 @@ class StateTracker:
         state.turns.append(record)
         return record
 
-    def apply_participant(self, state: DialogueState, intent: MoveIntent, text: str, move: TurnMove, tokens_in: int, tokens_out: int, validation_issues: list[str], repaired: bool) -> TurnRecord:
+    def apply_participant(self, state: DialogueState, intent: MoveIntent, text: str, move: TurnMove, tokens_in: int, tokens_out: int, validation_issues: list[str], repaired: bool, trigger_codes: list[str] | None = None) -> TurnRecord:
         persona = state.persona_by_id(intent.speaker_id)
-        return self._apply_turn(state, persona.id, persona.name, text, state.phase, intent, move, tokens_in, tokens_out, validation_issues, repaired)
+        return self._apply_turn(state, persona.id, persona.name, text, state.phase, intent, move, tokens_in, tokens_out, validation_issues, repaired, trigger_codes or [])
 
     def _apply_turn(
         self,
@@ -349,6 +352,7 @@ class StateTracker:
         tokens_out: int,
         validation_issues: list[str],
         repaired: bool,
+        repair_trigger_codes: list[str] | None = None,
     ) -> TurnRecord:
         # Moderator messages (e.g. the option board) keep their line breaks; participant
         # turns are single-line.
@@ -377,6 +381,7 @@ class StateTracker:
             tokens_out=tokens_out,
             validation_issues=validation_issues,
             repaired=repaired,
+            repair_trigger_codes=repair_trigger_codes or [],
         )
         state.turns.append(record)
         if speaker_id != "moderator":
