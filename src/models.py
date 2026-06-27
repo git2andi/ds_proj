@@ -142,6 +142,9 @@ class MoveIntent:
     # when this is set, so ordinary discussion/coverage-gap support of an acceptable
     # option no longer silently drifts their stance.
     moves_lean: bool = False
+    # When True the router wants a very short backchannel react (≤4 words).
+    # Only fires in DISCUSSION for REACT acts; never back-to-back.
+    short_react: bool = False
 
 
 @dataclass(slots=True)

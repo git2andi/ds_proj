@@ -627,7 +627,9 @@ def _short_alias(option: OptionCard) -> str:
     return " ".join(alias)
 
 
-def _verbosity_note(persona: Persona, max_words: int) -> str:
+def _verbosity_note(persona: Persona, max_words: int, short_react: bool = False) -> str:
+    if short_react:
+        return "Keep it to 1–4 words — a quick acknowledgment or brief reaction. No reasoning, no full sentence needed."
     t = persona.traits
     if t.response_length >= 4 or t.detail >= 0.66:
         return f"Aim for {max_words} words. You like to explain — make your point and add a quick why or detail."
@@ -695,6 +697,7 @@ def sim_utterance(
     ctx_line = ""
     if state.scenario.shared_context:
         ctx_line = "\nContext: " + "; ".join(state.scenario.shared_context) + "."
+    verbosity = _verbosity_note(persona, max_words, short_react=intent.short_react)
     return f"""Write one natural chat message for the next speaker.
 
 Topic: {state.scenario.topic}
@@ -711,7 +714,7 @@ Recent chat:
 
 Act: {intent.act.value}; focus: {focus_str}
 Guidance: {guidance}
-{_verbosity_note(persona, max_words)}{frame_line}
+{verbosity}{frame_line}
 
 Rules:
 - One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
