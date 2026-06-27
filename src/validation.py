@@ -118,9 +118,6 @@ class MessageValidator:
                 if _longest_run(masked, self._masked_tokens(turn.text)) >= min_run:
                     issues.append(ValidationIssue("ECHOED_PHRASE", "warn", "Reuses a long phrase from another speaker's recent turn."))
                     break
-        # Confirmations are otherwise naturally similar, so we don't flag ordinary repetition there.
-        if intent.act in {ActType.ACCEPT, ActType.REJECT}:
-            return
         rt = state.runtimes[intent.speaker_id]
         for prev in rt.already_said[-int(cfg.validation.repeated_start_window):]:
             score = jaccard_text(text, prev)

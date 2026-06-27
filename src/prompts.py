@@ -707,7 +707,7 @@ Guidance: {guidance}
 Rules:
 - One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
 - Vary your opener each turn — fragments, reactions, direct points. Lead with your own thought, not a recap.{address_rule}
-- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick'). You know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check', never a confident claim.{alias_rule}
+- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick'). You know only what's in the option cards — anything else is unknown: say 'I'm not sure', 'can't say', 'we'd have to check', 'no idea', 'unknown to me' — vary the phrasing, never a confident claim.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 

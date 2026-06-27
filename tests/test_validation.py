@@ -66,6 +66,12 @@ class TestRepetition:
         r = _validate(validator, "The cost factor makes Mountain Retreat really attractive for our group budget.", state, intent=make_intent(speaker_id="p1"))
         assert "SELF_REPETITION" in r.codes()
 
+    def test_self_repetition_fires_on_accept_intent(self, validator, state):
+        state.runtimes["p1"].already_said.append("Taco Loco offers a unique twist.")
+        r = _validate(validator, "Taco Loco offers a unique twist.", state,
+                      intent=make_intent(speaker_id="p1", act=ActType.ACCEPT))
+        assert "SELF_REPETITION" in r.codes()
+
     def test_question_echo_is_repair(self, validator, state):
         state.turns.append(make_turn(0, "p2", "Bob", "Do they have space at the venue for our group?"))
         r = _validate(validator, "Do they have space at the venue for our group of ten?", state, intent=make_intent(speaker_id="p1"))

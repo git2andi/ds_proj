@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-27 (R11-R26 all fixed; no open items remain).
+Last updated: 2026-06-27 (R11-R28 all fixed; R29 open — low priority).
 
 ---
 
@@ -89,9 +89,17 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **R24: Asker routed to answer own question** → In `_best_answerer`, built `other_askers` set from all open questions (excluding the current one), then added two-tier eligibility filter: first prefer non-asker non-other-asker candidates, then fall back to just non-asked_by. Tested with three cases: own question, option champion, cross-question exclusion.
 - **R25: Duplicate substance across speakers** → `covered_slots_hint` was broken — always received `text_slots=[]` so condition `not repeated` was always True and hint never fired. Removed `text_slots` parameter; now fires when `len(covered) >= 3`. Rewrote message to "The group already argued…". Call site updated.
 - **R26: ANSWER-turn echo loop (R13 gap)** → When an ANSWER-routed turn echoed its question (QUESTION_ECHO repair failed, message kept), `_update_questions` re-registered the kept "?" as a new OpenQuestion, cycling indefinitely. Fixed in `StateTracker._update_questions`: if the turn was ANSWER-routed AND `QUESTION_ECHO` is in `validation_issues`, suppress propagation. Validated: holiday party 3-question echo loop eliminated.
+- **R27: SELF_REPETITION skipped for ACCEPT/REJECT intents** → Validation returned early before consulting `already_said` for ACCEPT/REJECT acts ("Confirmations are naturally similar"). This let the exact same sentence repeat 3× on ACCEPT-routed turns without firing (seen: Leo's "Taco Loco offers a unique twist." in restaurant run). Fixed: removed the early-return exemption so SELF_REPETITION checks `already_said` regardless of act type. Added test.
+- **R28: "we'd need to check" epistemic phrase chorus in n=6 run** → Epistemic grounding guidance listed exactly two alternatives ("I'm not sure" or "we'd need to check"), making "we'd need to check" the model's default. 7 consecutive turns in the fictional world run all ended with it. Fixed: expanded to 5 alternatives ("I'm not sure", "can't say", "we'd have to check", "no idea", "unknown to me") with an explicit "vary the phrasing" instruction. Validated: variety improved across all 5 follow-up runs (e.g. "unknown to me", "can't say for sure", "no idea how that would play out").
 
 ---
 
 ## Open items (priority order)
 
-No open items. All R1–R26 issues resolved.
+### R29: "Considering..." opener persisting (warn-only, model non-compliance)
+
+**Symptom:** Speakers open turns with "Considering the kids…", "Considering our group's size…", "Considering the vibrant arts scene…" despite it being in the prompt's no-stock-phrases list. The ROBOTIC_TEMPLATE check detects it as warn-level but does not trigger repair. Observed 4+ hits per run in n=4 vacation run.
+
+**Root cause:** ROBOTIC_TEMPLATE is warn-only. The prompt forbids "Considering..." but llama3.3 complies inconsistently — some speakers get it, some don't. Without a repair enforcement layer, the phrase leaks into 1-7 turns per run depending on topic.
+
+**Fix candidate:** Escalate the `^\s*considering\b` pattern from warn to repair-level (same escalation used for POSSESSIVE_SUBJECT in R19, REPEATED_START in R20). This adds one LLM repair call per hit but closes the gap. Alternatively, add "Considering" to the REPEATED_START window so it's caught by the dynamic "don't start with X" hint if it appears twice.
