@@ -24,10 +24,20 @@ class MessageValidator:
         # Line-initial "<Option>'s <feature>" is the single most robotic, repetitive tic the
         # model falls into (it opened ~40% of turns in large-group runs). Catch it from the
         # actual option names so the check stays topic-agnostic.
-        self._possessive_openers = [
-            re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(o.name)}\s*[\x27‘’]s\b", re.I)
-            for o in resolver.options if o.name.strip()
-        ]
+        self._possessive_openers = []
+        for o in resolver.options:
+            if not o.name.strip():
+                continue
+            # Drop parenthetical annotations like "(2010)" — the model omits them in speech.
+            base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
+            seen: set[str] = set()
+            for candidate in filter(None, [base, o.short_name.strip()]):
+                if candidate.lower() in seen:
+                    continue
+                seen.add(candidate.lower())
+                self._possessive_openers.append(
+                    re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(candidate)}\s*[\x27’’]s\b", re.I)
+                )
         # Phrases from option card prose fields (upside/tradeoff/concern/best_for) that
         # are long enough to be distinctive. A turn parroting these verbatim sounds like
         # someone reading the card aloud instead of speaking naturally.
@@ -129,7 +139,7 @@ class MessageValidator:
                     issues.append(ValidationIssue("GROUP_REPETITION", "warn", f"Similar to a recent participant turn: {score:.2f}"))
                 break
             if first and first == _first_words(turn.text, int(cfg.validation.repeated_start_word_count)):
-                issues.append(ValidationIssue("REPEATED_START", "warn", "Starts like a recent turn."))
+                issues.append(ValidationIssue("REPEATED_START", "repair", "Starts like a recent turn."))
                 break
 
     def _check_opener_variety(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
@@ -197,7 +207,7 @@ class MessageValidator:
         if any(p.search(text) for p in _ROBOTIC_TEMPLATES):
             issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "warn", "Uses a banned formulaic template."))
         if any(p.match(text) for p in self._possessive_openers):
-            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "warn", "Opens with an option's possessive ('X's ...')."))
+            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
 
     def _check_collective_voice(self, text: str, issues: list[ValidationIssue]) -> None:
         # "We consider...", "We prioritize...", "We're drawn to...", "We can appreciate..." —

@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-27 (R11-R17 fixed; R18–R21 open).
+Last updated: 2026-06-27 (R11-R23 fixed; R22, R24, R25 open).
 
 ---
 
@@ -12,7 +12,7 @@ Every change follows this process — no exceptions:
 
 1. **Pick one item** from the priority list below.
 2. **Implement the fix.** Run `pytest tests/` to verify nothing breaks.
-3. **Validate with example runs.** One n=3 run is mandatory. Then pick 1-2 more from n=2–7, using a randomly selected topic from `evals/topics.txt`. Always use the `uni` provider.
+3. **Validate with example runs.** One n=3 run is mandatory. Then pick 5-6 more from n=2–7, using a randomly selected topic from `evals/topics.txt`. Always use the `uni` provider.
 4. **Read the transcripts.** Evaluate whether the change actually improved things. Check for regressions — did something else get worse?
 5. **If new issues surface**, add them directly to this file before moving on.
 6. **Update** CLAUDE.md, known_failures.md, memories and/or skills to be always up to date with the latest changes.
@@ -80,44 +80,42 @@ The simulator produces coherent, responsive discussions with natural turn length
 
 ---
 
+- **R18: Back-to-back routing in narrowing** → `_vote_intent` moved last speaker to the END of the unvoted list in the `else` branch, but didn't hard-exclude them when others were available. Tightened to: `others = [p for p in unvoted if p.id != last_pid]`; `ordered = others if others else unvoted` — last speaker only votes when they're the sole remaining voter. Sub-fix: when `others` is empty and the only unvoted persona just had a VOTE-routed turn (UNCLEAR_VOTE — their trailer had no valid option, so `explicit_vote` was never set), routing them again immediately caused a consecutive VOTE pair. Guard added: if `not others` and `last_turn.intent.act == ActType.VOTE`, advance straight to CONFIRMATION rather than re-picking the same speaker.
+- **R19: POSSESSIVE_SUBJECT opener** → (a) Escalated from warn to repair level so the model is forced to rewrite possessive openers. (b) Fixed pattern-building: option names with parenthetical annotations (e.g. "Inception (2010)") were stripped of the parenthetical so "Inception's" matches. (c) Added `short_name` patterns so abbreviated forms ("Budapest's" for "The Grand Budapest Hotel") are also caught. Prompt rule moved to Rule 1 (higher weight). Named rate improved to 26–31%.
+- **R20: Repeated openers (REPEATED_START)** → (a) Opener feedback added to `runtime_speaker_card`: last 2 turn openers shown, with "start differently this time" instruction — gives the model concrete context about its own recent openers. (b) REPEATED_START escalated from warn to repair, triggering an LLM rewrite. (c) Repair hint made dynamic: instead of generic "open with different words", the hint now names the exact repeated phrase ("don't start with 'Do they offer' — use a completely different first word or phrase"). Result: REPEATED_START dropped from 11–25 per 10-run batch (warn-only) to 0–3 with repair triggered on each hit.
+- **R21: Named-addressee rate low** → Address rule now fires for ANSWER/REACT acts even without an explicit `addressee_id`: the responding-to name is extracted from the `_responding_to_line` string and injected as a compact "use their name once" instruction. Named rate improved from ~13% to 26–31%.
+- **R23: Back-to-back questions from different speakers** → Hard-zero the ASK act weight in `_select_act` when the immediately preceding participant turn contained "?". The prior `ask_after_question_damping=0.40` was too soft — reduced probability but didn't prevent routing another ASK turn immediately after a question. Hard veto (`probs[ActType.ASK.value] = 0.0`) closes the router-level case. Incidental questions appended to non-ASK turns (REACT/COMPARE) are caught by the QUESTION_ECHO repair backstop (R13). Validated: no back-to-back question pairs in holiday party or programming language runs.
+
+---
+
 ## Open items (priority order)
 
-### R18: Back-to-back routing in narrowing/confirmation phase
+### R22: Trait differences not perceptible in generated text
 
-**Symptom:** ~1/10 runs has a participant speak twice in a row during the narrowing or confirmation phase. Observed in coffee machine (turn 31/38, narrowing) and movie night (turn 17/21, narrowing).
+**Symptom:** Speakers with very different trait profiles (e.g. extraversion 1 vs. 5, agreeableness 3 vs. 5, neuroticism 1 vs. 3) sound similar in practice. The traits affect routing weights and act probabilities but the actual text output doesn't reflect meaningful personality differences — a blunt direct persona and a collaborative worrier produce interchangeable sentences.
 
-**Root cause:** R15 added a "skip if target just spoke" guard at the opening→answer boundary only. Narrowing/confirmation speaker selection (weighted by initiative/preference) has no equivalent guard. When the top-weighted speaker also happens to have the best score for a VOTE or PROPOSE move, they get selected even if they were the last to speak.
+**Root cause:** The `_speaking_habit()` string is one short phrase delivered as "Style:" in the speaker card. llama3.3 doesn't anchor on it strongly enough to maintain a distinct voice across many turns. Trait values are not shown in the prompt at all (they were removed to save tokens) so the model has no numeric signal to calibrate against. The result is all speakers defaulting to a similar chatty-but-polite register.
 
-**Fix:** In `router.py`, extend the "skip if just spoke" guard to the narrowing/confirmation speaker selection path — if `target == last_participant.speaker_id`, move to the next-best candidate (same logic as R15 but applied more broadly).
-
----
-
-### R19: POSSESSIVE_SUBJECT opener not reliably suppressed by prompt
-
-**Symptom:** Speakers open turns with "[OptionName]'s [attribute]..." (e.g. "Jira's flexibility...", "Trello's cost..."). Counts 6–24 per 10-run batch despite explicit Rule 2 ban. Warn-level, so no repair is triggered. One topic (PM tools) had 15 in a single run.
-
-**Root cause:** llama3.3 treats the prompt rule as a soft suggestion. The pattern is short and natural, so the model continues to use it as a fallback opener especially for product-name topics.
-
-**Fix candidate A:** Escalate POSSESSIVE_SUBJECT from warn to repair in `validation.py` (change severity from `"warn"` to `"error"`), so the LLM is forced to rewrite the turn on every hit. Trade-off: adds repair calls and latency.
-
-**Fix candidate B:** Strengthen the prompt rule further — e.g. move the possessive ban into Rule 1 (the voice rule) so it appears earlier and carries more weight.
+**Fix candidate:** Pass trait values directly in `runtime_speaker_card` (a compact one-liner like `traits: extra=4, agree=3, neuro=2`) so the model can calibrate tone. Also strengthen the speaking habit description with a concrete behavioral tell ("blunt — one sentence, cuts preamble") and add a voice consistency note to Rule 1.
 
 ---
 
-### R20: Repeated openers within a speaker (REPEATED_START)
+### R24: Asker routed to answer their own question
 
-**Symptom:** A speaker opens multiple consecutive turns the same way (e.g. "Not sure about...", "Not sure about..." twice). 11–25 REPEATED_START hits per 10-run batch, warn-level only.
+**Symptom:** Sim A asks a question at turn N. Sim B (or another speaker) asks the same or a similar question at turn N+2. The router then routes Sim A to ANSWER at turn N+3 — but Sim A was the one who originally raised this question, so they cannot answer it. The conversation produces a logically broken exchange where the asker "answers" their own question.
 
-**Root cause:** The variety instruction in Rule 2 ("Vary your opener each turn") is not speaker-context-aware — the model has no memory of its own recent openers within the same prompt call, so it drifts back to the same short-path opener.
+**Root cause:** When a second open question is registered, `_best_answerer` looks for the option champion or falls back to `previous_speaker_id` — which may be Sim A (who spoke last before Sim B's question). The guard in R15 only prevents the same speaker going back-to-back at the opening→answer boundary; it does not check whether the routed ANSWER target is the original `asked_by` of the question being answered.
 
-**Fix candidate:** Feed back the speaker's last 1–2 turn openers in the `runtime_speaker_card` and add a brief instruction to not repeat them. Alternatively, add REPEATED_START to the repair level so the model is explicitly told to change the opener.
+**Fix candidate:** In `_best_answerer` (and in `next_intent` before emitting an ANSWER move), check that `target != q.asked_by`. If the best answerer is the same person who asked the question, skip to the next candidate.
 
 ---
 
-### R21: Named-addressee rate consistently low
+### R25: Duplicate substance across speakers (non-echo restatement)
 
-**Symptom:** Speakers address each other by name in only 4–21% of turns (ideal ≥20%). The R4 address rule is in the prompt but the model treats it as optional.
+**Symptom:** Two speakers make substantively the same point about an option in consecutive or near-consecutive turns (e.g. both mention cost as the main concern for the same option) without building on each other. The existing ECHOED_PHRASE check catches near-verbatim phrase reuse but misses cases where the same argument is restated in different words.
 
-**Root cause:** The address rule fires in the prompt as a suggestion ("when relevant, use their name"), which llama3.3 often skips. Named turns tend to cluster in REACT/PUSH_BACK acts where the model has a clear target.
+**Root cause:** The ECHOED_PHRASE / GROUP_REPETITION checks are string-similarity based (Jaccard on tokens). A paraphrase of the same claim ("it's the cheapest" vs. "the price is lowest") passes both checks and produces a chorus effect — multiple speakers making the same argument as if they hadn't heard each other.
 
-**Fix candidate:** Make the address rule conditional and stronger for ANSWER and REACT acts specifically — "name the person you are responding to" rather than "use their name when relevant". Also consider routing-level enforcement: inject the target name more prominently in the `_responding_to_line` anchor.
+**Fix candidate A:** Use `covered_slots` from `OptionCoverage` to track which claim dimensions have already been made for each option. In guidance, steer speakers away from slots already covered (this is already partially done via `covered_slots_hint` — strengthen its weight or make it more directive).
+
+**Fix candidate B:** Add a "you already heard this argument" line to `runtime_speaker_card` when the speaker's claimed focus slot was covered in the last 3 turns. Keep it brief to avoid bloating the prompt.

@@ -447,6 +447,12 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
         recent = rt.already_said[-2:]
         bullets = "; ".join(f'"{compact_words(s, 10)}"' for s in recent)
         lines.append(f"You already said: {bullets} — don't repeat these points.")
+    if intent.act not in {ActType.VOTE, ActType.OPENING}:
+        prior_turns = [t for t in state.turns if t.speaker_id == persona.id]
+        if len(prior_turns) >= 2:
+            openers = [t.text.split()[:3] for t in prior_turns[-2:] if t.text.split()]
+            opener_str = "; ".join(f'"{" ".join(w)}"' for w in openers)
+            lines.append(f"Your last openers: {opener_str} — start differently this time.")
     if lean != persona.preferred_option:
         old_name = state.scenario.option(persona.preferred_option).name
         lines.append(f"Started with {old_name}, now leaning {lean_name}.")
@@ -657,8 +663,13 @@ def sim_utterance(
     focus_str = ", ".join(intent.option_focus) if intent.option_focus else "-"
     guidance = _move_guidance(state, persona, intent)
     responding_block = f"\n{responding}\n" if responding else "\n"
-    address_rule = (f"\n- Responding to {addressee_name}: you can use their name once ('{addressee_name}, ...' or '...{addressee_name}'), then 'you' for their point."
-                    if addressee_name else "")
+    # Derive the name to address: explicit addressee first, then extract from the
+    # responding line for ANSWER/REACT so the model always has a cue to name-drop.
+    effective_address = addressee_name
+    if not effective_address and intent.act in {ActType.ANSWER, ActType.REACT} and responding.startswith("Responding to "):
+        effective_address = responding[len("Responding to "):].split(":")[0]
+    address_rule = (f"\n- Use {effective_address}'s name once in your response."
+                    if effective_address else "")
     rt = state.runtimes[persona.id]
     frame_hint = recent_frame_hint(_collect_recent_frames(state), rt.discourse_frames)
     frame_line = f"\n{frame_hint}" if frame_hint else ""
@@ -693,8 +704,8 @@ Guidance: {guidance}
 {_verbosity_note(persona, max_words)}{frame_line}
 
 Rules:
-- One line, no name prefix, no quotes. Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
-- Vary your opener each turn — fragments, reactions, names, direct points. Never start with an option name in possessive ('X's ...').{address_rule}
+- One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
+- Vary your opener each turn — fragments, reactions, direct points. Lead with your own thought, not a recap.{address_rule}
 - No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick'). You know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check', never a confident claim.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
@@ -744,7 +755,12 @@ def repair_utterance(
     """A focused rewrite prompt: just the speaker's voice, the recent chat for context, the bad
     line, and concrete fixes — not the full generation prompt. Keeps the meaning and stance,
     fixes the flagged problems."""
-    fixes = "; ".join(dict.fromkeys(_REPAIR_HINTS.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
+    hints = dict(_REPAIR_HINTS)
+    if "REPEATED_START" in issue_codes:
+        words = original_text.split()[:3]
+        if words:
+            hints["REPEATED_START"] = f"don't start with '{' '.join(words)}' — use a completely different first word or phrase"
+    fixes = "; ".join(dict.fromkeys(hints.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
     option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)
     recent = "\n".join(recent_lines[-4:]) if recent_lines else "(no recent turns)"

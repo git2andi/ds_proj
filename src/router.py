@@ -69,13 +69,18 @@ class TurnRouter:
     def _vote_intent(self, state: DialogueState) -> MoveIntent:
         last_turn = self._last_participant_turn(state)
         last_pid = last_turn.speaker_id if last_turn else None
-        stuck = self._consecutive_same_speaker(state) >= 2
         unvoted = [p for p in self._least_recent_personas(state) if not state.runtimes[p.id].explicit_vote]
-        if stuck:
-            unvoted = [p for p in unvoted if p.id != last_pid]
-        else:
-            unvoted = [p for p in unvoted if p.id != last_pid] + [p for p in unvoted if p.id == last_pid]
-        for persona in unvoted:
+        others = [p for p in unvoted if p.id != last_pid]
+        # Hard-exclude the last speaker when someone else still needs to vote.
+        # Only let them vote when they're the sole remaining voter — BUT if they just had a
+        # VOTE-routed turn and still have no explicit_vote (UNCLEAR_VOTE / repair failed),
+        # don't route them again immediately; advance to confirmation instead.
+        if not others and last_turn and last_turn.intent and last_turn.intent.act == ActType.VOTE:
+            state.candidate_option = leading_option(state) or state.candidate_option
+            state.phase = Phase.CONFIRMATION
+            return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
+        ordered = others if others else unvoted
+        for persona in ordered:
             if persona.is_hard_blocker:
                 focus = [persona.preferred_option]
             else:
@@ -325,6 +330,10 @@ class TurnRouter:
         recent = [turn for turn in reversed(state.turns) if turn.speaker_id != "moderator"][:window]
         if any("?" in turn.text for turn in recent):
             probs[ActType.ASK.value] *= float(cfg.routing.ask_after_question_damping)
+        # Hard veto: never route back-to-back ASK turns; if the previous speaker asked a
+        # question, force the next act to be a response/reaction instead.
+        if recent and "?" in recent[0].text:
+            probs[ActType.ASK.value] = 0.0
         if len(state.personas) >= 5:
             focus_opt = state.runtimes[speaker_id].current_preference or persona.preferred_option
             covered = state.coverage.get(focus_opt)
