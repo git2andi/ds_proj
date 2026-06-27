@@ -515,7 +515,7 @@ def _face_work(persona: Persona, intent: MoveIntent) -> str:
                 " Show you get their side first, then say your worry.",
             ])
         if t.neuroticism >= 3:
-            return " You're genuinely anxious about this — let that show ('this kind of worries me')."
+            return " You're genuinely anxious about this — let that unease show in your phrasing."
         if t.directness >= 0.55:
             return " Be direct but not rude — name the problem, skip the diplomacy."
     if intent.act == ActType.PROPOSE_COMPROMISE:
@@ -570,7 +570,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
-            return f"Say the option name explicitly — commit to it. {bridge}" + chorus
+            return f"Say '{opt_name}' by name and that you're going with it — the commitment must be in the text, not just the trailer. Then: {bridge}" + chorus
         return "Say the option name out loud and commit to it — 'I'm going with [Name]', '[Name] gets my vote', or similar. One brief personal reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
