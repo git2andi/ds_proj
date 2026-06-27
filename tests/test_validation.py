@@ -159,6 +159,21 @@ class TestRoboticPhrasing:
     def test_possessive_opener(self, validator, state):
         assert "POSSESSIVE_SUBJECT" in _validate(validator, "Mountain Retreat's fresh air is a big draw.", state).codes()
 
+    def test_option_name_opener_flagged(self, validator, state):
+        r = _validate(validator, "Mountain Retreat feels like the best fit for us.", state,
+                      intent=make_intent(act=ActType.REACT))
+        assert "OPTION_NAME_OPENER" in r.codes()
+
+    def test_option_name_opener_exempt_on_vote(self, validator, state):
+        r = _validate(validator, "Mountain Retreat gets my vote, I think it's the right call.", state,
+                      intent=make_intent(act=ActType.VOTE))
+        assert "OPTION_NAME_OPENER" not in r.codes()
+
+    def test_option_name_opener_exempt_on_accept(self, validator, state):
+        r = _validate(validator, "Mountain Retreat works for me, I can live with that choice.", state,
+                      intent=make_intent(act=ActType.ACCEPT))
+        assert "OPTION_NAME_OPENER" not in r.codes()
+
 
 # ── Collective voice ───────────────────────────────────────────────────
 

@@ -38,6 +38,22 @@ class MessageValidator:
                 self._possessive_openers.append(
                     re.compile(rf"^(?:\w+\s+){{0,2}}{re.escape(candidate)}\s*[\x27’’]s\b", re.I)
                 )
+        # "<Option> is/feels/seems/sounds/resonates..." openers during discussion —
+        # the model often starts a turn with the option name as plain subject instead of
+        # a personal reaction. Exempt VOTE/ACCEPT where naming the option is expected.
+        self._option_subject_openers: list[re.Pattern[str]] = []
+        seen_subj: set[str] = set()
+        for o in resolver.options:
+            if not o.name.strip():
+                continue
+            base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
+            for candidate in filter(None, [base, o.short_name.strip()]):
+                if candidate.lower() in seen_subj:
+                    continue
+                seen_subj.add(candidate.lower())
+                self._option_subject_openers.append(
+                    re.compile(rf"^{re.escape(candidate)}\s+\w", re.I)
+                )
         # Phrases from option card prose fields (upside/tradeoff/concern/best_for) that
         # are long enough to be distinctive. A turn parroting these verbatim sounds like
         # someone reading the card aloud instead of speaking naturally.
@@ -65,6 +81,7 @@ class MessageValidator:
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)
         self._check_robotic_phrasing(stripped, issues)
+        self._check_option_subject_opener(stripped, intent, issues)
         self._check_collective_voice(stripped, issues)
         self._check_card_reading(stripped, issues)
         self._check_self_narration(stripped, issues)
@@ -208,6 +225,15 @@ class MessageValidator:
             issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "warn", "Uses a banned formulaic template."))
         if any(p.match(text) for p in self._possessive_openers):
             issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
+
+    def _check_option_subject_opener(self, text: str, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
+        # "American Red Cross feels like a safe bet..." — option name as plain sentence
+        # subject during discussion. Fine in VOTE/ACCEPT turns where naming the option
+        # is explicitly required; warn-only elsewhere.
+        if intent.act in {ActType.VOTE, ActType.ACCEPT}:
+            return
+        if any(p.match(text) for p in self._option_subject_openers):
+            issues.append(ValidationIssue("OPTION_NAME_OPENER", "warn", "Opens with option name as subject — start with 'I', a reaction, or a fragment."))
 
     def _check_collective_voice(self, text: str, issues: list[ValidationIssue]) -> None:
         # "We consider...", "We prioritize...", "We're drawn to...", "We can appreciate..." —
