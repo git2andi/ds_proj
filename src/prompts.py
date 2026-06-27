@@ -123,6 +123,7 @@ Requirements:
 - At least one option should be acceptable to all non-hard-blockers so compromise is possible.
 - Reasons must be grounded only in the option cards above.
 - Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
+- Persona consistency: a participant's role, main_concern, and preferred_option must be compatible. A "quiet reader" prefers a calm low-key option; an "adventure seeker" prefers a high-energy option. Never assign someone a preferred option whose core attributes directly contradict their stated role and concern unless their backstory explicitly explains the contradiction.
 - Use the exact name given in each trait profile row. Do not change or substitute names.
 - Conversation should later sound like friends/classmates deciding together, not a business meeting.
 

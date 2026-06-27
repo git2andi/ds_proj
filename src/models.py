@@ -167,6 +167,7 @@ class OpenQuestion:
     target_id: str
     text: str
     option_focus: list[str] = field(default_factory=list)
+    hedge_count: int = 0  # times answered with a hedge; cleared after second hedge
 
 
 @dataclass(slots=True)

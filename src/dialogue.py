@@ -460,7 +460,15 @@ class StateTracker:
 
     def _update_questions(self, state: DialogueState, record: TurnRecord) -> None:
         if record.intent and record.intent.respond_to_turn is not None:
-            state.open_questions = [q for q in state.open_questions if q.turn_id != record.intent.respond_to_turn]
+            target_id = record.intent.respond_to_turn
+            if record.intent.act == ActType.ANSWER and _is_hedge_answer(record.text):
+                # First hedge: keep the question open for one more routing cycle.
+                # Second hedge (hedge_count already > 0): clear it — the group can't answer.
+                for q in state.open_questions:
+                    if q.turn_id == target_id and q.hedge_count == 0:
+                        q.hedge_count += 1
+                        return  # leave question open; don't fall through to clear it
+            state.open_questions = [q for q in state.open_questions if q.turn_id != target_id]
         if record.act.question_target_id:
             # If the model was routed to ANSWER but echoed the question anyway (repair
             # failed), don't re-register the echo as a new OpenQuestion — that feeds the
@@ -740,3 +748,19 @@ def _looks_like_reason(text: str) -> bool:
     # A turn "carries a reason" if it is substantive rather than a bare reaction.
     # Length is a deliberately simple, content-agnostic proxy (no keyword list).
     return len(text.split()) >= 8
+
+
+_HEDGE_ANSWER_PATTERN = re.compile(
+    r"\b(?:not\s+sure|can'?t\s+(?:say|confirm|tell)|"
+    r"(?:we|i)'?d?\s+(?:have\s+to|need\s+to)\s+(?:check|look|verify)|"
+    r"no\s+idea|hard\s+to\s+say|unknown|"
+    r"i'?m\s+not\s+(?:sure|certain)|"
+    r"would\s+need\s+to\s+(?:check|look|verify)|"
+    r"have\s+to\s+look|can'?t\s+confirm|"
+    r"honestly\s+(?:not\s+sure|don'?t\s+know))\b",
+    re.I,
+)
+
+
+def _is_hedge_answer(text: str) -> bool:
+    return bool(_HEDGE_ANSWER_PATTERN.search(text))
