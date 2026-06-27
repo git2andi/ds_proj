@@ -139,6 +139,7 @@ class TestRoboticPhrasing:
         "The views are stunning, why that matters is we have seniors.",
         "That's a great question, I hadn't thought of that.",
         "That is a good question actually.",
+        "This kind of worries me, what about the cost?",
     ])
     def test_robotic_detected(self, validator, state, text):
         assert "ROBOTIC_TEMPLATE" in _validate(validator, text, state).codes()
