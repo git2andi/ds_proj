@@ -87,6 +87,10 @@ Last updated: 2026-06-27. F1–F55 fixed (F14, F18, F50 removed — contradicted
 
 ## Open items
 
-None. All known issues resolved. New issues found in the 20-run verification batch (2026-06-27):
-- "do they offer" cascade persists in budget-heavy topics when multiple participants repeat the same pricing question. Warn-only (ROBOTIC_TEMPLATE + SELF_REPETITION caught but not always repairable in one pass). Not tracked as separate issue — inherent to the topic type.
-- `zero_question_density` WARN fires on fast-converging small groups where everyone agrees quickly. Not a structural problem.
+**F66** Vague ACCEPT text accepted as binding — "Handling worries me less with Spaniel" was counted as consensus (trailer had `acc=['A']`) but the text reads as a minor worry reduction, not genuine commitment. Concession bridge guidance should enforce explicit commitment language on ACCEPT-routed turns: "I'll go with X" / "X works for me" — not just a softened objection. *Priority: medium.*
+
+**F67** Option-name-led turn openers — many turns start directly with the full option name as subject ("St. Jude Children's Research Hospital resonates with me...", "American Red Cross feels like a safe bet..."). Especially noticeable in long-name topics. POSSESSIVE_SUBJECT catches `X's ...` openers but not `X is/feels/seems...` openers with the option name as plain subject. Consider adding to rule 2 ("don't open with just the option name — start with a reaction, fragment, or your own angle") and a pattern to robotic templates. *Priority: medium.*
+
+**F68** Occasional very-short backchannel turns missing — real group chats include brief acknowledgments ("yeah", "fair point", "good call") as whole turns, but only occasionally. Currently all turns are substantive multi-word statements. Allow 1–2 very short turns per run (≤4 words) via a low-probability short-turn routing branch or a length=1 trait path. Must not dominate: only 1 in ~8 turns max, never back-to-back. *Priority: low.*
+
+**F69** High repair rate on large-group runs (n=5–6, ~40–48%) — charity (n=6) had 22/46 repairs (47.8%), sports day (n=5) should be checked. May indicate the model generates more formulaic text with more participants, or that the per-turn prompt context gets diluted. Investigate repair trigger codes in run.json for n≥5 runs. *Priority: low — investigate first.*
