@@ -134,9 +134,20 @@ class TestRoboticPhrasing:
         "The cost outweighs the benefits here.",
         "Beach Resort seems like the best fit for everyone.",
         "Ride edges ahead for me because of the playtime.",
+        "Do they offer a group discount at Mountain Retreat?",
+        "The views are stunning, why that matters is we have seniors.",
     ])
     def test_robotic_detected(self, validator, state, text):
         assert "ROBOTIC_TEMPLATE" in _validate(validator, text, state).codes()
+
+    def test_considering_opener_is_repair(self, validator, state):
+        r = _validate(validator, "Considering the budget, Mountain Retreat seems expensive.", state)
+        assert "ROBOTIC_TEMPLATE" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "ROBOTIC_TEMPLATE")
+
+    def test_considering_mid_sentence_not_flagged(self, validator, state):
+        r = _validate(validator, "I'm not sure, considering the weather might be an issue.", state)
+        assert not any(i.code == "ROBOTIC_TEMPLATE" and i.severity == "repair" for i in r.issues)
 
     def test_normal_text_passes(self, validator, state):
         assert "ROBOTIC_TEMPLATE" not in _validate(validator, "Five days in the mountains sounds perfect.", state).codes()
@@ -164,6 +175,12 @@ class TestOtherChecks:
     def test_unwanted_question_in_vote(self, validator, state):
         r = _validate(validator, "Should we go with Mountain Retreat?", state, intent=make_intent(act=ActType.VOTE))
         assert "UNWANTED_QUESTION" in r.codes()
+
+    def test_unwanted_question_in_answer(self, validator, state):
+        r = _validate(validator, "Do they have a kids' menu at Mountain Retreat?", state,
+                      intent=make_intent(act=ActType.ANSWER))
+        assert "UNWANTED_QUESTION" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "UNWANTED_QUESTION")
 
 
 # ── Severity boundary ──────────────────────────────────────────────────

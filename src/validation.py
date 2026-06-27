@@ -191,9 +191,8 @@ class MessageValidator:
 
     def _check_unwanted_question(self, text: str, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         # Decision and opening turns must commit or state, not deflect into a question.
-        # Discussion moves may carry an occasional rhetorical or open question that invites
-        # others in — the question-chain check still stops it becoming an interrogation.
-        statement_only = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT, ActType.OPENING}
+        # ANSWER turns must answer or hedge, not re-ask the question.
+        statement_only = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT, ActType.OPENING, ActType.ANSWER}
         if "?" in text and intent.act in statement_only:
             issues.append(ValidationIssue("UNWANTED_QUESTION", "repair", "This move should be a statement, not a question."))
 
@@ -201,7 +200,11 @@ class MessageValidator:
         # The prompt bans these formulaic frames, but the model still reaches for them often
         # enough to read as a template. A deterministic backstop forces the worst ones to be
         # rewritten instead of leaking into the chat. Topic-agnostic: no scenario words.
-        if any(p.search(text) for p in _ROBOTIC_TEMPLATES):
+        # "Considering..." as a turn opener is escalated to repair (same class as POSSESSIVE_SUBJECT,
+        # REPEATED_START); other robotic templates remain warn-only.
+        if _CONSIDERING_OPENER.match(text):
+            issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "repair", "Opens with 'Considering' — start with the point, a reaction, or a question."))
+        elif any(p.search(text) for p in _ROBOTIC_TEMPLATES):
             issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "warn", "Uses a banned formulaic template."))
         if any(p.match(text) for p in self._possessive_openers):
             issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
@@ -269,15 +272,18 @@ _MASK = "\x00"
 # Pronoun only — stays topic-agnostic.
 _STANCE_OPENER = re.compile(r"\s*(?:i(?:['’](?:m|d|ve|ll))?|we(?:['’](?:re|ve|d|ll))?|our)\b", re.I)
 
+# "Considering..." as a turn opener — escalated to repair-level in _check_robotic_phrasing.
+# Kept separate so it can fire at repair severity while other _ROBOTIC_TEMPLATES stay warn-only.
+_CONSIDERING_OPENER = re.compile(r"^\s*considering\b", re.I)
+
 # Formulaic frames the prompt forbids but the model still emits. Kept small and word-based
-# (no option/topic words) so it generalises across every scenario. Repair-level: the worst
-# offenders get rewritten rather than reaching the transcript.
+# (no option/topic words) so it generalises across every scenario. Warn-level: logged but not
+# forced to rewrite — except _CONSIDERING_OPENER above which is repair-level.
 _ROBOTIC_TEMPLATES = [
     re.compile(r"\bout ?weigh", re.I),
     re.compile(r"\bmakes? me (?:think|consider|reconsider|wonder|real[iz]se)\b", re.I),
     re.compile(r"\b(?:point|points|concern|concerns|argument|idea)\b.{0,75}\b(?:valid|fair|well[- ]taken|compelling|spot[- ]on|resonate)\b", re.I),
     re.compile(r"\bgiven the discussion\b", re.I),
-    re.compile(r"^\s*considering\b", re.I),
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+a\s+(?:good|great|solid|natural|obvious|perfect|ideal|clear)\s+fit\b", re.I),
     re.compile(r"\bstill\s+(?:beats?|wins?|comes?\s+out\s+(?:ahead|on\s+top)|edges?\s+out)\b", re.I),
@@ -289,6 +295,8 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\b(?:is|seems?\s+like)\s+(?:the\s+)?way\s+to\s+go\b", re.I),
     re.compile(r"\b(?:is|are)\s+a\s+(?:must|big draw|major draw|huge draw|key factor|top priority)\b", re.I),
     re.compile(r"\b(?:is|are)\s+(?:key|crucial|essential|paramount)\s+(?:for|to)\s+me\b", re.I),
+    re.compile(r"\bdo they offer\b", re.I),
+    re.compile(r"\bwhy that matters\b", re.I),
 ]
 
 # Line-initial "we/our + cognition/preference verb": an individual hiding a private stance

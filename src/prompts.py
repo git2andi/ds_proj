@@ -263,10 +263,11 @@ def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: Dia
     elif outcome.final_option and outcome.status == "fallback":
         chosen = scenario.option(outcome.final_option).name
         holdout_concerns = _remaining_concerns(state, outcome.final_option)
-        situation = f"No full agreement, but most lean toward {chosen}."
-        concern_note = f" Remaining concern: {holdout_concerns}." if holdout_concerns else ""
-        instruction = (f"Name {chosen} as the working pick.{concern_note} "
-                       "Acknowledge it wasn't everyone's first choice. One practical next step that fits the topic.")
+        situation = f"No full consensus — majority working pick is {chosen}, but not everyone fully agreed."
+        concern_note = f" The remaining concern: {holdout_concerns}." if holdout_concerns else ""
+        instruction = (f"Open by being upfront that agreement wasn't unanimous.{concern_note} "
+                       f"Then name {chosen} as what the group is going with. "
+                       "One practical next step. Don't phrase it as a shared win.")
     else:
         blocker = _identify_blocker(state)
         situation = f"The group is split: {_camp_split(state)}."
@@ -485,16 +486,18 @@ def _concession_bridge(persona: Persona, option_name: str = "", reservation: str
     import random
     worry = reservation or persona.main_concern
     opt = option_name or "this"
+    # Two-part structure required: (1) own that it's not your first choice,
+    # (2) name the specific trade-off or condition on the worry you're accepting.
     bridges = [
-        f"Take {opt} — name the one condition about {worry} that would make it fully work.",
-        f"Back {opt}: be honest that {worry} is the trade-off you're accepting.",
-        f"Go along with {opt} — leave one specific concern about {worry} on the table.",
-        f"Commit to {opt} and flag the one thing about {worry} you'd want handled.",
+        f"Back {opt} — but first say you'd have preferred something else, then name the specific {worry} trade-off you're living with.",
+        f"Accept {opt}: own that it wasn't your pick, and say concretely what about {worry} you're accepting as a cost.",
+        f"Give {opt} a yes — acknowledge you came around, not that you always wanted it, and say what {worry} trade-off makes it workable.",
+        f"Agree to {opt}: be clear you preferred another option, then name the one {worry} thing you're letting go of.",
     ]
     if persona.traits.compromise_willingness < 0.5:
         bridges = [
-            f"Give {opt} a reluctant yes — only if there's a concrete plan for {worry}.",
-            f"You'll live with {opt} but not without a specific fix for {worry} named first.",
+            f"Reluctant yes on {opt} only — say you'd rather have had something else, and name specifically what about {worry} still isn't ideal.",
+            f"Accept {opt} with a condition: be explicit you're compromising, and say what about {worry} you'd want followed up on.",
         ]
     return random.choice(bridges)
 
@@ -582,7 +585,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"You're warming up to this. {bridge}"
     if intent.act == ActType.ANSWER:
-        return "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the question asks about a service, facility, or detail not in the card, say 'can't confirm that' or 'we'd have to look it up' — never invent facts. Don't repeat the question." + face
+        return "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the card doesn't cover it, hedge honestly — never invent facts. Don't ask the question back." + face
     by_act = {
         ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'huh interesting'). Don't re-pitch your option." + face,
         ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
@@ -707,7 +710,7 @@ Guidance: {guidance}
 Rules:
 - One line. No name prefix, no quotes, not starting with an option name in possessive ('X's ...'). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
 - Vary your opener each turn — fragments, reactions, direct points. Lead with your own thought, not a recap.{address_rule}
-- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick'). You know only what's in the option cards — anything else is unknown: say 'I'm not sure', 'can't say', 'we'd have to check', 'no idea', 'unknown to me' — vary the phrasing, never a confident claim.{alias_rule}
+- No stock phrases ('outweighs', 'valid point', 'Considering...', 'wins me over', 'seems like a good fit', 'edges ahead', 'still pick', 'do they offer', 'why that matters'). You know only what's in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 
@@ -732,10 +735,10 @@ _REPAIR_HINTS = {
     "UNCLEAR_ACCEPT": "clearly say you're agreeing to this option",
     "UNCLEAR_REJECT": "clearly state your objection",
     "QUESTION_IN_CONFIRMATION": "make it a statement, not a question",
-    "UNWANTED_QUESTION": "make it a statement, not a question",
+    "UNWANTED_QUESTION": "don't respond with a question — if answering, give a direct answer or hedge; otherwise make a statement",
     "QUESTION_CHAIN": "don't ask another question — react or state instead",
     "INCOMPLETE_TURN": "finish the thought; don't trail off",
-    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing ('outweighs', 'point is valid', 'makes me think', 'seems like a/the best fit', 'still beats') and DON'T open with a participial frame ('Considering...', 'Given the discussion...') — just say it plainly in your own voice",
+    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing — 'outweighs', 'makes me think', 'seems like a/the best fit', 'still beats', 'do they offer', 'why that matters' — and don't open with 'Considering...' or 'Given the discussion...' — just say it plainly in your own voice",
     "POSSESSIVE_SUBJECT": "don't open with an option name in possessive form ('X's ...') — use a fragment, reaction, or your own take instead",
     "COLLECTIVE_VOICE": "this is your own view, not the committee's — speak for yourself, not 'we'/'our'",
     "CARD_READING": "don't parrot the option card's description — put it in your own words",
