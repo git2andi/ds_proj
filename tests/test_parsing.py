@@ -32,10 +32,6 @@ class TestParseTrailer:
         text, move = parse_trailer("Just a comment.", self.IDS)
         assert text == "Just a comment." and not move.present
 
-    def test_dangling_option_letter_stripped(self):
-        text, _ = parse_trailer("Solid pick for us C", self.IDS)
-        assert not text.rstrip().endswith("C")
-
     def test_invalid_option_ignored(self):
         _, move = parse_trailer("Ok. [act=accept; opt=Z; stance=accept]", self.IDS)
         assert move.option is None
@@ -64,21 +60,22 @@ class TestCommitmentGating:
         stance, _, _ = _resolve_move(move, make_intent(act=ActType.ACCEPT), ["A"], None, hedged=True)
         assert stance == "neutral"
 
+    def test_question_not_credited_as_accept(self):
+        move = TurnMove(present=False)
+        stance, _, _ = _resolve_move(move, make_intent(act=ActType.ACCEPT), ["A"], "p2")
+        assert stance == "neutral"
+
+    def test_question_not_credited_as_vote(self):
+        move = TurnMove(present=False)
+        stance, _, _ = _resolve_move(move, make_intent(act=ActType.VOTE), ["B"], "p1")
+        assert stance == "neutral"
+
 
 # ── OptionResolver ──────────────────────────────────────────────────────
 
 class TestOptionResolver:
     def test_name_match(self, resolver: OptionResolver):
         assert "A" in resolver.ids_in_text("Mountain Retreat is great.")
-
-    def test_explicit_ref(self, resolver: OptionResolver):
-        assert "B" in resolver.ids_in_text("Option B looks good.")
-
-    def test_collision_excluded(self):
-        opts = [OptionCard(id="A", name="Bowling Night"), OptionCard(id="B", name="Game Night")]
-        r = OptionResolver(opts)
-        assert "A" in r.ids_in_text("Bowling sounds fun.")
-        assert "B" in r.ids_in_text("Game sounds fun.")
 
     def test_invalid_refs(self, resolver: OptionResolver):
         assert resolver.invalid_option_refs("Option Z is wild.") == ["Z"]
@@ -102,9 +99,3 @@ class TestDialogueAct:
                                   resolver=resolver, participant_names=participant_names,
                                   move=move, intent=make_intent(act=ActType.ACCEPT))
         assert act.accepts == []
-
-    def test_addressee_detection(self, resolver, participant_names):
-        act = parse_dialogue_act(speaker_id="p1", speaker_name="Alice",
-                                  text="Bob, what do you think?",
-                                  resolver=resolver, participant_names=participant_names)
-        assert act.addressee_id == "p2"

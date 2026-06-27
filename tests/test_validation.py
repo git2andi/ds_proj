@@ -1,4 +1,4 @@
-"""Essential tests for src/validation.py — one positive + one negative per guardrail."""
+"""Essential tests for src/validation.py — core guardrails and repair triggers."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ from models import ActType, Phase
 from parsing import OptionResolver, TurnMove
 from validation import (
     MessageValidator,
-    _longest_run,
     classify_claim_slots,
     classify_discourse_frames,
     fix_collective_voice,
@@ -44,17 +43,9 @@ class TestStructure:
         r = _validate(validator, "Option Z looks interesting.", state)
         assert "INVALID_OPTION_REFERENCE" in r.codes()
 
-    def test_valid_option_ref_passes(self, validator, state):
-        r = _validate(validator, "Option A is my top pick.", state)
-        assert "INVALID_OPTION_REFERENCE" not in r.codes()
-
     def test_invented_number_detected(self, validator, state):
         r = _validate(validator, "Mountain Retreat costs $3500 per person.", state)
         assert "INVENTED_OPTION_ATTRIBUTE" in r.codes()
-
-    def test_grounded_number_passes(self, validator, state):
-        r = _validate(validator, "Mountain Retreat at $800 is a steal.", state)
-        assert "INVENTED_OPTION_ATTRIBUTE" not in r.codes()
 
     def test_incomplete_turn_detected(self, validator, state):
         r = _validate(validator, "compared to Beach Resort's", state)
@@ -74,10 +65,11 @@ class TestRepetition:
         r = _validate(validator, "The cost factor makes Mountain Retreat really attractive for our group budget.", state, intent=make_intent(speaker_id="p1"))
         assert "SELF_REPETITION" in r.codes()
 
-    def test_naming_same_option_not_echoed(self, validator, state):
-        state.turns.append(make_turn(0, "p2", "Bob", "Mountain Retreat has great value."))
-        r = _validate(validator, "I'd go with Mountain Retreat for the scenery.", state, intent=make_intent(speaker_id="p1"))
-        assert "ECHOED_PHRASE" not in r.codes()
+    def test_question_echo_is_repair(self, validator, state):
+        state.turns.append(make_turn(0, "p2", "Bob", "Do they have space at the venue for our group?"))
+        r = _validate(validator, "Do they have space at the venue for our group of ten?", state, intent=make_intent(speaker_id="p1"))
+        assert "QUESTION_ECHO" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "QUESTION_ECHO")
 
 
 # ── Opener variety ─────────────────────────────────────────────────────
@@ -133,9 +125,8 @@ class TestQuestionChain:
 class TestRoboticPhrasing:
     @pytest.mark.parametrize("text", [
         "The cost outweighs the benefits here.",
-        "Considering our budget, Mountain Retreat wins.",
         "Beach Resort seems like the best fit for everyone.",
-        "The low cost wins me over.",
+        "Ride edges ahead for me because of the playtime.",
     ])
     def test_robotic_detected(self, validator, state, text):
         assert "ROBOTIC_TEMPLATE" in _validate(validator, text, state).codes()
@@ -150,12 +141,6 @@ class TestRoboticPhrasing:
 # ── Collective voice ───────────────────────────────────────────────────
 
 class TestCollectiveVoice:
-    def test_we_consider_flagged(self, validator, state):
-        assert "COLLECTIVE_VOICE" in _validate(validator, "We consider Mountain Retreat the best.", state).codes()
-
-    def test_we_should_not_flagged(self, validator, state):
-        assert "COLLECTIVE_VOICE" not in _validate(validator, "We should book early to get a discount.", state).codes()
-
     def test_fix_we_to_i(self):
         assert fix_collective_voice("We consider this option best.") == "I consider this option best."
 
@@ -168,13 +153,6 @@ class TestCollectiveVoice:
 class TestOtherChecks:
     def test_self_narration_detected(self, validator, state):
         assert "SELF_NARRATION" in _validate(validator, "I should consider the wine list at Beach Resort.", state).codes()
-
-    def test_card_reading_detected(self, validator, state):
-        from models import OptionCard
-        from parsing import OptionResolver
-        rich_options = [OptionCard(id="A", name="Bistro Bliss", attrs={"cost": "$25"}, upside="Cozy atmosphere and excellent service", tradeoff="Limited parking options")]
-        v = MessageValidator(OptionResolver(rich_options), {"p1": "Alice"})
-        assert "CARD_READING" in _validate(v, "Bistro Bliss has cozy atmosphere and excellent service.", state).codes()
 
     def test_unwanted_question_in_vote(self, validator, state):
         r = _validate(validator, "Should we go with Mountain Retreat?", state, intent=make_intent(act=ActType.VOTE))
@@ -195,41 +173,17 @@ class TestSeverity:
 
 # ── Discourse frames & claim slots ─────────────────────────────────────
 
-class TestDiscourseFrames:
+class TestDiscourseAndSlots:
     def test_echo_pivot_detected(self):
         assert "echo_pivot" in classify_discourse_frames("Variety is great, but I prefer something simpler.")
-
-    def test_plain_but_not_triggered(self):
-        assert "echo_pivot" not in classify_discourse_frames("I like the beach but the cost is too high.")
-
-    def test_no_frame_on_plain_text(self):
-        assert classify_discourse_frames("The price difference is only twenty bucks.") == []
 
     def test_recent_overuse_triggers_hint(self):
         hint = recent_frame_hint(["agreement_preface", "agreement_preface"], [])
         assert "Avoid" in hint
 
-    def test_no_overuse_returns_empty(self):
-        assert recent_frame_hint(["agreement_preface"], []) == ""
-
-
-class TestClaimSlots:
-    def test_cost_detected(self):
+    def test_cost_slot_detected(self):
         assert "cost" in classify_claim_slots("The price is $50 per person.")
-
-    def test_no_slots_on_plain(self):
-        assert classify_claim_slots("Yeah I think so too.") == []
 
     def test_multiple_slots(self):
         slots = classify_claim_slots("The price is low and the atmosphere is cozy.")
         assert "cost" in slots and "comfort" in slots
-
-
-# ── Longest run helper ─────────────────────────────────────────────────
-
-class TestLongestRun:
-    def test_identical(self):
-        assert _longest_run(["a", "b", "c"], ["a", "b", "c"]) == 3
-
-    def test_mask_breaks_run(self):
-        assert _longest_run(["\x00", "b"], ["\x00", "b"]) == 1

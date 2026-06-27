@@ -8,7 +8,6 @@ MoveIntent objects rather than bare speaker IDs.
 from __future__ import annotations
 
 import random
-from typing import Optional
 
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, Phase, Persona, TurnRecord
@@ -24,15 +23,19 @@ class TurnRouter:
         if state.open_questions:
             q = state.open_questions[0]
             target = self._best_answerer(state, q)
-            return MoveIntent(
-                speaker_id=target,
-                addressee_id=q.asked_by,
-                act=ActType.ANSWER,
-                option_focus=q.option_focus or self._focus_for_person(state, target),
-                reason="answer the direct question before the thread moves on",
-                length_hint="medium",
-                respond_to_turn=q.turn_id,
-            )
+            last = self._last_participant_turn(state)
+            # Don't route the same speaker twice in a row (e.g. opening → immediate answer).
+            # The question stays queued and is picked up after someone else speaks.
+            if not (last and last.speaker_id == target and len(state.personas) > 1):
+                return MoveIntent(
+                    speaker_id=target,
+                    addressee_id=q.asked_by,
+                    act=ActType.ANSWER,
+                    option_focus=q.option_focus or self._focus_for_person(state, target),
+                    reason="answer the direct question before the thread moves on",
+                    length_hint="medium",
+                    respond_to_turn=q.turn_id,
+                )
 
         if state.phase == Phase.NARROWING:
             return self._vote_intent(state)
@@ -88,7 +91,7 @@ class TurnRouter:
         state.phase = Phase.CONFIRMATION
         return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
 
-    def _confirmation_intent(self, state: DialogueState) -> Optional[MoveIntent]:
+    def _confirmation_intent(self, state: DialogueState) -> MoveIntent | None:
         candidate = state.candidate_option or leading_option(state)
         if not candidate:
             return None
@@ -122,7 +125,7 @@ class TurnRouter:
             )
         return None
 
-    def _unanswered_challenge(self, state: DialogueState) -> Optional[MoveIntent]:
+    def _unanswered_challenge(self, state: DialogueState) -> MoveIntent | None:
         """If a recent OBJECT/PUSH_BACK hasn't been answered by the natural respondent
         (champion of the targeted option or the explicit addressee), route them to
         respond before phase/coverage logic picks someone else."""
@@ -158,7 +161,7 @@ class TurnRouter:
             )
         return None
 
-    def _discussion_intent(self, state: DialogueState, forced_act: Optional[ActType] = None) -> MoveIntent:
+    def _discussion_intent(self, state: DialogueState, forced_act: ActType | None = None) -> MoveIntent:
         if forced_act is None:
             challenge_response = self._unanswered_challenge(state)
             if challenge_response is not None:
@@ -186,7 +189,7 @@ class TurnRouter:
                 return persuasion
         act = forced_act or self._sample_discussion_act(state, speaker_id)
         if self._should_skip(state, speaker_id, act):
-            speaker_id = self._select_speaker_excluding(state, speaker_id)
+            speaker_id = self._select_speaker(state, exclude=speaker_id)
             act = forced_act or self._sample_discussion_act(state, speaker_id)
         focus = self._focus_for_act(state, speaker_id, act, None)
         addressee = self._target_for_act(state, speaker_id, act, focus[0] if focus else None)
@@ -214,18 +217,6 @@ class TurnRouter:
             return True
         return False
 
-    def _select_speaker_excluding(self, state: DialogueState, exclude: str) -> str:
-        def extra(persona: Persona, rt, recent: list[str]) -> float:
-            score = 0.0
-            if rt.turn_count == 0:
-                score += float(cfg.routing.unspoken_boost)
-            score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
-            score -= recent.count(persona.id) * float(cfg.routing.recent_speaker_penalty)
-            if persona.id == exclude:
-                score -= 10.0
-            return score
-        return self._pick_speaker(state, extra)
-
     # ------------------------------------------------------------------
 
     def _pick_speaker(self, state: DialogueState, extra_score) -> str:
@@ -245,18 +236,20 @@ class TurnRouter:
             elif rt.turn_count == min_turns:
                 score += float(cfg.routing.low_turn_count_boost) * (0.5 if n >= 5 else 1.0)
             score += persona.traits.initiative * float(cfg.routing.initiative_weight)
-            score += persona.traits.extraversion * 0.06
+            score += persona.traits.extraversion * float(cfg.routing.extraversion_weight)
             score += extra_score(persona, rt, recent)
             weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))
         return weighted_choice(ids, weights)
 
-    def _select_speaker(self, state: DialogueState) -> str:
+    def _select_speaker(self, state: DialogueState, exclude: str | None = None) -> str:
         def extra(persona: Persona, rt, recent: list[str]) -> float:
             score = 0.0
             if rt.turn_count == 0:
                 score += float(cfg.routing.unspoken_boost)
             score += len(rt.soft_rejections) * float(cfg.routing.unresolved_objection_boost)
             score -= recent.count(persona.id) * float(cfg.routing.recent_speaker_penalty)
+            if exclude and persona.id == exclude:
+                score -= 10.0
             return score
         return self._pick_speaker(state, extra)
 
@@ -272,7 +265,7 @@ class TurnRouter:
             return score
         return self._pick_speaker(state, extra)
 
-    def _coverage_gap_option(self, state: DialogueState) -> Optional[str]:
+    def _coverage_gap_option(self, state: DialogueState) -> str | None:
         # Surface a real alternative that hasn't come up yet — but only one that at least
         # one person actually prefers or could live with. Options nobody wants are left
         # unmentioned on purpose: forcing talk about a dead option ("let's also consider
@@ -309,8 +302,19 @@ class TurnRouter:
             probs[ActType.PROPOSE_COMPROMISE.value] = float(probs.get(ActType.PROPOSE_COMPROMISE.value, 0.0)) + float(cfg.routing.late_discussion_compromise_bonus)
         persona = state.persona_by_id(speaker_id)
         trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
+        # openness: curious speakers ask more
         curiosity = persona.traits.openness / trait_mid
         probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * curiosity
+        # agreeableness: agreeable → react/support more, object/push-back less; disagreeable → reverse
+        agree_mod = 1.0 + (persona.traits.agreeableness - trait_mid) * 0.15
+        probs[ActType.REACT.value] = float(probs.get(ActType.REACT.value, 0.0)) * agree_mod
+        probs[ActType.SUPPORT.value] = float(probs.get(ActType.SUPPORT.value, 0.0)) * agree_mod
+        probs[ActType.OBJECT.value] = float(probs.get(ActType.OBJECT.value, 0.0)) * (2.0 - agree_mod)
+        probs[ActType.PUSH_BACK.value] = float(probs.get(ActType.PUSH_BACK.value, 0.0)) * (2.0 - agree_mod)
+        # conscientiousness: careful thinkers ask before reacting; low-consc speakers react first
+        consc_mod = 1.0 + (persona.traits.conscientiousness - trait_mid) * 0.15
+        probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * consc_mod
+        probs[ActType.REACT.value] = float(probs.get(ActType.REACT.value, 0.0)) * (2.0 - consc_mod)
         # When discussion stalls (2-3 turns without progress), boost questions and
         # comparisons to steer toward concrete details instead of restating preferences.
         if state.no_progress_count >= 2:
@@ -333,7 +337,7 @@ class TurnRouter:
         weights = [float(probs[key.value]) for key in keys]
         return weighted_choice(keys, weights)
 
-    def _persuasion_intent(self, state: DialogueState, speaker_id: str) -> Optional[MoveIntent]:
+    def _persuasion_intent(self, state: DialogueState, speaker_id: str) -> MoveIntent | None:
         """If the group is rallying behind an option this speaker can genuinely live with
         (more than their current lean), give them a chance to be won over — a real change
         of mind voiced in the chat, not just a silent tally shift. Routed as SUPPORT of
@@ -377,7 +381,7 @@ class TurnRouter:
             moves_lean=True,  # the only SUPPORT that legitimately shifts the speaker's lean
         )
 
-    def _supporter_of(self, state: DialogueState, option_id: str, exclude: str) -> Optional[str]:
+    def _supporter_of(self, state: DialogueState, option_id: str, exclude: str) -> str | None:
         for turn in reversed(state.turns):
             if turn.speaker_id in {"moderator", exclude}:
                 continue
@@ -386,7 +390,7 @@ class TurnRouter:
                 return turn.speaker_id
         return None
 
-    def _target_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: Optional[str]) -> Optional[str]:
+    def _target_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: str | None) -> str | None:
         # Most lines in a real group chat are said to the room, not aimed at one person.
         # Only reply-style and conflict moves get an explicit addressee, and even those
         # only sometimes (direct_reply_probability) — over-addressing was what made every
@@ -404,7 +408,7 @@ class TurnRouter:
             return last_participant.speaker_id
         return None
 
-    def _conflicting_person_for_option(self, state: DialogueState, speaker_id: str, option_id: str) -> Optional[str]:
+    def _conflicting_person_for_option(self, state: DialogueState, speaker_id: str, option_id: str) -> str | None:
         candidates: list[str] = []
         speaker = state.persona_by_id(speaker_id)
         speaker_likes = option_id == speaker.preferred_option or option_id in speaker.acceptable_options
@@ -418,7 +422,7 @@ class TurnRouter:
             return None
         return weighted_choice(candidates, [1.0] * len(candidates))
 
-    def _focus_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: Optional[str]) -> list[str]:
+    def _focus_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: str | None) -> list[str]:
         persona = state.persona_by_id(speaker_id)
         if option_id:
             focus = [option_id]
@@ -460,7 +464,7 @@ class TurnRouter:
         persona = state.persona_by_id(speaker_id)
         return [rt.current_preference or persona.preferred_option]
 
-    def _best_compromise_focus(self, state: DialogueState, speaker_id: str) -> Optional[str]:
+    def _best_compromise_focus(self, state: DialogueState, speaker_id: str) -> str | None:
         persona = state.persona_by_id(speaker_id)
         candidates = list(dict.fromkeys(persona.acceptable_options + ([state.candidate_option] if state.candidate_option else [])))
         if not candidates:
@@ -476,7 +480,7 @@ class TurnRouter:
         return ids[-window:]
 
     @staticmethod
-    def _last_participant_turn(state: DialogueState) -> Optional[TurnRecord]:
+    def _last_participant_turn(state: DialogueState) -> TurnRecord | None:
         for turn in reversed(state.turns):
             if turn.speaker_id != "moderator":
                 return turn

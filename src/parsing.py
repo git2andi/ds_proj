@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 from models import ActType, DialogueAct, MoveIntent, OptionCard
 from utils import normalise_ws
@@ -66,8 +65,8 @@ class TurnMove:
     fall back to the routed intent" — the validator only flags contradictions
     when a trailer was actually present."""
 
-    act: Optional[ActType] = None
-    option: Optional[str] = None
+    act: ActType | None = None
+    option: str | None = None
     stance: str = "neutral"
     present: bool = False
 
@@ -128,7 +127,7 @@ def parse_trailer(raw: str, option_ids: list[str]) -> tuple[str, TurnMove]:
     """Split a raw generation into (clean message, TurnMove). Tolerant of a
     trailer that is bracketed, missing its brackets, malformed, or absent."""
     move = TurnMove()
-    body: Optional[str] = None
+    body: str | None = None
     message = raw
     bracketed = list(_TRAILER.finditer(raw))
     if bracketed:
@@ -180,9 +179,9 @@ def parse_dialogue_act(
     text: str,
     resolver: OptionResolver,
     participant_names: dict[str, str],
-    move: Optional[TurnMove] = None,
-    intent: Optional[MoveIntent] = None,
-    previous_speaker_id: Optional[str] = None,
+    move: TurnMove | None = None,
+    intent: MoveIntent | None = None,
+    previous_speaker_id: str | None = None,
 ) -> DialogueAct:
     text = normalise_ws(text)
     option_refs = resolver.ids_in_text(text)
@@ -220,13 +219,13 @@ def parse_dialogue_act(
 
 
 def _resolve_move(
-    move: Optional[TurnMove],
-    intent: Optional[MoveIntent],
+    move: TurnMove | None,
+    intent: MoveIntent | None,
     option_refs: list[str],
-    question_target: Optional[str],
+    question_target: str | None,
     hedged: bool = False,
-) -> tuple[str, Optional[str], ActType]:
-    focus_opt: Optional[str] = None
+) -> tuple[str, str | None, ActType]:
+    focus_opt: str | None = None
     if move and move.option:
         focus_opt = move.option
     elif len(option_refs) == 1:
@@ -244,6 +243,12 @@ def _resolve_move(
     stance = move.stance if move and move.stance != "neutral" else "neutral"
     if stance == "neutral" and intent:
         stance = _INTENT_FALLBACK_STANCE.get(intent.act, "neutral")
+    # A question is never a binding commitment, even when the intent was ACCEPT/VOTE and
+    # the fallback stance would otherwise credit it. The model asked something instead of
+    # committing; don't let the fallback silently register a false acceptance that triggers
+    # premature consensus before the question is answered.
+    if question_target and stance in {"accept", "vote"}:
+        stance = "neutral"
 
     # A binding commitment is only real on a routed decision turn (the vote round or
     # confirmation). If the model tags an ordinary discussion line as a vote/accept, drop
@@ -297,8 +302,8 @@ def _best_respondent(
     speaker_id: str,
     option_refs: list[str],
     participant_names: dict[str, str],
-    previous_speaker_id: Optional[str],
-) -> Optional[str]:
+    previous_speaker_id: str | None,
+) -> str | None:
     others = [pid for pid in participant_names if pid != speaker_id]
     if not others:
         return None
@@ -307,7 +312,7 @@ def _best_respondent(
     return others[0] if others else None
 
 
-def _extract_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> Optional[str]:
+def _extract_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> str | None:
     lower = text.lower()
     for pid, name in participant_names.items():
         if pid == speaker_id:

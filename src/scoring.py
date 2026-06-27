@@ -6,13 +6,11 @@ the group back option X" drifting apart.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from config_loader import cfg
 from models import DialogueState, Persona
 
 
-def current_lean(state: DialogueState, persona: Persona) -> Optional[str]:
+def current_lean(state: DialogueState, persona: Persona) -> str | None:
     """The option a persona effectively backs right now: an explicit vote wins, then their
     moved leaning, falling back to their original preferred option. One definition shared by
     routing, consensus, concentration, and the moderator's standings."""
@@ -47,13 +45,13 @@ def option_support(state: DialogueState, option_id: str) -> float:
     return score
 
 
-def leading_option(state: DialogueState) -> Optional[str]:
+def leading_option(state: DialogueState) -> str | None:
     if not state.scenario.option_ids:
         return None
     return max(state.scenario.option_ids, key=lambda opt: option_support(state, opt))
 
 
-def best_overlap_option(state: DialogueState) -> Optional[str]:
+def best_overlap_option(state: DialogueState) -> str | None:
     """The option that best bridges the room: one that people currently in *different*
     lean-camps can all live with (it's their lean, an accepted option, or in their
     acceptable set) and that nobody hard-rejects. This is the common-ground candidate a
@@ -63,7 +61,7 @@ def best_overlap_option(state: DialogueState) -> Optional[str]:
     leans = {p.id: current_lean(state, p) for p in state.personas}
     if len({l for l in leans.values() if l}) <= 1:
         return None
-    best: Optional[str] = None
+    best: str | None = None
     best_key: tuple[int, int] = (1, 0)  # require strictly more than one bridged camp
     for opt in state.scenario.option_ids:
         backers = 0

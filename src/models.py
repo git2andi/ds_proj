@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 
 class Phase(str, Enum):
@@ -134,10 +134,10 @@ class MoveIntent:
     speaker_id: str
     act: ActType
     reason: str
-    addressee_id: Optional[str] = None
+    addressee_id: str | None = None
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
-    respond_to_turn: Optional[int] = None
+    respond_to_turn: int | None = None
     # True only when the router is deliberately handing the speaker a change-of-mind
     # (the persuasion "won over" turn). A SUPPORT move only moves the persona's lean
     # when this is set, so ordinary discussion/coverage-gap support of an acceptable
@@ -151,13 +151,13 @@ class DialogueAct:
     text: str
     act_type: ActType
     option_refs: list[str] = field(default_factory=list)
-    addressee_id: Optional[str] = None
-    question_target_id: Optional[str] = None
-    explicit_vote: Optional[str] = None
+    addressee_id: str | None = None
+    question_target_id: str | None = None
+    explicit_vote: str | None = None
     accepts: list[str] = field(default_factory=list)
     soft_rejects: dict[str, str] = field(default_factory=dict)
     hard_rejects: dict[str, str] = field(default_factory=dict)
-    proposes_option: Optional[str] = None
+    proposes_option: str | None = None
 
 
 @dataclass(slots=True)
@@ -182,10 +182,10 @@ class OptionCoverage:
 class ParticipantRuntime:
     persona_id: str
     turn_count: int = 0
-    last_spoke_turn: Optional[int] = None
+    last_spoke_turn: int | None = None
     stated_priority: str = ""
-    current_preference: Optional[str] = None
-    explicit_vote: Optional[str] = None
+    current_preference: str | None = None
+    explicit_vote: str | None = None
     accepted_options: set[str] = field(default_factory=set)
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
@@ -201,7 +201,7 @@ class TurnRecord:
     text: str
     phase: Phase
     act: DialogueAct
-    intent: Optional[MoveIntent] = None
+    intent: MoveIntent | None = None
     tokens_in: int = 0
     tokens_out: int = 0
     validation_issues: list[str] = field(default_factory=list)  # issues remaining after any repair
@@ -211,7 +211,7 @@ class TurnRecord:
 @dataclass(slots=True)
 class RunOutcome:
     status: str
-    final_option: Optional[str]
+    final_option: str | None
     reason: str
     turns: int
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -226,13 +226,13 @@ class DialogueState:
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
     open_questions: list[OpenQuestion] = field(default_factory=list)
-    candidate_option: Optional[str] = None
-    outcome: Optional[RunOutcome] = None
+    candidate_option: str | None = None
+    outcome: RunOutcome | None = None
     turn_index: int = 0
     readiness_score: float = 0.0
     no_progress_count: int = 0
     facilitator_force_narrow: bool = False
-    confirmation_start_turns: Optional[int] = None  # participant-turn count when confirmation began
+    confirmation_start_turns: int | None = None  # participant-turn count when confirmation began
     # Pacing targets derived once per run (group size + composition), so length varies
     # and scales with the number of participants instead of using one fixed floor.
     min_discussion_turns: int = 0
@@ -252,7 +252,7 @@ class DialogueState:
                 return persona
         raise KeyError(persona_id)
 
-    def name_for(self, persona_id: Optional[str]) -> str:
+    def name_for(self, persona_id: str | None) -> str:
         if persona_id is None:
             return ""
         if persona_id == "moderator":

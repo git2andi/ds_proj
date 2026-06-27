@@ -122,7 +122,11 @@ class MessageValidator:
         for turn in recent:
             score = jaccard_text(text, turn.text)
             if score >= float(cfg.validation.group_similarity_threshold):
-                issues.append(ValidationIssue("GROUP_REPETITION", "warn", f"Similar to a recent participant turn: {score:.2f}"))
+                if "?" in text and "?" in turn.text:
+                    # Echoing a question is strictly wrong — repair so the model hedges instead
+                    issues.append(ValidationIssue("QUESTION_ECHO", "repair", f"Re-asks a question already asked: {score:.2f}"))
+                else:
+                    issues.append(ValidationIssue("GROUP_REPETITION", "warn", f"Similar to a recent participant turn: {score:.2f}"))
                 break
             if first and first == _first_words(turn.text, int(cfg.validation.repeated_start_word_count)):
                 issues.append(ValidationIssue("REPEATED_START", "warn", "Starts like a recent turn."))
@@ -270,6 +274,8 @@ _ROBOTIC_TEMPLATES = [
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+the\s+(?:best|right)\s+(?:fit|choice|option|pick|one)\b", re.I),
     re.compile(r"\b(?:seems?|feels?|sounds?)\s+like\s+a\s+(?:good|great|solid|natural|obvious|perfect|ideal|clear)\s+fit\b", re.I),
     re.compile(r"\bstill\s+(?:beats?|wins?|comes?\s+out\s+(?:ahead|on\s+top)|edges?\s+out)\b", re.I),
+    re.compile(r"\bedges?\s+ahead\b", re.I),
+    re.compile(r"\bstill\s+pick\b", re.I),
     re.compile(r"^\s*since \w+ (?:mentioned|said|raised|brought up|expressed)\b", re.I),
     re.compile(r"\bwins? me over\b", re.I),
     re.compile(r"\bseals? the deal\b", re.I),

@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-26.
+Last updated: 2026-06-27 (R11-R17 fixed; R18–R21 open).
 
 ---
 
@@ -28,9 +28,9 @@ The simulator produces coherent, responsive discussions with natural turn length
 
 - **decision mechanics:** working — consensus, fallback, unresolved outcomes distinct,
 - **grounding:** working — responding-to anchoring, room-questions routed to option champions,
-- **repair / malformed output:** low (<7%),
+- **repair / malformed output:** low on most topics (5–15%); some topic/persona combos reach 20–38% (model-dependent),
 - **moderator:** diagnostic before directive, stall window scales with group size, topic-appropriate closures,
-- **persona voice:** behavioral habits active, face-work modifiers for objections,
+- **persona voice:** two-signal speaking habits (12 primary branches, all traits covered), face-work modifiers for REACT/SUPPORT/COMPARE/OBJECT/PUSH_BACK,
 - **concessions:** option-specific with persona's reservation referenced,
 - **option generation:** specific realistic names with concrete comparable attributes.
 
@@ -64,8 +64,60 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **R9: Linguistic template leakage** → seven turn-patterns ("X seems like a good fit", "X still beats Y", "What if we...", "Wait, what about...", "works for me", "Giving up X, gaining Y", "I'm voting for X because") repeated across unrelated topics, making all speakers sound like one hidden agent. Root cause: guidance strings in `_concession_bridge`, `_face_work`, and `_move_guidance` in `prompts.py` literally contained these phrases as examples, seeding them verbatim. Fixed by: (1) rewriting `_concession_bridge` to use persona-specific conditional bridges referencing `opt` and `worry` without template verbiage; (2) replacing `"Frame it as 'what if we...'"` with description-only guidance; (3) removing "Try: '...'" examples from PROPOSE_COMPROMISE; (4) removing seeded phrases from ACCEPT/VOTE/COMPARE/REACT guidance strings; (5) adding `seems like a good fit` and `still beats/wins` to `_ROBOTIC_TEMPLATES` in `validation.py`; (6) adding `what_if_opener` and `wait_what_about` patterns to `_FRAME_PATTERNS` for variety-hint injection. Validated: all seven patterns eliminated across 3 runs.
 - **R10: Invented context** → speakers asserted real-world facts not in the option cards ("big room in back", "group deals", "happy hour", etc.), especially for topics with named real-world places (cafes, restaurants). Root cause: model draws on training knowledge of real places rather than staying within the cards. Fixed by replacing the per-turn "hedge invented facts" rule with a stronger epistemic constraint: "You know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check', never a confident claim." Result: speakers now use "we'd need to check their seating capacity" and "if they have one" instead of asserting invented attributes. Also updated `_REPAIR_HINTS` for `INVENTED_OPTION_ATTRIBUTE` and `UNGROUNDED_NUMERIC_FACT` to suggest hedging. Validated: confident invented claims eliminated in re-run of cafe topic (hardest case for this issue).
 
+- **R11: "edges ahead" template** → phrase appeared 3× per run across different speakers (board game and restaurant topics). Root cause: `_move_guidance()` COMPARE guidance said "where yours edges ahead" — exact phrase the model copied verbatim (same class as R9). Fixed by: (1) rewriting COMPARE guidance to "Acknowledge one genuine plus of theirs, then say why you'd still pick yours. No attribute lists."; (2) adding `re.compile(r"\bedges?\s+ahead\b", re.I)` to `_ROBOTIC_TEMPLATES` in `validation.py`; (3) adding 'edges ahead' to the banned stock-phrases list in rule 3 of `sim_utterance`. Test added. Validated: phrase absent across 2 new runs (board game + restaurant).
+- **R12: Question echo in ANSWER turns** → when routed to answer an unanswerable question (not covered by option cards), the model copied the question back verbatim instead of hedging — producing 3-question echo chains (Tala→Diego→Tala all asking the same question about train car count). Root cause: `ActType.ANSWER` had no explicit guidance in `_move_guidance()`, falling through to the generic "Respond to the last point directly." Fixed by adding an explicit ANSWER case: "Answer if the option cards cover it. If they don't, say you're not sure and move on — don't repeat the question back." Validated: echo chain eliminated in board game re-run; residual mild echo (2 turns, warn-level only) in restaurant run when the echoing turn is not ANSWER-routed.
+- **R13: Question echo deterministic backstop** → prompt guidance alone (R12) didn't prevent 2-turn question echoes when the echoing turn is non-ANSWER-routed (GROUP_REPETITION fired as warn-only, so no repair). Fixed in `validation.py` `_check_repetition`: when GROUP_REPETITION fires and both the current and the matched turn contain "?", issue `QUESTION_ECHO` at repair level instead of GROUP_REPETITION at warn. Repair hint: "don't re-ask what was just asked — if the cards don't say, hedge and move on." Two tests added. Validated: QUESTION_ECHO repairs triggered=0 in restaurant re-run (echo never occurred; prompt+backstop together prevent it).
+- **R14: "still pick" template** → phrase "I'd still pick X because..." appeared 3–4× per run across all speakers in 4/6 new runs (farewell gift, sci-fi, framework, TV series). Root cause: R11's COMPARE guidance fix introduced the replacement phrase "why you'd still pick yours" — same R9/R11 class of template seeding. Fixed by: (1) rewriting COMPARE guidance to "One genuine strength of theirs; one concrete reason yours fits you better. No attribute lists, no templates." — no verb phrase that can be lifted as a sentence; (2) adding `re.compile(r"\bstill\s+pick\b", re.I)` to `_ROBOTIC_TEMPLATES`; (3) adding 'still pick' to banned stock-phrases list in rule 3. Validated: phrase absent in re-runs of farewell gift and sci-fi (both eval-clean, echoed dropped from 4→1 and 2→0 respectively).
+- **R15: Back-to-back routing at opening→answer boundary** → a speaker could get two consecutive turns when (a) they were next in the opening queue and (b) the router immediately routed them to ANSWER a question raised by someone else's opening statement. Root cause: `next_intent()` checks `state.open_questions` after the opening phase ends, with no guard for the last participant speaker. Fixed in `router.py`: before emitting a question-answer `MoveIntent`, check if `target == last_participant.speaker_id`; if so, skip (question stays queued and is picked up after someone else speaks). Validated: back-to-back eliminated in farewell gift re-run.
+
 ---
 
-## No open items
+- **R16: Moderator cuts off open question at closure** → when a participant generated a question on an ACCEPT-routed turn in the confirmation phase, two paths led to the moderator closing immediately after — cutting off the unanswered question. Root cause 1: `_INTENT_FALLBACK_STANCE[ActType.ACCEPT] = "accept"` in `parsing.py` — when the model produces no stance in its trailer, the fallback infers an accept; a question text with no trailer triggered this, silently crediting the speaker as having accepted the candidate option, triggering premature consensus. Root cause 2: the CONFIRMATION→CLOSURE timeout (`max_confirmation_turns`) in `DialogueController.update_phase()` had no guard against open questions, so even after fix 1 (question no longer credited as accept), the timeout could still fire and close mid-question. Fixed by: (1) in `_resolve_move()`, after applying `_INTENT_FALLBACK_STANCE`, override stance back to "neutral" if `question_target` is set (the model asked something, so it did not commit); (2) in `update_phase()`, guard the confirmation timeout with `if not state.open_questions:` — `hard_max_turns` still provides the unconditional backstop. Two tests added. Validated: question-before-closure pattern absent in sci-fi re-runs; `unresolved` outcome correctly issued when true disagreement exists.
 
-All tracked issues (F1–F10, O1–O12, R1–R10) are resolved. Remaining quality depends on model compliance (llama3.3). Re-evaluate after broader testing with diverse topics from `evals/topics.txt`.
+---
+
+- **R17: Fallback outcome uses drifted leading option** → `finalize()` called `leading_candidate(state)` = `leading_option(state)`, which is the live `option_support` score at closure time. After a long confirmation phase with many PROPOSE_COMPROMISE turns, `current_preference` values can drift as speakers propose different options, causing `leading_option` to return an option that nobody explicitly voted for — one with <0.66 support — producing `unresolved` even when 2/3 explicitly voted for the true candidate. Root cause: `leading_option` is a real-time score that changes as preferences drift; the correct fallback target is the option the group narrowed to in the vote round (`state.candidate_option`). Fixed by replacing `self.leading_candidate(state)` with `state.candidate_option or self.leading_candidate(state)` — the confirmed candidate takes priority; `leading_option` is only the fallback when no candidate was set (e.g. if the group never reached narrowing). Validated: 3 runs with clear majority outcomes.
+
+---
+
+## Open items (priority order)
+
+### R18: Back-to-back routing in narrowing/confirmation phase
+
+**Symptom:** ~1/10 runs has a participant speak twice in a row during the narrowing or confirmation phase. Observed in coffee machine (turn 31/38, narrowing) and movie night (turn 17/21, narrowing).
+
+**Root cause:** R15 added a "skip if target just spoke" guard at the opening→answer boundary only. Narrowing/confirmation speaker selection (weighted by initiative/preference) has no equivalent guard. When the top-weighted speaker also happens to have the best score for a VOTE or PROPOSE move, they get selected even if they were the last to speak.
+
+**Fix:** In `router.py`, extend the "skip if just spoke" guard to the narrowing/confirmation speaker selection path — if `target == last_participant.speaker_id`, move to the next-best candidate (same logic as R15 but applied more broadly).
+
+---
+
+### R19: POSSESSIVE_SUBJECT opener not reliably suppressed by prompt
+
+**Symptom:** Speakers open turns with "[OptionName]'s [attribute]..." (e.g. "Jira's flexibility...", "Trello's cost..."). Counts 6–24 per 10-run batch despite explicit Rule 2 ban. Warn-level, so no repair is triggered. One topic (PM tools) had 15 in a single run.
+
+**Root cause:** llama3.3 treats the prompt rule as a soft suggestion. The pattern is short and natural, so the model continues to use it as a fallback opener especially for product-name topics.
+
+**Fix candidate A:** Escalate POSSESSIVE_SUBJECT from warn to repair in `validation.py` (change severity from `"warn"` to `"error"`), so the LLM is forced to rewrite the turn on every hit. Trade-off: adds repair calls and latency.
+
+**Fix candidate B:** Strengthen the prompt rule further — e.g. move the possessive ban into Rule 1 (the voice rule) so it appears earlier and carries more weight.
+
+---
+
+### R20: Repeated openers within a speaker (REPEATED_START)
+
+**Symptom:** A speaker opens multiple consecutive turns the same way (e.g. "Not sure about...", "Not sure about..." twice). 11–25 REPEATED_START hits per 10-run batch, warn-level only.
+
+**Root cause:** The variety instruction in Rule 2 ("Vary your opener each turn") is not speaker-context-aware — the model has no memory of its own recent openers within the same prompt call, so it drifts back to the same short-path opener.
+
+**Fix candidate:** Feed back the speaker's last 1–2 turn openers in the `runtime_speaker_card` and add a brief instruction to not repeat them. Alternatively, add REPEATED_START to the repair level so the model is explicitly told to change the opener.
+
+---
+
+### R21: Named-addressee rate consistently low
+
+**Symptom:** Speakers address each other by name in only 4–21% of turns (ideal ≥20%). The R4 address rule is in the prompt but the model treats it as optional.
+
+**Root cause:** The address rule fires in the prompt as a suggestion ("when relevant, use their name"), which llama3.3 often skips. Named turns tend to cluster in REACT/PUSH_BACK acts where the model has a clear target.
+
+**Fix candidate:** Make the address rule conditional and stronger for ANSWER and REACT acts specifically — "name the person you are responding to" rather than "use their name when relevant". Also consider routing-level enforcement: inject the target name more prominently in the `_responding_to_line` anchor.

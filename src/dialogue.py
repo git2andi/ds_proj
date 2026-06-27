@@ -6,8 +6,6 @@ import datetime as dt
 import random
 import re
 from collections import Counter
-from typing import Optional
-
 import prompts
 from builders import SetupBuilder
 from config_loader import cfg
@@ -131,7 +129,7 @@ class Orchestrator:
                 said.append(line)
                 self._emit(tracker.apply_social(state, persona, line, phase, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
-    def _social_say(self, prompt: str, persona: Persona, budget: int) -> Optional[str]:
+    def _social_say(self, prompt: str, persona: Persona, budget: int) -> str | None:
         # Greetings/goodbyes are cosmetic; a hiccup on one shouldn't sink the whole run, so
         # we skip that persona's line rather than fabricate or abort.
         try:
@@ -201,7 +199,7 @@ class Orchestrator:
             bool(cfg.validation.repair_on_warning) and any(i.severity == "warn" for i in result.issues)
         )
 
-    def _moderator_intervention(self, state: DialogueState) -> Optional[str]:
+    def _moderator_intervention(self, state: DialogueState) -> str | None:
         """Return moderator text when the discussion is circling or has a lone holdout,
         else None. Rate-limited by a cooldown and a per-run cap so the mod stays quiet
         most of the time."""
@@ -311,7 +309,7 @@ class StateTracker:
     def __init__(self, state: DialogueState) -> None:
         self.resolver = OptionResolver(state.scenario.options)
         self.participant_names = {p.id: p.name for p in state.personas}
-        self._last_progress_snapshot: Optional[tuple] = None
+        self._last_progress_snapshot: tuple | None = None
 
     def apply_moderator(self, state: DialogueState, text: str, phase: Phase) -> TurnRecord:
         return self._apply_turn(state, "moderator", "Moderator", text, phase, intent=None, move=None, tokens_in=0, tokens_out=0, validation_issues=[], repaired=False)
@@ -345,8 +343,8 @@ class StateTracker:
         speaker_name: str,
         text: str,
         phase: Phase,
-        intent: Optional[MoveIntent],
-        move: Optional[TurnMove],
+        intent: MoveIntent | None,
+        move: TurnMove | None,
         tokens_in: int,
         tokens_out: int,
         validation_issues: list[str],
@@ -527,7 +525,8 @@ class DialogueController:
             if state.confirmation_start_turns is None:
                 state.confirmation_start_turns = participant_turns
             elif participant_turns - state.confirmation_start_turns >= int(cfg.conversation.max_confirmation_turns):
-                state.phase = Phase.CLOSURE
+                if not state.open_questions:
+                    state.phase = Phase.CLOSURE
         if participant_turns >= state.hard_max_turns:
             state.phase = Phase.CLOSURE
 
@@ -570,7 +569,7 @@ class DialogueController:
 
 
 class ConsensusManager:
-    def detect(self, state: DialogueState) -> Optional[RunOutcome]:
+    def detect(self, state: DialogueState) -> RunOutcome | None:
         candidate = state.candidate_option or self.leading_candidate(state)
         if not candidate:
             return None
@@ -584,7 +583,10 @@ class ConsensusManager:
         detected = self.detect(state)
         if detected:
             return detected
-        candidate = self.leading_candidate(state)
+        # Prefer the option that entered confirmation (the group narrowed to it); fall back
+        # to the live leading option only if no candidate was set. This prevents preference
+        # drift during long proposal rounds from overriding what the group actually voted on.
+        candidate = state.candidate_option or self.leading_candidate(state)
         if candidate:
             fraction = self.support_fraction(state, candidate)
             # A hard rejection always blocks a fallback pick; otherwise a strong majority can carry it.
@@ -592,7 +594,7 @@ class ConsensusManager:
                 return RunOutcome("fallback", candidate, f"majority fallback with support fraction {fraction:.2f}", participant_turn_count(state))
         return RunOutcome("unresolved", None, "no option reached explicit acceptance by all participants", participant_turn_count(state))
 
-    def leading_candidate(self, state: DialogueState) -> Optional[str]:
+    def leading_candidate(self, state: DialogueState) -> str | None:
         return leading_option(state)
 
     def support_fraction(self, state: DialogueState, option_id: str) -> float:
@@ -621,32 +623,6 @@ class ConsensusManager:
 # ---------------------------------------------------------------------------
 # Prompt helpers / generation cleanup
 # ---------------------------------------------------------------------------
-
-
-def public_board(state: DialogueState) -> str:
-    lines = [f"phase={state.phase.value}; candidate={state.candidate_option or '-'}; agreement={state.readiness_score:.2f}"]
-    for persona in state.personas:
-        rt = state.runtimes[persona.id]
-        bits = [f"{persona.name}: turns={rt.turn_count}"]
-        if rt.stated_priority:
-            bits.append(f"priority='{compact_words(rt.stated_priority, 12)}'")
-        if rt.current_preference:
-            bits.append(f"lean={rt.current_preference}")
-        if rt.explicit_vote:
-            bits.append(f"vote={rt.explicit_vote}")
-        if rt.accepted_options:
-            bits.append(f"accepts={sorted(rt.accepted_options)}")
-        if rt.soft_rejections:
-            bits.append(f"concerns={sorted(rt.soft_rejections)}")
-        lines.append("; ".join(bits))
-    coverage_bits = []
-    for option_id, c in state.coverage.items():
-        coverage_bits.append(f"{option_id}:m{c.mentions}/r{c.reasons}/o{c.objections}/a{c.acceptances}")
-    lines.append("coverage " + ", ".join(coverage_bits))
-    if state.open_questions:
-        q = state.open_questions[0]
-        lines.append(f"open question: {state.name_for(q.asked_by)} -> {state.name_for(q.target_id)}: {compact_words(q.text, 16)}")
-    return "\n".join(lines[: int(cfg.utterances.max_public_board_lines)])
 
 
 def recent_lines_for_prompt(state: DialogueState, intent: MoveIntent) -> list[str]:
@@ -747,7 +723,7 @@ def _candidate_holdouts(state: DialogueState, candidate_id: str) -> list[str]:
     ]
 
 
-def previous_participant_speaker(state: DialogueState, exclude: Optional[str] = None) -> Optional[str]:
+def previous_participant_speaker(state: DialogueState, exclude: str | None = None) -> str | None:
     for turn in reversed(state.turns):
         if turn.speaker_id != "moderator" and turn.speaker_id != exclude:
             return turn.speaker_id

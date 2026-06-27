@@ -129,9 +129,10 @@ conversation:
 routing:
   recent_speaker_window: 5
   recent_speaker_penalty: 0.25
-  low_turn_count_boost: 0.45
+  low_turn_count_boost: 0.20    # lowered from 0.45 so extraversion/initiative can differentiate turn share
   unspoken_boost: 0.95
   initiative_weight: 0.24
+  extraversion_weight: 0.15    # was hardcoded 0.06; max spread now 0.60 vs low_turn_count_boost 0.20
   unresolved_objection_boost: 0.34
   preferred_option_gap_boost: 0.40
   acceptable_option_gap_boost: 0.22
@@ -176,7 +177,6 @@ utterances:
   recent_turns_in_prompt: 6     # last N turns shown for context; enough to build on recent points without bloating prompt
   recent_turns_after_question: 8
   max_focus_options_in_prompt: 3
-  max_public_board_lines: 8
   repair_issue_limit: 4
 
 validation:

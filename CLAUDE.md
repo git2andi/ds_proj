@@ -20,18 +20,18 @@ Copy-Item .\.claude\memory\* $dest -Force
 
 ## Running
 
-Activate the `dspro` virtualenv. No requirements.txt install step — the venv is pre-built.
+Activate the `ds_proj` virtualenv. No requirements.txt install step — the venv is pre-built.
 
 ```powershell
 # Interactive single run
-(dspro) PS> py .\main.py
+(ds_proj) PS> py .\main.py
 Topic: Plan a weekend team offsite
 
 # Batch (one topic per line, # comments ignored)
-(dspro) PS> py .\main.py scenarios.txt
+(ds_proj) PS> py .\main.py scenarios.txt
 
 # Headless (pipe a topic, using the venv python directly)
-"Example Topic" | & .\dspro\Scripts\python.exe .\main.py
+"Example Topic" | & .\ds_proj\Scripts\python.exe .\main.py
 ```
 
 Provider is set in `config.yaml` → `llm.provider`: `uni` (Bamberg Ollama endpoint, requires VPN), `groq`, or `gemini`. API keys (`GROQ_API_KEY`, `GOOGLE_API_KEY`) come from `.env`. There is no offline/mock mode — a run requires a reachable provider and raises on failure.
@@ -89,13 +89,13 @@ Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flag
 
 ```powershell
 # Unit tests (offline, instant — run after every code change)
-& .\dspro\Scripts\python.exe -m pytest tests/ -v
+& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
 
 # Post-run regression checks on existing logs
-& .\dspro\Scripts\python.exe evals\run_eval.py --check-latest 4
+& .\ds_proj\Scripts\python.exe evals\run_eval.py --check-latest 4
 
 # Drive new eval runs from the scenario spread (requires VPN for uni)
-& .\dspro\Scripts\python.exe evals\run_eval.py --run
+& .\ds_proj\Scripts\python.exe evals\run_eval.py --run
 ```
 
 ### Implementation process
