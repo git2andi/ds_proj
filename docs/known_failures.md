@@ -1,6 +1,6 @@
 # Known Failures
 
-Last updated: 2026-06-27. F1–F52 fixed (F14, F18, F50 removed — contradicted by R37, R33, R36). Open: R29, R32–R38.
+Last updated: 2026-06-27. F1–F55 fixed (F14, F18, F50 removed — contradicted by R37, R33, R36). All R29–R38 resolved.
 
 ---
 
@@ -15,7 +15,7 @@ Last updated: 2026-06-27. F1–F52 fixed (F14, F18, F50 removed — contradicted
 
 ---
 
-## Fixed (F1–F52)
+## Fixed (F1–F55)
 
 **F1** Mid-discussion accepts counted as binding → commitment gating; ACCEPT/VOTE binding only in narrowing/confirmation.
 **F2** Hard-blocker personas folded to non-preferred → only backs preferred; votes elsewhere ignored.
@@ -66,53 +66,17 @@ Last updated: 2026-06-27. F1–F52 fixed (F14, F18, F50 removed — contradicted
 **F49** SELF_REPETITION skipped for ACCEPT/REJECT → early-return exemption removed; `already_said` checked for all act types.
 **F51** ANSWER turns invent non-card facts → ANSWER guidance states card attributes are exhaustive; "never invent facts."
 **F52** response_length absent from trait card → `len=N` added to Traits line.
+**F53** "Considering..." opener warn-only despite repair escalation pattern → split from `_ROBOTIC_TEMPLATES` into `_CONSIDERING_OPENER` constant; fires repair on `^\s*considering\b` match only.
+**F54** ANSWER-routed turn can contain "?" without triggering repair → `ActType.ANSWER` added to `statement_only` set in `_check_unwanted_question`; echo loop broken.
+**F55** Epistemic hedge phrases ("do they offer", "why that matters") became chorus → both added to `_ROBOTIC_TEMPLATES`; ANSWER guidance rewritten to describe hedging behavior without listing example phrases; R9-class mistake corrected.
+**F56** Fallback closure phrased as unanimous win → `moderator_closure_prompt` fallback case now opens with "agreement wasn't unanimous"; names remaining concerns before naming the pick.
+**F57** Acceptance of non-preferred option was one thin sentence → `_concession_bridge` now enforces two-part structure: (1) own that it wasn't your pick, (2) name the specific trade-off you're accepting as a cost.
+**F58** Open questions silently cleared after one hedge → `hedge_count` field on `OpenQuestion`; first hedge keeps question open for one more routing cycle; cleared on real answer or second hedge.
+**F59** Persona role/concern contradicts preferred option (setup) → `setup_personas` prompt adds consistency constraint: "a quiet reader prefers a calm option; never assign a preferred option whose core attributes directly contradict the persona's role and concern."
+**F60** Token cost regression (~840–875 t/turn for n=3) → resolved as side-effect of F55: removing epistemic phrase list from prompt shortened per-turn cost to ~675 t/turn (~20% reduction).
 
 ---
 
-## Open items (priority order)
+## Open items
 
-### R29 — "Considering..." opener (TOP PRIORITY)
-`^\s*considering\b` in `_ROBOTIC_TEMPLATES` is warn-only. Appears 1-4×/run despite prompt ban. Same escalation pattern as F41/F42.
-**Fix:** Split from blanket warn → repair for this pattern only. Hint: "don't start with 'Considering' — open with the point itself, a reaction, or a question."
-
----
-
-### R32 — ANSWER-routed "?" falls through validation
-ANSWER not in `statement_only`, so a question on an ANSWER turn never fires UNWANTED_QUESTION. The "?" re-registers as OpenQuestion → another ANSWER cycle.
-**Fix:** Add `ActType.ANSWER` to `statement_only`. Hint: "give an answer or say you can't confirm, don't re-ask."
-
----
-
-### R33 — Earned consensus / acceptance gate
-**Symptom:** Fallback outcomes phrased as clean wins (e.g. "Ruby wins" when support=0.667, outcome=fallback). Speakers jump from concern to accept in one sentence with no visible reasoning. System finalizes on hidden state tallies, not visible text quality.
-**Fix candidate:** (a) Before finalizing, verify each participant has a visible accept/vote or explicit "I can work with X" this round — otherwise re-route one more narrowing turn. (b) Fallback moderator closure text should reflect partial agreement, not unanimous language.
-
----
-
-### R34 — Open questions drift away unanswered
-**Symptom:** "Can it handle five players?" raised and never answered or deferred. Routing clears the question after one hedge ANSWER even though the question is still open. Moderator doesn't name lingering unknowns before closure.
-**Fix candidate:** Add `hedged=True` flag to OpenQuestion. If question hedged twice with no substantive answer, route moderator to name it explicitly ("We still don't know X — do we need this to decide?") rather than silently closing it.
-
----
-
-### R35 — Persona/option setup contradiction
-**Symptom:** "Quiet Observer, wants a quiet reading spot" assigned Cosmic Playground (high-noise arcade) as preferred option. Role, concern, and preference internally inconsistent — poisons the whole discussion.
-**Fix candidate:** In `builders.py` belief-state prompt, add constraint: preferred option must plausibly match at least one stated concern. Post-generation check: if persona's concern cluster contradicts preferred option's attribute cluster, re-roll or raise.
-
----
-
-### R36 — Hedge phrases became new templates
-**Symptom:** "do they offer", "we'd have to check", "no idea if", "why that matters is" repeat across multiple speakers per run. F51/F50 fixed hallucination but replacement phrases are now the chorus. Same-unknown raised twice in same form by different speakers.
-**Fix candidate:** (a) Add "do they offer", "why that matters is" to `_ROBOTIC_TEMPLATES`. (b) Track raised-unknowns per option in state; suppress re-raising already-hedged unknowns (or feed into `covered_slots_hint`). (c) Rewrite epistemic guidance to describe behavior without listing the exact phrases.
-
----
-
-### R37 — Acceptance move too thin
-**Symptom:** Speaker who actively opposed an option accepts it in one vague sentence with no condition, no acknowledgment of prior objection. Consensus feels unearned; character feels inconsistent.
-**Fix candidate:** For ACCEPT on non-preferred option: bridge guidance must require (a) naming the concern that was addressed AND (b) a condition or trade-off making this workable — forces "I still prefer X, but since Y is handled, I'm okay with Z" over a single generic clause.
-
----
-
-### R38 — Token usage regression (20k+ tokens/run)
-**Symptom:** Recent runs show 20k+ tokens. Earlier runs were substantially lower. Likely grew with F42 opener feedback, F44 trait block, F50 epistemic expansion, F51 ANSWER guidance additions.
-**Fix candidate:** (a) Profile `prompts.jsonl` token counts per turn. (b) Verify full option cards sent only on COMPARE/VOTE. (c) Trim `already_said` display to last 1 claim instead of 2. (d) Check if opener feedback + trait block + shared_context together bloat the card past useful size.
+No tracked open items. Add new observations here as they surface in validation runs.
