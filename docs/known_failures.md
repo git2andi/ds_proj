@@ -2,7 +2,7 @@
 
 Tracked failures and quality issues in the dialogue simulator. This is the single file for tracking what needs fixing.
 
-Last updated: 2026-06-27 (R11-R23 fixed; R22, R24, R25 open).
+Last updated: 2026-06-27 (R11-R26 all fixed; no open items remain).
 
 ---
 
@@ -85,37 +85,13 @@ The simulator produces coherent, responsive discussions with natural turn length
 - **R20: Repeated openers (REPEATED_START)** → (a) Opener feedback added to `runtime_speaker_card`: last 2 turn openers shown, with "start differently this time" instruction — gives the model concrete context about its own recent openers. (b) REPEATED_START escalated from warn to repair, triggering an LLM rewrite. (c) Repair hint made dynamic: instead of generic "open with different words", the hint now names the exact repeated phrase ("don't start with 'Do they offer' — use a completely different first word or phrase"). Result: REPEATED_START dropped from 11–25 per 10-run batch (warn-only) to 0–3 with repair triggered on each hit.
 - **R21: Named-addressee rate low** → Address rule now fires for ANSWER/REACT acts even without an explicit `addressee_id`: the responding-to name is extracted from the `_responding_to_line` string and injected as a compact "use their name once" instruction. Named rate improved from ~13% to 26–31%.
 - **R23: Back-to-back questions from different speakers** → Hard-zero the ASK act weight in `_select_act` when the immediately preceding participant turn contained "?". The prior `ask_after_question_damping=0.40` was too soft — reduced probability but didn't prevent routing another ASK turn immediately after a question. Hard veto (`probs[ActType.ASK.value] = 0.0`) closes the router-level case. Incidental questions appended to non-ASK turns (REACT/COMPARE) are caught by the QUESTION_ECHO repair backstop (R13). Validated: no back-to-back question pairs in holiday party or programming language runs.
+- **R22: Trait differences not perceptible** → Added compact `Traits: extra=N agree=N neuro=N` line to `runtime_speaker_card` so llama3.3 has numeric calibration signal alongside the speaking-habit description. Validated: terse vs verbose personas now read more distinctly across 5 runs (Isla/Nico terse, Jasper/Yara more elaborate).
+- **R24: Asker routed to answer own question** → In `_best_answerer`, built `other_askers` set from all open questions (excluding the current one), then added two-tier eligibility filter: first prefer non-asker non-other-asker candidates, then fall back to just non-asked_by. Tested with three cases: own question, option champion, cross-question exclusion.
+- **R25: Duplicate substance across speakers** → `covered_slots_hint` was broken — always received `text_slots=[]` so condition `not repeated` was always True and hint never fired. Removed `text_slots` parameter; now fires when `len(covered) >= 3`. Rewrote message to "The group already argued…". Call site updated.
+- **R26: ANSWER-turn echo loop (R13 gap)** → When an ANSWER-routed turn echoed its question (QUESTION_ECHO repair failed, message kept), `_update_questions` re-registered the kept "?" as a new OpenQuestion, cycling indefinitely. Fixed in `StateTracker._update_questions`: if the turn was ANSWER-routed AND `QUESTION_ECHO` is in `validation_issues`, suppress propagation. Validated: holiday party 3-question echo loop eliminated.
 
 ---
 
 ## Open items (priority order)
 
-### R22: Trait differences not perceptible in generated text
-
-**Symptom:** Speakers with very different trait profiles (e.g. extraversion 1 vs. 5, agreeableness 3 vs. 5, neuroticism 1 vs. 3) sound similar in practice. The traits affect routing weights and act probabilities but the actual text output doesn't reflect meaningful personality differences — a blunt direct persona and a collaborative worrier produce interchangeable sentences.
-
-**Root cause:** The `_speaking_habit()` string is one short phrase delivered as "Style:" in the speaker card. llama3.3 doesn't anchor on it strongly enough to maintain a distinct voice across many turns. Trait values are not shown in the prompt at all (they were removed to save tokens) so the model has no numeric signal to calibrate against. The result is all speakers defaulting to a similar chatty-but-polite register.
-
-**Fix candidate:** Pass trait values directly in `runtime_speaker_card` (a compact one-liner like `traits: extra=4, agree=3, neuro=2`) so the model can calibrate tone. Also strengthen the speaking habit description with a concrete behavioral tell ("blunt — one sentence, cuts preamble") and add a voice consistency note to Rule 1.
-
----
-
-### R24: Asker routed to answer their own question
-
-**Symptom:** Sim A asks a question at turn N. Sim B (or another speaker) asks the same or a similar question at turn N+2. The router then routes Sim A to ANSWER at turn N+3 — but Sim A was the one who originally raised this question, so they cannot answer it. The conversation produces a logically broken exchange where the asker "answers" their own question.
-
-**Root cause:** When a second open question is registered, `_best_answerer` looks for the option champion or falls back to `previous_speaker_id` — which may be Sim A (who spoke last before Sim B's question). The guard in R15 only prevents the same speaker going back-to-back at the opening→answer boundary; it does not check whether the routed ANSWER target is the original `asked_by` of the question being answered.
-
-**Fix candidate:** In `_best_answerer` (and in `next_intent` before emitting an ANSWER move), check that `target != q.asked_by`. If the best answerer is the same person who asked the question, skip to the next candidate.
-
----
-
-### R25: Duplicate substance across speakers (non-echo restatement)
-
-**Symptom:** Two speakers make substantively the same point about an option in consecutive or near-consecutive turns (e.g. both mention cost as the main concern for the same option) without building on each other. The existing ECHOED_PHRASE check catches near-verbatim phrase reuse but misses cases where the same argument is restated in different words.
-
-**Root cause:** The ECHOED_PHRASE / GROUP_REPETITION checks are string-similarity based (Jaccard on tokens). A paraphrase of the same claim ("it's the cheapest" vs. "the price is lowest") passes both checks and produces a chorus effect — multiple speakers making the same argument as if they hadn't heard each other.
-
-**Fix candidate A:** Use `covered_slots` from `OptionCoverage` to track which claim dimensions have already been made for each option. In guidance, steer speakers away from slots already covered (this is already partially done via `covered_slots_hint` — strengthen its weight or make it more directive).
-
-**Fix candidate B:** Add a "you already heard this argument" line to `runtime_speaker_card` when the speaker's claimed focus slot was covered in the last 3 turns. Keep it brief to avoid bloating the prompt.
+No open items. All R1–R26 issues resolved.

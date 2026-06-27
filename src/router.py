@@ -452,17 +452,29 @@ class TurnRouter:
     def _best_answerer(self, state: DialogueState, q) -> str:
         """Pick the best person to answer an open question. If the question mentions
         an option, prefer whoever champions that option. Otherwise use the registered
-        target (previous speaker or explicit addressee)."""
+        target (previous speaker or explicit addressee).
+
+        Excludes q.asked_by and the askers of any other open questions — they are the
+        ones who don't know, so routing them produces the "asker answers own question" bug."""
+        other_askers = {oq.asked_by for oq in state.open_questions if oq.turn_id != q.turn_id}
+
+        def _eligible(pid: str) -> bool:
+            return pid != q.asked_by and pid not in other_askers
+
         if q.option_focus:
             opt = q.option_focus[0]
             for p in state.personas:
-                if p.id == q.asked_by:
+                if not _eligible(p.id):
                     continue
                 rt = state.runtimes[p.id]
                 if rt.current_preference == opt or p.preferred_option == opt:
                     return p.id
-        if q.target_id and q.target_id != q.asked_by:
+        if q.target_id and _eligible(q.target_id):
             return q.target_id
+        for p in self._least_recent_personas(state):
+            if _eligible(p.id):
+                return p.id
+        # Last resort: at least exclude this question's own asker
         for p in self._least_recent_personas(state):
             if p.id != q.asked_by:
                 return p.id

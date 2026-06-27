@@ -439,9 +439,10 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
         if focus != persona.preferred_option and persona.reservation:
             concern = persona.reservation
 
+    t = persona.traits
     lines = [
         f"Speaker: {persona.name}, {persona.role}. Lean: {lean_name}. Voice: {persona.speech_style}.",
-        f"Concern: {concern}. Style: {_speaking_habit(persona)}.",
+        f"Concern: {concern}. Style: {_speaking_habit(persona)}. Traits: extra={t.extraversion} agree={t.agreeableness} neuro={t.neuroticism}.",
     ]
     if rt.already_said:
         recent = rt.already_said[-2:]
@@ -678,7 +679,7 @@ def sim_utterance(
         focus_opt = intent.option_focus[0]
         if focus_opt in state.coverage:
             covered = state.coverage[focus_opt].covered_slots
-            slot_hint_text = covered_slots_hint(focus_opt, covered, [])
+            slot_hint_text = covered_slots_hint(focus_opt, covered)
             if slot_hint_text:
                 frame_line += f"\n{slot_hint_text}"
     alias_rule = _alias_rule(state, intent)

@@ -503,14 +503,15 @@ def classify_claim_slots(text: str) -> list[str]:
     return [slot for slot, pat in _CLAIM_SLOT_PATTERNS.items() if pat.search(text)]
 
 
-def covered_slots_hint(option_id: str, covered: set[str], text_slots: list[str]) -> str:
-    """If the speaker is about to repeat an already-covered slot for this option,
-    return a hint nudging toward a new angle."""
-    repeated = [s for s in text_slots if s in covered]
-    if not repeated or len(covered) < 2:
+def covered_slots_hint(option_id: str, covered: set[str]) -> str:
+    """Return a nudge toward a new argument dimension when 3+ claim slots are already
+    covered for this option — prevents multiple speakers repeating the same substance
+    in different words (cost/quality/comfort chorus)."""
+    if len(covered) < 3:
         return ""
+    covered_names = ", ".join(sorted(covered)[:4])
     uncovered = [s for s in _CLAIM_SLOT_PATTERNS if s not in covered]
     if uncovered:
         suggestions = ", ".join(uncovered[:3])
-        return f"Already discussed for this option: {', '.join(sorted(covered))}. Try a new angle: {suggestions}."
-    return f"Already discussed for this option: {', '.join(sorted(covered))}. Add a new detail or respond to an objection instead of restating."
+        return f"The group already argued {covered_names} for this option. Try a new angle: {suggestions}."
+    return f"The group already argued {covered_names} for this option. Add a new detail or respond to an objection instead of restating."

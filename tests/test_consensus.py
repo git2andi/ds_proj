@@ -6,6 +6,8 @@ import pytest
 from conftest import _make_persona, _make_options
 from models import DialogueState, OptionCoverage, ParticipantRuntime, Phase, Scenario
 from dialogue import ConsensusManager
+from models import OpenQuestion
+from router import TurnRouter
 
 
 @pytest.fixture()
@@ -66,3 +68,71 @@ class TestConsensus:
         consensus_state.candidate_option = "A"
         outcome = cm.finalize(consensus_state)
         assert outcome.status == "fallback" and outcome.final_option == "A"
+
+
+class TestBestAnswerer:
+    """R24: _best_answerer must never route the asker back to answer their own question,
+    or route any persona who themselves has an open question (they don't know either)."""
+
+    def test_asker_not_chosen_for_own_question(self, consensus_state):
+        router = TurnRouter()
+        q = OpenQuestion(turn_id=1, asked_by="p1", target_id="p2", text="What about cost?")
+        consensus_state.open_questions = [q]
+        result = router._best_answerer(consensus_state, q)
+        assert result != "p1"
+
+    def test_prefers_option_champion(self, consensus_state):
+        router = TurnRouter()
+        # p2 prefers "B" (sole champion); p1 prefers "A"; p3 is the asker → must pick p2
+        q = OpenQuestion(turn_id=1, asked_by="p3", target_id="p1", text="How good is B?", option_focus=["B"])
+        consensus_state.open_questions = [q]
+        result = router._best_answerer(consensus_state, q)
+        assert result == "p2"
+
+    def test_other_open_askers_excluded(self, consensus_state):
+        """If p1 asked Q1 and p2 asked Q2, routing for Q2 should not pick p1."""
+        router = TurnRouter()
+        q1 = OpenQuestion(turn_id=1, asked_by="p1", target_id="p3", text="What about cost?")
+        q2 = OpenQuestion(turn_id=2, asked_by="p2", target_id="p1", text="How good is A?")
+        consensus_state.open_questions = [q1, q2]
+        # When answering q2, neither p1 (asked q1) nor p2 (asked q2) should be chosen
+        result = router._best_answerer(consensus_state, q2)
+        assert result not in {"p1", "p2"}
+
+
+class TestUpdateQuestions:
+    """R26: ANSWER turns that still carry QUESTION_ECHO must not propagate as new OpenQuestions."""
+
+    def test_question_echo_in_answer_not_propagated(self, consensus_state):
+        from conftest import make_turn
+        from dialogue import StateTracker
+        from models import ActType, OpenQuestion
+
+        tracker = StateTracker(consensus_state)
+        # Simulate: Q1 was asked, router routes p2 to ANSWER, but p2 echoes Q1
+        q1 = OpenQuestion(turn_id=1, asked_by="p1", target_id="p2", text="Do they have room?")
+        consensus_state.open_questions = [q1]
+        # A turn record that represents p2's failed ANSWER (QUESTION_ECHO remaining)
+        turn = make_turn(index=2, speaker_id="p2", speaker_name="Bob", text="Do they have room?", act_type=ActType.ANSWER)
+        from models import MoveIntent
+        turn.intent = MoveIntent(speaker_id="p2", act=ActType.ANSWER, reason="answer", respond_to_turn=1)
+        turn.validation_issues = ["QUESTION_ECHO"]
+        # Manually set question_target_id on the act (as parse_dialogue_act would)
+        turn.act.question_target_id = "p1"
+
+        tracker._update_questions(consensus_state, turn)
+        # Q1 should be cleared (respond_to_turn=1 matches), but no new Q added
+        assert len(consensus_state.open_questions) == 0
+
+    def test_normal_question_still_registered(self, consensus_state):
+        from conftest import make_turn
+        from dialogue import StateTracker
+        from models import ActType, MoveIntent
+
+        tracker = StateTracker(consensus_state)
+        turn = make_turn(index=1, speaker_id="p1", speaker_name="Alice", text="Do they have parking?", act_type=ActType.ASK)
+        turn.intent = MoveIntent(speaker_id="p1", act=ActType.ASK, reason="ask")
+        turn.act.question_target_id = "p2"
+
+        tracker._update_questions(consensus_state, turn)
+        assert len(consensus_state.open_questions) == 1

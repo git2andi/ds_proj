@@ -10,6 +10,7 @@ from validation import (
     MessageValidator,
     classify_claim_slots,
     classify_discourse_frames,
+    covered_slots_hint,
     fix_collective_voice,
     recent_frame_hint,
 )
@@ -187,3 +188,16 @@ class TestDiscourseAndSlots:
     def test_multiple_slots(self):
         slots = classify_claim_slots("The price is low and the atmosphere is cozy.")
         assert "cost" in slots and "comfort" in slots
+
+    def test_covered_slots_hint_fires_at_three(self):
+        hint = covered_slots_hint("A", {"cost", "comfort", "quality"})
+        assert "cost" in hint or "comfort" in hint or "quality" in hint
+        assert "new angle" in hint
+
+    def test_covered_slots_hint_silent_below_threshold(self):
+        assert covered_slots_hint("A", {"cost", "comfort"}) == ""
+
+    def test_covered_slots_hint_all_covered(self):
+        all_slots = {"cost", "time", "comfort", "flexibility", "quality", "effort", "distance", "group_fit", "novelty", "risk"}
+        hint = covered_slots_hint("A", all_slots)
+        assert "new detail" in hint

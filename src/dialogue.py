@@ -462,6 +462,12 @@ class StateTracker:
         if record.intent and record.intent.respond_to_turn is not None:
             state.open_questions = [q for q in state.open_questions if q.turn_id != record.intent.respond_to_turn]
         if record.act.question_target_id:
+            # If the model was routed to ANSWER but echoed the question anyway (repair
+            # failed), don't re-register the echo as a new OpenQuestion — that feeds the
+            # next ANSWER cycle and produces the 3-turn echo loop (R26 / R13 gap).
+            if (record.intent and record.intent.act == ActType.ANSWER
+                    and "QUESTION_ECHO" in record.validation_issues):
+                return
             state.open_questions.append(OpenQuestion(
                 turn_id=record.index,
                 asked_by=record.speaker_id,
