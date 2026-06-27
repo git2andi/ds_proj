@@ -66,7 +66,7 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 
 - **No fabricated fallbacks**: if setup or a turn call returns something unusable, the run raises rather than papering over it with defaults.
 - **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion. Hedged accepts ("still not sure", "not fully sold") are clamped to neutral.
-- **Hard blockers are immovable**: a hard-blocker persona only ever backs their preferred option; any vote/accept elsewhere is ignored.
+- **Trait-driven stubbornness**: a participant sampled with `agreeableness=1` (4% per-run chance, at most one per run) only accepts their preferred option. The LLM plays this from the trait card; the router uses the trait value for vote-focus and persuasion gating. No mechanical vote override — behaviour emerges from traits.
 - **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition.
 - **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance fires.
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
@@ -114,7 +114,7 @@ Every fix follows this cycle (see `docs/known_failures.md` for the full protocol
 - `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (essential cases for each check, plus discourse-frame and claim-slot classification).
 - `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
 - `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
-- `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, hard-blocker integrity, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).
+- `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).
 - `evals/topics.txt` — ~40 diverse topics for random validation runs (everyday, travel, academic, work, creative, hypothetical).
 - `evals/scenarios.yaml` — the topic/size spread used for batch evaluation.
 - `docs/known_failures.md` — single tracking file for open issues, fix priorities, and implementation protocol.
