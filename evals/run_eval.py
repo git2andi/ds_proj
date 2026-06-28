@@ -143,7 +143,7 @@ def check_run(run_dir: Path) -> list[str]:
     header = f"[{run_id}] {topic} (n={len(personas)})"
 
     # --- Opener variety ---
-    participant_turns = [t for t in turns if t["speaker_id"] != "moderator"]
+    participant_turns = [t for t in turns if t["speaker_id"] != "moderator" and not t.get("is_social", False)]
     if participant_turns:
         fp_openers = sum(1 for t in participant_turns if _STANCE_OPENER.match(t["text"]))
         ratio = fp_openers / len(participant_turns)
@@ -183,8 +183,9 @@ def check_run(run_dir: Path) -> list[str]:
     back_to_back = 0
     for t in turns:
         pid = t["speaker_id"]
-        if pid == "moderator":
-            moderator_between = True
+        if pid == "moderator" or t.get("is_social", False):
+            if pid == "moderator":
+                moderator_between = True
             continue
         if pid == prev_pid and not moderator_between:
             back_to_back += 1

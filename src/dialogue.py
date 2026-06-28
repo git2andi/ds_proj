@@ -167,6 +167,8 @@ class Orchestrator:
         )
         message, move = parse_trailer(self._llm.generate(prompt, profile="dialogue"), option_ids)
         text = clean_generated(message, persona.name, max_words)
+        total_tokens_in = self._llm.last_tokens_in
+        total_tokens_out = self._llm.last_tokens_out
 
         result = validator.validate(text, state, intent, move)
         issues = result.codes()
@@ -190,11 +192,13 @@ class Orchestrator:
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_repair")
             message, move = parse_trailer(self._llm.generate(repair_prompt, profile="repair"), option_ids)
             text = clean_generated(message, persona.name, max_words)
+            total_tokens_in += self._llm.last_tokens_in
+            total_tokens_out += self._llm.last_tokens_out
             result = validator.validate(text, state, intent, move)
             issues = result.codes()
         # No fabricated fallback: keep the model's real (possibly imperfect) message and
         # record the remaining issues so they are visible in the logs and metrics.
-        return text, move, prompt, self._llm.last_tokens_in, self._llm.last_tokens_out, issues, repaired, trigger_codes
+        return text, move, prompt, total_tokens_in, total_tokens_out, issues, repaired, trigger_codes
 
     @staticmethod
     def _needs_repair(result) -> bool:
@@ -333,6 +337,7 @@ class StateTracker:
             act=DialogueAct(speaker_id=persona.id, text=text, act_type=ActType.REACT),
             tokens_in=tokens_in,
             tokens_out=tokens_out,
+            is_social=True,
         )
         state.turns.append(record)
         return record
@@ -501,8 +506,12 @@ class StateTracker:
             )
             for pid, rt in state.runtimes.items()
         )
-        reasoned = tuple(1 if c.reasons > 0 else 0 for c in state.coverage.values())
-        return (stances, reasoned)
+        # Include objections and covered_slots so new argument dimensions register as progress,
+        # not just stance changes and first-reason counts. Open-question count also matters:
+        # answering a question is progress even if stances don't shift.
+        coverage = tuple((c.reasons, c.objections, frozenset(c.covered_slots)) for c in state.coverage.values())
+        open_q_count = len(state.open_questions)
+        return (stances, coverage, open_q_count)
 
 
 # ---------------------------------------------------------------------------
@@ -569,6 +578,11 @@ class DialogueController:
         if participant_turn_count(state) < state.min_discussion_turns:
             return False
         if sum(1 for c in state.coverage.values() if c.mentions > 0) < int(cfg.conversation.min_options_touched_before_narrowing):
+            return False
+        # Leading option needs at least one substantive reason before natural narrowing —
+        # prevents the group from voting immediately after bare first-position statements.
+        lead = leading_option(state)
+        if lead and lead in state.coverage and state.coverage[lead].reasons == 0:
             return False
         if state.facilitator_force_narrow:
             return True
@@ -692,11 +706,11 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     return compact_words(text, hard_cap)
 
 
-_CONSIDERING_OPENER_STRIP = re.compile(r"^\s*considering\s+[^,]{1,60},\s+", re.I)
+_CONSIDERING_OPENER_STRIP = re.compile(r"^\s*considering\s+[^,.]{1,60}[,.]\s+", re.I)
 
 
 def _strip_considering_opener(text: str) -> str:
-    """Deterministically remove 'Considering X, ' as a turn opener.
+    """Deterministically remove 'Considering X, ' or 'Considering X. ' as a turn opener.
     The validation layer escalates this to repair, but the model sometimes regenerates
     it anyway. Strip it here so it can never survive into the final transcript."""
     m = _CONSIDERING_OPENER_STRIP.match(text)

@@ -84,6 +84,7 @@ class MessageValidator:
         self._check_robotic_phrasing(stripped, issues)
         self._check_option_subject_opener(stripped, intent, issues)
         self._check_collective_voice(stripped, issues)
+        self._check_soft_attributes(stripped, issues)
         self._check_card_reading(stripped, issues)
         self._check_self_narration(stripped, issues)
         ok = not any(issue.severity in {"repair", "fatal"} for issue in issues)
@@ -156,6 +157,19 @@ class MessageValidator:
             if first and first == _first_words(turn.text, int(cfg.validation.repeated_start_word_count)):
                 issues.append(ValidationIssue("REPEATED_START", "repair", "Starts like a recent turn."))
                 break
+        # KF14: slot-level semantic repetition — same option + same argument dimension
+        # in different words. Complements Jaccard which misses paraphrased repetition.
+        if not any(i.code == "SELF_REPETITION" for i in issues):
+            current_slots = set(classify_claim_slots(text))
+            current_opts = set(intent.option_focus)
+            if current_slots and current_opts:
+                own_recent = [t for t in reversed(state.turns) if t.speaker_id == intent.speaker_id][:3]
+                for prev_turn in own_recent:
+                    if not (current_opts & set(prev_turn.act.option_refs)):
+                        continue
+                    if len(current_slots & set(classify_claim_slots(prev_turn.text))) >= 2:
+                        issues.append(ValidationIssue("SELF_REPETITION", "warn", "Same argument dimension about this option repeated."))
+                        break
 
     def _check_opener_variety(self, text: str, state: DialogueState, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         # The dominant naturalness failure across runs: turn after turn opens with a self-anchored
@@ -265,6 +279,12 @@ class MessageValidator:
         if _COLLECTIVE_VOICE.search(text):
             issues.append(ValidationIssue("COLLECTIVE_VOICE", "warn", "States a personal view as the committee 'we'."))
 
+    def _check_soft_attributes(self, text: str, issues: list[ValidationIssue]) -> None:
+        if _HEDGE_WORDS.search(text):
+            return
+        if _SOFT_CLAIM_PATTERN.search(text):
+            issues.append(ValidationIssue("UNSUPPORTED_CLAIM", "warn", "Soft attribute (capacity/flexibility/availability) stated confidently without card support."))
+
     def _check_card_reading(self, text: str, issues: list[ValidationIssue]) -> None:
         low = text.lower()
         for phrase in self._card_phrases:
@@ -321,6 +341,24 @@ _STANCE_OPENER = re.compile(r"\s*(?:i(?:['’](?:m|d|ve|ll))?|we(?:['’](?:re|v
 # "Considering..." as a turn opener — escalated to repair-level in _check_robotic_phrasing.
 # Kept separate so it can fire at repair severity while other _ROBOTIC_TEMPLATES stay warn-only.
 _CONSIDERING_OPENER = re.compile(r"^\s*considering\b", re.I)
+
+# Unhedged soft-attribute claims: capacity, flexibility, or availability stated confidently
+# without card support. Warn-level only — the model may be paraphrasing a real card field
+# in some cases, but confident invented logistics are a common naturalness failure.
+_SOFT_CLAIM_PATTERN = re.compile(
+    r"\b("
+    r"(can|will|does)\s+accommodate"
+    r"|has?\s+(flexible|ample|dedicated|reserved)\s+"
+    r"|offers?\s+(flexible|customizable|unlimited)"
+    r"|less\s+risk\s+of"
+    r"|more\s+(seats?|space|room|availability)"
+    r")\b",
+    re.I,
+)
+_HEDGE_WORDS = re.compile(
+    r"\b(think|probably|likely|not sure|might|maybe|guess|could|seem|appears?|sounds?|imagine|believe|unsure|I'm not|unclear)\b",
+    re.I,
+)
 
 # Formulaic frames the prompt forbids but the model still emits. Kept small and word-based
 # (no option/topic words) so it generalises across every scenario. Warn-level: logged but not

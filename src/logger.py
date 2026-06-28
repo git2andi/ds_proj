@@ -119,22 +119,23 @@ def token_summary_for(state: DialogueState) -> dict[str, int]:
 
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+    decision_turns = [t for t in participant_turns if not t.is_social]
     moderator_turns = [t for t in state.turns if t.speaker_id == "moderator"]
     turn_counts = {p.name: state.runtimes[p.id].turn_count for p in state.personas}
-    n_part = max(1, len(participant_turns))
-    question_density = round(sum(1 for t in participant_turns if "?" in t.text) / n_part, 3)
-    avg_words = round(sum(len(t.text.split()) for t in participant_turns) / n_part, 1)
-    repaired = sum(1 for t in participant_turns if t.repaired)
-    flagged = sum(1 for t in participant_turns if t.validation_issues)
+    n_part = max(1, len(decision_turns))
+    question_density = round(sum(1 for t in decision_turns if "?" in t.text) / n_part, 3)
+    avg_words = round(sum(len(t.text.split()) for t in decision_turns) / n_part, 1)
+    repaired = sum(1 for t in decision_turns if t.repaired)
+    flagged = sum(1 for t in decision_turns if t.validation_issues)
     avg_words_by_persona = {
         p.name: round(
-            sum(len(t.text.split()) for t in participant_turns if t.speaker_id == p.id)
+            sum(len(t.text.split()) for t in decision_turns if t.speaker_id == p.id)
             / max(1, state.runtimes[p.id].turn_count), 1
         )
         for p in state.personas
     }
     return {
-        "participant_turns": len(participant_turns),
+        "participant_turns": len(decision_turns),
         "moderator_turns": len(moderator_turns),
         "moderator_ratio": round(len(moderator_turns) / max(1, len(state.turns)), 3),
         "turn_counts": turn_counts,

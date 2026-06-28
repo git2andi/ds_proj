@@ -741,7 +741,7 @@ Guidance: {guidance}
 Rules:
 - One line. No name prefix, no quotes, not starting with an option name in possessive (‘X’s ...’). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
 - Vary your opener — fragments, reactions, direct points. Lead with ‘I’, a reaction, or a fragment. Don’t open with just an option name.{address_rule}
-- No stock phrases (‘outweighs’, ‘great question’, ‘this kind of worries me’, ‘Considering...’, ‘wins me over’, ‘seems like a good fit’, ‘edges ahead’, ‘still pick’, ‘do they offer’, ‘why that matters’, ‘brings up a good point’, ‘makes a strong point’). You know only what’s in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
+- No formulaic filler (‘great question’, ‘outweighs’, ‘wins me over’, ‘seems like a good fit’, or similar). You know only what’s in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 
@@ -754,7 +754,7 @@ _REPAIR_HINTS = {
     "MULTI_TURN_OUTPUT": "write only one single line",
     "INVALID_OPTION_REFERENCE": "only mention the real options listed",
     "UNGROUNDED_NUMERIC_FACT": "don't state numbers that aren't in the option cards — hedge as 'I think ~X' if unsure",
-    "INVENTED_OPTION_ATTRIBUTE": "don't state facts that aren't in the option cards — frame as 'I think they have...' or 'do they...?' instead",
+    "INVENTED_OPTION_ATTRIBUTE": "don't state facts that aren't in the option cards — hedge with 'I think they might...' or 'not sure if they...' — never turn it into a question",
     "DUPLICATE_TURN": "don't repeat another speaker's line — say it in your own words",
     "ECHOED_PHRASE": "don't reuse another speaker's phrasing — reword it your way",
     "GROUP_REPETITION": "don't echo a recent turn — add your own angle",
@@ -805,5 +805,5 @@ Recent chat:
 {recent}
 Original line: {original_text}
 Fix: {fixes}.
-Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the option cards — anything else must be hedged ('I think...', 'do they...?'); don't copy others' wording.
+Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the option cards — anything not in the cards must be hedged as 'I think...' or 'not sure if...' — never ask a question; don't copy others' wording.
 End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral."""
