@@ -31,9 +31,10 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 **Partial fix (2026-06-28):** ANSWER directive strengthened. When the responding-to turn ends with "?", `_responding_to_line()` now shows "Answer this (or say 'not sure'):" instead of "Responding to:". ANSWER guidance rewritten to "Address the question above first — say what the cards show, or 'not sure' if not covered." This produced a consistent 10–15pp improvement in `responsive` rate (n=3=37%, n=4=35%, n=6=40%, vs 24–25% pre-fix). "Not sure" responses to unanswerable questions now appear naturally.
 
+**Second partial fix (2026-06-28):** `_unanswered_challenge()` now routes `SUPPORT` (not `REACT`) to the champion of the targeted option when an objection hasn't been answered. REACT guidance says "a fragment is fine — don't re-pitch your option", which is wrong for defending against a specific concern. SUPPORT guidance says "Back this from your angle — a personal reason or past experience", which is appropriate for concern response.
+
 **Remaining issues:**
-- Act mismatch: router routes ASK but LLM generates a question in an OBJECT/SUPPORT trailer → question isn't registered as open → ANSWER never fires. Affects responsive rate in runs where the speaker produces incidental questions.
-- Concern response: when the previous turn raises a concern (not a "?" question), no explicit routing/guidance to address it directly.
+- Act mismatch: router routes ASK but LLM writes a question in OBJECT/SUPPORT trailer — the question IS registered (question_target_id is set from text, not act type) but the act mismatch means the ANSWER routing fires for a speaker who might not have the right focus. Affect on responsive rate unclear.
 - Every non-REACT turn still tends toward a full reason + option pitch, even in discussion where a brief acknowledgment would suffice.
 
 **Relevant code:** `src/router.py`: answer/response routing; `src/prompts.py`: `_responding_to_line()`, ANSWER guidance in `_move_guidance()`; `src/dialogue.py`: open-question tracking.
@@ -86,14 +87,10 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 ## P3 — Efficiency and repair pressure
 
-### KF19 — Repair severity is not well aligned with quality cost
+### KF19 — Repair severity reclassification: POSSESSIVE_SUBJECT (implemented 2026-06-28)
 
-**Problem:** Some highly visible issues are warn-only and leak into transcripts, while some surface issues are repair-level and cause expensive retry calls. `max_repairs_per_turn=1` means one failed repair still leaks. `repair_on_warning=false` means warnings are mostly only logged.
+**Fix applied:** `POSSESSIVE_SUBJECT` downgraded from `repair` to `warn`. New `strip_possessive_opener()` in `validation.py` is called after both `clean_generated()` calls in `_generate_turn()` — so possessive openers are stripped deterministically before validation even runs. Cost: zero tokens. Previously, each occurrence triggered ~1k-token LLM retry.
 
-**Why it matters:** Repair cost is high, but quality leaks remain. The system needs fewer but more meaningful repairs.
-
-**Relevant code:** `src/validation.py`: issue severities; `src/dialogue.py`: `_needs_repair()`; `config.yaml`: `simulation.max_repairs_per_turn`, `validation.repair_on_warning`.
-
-**Fix direction:** Reclassify only the most harmful issues as repair-level. Prefer deterministic cleanup for simple surface patterns. Do not globally enable repair-on-warning.
+**Remaining severity questions:** `REPEATED_START` stays at `repair` (fires 0–3 per run post-R20, repair works). `CONSIDERING` opener stays at `repair` (also stripped deterministically in `_strip_considering_opener`). Other robotic templates remain `warn`.
 
 ---
