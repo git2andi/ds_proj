@@ -9,10 +9,12 @@ If it cannot produce a valid world, build() raises rather than fabricating one.
 from __future__ import annotations
 
 import random
+import re
 from dataclasses import asdict
 from typing import Any
 
 import prompts
+from aliases import validated_short_alias
 from config_loader import cfg
 from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
@@ -57,15 +59,15 @@ class SetupBuilder:
         trait_rows = self._trait_rows(n)
         plan = self._preference_plan(n)
         pref_groups = self._preference_groups(plan)
+        common_option = random.choice([str(x) for x in cfg.scenario.option_labels]) if bool(cfg.personas.require_common_compromise) else None
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         last_error = ""
         for attempt in range(attempts):
             try:
-                scenario, options_json = self._generate_scenario()
-                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario)
+                scenario, options_json = self._generate_scenario(n, common_option)
+                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario, common_option)
                 self._validate_preference_plan(personas, plan)
-                personas = self._postprocess_personas(personas, scenario)
-                self._validate_world(scenario, personas)
+                self._validate_world(scenario, personas, common_option)
                 return scenario, personas
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {exc}"
@@ -74,17 +76,17 @@ class SetupBuilder:
             f"Last error: {last_error}. Check the LLM endpoint/provider in config.yaml."
         )
 
-    def _generate_scenario(self) -> tuple[Scenario, list[dict]]:
-        data = self._llm.generate_json(prompts.setup_scenario(self.topic), profile="setup")
+    def _generate_scenario(self, n: int, common_option: str | None) -> tuple[Scenario, list[dict]]:
+        data = self._llm.generate_json(prompts.setup_scenario(self.topic, n, common_option), profile="setup")
         raw_scenario = data.get("scenario", data)
-        scenario = self._parse_scenario(raw_scenario)
+        scenario = self._parse_scenario(raw_scenario, n)
         options_json = raw_scenario.get("options", [])
         return scenario, options_json
 
     def _generate_personas(self, n: int, trait_rows: list[dict], pref_groups: list[list[str]],
-                           options_json: list[dict], scenario: Scenario) -> list[Persona]:
+                           options_json: list[dict], scenario: Scenario, common_option: str | None) -> list[Persona]:
         data = self._llm.generate_json(
-            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json),
+            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json, common_option),
             profile="setup",
         )
         return self._parse_personas(data.get("participants", []), trait_rows, scenario)
@@ -153,7 +155,7 @@ class SetupBuilder:
             detail=clamp(sample_range(controls.detail), 0.0, 1.0),
         )
 
-    def _parse_scenario(self, raw: Any) -> Scenario:
+    def _parse_scenario(self, raw: Any, n: int) -> Scenario:
         if not isinstance(raw, dict):
             raise ValueError("setup.scenario must be an object")
         options_raw = raw.get("options")
@@ -165,6 +167,7 @@ class SetupBuilder:
             raise ValueError("wrong number of options")
         ctx_raw = raw.get("shared_context", [])
         shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
+        self._validate_participant_references(shared_context, n)
         return Scenario(
             topic=self.topic,
             decision_kind=_require(raw.get("decision_kind"), "scenario.decision_kind"),
@@ -172,6 +175,24 @@ class SetupBuilder:
             options=options,
             shared_context=shared_context,
         )
+
+    @staticmethod
+    def _validate_participant_references(shared_context: list[str], n: int) -> None:
+        number_words = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+        count_pattern = r"(?P<count>\d+|two|three|four|five|six|seven)"
+        patterns = [
+            re.compile(rf"\bgroup\s+of\s+{count_pattern}\b", re.I),
+            re.compile(rf"\b{count_pattern}\s+(?:friends|students|colleagues|participants|players|group\s+members)\b", re.I),
+        ]
+        for fact in shared_context:
+            for pattern in patterns:
+                match = pattern.search(fact)
+                if not match:
+                    continue
+                raw_count = match.group("count").lower()
+                count = int(raw_count) if raw_count.isdigit() else number_words[raw_count]
+                if count != n:
+                    raise ValueError(f"shared_context participant count {count} does not match requested {n}")
 
     def _parse_option(self, raw: Any, expected_id: str) -> OptionCard:
         if not isinstance(raw, dict):
@@ -185,10 +206,11 @@ class SetupBuilder:
         clean_attrs = dict(list(clean_attrs.items())[:attr_max])
         if len(clean_attrs) < attr_min:
             raise ValueError("option has too few attributes")
+        name = self._clean_name(_require(raw.get("name"), f"option {expected_id} name"))
         return OptionCard(
             id=str(raw.get("id") or expected_id).strip().upper(),
-            name=self._clean_name(_require(raw.get("name"), f"option {expected_id} name")),
-            short_name=self._clean_short_name(str(raw.get("short_name") or "")),
+            name=name,
+            short_name=validated_short_alias(name, str(raw.get("short_name") or "")),
             attrs=clean_attrs,
             upside=_require(raw.get("upside"), f"option {expected_id} upside"),
             tradeoff=_require(raw.get("tradeoff"), f"option {expected_id} tradeoff"),
@@ -228,7 +250,7 @@ class SetupBuilder:
             raise ValueError(f"participant {pid} has invalid/missing preferred_option: {row.get('preferred_option')!r}")
         acceptable = self._clean_option_list(row.get("acceptable_options", []), labels)
         if preferred not in acceptable:
-            acceptable.insert(0, preferred)
+            raise ValueError(f"participant {pid} omitted preferred option from acceptable_options")
         soft = self._clean_option_list(row.get("soft_rejections", []), labels)
         hard_rej = self._clean_option_list(row.get("hard_rejections", []), labels) if stubborn else []
         reasons_raw = row.get("reasons", {})
@@ -266,9 +288,8 @@ class SetupBuilder:
 
     @staticmethod
     def _build_scores(raw: Any, labels: list[str], preferred: str, acceptable: list[str], soft: list[str], hard: list[str], pid: str) -> dict[str, int]:
-        # Take the model's 1..5 ratings (required for every option), then force
-        # consistency with the labels so the hidden utility never contradicts the
-        # stated stance. A missing rating means the setup response is unusable.
+        # Generated scores are part of the setup contract. Contradictions trigger a
+        # retry instead of being silently rewritten into a different preference world.
         smin, smax = int(cfg.scenario.score_min), int(cfg.scenario.score_max)
         thr = int(cfg.scenario.acceptance_score)
         given = raw if isinstance(raw, dict) else {}
@@ -276,18 +297,21 @@ class SetupBuilder:
         for opt in labels:
             val = given.get(opt, given.get(opt.lower()))
             try:
-                scores[opt] = max(smin, min(smax, int(val)))
+                scores[opt] = int(val)
             except (TypeError, ValueError):
                 raise ValueError(f"participant {pid} has no valid score for option {opt}")
-        for opt in labels:
-            if opt == preferred:
-                scores[opt] = smax
-            elif opt in hard:
-                scores[opt] = smin
-            elif opt in acceptable:
-                scores[opt] = max(scores[opt], thr)
-            elif opt in soft:
-                scores[opt] = min(scores[opt], thr - 1)
+            if not smin <= scores[opt] <= smax:
+                raise ValueError(f"participant {pid} score for {opt} is outside {smin}-{smax}")
+        contradictions = [
+            opt for opt in labels
+            if (opt in acceptable and scores[opt] < thr)
+            or (opt not in acceptable and scores[opt] >= thr)
+            or (opt in set(soft) | set(hard) and scores[opt] >= thr)
+        ]
+        if scores[preferred] != max(scores.values()):
+            contradictions.append(preferred)
+        if contradictions:
+            raise ValueError(f"participant {pid} score/list contradiction for {sorted(set(contradictions))}")
         return scores
 
     @staticmethod
@@ -296,21 +320,6 @@ class SetupBuilder:
         words = raw.split()
         cap = int(cfg.scenario.option_name_max_words)
         return " ".join(words[:cap]) if len(words) > cap else " ".join(words)
-
-    _SHORT_NAME_STOPWORDS = frozenset({"and", "or", "of", "to", "a", "an", "in", "on", "at", "for", "by", "with", "the"})
-
-    @staticmethod
-    def _clean_short_name(raw: str) -> str:
-        """Validate LLM-provided short_name; return empty string if unusable so the
-        deterministic fallback in _short_alias takes over."""
-        s = raw.strip().strip('"\'').strip()
-        if not s:
-            return ""
-        words = s.split()
-        # Reject if too long or ends on a dangling stopword
-        if len(words) > 3 or words[-1].lower() in SetupBuilder._SHORT_NAME_STOPWORDS:
-            return ""
-        return s
 
     @staticmethod
     def _clean_option_list(value: Any, labels: list[str]) -> list[str]:
@@ -404,7 +413,7 @@ class SetupBuilder:
             )
         return personas
 
-    def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
+    def _validate_world(self, scenario: Scenario, personas: list[Persona], common_option: str | None = None) -> None:
         labels = [str(x) for x in cfg.scenario.option_labels]
         if scenario.option_ids != labels:
             raise ValueError(f"option ids must be {labels}, got {scenario.option_ids}")
@@ -416,6 +425,23 @@ class SetupBuilder:
                 raise ValueError("invalid preferred option")
             if persona.traits.agreeableness > 1 and len(persona.acceptable_options) < int(cfg.personas.non_blocker_min_acceptable):
                 raise ValueError("normal participant has too few acceptable options")
+            if persona.traits.agreeableness == 1 and persona.acceptable_options != [persona.preferred_option]:
+                raise ValueError("stubborn participant must accept only their preferred option")
+            acceptable = set(persona.acceptable_options)
+            rejected = set(persona.soft_rejections) | set(persona.hard_rejections)
+            if acceptable & rejected:
+                raise ValueError("option cannot be both acceptable and rejected")
+            if any(not persona.reasons.get(option_id) for option_id in acceptable):
+                raise ValueError("every acceptable option needs a grounded reason")
+        normal = [persona for persona in personas if persona.traits.agreeableness > 1]
+        if bool(cfg.personas.require_common_compromise) and normal:
+            common = set(normal[0].acceptable_options)
+            for persona in normal[1:]:
+                common &= set(persona.acceptable_options)
+            if not common:
+                raise ValueError("normal participants have no shared acceptable option")
+            if common_option and any(common_option not in persona.acceptable_options for persona in normal):
+                raise ValueError(f"normal participants must all accept planned compromise {common_option}")
 
     @staticmethod
     def _default_reason(option: OptionCard) -> str:

@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 
+from aliases import short_alias_map
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario
 from scoring import best_overlap_option, current_lean, leading_option
@@ -39,7 +40,7 @@ def _option_name_only(option: OptionCard) -> str:
 # ---------------------------------------------------------------------------
 
 
-def setup_scenario(topic: str) -> str:
+def setup_scenario(topic: str, n: int, common_option: str | None = None) -> str:
     labels = list(cfg.scenario.option_labels)
     schema = {
         "scenario": {
@@ -50,7 +51,7 @@ def setup_scenario(topic: str) -> str:
                 {
                     "id": label,
                     "name": "specific realistic name, not a generic category",
-                    "short_name": "1-2 word casual nickname friends would use; must stand alone (never end with 'and', 'of', 'to', 'the', 'a', 'an')",
+                    "short_name": f"1-2 recognizable words copied from the option name; at least {cfg.scenario.short_alias_min_chars} characters",
                     "attrs": {"cost/time/effort/etc": "stable value", "other_relevant_attribute": "stable value"},
                     "upside": "specific benefit",
                     "tradeoff": "specific downside or cost",
@@ -61,25 +62,30 @@ def setup_scenario(topic: str) -> str:
             ],
         },
     }
+    compromise_rule = (
+        f"\n- Option {common_option} must be a credible broad compromise: meaningful, but not obviously dominant."
+        if common_option else ""
+    )
     return f"""Create a fictional group-decision scenario.
 
 Topic: {topic}
 Option ids: {labels}
+Decision group: exactly {n} participants.
 
 Requirements:
 - Create exactly {len(labels)} options.
 - Option names must be specific and realistic, not generic categories.
 - Each option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} stable, topic-specific attributes with concrete values people can compare and discuss.
 - Every attribute must be a fixed value known now. No placeholders, "unknown"/"TBD", or facts that require a live lookup (availability, current weather, booking status).
-- Options must differ meaningfully and expose real trade-offs.
+- Options must differ meaningfully and expose real trade-offs.{compromise_rule}
 - The opening question must ask about priorities and trade-offs, not ask for votes.
-- shared_context: 2-3 stable facts about the decision situation (not about specific options). These are things all participants would know going in.
+- shared_context: 2-3 stable facts about the decision situation (not specific options). If it mentions the decision-makers' group size, it must be exactly {n}.
 
 Return JSON only in this shape:
 {_schema(schema)}"""
 
 
-def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]], options_json: list[dict]) -> str:
+def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]], options_json: list[dict], common_option: str | None = None) -> str:
     labels = list(cfg.scenario.option_labels)
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
     group_lines = "\n".join(
@@ -100,13 +106,19 @@ def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list
                 "acceptable_options": ["A", "C"],
                 "soft_rejections": ["D"],
                 "hard_rejections": [],
-                "scores": {"A": 5, "B": 3, "C": 4, "D": 2},
+                "scores": {"A": 5, "B": 1, "C": 3, "D": 1},
                 "reasons": {"A": ["grounded reason"], "C": ["grounded reason"]},
                 "reservation": "one addressable concern about another option",
                 "reconsider_if": "condition based on group priorities, not changed facts",
             }
         ],
     }
+    compromise_rule = (
+        f"- Every participant with agreeableness >= 2 MUST include Option {common_option} in acceptable_options, "
+        f"score it at least {cfg.scenario.acceptance_score}, and provide a grounded reason for it."
+        if common_option else
+        "- Non-stubborn participants must share at least one acceptable option."
+    )
     return f"""Create {n} participants for this group decision.
 
 Topic: {topic}
@@ -124,7 +136,7 @@ Requirements:
 - Preference camps — CRITICAL: same-camp participants MUST share exactly one preferred_option (they want the same thing for different personal reasons); different camps MUST choose DIFFERENT preferred_options (this disagreement is what creates the conversation). If two camps end up with the same preferred_option the scenario cannot produce meaningful conflict:
 {group_lines}
 - Even when participants share a preferred option, give them distinct roles, reasons, and concerns so they don't sound identical.
-- At least one option should be acceptable to all participants with agreeableness ≥ 2 so compromise is possible.
+{compromise_rule}
 - Reasons must be grounded only in the option cards above.
 - Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
 - Persona consistency: a participant's role, main_concern, and preferred_option must be compatible. A "quiet reader" prefers a calm low-key option; an "adventure seeker" prefers a high-energy option. Never assign someone a preferred option whose core attributes directly contradict their stated role and concern unless their backstory explicitly explains the contradiction.
@@ -439,8 +451,8 @@ def _group_leans(state: DialogueState) -> str:
         rt = state.runtimes[persona.id]
         lean = rt.current_preference or persona.preferred_option
         if lean in state.scenario.option_ids:
-            parts.append(f"{persona.name}→{state.scenario.option(lean).name}")
-    return "Group: " + ", ".join(parts)
+            parts.append(f"{persona.name}={lean}")
+    return "Leans: " + ", ".join(parts)
 
 
 def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveIntent) -> str:
@@ -454,21 +466,12 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
         if focus != persona.preferred_option and persona.reservation:
             concern = persona.reservation
 
-    t = persona.traits
     lines = [
-        f"Speaker: {persona.name}, {persona.role}. Lean: {lean_name}. Voice: {persona.speech_style}.",
-        f"Concern: {concern}. Style: {_speaking_habit(persona)}. Traits: extra={t.extraversion} agree={t.agreeableness} neuro={t.neuroticism} len={t.response_length}.",
+        f"Speaker: {persona.name} ({persona.role}); lean: {lean_name}; concern: {concern}; "
+        f"voice: {persona.speech_style}; habit: {_speaking_habit(persona)}.",
     ]
     if rt.already_said:
-        recent = rt.already_said[-2:]
-        bullets = "; ".join(f'"{compact_words(s, 10)}"' for s in recent)
-        lines.append(f"You already said: {bullets} — don't repeat these points.")
-    if intent.act not in {ActType.VOTE, ActType.OPENING}:
-        prior_turns = [t for t in state.turns if t.speaker_id == persona.id]
-        if len(prior_turns) >= 2:
-            openers = [t.text.split()[:3] for t in prior_turns[-2:] if t.text.split()]
-            opener_str = "; ".join(f'"{" ".join(w)}"' for w in openers)
-            lines.append(f"Your last openers: {opener_str} — start differently this time.")
+        lines.append(f"Avoid repeating your last point: \"{compact_words(rt.already_said[-1], 10)}\".")
     if lean != persona.preferred_option:
         old_name = state.scenario.option(persona.preferred_option).name
         lines.append(f"Started with {old_name}, now leaning {lean_name}.")
@@ -621,27 +624,12 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
         return "\n- Name options naturally, not 'Option B'."
     mentioned = {opt for t in state.turns for opt in (t.act.option_refs if hasattr(t.act, 'option_refs') else [])}
     if mentioned:
-        shorts = ", ".join(f'"{_short_alias(o)}"' for o in state.scenario.options if o.id in mentioned)
+        aliases = short_alias_map(state.scenario.options)
+        shorts = ", ".join(f'"{aliases[o.id]}"' for o in state.scenario.options if o.id in mentioned)
         if shorts:
             return f"\n- Use short names for options: {shorts}. Don't repeat full names — shorten like friends would."
         return "\n- Use short names for options already discussed. Don't repeat full names."
     return "\n- Name options naturally, not 'Option B'."
-
-
-_ALIAS_STOPWORDS = frozenset({"and", "or", "of", "to", "a", "an", "in", "on", "at", "for", "by", "with", "the"})
-
-
-def _short_alias(option: OptionCard) -> str:
-    if option.short_name:
-        return option.short_name
-    words = option.name.split()
-    if len(words) <= 3:
-        return option.name
-    # 4+ words: take first 2, but swap in word[2] if word[1] is a dangling stopword
-    alias = words[:2]
-    if alias[-1].lower() in _ALIAS_STOPWORDS and len(words) >= 3:
-        alias = [words[0], words[2]]
-    return " ".join(alias)
 
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
@@ -676,7 +664,8 @@ def sim_utterance(
     addressee_name: str | None,
     max_words: int,
 ) -> str:
-    option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
+    aliases = short_alias_map(state.scenario.options)
+    option_names = ", ".join(f"{o.id}={aliases[o.id]}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)
     card = runtime_speaker_card(persona, state, intent)
     leans = _group_leans(state)
@@ -718,7 +707,7 @@ def sim_utterance(
     alias_rule = _alias_rule(state, intent)
     ctx_line = ""
     if state.scenario.shared_context:
-        ctx_line = "\nContext: " + "; ".join(state.scenario.shared_context) + "."
+        ctx_line = "\nContext: " + "; ".join(compact_words(item, 12) for item in state.scenario.shared_context)
     verbosity = _verbosity_note(persona, max_words)
     return f"""Write one natural chat message for the next speaker.
 
@@ -739,9 +728,9 @@ Guidance: {guidance}
 {verbosity}{frame_line}
 
 Rules:
-- One line. No name prefix, no quotes, not starting with an option name in possessive (‘X’s ...’). Talk like friends chatting — fragments, shortcuts, reactions all fine. Voice: {persona.speech_style}.
-- Vary your opener — fragments, reactions, direct points. Lead with ‘I’, a reaction, or a fragment. Don’t open with just an option name.{address_rule}
-- No formulaic filler (‘great question’, ‘outweighs’, ‘wins me over’, ‘seems like a good fit’, or similar). You know only what’s in the option cards — anything else is unknown: hedge it, never state it confidently.{alias_rule}
+- One line; no name prefix or quotes. Chat naturally in fragments or reactions when they fit. Don't start with an option's possessive form.
+- Vary the opening; don't default to I/we or a bare option name.{address_rule}
+- No formulaic filler. Use only card/context facts; otherwise say it's unknown or hedge it.{alias_rule}
 
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral."""
 
@@ -796,14 +785,31 @@ def repair_utterance(
         if words:
             hints["REPEATED_START"] = f"don't start with '{' '.join(words)}' — use a completely different first word or phrase"
     fixes = "; ".join(dict.fromkeys(hints.get(c, c.lower().replace("_", " ")) for c in issue_codes[: int(cfg.utterances.repair_issue_limit)]))
-    option_names = ", ".join(f"{o.id}={o.name}" for o in state.scenario.options)
+    ids = list(dict.fromkeys(intent.option_focus))
+    if state.candidate_option and state.candidate_option not in ids:
+        ids.append(state.candidate_option)
+    if not ids:
+        ids.append(persona.preferred_option)
+    if "INVALID_OPTION_REFERENCE" in issue_codes:
+        ids = state.scenario.option_ids
+    repair_options = [state.scenario.option(option_id) for option_id in ids if option_id in state.scenario.option_ids]
+    grounding_codes = {"UNGROUNDED_NUMERIC_FACT", "INVENTED_OPTION_ATTRIBUTE", "CARD_READING"}
+    if grounding_codes.intersection(issue_codes):
+        option_context = _option_cards(repair_options)
+    else:
+        option_context = ", ".join(f"{o.id}={o.name}" for o in repair_options)
     opt_choices = "|".join(state.scenario.option_ids)
-    recent = "\n".join(recent_lines[-4:]) if recent_lines else "(no recent turns)"
-    return f"""Rewrite this one chat line from {persona.name} ({persona.role}). Keep their meaning and stance, but fix the problems. Style: {persona.speech_style}.
-Options: {option_names}
-Recent chat:
-{recent}
-Original line: {original_text}
+    context_codes = {
+        "DUPLICATE_TURN", "ECHOED_PHRASE", "GROUP_REPETITION", "QUESTION_ECHO",
+        "REPEATED_START", "SELF_REPETITION",
+    }
+    recent_block = ""
+    if context_codes.intersection(issue_codes) and recent_lines:
+        limit = int(cfg.utterances.repair_recent_turns)
+        recent_block = "\nRecent chat:\n" + "\n".join(recent_lines[-limit:])
+    return f"""Rewrite {persona.name}'s line in their {persona.speech_style} voice. Preserve meaning and stance.
+Relevant options: {option_context}{recent_block}
+Line: {original_text}
 Fix: {fixes}.
-Write one natural line, under {max_words} words, no name prefix or quotes; name options in words (not "Option B"); use only facts from the option cards — anything not in the cards must be hedged as 'I think...' or 'not sure if...' — never ask a question; don't copy others' wording.
-End with a status tag on its own line, exactly: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER is one of {opt_choices} (or - if none); STANCE is one of vote|accept|object|reject|propose|neutral."""
+One natural line under {max_words} words; no prefix, quotes, invented facts, questions, or copied wording.
+Then: [act={intent.act.value}; opt=LETTER; stance=STANCE] where LETTER={opt_choices} or - and STANCE=vote|accept|object|reject|propose|neutral."""

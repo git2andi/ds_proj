@@ -207,6 +207,7 @@ class TurnRecord:
     validation_issues: list[str] = field(default_factory=list)  # issues remaining after any repair
     repaired: bool = False  # whether a repair attempt actually ran for this turn
     repair_trigger_codes: list[str] = field(default_factory=list)  # codes that triggered the repair (pre-repair)
+    state_mutation_blocked: bool = False  # invalid text is logged but cannot alter semantic state
     is_social: bool = False  # greeting/farewell cosmetic turn — excluded from decision metrics
 
 

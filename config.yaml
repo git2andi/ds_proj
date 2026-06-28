@@ -1,9 +1,9 @@
-# Master group-discussion simulator configuration.
+﻿# Master group-discussion simulator configuration.
 # Rule: every tweakable numeric parameter used by the repo lives here.
 # Rule: every prompt/chat template lives in src/prompts.py.
 #
 # ============================================================================
-#  DIALS THAT MATTER  —  if you only ever touch a handful, touch these.
+#  DIALS THAT MATTER  â€”  if you only ever touch a handful, touch these.
 #  (Everything else in this file is a structural constant you set once.)
 #
 #   Naturalness / feel
@@ -29,11 +29,12 @@
 # ============================================================================
 
 llm:
-  provider: "uni"                    # uni | groq | gemini
+  provider: "gpt"                     # uni | groq | gemini | gpt
   models:
     uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
+    gpt: "gpt-4.1-mini"
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   timeouts:
@@ -75,6 +76,8 @@ scenario:
   public_attr_max: 5
   option_prompt_max_words: 34
   option_name_max_words: 8
+  short_alias_min_chars: 4
+  short_alias_max_words: 3
 
 personas:
   # --- core dials: these decide whether/how easily a chat resolves ---
@@ -174,8 +177,9 @@ utterances:
     farewell: 18                     # quick sign-off acknowledging the outcome
   hard_cap_extra_words: 8
   length_trait_word_step: 6         # words added/removed per point of response_length above/below the trait midpoint
-  recent_turns_in_prompt: 6     # last N turns shown for context; enough to build on recent points without bloating prompt
-  recent_turns_after_question: 8
+  recent_turns_in_prompt: 4
+  recent_turns_after_question: 4
+  repair_recent_turns: 2
   max_focus_options_in_prompt: 3
   repair_issue_limit: 4
 
@@ -202,5 +206,11 @@ output:
   transcript_file: "transcript.md"
   json_file: "run.json"
   metrics_csv: "metrics.csv"    # master file, one appended row per run
+
+
+
+
+
+
 
 

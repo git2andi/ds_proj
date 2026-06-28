@@ -51,14 +51,14 @@ class TestConsensus:
         assert cm.support_fraction(consensus_state, "B") == 1.0
         assert cm.support_fraction(consensus_state, "A") == 0.0
 
-    def test_hard_blocker_prevents_fallback(self, consensus_state):
+    def test_rejection_state_does_not_veto_visible_majority(self, consensus_state):
         cm = ConsensusManager()
         consensus_state.runtimes["p1"].explicit_vote = "A"
         consensus_state.runtimes["p2"].explicit_vote = "A"
         consensus_state.runtimes["p3"].explicit_vote = "B"
         consensus_state.runtimes["p3"].hard_rejections = {"A": "blocked"}
         outcome = cm.finalize(consensus_state)
-        assert outcome.final_option != "A" or outcome.status != "majority"
+        assert outcome.status == "majority" and outcome.final_option == "A"
 
     def test_majority_fallback(self, consensus_state):
         cm = ConsensusManager()

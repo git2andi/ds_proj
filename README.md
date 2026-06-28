@@ -8,7 +8,7 @@ Give it a topic ("pick a restaurant for the team dinner", "choose a board game f
 
 The motivation is that LLM-driven "user simulators" are increasingly used to test dialogue systems and group-decision tools — but only if the simulated conversations actually *behave* like real group discussions. This project is an attempt to get closer to the real thing while staying fully topic-agnostic.
 
-A good run reads like a casual group chat: people state a leaning, respond to each other, occasionally get persuaded, and the group either converges for understandable reasons or — when someone is a genuine holdout — ends without agreement. The text should stay grounded in the scenario's facts, avoid repeating itself, and sound like friends talking, not a formal debate.
+A good run reads like friends making a decision together: casual and plain-spoken without Gen-Z slang, corporate jargon, formal debate language, or mini-essays. People should respond to each other, show their persona traits through behavior and turn length, occasionally get persuaded, and either converge for understandable reasons or end without agreement. The text must stay grounded in the scenario's facts and avoid repetitive option pitches.
 
 ## What I've been doing
 
@@ -16,6 +16,6 @@ Iteratively improving discussion quality through multiple passes:
 
 - **Structural fixes**: commitment gating (votes only count during decision phases), hard-blocker integrity, echo guards, robotic template detection
 - **Naturalness fixes**: anti-card-reading (don't parrot option descriptions), self-narration detection ("I should consider..."), collective voice rewrite ("we prioritize" → "I prioritize"), opener variety enforcement, conversational register in prompts
-- **Evaluation infrastructure**: 110 unit tests, automated eval runner, known failures tracking, scenario spread for batch evaluation
+- **Verification infrastructure**: offline unit tests, structured run logs, metrics, manual transcript review, and known-failure tracking
 
 Current state and remaining issues are tracked in `docs/known_failures.md`. Architecture and how to run/test are in `CLAUDE.md`.

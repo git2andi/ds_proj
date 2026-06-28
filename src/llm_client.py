@@ -1,4 +1,4 @@
-"""Thin provider abstraction over Gemini, Groq, and an Ollama-style local endpoint."""
+"""Thin provider abstraction over OpenAI, Gemini, Groq, and an Ollama-style endpoint."""
 
 from __future__ import annotations
 
@@ -38,6 +38,12 @@ class LLMClient:
             if not api_key:
                 raise EnvironmentError("Missing GROQ_API_KEY.")
             return OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+        if self.provider == "gpt":
+            from openai import OpenAI  # type: ignore
+            api_key = os.environ.get("OPENAI_API_KEY")
+            if not api_key:
+                raise EnvironmentError("Missing OPENAI_API_KEY.")
+            return OpenAI(api_key=api_key)
         if self.provider == "uni":
             return None
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
@@ -82,7 +88,7 @@ class LLMClient:
             )
             return text
 
-        if self.provider == "groq":
+        if self.provider in {"groq", "gpt"}:
             response = self._client.chat.completions.create(
                 model=self.model_id,
                 messages=[{"role": "user", "content": prompt}],

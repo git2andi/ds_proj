@@ -29,7 +29,7 @@ from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
 from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
-from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases, strip_possessive_opener
+from validation import MessageValidator, blocks_state_mutation, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases, strip_possessive_opener
 
 
 class Orchestrator:
@@ -378,6 +378,7 @@ class StateTracker:
             previous_speaker_id=previous_speaker,
         )
         state.turn_index += 1
+        state_mutation_blocked = speaker_id != "moderator" and blocks_state_mutation(validation_issues)
         record = TurnRecord(
             index=state.turn_index,
             speaker_id=speaker_id,
@@ -391,16 +392,19 @@ class StateTracker:
             validation_issues=validation_issues,
             repaired=repaired,
             repair_trigger_codes=repair_trigger_codes or [],
+            state_mutation_blocked=state_mutation_blocked,
         )
         state.turns.append(record)
         if speaker_id != "moderator":
-            self._update_runtime(state, record)
-            self._update_coverage(state, record)
-            self._update_questions(state, record)
+            apply_semantic_state = not record.state_mutation_blocked
+            self._update_runtime(state, record, apply_semantic_state)
+            if apply_semantic_state:
+                self._update_coverage(state, record)
+                self._update_questions(state, record)
             self._update_progress(state, record)
         return record
 
-    def _update_runtime(self, state: DialogueState, record: TurnRecord) -> None:
+    def _update_runtime(self, state: DialogueState, record: TurnRecord, apply_semantic_state: bool = True) -> None:
         rt = state.runtimes[record.speaker_id]
         rt.turn_count += 1
         rt.last_spoke_turn = record.index
@@ -411,6 +415,8 @@ class StateTracker:
         rt.discourse_frames.extend(frames)
         if len(rt.discourse_frames) > 8:
             rt.discourse_frames = rt.discourse_frames[-8:]
+        if not apply_semantic_state:
+            return
         act = record.act
         persona = state.persona_by_id(record.speaker_id)
         if act.act_type == ActType.OPENING and not rt.stated_priority:
@@ -603,8 +609,6 @@ class ConsensusManager:
         candidate = state.candidate_option or self.leading_candidate(state)
         if not candidate:
             return None
-        if self._hard_blockers_for(state, candidate):
-            return None
         if self._all_accepted_or_voted(state, candidate):
             return RunOutcome("successful", candidate, "all participants accepted or voted for the same option", participant_turn_count(state))
         return None
@@ -619,8 +623,7 @@ class ConsensusManager:
         candidate = state.candidate_option or self.leading_candidate(state)
         if candidate:
             fraction = self.support_fraction(state, candidate)
-            # A hard rejection always blocks a fallback pick; otherwise a strong majority can carry it.
-            if fraction >= float(cfg.consensus.majority_fallback_fraction) and not self._hard_blockers_for(state, candidate):
+            if fraction >= float(cfg.consensus.majority_fallback_fraction):
                 return RunOutcome("majority", candidate, f"majority outcome with visible support fraction {fraction:.2f}", participant_turn_count(state))
         return RunOutcome("unresolved", None, "no option reached explicit acceptance by all participants", participant_turn_count(state))
 
@@ -641,11 +644,6 @@ class ConsensusManager:
     def _all_accepted_or_voted(state: DialogueState, option_id: str) -> bool:
         return not _candidate_holdouts(state, option_id)
 
-    @staticmethod
-    def _hard_blockers_for(state: DialogueState, option_id: str) -> list[str]:
-        return [pid for pid, rt in state.runtimes.items() if option_id in rt.hard_rejections]
-
-
 # ---------------------------------------------------------------------------
 # Prompt helpers / generation cleanup
 # ---------------------------------------------------------------------------
@@ -661,6 +659,8 @@ def recent_lines_for_prompt(state: DialogueState, intent: MoveIntent) -> list[st
     else:
         n = int(cfg.utterances.recent_turns_in_prompt)
     turns = state.turns[-n:]
+    if intent.respond_to_turn is not None:
+        turns = [turn for turn in turns if turn.index != intent.respond_to_turn]
     return [f"{turn.speaker_name}: {turn.text}" for turn in turns]
 
 

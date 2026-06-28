@@ -99,6 +99,30 @@ class TestOpenerVariety:
 # ── Decision clarity ───────────────────────────────────────────────────
 
 class TestDecisionClarity:
+    def test_vote_trailer_target_must_match_visible_commitment(self, validator, state):
+        r = _validate(validator, "Mountain Retreat gets my vote.", state,
+                      intent=make_intent(act=ActType.VOTE, option_focus=["B"]),
+                      move=TurnMove(present=True, stance="vote", option="B"))
+        assert "UNCLEAR_VOTE" in r.codes()
+
+    def test_pronoun_only_acceptance_is_not_visible_commitment(self, validator, state):
+        r = _validate(validator, "I can live with it.", state,
+                      intent=make_intent(act=ActType.ACCEPT, option_focus=["B"]),
+                      move=TurnMove(present=True, stance="accept", option="B"))
+        assert "UNCLEAR_ACCEPT" in r.codes()
+
+    def test_multi_option_contrast_accepts_commitment_bound_to_target(self, validator, state):
+        r = _validate(validator, "I'd prefer Mountain Retreat, but I'm going with Beach Resort.", state,
+                      intent=make_intent(act=ActType.ACCEPT, option_focus=["B"]),
+                      move=TurnMove(present=True, stance="accept", option="B"))
+        assert "UNCLEAR_ACCEPT" not in r.codes()
+
+    def test_option_statement_without_commitment_is_not_a_vote(self, validator, state):
+        r = _validate(validator, "Beach Resort could stay within budget.", state,
+                      intent=make_intent(act=ActType.VOTE, option_focus=["B"]),
+                      move=TurnMove(present=True, stance="vote", option="B"))
+        assert "UNCLEAR_VOTE" in r.codes()
+
     def test_vote_without_vote_stance(self, validator, state):
         r = _validate(validator, "Mountain Retreat is nice.", state,
                        intent=make_intent(act=ActType.VOTE),

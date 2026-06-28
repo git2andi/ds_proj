@@ -34,7 +34,7 @@ Topic: Plan a weekend team offsite
 "Example Topic" | & .\ds_proj\Scripts\python.exe .\main.py
 ```
 
-Provider is set in `config.yaml` → `llm.provider`: `uni` (Bamberg Ollama endpoint, requires VPN), `groq`, or `gemini`. API keys (`GROQ_API_KEY`, `GOOGLE_API_KEY`) come from `.env`. There is no offline/mock mode — a run requires a reachable provider and raises on failure.
+Provider is set in `config.yaml` under `llm.provider`: `uni` (Bamberg Ollama endpoint, requires VPN), `groq`, `gemini`, or `gpt`. API keys come from `.env`. There is no offline/mock mode: a run requires a reachable provider and raises on failure. Validation uses the provider explicitly authorized for the current task; do not silently substitute another endpoint.
 
 ## Architecture
 
@@ -62,6 +62,8 @@ The per-turn prompt uses a compact `runtime_speaker_card` (not the full persona 
 
 Face-work modifiers are added to guidance for objection/push-back acts based on persona traits (agreeable speakers soften, neurotic speakers show anxiety, direct speakers skip diplomacy).
 
+The target register is a chat among friends: casual and plain-spoken without Gen-Z slang, corporate jargon, formal debate language, or mini-essays. Traits and configured response length must be visible in behavior and turn length without becoming stereotypes or repeated verbal tics. Direct-response turns should answer or engage with the local point before introducing another option claim.
+
 ### Key design constraints
 
 - **No fabricated fallbacks**: if setup or a turn call returns something unusable, the run raises rather than papering over it with defaults.
@@ -73,7 +75,6 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
 - **Contribution-based routing**: for n>=4, speakers are skipped when their only available move is restating a known preference. Extraversion and initiative drive turn frequency.
 - **Stall-to-concrete routing**: when discussion stalls (2+ turns no progress), ASK probability doubles and SUPPORT dampens, steering toward concrete questions instead of preference restating.
-- **Backchannel injection**: 5% chance per discussion turn that the router injects a `short_react=True` REACT intent (skips act sampling entirely). Guard: previous turn must be ≥10 words and not itself a backchannel. Validation enforces ≤8-word limit via `BACKCHANNEL_TOO_LONG` repair code.
 - **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`; possessive openers (`OptName's`) and `Considering X,` openers stripped after `clean_generated` so they never survive into the transcript.
 - **No example seeding in guidance**: guidance strings must describe desired behavior, never demonstrate it with quoted phrases (e.g., never `"Try: 'What if we...'"`) — the model copies examples verbatim across all topics.
 - **Epistemic grounding rule**: the per-turn prompt tells the model "you know only what's in the option cards — anything else is unknown: say 'I'm not sure' or 'we'd need to check'". This prevents confident invented facts about real-world named places (seating, pricing, amenities not in the cards).
@@ -87,40 +88,33 @@ Each run writes to `logs/<run_id>/`:
 
 Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flagged_turns`, `question_density`, `avg_words_per_turn`, `option_coverage`.
 
-## Testing and evaluation
+## Testing and diagnostics
 
 ```powershell
 # Unit tests (offline, instant — run after every code change)
 & .\ds_proj\Scripts\python.exe -m pytest tests/ -v
 
-# Post-run regression checks on existing logs
-& .\ds_proj\Scripts\python.exe evals\run_eval.py --check-latest 4
-
-# Drive new eval runs from the scenario spread (requires VPN for uni)
-& .\ds_proj\Scripts\python.exe evals\run_eval.py --run
 ```
 
 ### Implementation process
 
-Every fix follows this cycle (see `docs/known_failures.md` for the full protocol):
+Every upgrade follows this cycle (see `docs/known_failures.md` for the full protocol). One upgrade is one issue and one independently verifiable task unless the user explicitly groups issues:
 
 1. Pick one item from the priority list in `docs/known_failures.md`.
-2. Implement the fix. Run `pytest tests/`.
-3. Validate: one n=3 run (mandatory), then 5–6 additional runs across n=2–7 with random topics from `evals/topics.txt`. Always use the `uni` provider.
-4. Read the transcripts. Check the fix works and nothing regressed.
-5. If new issues surface, add them to `docs/known_failures.md` before continuing.
-6. Only move to the next item when all runs are reviewed.
+2. Add a failing deterministic test where applicable, implement the smallest provider-independent fix, and run the full offline suite.
+3. Validate with the provider explicitly authorized for the task: one n=3 run is mandatory when live validation is requested, followed by the requested size/topic spread.
+4. Read every relevant `transcript.md` and `run.json`; metrics alone are insufficient.
+5. Update `docs/known_failures.md` with the result and any stable new failure pattern.
+6. Audit and synchronize `AGENTS.md`, this file, repository skills, active memory/index files, `README.md`, and any other affected information files before completing the upgrade.
+7. Do not start the next issue until this upgrade is fully verified; stop unless the user explicitly requested automatic continuation.
 
 ### Test and eval files
 
 - `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (essential cases for each check, plus discourse-frame and claim-slot classification).
 - `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
 - `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
-- `evals/run_eval.py` — reads `run.json` files and checks for regressions (same-speaker back-to-back, question density, opener variety, mid-discussion accepts, duplicate moderator lines, robotic templates, outcome sanity) plus interaction quality metrics (named rate, responsive rate, self-repetition, echoed phrases).
 - `evals/topics.txt` — ~40 diverse topics for random validation runs (everyday, travel, academic, work, creative, hypothetical).
-- `evals/scenarios.yaml` — the topic/size spread used for batch evaluation.
-- `docs/known_failures.md` — single tracking file for open issues, fix priorities, and implementation protocol.
-- `docs/evaluation.md` — full evaluation workflow reference.
+- `docs/known_failures.md` — single tracking file for open issues, priorities, acceptance criteria, and implementation protocol.
 
 ## Configuration quick reference
 

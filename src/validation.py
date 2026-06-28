@@ -4,10 +4,49 @@ from __future__ import annotations
 
 import re
 
+from aliases import short_alias_map
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, ValidationIssue, ValidationResult
 from parsing import OptionResolver, TurnMove
 from utils import extract_numbers, jaccard_text
+
+
+STATE_BLOCKING_ISSUES = frozenset({
+    "EMPTY",
+    "MULTI_TURN_OUTPUT",
+    "INVALID_OPTION_REFERENCE",
+    "UNGROUNDED_NUMERIC_FACT",
+    "INVENTED_OPTION_ATTRIBUTE",
+    "UNCLEAR_VOTE",
+    "UNCLEAR_ACCEPT",
+    "UNCLEAR_REJECT",
+    "QUESTION_IN_CONFIRMATION",
+    "HARD_BLOCKER_WRONG_VOTE",
+    "INCOMPLETE_TURN",
+    "UNWANTED_QUESTION",
+})
+
+_VISIBLE_COMMITMENT_CUES = {
+    ActType.VOTE: re.compile(
+        r"\b(?:vote(?:d|s|ing)?(?:\s+for)?|choos(?:e|es|ing)|pick(?:s|ed|ing)?|"
+        r"go(?:ing)?\s+with|sett(?:le|les|ling)\s+on|my\s+(?:choice|pick)|gets?\s+my\s+vote)\b",
+        re.I,
+    ),
+    ActType.ACCEPT: re.compile(
+        r"\b(?:accept(?:s|ed|ing)?|agree(?:s|d|ing)?(?:\s+to)?|on\s+board\s+with|"
+        r"ok(?:ay)?\s+with|fine\s+with|works?\s+for\s+me|can\s+live\s+with|"
+        r"go(?:ing)?\s+with|choos(?:e|es|ing)|stick(?:s|ing)?\s+with|"
+        r"i\s+support|supporting|i(?:'m|\s+am)\s+in\s+for)\b",
+        re.I,
+    ),
+}
+
+_CONTRAST_BOUNDARY = re.compile(r"[.!?;]+|\b(?:but|however|though|yet)\b", re.I)
+
+
+def blocks_state_mutation(issue_codes: list[str]) -> bool:
+    """Whether a logged turn is too unreliable to alter semantic dialogue state."""
+    return bool(STATE_BLOCKING_ISSUES.intersection(issue_codes))
 
 
 class MessageValidator:
@@ -25,13 +64,14 @@ class MessageValidator:
         # model falls into (it opened ~40% of turns in large-group runs). Catch it from the
         # actual option names so the check stays topic-agnostic.
         self._possessive_openers = []
+        safe_short_names = short_alias_map(resolver.options)
         for o in resolver.options:
             if not o.name.strip():
                 continue
             # Drop parenthetical annotations like "(2010)" — the model omits them in speech.
             base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
             seen: set[str] = set()
-            for candidate in filter(None, [base, o.short_name.strip()]):
+            for candidate in filter(None, [base, safe_short_names[o.id]]):
                 if candidate.lower() in seen:
                     continue
                 seen.add(candidate.lower())
@@ -47,7 +87,7 @@ class MessageValidator:
             if not o.name.strip():
                 continue
             base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
-            for candidate in filter(None, [base, o.short_name.strip()]):
+            for candidate in filter(None, [base, safe_short_names[o.id]]):
                 if candidate.lower() in seen_subj:
                     continue
                 seen_subj.add(candidate.lower())
@@ -204,6 +244,14 @@ class MessageValidator:
                 issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept move did not report acceptance."))
             if intent.act == ActType.REJECT and move.stance not in {"reject", "object"}:
                 issues.append(ValidationIssue("UNCLEAR_REJECT", "repair", "Reject move did not report a rejection or objection."))
+            if intent.act in {ActType.VOTE, ActType.ACCEPT} and move.stance == intent.act.value:
+                if not move.option or not self._has_visible_commitment(text, move.option, intent.act):
+                    code = "UNCLEAR_VOTE" if intent.act == ActType.VOTE else "UNCLEAR_ACCEPT"
+                    issues.append(ValidationIssue(
+                        code,
+                        "repair",
+                        "Visible commitment must name and commit to the same option as the trailer.",
+                    ))
         else:
             # No trailer at all on a decision turn. Ask the model to confirm explicitly so
             # the commitment is verifiable in the trailer rather than inferred from routing (KF03).
@@ -213,6 +261,17 @@ class MessageValidator:
                 issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept turn must end with a trailer confirming the choice."))
         if intent.act == ActType.ACCEPT and "?" in text:
             issues.append(ValidationIssue("QUESTION_IN_CONFIRMATION", "repair", "Confirmation should be an answer, not a new question."))
+
+    def _has_visible_commitment(self, text: str, option_id: str, act: ActType) -> bool:
+        """Require the commitment cue and selected option in the same contrast clause."""
+        cue = _VISIBLE_COMMITMENT_CUES[act]
+        aliases = [alias for alias, owner in self.resolver.alias_to_id.items() if owner == option_id]
+        aliases.append(f"option {option_id.lower()}")
+        target = re.compile(
+            r"(?<!\w)(?:" + "|".join(re.escape(alias) for alias in sorted(set(aliases), key=len, reverse=True)) + r")(?!\w)",
+            re.I,
+        )
+        return any(target.search(clause) and cue.search(clause) for clause in _CONTRAST_BOUNDARY.split(text))
 
     @staticmethod
     def _check_hard_blocker_vote(state: DialogueState, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
@@ -445,10 +504,11 @@ def strip_possessive_opener(text: str, options: list) -> str:
     """Deterministically remove 'OptName's ...' as a turn opener.
     Mirrors the POSSESSIVE_SUBJECT check so the pattern never survives into the transcript.
     Both full option names and short_names are checked; parenthetical annotations are stripped."""
+    safe_short_names = short_alias_map(options)
     for o in options:
         base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
         seen: set[str] = set()
-        for candidate in filter(None, [base, getattr(o, "short_name", "").strip()]):
+        for candidate in filter(None, [base, safe_short_names[o.id]]):
             if candidate.lower() in seen:
                 continue
             seen.add(candidate.lower())

@@ -34,14 +34,14 @@ if str(SRC) not in sys.path:
 from dialogue import Orchestrator  # noqa: E402
 
 
-def run_dialogue(topic: str) -> None:
+def run_dialogue(topic: str) -> bool:
     # The orchestrator streams the header and every turn to stdout as they happen,
     # so here we only print the closing summary.
     try:
         result = Orchestrator(topic).run()
     except Exception as exc:  # noqa: BLE001 - surface a clean message, not a traceback
         print(f"\n[error] Could not complete dialogue for {topic!r}: {type(exc).__name__}: {exc}\n")
-        return
+        return False
     tokens = result.token_summary
     print("\n" + "-" * 72)
     print(f"Outcome     : {result.outcome.status}")
@@ -55,6 +55,7 @@ def run_dialogue(topic: str) -> None:
     )
     print(f"Logs        : {result.log_paths.get('dir', '')}")
     print("-" * 72 + "\n")
+    return True
 
 
 def _clean_topic(text: str) -> str:
@@ -63,24 +64,28 @@ def _clean_topic(text: str) -> str:
     return text.replace("﻿", "").replace("ï»¿", "").strip()
 
 
-def run_batch(path: str) -> None:
+def run_batch(path: str) -> bool:
     topics = [
         cleaned
         for line in Path(path).read_text(encoding="utf-8-sig").splitlines()
         if (cleaned := _clean_topic(line)) and not cleaned.startswith("#")
     ]
+    succeeded = True
     for topic in topics:
-        run_dialogue(topic)
+        succeeded = run_dialogue(topic) and succeeded
+    return succeeded
 
 
 def main() -> None:
     if len(sys.argv) > 1:
-        run_batch(sys.argv[1])
+        if not run_batch(sys.argv[1]):
+            raise SystemExit(1)
         return
     topic = _clean_topic(input("Topic: "))
     if not topic:
         raise SystemExit("No topic provided.")
-    run_dialogue(topic)
+    if not run_dialogue(topic):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

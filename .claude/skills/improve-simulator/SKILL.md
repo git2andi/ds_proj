@@ -9,11 +9,16 @@ naturalness, convergence, state integrity, moderator behaviour, or validation.
 
 ## Workflow
 
+### Upgrade boundary
+
+One upgrade is one backlog issue and one independently verifiable task unless the user explicitly groups issues. Finish its tests, required live evidence, transcript review, and information-file synchronization before starting another issue. Stop at that boundary unless automatic continuation was explicitly requested.
+
 ### 1. Identify the problem
 
 - Read the most recent transcripts (`logs/<newest>/transcript.md`) and `run.json`.
 - Check `docs/known_failures.md` — is this already tracked?
-- Run `evals/run_eval.py --check-latest 4` to see if automated checks flag it.
+- Separate deterministic controller defects from provider-specific wording.
+- For naturalness, assess plain-spoken conversation among friends: no slang-heavy Gen-Z voice, corporate or academic register, mini-essays, standalone pitches, or invisible persona traits.
 
 ### 2. Write a failing test (if deterministic)
 
@@ -39,6 +44,8 @@ Design constraints (never violate):
 - Topic-agnostic: fixes must work for any topic, any group size 2–7.
 - No fabricated fallbacks: if a call fails, raise — don't paper over it.
 - No offline/mock mode: all runs require a live provider. Error on connection failure.
+- Preserve visible commitment gating, trait-driven stubbornness, grounded claims, and configured outcome rules.
+- Do not tune phrase regexes or prompts for one provider, seed quoted examples, or inject forced turns for naturalness.
 
 ### 4. Verify offline
 
@@ -56,19 +63,14 @@ One mandatory n=3 run, then 5–6 additional runs across n=2–7 with random top
 "Test topic" | & .\ds_proj\Scripts\python.exe .\main.py
 ```
 
-Or use the eval runner:
-
-```powershell
-& .\ds_proj\Scripts\python.exe evals\run_eval.py --run --topic "relevant topic" --size 3
-```
-
-Read transcripts (not just metrics). Check `run_eval.py` output for FAIL/WARN lines. Only close the issue when the target failure improved and no regression appeared.
+Read every relevant transcript and `run.json`; metrics alone are insufficient. Compare visible behavior with the issue's acceptance criteria and check regressions before closing it.
 
 ### 6. Update tracking
 
-- Update `docs/known_failures.md` (move to Fixed, add regression signal).
+- Update `docs/known_failures.md` with the evidence and resolution status.
 - If a new failure pattern is found, add it to Open section.
-- If the fix changes evaluation thresholds, update `evals/run_eval.py`.
+- Consolidate overlapping symptoms so the backlog has no duplicate issues.
+- Audit and update every applicable active source: `AGENTS.md`, `CLAUDE.md`, both repository skill copies, active memory/index files, `README.md`, and other affected workflow docs. Historical per-fix memories remain historical.
 
 ## Files involved
 
@@ -76,14 +78,11 @@ Read transcripts (not just metrics). Check `run_eval.py` output for FAIL/WARN li
 |---|---|
 | `tests/test_validation.py` | Unit tests for validation guardrails |
 | `tests/test_parsing.py` | Unit tests for trailer parsing and commitment gating |
-| `evals/run_eval.py` | Post-run regression checker |
-| `evals/scenarios.yaml` | Topic/size spread for batch evaluation |
 | `docs/known_failures.md` | Tracked failures and their fix status |
-| `docs/evaluation.md` | Full evaluation workflow reference |
 
 ## Important
 
 - Never change generation behaviour without a live run to verify.
-- The `uni` provider requires the Bamberg VPN. No fallback.
+- Use only the provider explicitly authorized for the current task. No silent fallback.
 - `max_repairs_per_turn: 1` — validation catches issues but only gets one repair shot.
 - Prompt changes in `src/prompts.py` affect every turn — test broadly, not just the target case.

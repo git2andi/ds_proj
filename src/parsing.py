@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from aliases import short_alias_map
 from models import ActType, DialogueAct, MoveIntent, OptionCard
 from utils import normalise_ws
 
@@ -84,6 +85,7 @@ class OptionResolver:
         # "Bowling Night" and "Game Night" belongs to neither once collisions are
         # removed, so an option only matches on its own distinctive words.
         candidates: dict[str, set[str]] = {}
+        safe_short_names = short_alias_map(options)
         for option in options:
             name = option.name.lower()
             aliases = {name}
@@ -92,10 +94,7 @@ class OptionResolver:
             aliases.update(words)
             if len(words) >= 2:
                 aliases.add(" ".join(words[:2]))
-            # Include LLM-generated short name so "Ride" resolves to "Ticket to Ride" etc.
-            # Require len>=4 to skip generic one-word aliases like "The", "One".
-            if option.short_name and len(option.short_name) >= 4:
-                aliases.add(option.short_name.lower())
+            aliases.add(safe_short_names[option.id].lower())
             candidates[option.id] = {a.strip() for a in aliases if a.strip()}
         owners: dict[str, set[str]] = {}
         for option_id, aliases in candidates.items():
