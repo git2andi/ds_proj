@@ -96,8 +96,8 @@ class Config(Section):
 
         for name, rng in self.personas.trait_ranges.items():
             self._validate_range(f"personas.trait_ranges.{name}", rng, int(self.personas.trait_min), int(self.personas.trait_max))
-        for name, rng in self.personas.cooperative_controls.items():
-            self._validate_range(f"personas.cooperative_controls.{name}", rng, 0.0, 1.0)
+        for name, rng in self.personas.hard_blocker_trait_ranges.items():
+            self._validate_range(f"personas.hard_blocker_trait_ranges.{name}", rng, int(self.personas.trait_min), int(self.personas.trait_max))
 
 
 cfg = Config(Path(__file__).resolve().parents[1] / "config.yaml")

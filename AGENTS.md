@@ -62,7 +62,7 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 ## Conversation target
 
 - Discussions should read like friends making a decision together: casual and plain-spoken, but neither slang-heavy/Gen-Z nor corporate, academic, or presentation-like.
-- Persona traits must be visible in conversational behavior such as directness, caution, curiosity, compromise, and initiative. Do not express traits through stereotypes, catchphrases, or repeated self-description.
+- The five OCEAN traits must be visible through behavior such as directness, caution, curiosity, compromise, and initiative. Response length and compromise willingness are derived from those traits; do not generate separate initiative, directness, or detail state. Do not express traits through stereotypes, catchphrases, or repeated self-description.
 - Configured response length must produce observable differences between personas, while even the longest setting remains appropriate for a chat rather than a speech or mini-essay.
 - Turns should respond locally to what another participant just said. Avoid standalone option pitches, card summaries, and unnecessarily complex sentences.
 

@@ -9,8 +9,9 @@ metadata:
 
 **Change:** `is_hard_blocker: bool` removed from `Persona` model and all enforcement code. Stubbornness is now expressed through trait values only.
 
-**How it works:**
-- 4% per-run chance one participant gets `agreeableness=1` + `compromise_willingness` in `[0.10, 0.35]` (sampled from `hard_blocker_compromise` config range). All other participants keep `agreeableness` in `[3, 5]` (the existing normal range — no change needed).
+**Current behavior:**
+- `hard_blocker_probability` can select one participant whose complete five-trait profile comes from `hard_blocker_trait_ranges`: agreeableness 1, low openness, firmer conscientiousness, variable extraversion, and moderate-to-high neuroticism. All other participants keep agreeableness in `[3, 5]`.
+- `compromise_willingness` is derived from the five traits with agreeableness dominant; it is no longer sampled from a separate range.
 - The LLM sees `agreeableness=1` in the trait card and plays the persona as stubbornly committed to their preferred option. No separate flag is passed.
 - Router still uses `persona.traits.agreeableness == 1` for routing decisions (vote focus on preferred option; blocked from persuasion/fold path). This is trait-informed routing, not mechanical enforcement.
 - No vote auto-correction in dialogue.py — LLM output is accepted as-is.
@@ -21,7 +22,7 @@ metadata:
 
 **Key config knobs:**
 - `personas.hard_blocker_probability: 0.04` — per-run chance of one stubborn participant
-- `personas.hard_blocker_compromise: [0.10, 0.35]` — compromise range for stubborn sims
+- `personas.hard_blocker_trait_ranges` — five-trait distribution for stubborn sims
 - `personas.trait_ranges.agreeableness: [3, 5]` — normal range (stubborn gets exactly 1)
 
 **Committed:** 9be147c (2026-06-27)

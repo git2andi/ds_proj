@@ -67,7 +67,7 @@ class DialogueLogger:
                 f"traits: open={persona.traits.openness} consc={persona.traits.conscientiousness} "
                 f"extra={persona.traits.extraversion} agree={persona.traits.agreeableness} "
                 f"neuro={persona.traits.neuroticism} length={persona.traits.response_length} "
-                f"compromise={persona.traits.compromise_willingness:.2f} initiative={persona.traits.initiative:.2f}"
+                f"compromise={persona.traits.compromise_willingness:.2f}"
             )
             lines.append(f"goal: {persona.private_goal}")
             lines.append(f"prefers Option {persona.preferred_option}; accepts {persona.acceptable_options}; soft concerns {persona.soft_rejections}; hard rejects {persona.hard_rejections}")

@@ -12,8 +12,6 @@
 #
 #   Group make-up
 #     simulation.num_participants         how many sims are in the room
-#     personas.cooperative_controls.compromise_willingness
-#                                         THE main "do chats conclude" dial
 #     personas.hard_blocker_probability   chance one participant gets agreeableness=1 (very stubborn)
 #     personas.coalition_probability      how often participants share a preference (2v1, ...)
 #
@@ -81,11 +79,6 @@ scenario:
 
 personas:
   # --- core dials: these decide whether/how easily a chat resolves ---
-  cooperative_controls:
-    compromise_willingness: [0.45, 0.9]    # range sampled per persona; lower = more deadlock / more friction
-    initiative: [0.35, 0.82]
-    directness: [0.18, 0.72]
-    detail: [0.36, 0.90]
   hard_blocker_probability: 0.04           # chance one participant gets agreeableness=1 (very stubborn traits)
   coalition_probability: 0.4               # chance two+ participants share a preferred option (2v1, 3v1, ...)
   # --- structural: trait sampling + setup guardrails, set once ---
@@ -97,8 +90,12 @@ personas:
     extraversion: [1, 5]
     agreeableness: [3, 5]
     neuroticism: [1, 3]
-    response_length: [1, 5]
-  hard_blocker_compromise: [0.10, 0.35]
+  hard_blocker_trait_ranges:
+    openness: [1, 2]                       # resistant to alternatives
+    conscientiousness: [3, 5]             # holds a deliberate, principled position
+    extraversion: [1, 5]                   # stubbornness does not imply talkativeness
+    agreeableness: [1, 1]                  # the explicit stubbornness signal
+    neuroticism: [2, 5]                    # concern can reinforce the fixed position
   non_blocker_min_acceptable: 2
   non_blocker_max_soft_rejections: 1
   preferred_diversity_min_unique: 2
@@ -116,7 +113,7 @@ conversation:
     base_per_participant: 2.0
     contention_weight: 1.5           # more distinct starting preferences -> longer
     stubbornness_weight: 1.0         # lower mean compromise_willingness -> longer
-    detail_weight: 1.0               # higher mean detail trait -> longer
+    deliberation_weight: 1.0         # higher openness/conscientiousness -> longer
     jitter_per_participant: [0.0, 1.5]   # random spread so runs differ even with similar groups
   moderator_stall_window: 4         # consecutive no-progress turns before the mod steps in
   moderator_max_interventions: 3    # cap on moderator nudges per run
@@ -132,9 +129,8 @@ conversation:
 routing:
   recent_speaker_window: 5
   recent_speaker_penalty: 0.25
-  low_turn_count_boost: 0.20    # lowered from 0.45 so extraversion/initiative can differentiate turn share
+  low_turn_count_boost: 0.20    # lowered from 0.45 so extraversion can differentiate turn share
   unspoken_boost: 0.95
-  initiative_weight: 0.24
   extraversion_weight: 0.15    # was hardcoded 0.06; max spread now 0.60 vs low_turn_count_boost 0.20
   unresolved_objection_boost: 0.34
   preferred_option_gap_boost: 0.40

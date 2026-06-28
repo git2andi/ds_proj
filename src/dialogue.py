@@ -293,7 +293,7 @@ def initialise_state(scenario, personas) -> DialogueState:
 def derive_pacing(personas) -> tuple[int, int, int]:
     """Derive this run's pacing from group size and composition so length varies and
     scales with the number of participants instead of hitting one fixed floor. A more
-    split, more stubborn, more detail-oriented group talks longer; jitter keeps even
+    split, more stubborn, more deliberative group talks longer; jitter keeps even
     similar groups from running identical lengths. Returns
     (min discussion turns before narrowing, force-narrow cap, hard stop)."""
     n = len(personas)
@@ -301,13 +301,16 @@ def derive_pacing(personas) -> tuple[int, int, int]:
     distinct = len({p.preferred_option for p in personas})
     contention = distinct / max(1, n)
     avg_compromise = sum(p.traits.compromise_willingness for p in personas) / n
-    avg_detail = sum(p.traits.detail for p in personas) / n
+    avg_deliberation = sum(
+        (p.traits.openness + p.traits.conscientiousness - 2) / 8
+        for p in personas
+    ) / n
     lo, hi = (float(x) for x in dd.jitter_per_participant)
     per_participant = (
         float(dd.base_per_participant)
         + contention * float(dd.contention_weight)
         + (1.0 - avg_compromise) * float(dd.stubbornness_weight)
-        + avg_detail * float(dd.detail_weight)
+        + avg_deliberation * float(dd.deliberation_weight)
         + random.uniform(lo, hi)
     )
     force_narrow = int(cfg.conversation.force_narrow_turns_per_participant) * n

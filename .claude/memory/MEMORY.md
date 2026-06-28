@@ -29,3 +29,4 @@
 - [KF01/KF02/KF04/KF05 resolved](project-kf01-kf02-kf04-kf05.md) — preference validation, outcome taxonomy (successful/majority/unresolved), short_name alias, hard-blocker vote guard; resolved 2026-06-28
 - [KF03 first fix](project-kf03-fix.md) — historical no-trailer/ghost-commit fix; broad evaluation remains open in known_failures
 - [P0 friend-chat checkpoint](project-p0-friend-chat-checkpoint.md) — local-job prompts, behavioral persona cues, bounded length, exact response targets, and `select` commitment cue; broad live validation blocked by KF23 setup failures (2026-06-28)
+- [Five-trait routing](project-five-trait-routing.md) — only OCEAN traits are stored; response length, compromise, routing, pacing, and behavior derive from them; preference simplification remains KF23

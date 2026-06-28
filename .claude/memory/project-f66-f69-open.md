@@ -11,7 +11,7 @@ metadata:
 
 **F67** — FIXED. `OPTION_NAME_OPENER` warn-level check added to `MessageValidator`; Rule 2 updated: "Don't open with just an option name." VOTE/ACCEPT exempt.
 
-**F68** — REVERTED. The forced injection/backchannel repair approach was wrong — mechanical, not natural. Reverted all code. Known-failures entry rewritten: must emerge from low `response_length`/`detail` traits on REACT acts naturally, not from forced routing. Observe first before implementing.
+**F68** — REVERTED. The forced injection/backchannel repair approach was wrong — mechanical, not natural. Reverted all code. Short reactions must emerge from the five traits and the derived response length on REACT acts, not from forced routing.
 
 **F69** — PARTIALLY FIXED. Diagnosed: INVENTED_OPTION_ATTRIBUTE dominates (model invents capacity/prices on PROPOSE_COMPROMISE despite epistemic rule). Fixed: "No inventing specific prices, sizes, or details" added to PROPOSE_COMPROMISE guidance. Secondary loop issue: repair-generated questions can echo across multiple speakers (separate sub-bug). repair_trigger_codes now in run.json for future diagnosis.
 

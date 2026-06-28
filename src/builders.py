@@ -18,7 +18,7 @@ from aliases import validated_short_alias
 from config_loader import cfg
 from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
-from utils import clamp, sample_int_range, sample_range
+from utils import sample_int_range
 
 _NAME_POOL = [
     "Amir", "Beatriz", "Callum", "Daria", "Emeka", "Faye", "Goran", "Hana",
@@ -136,23 +136,13 @@ class SetupBuilder:
         return [sorted(members, key=lambda p: int(p[1:])) for _, members in sorted(camps.items())]
 
     def _sample_traits(self, stubborn: bool) -> TraitProfile:
-        controls = cfg.personas.cooperative_controls
-        compromise = sample_range(controls.compromise_willingness)
-        agree = sample_int_range(cfg.personas.trait_ranges.agreeableness)
-        if stubborn:
-            compromise = sample_range(cfg.personas.hard_blocker_compromise)
-            agree = int(cfg.personas.trait_min)  # agreeableness=1 signals extreme stubbornness
+        ranges = cfg.personas.hard_blocker_trait_ranges if stubborn else cfg.personas.trait_ranges
         return TraitProfile(
-            openness=sample_int_range(cfg.personas.trait_ranges.openness),
-            conscientiousness=sample_int_range(cfg.personas.trait_ranges.conscientiousness),
-            extraversion=sample_int_range(cfg.personas.trait_ranges.extraversion),
-            agreeableness=agree,
-            neuroticism=sample_int_range(cfg.personas.trait_ranges.neuroticism),
-            response_length=sample_int_range(cfg.personas.trait_ranges.response_length),
-            compromise_willingness=clamp(compromise, 0.0, 1.0),
-            initiative=clamp(sample_range(controls.initiative), 0.0, 1.0),
-            directness=clamp(sample_range(controls.directness), 0.0, 1.0),
-            detail=clamp(sample_range(controls.detail), 0.0, 1.0),
+            openness=sample_int_range(ranges.openness),
+            conscientiousness=sample_int_range(ranges.conscientiousness),
+            extraversion=sample_int_range(ranges.extraversion),
+            agreeableness=sample_int_range(ranges.agreeableness),
+            neuroticism=sample_int_range(ranges.neuroticism),
         )
 
     def _parse_scenario(self, raw: Any, n: int) -> Scenario:

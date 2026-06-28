@@ -54,12 +54,20 @@ class TurnRouter:
     # ------------------------------------------------------------------
 
     def _narrowing_call_intent(self, state: DialogueState) -> MoveIntent:
-        """Route the highest-initiative participant to call for a vote — one deferred turn
+        """Route a naturally proactive participant to call for a vote — one deferred turn
         before the formal NARROWING phase so the transition feels participant-driven."""
         last = self._last_participant_turn(state)
         last_pid = last.speaker_id if last else None
         candidates = [p for p in state.personas if p.id != last_pid] or list(state.personas)
-        caller = max(candidates, key=lambda p: p.traits.initiative + p.traits.compromise_willingness)
+        caller = max(
+            candidates,
+            key=lambda p: (
+                p.traits.extraversion
+                + p.traits.conscientiousness
+                + p.traits.openness
+                + 5 * p.traits.compromise_willingness
+            ),
+        )
         lead = leading_option(state)
         focus = [lead] if lead else self._focus_for_person(state, caller.id)
         return MoveIntent(
@@ -266,7 +274,6 @@ class TurnRouter:
                 score += float(cfg.routing.unspoken_boost)
             elif rt.turn_count == min_turns:
                 score += float(cfg.routing.low_turn_count_boost) * (0.5 if n >= 5 else 1.0)
-            score += persona.traits.initiative * float(cfg.routing.initiative_weight)
             score += persona.traits.extraversion * float(cfg.routing.extraversion_weight)
             score += extra_score(persona, rt, recent)
             weights.append(0.0 if (pid == last and len(ids) > 1) else max(0.01, score))

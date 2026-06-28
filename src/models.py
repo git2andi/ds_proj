@@ -98,11 +98,22 @@ class TraitProfile:
     extraversion: int
     agreeableness: int
     neuroticism: int
-    response_length: int
-    compromise_willingness: float
-    initiative: float
-    directness: float
-    detail: float
+
+    @property
+    def response_length(self) -> int:
+        """Derive chat length from talkativeness, deliberation, and openness."""
+        value = (2 * self.extraversion + self.conscientiousness + self.openness) / 4
+        return max(1, min(5, round(value)))
+
+    @property
+    def compromise_willingness(self) -> float:
+        """Derive cooperation from the five traits; agreeableness dominates."""
+        agree = (self.agreeableness - 1) / 4
+        openness = (self.openness - 1) / 4
+        calm = (5 - self.neuroticism) / 4
+        value = 0.65 * agree + 0.20 * openness + 0.15 * calm
+        floor = 0.05 if self.agreeableness == 1 else 0.45
+        return max(floor, min(0.95, value))
 
 
 @dataclass(slots=True)

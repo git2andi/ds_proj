@@ -412,15 +412,25 @@ def _speaking_behavior(persona: Persona) -> str:
         cues.append("acknowledge the other side before disagreeing")
     elif t.agreeableness <= 2:
         cues.append("challenge weak reasoning plainly")
-    if t.directness >= 0.55:
+    if _is_direct(t):
         cues.append("put the bottom line early")
-    if t.initiative >= 0.65:
+    if _is_proactive(t):
         cues.append("move the group toward a next step")
     if t.compromise_willingness < 0.45:
         cues.append("hold the concern until someone addresses it")
     if not cues:
         cues.append("give one practical take and build on the conversation")
     return "; ".join(cues[:3])
+
+
+def _is_direct(traits) -> bool:
+    return traits.extraversion >= 4 and traits.agreeableness <= 3
+
+
+def _is_proactive(traits) -> bool:
+    return traits.extraversion >= 4 or (
+        traits.conscientiousness >= 4 and traits.openness >= 4
+    )
 
 
 def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveIntent) -> str:
@@ -484,7 +494,7 @@ def _face_work(persona: Persona, intent: MoveIntent) -> str:
             return " Acknowledge their side before naming your worry."
         if t.neuroticism >= 3:
             return " You're genuinely anxious about this — let that unease show in your phrasing."
-        if t.directness >= 0.55:
+        if _is_direct(t):
             return " Be direct but not rude — name the problem, skip the diplomacy."
     if intent.act == ActType.PROPOSE_COMPROMISE:
         if t.agreeableness >= 4:
@@ -500,7 +510,7 @@ def _face_work(persona: Persona, intent: MoveIntent) -> str:
         if t.neuroticism >= 3:
             return " Back it, but name the one risk you're accepting."
     if intent.act == ActType.COMPARE:
-        if t.directness >= 0.55:
+        if _is_direct(t):
             return " State your preference plainly — no hedging."
         if t.neuroticism >= 3:
             return " Acknowledge a downside on both sides before landing."
@@ -519,7 +529,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             common += " Someone already backed this — give your own distinct angle."
         if t.extraversion >= 4:
             return "Jump in — say what grabbed you." + common
-        if t.directness >= 0.55:
+        if _is_direct(t):
             return "Cut to the chase." + common
         return "Say what you're leaning toward." + common
     if intent.act == ActType.ACCEPT:
