@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28 (KF08 resolved).
+Last updated: 2026-06-28 (KF09 partial fix — ANSWER directive).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -29,14 +29,14 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 **Why it matters:** Naturalness depends less on longer prompts and more on local uptake: answering the previous question, naming the actual concern, making small concessions, and reacting in short turns when appropriate.
 
-**Relevant code:** `src/router.py`: answer/response routing; `src/prompts.py`: `sim_utterance()`, `intent_guidance()`, recent-chat prompt window; `src/dialogue.py`: open-question tracking and progress tracking.
+**Partial fix (2026-06-28):** ANSWER directive strengthened. When the responding-to turn ends with "?", `_responding_to_line()` now shows "Answer this (or say 'not sure'):" instead of "Responding to:". ANSWER guidance rewritten to "Address the question above first — say what the cards show, or 'not sure' if not covered." This produced a consistent 10–15pp improvement in `responsive` rate (n=3=37%, n=4=35%, n=6=40%, vs 24–25% pre-fix). "Not sure" responses to unanswerable questions now appear naturally.
 
-**Fix direction:** Improve routing/context before adding more style rules:
+**Remaining issues:**
+- Act mismatch: router routes ASK but LLM generates a question in an OBJECT/SUPPORT trailer → question isn't registered as open → ANSWER never fires. Affects responsive rate in runs where the speaker produces incidental questions.
+- Concern response: when the previous turn raises a concern (not a "?" question), no explicit routing/guidance to address it directly.
+- Every non-REACT turn still tends toward a full reason + option pitch, even in discussion where a brief acknowledgment would suffice.
 
-- if the previous turn asked a question, route a true answer or explicit non-answer;
-- if the previous turn raised a concern, route a response to that concern;
-- allow short backchannel/support turns for low response-length personas;
-- avoid every turn containing a full reason + option pitch.
+**Relevant code:** `src/router.py`: answer/response routing; `src/prompts.py`: `_responding_to_line()`, ANSWER guidance in `_move_guidance()`; `src/dialogue.py`: open-question tracking.
 
 ---
 

@@ -419,7 +419,10 @@ def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveInte
     if intent.respond_to_turn is not None:
         for turn in state.turns:
             if turn.index == intent.respond_to_turn:
-                return f"Responding to {turn.speaker_name}: \"{compact_words(turn.text, 20)}\""
+                snippet = compact_words(turn.text, 20)
+                if intent.act == ActType.ANSWER and turn.text.strip().endswith("?"):
+                    return f"Answer this (or say 'not sure'): {turn.speaker_name}: \"{snippet}\""
+                return f"Responding to {turn.speaker_name}: \"{snippet}\""
     target_id = intent.addressee_id
     for turn in reversed(state.turns):
         if turn.speaker_id == persona.id:
@@ -596,7 +599,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"You're warming up to this. {bridge}"
     if intent.act == ActType.ANSWER:
-        return "The card attributes are exhaustive — anything not listed is unknown. Answer only from what the card explicitly states. If the card doesn't cover it, hedge honestly — never invent facts. Don't ask the question back." + face
+        return "Address the question above first — say what the cards show, or 'not sure' if not covered. Never invent facts. Don't re-ask." + face
     by_act = {
         ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'huh interesting'). Don't re-pitch your option." + face,
         ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
@@ -690,8 +693,11 @@ def sim_utterance(
     # responding line for ANSWER/REACT so the model always has a cue to name-drop.
     effective_address = addressee_name
     derived_address = None
-    if not effective_address and intent.act in {ActType.ANSWER, ActType.REACT} and responding.startswith("Responding to "):
-        derived_address = responding[len("Responding to "):].split(":")[0]
+    if not effective_address and intent.act in {ActType.ANSWER, ActType.REACT}:
+        for _pfx in ("Responding to ", "Answer this (or say 'not sure'): "):
+            if responding.startswith(_pfx):
+                derived_address = responding[len(_pfx):].split(":")[0]
+                break
     if effective_address:
         address_rule = f"\n- Use {effective_address}'s name once in your response."
     elif derived_address:
