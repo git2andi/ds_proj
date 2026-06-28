@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 from conftest import make_intent, make_turn
-from models import ActType, DialogueAct, Phase, TurnRecord
+from models import ActType, DialogueAct, OptionCard, Phase, TurnRecord
 from parsing import OptionResolver, TurnMove
 from validation import (
     MessageValidator,
@@ -13,6 +13,7 @@ from validation import (
     covered_slots_hint,
     fix_collective_voice,
     recent_frame_hint,
+    strip_possessive_opener,
 )
 
 
@@ -173,7 +174,10 @@ class TestRoboticPhrasing:
         assert "ROBOTIC_TEMPLATE" not in _validate(validator, "Five days in the mountains sounds perfect.", state).codes()
 
     def test_possessive_opener(self, validator, state):
-        assert "POSSESSIVE_SUBJECT" in _validate(validator, "Mountain Retreat's fresh air is a big draw.", state).codes()
+        r = _validate(validator, "Mountain Retreat's fresh air is a big draw.", state)
+        assert "POSSESSIVE_SUBJECT" in r.codes()
+        # warn-only now — stripped deterministically, no LLM repair needed
+        assert all(i.severity == "warn" for i in r.issues if i.code == "POSSESSIVE_SUBJECT")
 
     def test_option_name_opener_flagged(self, validator, state):
         r = _validate(validator, "Mountain Retreat feels like the best fit for us.", state,
@@ -322,3 +326,26 @@ class TestSlotRepetition:
         # Only 1 shared slot (cost), threshold is 2 — should not fire slot repetition
         slot_rep = [i for i in r.issues if i.code == "SELF_REPETITION" and "dimension" in i.message]
         assert not slot_rep
+
+
+# ── KF19: strip_possessive_opener deterministic cleanup ────────────────
+
+class TestStripPossessiveOpener:
+    def test_strips_full_name_possessive(self, resolver):
+        result = strip_possessive_opener("Mountain Retreat's fresh air is a big draw.", resolver.options)
+        assert not result.startswith("Mountain Retreat")
+        assert "fresh air" in result.lower()
+
+    def test_strips_short_name_possessive(self):
+        opt = OptionCard(id="A", name="Mountain Retreat", short_name="Retreat")
+        result = strip_possessive_opener("Retreat's layout works well for us.", [opt])
+        assert not result.lower().startswith("retreat")
+        assert "layout" in result.lower()
+
+    def test_non_possessive_unchanged(self, resolver):
+        text = "The fresh air at Mountain Retreat is great."
+        assert strip_possessive_opener(text, resolver.options) == text
+
+    def test_capitalizes_remainder(self, resolver):
+        result = strip_possessive_opener("Mountain Retreat's pricing seems high.", resolver.options)
+        assert result[0].isupper()

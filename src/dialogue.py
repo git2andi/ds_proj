@@ -29,7 +29,7 @@ from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
 from scoring import current_lean, leading_option
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
-from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases
+from validation import MessageValidator, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases, strip_possessive_opener
 
 
 class Orchestrator:
@@ -167,6 +167,7 @@ class Orchestrator:
         )
         message, move = parse_trailer(self._llm.generate(prompt, profile="dialogue"), option_ids)
         text = clean_generated(message, persona.name, max_words)
+        text = strip_possessive_opener(text, state.scenario.options)
         total_tokens_in = self._llm.last_tokens_in
         total_tokens_out = self._llm.last_tokens_out
 
@@ -192,6 +193,7 @@ class Orchestrator:
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_repair")
             message, move = parse_trailer(self._llm.generate(repair_prompt, profile="repair"), option_ids)
             text = clean_generated(message, persona.name, max_words)
+            text = strip_possessive_opener(text, state.scenario.options)
             total_tokens_in += self._llm.last_tokens_in
             total_tokens_out += self._llm.last_tokens_out
             result = validator.validate(text, state, intent, move)

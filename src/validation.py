@@ -251,14 +251,15 @@ class MessageValidator:
         # The prompt bans these formulaic frames, but the model still reaches for them often
         # enough to read as a template. A deterministic backstop forces the worst ones to be
         # rewritten instead of leaking into the chat. Topic-agnostic: no scenario words.
-        # "Considering..." as a turn opener is escalated to repair (same class as POSSESSIVE_SUBJECT,
-        # REPEATED_START); other robotic templates remain warn-only.
+        # "Considering..." as a turn opener is escalated to repair (same class as REPEATED_START);
+        # other robotic templates remain warn-only. POSSESSIVE_SUBJECT is now warn-only too since
+        # strip_possessive_opener() in clean_generated handles it deterministically.
         if _CONSIDERING_OPENER.match(text):
             issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "repair", "Opens with 'Considering' — start with the point, a reaction, or a question."))
         elif any(p.search(text) for p in _ROBOTIC_TEMPLATES):
             issues.append(ValidationIssue("ROBOTIC_TEMPLATE", "warn", "Uses a banned formulaic template."))
         if any(p.match(text) for p in self._possessive_openers):
-            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "repair", "Opens with an option's possessive ('X's ...')."))
+            issues.append(ValidationIssue("POSSESSIVE_SUBJECT", "warn", "Opens with an option's possessive ('X's ...') — stripped deterministically."))
 
     def _check_option_subject_opener(self, text: str, intent: MoveIntent, issues: list[ValidationIssue]) -> None:
         # "American Red Cross feels like a safe bet..." — option name as plain sentence
@@ -437,6 +438,24 @@ _STOCK_PHRASE_REWRITES = [
 def fix_stock_phrases(text: str) -> str:
     for pattern, replacement in _STOCK_PHRASE_REWRITES:
         text = pattern.sub(replacement, text)
+    return text
+
+
+def strip_possessive_opener(text: str, options: list) -> str:
+    """Deterministically remove 'OptName's ...' as a turn opener.
+    Mirrors the POSSESSIVE_SUBJECT check so the pattern never survives into the transcript.
+    Both full option names and short_names are checked; parenthetical annotations are stripped."""
+    for o in options:
+        base = re.sub(r"\s*\([^)]*\)", "", o.name).strip()
+        seen: set[str] = set()
+        for candidate in filter(None, [base, getattr(o, "short_name", "").strip()]):
+            if candidate.lower() in seen:
+                continue
+            seen.add(candidate.lower())
+            m = re.match(rf"^(?:\w+\s+){{0,2}}{re.escape(candidate)}\s*[\x27'']s\s+", text, re.I)
+            if m:
+                rest = text[m.end():]
+                return (rest[0].upper() + rest[1:]) if rest else text
     return text
 
 
