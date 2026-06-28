@@ -189,13 +189,19 @@ def moderator_stall_prompt(state: DialogueState) -> str:
     conflict = _conflict_dimension(state)
     split = _camp_split(state)
     if overlap is not None:
-        push = (f"Point out that {state.scenario.option(overlap).name} may be the common ground — "
-                "people on different sides can live with it — and ask if everyone can get behind it, "
-                "or ask a specific holdout what would make it work.")
+        if _has_clear_holdout(state):
+            holdout_name, concern = _holdout_info(state)
+            overlap_name = state.scenario.option(overlap).name
+            push = (f"Most people can live with {overlap_name}. "
+                    f"Ask {holdout_name} directly what specifically blocks them from {overlap_name} "
+                    f"(their concern is {concern}) and what would need to change. Don't ask the whole group.")
+        else:
+            push = (f"Point out that {state.scenario.option(overlap).name} may be common ground. "
+                    "Ask what one thing would need to change for anyone still doubtful.")
     elif _has_clear_holdout(state):
         holdout_name, concern = _holdout_info(state)
         push = (f"Ask {holdout_name} directly what would need to change about the leading option "
-                f"to make it work for them (their concern is {concern}). Don't propose a solution yet.")
+                f"to make it work for them (concern: {concern}). Don't propose a solution yet.")
     else:
         push = ("The group is genuinely split. Ask one specific question to surface the real blocker: "
                 "what's the one thing that would change someone's mind? Don't propose a compromise yet.")

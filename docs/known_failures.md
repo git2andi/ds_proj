@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28 (KF03 resolved).
+Last updated: 2026-06-28 (KF06 resolved).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -22,23 +22,6 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 
 ## P1 — Natural moderation and dialogue flow
-
-### KF06 — Moderator interventions should target the actual social state, especially lone holdouts
-
-**Problem:** The moderator can intervene with generic or repetitive narrowing prompts instead of responding to the actual support distribution. When all or almost all sims support one option and exactly one person does not, the moderator should not ask the whole group another generic compromise question. The moderator should address the one holdout directly and ask what currently blocks them or what condition would make them move.
-
-**Why it matters:** Real moderators do not repeatedly ask “can everyone get behind X?” when the social state is clear. They identify the unresolved participant or unresolved concern. This would make narrowing and conflict resolution feel more natural and less scripted.
-
-**Relevant code:** `src/prompts.py`: `moderator_stall_prompt()`, `moderator_holdout_prompt()`, `_camp_split()`, `_conflict_dimension()`, `_has_clear_holdout()`; `src/dialogue.py`: `_candidate_holdouts()` and phase transitions.
-
-**Fix direction:** Build moderator prompts from explicit support distribution:
-
-- If one option has all-but-one visible supporter, ask only the holdout what the current blocker is and what would make them move.
-- If two camps remain, ask a bridge question comparing the exact unresolved concerns.
-- If no candidate exists, summarize the real tension and ask for a concrete comparison.
-- Avoid letting the LLM infer the target participant when the controller already knows it.
-
----
 
 ### KF07 — Narrowing is too moderator-led and repetitive
 
