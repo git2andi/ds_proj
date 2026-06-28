@@ -344,7 +344,7 @@ def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, oth
             tone = "You came around to this — brief and genuine."
     else:
         result = "the group couldn't land on a choice this time"
-        tone = "No decision yet — react naturally (mild frustration, acceptance, or suggest checking one thing before next time). Don't just say 'we'll figure it out'."
+        tone = "No decision yet — name the one thing you'd need resolved before the group reconvenes, or how you feel about it. Don't just restate the impasse: not 'tabling this', 'still up in the air', 'sleep on it', 'revisit this later', 'we'll figure it out'."
     audience = (f" It's just you and {others[0]} — sign off to {others[0]} directly; don't say 'all', 'everyone', 'team', or 'you all'."
                 if len(others) == 1 else "")
     return f"""The discussion just wrapped: {result}.

@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28 (KF09 partial fix — ANSWER directive).
+Last updated: 2026-06-28 (KF10 resolved).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -39,16 +39,6 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 **Relevant code:** `src/router.py`: answer/response routing; `src/prompts.py`: `_responding_to_line()`, ANSWER guidance in `_move_guidance()`; `src/dialogue.py`: open-question tracking.
 
 ---
-
-### KF10 — Unresolved closures are still weak and can feel unfinished
-
-**Problem:** The unresolved closure prompt asks for a concrete action, but the actual closure is still fully LLM-generated and unvalidated. It can produce unhelpful endings such as procedural dead ends (“flip a coin”) or vague tabling. Farewell prompts then reinforce the “no decision” state rather than producing a useful next step.
-
-**Why it matters:** Honest unresolved outcomes are good, but the ending must still feel socially realistic: name the blocker and the next action.
-
-**Relevant code:** `src/prompts.py`: `moderator_closure_prompt()`, `_identify_blocker()`, `farewell_line()`; `src/dialogue.py`: final closure generation.
-
-**Fix direction:** For unresolved outcomes, prefer a deterministic closure skeleton with the blocker and next action filled from state, or validate the generated closure against banned weak endings.
 
 ---
 
