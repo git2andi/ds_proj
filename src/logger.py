@@ -126,11 +126,19 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     avg_words = round(sum(len(t.text.split()) for t in participant_turns) / n_part, 1)
     repaired = sum(1 for t in participant_turns if t.repaired)
     flagged = sum(1 for t in participant_turns if t.validation_issues)
+    avg_words_by_persona = {
+        p.name: round(
+            sum(len(t.text.split()) for t in participant_turns if t.speaker_id == p.id)
+            / max(1, state.runtimes[p.id].turn_count), 1
+        )
+        for p in state.personas
+    }
     return {
         "participant_turns": len(participant_turns),
         "moderator_turns": len(moderator_turns),
         "moderator_ratio": round(len(moderator_turns) / max(1, len(state.turns)), 3),
         "turn_counts": turn_counts,
+        "avg_words_by_persona": avg_words_by_persona,
         "question_density": question_density,
         "avg_words_per_turn": avg_words,
         "repaired_turns": repaired,

@@ -643,12 +643,16 @@ def _short_alias(option: OptionCard) -> str:
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
     t = persona.traits
-    if t.response_length >= 4 or t.detail >= 0.66:
-        return f"Aim for {max_words} words. You like to explain — make your point and add a quick why or detail."
-    if t.response_length <= 2:
-        target = max(6, max_words // 2)
-        return f"Aim for ~{target} words max. You keep it short — one crisp line, no preamble."
-    return f"Aim for ~{max_words} words. Natural length — a sentence or two."
+    if t.response_length >= 4:
+        return f"Aim for {max_words} words. You elaborate — give your point and explain the why."
+    if t.response_length == 3:
+        target = max(10, 2 * max_words // 3)
+        return f"Aim for ~{target} words. Direct — one point, no padding."
+    if t.response_length == 2:
+        target = max(8, max_words // 2)
+        return f"Aim for ~{target} words. Brief — one clear line."
+    target = max(6, max_words // 3)
+    return f"Aim for ~{target} words. Very short — a fragment or a single clause."
 
 
 def _collect_recent_frames(state: DialogueState, window: int = 4) -> list[str]:

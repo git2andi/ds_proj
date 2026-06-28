@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28 (KF07 resolved).
+Last updated: 2026-06-28 (KF08 resolved).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -22,26 +22,6 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 
 ## P1 — Natural moderation and dialogue flow
-
-### KF08 — Trait-visible speaking behavior and response length need to be measurable
-
-**Problem:** Traits are present and affect some routing/prompt choices, but their impact is not consistently visible enough in the generated transcript. Response length is especially important for later evaluation: it should be possible to measure whether low-length personas actually speak shorter and high-length personas actually elaborate more. Similar expectations apply to extraversion, agreeableness, conscientiousness, neuroticism, initiative, and compromise willingness.
-
-**Why it matters:** If trait effects are not visible and measurable, later evaluation cannot determine whether persona design matters. The sims may appear different in metadata but similar in the transcript.
-
-**Relevant code:** `src/models.py`: `Traits`; `src/builders.py`: trait sampling; `src/router.py`: speaker and act selection; `src/prompts.py`: `runtime_speaker_card()`, `sim_utterance()`, verbosity and style rules.
-
-**Fix direction:** Make trait effects observable but not cartoonish:
-
-- response_length should influence actual word-count target and variance;
-- extraversion/initiative should affect who volunteers, interrupts less/more, and starts narrowing;
-- agreeableness/compromise should affect concession timing and face-work;
-- conscientiousness should increase practical constraint checks and detail orientation;
-- neuroticism should increase risk sensitivity and blocker-style concerns.
-
-Add metrics later that compare trait values to actual transcript behavior.
-
----
 
 ### KF09 — Local conversation flow still needs more human uptake
 
