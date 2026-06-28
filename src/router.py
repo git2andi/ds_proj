@@ -176,7 +176,7 @@ class TurnRouter:
             return MoveIntent(
                 speaker_id=target_id,
                 addressee_id=turn.speaker_id,
-                act=ActType.REACT,
+                act=ActType.SUPPORT,
                 option_focus=turn.act.option_refs or self._focus_for_person(state, target_id),
                 reason=f"respond to {state.name_for(turn.speaker_id)}'s objection",
                 length_hint=self._length_hint(persona),
