@@ -37,6 +37,9 @@ class TurnRouter:
                     respond_to_turn=q.turn_id,
                 )
 
+        if state.narrowing_called:
+            return self._narrowing_call_intent(state)
+
         if state.phase == Phase.NARROWING:
             return self._vote_intent(state)
 
@@ -49,6 +52,23 @@ class TurnRouter:
         return self._discussion_intent(state)
 
     # ------------------------------------------------------------------
+
+    def _narrowing_call_intent(self, state: DialogueState) -> MoveIntent:
+        """Route the highest-initiative participant to call for a vote — one deferred turn
+        before the formal NARROWING phase so the transition feels participant-driven."""
+        last = self._last_participant_turn(state)
+        last_pid = last.speaker_id if last else None
+        candidates = [p for p in state.personas if p.id != last_pid] or list(state.personas)
+        caller = max(candidates, key=lambda p: p.traits.initiative + p.traits.compromise_willingness)
+        lead = leading_option(state)
+        focus = [lead] if lead else self._focus_for_person(state, caller.id)
+        return MoveIntent(
+            speaker_id=caller.id,
+            act=ActType.PROPOSE_COMPROMISE,
+            option_focus=focus,
+            reason="suggest the group has heard enough and should each commit to one option",
+            length_hint="short",
+        )
 
     def _opening_intent(self, state: DialogueState) -> MoveIntent:
         last = self._last_participant_turn(state)

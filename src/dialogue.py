@@ -228,6 +228,7 @@ class Orchestrator:
                     self._register_intervention(state)
                     state.no_progress_count = 0
                     state.facilitator_force_narrow = True
+                    state.narrowing_called = False  # moderator is handling the narrowing
                     return self._moderator_say(prompts.moderator_agreement_prompt(state, candidate), state)
             # Scale stall window with group size: a 5-person group needs more turns
             # before "no progress" actually means the discussion is circling.
@@ -239,6 +240,7 @@ class Orchestrator:
                 self._register_intervention(state)
                 state.no_progress_count = 0
                 state.facilitator_force_narrow = True
+                state.narrowing_called = False  # moderator is handling the narrowing
                 return self._moderator_say(prompts.moderator_stall_prompt(state), state)
 
         if state.phase == Phase.CONFIRMATION and state.candidate_option:
@@ -518,7 +520,14 @@ class DialogueController:
             state.phase = Phase.DISCUSSION
         state.readiness_score = self.readiness_score(state)
         if state.phase == Phase.DISCUSSION and self._can_start_narrowing(state):
-            state.phase = Phase.NARROWING
+            # On natural convergence (readiness, not moderator/cap), defer one turn so
+            # a participant can call for a vote instead of the phase flipping silently.
+            natural = not state.facilitator_force_narrow and participant_turn_count(state) < state.force_narrow_turns
+            if natural and not state.narrowing_called:
+                state.narrowing_called = True
+            else:
+                state.phase = Phase.NARROWING
+                state.narrowing_called = False
         if state.phase == Phase.NARROWING and everyone_voted(state):
             state.candidate_option = ConsensusManager().leading_candidate(state)
             state.phase = Phase.CONFIRMATION

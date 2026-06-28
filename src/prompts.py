@@ -604,7 +604,11 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         ActType.SUPPORT: "Back this from your angle — a personal reason or past experience, not the spec sheet." + face,
         ActType.OBJECT: "Name your specific worry. One concrete thing from the option card — don't invent flaws not mentioned there." + face,
         ActType.PUSH_BACK: "Push back on the exact claim just made." + face,
-        ActType.PROPOSE_COMPROMISE: "Name the fix directly — skip 'What if we' and 'How about we'. No inventing specific prices, sizes, or details not in the cards." + face,
+        ActType.PROPOSE_COMPROMISE: (
+            "The group has covered the ground. Suggest directly that it's time to each pick one option — briefly explain your lean, then ask everyone to commit. No new trade-offs."
+            if state.narrowing_called else
+            "Name the fix directly — skip 'What if we' and 'How about we'. No inventing specific prices, sizes, or details not in the cards."
+        ) + face,
     }
     return by_act.get(intent.act, "Respond to the last point directly.")
 

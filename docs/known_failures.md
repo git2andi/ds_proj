@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28 (KF06 resolved).
+Last updated: 2026-06-28 (KF07 resolved).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -22,18 +22,6 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 
 ## P1 — Natural moderation and dialogue flow
-
-### KF07 — Narrowing is too moderator-led and repetitive
-
-**Problem:** Narrowing is usually introduced by the moderator and often follows the same pattern. Participants rarely initiate narrowing themselves, even when the group naturally has enough information to reduce the option set.
-
-**Why it matters:** Human group discussions often narrow from within the group: “Seems like we’re between A and C,” “I could move to B if the budget works,” or “Maybe we should drop D.” If only the moderator narrows, the conversation feels staged.
-
-**Relevant code:** `src/router.py`: phase/intent selection; `src/prompts.py`: `intent_guidance()`, `moderator_stall_prompt()`; `src/dialogue.py`: `_can_start_narrowing()`.
-
-**Fix direction:** Add or reuse a participant act for participant-led narrowing. Trigger it when coverage is sufficient and one participant has high initiative/extraversion or high compromise willingness. The moderator should intervene only when participants do not naturally narrow after a stall.
-
----
 
 ### KF08 — Trait-visible speaking behavior and response length need to be measurable
 

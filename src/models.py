@@ -233,6 +233,7 @@ class DialogueState:
     readiness_score: float = 0.0
     no_progress_count: int = 0
     facilitator_force_narrow: bool = False
+    narrowing_called: bool = False  # deferred one turn so a participant can call for a vote naturally
     confirmation_start_turns: int | None = None  # participant-turn count when confirmation began
     # Pacing targets derived once per run (group size + composition), so length varies
     # and scales with the number of participants instead of using one fixed floor.
