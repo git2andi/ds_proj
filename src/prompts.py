@@ -138,8 +138,8 @@ Requirements:
 - Even when participants share a preferred option, give them distinct roles, reasons, and concerns so they don't sound identical.
 {compromise_rule}
 - Reasons must be grounded only in the option cards above.
-- Reconsider conditions must be about group priorities, not changed facts. Bad: "if the price drops". Good: "if everyone values comfort over price".
-- Persona consistency: a participant's role, main_concern, and preferred_option must be compatible. A "quiet reader" prefers a calm low-key option; an "adventure seeker" prefers a high-energy option. Never assign someone a preferred option whose core attributes directly contradict their stated role and concern unless their backstory explicitly explains the contradiction.
+- Reconsider conditions must depend on how the group weighs known trade-offs, never on changing an option fact.
+- Persona consistency: role, main concern, and preferred option must fit the option's core attributes. If the combination is surprising, the backstory must explain it.
 - Use the exact name given in each trait profile row. Do not change or substitute names.
 - Conversation should later sound like friends/classmates deciding together, not a business meeting.
 
@@ -376,55 +376,6 @@ def _lean_name(state: DialogueState, persona: Persona) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _speaking_habit(persona: Persona) -> str:
-    t = persona.traits
-    # Primary: the most dominant voice character
-    if t.neuroticism >= 3 and t.agreeableness <= 3:
-        primary = "worrier — raises what could go wrong before agreeing"
-    elif t.directness >= 0.55 and t.response_length <= 2:
-        primary = "blunt — short and direct, no preamble"
-    elif t.conscientiousness >= 4 and t.openness >= 4:
-        primary = "methodical — wants one concrete fact before committing"
-    elif t.agreeableness >= 4 and t.compromise_willingness >= 0.6:
-        primary = "collaborator — looks for what everyone can live with"
-    elif t.conscientiousness >= 4:
-        primary = "careful — asks for specifics, checks before agreeing"
-    elif t.extraversion >= 4 and t.openness >= 4:
-        primary = "energetic — jumps in, builds on what others say"
-    elif t.extraversion <= 2:
-        primary = "measured — listens, then gives one clear take"
-    elif t.compromise_willingness < 0.45:
-        primary = "firm — holds position unless shown a concrete fix"
-    elif t.openness >= 4:
-        primary = "curious — explores before deciding"
-    elif t.agreeableness >= 4:
-        primary = "agreeable — finds the shared angle quickly"
-    elif t.neuroticism >= 3:
-        primary = "cautious — flags risks, hedges before committing"
-    else:
-        primary = "practical — goes with what works, moves things along"
-    # Secondary: a distinct behavioral tell from a different trait
-    used = primary.split(" — ")[0]
-    secondary = ""
-    if t.conscientiousness >= 4 and "methodical" not in used and "careful" not in used:
-        secondary = "asks for one concrete detail"
-    elif t.detail >= 0.6 and "methodical" not in used and "careful" not in used:
-        secondary = "pins down a specific number or constraint"
-    elif t.neuroticism >= 3 and "worrier" not in used and "cautious" not in used:
-        secondary = "names the risk before saying yes"
-    elif t.response_length <= 2 and "blunt" not in used:
-        secondary = "keeps it to one short line"
-    elif t.agreeableness >= 4 and "collaborator" not in used and "agreeable" not in used:
-        secondary = "softens objections before landing"
-    elif t.extraversion >= 4 and "energetic" not in used:
-        secondary = "thinks out loud"
-    elif t.openness >= 4 and "curious" not in used and "energetic" not in used:
-        secondary = "asks what they don't know yet"
-    elif t.compromise_willingness < 0.45 and "firm" not in used:
-        secondary = "pushes back if their concern isn't addressed"
-    return f"{primary}; {secondary}" if secondary else primary
-
-
 def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveIntent) -> str:
     if intent.act in {ActType.OPENING, ActType.VOTE}:
         return ""
@@ -432,10 +383,10 @@ def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveInte
         for turn in state.turns:
             if turn.index == intent.respond_to_turn:
                 snippet = compact_words(turn.text, 20)
-                if intent.act == ActType.ANSWER and turn.text.strip().endswith("?"):
-                    return f"Answer this (or say 'not sure'): {turn.speaker_name}: \"{snippet}\""
                 return f"Responding to {turn.speaker_name}: \"{snippet}\""
     target_id = intent.addressee_id
+    if not target_id:
+        return ""
     for turn in reversed(state.turns):
         if turn.speaker_id == persona.id:
             continue
@@ -445,14 +396,31 @@ def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveInte
     return ""
 
 
-def _group_leans(state: DialogueState) -> str:
-    parts: list[str] = []
-    for persona in state.personas:
-        rt = state.runtimes[persona.id]
-        lean = rt.current_preference or persona.preferred_option
-        if lean in state.scenario.option_ids:
-            parts.append(f"{persona.name}={lean}")
-    return "Leans: " + ", ".join(parts)
+def _speaking_behavior(persona: Persona) -> str:
+    """Translate traits into observable turn behavior without persona labels."""
+    t = persona.traits
+    cues: list[str] = []
+    if t.conscientiousness >= 4:
+        cues.append("check one concrete constraint before agreeing")
+    elif t.conscientiousness <= 2:
+        cues.append("react to the practical gist without auditing every detail")
+    if t.neuroticism >= 3:
+        cues.append("state the risk that still needs resolving")
+    if t.openness >= 4:
+        cues.append("probe a useful alternative or missing trade-off")
+    if t.agreeableness >= 4:
+        cues.append("acknowledge the other side before disagreeing")
+    elif t.agreeableness <= 2:
+        cues.append("challenge weak reasoning plainly")
+    if t.directness >= 0.55:
+        cues.append("put the bottom line early")
+    if t.initiative >= 0.65:
+        cues.append("move the group toward a next step")
+    if t.compromise_willingness < 0.45:
+        cues.append("hold the concern until someone addresses it")
+    if not cues:
+        cues.append("give one practical take and build on the conversation")
+    return "; ".join(cues[:3])
 
 
 def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveIntent) -> str:
@@ -467,8 +435,8 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
             concern = persona.reservation
 
     lines = [
-        f"Speaker: {persona.name} ({persona.role}); lean: {lean_name}; concern: {concern}; "
-        f"voice: {persona.speech_style}; habit: {_speaking_habit(persona)}.",
+        f"Speaker: {persona.name}; lean: {lean_name}; concern: {concern}; "
+        f"behavior: {_speaking_behavior(persona)}.",
     ]
     if rt.already_said:
         lines.append(f"Avoid repeating your last point: \"{compact_words(rt.already_said[-1], 10)}\".")
@@ -500,36 +468,20 @@ def _others_back(state: DialogueState, persona: Persona, option_focus: list[str]
 
 
 def _concession_bridge(persona: Persona, option_name: str = "", reservation: str = "") -> str:
-    import random
     worry = reservation or persona.main_concern
     opt = option_name or "this"
-    # Two-part structure required: (1) own that it's not your first choice,
-    # (2) name the specific trade-off or condition on the worry you're accepting.
-    bridges = [
-        f"Back {opt} — but first say you'd have preferred something else, then name the specific {worry} trade-off you're living with.",
-        f"Accept {opt}: own that it wasn't your pick, and say concretely what about {worry} you're accepting as a cost.",
-        f"Give {opt} a yes — acknowledge you came around, not that you always wanted it, and say what {worry} trade-off makes it workable.",
-        f"Agree to {opt}: be clear you preferred another option, then name the one {worry} thing you're letting go of.",
-    ]
     if persona.traits.compromise_willingness < 0.5:
-        bridges = [
-            f"Reluctant yes on {opt} only — say you'd rather have had something else, and name specifically what about {worry} still isn't ideal.",
-            f"Accept {opt} with a condition: be explicit you're compromising, and say what about {worry} you'd want followed up on.",
-        ]
-    return random.choice(bridges)
+        return f"Give {opt} a reluctant yes and name the unresolved {worry} condition."
+    return f"Accept {opt}, acknowledge it was not your first choice, and name the {worry} trade-off you can live with."
 
 
 def _face_work(persona: Persona, intent: MoveIntent) -> str:
-    import random
     t = persona.traits
     if intent.act in {ActType.VOTE, ActType.ACCEPT, ActType.OPENING}:
         return ""
     if intent.act in {ActType.OBJECT, ActType.PUSH_BACK, ActType.REJECT}:
         if t.agreeableness >= 4:
-            return random.choice([
-                " Soften it — 'I might be wrong but...' or 'not trying to be difficult, just...'.",
-                " Show you get their side first, then say your worry.",
-            ])
+            return " Acknowledge their side before naming your worry."
         if t.neuroticism >= 3:
             return " You're genuinely anxious about this — let that unease show in your phrasing."
         if t.directness >= 0.55:
@@ -560,7 +512,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     high_compromise = t.compromise_willingness >= 0.6
     face = _face_work(persona, intent)
     if intent.act == ActType.OPENING:
-        common = " Name your pick casually and say why it fits you personally — don't announce a criterion ('X matters most to me')."
+        common = " Name your pick casually and give one personal reason."
         spoken_ids = {turn.speaker_id for turn in state.turns if turn.speaker_id != "moderator"}
         if any(p.id in spoken_ids and p.preferred_option == persona.preferred_option
                for p in state.personas if p.id != persona.id):
@@ -575,10 +527,10 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
-            return bridge
+            return f"Name {opt_name} and use an unhedged first-person acceptance verb. {bridge}"
         if _others_back(state, persona, intent.option_focus):
             return "Others agreed already — confirm briefly without echoing their phrasing."
-        return "Say you're in — one reason why it's okay for you."
+        return "Name the option and use an unhedged first-person acceptance verb. Give one reason it works for you."
     if intent.act == ActType.VOTE:
         chorus = (" Others already voted this way — brief, don't echo them."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -586,8 +538,8 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
-            return f"Say '{opt_name}' by name and that you're going with it — the commitment must be in the text, not just the trailer. Then: {bridge}" + chorus
-        return "Say the option name out loud and commit to it — 'I'm going with [Name]', '[Name] gets my vote', or similar. One brief personal reason." + chorus
+            return f"Name {opt_name} and use a first-person commitment verb without hedging. {bridge}" + chorus
+        return "Name the option and use a first-person commitment verb without hedging. Give one brief personal reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -602,10 +554,10 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             bridge = _concession_bridge(persona, opt_name, persona.reservation)
             return f"You're warming up to this. {bridge}"
     if intent.act == ActType.ANSWER:
-        return "Address the question above first — say what the cards show, or 'not sure' if not covered. Never invent facts. Don't re-ask." + face
+        return "Answer the question first from the cards; if they do not cover it, say that plainly and move on. Never invent facts or re-ask." + face
     by_act = {
-        ActType.REACT: "React — a fragment is fine ('yeah fair', 'hmm not sure', 'huh interesting'). Don't re-pitch your option." + face,
-        ActType.ASK: "Ask one real question you'd want answered before deciding. Casual, end with '?'." + face,
+        ActType.REACT: "Acknowledge, challenge, or build on the last useful point. Do not re-pitch your option." + face,
+        ActType.ASK: "Ask one answerable question that would help the decision. Keep it casual." + face,
         ActType.COMPARE: "One genuine strength of theirs; one concrete reason yours fits you better. No attribute lists, no templates." + face,
         ActType.SUPPORT: "Back this from your angle — a personal reason or past experience, not the spec sheet." + face,
         ActType.OBJECT: "Name your specific worry. One concrete thing from the option card — don't invent flaws not mentioned there." + face,
@@ -613,15 +565,17 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         ActType.PROPOSE_COMPROMISE: (
             "The group has covered the ground. Suggest directly that it's time to each pick one option — briefly explain your lean, then ask everyone to commit. No new trade-offs."
             if state.narrowing_called else
-            "Name the fix directly — skip 'What if we' and 'How about we'. No inventing specific prices, sizes, or details not in the cards."
+            "Name one workable fix directly without inventing details beyond the cards."
         ) + face,
     }
     return by_act.get(intent.act, "Respond to the last point directly.")
 
 
 def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
-    if intent.act in {ActType.OPENING, ActType.VOTE}:
-        return "\n- Name options naturally, not 'Option B'."
+    if intent.act == ActType.VOTE:
+        return "\n- Use the shortest recognizable option name from the Options line."
+    if intent.act == ActType.OPENING:
+        return "\n- Name options naturally rather than using lettered labels."
     mentioned = {opt for t in state.turns for opt in (t.act.option_refs if hasattr(t.act, 'option_refs') else [])}
     if mentioned:
         aliases = short_alias_map(state.scenario.options)
@@ -629,13 +583,13 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
         if shorts:
             return f"\n- Use short names for options: {shorts}. Don't repeat full names — shorten like friends would."
         return "\n- Use short names for options already discussed. Don't repeat full names."
-    return "\n- Name options naturally, not 'Option B'."
+    return "\n- Name options naturally rather than using lettered labels."
 
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
     t = persona.traits
     if t.response_length >= 4:
-        return f"Aim for {max_words} words. You elaborate — give your point and explain the why."
+        return f"Use up to {max_words} words and at most two short sentences: one point and its reason, without a mini-speech."
     if t.response_length == 3:
         target = max(10, 2 * max_words // 3)
         return f"Aim for ~{target} words. Direct — one point, no padding."
@@ -668,7 +622,6 @@ def sim_utterance(
     option_names = ", ".join(f"{o.id}={aliases[o.id]}" for o in state.scenario.options)
     opt_choices = "|".join(state.scenario.option_ids)
     card = runtime_speaker_card(persona, state, intent)
-    leans = _group_leans(state)
     responding = _responding_to_line(state, persona, intent)
     if intent.act in {ActType.COMPARE, ActType.VOTE, ActType.OPENING}:
         focused = _option_cards(focus_options) if focus_options else "- none"
@@ -677,18 +630,18 @@ def sim_utterance(
     recent = "\n".join(recent_lines) if recent_lines else "(no recent turns)"
     focus_str = ", ".join(intent.option_focus) if intent.option_focus else "-"
     guidance = _move_guidance(state, persona, intent)
-    responding_block = f"\n{responding}\n" if responding else "\n"
+    responding_block = f"\nExact message: {responding}\n" if responding else "\n"
     # Derive the name to address: explicit addressee first, then extract from the
     # responding line for ANSWER/REACT so the model always has a cue to name-drop.
     effective_address = addressee_name
     derived_address = None
     if not effective_address and intent.act in {ActType.ANSWER, ActType.REACT}:
-        for _pfx in ("Responding to ", "Answer this (or say 'not sure'): "):
+        for _pfx in ("Responding to ",):
             if responding.startswith(_pfx):
                 derived_address = responding[len(_pfx):].split(":")[0]
                 break
     if effective_address:
-        address_rule = f"\n- Use {effective_address}'s name once in your response."
+        address_rule = f"\n- Address {effective_address} only if it sounds natural."
     elif derived_address:
         address_rule = f"\n- You can use {derived_address}'s name if it flows naturally — don't force it."
     else:
@@ -709,13 +662,16 @@ def sim_utterance(
     if state.scenario.shared_context:
         ctx_line = "\nContext: " + "; ".join(compact_words(item, 12) for item in state.scenario.shared_context)
     verbosity = _verbosity_note(persona, max_words)
+    local_job = (
+        f"respond to this exact message first; {guidance[0].lower() + guidance[1:]}"
+        if responding else guidance
+    )
     return f"""Write one natural chat message for the next speaker.
 
 Topic: {state.scenario.topic}
 Options: {option_names}{ctx_line}
 
 {card}
-{leans}
 {responding_block}
 Option facts:
 {focused}
@@ -724,11 +680,11 @@ Recent chat:
 {recent}
 
 Act: {intent.act.value}; focus: {focus_str}
-Guidance: {guidance}
+Local job: {local_job}
 {verbosity}{frame_line}
 
 Rules:
-- One line; no name prefix or quotes. Chat naturally in fragments or reactions when they fit. Don't start with an option's possessive form.
+- Do only the local job. One line; no name prefix or quotes. Use plain spoken language, not a complete option pitch.
 - Vary the opening; don't default to I/we or a bare option name.{address_rule}
 - No formulaic filler. Use only card/context facts; otherwise say it's unknown or hedge it.{alias_rule}
 
@@ -742,27 +698,27 @@ _REPAIR_HINTS = {
     "SPEAKER_PREFIX": "drop the 'Name:' prefix",
     "MULTI_TURN_OUTPUT": "write only one single line",
     "INVALID_OPTION_REFERENCE": "only mention the real options listed",
-    "UNGROUNDED_NUMERIC_FACT": "don't state numbers that aren't in the option cards — hedge as 'I think ~X' if unsure",
-    "INVENTED_OPTION_ATTRIBUTE": "don't state facts that aren't in the option cards — hedge with 'I think they might...' or 'not sure if they...' — never turn it into a question",
+    "UNGROUNDED_NUMERIC_FACT": "remove numbers that are not in the option cards and state uncertainty plainly",
+    "INVENTED_OPTION_ATTRIBUTE": "remove facts that are not in the option cards; state uncertainty plainly and never turn it into a question",
     "DUPLICATE_TURN": "don't repeat another speaker's line — say it in your own words",
     "ECHOED_PHRASE": "don't reuse another speaker's phrasing — reword it your way",
     "GROUP_REPETITION": "don't echo a recent turn — add your own angle",
-    "QUESTION_ECHO": "don't re-ask what was just asked — if the cards don't say, hedge ('not sure, we'd need to check') and move on",
-    "REPETITIVE_OPENER": "don't open with 'I' (and not 'we'/'Considering'/'Given' either) — start with the other person's point, a reaction ('fair,', 'true,', 'okay but'), the option/detail itself, or a short question",
+    "QUESTION_ECHO": "don't re-ask what was just asked; if the cards do not answer it, state that and move on",
+    "REPETITIVE_OPENER": "change the grammatical opening and lead from the local point rather than the speaker",
     "REPEATED_START": "open with different words than the recent turns — don't start the same way again",
     "SELF_REPETITION": "you already made this point — add something new or move toward deciding",
-    "UNCLEAR_VOTE": "say the option name explicitly and commit — 'I'm going with [Name]' or '[Name] gets my vote' — no hedging",
-    "UNCLEAR_ACCEPT": "say the option name and confirm you're agreeing to it — 'I can work with [Name]' or '[Name] works for me'",
+    "UNCLEAR_VOTE": "say the option name explicitly and commit without hedging",
+    "UNCLEAR_ACCEPT": "say the option name explicitly and confirm agreement",
     "UNCLEAR_REJECT": "clearly state your objection",
     "QUESTION_IN_CONFIRMATION": "make it a statement, not a question",
     "UNWANTED_QUESTION": "don't respond with a question — if answering, give a direct answer or hedge; otherwise make a statement",
     "QUESTION_CHAIN": "don't ask another question — react or state instead",
     "INCOMPLETE_TURN": "finish the thought; don't trail off",
-    "ROBOTIC_TEMPLATE": "drop the formulaic phrasing — 'outweighs', 'makes me think', 'seems like a/the best fit', 'still beats', 'do they offer', 'why that matters' — and don't open with 'Considering...' or 'Given the discussion...' — just say it plainly in your own voice",
-    "POSSESSIVE_SUBJECT": "don't open with an option name in possessive form ('X's ...') — use a fragment, reaction, or your own take instead",
-    "COLLECTIVE_VOICE": "this is your own view, not the committee's — speak for yourself, not 'we'/'our'",
+    "ROBOTIC_TEMPLATE": "replace the formulaic sentence structure with one plain local response in the speaker's own voice",
+    "POSSESSIVE_SUBJECT": "don't open with an option name in possessive form; lead from the local point instead",
+    "COLLECTIVE_VOICE": "state the speaker's own view rather than speaking for the group",
     "CARD_READING": "don't parrot the option card's description — put it in your own words",
-    "SELF_NARRATION": "don't narrate your thinking ('I should consider', 'I need to prioritize') — just say the thing directly",
+    "SELF_NARRATION": "don't narrate the thinking process; state the point directly",
 }
 
 
@@ -807,9 +763,19 @@ def repair_utterance(
     if context_codes.intersection(issue_codes) and recent_lines:
         limit = int(cfg.utterances.repair_recent_turns)
         recent_block = "\nRecent chat:\n" + "\n".join(recent_lines[-limit:])
-    return f"""Rewrite {persona.name}'s line in their {persona.speech_style} voice. Preserve meaning and stance.
+    decision_block = ""
+    if intent.act in {ActType.VOTE, ActType.ACCEPT} and intent.option_focus:
+        target_id = intent.option_focus[0]
+        if target_id in state.scenario.option_ids:
+            target = short_alias_map(state.scenario.options)[target_id]
+            decision_block = (
+                f"\nDecision requirement: name {target} and visibly say you are selecting it now. "
+                "Praising it, describing it, or promising to present it is not a choice. The trailer is metadata only."
+            )
+    return f"""Rewrite {persona.name}'s line. Keep its grounded point and fulfill the routed act.
+Behavior: {_speaking_behavior(persona)}.
 Relevant options: {option_context}{recent_block}
 Line: {original_text}
-Fix: {fixes}.
+Fix: {fixes}.{decision_block}
 One natural line under {max_words} words; no prefix, quotes, invented facts, questions, or copied wording.
 Then: [act={intent.act.value}; opt=LETTER; stance=STANCE] where LETTER={opt_choices} or - and STANCE=vote|accept|object|reject|propose|neutral."""

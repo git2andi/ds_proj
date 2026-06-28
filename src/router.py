@@ -196,6 +196,9 @@ class TurnRouter:
             act = forced_act or self._act_for_gap(state, speaker_id, gap)
             addressee = self._target_for_act(state, speaker_id, act, gap)
             focus = self._focus_for_act(state, speaker_id, act, gap)
+            response_turn = self._response_turn_for(state, speaker_id, addressee)
+            if response_turn is None and act in {ActType.REACT, ActType.COMPARE, ActType.SUPPORT, ActType.OBJECT, ActType.PUSH_BACK}:
+                response_turn = self._local_response_turn_for(state, speaker_id, focus)
             return MoveIntent(
                 speaker_id=speaker_id,
                 addressee_id=addressee,
@@ -203,6 +206,7 @@ class TurnRouter:
                 option_focus=focus,
                 reason=f"develop under-discussed Option {gap} with a real trade-off",
                 length_hint=self._length_hint(state.persona_by_id(speaker_id)),
+                respond_to_turn=response_turn,
             )
 
         speaker_id = self._select_speaker(state)
@@ -216,6 +220,9 @@ class TurnRouter:
             act = forced_act or self._sample_discussion_act(state, speaker_id)
         focus = self._focus_for_act(state, speaker_id, act, None)
         addressee = self._target_for_act(state, speaker_id, act, focus[0] if focus else None)
+        response_turn = self._response_turn_for(state, speaker_id, addressee)
+        if response_turn is None and act in {ActType.REACT, ActType.COMPARE, ActType.SUPPORT, ActType.OBJECT, ActType.PUSH_BACK}:
+            response_turn = self._local_response_turn_for(state, speaker_id, focus)
         return MoveIntent(
             speaker_id=speaker_id,
             addressee_id=addressee,
@@ -223,6 +230,7 @@ class TurnRouter:
             option_focus=focus,
             reason=self._reason_for_act(act),
             length_hint=self._length_hint(state.persona_by_id(speaker_id)),
+            respond_to_turn=response_turn,
         )
 
     def _should_skip(self, state: DialogueState, speaker_id: str, act: ActType) -> bool:
@@ -405,6 +413,7 @@ class TurnRouter:
             option_focus=[best],
             reason="a good case was made for an option you can live with; move toward it",
             length_hint=self._length_hint(persona),
+            respond_to_turn=self._response_turn_for(state, speaker_id, supporter),
             moves_lean=True,  # the only SUPPORT that legitimately shifts the speaker's lean
         )
 
@@ -415,6 +424,30 @@ class TurnRouter:
             rt = state.runtimes.get(turn.speaker_id)
             if rt and (rt.explicit_vote == option_id or option_id in rt.accepted_options or rt.current_preference == option_id):
                 return turn.speaker_id
+        return None
+
+    @staticmethod
+    def _response_turn_for(state: DialogueState, speaker_id: str, addressee_id: str | None) -> int | None:
+        if not addressee_id or addressee_id == speaker_id:
+            return None
+        for turn in reversed(state.turns):
+            if turn.speaker_id == addressee_id:
+                return turn.index
+        return None
+
+    @staticmethod
+    def _local_response_turn_for(state: DialogueState, speaker_id: str, option_focus: list[str]) -> int | None:
+        """Find a recent, exact point about this move's focus without changing routing."""
+        focus = set(option_focus)
+        if not focus:
+            return None
+        window = int(cfg.routing.recent_speaker_window)
+        recent = [turn for turn in state.turns if turn.speaker_id != "moderator"][-window:]
+        for turn in reversed(recent):
+            if turn.speaker_id == speaker_id:
+                continue
+            if focus.intersection(turn.act.option_refs):
+                return turn.index
         return None
 
     def _target_for_act(self, state: DialogueState, speaker_id: str, act: ActType, option_id: str | None) -> str | None:

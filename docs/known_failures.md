@@ -6,7 +6,7 @@ This backlog contains only issues still supported by the current code or by the 
 
 ## Evidence baseline
 
-Provider: `gpt` / `gpt-4.1-mini`. Offline suite: 107 tests passed.
+Provider: `gpt` / `gpt-4.1-mini`. Latest offline suite: 116 tests passed.
 
 | Run | n | Topic | Outcome | Repair rate | Flagged turns | First-person openers | Responsive turns |
 |---|---:|---|---|---:|---:|---:|---:|
@@ -57,11 +57,15 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 
 **Relevant code:** `src/prompts.py`: runtime speaker card, utterance guidance, and word budgets; `src/router.py`: response targeting and contribution selection; `src/dialogue.py`: question/challenge context and progress tracking; `src/validation.py`: repetition/discourse diagnostics; `src/builders.py`: persona-generation contract; `config.yaml`: response-length and context dials.
 
+**Implementation checkpoint (not yet closed):** Runtime prompts now lead with one local job, include exact response context only when routing identifies a real target, and omit generated role/style labels that could induce stereotypes or formal register. Persona cues describe observable behaviors from traits. Focus-matching recent turns can be selected without changing the routed speaker or act. Response budgets are monotonic by trait and capped at 48 words; long turns are limited to two short sentences. Decision prompts and repairs distinguish selecting an option now from merely praising it. The visible-commitment parser now recognizes the provider-neutral `select` verb family after live evidence showed that the prompt/parser contracts disagreed. Deterministic coverage was added for all of these contracts.
+
+**Checkpoint evidence:** Completed GPT runs `20260628_214821_616924`, `20260628_215131_265947`, and `20260628_215601_400208` were read in full. They confirmed clear relative length differences and more exact local targeting, but also exposed remaining formal turns and decision-loop churn during iteration. The last run produced many plainly visible selections that were rejected only because `select` was absent from the commitment cue set; the regression is fixed offline, but no post-fix dialogue completed because KF23 repeatedly exhausted setup retries. P0 therefore remains open, and the required final `n=3` plus `n=2-7` spread is still pending.
+
 ## P1 - State, outcome, and run integrity
 
 ### KF03 - Visible commitment and machine trailer can disagree
 
-**Implemented:** Binding VOTE/ACCEPT validation now requires a clause-local visible commitment to the same option named by the trailer. Wrong-target, pronoun-only, and descriptive non-commitments trigger repair; residual failures are logged with semantic state blocked. Targeted GPT run `20260628_175843_081308` produced three matching visible votes and a correct unanimous outcome. Keep open until the deferred broad evaluation.
+**Implemented:** Binding VOTE/ACCEPT validation now requires a clause-local visible commitment to the same option named by the trailer. Wrong-target, pronoun-only, and descriptive non-commitments trigger repair; residual failures are logged with semantic state blocked. The shared cue contract includes `select` after `20260628_215601_400208` showed repeated visible selections being rejected. Targeted GPT run `20260628_175843_081308` produced three matching visible votes and a correct unanimous outcome. Keep open until the deferred broad evaluation.
 
 **Newest evidence:** In `20260628_173039_600135`, Yara's confirmation line named Eagle and Bear but runtime state credited an acceptance of Willow. In `20260628_173250_522106`, Sami's vote was credited to the Advanced Reporting Dashboard even though the visible sentence did not name it.
 
@@ -90,6 +94,8 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 ### KF23 - Setup validity is not reliable across providers
 
 **Implemented:** Scenario setup now receives the exact participant count and rejects conflicting decision-group references. Persona scores/lists are validated rather than clamped or rewritten. A controller-selected rotating option is prompted and validated as common ground for all non-stubborn participants. The persona schema's contradictory threshold example was corrected. Targeted GPT run `20260628_181856_135923` produced three count-consistent personas, consistent scores/lists, shared non-stubborn compromise options, and trait-driven stubbornness. Keep open until deferred broad setup-rate evaluation.
+
+**Newest evidence / validation blocker:** During the P0 checkpoint, six GPT CLI attempts exhausted both setup retries with a generated score/list contradiction (`book swap`, `Sunday dessert`, `biology presentation`, `hiking trail`, `coffee machine`, and `client lunch`). Three other attempts completed setup. This failure rate now blocks mandatory behavioral spreads, including post-fix verification of P0. KF23 should be the next implementation boundary before resuming broad naturalness validation.
 
 **New evidence:** In `20260628_170634_413335`, the n=2 hiking scenario described a group of five friends. In `20260628_170750_982638`, the n=3 biology scenario described four students.
 

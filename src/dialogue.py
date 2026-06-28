@@ -693,7 +693,8 @@ def max_words_for(intent: MoveIntent, persona) -> int:
     # persona read a bit more differently (without overriding the hint).
     mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
     shift = persona.traits.response_length - mid
-    return max(8, int(base + shift * int(cfg.utterances.length_trait_word_step)))
+    trait_adjusted = max(8, int(base + shift * int(cfg.utterances.length_trait_word_step)))
+    return min(trait_adjusted, int(cfg.utterances.max_chat_words))
 
 
 def clean_generated(text: str, speaker_name: str, max_words: int) -> str:

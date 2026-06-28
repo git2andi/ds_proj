@@ -123,6 +123,12 @@ class TestDecisionClarity:
                       move=TurnMove(present=True, stance="vote", option="B"))
         assert "UNCLEAR_VOTE" in r.codes()
 
+    def test_selecting_named_option_is_visible_vote(self, validator, state):
+        r = _validate(validator, "I am selecting Beach Resort now.", state,
+                      intent=make_intent(act=ActType.VOTE, option_focus=["B"]),
+                      move=TurnMove(present=True, stance="vote", option="B"))
+        assert "UNCLEAR_VOTE" not in r.codes()
+
     def test_vote_without_vote_stance(self, validator, state):
         r = _validate(validator, "Mountain Retreat is nice.", state,
                        intent=make_intent(act=ActType.VOTE),

@@ -1,88 +1,56 @@
-# Skill: improve-simulator
+---
+name: improve-simulator
+description: Improve the group-discussion simulator one tracked issue at a time across naturalness, persona expression, convergence, state integrity, moderation, parsing, grounding, and endpoint portability.
+---
 
-Iterative improvement workflow for the group-discussion simulator.
+# Improve the simulator
 
-## When to use
+Follow `AGENTS.md` and `docs/known_failures.md` as the authoritative policy and backlog. Keep every change topic-agnostic, valid for group sizes 2 through 7, and independent of one provider's wording habits.
 
-When the user asks to improve, fix, or evaluate the simulator's output quality —
-naturalness, convergence, state integrity, moderator behaviour, or validation.
+## Upgrade boundary
 
-## Workflow
+One upgrade is one backlog issue and one independently verifiable task unless the user explicitly groups issues. Complete its tests, live evidence when required, transcript review, and information-file synchronization before starting another issue. Stop at that boundary unless the user explicitly requests automatic continuation.
 
-### Upgrade boundary
+## Diagnose
 
-One upgrade is one backlog issue and one independently verifiable task unless the user explicitly groups issues. Finish its tests, required live evidence, transcript review, and information-file synchronization before starting another issue. Stop at that boundary unless automatic continuation was explicitly requested.
+1. Read `docs/known_failures.md` and the relevant implementation.
+2. Inspect the newest `logs/<run_id>/transcript.md` and `run.json` files.
+3. Distinguish controller defects from provider-specific generation tendencies. Fix the endpoint-independent contract, not one model's favorite wording.
+4. For conversation quality, assess whether the exchange sounds like plain-spoken friends: neither Gen-Z/slang-heavy nor corporate, academic, or presentation-like. Check local responsiveness, sentence complexity, repetition, visible trait behavior, and response length by trait.
 
-### 1. Identify the problem
+## Implement one issue
 
-- Read the most recent transcripts (`logs/<newest>/transcript.md`) and `run.json`.
-- Check `docs/known_failures.md` — is this already tracked?
-- Separate deterministic controller defects from provider-specific wording.
-- For naturalness, assess plain-spoken conversation among friends: no slang-heavy Gen-Z voice, corporate or academic register, mini-essays, standalone pitches, or invisible persona traits.
+1. Add a failing unit test first for deterministic parsing, validation, routing, scoring, or state behavior.
+2. Make the smallest topic-agnostic change valid for group sizes 2 through 7.
+3. Put numeric dials in `config.yaml` and all generated or moderator prose in `src/prompts.py`.
+4. Preserve visible commitment gating, trait-driven stubbornness, grounded claims, configured outcome rules, and explicit failure on unusable setup or generation.
+5. Do not use provider-specific regexes, phrase lists, quoted prompt examples, forced naturalness turns, or injected dialogue.
 
-### 2. Write a failing test (if deterministic)
+Use these ownership boundaries:
 
-If the fix belongs in `validation.py` or `parsing.py`, add a test in
-`tests/test_validation.py` or `tests/test_parsing.py` first. Run:
+- `src/parsing.py`: trailers and option references.
+- `src/validation.py`: deterministic guardrails and repair decisions.
+- `src/router.py`: speaker and dialogue-act selection.
+- `src/dialogue.py`: orchestration, phases, state, and outcomes.
+- `src/scoring.py`: shared lean and option-support calculations.
+- `src/llm_client.py`: stateless provider adapters only.
 
-```powershell
-& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
-```
+## Verify
 
-The new test should fail, confirming the bug exists.
+1. Run the full offline suite:
 
-### 3. Implement the fix
+   ```powershell
+   & .\ds_proj\Scripts\python.exe -m pytest .\tests -v
+   ```
 
-- **`config.yaml`** for tunable numbers.
-- **`src/prompts.py`** for LLM prose and moderator text.
-- **`src/validation.py`** for deterministic guardrails.
-- **`src/parsing.py`** for trailer/option parsing.
-- **`src/router.py`** for turn-taking logic.
-- **`src/dialogue.py`** for orchestration and state tracking.
+2. Use the provider explicitly authorized by the current user and `AGENTS.md`. If it is unavailable, report the failure; do not silently substitute another endpoint.
+3. Run the required live spread across relevant topics and participant counts.
+4. Read every relevant transcript and `run.json`; metrics alone are insufficient.
+5. Compare evidence with the issue's acceptance criteria and check state, grounding, outcome, persona, and cost regressions.
+6. Close an issue only when visible behavior improves without an obvious regression.
 
-Design constraints (never violate):
-- Topic-agnostic: fixes must work for any topic, any group size 2–7.
-- No fabricated fallbacks: if a call fails, raise — don't paper over it.
-- No offline/mock mode: all runs require a live provider. Error on connection failure.
-- Preserve visible commitment gating, trait-driven stubbornness, grounded claims, and configured outcome rules.
-- Do not tune phrase regexes or prompts for one provider, seed quoted examples, or inject forced turns for naturalness.
+## Maintain the backlog
 
-### 4. Verify offline
+Keep `docs/known_failures.md` limited to currently open, reproducible issues. Record evidence, endpoint scope, relevant code, and the smallest provider-independent fix direction. Remove stale claims that the supplied code disproves; do not claim resolution based only on unit tests or one provider run.
 
-```powershell
-& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
-```
-
-All tests green before any live run.
-
-### 5. Verify live
-
-One mandatory n=3 run, then 5–6 additional runs across n=2–7 with random topics:
-
-```powershell
-"Test topic" | & .\ds_proj\Scripts\python.exe .\main.py
-```
-
-Read every relevant transcript and `run.json`; metrics alone are insufficient. Compare visible behavior with the issue's acceptance criteria and check regressions before closing it.
-
-### 6. Update tracking
-
-- Update `docs/known_failures.md` with the evidence and resolution status.
-- If a new failure pattern is found, add it to Open section.
-- Consolidate overlapping symptoms so the backlog has no duplicate issues.
-- Audit and update every applicable active source: `AGENTS.md`, `CLAUDE.md`, both repository skill copies, active memory/index files, `README.md`, and other affected workflow docs. Historical per-fix memories remain historical.
-
-## Files involved
-
-| File | Role |
-|---|---|
-| `tests/test_validation.py` | Unit tests for validation guardrails |
-| `tests/test_parsing.py` | Unit tests for trailer parsing and commitment gating |
-| `docs/known_failures.md` | Tracked failures and their fix status |
-
-## Important
-
-- Never change generation behaviour without a live run to verify.
-- Use only the provider explicitly authorized for the current task. No silent fallback.
-- `max_repairs_per_turn: 1` — validation catches issues but only gets one repair shot.
-- Prompt changes in `src/prompts.py` affect every turn — test broadly, not just the target case.
+Consolidate overlapping symptoms under one issue and retain historical IDs when useful. Before completing each upgrade, audit and update every applicable active information source: `AGENTS.md`, `CLAUDE.md`, both repository copies of this skill, active memory/index files, `docs/known_failures.md`, `README.md`, and other affected workflow documentation. Historical per-fix memories remain historical; active guidance must describe the current repository.

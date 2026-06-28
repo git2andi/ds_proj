@@ -27,4 +27,5 @@
 - [F71 token cost regression](project-f71-token-cost.md) — n=3 15k→18-28k; repair escalations (POSSESSIVE_SUBJECT, REPEATED_START) firing 3-12×/run at ~1k tokens each; next priority fix
 - [Stubborn trait refactor](project-stubborn-trait-refactor.md) — is_hard_blocker flag removed; agreeableness=1 now signals stubbornness via traits; router uses trait value, no mechanical vote override (2026-06-27)
 - [KF01/KF02/KF04/KF05 resolved](project-kf01-kf02-kf04-kf05.md) — preference validation, outcome taxonomy (successful/majority/unresolved), short_name alias, hard-blocker vote guard; resolved 2026-06-28
-- [KF03 resolved](project-kf03-fix.md) — no-trailer VOTE/ACCEPT triggers repair + cannot ghost-commit to invisible options; resolved 2026-06-28
+- [KF03 first fix](project-kf03-fix.md) — historical no-trailer/ghost-commit fix; broad evaluation remains open in known_failures
+- [P0 friend-chat checkpoint](project-p0-friend-chat-checkpoint.md) — local-job prompts, behavioral persona cues, bounded length, exact response targets, and `select` commitment cue; broad live validation blocked by KF23 setup failures (2026-06-28)

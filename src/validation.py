@@ -28,7 +28,7 @@ STATE_BLOCKING_ISSUES = frozenset({
 
 _VISIBLE_COMMITMENT_CUES = {
     ActType.VOTE: re.compile(
-        r"\b(?:vote(?:d|s|ing)?(?:\s+for)?|choos(?:e|es|ing)|pick(?:s|ed|ing)?|"
+        r"\b(?:vote(?:d|s|ing)?(?:\s+for)?|choos(?:e|es|ing)|select(?:s|ed|ing)?|pick(?:s|ed|ing)?|"
         r"go(?:ing)?\s+with|sett(?:le|les|ling)\s+on|my\s+(?:choice|pick)|gets?\s+my\s+vote)\b",
         re.I,
     ),

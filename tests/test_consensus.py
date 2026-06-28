@@ -136,3 +136,29 @@ class TestUpdateQuestions:
 
         tracker._update_questions(consensus_state, turn)
         assert len(consensus_state.open_questions) == 1
+
+
+def test_response_target_uses_exact_latest_turn_from_addressee(consensus_state):
+    from conftest import make_turn
+
+    consensus_state.turns.extend(
+        [
+            make_turn(1, "p2", "Bob", "The beach is closer."),
+            make_turn(2, "p3", "Carol", "The city is cheaper."),
+            make_turn(3, "p2", "Bob", "The beach still has the easier schedule."),
+        ]
+    )
+
+    assert TurnRouter()._response_turn_for(consensus_state, "p1", "p2") == 3
+
+
+def test_local_response_target_prefers_recent_turn_about_focus(consensus_state):
+    from conftest import make_turn
+
+    beach = make_turn(1, "p2", "Bob", "The beach drive is too long.")
+    beach.act.option_refs = ["B"]
+    city = make_turn(2, "p3", "Carol", "The city costs less.")
+    city.act.option_refs = ["C"]
+    consensus_state.turns.extend([beach, city])
+
+    assert TurnRouter()._local_response_turn_for(consensus_state, "p1", ["B"]) == 1
