@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 from conftest import make_intent, make_turn
-from models import ActType, Phase
+from models import ActType, DialogueAct, Phase, TurnRecord
 from parsing import OptionResolver, TurnMove
 from validation import (
     MessageValidator,
@@ -259,3 +259,66 @@ class TestDiscourseAndSlots:
         all_slots = {"cost", "time", "comfort", "flexibility", "quality", "effort", "distance", "group_fit", "novelty", "risk"}
         hint = covered_slots_hint("A", all_slots)
         assert "new detail" in hint
+
+
+# ── KF12: soft-attribute grounding ─────────────────────────────────────
+
+class TestSoftAttributes:
+    def test_unhedged_accommodate_flagged(self, validator, state):
+        r = _validate(validator, "Mountain Retreat can accommodate our whole team.", state)
+        assert "UNSUPPORTED_CLAIM" in r.codes()
+
+    def test_unhedged_flexible_flagged(self, validator, state):
+        r = _validate(validator, "Mountain Retreat has flexible check-in options.", state)
+        assert "UNSUPPORTED_CLAIM" in r.codes()
+
+    def test_hedge_bypasses_check(self, validator, state):
+        r = _validate(validator, "I think Mountain Retreat might accommodate large groups.", state)
+        assert "UNSUPPORTED_CLAIM" not in r.codes()
+
+    def test_normal_text_not_flagged(self, validator, state):
+        r = _validate(validator, "Mountain Retreat is affordable and has great scenery.", state)
+        assert "UNSUPPORTED_CLAIM" not in r.codes()
+
+
+# ── KF14: slot-level self-repetition ────────────────────────────────────
+
+class TestSlotRepetition:
+    def test_same_option_same_slots_fires(self, validator, state):
+        prev = TurnRecord(
+            index=0, speaker_id="p1", speaker_name="Alice",
+            text="The price is low and the atmosphere is cozy.",
+            phase=Phase.DISCUSSION,
+            act=DialogueAct(speaker_id="p1", text="", act_type=ActType.SUPPORT, option_refs=["A"]),
+        )
+        state.turns.append(prev)
+        intent = make_intent(speaker_id="p1", option_focus=["A"])
+        r = _validate(validator, "The cost is reasonable and the comfort level is excellent.", state, intent=intent)
+        assert "SELF_REPETITION" in r.codes()
+
+    def test_different_option_no_fire(self, validator, state):
+        prev = TurnRecord(
+            index=0, speaker_id="p1", speaker_name="Alice",
+            text="The price is low and the atmosphere is cozy.",
+            phase=Phase.DISCUSSION,
+            act=DialogueAct(speaker_id="p1", text="", act_type=ActType.SUPPORT, option_refs=["B"]),
+        )
+        state.turns.append(prev)
+        intent = make_intent(speaker_id="p1", option_focus=["A"])
+        r = _validate(validator, "The cost is reasonable and the comfort level is excellent.", state, intent=intent)
+        # Different option — should not fire slot repetition (only Jaccard-based if similar enough)
+        assert not any(i.code == "SELF_REPETITION" and "dimension" in i.message for i in r.issues)
+
+    def test_single_slot_no_fire(self, validator, state):
+        prev = TurnRecord(
+            index=0, speaker_id="p1", speaker_name="Alice",
+            text="The price is affordable.",
+            phase=Phase.DISCUSSION,
+            act=DialogueAct(speaker_id="p1", text="", act_type=ActType.SUPPORT, option_refs=["A"]),
+        )
+        state.turns.append(prev)
+        intent = make_intent(speaker_id="p1", option_focus=["A"])
+        r = _validate(validator, "The cost seems reasonable actually.", state, intent=intent)
+        # Only 1 shared slot (cost), threshold is 2 — should not fire slot repetition
+        slot_rep = [i for i in r.issues if i.code == "SELF_REPETITION" and "dimension" in i.message]
+        assert not slot_rep
