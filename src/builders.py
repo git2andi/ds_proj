@@ -63,7 +63,8 @@ class SetupBuilder:
             try:
                 scenario, options_json = self._generate_scenario()
                 personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario)
-                personas = self._postprocess_personas(personas, scenario, plan)
+                self._validate_preference_plan(personas, plan)
+                personas = self._postprocess_personas(personas, scenario)
                 self._validate_world(scenario, personas)
                 return scenario, personas
             except Exception as exc:
@@ -317,30 +318,51 @@ class SetupBuilder:
             return []
         return list(dict.fromkeys(str(x).strip().upper() for x in value if str(x).strip().upper() in labels))
 
-    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario, plan: dict[str, int]) -> list[Persona]:
+    def _validate_preference_plan(self, personas: list[Persona], plan: dict[str, int]) -> None:
+        """Verify the LLM honored the sampled coalition structure.
+
+        Same-camp participants must share exactly one preferred option; participants in
+        different camps must choose different options. Raises ValueError to trigger a retry
+        rather than silently mutating personas and creating role/reason contradictions."""
+        pref_by_id = {p.id: p.preferred_option for p in personas}
+        camps: dict[int, set[str]] = {}
+        for pid, camp_idx in plan.items():
+            if pid in pref_by_id:
+                camps.setdefault(camp_idx, set()).add(pref_by_id[pid])
+        camp_options: dict[int, str] = {}
+        for camp_idx, prefs in sorted(camps.items()):
+            if len(prefs) > 1:
+                raise ValueError(
+                    f"Preference camp {camp_idx} members chose conflicting options {prefs} — "
+                    "retry so the LLM can honor the coalition structure."
+                )
+            camp_options[camp_idx] = next(iter(prefs))
+        if len(set(camp_options.values())) < len(camp_options):
+            raise ValueError(
+                f"Different preference camps converged on the same option {camp_options} — "
+                "retry to produce the required preference diversity."
+            )
+
+    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario) -> list[Persona]:
+        """Safe persona cleanup after generation and preference-plan validation.
+
+        Does NOT mutate preferred_option — the LLM owns that choice (enforced upstream by
+        _validate_preference_plan). Only adds missing reasons, resolves accept/reject
+        contradictions, ensures a shared compromise option, and re-syncs hidden scores."""
         labels = scenario.option_ids
-        # Enforce the sampled coalition plan: members of one camp share a preferred option,
-        # different camps differ. Done first so the diversity floor below never fights it.
-        self._apply_preference_plan(personas, plan, labels)
-        # Make sure every preferred/acceptable option carries at least one reason so the
-        # turn prompts can render it. We do NOT pad the model's own reasons: a derived
-        # reason is only ever added for an option the model was never asked to justify
-        # (one this code structurally assigned above, e.g. a coalition-reassigned
-        # preference). Options the model itself picked are validated upstream.
+        # Ensure the preferred option is always listed in acceptable_options (the LLM
+        # occasionally omits it). This is safe: you can always live with your own top choice.
+        for persona in personas:
+            if persona.preferred_option not in persona.acceptable_options:
+                persona.acceptable_options.insert(0, persona.preferred_option)
+        # Every preferred/acceptable option needs at least one reason for the turn prompts.
+        # Only add a derived reason for options the model was never asked to justify
+        # (e.g. an option added to acceptable_options via the common-compromise step below).
         for persona in personas:
             for opt in [persona.preferred_option] + persona.acceptable_options:
                 if not persona.reasons.get(opt):
                     persona.reasons[opt] = [self._default_reason(scenario.option(opt))]
-        # Enforce minimum preference diversity by rotating preferences when all collapsed.
-        unique = {p.preferred_option for p in personas}
-        if len(unique) < int(cfg.personas.preferred_diversity_min_unique) and len(labels) >= int(cfg.personas.preferred_diversity_min_unique):
-            for idx, persona in enumerate(personas):
-                new_pref = labels[idx % len(labels)]
-                persona.preferred_option = new_pref
-                if new_pref not in persona.acceptable_options:
-                    persona.acceptable_options.insert(0, new_pref)
-                persona.reasons.setdefault(new_pref, [self._default_reason(scenario.option(new_pref))])
-        # Ensure a common compromise among non-stubborn participants when requested.
+        # Ensure a shared compromise option exists among non-stubborn participants.
         if bool(cfg.personas.require_common_compromise):
             counts = {opt: 0 for opt in labels}
             for persona in personas:
@@ -353,42 +375,34 @@ class SetupBuilder:
                 if persona.traits.agreeableness > 1 and common not in persona.acceptable_options:
                     persona.acceptable_options.append(common)
                     persona.reasons.setdefault(common, [self._default_reason(scenario.option(common))])
-        # Resolve contradictory stance: an option can't be both "acceptable" and "rejected".
-        # The model occasionally emits both (ANALYSIS #3: accepting and soft-rejecting the same
-        # option). Acceptable wins — a listed acceptable option means the persona can live with
-        # it — so drop it from the rejection lists, and never let the preferred option sit in a
-        # rejection list either.
+        # An option can't be both acceptable and rejected: acceptable wins.
         for persona in personas:
             acceptable = set(persona.acceptable_options) | {persona.preferred_option}
             persona.soft_rejections = [o for o in persona.soft_rejections if o not in acceptable]
             persona.hard_rejections = [o for o in persona.hard_rejections if o not in acceptable]
-        # Re-sync hidden scores after any preference/acceptable-list changes above.
+        # Guarantee minimum acceptable-options count for non-stubborn participants.
+        # The LLM sometimes omits options; pick best-scoring fallback rather than retrying.
+        min_acc = int(cfg.personas.non_blocker_min_acceptable)
+        for persona in personas:
+            if persona.traits.agreeableness == 1:
+                continue
+            while len(persona.acceptable_options) < min_acc:
+                candidates = [
+                    o for o in sorted(labels, key=lambda x: persona.score_for(x), reverse=True)
+                    if o not in persona.acceptable_options and o not in persona.hard_rejections
+                ]
+                if not candidates:
+                    break
+                fallback = candidates[0]
+                persona.acceptable_options.append(fallback)
+                persona.reasons.setdefault(fallback, [self._default_reason(scenario.option(fallback))])
+        # Re-sync hidden scores after any acceptable-list changes above.
         for persona in personas:
             persona.option_scores = self._build_scores(
                 persona.option_scores, labels, persona.preferred_option,
                 persona.acceptable_options, persona.soft_rejections, persona.hard_rejections, persona.id,
             )
         return personas
-
-    @staticmethod
-    def _apply_preference_plan(personas: list[Persona], plan: dict[str, int], labels: list[str]) -> None:
-        camps: dict[int, list[Persona]] = {}
-        for persona in personas:
-            camps.setdefault(plan.get(persona.id, -hash(persona.id)), []).append(persona)
-        used: set[str] = set()
-        # Largest camps choose first so a coalition gets its best-fitting shared option.
-        for members in sorted(camps.values(), key=len, reverse=True):
-            ranked = sorted(labels, key=lambda o: sum(m.score_for(o) for m in members), reverse=True)
-            choice = next((o for o in ranked if o not in used), None) or next((o for o in labels if o not in used), members[0].preferred_option)
-            used.add(choice)
-            for member in members:
-                member.preferred_option = choice
-                if choice not in member.acceptable_options:
-                    member.acceptable_options.insert(0, choice)
-                if choice in member.soft_rejections:
-                    member.soft_rejections.remove(choice)
-                if choice in member.hard_rejections:
-                    member.hard_rejections.remove(choice)
 
     def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
         labels = [str(x) for x in cfg.scenario.option_labels]

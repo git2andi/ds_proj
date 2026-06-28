@@ -81,7 +81,11 @@ Return JSON only in this shape:
 
 def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]], options_json: list[dict]) -> str:
     labels = list(cfg.scenario.option_labels)
-    group_lines = "\n".join(f"- group {i + 1}: {', '.join(g)}" for i, g in enumerate(pref_groups))
+    names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
+    group_lines = "\n".join(
+        f"  - camp {i + 1}: {', '.join(f'{pid} ({names_by_id.get(pid, pid)})' for pid in g)}"
+        for i, g in enumerate(pref_groups)
+    )
     schema = {
         "participants": [
             {
@@ -117,7 +121,7 @@ Requirements:
 - Participants with agreeableness ≥ 2 need at least {cfg.personas.non_blocker_min_acceptable} acceptable options including their preferred option.
 - A participant with agreeableness=1 is deeply resistant to compromise: they hold a strong personal conviction and their acceptable_options should contain only their preferred option. Their backstory must reflect this conviction.
 - "scores" rates every option {cfg.scenario.score_min}-{cfg.scenario.score_max} for that person ({cfg.scenario.score_max}=loves it, {cfg.scenario.score_min}=cannot accept). Make scores consistent with the labels: preferred highest, acceptable options {cfg.scenario.acceptance_score} or above, rejected options below {cfg.scenario.acceptance_score}.
-- Preferred-option groups (participants in the SAME group share ONE preferred option; different groups must prefer DIFFERENT options):
+- Preference camps — CRITICAL: same-camp participants MUST share exactly one preferred_option (they want the same thing for different personal reasons); different camps MUST choose DIFFERENT preferred_options (this disagreement is what creates the conversation). If two camps end up with the same preferred_option the scenario cannot produce meaningful conflict:
 {group_lines}
 - Even when participants share a preferred option, give them distinct roles, reasons, and concerns so they don't sound identical.
 - At least one option should be acceptable to all participants with agreeableness ≥ 2 so compromise is possible.
@@ -256,12 +260,12 @@ def _remaining_concerns(state: DialogueState, option_id: str) -> str:
 
 
 def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
-    if outcome.final_option and outcome.status == "consensus":
+    if outcome.final_option and outcome.status == "successful":
         chosen = scenario.option(outcome.final_option).name
         situation = f"The group agreed on {chosen}."
         instruction = (f"Name {chosen} as the decision and suggest one practical thing to do next "
                        "that fits the topic. Warm and brief.")
-    elif outcome.final_option and outcome.status == "fallback":
+    elif outcome.final_option and outcome.status == "majority":
         chosen = scenario.option(outcome.final_option).name
         holdout_concerns = _remaining_concerns(state, outcome.final_option)
         situation = f"No full consensus — majority working pick is {chosen}, but not everyone fully agreed."
@@ -323,12 +327,12 @@ Keep it short and unforced. Do NOT use seminar/meeting openers ('looking forward
 
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
-    if outcome.final_option and outcome.status in {"consensus", "fallback"}:
+    if outcome.final_option and outcome.status in {"successful", "majority"}:
         chosen = scenario.option(outcome.final_option).name
         result = f"the group is going with {chosen}"
         if outcome.final_option == persona.preferred_option:
             tone = "You got your top pick — be pleased but brief."
-        elif outcome.status == "fallback":
+        elif outcome.status == "majority":
             tone = f"This wasn't your first choice — you can show mild acceptance ('fair enough', 'I can live with it') and keep your personality."
         else:
             tone = "You came around to this — brief and genuine."

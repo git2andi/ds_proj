@@ -92,6 +92,10 @@ class OptionResolver:
             aliases.update(words)
             if len(words) >= 2:
                 aliases.add(" ".join(words[:2]))
+            # Include LLM-generated short name so "Ride" resolves to "Ticket to Ride" etc.
+            # Require len>=4 to skip generic one-word aliases like "The", "One".
+            if option.short_name and len(option.short_name) >= 4:
+                aliases.add(option.short_name.lower())
             candidates[option.id] = {a.strip() for a in aliases if a.strip()}
         owners: dict[str, set[str]] = {}
         for option_id, aliases in candidates.items():

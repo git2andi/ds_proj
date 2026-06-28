@@ -2,6 +2,7 @@
 
 - [ds-proj refactor status](ds-proj-naturalness-plan.md) — S1-S4 identified but NOT implemented; reverted 2026-06-25 (groq was used)
 - [Prompt length feedback](feedback-prompt-length.md) — shorter prompts, not longer; llama3.3 ignores excess rules
+- [Implementation process feedback](feedback-implementation-process.md) — one fix at a time, mandatory n=3 run between each; no forced/mechanical routing for naturalness goals
 - [Provider rule](feedback-uni-provider.md) — uni only; never switch to groq/gemini without explicit user instruction
 - [R8: short_name alias fix](project-short-name-fix.md) — OptionCard.short_name LLM-generated alias replaces blind 2-word truncation (2026-06-26)
 - [R9: template leakage fix](project-r9-template-fix.md) — never put quoted examples in guidance strings; llama3.3 copies them verbatim across all topics (2026-06-26)
@@ -19,4 +20,10 @@
 - [R24/R25/R26 fixes](project-r24-r25-r26-fixes.md) — asker-answers-own-question guard in _best_answerer; covered_slots_hint fixed (was dead code); ANSWER echo loop blocker in _update_questions (2026-06-27)
 - [R27/R28 fixes](project-r27-r28-fixes.md) — SELF_REPETITION now covers ACCEPT/REJECT intents; epistemic phrase expanded to 5 variants to prevent chorus (2026-06-27)
 - [R30/R31 fixes](project-r30-r31-fixes.md) — ANSWER guidance exhaustiveness rule (no inventing card facts); len=N added to trait card (2026-06-27)
-- [Open: R29, R32–R38](project-r29-r32-open.md) — R29 Considering opener (priority); R32 ANSWER-? gap; R33 earned consensus; R34 question drift; R35 persona contradiction; R36 hedge templates; R37 thin acceptance; R38 token regression
+- [R29/R32/R33/R36/R37 fixes](project-r29-r32-open.md) — all resolved 2026-06-27; F53–F60 in known_failures.md; no open items remain
+- [R34/R35 fixes](project-r34-r35-fixes.md) — question lifecycle after hedge (hedge_count on OpenQuestion); persona/option consistency constraint in setup prompt (2026-06-27)
+- [F61-F65 fixes](project-f61-f65-fixes.md) — UNCLEAR_VOTE guidance, Considering strip, OBJECT card-only rule, AI-filler template (2026-06-27)
+- [F66-F70 status](project-f66-f69-open.md) — F66/F67/F70 fixed; F68 backchannel reverted (forced injection wrong approach); F69 partial (PROPOSE_COMPROMISE guidance + repair_trigger_codes); committed 2026-06-27
+- [F71 token cost regression](project-f71-token-cost.md) — n=3 15k→18-28k; repair escalations (POSSESSIVE_SUBJECT, REPEATED_START) firing 3-12×/run at ~1k tokens each; next priority fix
+- [Stubborn trait refactor](project-stubborn-trait-refactor.md) — is_hard_blocker flag removed; agreeableness=1 now signals stubbornness via traits; router uses trait value, no mechanical vote override (2026-06-27)
+- [KF01/KF02/KF04/KF05 resolved](project-kf01-kf02-kf04-kf05.md) — preference validation, outcome taxonomy (successful/majority/unresolved), short_name alias, hard-blocker vote guard; resolved 2026-06-28

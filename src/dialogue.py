@@ -581,7 +581,7 @@ class ConsensusManager:
         if self._hard_blockers_for(state, candidate):
             return None
         if self._all_accepted_or_voted(state, candidate):
-            return RunOutcome("consensus", candidate, "all participants accepted or voted for the same option", participant_turn_count(state))
+            return RunOutcome("successful", candidate, "all participants accepted or voted for the same option", participant_turn_count(state))
         return None
 
     def finalize(self, state: DialogueState) -> RunOutcome:
@@ -596,24 +596,20 @@ class ConsensusManager:
             fraction = self.support_fraction(state, candidate)
             # A hard rejection always blocks a fallback pick; otherwise a strong majority can carry it.
             if fraction >= float(cfg.consensus.majority_fallback_fraction) and not self._hard_blockers_for(state, candidate):
-                return RunOutcome("fallback", candidate, f"majority fallback with support fraction {fraction:.2f}", participant_turn_count(state))
+                return RunOutcome("majority", candidate, f"majority outcome with visible support fraction {fraction:.2f}", participant_turn_count(state))
         return RunOutcome("unresolved", None, "no option reached explicit acceptance by all participants", participant_turn_count(state))
 
     def leading_candidate(self, state: DialogueState) -> str | None:
         return leading_option(state)
 
     def support_fraction(self, state: DialogueState, option_id: str) -> float:
-        supporters = 0
-        for persona in state.personas:
-            rt = state.runtimes[persona.id]
-            if rt.explicit_vote == option_id:
-                supporters += 1
-            elif option_id in rt.accepted_options:
-                supporters += 1
-            elif rt.explicit_vote is None and rt.current_preference == option_id:
-                supporters += 1
-            elif rt.explicit_vote is None and not rt.accepted_options and option_id == persona.preferred_option:
-                supporters += 1
+        """Count only visible VOTE and ACCEPT turns. Hidden preferences and routing-
+        assigned leans do not count as social proof in the transcript."""
+        supporters = sum(
+            1 for persona in state.personas
+            if state.runtimes[persona.id].explicit_vote == option_id
+            or option_id in state.runtimes[persona.id].accepted_options
+        )
         return supporters / max(1, len(state.personas))
 
     @staticmethod

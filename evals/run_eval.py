@@ -212,10 +212,10 @@ def check_run(run_dir: Path) -> list[str]:
     # --- Outcome sanity ---
     status = outcome.get("status", "")
     support = metrics.get("final_support_fraction", 0)
-    if status == "consensus" and support < MIN_CONSENSUS_SUPPORT:
-        failures.append(f"  FAIL outcome_sanity: consensus but support={support} (need {MIN_CONSENSUS_SUPPORT})")
-    if status == "fallback" and support < MIN_FALLBACK_SUPPORT:
-        failures.append(f"  FAIL outcome_sanity: fallback but support={support} (need {MIN_FALLBACK_SUPPORT})")
+    if status == "successful" and support < MIN_CONSENSUS_SUPPORT:
+        failures.append(f"  FAIL outcome_sanity: successful but support={support} (need {MIN_CONSENSUS_SUPPORT})")
+    if status == "majority" and support < MIN_FALLBACK_SUPPORT:
+        failures.append(f"  FAIL outcome_sanity: majority but support={support} (need {MIN_FALLBACK_SUPPORT})")
 
     # --- Repair rate (informational) ---
     repair_rate = metrics.get("repair_rate", 0)

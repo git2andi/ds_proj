@@ -1,110 +1,248 @@
-# Known Failures
+# Known Failures — Open Issues Only
 
-Last updated: 2026-06-27. F1–F55 fixed (F14, F18, F50 removed — contradicted by R37, R33, R36). All R29–R38 resolved.
+Last updated: 2026-06-28.
+Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
----
-
-## Implementation process
-
-1. Pick one item from the priority list.
-2. Implement. Run `pytest tests/`.
-3. Validate: one n=3 run mandatory, then 5-6 more from n=2–7 with random topics from `evals/topics.txt`. Provider: `uni` always.
-4. Read transcripts. Did it improve? Any regressions?
-5. New issues → add here before continuing.
-6. Update CLAUDE.md, memories. Only then move to next item.
+The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
 
 ---
 
-## Fixed (F1–F55)
+## Validation process for each change
 
-**F1** Mid-discussion accepts counted as binding → commitment gating; ACCEPT/VOTE binding only in narrowing/confirmation.
-**F2** Hard-blocker personas folded to non-preferred → only backs preferred; votes elsewhere ignored.
-**F3** Self-narration in turns → banned from prompt.
-**F4** Duplicate moderator lines → deduplication guard.
-**F5** Setup instability (invalid worlds silently defaulted) → raise on unusable setup output.
-**F6** Excessive repair → repair hints targeted; structural errors only trigger LLM repair.
-**F7** No grounding to prior turns → `_responding_to_line` anchors each turn to most relevant prior.
-**F8** Outcome categories too coarse → consensus / fallback / unresolved distinct.
-**F9** No compromise mechanism → PROPOSE_COMPROMISE act with bridge guidance.
-**F10** Argument-card recitation → discourse-frame/claim-slot tracking; situated reactions via prompt rewrite.
-**F11** Option name overuse → alias instruction after opening; ~70% compliance.
-**F12** Flat persona voice → behavioral speaking habits (12 branches covering all traits).
-**F13** No face-work on objections → trait-based modifiers for OBJECT/PUSH_BACK.
-**F15** Hedged accepts counted as binding → "still not sure", "not fully sold" clamped to neutral.
-**F16** Moderator always directive → diagnostic questions; stall window scales with n.
-**F17** Practical constraints never surface → stall-to-concrete routing; ASK doubled after 2+ no-progress turns.
-**F19** Surface artifacts (space-before-punctuation etc.) → deterministic cleanup in `clean_generated`.
-**F20** Turn-taking too balanced → extraversion/initiative weight; reduced catch-up boost for n>=5.
-**F21** Large groups repeat known positions → skip-if-nothing-new for n>=4.
-**F22** Room questions unrouted → registered as OpenQuestion; routed to option champion.
-**F23** Moderator interrupts too early for large groups → stall window = base + max(0, n-3).
-**F24** Stock phrases ("is a must for me", "major draw") → deterministic `fix_stock_phrases` in `clean_generated`.
-**F25** Farewell lines stiff → formal closers banned in farewell prompt.
-**F26** Option alias bad truncation ("Wine and", "Settlers of") → `short_name` LLM-generated (e.g. "Ticket to Ride"→"Ride"); `_clean_short_name` rejects stopword-ending; deterministic fallback upgraded.
-**F27** Named-addressee rate low → address rule encourages name once per turn.
-**F28** Repetitive agreement loops → when concentration==1.0 and no_progress>=2, force narrowing transition.
-**F29** No shared situational context → `shared_context` generated at setup; injected into moderator opening and per-turn prompt.
-**F30** Participant names repetitive → 48-name diverse pool pre-sampled in `builders.py`.
-**F31** Seven turn-patterns seeded by guidance strings ("X seems like a good fit", "still beats", "What if we...", etc.) → guidance strings rewritten to describe behavior without quoting phrases; patterns added to `_ROBOTIC_TEMPLATES`.
-**F32** Speakers assert real-world facts not in cards → epistemic constraint: "You know only what's in the option cards." Repair hints updated.
-**F33** "edges ahead" phrase seeded by COMPARE guidance → guidance rewritten; phrase added to `_ROBOTIC_TEMPLATES` + stock-phrases ban.
-**F34** Question echo in ANSWER turns → explicit ANSWER guidance: "don't repeat the question, hedge and move on."
-**F35** 2-turn question echo when non-ANSWER-routed → GROUP_REPETITION on question pairs escalated to QUESTION_ECHO repair.
-**F36** "still pick" phrase seeded by F33's COMPARE rewrite → guidance rewritten again (no verb phrases); "still pick" added to `_ROBOTIC_TEMPLATES`.
-**F37** Back-to-back at opening→answer boundary → guard in `next_intent()` skips ANSWER routing if target just spoke.
-**F38** Moderator closes mid-question in confirmation → (a) question stance override in `_resolve_move`; (b) confirmation timeout guards `if not state.open_questions`.
-**F39** Fallback targets drifted `leading_option` → `finalize()` prefers `state.candidate_option` over live lean score.
-**F40** Back-to-back votes in narrowing → last-speaker excluded from unvoted list; consecutive UNCLEAR_VOTE advances to CONFIRMATION.
-**F41** POSSESSIVE_SUBJECT opener warn→repair → escalated; pattern covers `short_name` forms and names with parentheticals. Named rate 26–31%.
-**F42** Repeated openers → opener feedback in speaker card (last 2 shown); REPEATED_START escalated to repair with dynamic hint naming exact repeated phrase.
-**F43** Named-addressee rate low in ANSWER/REACT without explicit `addressee_id` → responding-to name injected as "use their name once" instruction.
-**F44** Trait differences not perceptible → `Traits: extra=N agree=N neuro=N len=N` added to `runtime_speaker_card`.
-**F45** Back-to-back questions from different speakers → hard-zero ASK weight when preceding participant turn contained "?".
-**F46** Asker routed to answer own question → `_best_answerer` two-tier filter: prefer non-asker non-other-asker candidates first.
-**F47** `covered_slots_hint` never fired (dead code) → broken `text_slots` param removed; fires when `len(covered) >= 3`.
-**F48** ANSWER echo loop (F35 gap) → if ANSWER-routed turn has QUESTION_ECHO in issues, `_update_questions` suppresses propagation.
-**F49** SELF_REPETITION skipped for ACCEPT/REJECT → early-return exemption removed; `already_said` checked for all act types.
-**F51** ANSWER turns invent non-card facts → ANSWER guidance states card attributes are exhaustive; "never invent facts."
-**F52** response_length absent from trait card → `len=N` added to Traits line.
-**F53** "Considering..." opener warn-only despite repair escalation pattern → split from `_ROBOTIC_TEMPLATES` into `_CONSIDERING_OPENER` constant; fires repair on `^\s*considering\b` match only.
-**F54** ANSWER-routed turn can contain "?" without triggering repair → `ActType.ANSWER` added to `statement_only` set in `_check_unwanted_question`; echo loop broken.
-**F55** Epistemic hedge phrases ("do they offer", "why that matters") became chorus → both added to `_ROBOTIC_TEMPLATES`; ANSWER guidance rewritten to describe hedging behavior without listing example phrases; R9-class mistake corrected.
-**F56** Fallback closure phrased as unanimous win → `moderator_closure_prompt` fallback case now opens with "agreement wasn't unanimous"; names remaining concerns before naming the pick.
-**F57** Acceptance of non-preferred option was one thin sentence → `_concession_bridge` now enforces two-part structure: (1) own that it wasn't your pick, (2) name the specific trade-off you're accepting as a cost.
-**F58** Open questions silently cleared after one hedge → `hedge_count` field on `OpenQuestion`; first hedge keeps question open for one more routing cycle; cleared on real answer or second hedge.
-**F59** Persona role/concern contradicts preferred option (setup) → `setup_personas` prompt adds consistency constraint: "a quiet reader prefers a calm option; never assign a preferred option whose core attributes directly contradict the persona's role and concern."
-**F60** Token cost regression (~840–875 t/turn for n=3) → resolved as side-effect of F55: removing epistemic phrase list from prompt shortened per-turn cost to ~675 t/turn (~20% reduction).
+1. Move existing logs form logs/ into logs/archive/
+2. Pick the highest-priority open item.
+3. Implement the smallest change that should improve that item.
+4. Validate with one mandatory n=3 run, then 5–6 additional runs across n=2–7 using random topics. Provider: `uni`.
+5. Read transcripts, not only metrics. Check whether the fix improved the target failure without creating regressions.
+6. Only close an issue when the visible dialogue improved and no obvious regression appeared.
+7. If a change merely moves the problem elsewhere, keep the issue open and update the diagnosis.
+8. Update `CLAUDE.md`, memoryand relevant project notes after each successful implementation pass.
 
 ---
 
-**F61** UNCLEAR_VOTE guidance confusing — "State your pick without 'I'm voting for X because'" read as "be vague" → rewritten: "Say the option name out loud and commit to it." Repair hint sharpened to match. (2026-06-27)
-**F62** "Considering X, Y" opener survives through repair (model regenerates it) → deterministic strip `_strip_considering_opener()` added to `clean_generated()`; removes the dependent clause before validation runs. (2026-06-27)
-**F63** Hard-blocker voted for non-preferred option: UNCLEAR_VOTE didn't fire (stance was "vote", only option letter was wrong) → `HARD_BLOCKER_WRONG_VOTE` validation check added; fires repair with named option hint when hard-blocker trailer names a different option. (2026-06-27)
-**F64** R39: OBJECT guidance now says "from the option card — don't invent flaws not mentioned there". Closes gap where epistemic rule covered positive claims but not negative invented attributes. (2026-06-27)
-**F65** R40: "that's a great question / that is a good question" added to `_ROBOTIC_TEMPLATES`; "valid point" swapped for "great question" in sim_utterance rule 3 banned list (still 9 phrases; "valid point" already caught by broader pattern). (2026-06-27)
 
-**F66** Vague ACCEPT text ("handling worries me less with X") counted as consensus — ACCEPT/VOTE guidance rewritten: explicit name + commit required in text; face_work R9-class seeding phrase removed. (2026-06-27)
+## P0 — Setup and outcome-state correctness
 
-**F67** Option-name-led openers ("Go offers great performance...") — `OPTION_NAME_OPENER` warn-level check added to `MessageValidator`; Rule 2 updated: "Don't open with just an option name." VOTE/ACCEPT exempt. (2026-06-27)
+### KF03 — Binding votes/acceptances are too dependent on trailers and routed intent, not visible text
+
+**Problem:** A VOTE/ACCEPT can become binding from the trailer or even from routed-intent fallback when no trailer is present. `MessageValidator._check_decision_clarity()` only checks trailer contradictions when `move.present` is true. It does not verify that the visible message itself explicitly commits to the option. This means weak text such as “Data Studio's free” can be counted as acceptance if the trailer/intent says accept.
+
+**Why it matters:** This is the parser-level prerequisite for KF02. The simulator can only compute `successful` and `majority` correctly if support is visible in the transcript. Conversely, if visible text uses an alias that the parser misses, the run can stay unresolved despite apparent agreement.
+
+**Relevant code:** `src/parsing.py`: `_resolve_move()`, `_INTENT_FALLBACK_STANCE`; `src/validation.py`: `_check_decision_clarity()`; `src/dialogue.py`: `StateTracker._update_runtime()`, `_candidate_holdouts()`.
+
+**Fix direction:** For VOTE and ACCEPT, require the visible text to contain a resolved option name/alias and a clear commitment phrase before updating `explicit_vote` or `accepted_options`. Do not rely only on fallback stance.
 
 ---
 
-## Open items
+## P1 — Natural moderation and dialogue flow
 
-**F68** Occasional short backchannel turns missing — **OBSERVATION UPDATE 2026-06-27**: two runs from the new batch show this IS emerging naturally without any forced injection. The n=4 standup run opened with "hey everyone"/"hi all" and had multiple short turns ("Recording helps with Async Text-Based.", "Async Text-Based is best.", "Personal interaction is nice, but TextUp might be more comfortable for introverts.") from a persona with `response_length=1`. The n=2 museum run opened with "Hey Goran"/"Felix, how's it going". These are exactly the desired informal, short-reaction turns. **Conclusion: no code change needed — the trait system and verbosity note already produce this naturally when a low-response_length persona gets REACT/SUPPORT acts after substantive turns.** *Priority: closed — observe in future runs to confirm consistency.*
+### KF06 — Moderator interventions should target the actual social state, especially lone holdouts
 
-**F69** High repair rate on large-group runs (n=5–6, ~27–48%) — `repair_trigger_codes` now logged in run.json. Diagnosis from n=5 runs: INVENTED_OPTION_ATTRIBUTE=~5 per run, REPEATED_START=4 (vote phase), POSSESSIVE_SUBJECT=3. Two sub-issues: (a) model invents prices/capacity on ANSWER/PROPOSE_COMPROMISE; repair forces a hedge but cost extra tokens — fix: add "never invent numbers" to PROPOSE_COMPROMISE guidance; (b) repair-generated question turns ("do they have space limits...") can loop across 2-3 speakers when multiple people ask the same invented-attribute question — QUESTION_ECHO doesn't catch these because max_repairs_per_turn=1 and the second speaker's first-attempt also triggers INVENTED_OPTION_ATTRIBUTE before the echo is detectable. *Priority: medium.*
+**Problem:** The moderator can intervene with generic or repetitive narrowing prompts instead of responding to the actual support distribution. When all or almost all sims support one option and exactly one person does not, the moderator should not ask the whole group another generic compromise question. The moderator should address the one holdout directly and ask what currently blocks them or what condition would make them move.
 
-**F70** New sycophantic templates not caught — "[Name] brings up a good point", "[Name] makes a strong point" escaped existing `_ROBOTIC_TEMPLATES`. Pattern added: `\b(?:brings?\s+up|makes?|raises?)\s+(?:a|an)\s+(?:great|good|fair|valid|strong|excellent|interesting|important)\s+(?:point|concern|question|issue)\b`. Also added to Rule 3 banned list. (2026-06-27)
+**Why it matters:** Real moderators do not repeatedly ask “can everyone get behind X?” when the social state is clear. They identify the unresolved participant or unresolved concern. This would make narrowing and conflict resolution feel more natural and less scripted.
 
-**F71** Token cost regression — n=3 runs went from ~15k tokens to ~18-28k depending on repair rate. Two causes: (1) Per-turn prompt grew ~20% (110 tokens/call) from accumulated additions: trait numbers in speaker card (F44), opener feedback (F42), shared context (F29), expanded Rule 3. Clean runs (0–1 repairs) cost ~18k — this is expected and largely unavoidable. (2) Repair escalations (POSSESSIVE_SUBJECT F41, REPEATED_START F42) fire 3–12 times per run at ~1k tokens per repair call. This is the main driver of 25k+ runs. Data: avg tokens by repair bucket: 0-1 repairs → 18k, 5-9 repairs → 25k, 10+ repairs → 28k. Options: (a) down-escalate POSSESSIVE_SUBJECT back to warn — it fires very frequently and the surface text is still readable; guidance in Rule 1 already bans it; (b) same for REPEATED_START; (c) improve prompt guidance to reduce frequency of these patterns so fewer repairs trigger in the first place. *Priority: high.*
+**Relevant code:** `src/prompts.py`: `moderator_stall_prompt()`, `moderator_holdout_prompt()`, `_camp_split()`, `_conflict_dimension()`, `_has_clear_holdout()`; `src/dialogue.py`: `_candidate_holdouts()` and phase transitions.
 
-**F72** ASK veto bypassed by repair — `_select_act` sets ASK weight to 0 when the preceding participant turn ends with "?", preventing consecutive questions from different speakers. But this only gates initial act selection. If a turn is repaired for a different violation (e.g. POSSESSIVE_SUBJECT, INVENTED_OPTION_ATTRIBUTE), the repair prompt generates freely and can produce a question regardless of the preceding turn. Observed: n=2 museum run turns 7–10 — four consecutive capacity questions from alternating speakers, each a repair-generated question that bypassed the veto. Fix: carry the "no ASK" constraint into the repair prompt when the prior participant turn ended with "?". *Priority: medium.*
+**Fix direction:** Build moderator prompts from explicit support distribution:
 
-**F73** "Considering" strip fails on single-clause sentences — `_strip_considering_opener` in `clean_generated` only strips the form `Considering X, Y` (removes up to the comma, keeps Y). A sentence like "Considering the AMNH's interactive exhibits seem engaging." has no comma, so the strip doesn't match and the text passes to validation unchanged. `ROBOTIC_TEMPLATE` then fires a repair, but if the model is strongly biased toward this pattern it regenerates "Considering..." through all max_repairs attempts and the text goes through. Fix: either (a) extend the strip to also remove a bare "Considering …." single-clause sentence entirely, forcing a blank that the model must replace; or (b) accept that the strip handles the common case and the repair handles the rest — but increase max_repairs for CONSIDERING_OPENER specifically. *Priority: low.*
+- If one option has all-but-one visible supporter, ask only the holdout what the current blocker is and what would make them move.
+- If two camps remain, ask a bridge question comparing the exact unresolved concerns.
+- If no candidate exists, summarize the real tension and ask for a concrete comparison.
+- Avoid letting the LLM infer the target participant when the controller already knows it.
 
-**F74** Banned phrases survive repair exhaustion — when the model has a strong bias toward a pattern that is in Rule 3 (e.g., "do they offer", "Considering..."), it can regenerate the same banned phrase across all repair attempts. After `max_repairs_per_turn` attempts the last generated text goes through regardless. Observed: "Do they offer group rates…" / "Do they offer discounts…" both appearing in the museum transcript despite being in Rule 3. Root cause: the repair prompt inherits Rule 3 but the model ignores it under repetition pressure. This is a subset of F71 (extra repair calls) and F73. No clean fix — options: (a) deterministic post-processing strip for high-frequency banned phrases (like the Considering strip), (b) raise max_repairs for structural-ish violations, (c) accept as rare edge case. *Priority: low.*
+---
 
-**F75** Cross-speaker substring echo not caught — `ECHOED_PHRASE` and `GROUP_REPETITION` compare full turns by Jaccard similarity; short exact phrases shared between different speakers' turns score below threshold and go through. Observed in software run: "given our budget constraints" used word-for-word by Quinn and then Faye in consecutive narrowing turns; "[Name]'s [concern/point] about X is [valid/fair]" template used three times across Quinn and Faye. Fix: track a rolling set of significant n-grams (3–5 words) seen in recent turns; flag if current turn contains an exact match. Alternatively, add "[Name]'s X is valid/fair" to `_ROBOTIC_TEMPLATES`. *Priority: medium.*
+### KF07 — Narrowing is too moderator-led and repetitive
 
-**F76** Named real-world venue topics trigger question cascade — when option cards describe real-world named places (NYC museums, specific restaurants, landmarks), the model "knows" these places have attributes not in the cards (group capacity, group rates, accessibility, nearby parking). It generates questions about these attributes. Because no card covers them, any attempt to answer triggers `INVENTED_OPTION_ATTRIBUTE` → repair → which may generate another question about the same missing fact → `QUESTION_ECHO` fires but at n=2 the loop has no third speaker to interrupt. Observed: museum run turns 7–10, four consecutive capacity questions from two speakers. Partial mitigation: the epistemic grounding rule already says "you know only what's in the option cards"; strengthen it to explicitly say "do not ask about attributes not listed in the card — if the card doesn't list it, it's unknowable for this conversation." *Priority: medium.*
+**Problem:** Narrowing is usually introduced by the moderator and often follows the same pattern. Participants rarely initiate narrowing themselves, even when the group naturally has enough information to reduce the option set.
+
+**Why it matters:** Human group discussions often narrow from within the group: “Seems like we’re between A and C,” “I could move to B if the budget works,” or “Maybe we should drop D.” If only the moderator narrows, the conversation feels staged.
+
+**Relevant code:** `src/router.py`: phase/intent selection; `src/prompts.py`: `intent_guidance()`, `moderator_stall_prompt()`; `src/dialogue.py`: `_can_start_narrowing()`.
+
+**Fix direction:** Add or reuse a participant act for participant-led narrowing. Trigger it when coverage is sufficient and one participant has high initiative/extraversion or high compromise willingness. The moderator should intervene only when participants do not naturally narrow after a stall.
+
+---
+
+### KF08 — Trait-visible speaking behavior and response length need to be measurable
+
+**Problem:** Traits are present and affect some routing/prompt choices, but their impact is not consistently visible enough in the generated transcript. Response length is especially important for later evaluation: it should be possible to measure whether low-length personas actually speak shorter and high-length personas actually elaborate more. Similar expectations apply to extraversion, agreeableness, conscientiousness, neuroticism, initiative, and compromise willingness.
+
+**Why it matters:** If trait effects are not visible and measurable, later evaluation cannot determine whether persona design matters. The sims may appear different in metadata but similar in the transcript.
+
+**Relevant code:** `src/models.py`: `Traits`; `src/builders.py`: trait sampling; `src/router.py`: speaker and act selection; `src/prompts.py`: `runtime_speaker_card()`, `sim_utterance()`, verbosity and style rules.
+
+**Fix direction:** Make trait effects observable but not cartoonish:
+
+- response_length should influence actual word-count target and variance;
+- extraversion/initiative should affect who volunteers, interrupts less/more, and starts narrowing;
+- agreeableness/compromise should affect concession timing and face-work;
+- conscientiousness should increase practical constraint checks and detail orientation;
+- neuroticism should increase risk sensitivity and blocker-style concerns.
+
+Add metrics later that compare trait values to actual transcript behavior.
+
+---
+
+### KF09 — Local conversation flow still needs more human uptake
+
+**Problem:** Many turns still read as standalone argument cards. Sims often state their own position rather than directly answering, briefly acknowledging, challenging, or building on the previous turn. Backchannels and short reactions appear sometimes, but not as a stable part of the flow.
+
+**Why it matters:** Naturalness depends less on longer prompts and more on local uptake: answering the previous question, naming the actual concern, making small concessions, and reacting in short turns when appropriate.
+
+**Relevant code:** `src/router.py`: answer/response routing; `src/prompts.py`: `sim_utterance()`, `intent_guidance()`, recent-chat prompt window; `src/dialogue.py`: open-question tracking and progress tracking.
+
+**Fix direction:** Improve routing/context before adding more style rules:
+
+- if the previous turn asked a question, route a true answer or explicit non-answer;
+- if the previous turn raised a concern, route a response to that concern;
+- allow short backchannel/support turns for low response-length personas;
+- avoid every turn containing a full reason + option pitch.
+
+---
+
+### KF10 — Unresolved closures are still weak and can feel unfinished
+
+**Problem:** The unresolved closure prompt asks for a concrete action, but the actual closure is still fully LLM-generated and unvalidated. It can produce unhelpful endings such as procedural dead ends (“flip a coin”) or vague tabling. Farewell prompts then reinforce the “no decision” state rather than producing a useful next step.
+
+**Why it matters:** Honest unresolved outcomes are good, but the ending must still feel socially realistic: name the blocker and the next action.
+
+**Relevant code:** `src/prompts.py`: `moderator_closure_prompt()`, `_identify_blocker()`, `farewell_line()`; `src/dialogue.py`: final closure generation.
+
+**Fix direction:** For unresolved outcomes, prefer a deterministic closure skeleton with the blocker and next action filled from state, or validate the generated closure against banned weak endings.
+
+---
+
+## P2 — Dialogue substance and grounding
+
+### KF11 — Option coverage is too shallow before narrowing/closure
+
+**Problem:** `_coverage_gap_option()` only forces an option while `mentions == 0`. Once an option has one mention, it is considered covered. `min_options_touched_before_narrowing` is only 2, so viable options can remain almost unexplored before the group narrows or closes.
+
+**Why it matters:** Final decisions can feel under-tested. Options like an obvious compromise can be mentioned once and then disappear.
+
+**Relevant code:** `src/router.py`: `_coverage_gap_option()`, `_act_for_gap()`; `src/dialogue.py`: `DialogueController._can_start_narrowing()`; `config.yaml`: `conversation.min_options_touched_before_narrowing`.
+
+**Fix direction:** Add a small coverage gate for the leading/candidate option and serious alternatives: at least one reason and one trade-off/objection should be visible before narrowing, unless the group explicitly rejects the option.
+
+---
+
+### KF12 — Unsupported soft attributes still leak through
+
+**Problem:** Grounding validation mainly catches invented numbers. Non-numeric claims such as “likely has flexible check-in”, “less risk of room assignment issues”, “more seats”, or “better availability” can pass if no unsupported number appears. The prompt says to hedge unknown facts, but this is not deterministic.
+
+**Why it matters:** The simulator still invents plausible real-world attributes, especially for real venues/products/tools.
+
+**Relevant code:** `src/validation.py`: `_check_grounding_numbers()`; `src/prompts.py`: sim and repair grounding rules.
+
+**Fix direction:** Do not add a large brittle fact ontology. Start with a compact denylist for common unsupported availability/logistics claims, or validate claims against option-card attribute keys for ANSWER/PROPOSE_COMPROMISE turns.
+
+---
+
+### KF13 — Repair prompts can bypass ASK/question controls and create question cascades
+
+**Problem:** Initial act sampling dampens or vetoes ASK after recent questions, but repair generation is free-form. The repair prompt even allows unknown facts to become “do they...?” questions. `QUESTION_CHAIN` is warn-level and `repair_on_warning` is false, so repaired text can still ask a question after a question.
+
+**Why it matters:** Named real-world topics can enter loops of unanswerable capacity/availability/group-rate questions.
+
+**Relevant code:** `src/router.py`: `_sample_discussion_act()`; `src/prompts.py`: `repair_utterance()`, `_REPAIR_HINTS`; `src/validation.py`: `_check_question_chain()`, `_check_unwanted_question()`.
+
+**Fix direction:** Carry “no new question” constraints into repair prompts when the prior participant turn was a question or when the original intent was not ASK. Remove “do they...?” as a recommended repair form for invented attributes.
+
+---
+
+### KF14 — Semantic repetition survives string-level repetition checks
+
+**Problem:** Repetition checks use Jaccard similarity, shared phrase runs, repeated starts, and discourse frames. They still miss repeated claims that use different wording but the same semantic slot, for example repeatedly saying an option is broad, light, practical, comfortable, or better after a long day.
+
+**Why it matters:** Dialogues can loop at the argument level while avoiding exact lexical repetition.
+
+**Relevant code:** `src/validation.py`: `_check_repetition()`, discourse-frame checks; `src/prompts.py`: `classify_claim_slots()`, `covered_slots_hint()`; `src/dialogue.py`: `_update_progress()`.
+
+**Fix direction:** Use the existing claim-slot tracking more directly. Track recent `(option, claim_slot, polarity)` patterns and nudge/validate when the same speaker or group repeats the same semantic move.
+
+---
+
+### KF15 — Progress detection is too coarse
+
+**Problem:** `_progress_snapshot()` counts only stance changes and whether each option has at least one reason. It does not treat new claim slots, answered questions, objections, or cleared blockers as progress.
+
+**Why it matters:** The moderator can interpret a discussion as stalled even when the group is adding new argument dimensions. This can trigger premature moderation or narrowing.
+
+**Relevant code:** `src/dialogue.py`: `_update_progress()`, `_progress_snapshot()`; `src/validation.py`: `classify_claim_slots()`.
+
+**Fix direction:** Include coverage slots, objections, and open-question changes in the progress snapshot. Keep it simple: do not use semantic embeddings.
+
+---
+
+## P3 — Efficiency, metrics, and repair pressure
+
+### KF16 — Token cost remains structurally high
+
+**Problem:** The per-turn prompt contains full option names, context, speaker card, group lean state, recent chat, option facts, guidance, verbosity hints, frame hints, alias rules, and global rules. Repairs add extra calls. This may be necessary for quality, but it is still the main efficiency cost.
+
+**Why it matters:** High input/output ratio makes larger n=5–7 runs expensive and slow. It also hides whether quality improvements are coming from better control or simply more prompt text.
+
+**Relevant code:** `src/prompts.py`: `sim_utterance()`, `runtime_speaker_card()`, `repair_utterance()`; `config.yaml`: prompt windows and word budgets.
+
+**Fix direction:** Defer heavy optimization until P0/P1 correctness is stable. Then reduce prompt size by shortening group state, avoiding repeated global rules, and making repair prompts stricter but smaller.
+
+---
+
+### KF17 — Per-turn token logging undercounts repaired turns
+
+**Problem:** `_generate_turn()` returns `self._llm.last_tokens_in/out`, which after repair refers only to the last generation attempt. Session totals include all attempts, but individual `TurnRecord.tokens_in/out` do not accumulate initial + repair costs.
+
+**Why it matters:** Run totals are usable, but per-turn analysis underestimates which turns caused token spikes.
+
+**Relevant code:** `src/dialogue.py`: `_generate_turn()`; `src/logger.py`: `_json_payload()`, `metrics_for()`.
+
+**Fix direction:** Accumulate token counts across the initial generation and all repair attempts for the `TurnRecord`.
+
+---
+
+### KF18 — Metrics mix social turns with decision turns
+
+**Problem:** `apply_social()` appends greetings/farewells as normal non-moderator turns, but does not update runtime turn counts. `metrics_for()` computes `participant_turns`, `question_density`, `avg_words_per_turn`, repair rate denominator, and moderator ratio from all non-moderator turns, including social greetings/farewells. This makes metrics inconsistent with `turn_counts` and decision quality.
+
+**Why it matters:** Evaluation metrics are diluted by cosmetic lines. This can hide real question density, dialogue length, and repair rates for decision turns.
+
+**Relevant code:** `src/dialogue.py`: `apply_social()`; `src/logger.py`: `metrics_for()`.
+
+**Fix direction:** Add an explicit social/cosmetic flag or compute decision metrics from turns with real runtime impact only.
+
+---
+
+### KF19 — Repair severity is not well aligned with quality cost
+
+**Problem:** Some highly visible issues are warn-only and leak into transcripts, while some surface issues are repair-level and cause expensive retry calls. `max_repairs_per_turn=1` means one failed repair still leaks. `repair_on_warning=false` means warnings are mostly only logged.
+
+**Why it matters:** Repair cost is high, but quality leaks remain. The system needs fewer but more meaningful repairs.
+
+**Relevant code:** `src/validation.py`: issue severities; `src/dialogue.py`: `_needs_repair()`; `config.yaml`: `simulation.max_repairs_per_turn`, `validation.repair_on_warning`.
+
+**Fix direction:** Reclassify only the most harmful issues as repair-level. Prefer deterministic cleanup for simple surface patterns. Do not globally enable repair-on-warning.
+
+---
+
+## P4 — Low-priority surface cleanup
+
+### KF20 — “Considering...” strip still misses single-clause cases
+
+**Problem:** `_strip_considering_opener()` only strips `Considering X, Y` with a comma. A single-clause opener such as “Considering the budget is tight.” is not stripped by cleanup, though validation can still flag it.
+
+**Relevant code:** `src/dialogue.py`: `_CONSIDERING_OPENER_STRIP`, `_strip_considering_opener()`; `src/validation.py`: `_CONSIDERING_OPENER`.
+
+**Fix direction:** Extend the deterministic strip or accept this as a low-priority warning if it is rare.
+
+---
+
+### KF21 — Banned phrase handling is split across prompt, validation, and cleanup
+
+**Problem:** Some stock phrases are rewritten deterministically, some are warn-only validation, and some are prompt-only bans. This makes it hard to predict whether a phrase will be repaired, logged, or silently fixed.
+
+**Relevant code:** `src/prompts.py`: stock-phrase rule and repair hints; `src/validation.py`: `_ROBOTIC_TEMPLATES`, `_STOCK_PHRASE_REWRITES`; `src/dialogue.py`: `clean_generated()`.
+
+**Fix direction:** Keep one small deterministic cleanup list for harmless replacements and one small repair-level list for severe robotic frames. Avoid growing the prompt ban list further.

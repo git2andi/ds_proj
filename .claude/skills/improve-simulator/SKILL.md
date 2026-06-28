@@ -21,7 +21,7 @@ If the fix belongs in `validation.py` or `parsing.py`, add a test in
 `tests/test_validation.py` or `tests/test_parsing.py` first. Run:
 
 ```powershell
-& .\dspro\Scripts\python.exe -m pytest tests/ -v
+& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
 ```
 
 The new test should fail, confirming the bug exists.
@@ -43,26 +43,26 @@ Design constraints (never violate):
 ### 4. Verify offline
 
 ```powershell
-& .\dspro\Scripts\python.exe -m pytest tests/ -v
+& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
 ```
 
 All tests green before any live run.
 
 ### 5. Verify live
 
-Run at least one small and one large group:
+One mandatory n=3 run, then 5–6 additional runs across n=2–7 with random topics:
 
 ```powershell
-"Test topic" | & .\dspro\Scripts\python.exe .\main.py
+"Test topic" | & .\ds_proj\Scripts\python.exe .\main.py
 ```
 
 Or use the eval runner:
 
 ```powershell
-& .\dspro\Scripts\python.exe evals\run_eval.py --run --topic "relevant topic" --size 3
+& .\ds_proj\Scripts\python.exe evals\run_eval.py --run --topic "relevant topic" --size 3
 ```
 
-Read the transcript. Check `run_eval.py` output for FAIL/WARN lines.
+Read transcripts (not just metrics). Check `run_eval.py` output for FAIL/WARN lines. Only close the issue when the target failure improved and no regression appeared.
 
 ### 6. Update tracking
 

@@ -77,6 +77,7 @@ class MessageValidator:
         self._check_repetition(stripped, state, intent, issues)
         self._check_opener_variety(stripped, state, intent, issues)
         self._check_decision_clarity(stripped, intent, move, issues)
+        self._check_hard_blocker_vote(state, intent, move, issues)
         self._check_question_chain(stripped, state, intent, issues)
         self._check_completeness(stripped, issues)
         self._check_unwanted_question(stripped, intent, issues)
@@ -192,6 +193,19 @@ class MessageValidator:
                 issues.append(ValidationIssue("UNCLEAR_REJECT", "repair", "Reject move did not report a rejection or objection."))
         if intent.act == ActType.ACCEPT and "?" in text:
             issues.append(ValidationIssue("QUESTION_IN_CONFIRMATION", "repair", "Confirmation should be an answer, not a new question."))
+
+    @staticmethod
+    def _check_hard_blocker_vote(state: DialogueState, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
+        """A hard-blocker (agreeableness==1) can only commit to their preferred option.
+        If the trailer names a different option on a VOTE/ACCEPT turn, flag for repair."""
+        if not move.present or intent.act not in {ActType.VOTE, ActType.ACCEPT} or not move.option:
+            return
+        persona = next((p for p in state.personas if p.id == intent.speaker_id), None)
+        if persona and persona.traits.agreeableness == 1 and move.option != persona.preferred_option:
+            issues.append(ValidationIssue(
+                "HARD_BLOCKER_WRONG_VOTE", "repair",
+                f"Stubborn participant can only commit to their preferred option ({persona.preferred_option}), not {move.option}.",
+            ))
 
     def _check_completeness(self, text: str, issues: list[ValidationIssue]) -> None:
         # Catch turns that trail off mid-thought, e.g. "...compare to Kyoto Delight's"

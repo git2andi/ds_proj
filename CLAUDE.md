@@ -47,7 +47,7 @@ The split is deliberate and load-bearing:
 
 ### Run flow
 
-1. **`builders.py`** — two sequential LLM calls: first generates the option cards (with `shared_context` and `short_name` per option), second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits and names are sampled in code from a diverse pool and passed to the model. Invalid worlds raise, never silently default. `_clean_short_name` validates LLM-provided short names (rejects if ending on a stopword or >3 words).
+1. **`builders.py`** — two sequential LLM calls: first generates the option cards (with `shared_context` and `short_name` per option), second generates per-persona hidden belief state (preferred/acceptable/rejected, utility scores, backstory) given those options. Traits and names are sampled in code from a diverse pool and passed to the model. Invalid worlds raise, never silently default. `_clean_short_name` validates LLM-provided short names (rejects if ending on a stopword or >3 words). After persona generation, `_validate_preference_plan()` checks that same-camp participants share a preferred option and different camps chose different options; a violated camp structure retries setup (up to `setup_generation_attempts`) rather than mutating personas. Safe postprocessing ensures `preferred_option` is always in `acceptable_options`, adds a common compromise to non-stubborn participants, and guarantees a minimum of `non_blocker_min_acceptable` acceptable options per non-stubborn persona.
 2. **`router.py`** — emits a `MoveIntent` each turn. Priority: (1) answer pending question, (2) respond to unanswered challenge via `_unanswered_challenge`, (3) fill coverage gaps, (4) weighted speaker selection. Drives phases: opening → discussion → narrowing → confirmation → closure.
 3. **`dialogue.py`** — orchestration: calls the router, renders the turn via `prompts.sim_utterance`, parses the trailer, updates state, checks consensus. Contains `Orchestrator`, `DialogueController`, `StateTracker`, `ConsensusManager`.
 4. **`parsing.py`** — extracts the machine trailer `[act=…; opt=…; stance=…]` from each generated turn, resolves option references.
@@ -66,7 +66,8 @@ Face-work modifiers are added to guidance for objection/push-back acts based on 
 
 - **No fabricated fallbacks**: if setup or a turn call returns something unusable, the run raises rather than papering over it with defaults.
 - **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion. Hedged accepts ("still not sure", "not fully sold") are clamped to neutral.
-- **Trait-driven stubbornness**: a participant sampled with `agreeableness=1` (4% per-run chance, at most one per run) only accepts their preferred option. The LLM plays this from the trait card; the router uses the trait value for vote-focus and persuasion gating. No mechanical vote override — behaviour emerges from traits.
+- **Trait-driven stubbornness**: a participant sampled with `agreeableness=1` (4% per-run chance, at most one per run) only accepts their preferred option. The LLM plays this from the trait card; the router uses the trait value for vote-focus and persuasion gating. No mechanical vote override — behaviour emerges from traits. If the LLM's trailer names a different option on a VOTE/ACCEPT turn, `HARD_BLOCKER_WRONG_VOTE` repair fires.
+- **Outcome taxonomy**: `successful` = every participant visibly voted/accepted the same option; `majority` = one option has ≥66% visible support; `unresolved` = no option met either threshold. Only explicit `explicit_vote` and `accepted_options` entries count — hidden preferences and routing leans are excluded.
 - **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition.
 - **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance fires.
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
@@ -105,7 +106,7 @@ Every fix follows this cycle (see `docs/known_failures.md` for the full protocol
 
 1. Pick one item from the priority list in `docs/known_failures.md`.
 2. Implement the fix. Run `pytest tests/`.
-3. Validate: one n=3 run (mandatory), then 1-2 more from n=2–7 with a random topic from `evals/topics.txt`. Always use the `uni` provider.
+3. Validate: one n=3 run (mandatory), then 5–6 additional runs across n=2–7 with random topics from `evals/topics.txt`. Always use the `uni` provider.
 4. Read the transcripts. Check the fix works and nothing regressed.
 5. If new issues surface, add them to `docs/known_failures.md` before continuing.
 6. Only move to the next item when all runs are reviewed.

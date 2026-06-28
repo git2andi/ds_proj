@@ -29,7 +29,7 @@ class TestConsensus:
         for pid in ["p1", "p2", "p3"]:
             consensus_state.runtimes[pid].explicit_vote = "A"
         outcome = cm.detect(consensus_state)
-        assert outcome is not None and outcome.status == "consensus"
+        assert outcome is not None and outcome.status == "successful"
 
     def test_partial_vote_no_consensus(self, consensus_state):
         cm = ConsensusManager()
@@ -58,7 +58,7 @@ class TestConsensus:
         consensus_state.runtimes["p3"].explicit_vote = "B"
         consensus_state.runtimes["p3"].hard_rejections = {"A": "blocked"}
         outcome = cm.finalize(consensus_state)
-        assert outcome.final_option != "A" or outcome.status != "fallback"
+        assert outcome.final_option != "A" or outcome.status != "majority"
 
     def test_majority_fallback(self, consensus_state):
         cm = ConsensusManager()
@@ -67,7 +67,7 @@ class TestConsensus:
         consensus_state.runtimes["p3"].explicit_vote = "A"
         consensus_state.candidate_option = "A"
         outcome = cm.finalize(consensus_state)
-        assert outcome.status == "fallback" and outcome.final_option == "A"
+        assert outcome.status == "majority" and outcome.final_option == "A"
 
 
 class TestBestAnswerer:
