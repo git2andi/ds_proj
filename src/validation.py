@@ -182,15 +182,21 @@ class MessageValidator:
             issues.append(ValidationIssue("REPETITIVE_OPENER", "warn", "Several turns in a row open with 'I'/'we' — vary the opening."))
 
     def _check_decision_clarity(self, text: str, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
-        # Only flag a decision move when the model emitted a trailer that contradicts
-        # the routed move. With no trailer we trust the routed intent (see parsing).
         if move.present:
+            # Trailer present but contradicts the routed move.
             if intent.act == ActType.VOTE and move.stance != "vote":
                 issues.append(ValidationIssue("UNCLEAR_VOTE", "repair", "Vote move did not report a vote."))
             if intent.act == ActType.ACCEPT and move.stance != "accept":
                 issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept move did not report acceptance."))
             if intent.act == ActType.REJECT and move.stance not in {"reject", "object"}:
                 issues.append(ValidationIssue("UNCLEAR_REJECT", "repair", "Reject move did not report a rejection or objection."))
+        else:
+            # No trailer at all on a decision turn. Ask the model to confirm explicitly so
+            # the commitment is verifiable in the trailer rather than inferred from routing (KF03).
+            if intent.act == ActType.VOTE:
+                issues.append(ValidationIssue("UNCLEAR_VOTE", "repair", "Vote turn must end with a trailer confirming the choice."))
+            if intent.act == ActType.ACCEPT:
+                issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept turn must end with a trailer confirming the choice."))
         if intent.act == ActType.ACCEPT and "?" in text:
             issues.append(ValidationIssue("QUESTION_IN_CONFIRMATION", "repair", "Confirmation should be an answer, not a new question."))
 

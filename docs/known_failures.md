@@ -1,6 +1,6 @@
 # Known Failures — Open Issues Only
 
-Last updated: 2026-06-28.
+Last updated: 2026-06-28 (KF03 resolved).
 Scope of this file: only issues that still appear relevant after reading the currently supplied code files and the latest transcript observations. Fixed/history entries were removed. This is a working backlog, ordered by implementation priority.
 
 The goal is not to add more knobs or more prompt text by default. Prefer small controller/parser/state fixes over additional prompt rules, because the current code already has many prompt-level guardrails.
@@ -20,20 +20,6 @@ The goal is not to add more knobs or more prompt text by default. Prefer small c
 
 ---
 
-
-## P0 — Setup and outcome-state correctness
-
-### KF03 — Binding votes/acceptances are too dependent on trailers and routed intent, not visible text
-
-**Problem:** A VOTE/ACCEPT can become binding from the trailer or even from routed-intent fallback when no trailer is present. `MessageValidator._check_decision_clarity()` only checks trailer contradictions when `move.present` is true. It does not verify that the visible message itself explicitly commits to the option. This means weak text such as “Data Studio's free” can be counted as acceptance if the trailer/intent says accept.
-
-**Why it matters:** This is the parser-level prerequisite for KF02. The simulator can only compute `successful` and `majority` correctly if support is visible in the transcript. Conversely, if visible text uses an alias that the parser misses, the run can stay unresolved despite apparent agreement.
-
-**Relevant code:** `src/parsing.py`: `_resolve_move()`, `_INTENT_FALLBACK_STANCE`; `src/validation.py`: `_check_decision_clarity()`; `src/dialogue.py`: `StateTracker._update_runtime()`, `_candidate_holdouts()`.
-
-**Fix direction:** For VOTE and ACCEPT, require the visible text to contain a resolved option name/alias and a clear commitment phrase before updating `explicit_vote` or `accepted_options`. Do not rely only on fallback stance.
-
----
 
 ## P1 — Natural moderation and dialogue flow
 

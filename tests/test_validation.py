@@ -110,6 +110,20 @@ class TestDecisionClarity:
                        move=TurnMove(present=True, stance="accept", option="A"))
         assert "QUESTION_IN_CONFIRMATION" in r.codes()
 
+    def test_no_trailer_vote_fires_unclear_vote(self, validator, state):
+        # No trailer on a VOTE turn → must trigger repair so model produces explicit trailer (KF03)
+        r = _validate(validator, "Mountain Retreat has fresh air.", state,
+                      intent=make_intent(act=ActType.VOTE),
+                      move=TurnMove(present=False))
+        assert "UNCLEAR_VOTE" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "UNCLEAR_VOTE")
+
+    def test_no_trailer_accept_fires_unclear_accept(self, validator, state):
+        r = _validate(validator, "Beach Resort sounds fine.", state,
+                      intent=make_intent(act=ActType.ACCEPT),
+                      move=TurnMove(present=False))
+        assert "UNCLEAR_ACCEPT" in r.codes()
+        assert any(i.severity == "repair" for i in r.issues if i.code == "UNCLEAR_ACCEPT")
 
 
 # ── Question chain ─────────────────────────────────────────────────────

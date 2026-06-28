@@ -235,7 +235,12 @@ def _resolve_move(
     elif len(option_refs) == 1:
         focus_opt = option_refs[0]
     elif intent and len(intent.option_focus) == 1:
-        focus_opt = intent.option_focus[0]
+        # On no-trailer binding turns (VOTE/ACCEPT), the option must be visible in text.
+        # Using intent.option_focus here would ghost-commit to an option the speaker
+        # never mentioned, making invisible routing state look like social proof (KF03).
+        trailer_present = move and move.present
+        if trailer_present or intent.act not in {ActType.VOTE, ActType.ACCEPT}:
+            focus_opt = intent.option_focus[0]
 
     # An opening turn only states an initial leaning — it can never be a vote, accept,
     # or compromise proposal, no matter what stance the model put in its trailer.

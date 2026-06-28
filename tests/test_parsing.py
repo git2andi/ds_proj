@@ -70,6 +70,30 @@ class TestCommitmentGating:
         stance, _, _ = _resolve_move(move, make_intent(act=ActType.VOTE), ["B"], "p1")
         assert stance == "neutral"
 
+    def test_no_trailer_vote_invisible_option_not_ghosted(self):
+        # No trailer, option_refs empty, routing focuses on A → focus_opt must be None (KF03)
+        move = TurnMove(present=False)
+        _, focus, _ = _resolve_move(move, make_intent(act=ActType.VOTE, option_focus=["A"]), [], None)
+        assert focus is None
+
+    def test_no_trailer_accept_invisible_option_not_ghosted(self):
+        # Same rule for ACCEPT intent
+        move = TurnMove(present=False)
+        _, focus, _ = _resolve_move(move, make_intent(act=ActType.ACCEPT, option_focus=["B"]), [], None)
+        assert focus is None
+
+    def test_no_trailer_compare_still_uses_intent_focus(self):
+        # Non-binding acts may still use intent.option_focus when no trailer
+        move = TurnMove(present=False)
+        _, focus, _ = _resolve_move(move, make_intent(act=ActType.COMPARE, option_focus=["C"]), [], None)
+        assert focus == "C"
+
+    def test_trailer_present_vote_uses_intent_focus_when_no_option_refs(self):
+        # Trailer present (commitment explicit) → intent.option_focus allowed as option fallback
+        move = TurnMove(present=True, stance="vote")
+        _, focus, _ = _resolve_move(move, make_intent(act=ActType.VOTE, option_focus=["A"]), [], None)
+        assert focus == "A"
+
 
 # ── OptionResolver ──────────────────────────────────────────────────────
 
