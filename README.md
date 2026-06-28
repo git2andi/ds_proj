@@ -16,6 +16,6 @@ Iteratively improving discussion quality through multiple passes:
 
 - **Structural fixes**: commitment gating (votes only count during decision phases), hard-blocker integrity, echo guards, robotic template detection
 - **Naturalness fixes**: anti-card-reading (don't parrot option descriptions), self-narration detection ("I should consider..."), collective voice rewrite ("we prioritize" → "I prioritize"), opener variety enforcement, conversational register in prompts
-- **Verification infrastructure**: offline unit tests, structured run logs, metrics, manual transcript review, and known-failure tracking
+- **Verification infrastructure**: structured run logs, metrics, manual transcript review, and known-failure tracking
 
-Current state and remaining issues are tracked in `docs/known_failures.md`. Architecture and how to run/test are in `CLAUDE.md`.
+Current state and remaining issues are tracked in `docs/known_failures.md`. Architecture and run instructions are in `CLAUDE.md`.

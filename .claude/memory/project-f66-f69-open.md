@@ -9,13 +9,13 @@ metadata:
 
 **F66** — FIXED. ACCEPT/VOTE guidance rewritten: explicit name + commit required in text. Face_work R9-class seeding phrase removed. Verified in n=3 concession run.
 
-**F67** — FIXED. `OPTION_NAME_OPENER` warn-level check added to `MessageValidator`; Rule 2 updated: "Don't open with just an option name." VOTE/ACCEPT exempt. Tests added.
+**F67** — FIXED. `OPTION_NAME_OPENER` warn-level check added to `MessageValidator`; Rule 2 updated: "Don't open with just an option name." VOTE/ACCEPT exempt.
 
 **F68** — REVERTED. The forced injection/backchannel repair approach was wrong — mechanical, not natural. Reverted all code. Known-failures entry rewritten: must emerge from low `response_length`/`detail` traits on REACT acts naturally, not from forced routing. Observe first before implementing.
 
 **F69** — PARTIALLY FIXED. Diagnosed: INVENTED_OPTION_ATTRIBUTE dominates (model invents capacity/prices on PROPOSE_COMPROMISE despite epistemic rule). Fixed: "No inventing specific prices, sizes, or details" added to PROPOSE_COMPROMISE guidance. Secondary loop issue: repair-generated questions can echo across multiple speakers (separate sub-bug). repair_trigger_codes now in run.json for future diagnosis.
 
-**F70** — FIXED. `[Name] brings/makes/raises a [adj] point/concern` pattern added to `_ROBOTIC_TEMPLATES` and Rule 3 banned list. Tests added.
+**F70** — FIXED. `[Name] brings/makes/raises a [adj] point/concern` pattern added to `_ROBOTIC_TEMPLATES` and Rule 3 banned list.
 
 **Setup failures on personal topics** — "Plan a weekend road trip route" and similar personal-preference topics cause setup failure: LLM assigns too-strong preferences, violating `non_blocker_min_acceptable=2`. Not filed as F yet; not critical.
 

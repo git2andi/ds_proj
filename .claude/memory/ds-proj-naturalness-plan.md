@@ -20,4 +20,4 @@ Group Discussion Simulator (ds_proj). Previous rounds (F1-F10, O1-O12, R1-R7) al
 - S3: Conditional consensus not a distinct outcome — "I'll accept X if we do Y" counted as full consensus
 - S4: Minority options (C, D) abandoned after 1-3 mentions — router should force one SUPPORT/COMPARE per underrepresented option
 
-**How to apply:** Follow the one-upgrade-at-a-time protocol in `docs/known_failures.md`. Use the provider explicitly authorized for the task; never substitute silently. The consolidated P0 friend-chat issue has an offline-tested checkpoint but remains open. Repeated KF23 setup failures now block its required live spread, so complete KF23 as the next independent boundary before resuming P0 validation.
+**How to apply:** Follow the one-upgrade-at-a-time protocol in `docs/known_failures.md`. Use the provider explicitly authorized for the task; never substitute silently. The consolidated P0 friend-chat issue has an implementation checkpoint but remains open. Repeated KF23 setup failures now block its required live spread, so complete KF23 as the next independent boundary before resuming P0 validation.

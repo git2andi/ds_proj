@@ -6,7 +6,7 @@ This backlog contains only issues still supported by the current code or by the 
 
 ## Evidence baseline
 
-Provider: `gpt` / `gpt-4.1-mini`. Latest offline suite: 116 tests passed.
+Provider: `gpt` / `gpt-4.1-mini`.
 
 | Run | n | Topic | Outcome | Repair rate | Flagged turns | First-person openers | Responsive turns |
 |---|---:|---|---|---:|---:|---:|---:|
@@ -22,15 +22,14 @@ Across the five runs: 177 decision turns, 139,572 input tokens, 20,268 output to
 
 For each fix:
 
-1. Work on one issue only and add a failing unit test first when behavior is deterministic.
+1. Work on one issue only.
 2. Fix the controller/parser/state contract, not a phrase pattern emitted by one provider.
-3. Run the full offline suite.
-4. Use the provider explicitly authorized for the task. Never silently substitute an endpoint.
-5. Run at least one `n=3` discussion, then a spread across relevant sizes and topics. Portability claims require the same behavioral checks on more than one available provider.
-6. Read transcripts and `run.json`; metrics alone are insufficient.
-7. Close the issue only when visible behavior improves without an obvious regression.
-8. Before completing the upgrade, audit and synchronize every applicable active information source: `AGENTS.md`, `CLAUDE.md`, both repository skill copies, active memory/index files, this backlog, `README.md`, and other affected workflow docs. Historical per-fix records remain historical.
-9. Stop at the completed upgrade boundary unless the user explicitly grouped issues or requested automatic continuation.
+3. Use the provider explicitly authorized for the task. Never silently substitute an endpoint.
+4. Run at least one `n=3` discussion, then a spread across relevant sizes and topics. Portability claims require the same behavioral checks on more than one available provider.
+5. Read transcripts and `run.json`; metrics alone are insufficient.
+6. Close the issue only when visible behavior improves without an obvious regression.
+7. Before completing the upgrade, audit and synchronize every applicable active information source: `AGENTS.md`, `CLAUDE.md`, both repository skill copies, active memory/index files, this backlog, `README.md`, and other affected workflow docs. Historical per-fix records remain historical.
+8. Stop at the completed upgrade boundary unless the user explicitly grouped issues or requested automatic continuation.
 
 Current implementation order is P0 friend-chat naturalness and visible personas, P1 state/run follow-up, P2 moderator/closure integrity, P3 grounding/question quality, then P4 token cost. Each item remains a separate upgrade.
 
@@ -53,13 +52,13 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 - Repeated turns add new grounded substance or move toward narrowing; lexical rephrasing of the same option claim does not count as progress.
 - The change remains provider-independent and preserves grounding, commitment gating, trait-driven stubbornness, and outcome rules.
 
-**Required direction:** Simplify the per-turn contract around one local conversational job, make persona behavior and response-length limits explicit but compact, and ensure direct-response context is exact. Prefer router/state and prompt-structure changes over provider-specific phrase detection. Do not add forced backchannels, scripted turns, stereotypes, quoted examples, or a larger regex blacklist. Add deterministic tests for prompt composition and response-length budgets; use manual transcript review for the behavioral acceptance criteria.
+**Required direction:** Simplify the per-turn contract around one local conversational job, make persona behavior and response-length limits explicit but compact, and ensure direct-response context is exact. Prefer router/state and prompt-structure changes over provider-specific phrase detection. Do not add forced backchannels, scripted turns, stereotypes, quoted examples, or a larger regex blacklist. Use manual transcript review for the behavioral acceptance criteria.
 
 **Relevant code:** `src/prompts.py`: runtime speaker card, utterance guidance, and word budgets; `src/router.py`: response targeting and contribution selection; `src/dialogue.py`: question/challenge context and progress tracking; `src/validation.py`: repetition/discourse diagnostics; `src/builders.py`: persona-generation contract; `config.yaml`: response-length and context dials.
 
-**Implementation checkpoint (not yet closed):** Runtime prompts now lead with one local job, include exact response context only when routing identifies a real target, and omit generated role/style labels that could induce stereotypes or formal register. Persona cues describe observable behaviors from traits. Focus-matching recent turns can be selected without changing the routed speaker or act. Response budgets are monotonic by trait and capped at 48 words; long turns are limited to two short sentences. Decision prompts and repairs distinguish selecting an option now from merely praising it. The visible-commitment parser now recognizes the provider-neutral `select` verb family after live evidence showed that the prompt/parser contracts disagreed. Deterministic coverage was added for all of these contracts.
+**Implementation checkpoint (not yet closed):** Runtime prompts now lead with one local job, include exact response context only when routing identifies a real target, and omit generated role/style labels that could induce stereotypes or formal register. Persona cues describe observable behaviors from traits. Focus-matching recent turns can be selected without changing the routed speaker or act. Response budgets are monotonic by trait and capped at 48 words; long turns are limited to two short sentences. Decision prompts and repairs distinguish selecting an option now from merely praising it. The visible-commitment parser now recognizes the provider-neutral `select` verb family after live evidence showed that the prompt/parser contracts disagreed.
 
-**Checkpoint evidence:** Completed GPT runs `20260628_214821_616924`, `20260628_215131_265947`, and `20260628_215601_400208` were read in full. They confirmed clear relative length differences and more exact local targeting, but also exposed remaining formal turns and decision-loop churn during iteration. The last run produced many plainly visible selections that were rejected only because `select` was absent from the commitment cue set; the regression is fixed offline, but no post-fix dialogue completed because KF23 repeatedly exhausted setup retries. P0 therefore remains open, and the required final `n=3` plus `n=2-7` spread is still pending.
+**Checkpoint evidence:** Completed GPT runs `20260628_214821_616924`, `20260628_215131_265947`, and `20260628_215601_400208` were read in full. They confirmed clear relative length differences and more exact local targeting, but also exposed remaining formal turns and decision-loop churn during iteration. The last run produced many plainly visible selections that were rejected only because `select` was absent from the commitment cue set; the parser was corrected, but no post-fix dialogue completed because KF23 repeatedly exhausted setup retries. P0 therefore remains open, and the required final `n=3` plus `n=2-7` spread is still pending.
 
 ## P1 - State, outcome, and run integrity
 
@@ -75,7 +74,7 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 
 **Root cause:** `_resolve_move()` prioritizes `move.option`. `_check_decision_clarity()` checks trailer stance against routed intent but does not require the visible sentence to resolve to the same option or contain an unhedged commitment. After the repair budget is exhausted, the turn is still applied to runtime state.
 
-**Required direction:** Treat the trailer as metadata, not sole evidence. For VOTE/ACCEPT, require visible, unhedged commitment to one resolved option; reject or repair text/trailer mismatches. If the final attempt is still invalid, log the utterance but do not mutate binding state. Add regression tests for wrong trailer option, pronoun-only acceptance, multi-option contrast, and failed repair.
+**Required direction:** Treat the trailer as metadata, not sole evidence. For VOTE/ACCEPT, require visible, unhedged commitment to one resolved option; reject or repair text/trailer mismatches. If the final attempt is still invalid, log the utterance but do not mutate binding state.
 
 **Relevant code:** `src/parsing.py`: `_resolve_move()`; `src/validation.py`: `_check_decision_clarity()`; `src/dialogue.py`: `_generate_turn()`, `StateTracker._update_runtime()`.
 

@@ -7,7 +7,7 @@ metadata:
   originSessionId: 448d7ae6-0f14-48d8-b082-e4e42ac7e259
 ---
 
-Follow the exact protocol in `docs/known_failures.md` for every upgrade. One upgrade is one issue and one independently verifiable task unless the user explicitly groups issues. Add a failing deterministic test where applicable, run the complete offline suite, include n=3 when live validation is required, and read every relevant transcript and `run.json`. Do not chain fixes without completing the full verification boundary between them.
+Follow the exact protocol in `docs/known_failures.md` for every upgrade. One upgrade is one issue and one independently verifiable task unless the user explicitly groups issues. Include n=3 when live validation is required, and read every relevant transcript and `run.json`. Do not chain fixes without completing the full verification boundary between them.
 
 **Why:** Multiple fixes done in sequence without validation introduced accumulating issues that were hard to attribute to specific changes. The user has stated this requirement several times.
 

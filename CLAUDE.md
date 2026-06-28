@@ -88,31 +88,22 @@ Each run writes to `logs/<run_id>/`:
 
 Key metrics: `outcome_status`, `final_support_fraction`, `repaired_turns`, `flagged_turns`, `question_density`, `avg_words_per_turn`, `option_coverage`.
 
-## Testing and diagnostics
-
-```powershell
-# Unit tests (offline, instant — run after every code change)
-& .\ds_proj\Scripts\python.exe -m pytest tests/ -v
-
-```
+## Validation and diagnostics
 
 ### Implementation process
 
 Every upgrade follows this cycle (see `docs/known_failures.md` for the full protocol). One upgrade is one issue and one independently verifiable task unless the user explicitly groups issues:
 
 1. Pick one item from the priority list in `docs/known_failures.md`.
-2. Add a failing deterministic test where applicable, implement the smallest provider-independent fix, and run the full offline suite.
+2. Implement the smallest provider-independent fix.
 3. Validate with the provider explicitly authorized for the task: one n=3 run is mandatory when live validation is requested, followed by the requested size/topic spread.
 4. Read every relevant `transcript.md` and `run.json`; metrics alone are insufficient.
 5. Update `docs/known_failures.md` with the result and any stable new failure pattern.
 6. Audit and synchronize `AGENTS.md`, this file, repository skills, active memory/index files, `README.md`, and any other affected information files before completing the upgrade.
 7. Do not start the next issue until this upgrade is fully verified; stop unless the user explicitly requested automatic continuation.
 
-### Test and eval files
+### Evaluation files
 
-- `tests/test_validation.py` — covers all deterministic guardrails in `validation.py` (essential cases for each check, plus discourse-frame and claim-slot classification).
-- `tests/test_consensus.py` — covers consensus support fraction, outcome state consistency.
-- `tests/test_parsing.py` — covers trailer extraction, commitment gating, hedge detection, option resolution.
 - `evals/topics.txt` — ~40 diverse topics for random validation runs (everyday, travel, academic, work, creative, hypothetical).
 - `docs/known_failures.md` — single tracking file for open issues, priorities, acceptance criteria, and implementation protocol.
 

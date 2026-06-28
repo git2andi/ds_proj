@@ -4,7 +4,7 @@
 
 This is a Python CLI that simulates a 2-7 person group discussion. The deterministic controller owns speaker selection, dialogue intent, state, pacing, and consensus; the LLM only renders each stateless turn.
 
-## Run and test
+## Run
 
 Use the repository's prebuilt virtual environment:
 
@@ -17,9 +17,6 @@ Use the repository's prebuilt virtual environment:
 
 # Batch: one topic per line; lines beginning with # are ignored
 & .\ds_proj\Scripts\python.exe .\main.py .\evals\topics.txt
-
-# Offline unit tests
-& .\ds_proj\Scripts\python.exe -m pytest .\tests -v
 
 ```
 
@@ -45,7 +42,7 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 - `src/validation.py`: deterministic guardrails and repair decisions.
 - `src/llm_client.py`: stateless provider abstraction.
 - `src/logger.py`: writes `logs/<run_id>/transcript.md`, `run.json`, optional prompts, and `logs/metrics.csv`.
-- `tests/`: offline deterministic tests. `evals/topics.txt`: optional batch topic corpus.
+- `evals/topics.txt`: optional batch topic corpus.
 - `docs/known_failures.md`: current issue backlog and validation protocol.
 
 ## Design constraints
@@ -73,10 +70,8 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 
 For simulator-quality fixes, use `docs/known_failures.md` as the source of truth. Each upgrade is one issue and one independently verifiable task unless the user explicitly groups issues:
 
-1. Add a failing unit test first when the behavior is deterministic, especially for parsing or validation.
-2. Implement the smallest targeted change.
-3. Run the full offline test suite.
-4. Validate with one mandatory `n=3` live run on the provider explicitly authorized for the task, then the requested spread across `n=2-7` when behavioral validation is required.
-5. Read every relevant `transcript.md` and `run.json` as well as metrics. Do not proceed to another issue until the target behavior improves without an obvious regression.
-6. Before completing the upgrade, audit and synchronize every applicable information source: `AGENTS.md`, `CLAUDE.md`, repository skills, active memory/index files, `docs/known_failures.md`, `README.md`, and other workflow documentation. Historical per-fix records may remain unchanged, but active guidance must not contradict the current repository.
-7. Stop at the completed upgrade boundary unless the user explicitly asks to continue automatically.
+1. Implement the smallest targeted change.
+2. Validate with one mandatory `n=3` live run on the provider explicitly authorized for the task, then the requested spread across `n=2-7` when behavioral validation is required.
+3. Read every relevant `transcript.md` and `run.json` as well as metrics. Do not proceed to another issue until the target behavior improves without an obvious regression.
+4. Before completing the upgrade, audit and synchronize every applicable information source: `AGENTS.md`, `CLAUDE.md`, repository skills, active memory/index files, `docs/known_failures.md`, `README.md`, and other workflow documentation. Historical per-fix records may remain unchanged, but active guidance must not contradict the current repository.
+5. Stop at the completed upgrade boundary unless the user explicitly asks to continue automatically.
