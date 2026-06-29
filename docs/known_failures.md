@@ -62,6 +62,32 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 
 Residual: standalone option letter reference in body ("D offers a laid-back vibe") occurs rarely; the `^[A-Z]=` strip in `_surface_cleanup` handles the "D=" form, not the letter-as-word form. Acceptable — alias rule already instructs against it.
 
+**Naturalness wave 2026-06-29** — 12-run diagnostic and fix sprint (8 post-fix validation runs), targeting five remaining style issues found after the initial checkpoint:
+
+1. **Greeting template "Hey everyone, just [verb] here"**: Banned "Hey everyone" in `greeting_line`; instruction to "enter the chat differently: a quick state, a reaction to joining, or just sliding in." Zero instances in all post-fix runs.
+
+2. **"I get that…, but…" opener template**: Banned in `sim_utterance` first line (moved to top of prompt for salience), in REACT guidance, OBJECT guidance, and PUSH_BACK guidance. Zero instances in all 8 post-fix runs.
+
+3. **UNCLEAR_VOTE / hedged commitments** (was 6+ per run → ~1.5 per run average): Added "No trailing 'though', 'provided', 'if', or 'now'" to VOTE and ACCEPT guidance. Expanded `_VISIBLE_COMMITMENT_CUES` regex in `validation.py` to catch casual forms ("I'll take", "I'm in", "that works", "I'm going with"). "Now" suffix banned as procedural language.
+
+4. **INVENTED_OPTION_ATTRIBUTE** (was 4+ per run → ~0.5 per run average): Changed grounding rule from "say 'not sure' for anything else" to "skip it entirely (don't speculate about it, don't ask about it)". Added "Don't end with a question unless your act is ASK" to prevent trailing speculation questions.
+
+5. **Two-sided COMPARE sentences**: Changed COMPARE guidance from "name what the other option does better, then why yours fits you more" (inherently compound) to "say the one thing your option has that matters more for YOUR situation — don't weigh both sides; your position is already known."
+
+6. **_verbosity_note style**: Added "no 'we should', no 'we need to', no formal transitions" and "One thought — don't add a 'though/but/while' clause to balance the other side" to every length level.
+
+7. **REACT opener "I get that / I hear you"**: Also banned in `sim_utterance` first line (moved from end-of-rules to top for salience).
+
+**Post-fix results** (8 runs: hiking, board game, restaurant, framework, venue, space station, coffee machine, road trip):
+- Repair rate: 0.04–0.14 (was 0.25–0.39)
+- INVENTED_OPTION_ATTRIBUTE: ~0.2 per run (was 4+)
+- UNCLEAR_VOTE: ~1.5 per run average (was 6+)
+- "I get that" opener: zero in all 8 runs
+- "Hey everyone" greeting: zero in all 8 runs
+- Two-sided COMPARE: greatly reduced
+
+Residual issues: REPEATED_START (1–2 per run, model habit), UNWANTED_QUESTION (sporadic; 0–3 per run depending on topic), UNCLEAR_VOTE (~1 per run, model hedging), INVENTED_OPTION_ATTRIBUTE (~0.5 per run). All within acceptable range; no further intervention warranted at this stage.
+
 ## P1 - State, outcome, and run integrity
 
 ### KF03 - Visible commitment and machine trailer can disagree — RESOLVED 2026-06-29

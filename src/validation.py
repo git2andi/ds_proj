@@ -29,15 +29,18 @@ STATE_BLOCKING_ISSUES = frozenset({
 _VISIBLE_COMMITMENT_CUES = {
     ActType.VOTE: re.compile(
         r"\b(?:vote(?:d|s|ing)?(?:\s+for)?|choos(?:e|es|ing)|select(?:s|ed|ing)?|pick(?:s|ed|ing)?|"
-        r"go(?:ing)?\s+with|sett(?:le|les|ling)\s+on|my\s+(?:choice|pick)|gets?\s+my\s+vote)\b",
+        r"go(?:ing)?\s+with|sett(?:le|les|ling)\s+on|my\s+(?:choice|pick|vote)|gets?\s+my\s+vote|"
+        r"i(?:'m|\s+am)\s+(?:going|committing|voting)\s+(?:with|for)|i(?:'ll|will)\s+(?:go|take|vote)\s+(?:with|for)?|"
+        r"that(?:'s|s|\s+is)\s+my\s+(?:pick|choice|vote))\b",
         re.I,
     ),
     ActType.ACCEPT: re.compile(
         r"\b(?:accept(?:s|ed|ing)?|agree(?:s|d|ing)?(?:\s+to)?|on\s+board\s+with|"
         r"ok(?:ay)?\s+with|fine\s+with|works?\s+for\s+me|can\s+live\s+with|"
         r"go(?:ing)?\s+with|choos(?:e|es|ing)|select(?:s|ed|ing)?|stick(?:s|ing)?\s+with|"
-        r"lock(?:s|ed|ing)?\s+(?:it\s+)?in|"
-        r"i\s+support|supporting|i(?:'m|\s+am)\s+in\s+for)\b",
+        r"lock(?:s|ed|ing)?\s+(?:it\s+)?in|i\s+support|supporting|"
+        r"i(?:'m|\s+am)\s+in\s+for|i(?:'m|\s+am)\s+in\b|i(?:'ll|will)\s+(?:take|go\s+with)|"
+        r"that(?:'ll|will)\s+work|that\s+works|i(?:'m|\s+am)\s+on\s+board)\b",
         re.I,
     ),
 }

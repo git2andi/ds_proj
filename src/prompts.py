@@ -319,7 +319,7 @@ def _distinct_from_prior(prior: list[str], what: str) -> str:
 
 def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int, prior: list[str]) -> str:
     return f"""Write a 2-6 word casual hello from {persona.name} joining a group chat.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
-Plain and informal — like a real first message in a text thread. No topic, no opinion, no question, no emoji, no name prefix. Avoid meeting-style openers."""
+Plain and informal — like a real first message in a text thread. No topic, no opinion, no question, no emoji, no name prefix. Avoid "Hey everyone" — enter the chat differently: a quick state, a reaction to joining, or just sliding in."""
 
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
@@ -446,7 +446,8 @@ def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveInt
     if register:
         lines.append(f"Voice: {register}.")
     if rt.already_said:
-        lines.append(f"Don't repeat your last point: \"{compact_words(rt.already_said[-1], 10)}\".")
+        recent_pts = "; ".join(f'"{compact_words(p, 10)}"' for p in rt.already_said[-2:])
+        lines.append(f"Don't repeat these points you already made: {recent_pts}.")
     if lean != persona.preferred_option:
         old_name = state.scenario.option(persona.preferred_option).name
         lines.append(f"Originally leaning {old_name}; shifted to {lean_name}.")
@@ -533,10 +534,10 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Name {opt_name} and use an unhedged first-person acceptance verb. {bridge}"
+            return f"Use a first-person acceptance verb + {opt_name}. No trailing 'though', 'provided', 'if', or 'now'. Don't open with '{opt_name} is [adjective]'. {bridge}"
         if _others_back(state, persona, intent.option_focus):
-            return "Others agreed already — confirm briefly without echoing their phrasing."
-        return "Name the option and use an unhedged first-person acceptance verb. Give one reason it works for you."
+            return "Use a first-person acceptance verb + the option name. No trailing conditions or 'now'. Don't echo others' phrasing."
+        return "Use a first-person acceptance verb + the option name. One brief personal reason. No trailing 'though', 'provided', 'if', or 'now'."
     if intent.act == ActType.VOTE:
         chorus = (" Others already voted this way — brief, don't echo them."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -544,8 +545,8 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Name {opt_name} and use a first-person commitment verb without hedging. {bridge}" + chorus
-        return "Name the option and use a first-person commitment verb without hedging. Give one brief personal reason." + chorus
+            return f"Use a first-person commitment verb + {opt_name}. No trailing 'though', 'provided', 'if', or 'now'. {bridge}" + chorus
+        return "Use a first-person commitment verb + the option name. No trailing conditions or 'now'. One brief personal reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -560,12 +561,12 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     if intent.act == ActType.ANSWER:
         return "Answer the question first from the cards; if they do not cover it, say that plainly and move on. Never invent facts or re-ask." + face
     by_act = {
-        ActType.REACT: "React to what was just said — agree with a twist, push back on one specific word or claim, or add one new angle to their point. Don't re-introduce your option as if it hasn't come up." + face,
+        ActType.REACT: "React to what was just said — agree with a twist, push back on one specific word or claim, or add one new angle. Don't re-introduce your option as if it hasn't come up. Don't open with 'I get that', 'I hear you', or 'True, but'." + face,
         ActType.ASK: "Ask one question the option cards above can actually answer — a specific attribute, number, or trade-off listed there. Keep it casual." + face,
-        ActType.COMPARE: "Name one real thing the other option does better, then say why yours still fits you more. Quick and direct — not a balanced scorecard. Don't open with either option name." + face,
+        ActType.COMPARE: "Say the one thing your option has that matters more for YOUR situation — personal, from your background or constraint. Don't weigh both sides; your position is already known. Don't open with either option name." + face,
         ActType.SUPPORT: "Give one concrete reason this option works for YOUR situation — your background or constraint, not a feature list. Start with 'I' or 'My' — not the option name." + face,
-        ActType.OBJECT: "Open with your worry — name the specific concern first, before any acknowledgment. One concrete thing from the option card." + face,
-        ActType.PUSH_BACK: "Push back on the exact claim just made — not a general counterpoint." + face,
+        ActType.OBJECT: "Open with your worry — name the specific concern first, no 'I get that' lead-in. One concrete thing from the option card." + face,
+        ActType.PUSH_BACK: "Push back on the exact claim just made — not a general counterpoint. Don't open with 'I get that' or 'I hear you'." + face,
         ActType.PROPOSE_COMPROMISE: (
             "The group has covered the ground. Suggest directly that it's time to each pick one option — briefly explain your lean, then ask everyone to commit. No new trade-offs."
             if state.narrowing_called else
@@ -596,7 +597,7 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
     t = persona.traits
-    style = "Contractions OK, no semicolons, no formal transitions."
+    style = "Contractions OK. No semicolons, no 'we should', no 'we need to', no formal transitions. One thought — don't add a 'though/but/while' clause to balance the other side."
     if t.response_length >= 4:
         return f"Hard limit: {max_words} words, 1-2 sentences. Make the point — don't build a case. {style}"
     if t.response_length == 3:
@@ -684,7 +685,7 @@ def sim_utterance(
         job_block = f"Job: {guidance}{address_note}\nMessage to address first: {responding}"
     else:
         job_block = f"Job: {guidance}{address_note}"
-    return f"""Next message in a casual group chat. One line only — write like you'd text a friend, not like you're presenting.
+    return f"""Next message in a casual group chat. One short message — one point. Write like you'd text a friend. Don't open with "I get that", "I hear you", or "True, but".
 
 Topic: {state.scenario.topic}
 Options: {option_names}{ctx_line}
@@ -700,7 +701,7 @@ Option facts (reference only):
 Recent chat:
 {recent}
 
-No name prefix. No semicolons in the message. Never write an option letter (A/B/C/D) in the message — only in the trailer. Card/context facts only — say "not sure" for anything else, never invent.{alias_rule}
+No name prefix. No semicolons in the message. Never write an option letter (A/B/C/D) in the message — only in the trailer. Card/context facts only — if a detail isn't in the card, skip it entirely (don't speculate about it, don't ask about it). Don't end with a question unless your act is ASK.{alias_rule}
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral.{_trailer_stance_hint(intent)}"""
 
 
