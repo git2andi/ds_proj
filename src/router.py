@@ -127,7 +127,6 @@ class TurnRouter:
         if not candidate:
             return None
         state.candidate_option = candidate
-        threshold = int(cfg.scenario.acceptance_score)
         last_turn = self._last_participant_turn(state)
         last_pid = last_turn.speaker_id if last_turn else None
         candidates: list[tuple[Persona, bool]] = []
@@ -139,11 +138,9 @@ class TurnRouter:
                 continue
             if persona.id == last_pid and len(state.personas) > 1:
                 continue
-            can_accept = (
-                (candidate in persona.acceptable_options or candidate == persona.preferred_option
-                 or persona.score_for(candidate) >= threshold)
-                and candidate not in persona.hard_rejections
-                and not (persona.traits.agreeableness == 1 and candidate != persona.preferred_option)
+            # Hard blocker (agreeableness==1) accepts only their preferred option
+            can_accept = not (
+                persona.traits.agreeableness == 1 and candidate not in persona.preferred_options
             )
             candidates.append((persona, can_accept))
         for persona, can_accept in candidates:
@@ -294,38 +291,27 @@ class TurnRouter:
     def _speaker_for_gap(self, state: DialogueState, option_id: str) -> str:
         def extra(persona: Persona, rt, recent: list[str]) -> float:
             score = 0.0
-            if option_id == persona.preferred_option:
+            if option_id in persona.preferred_options:
                 score += float(cfg.routing.preferred_option_gap_boost)
-            if option_id in persona.acceptable_options:
-                score += float(cfg.routing.acceptable_option_gap_boost)
-            if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
+            if option_id == persona.rejection:
                 score += float(cfg.routing.unresolved_objection_boost)
             return score
         return self._pick_speaker(state, extra)
 
     def _coverage_gap_option(self, state: DialogueState) -> str | None:
-        # Surface a real alternative that hasn't come up yet — but only one that at least
-        # one person actually prefers or could live with. Options nobody wants are left
-        # unmentioned on purpose: forcing talk about a dead option ("let's also consider
-        # D") is exactly the filler that doesn't sound like real group conversation.
-        with_stake = {p.preferred_option for p in state.personas}
-        with_stake.update(opt for p in state.personas for opt in p.acceptable_options)
+        # Surface an option nobody has mentioned yet, but only if at least one person
+        # genuinely prefers it. Options nobody wants are left unmentioned on purpose.
+        with_stake = {opt for p in state.personas for opt in p.preferred_options}
         for option_id, coverage in state.coverage.items():
             if coverage.mentions == 0 and option_id in with_stake:
                 return option_id
         return None
 
     def _act_for_gap(self, state: DialogueState, speaker_id: str, option_id: str) -> ActType:
-        # Surface an under-discussed option in a way that stays true to the speaker's stance:
-        #  - their own preferred pick -> SUPPORT (champion it)
-        #  - merely acceptable (not preferred) -> COMPARE, so they weigh it against their pick
-        #    and stay anchored, instead of advocating it as if it were their favourite
-        #  - rejected -> OBJECT, which surfaces the option *and* gives an explicit reason to drop
-        #    it (so an option isn't just silently forgotten — ANALYSIS #8)
         persona = state.persona_by_id(speaker_id)
-        if option_id in persona.soft_rejections or option_id in persona.hard_rejections:
+        if option_id == persona.rejection:
             return ActType.OBJECT
-        if option_id == persona.preferred_option:
+        if option_id in persona.preferred_options:
             return ActType.SUPPORT
         return ActType.COMPARE
 
@@ -393,12 +379,11 @@ class TurnRouter:
         if rt.turn_count < int(cfg.routing.persuasion_min_speaker_turns):
             return None
         lean = rt.current_preference or persona.preferred_option
-        threshold = int(cfg.scenario.acceptance_score)
         margin = float(cfg.routing.persuasion_support_margin)
         # A rival option has to clearly out-pull the current lean, not just edge it.
         best, best_support = None, option_support(state, lean) + margin
-        for opt in persona.acceptable_options:
-            if opt == lean or persona.score_for(opt) < threshold:
+        for opt in state.scenario.option_ids:
+            if opt == lean or opt == persona.rejection:
                 continue
             support = option_support(state, opt)
             if support > best_support:
@@ -478,11 +463,11 @@ class TurnRouter:
     def _conflicting_person_for_option(self, state: DialogueState, speaker_id: str, option_id: str) -> str | None:
         candidates: list[str] = []
         speaker = state.persona_by_id(speaker_id)
-        speaker_likes = option_id == speaker.preferred_option or option_id in speaker.acceptable_options
+        speaker_likes = option_id in speaker.preferred_options
         for persona in state.personas:
             if persona.id == speaker_id:
                 continue
-            other_likes = option_id == persona.preferred_option or option_id in persona.acceptable_options
+            other_likes = option_id in persona.preferred_options
             if other_likes != speaker_likes:
                 candidates.append(persona.id)
         if not candidates:
@@ -545,10 +530,9 @@ class TurnRouter:
 
     def _best_compromise_focus(self, state: DialogueState, speaker_id: str) -> str | None:
         persona = state.persona_by_id(speaker_id)
-        candidates = list(dict.fromkeys(persona.acceptable_options + ([state.candidate_option] if state.candidate_option else [])))
-        if not candidates:
-            return persona.preferred_option
-        return max(candidates, key=lambda opt: option_support(state, opt))
+        option_ids = state.scenario.option_ids
+        candidates = [opt for opt in option_ids if opt != persona.rejection]
+        return max(candidates or option_ids, key=lambda opt: option_support(state, opt))
 
     def _least_recent_personas(self, state: DialogueState) -> list[Persona]:
         return sorted(state.personas, key=lambda p: (state.runtimes[p.id].last_spoke_turn is not None, state.runtimes[p.id].last_spoke_turn or -1))

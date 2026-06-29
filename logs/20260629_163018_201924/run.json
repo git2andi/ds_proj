@@ -1,0 +1,1585 @@
+{
+  "run_id": "20260629_163018_201924",
+  "topic": "Choose a framework for the software engineering project",
+  "scenario": {
+    "topic": "Choose a framework for the software engineering project",
+    "decision_kind": "tool_choice",
+    "opening_question": "What trade-offs are you most willing to accept when picking a framework for our project—speed of development, long-term maintainability, or ease of onboarding new developers?",
+    "options": [
+      {
+        "id": "A",
+        "name": "React 18 with TypeScript",
+        "attrs": {
+          "initial_development_speed": "medium (estimated 3 months for MVP)",
+          "long_term_maintainability": "high",
+          "learning_curve": "moderate",
+          "community_support": "very large"
+        },
+        "upside": "Strong typing reduces runtime errors and improves maintainability.",
+        "tradeoff": "Initial setup and type definitions slow down early development.",
+        "concern": "Requires all team members to be comfortable with TypeScript for best results.",
+        "best_for": "projects prioritizing maintainability and type safety over rapid prototyping",
+        "short_name": "React TypeScript"
+      },
+      {
+        "id": "B",
+        "name": "Vue 3 with Composition API",
+        "attrs": {
+          "initial_development_speed": "fast (estimated 2 months for MVP)",
+          "long_term_maintainability": "medium",
+          "learning_curve": "low",
+          "community_support": "large"
+        },
+        "upside": "Simpler syntax and faster ramp-up for less experienced developers.",
+        "tradeoff": "Less strict typing can lead to more bugs in complex features.",
+        "concern": "May require more refactoring as the app grows in complexity.",
+        "best_for": "teams valuing quick delivery and easy onboarding",
+        "short_name": "Vue Composition"
+      },
+      {
+        "id": "C",
+        "name": "Angular 14 with RxJS",
+        "attrs": {
+          "initial_development_speed": "slow (estimated 4 months for MVP)",
+          "long_term_maintainability": "very high",
+          "learning_curve": "high",
+          "community_support": "large"
+        },
+        "upside": "Comprehensive framework with built-in solutions for complex state management.",
+        "tradeoff": "Steep learning curve and verbose boilerplate code.",
+        "concern": "May overwhelm less experienced team members and slow initial progress.",
+        "best_for": "projects needing robust architecture and scalability",
+        "short_name": "Angular RxJS"
+      },
+      {
+        "id": "D",
+        "name": "SvelteKit with JavaScript",
+        "attrs": {
+          "initial_development_speed": "very fast (estimated 1.5 months for MVP)",
+          "long_term_maintainability": "medium-low",
+          "learning_curve": "low",
+          "community_support": "medium"
+        },
+        "upside": "Minimal boilerplate and highly performant output with simple syntax.",
+        "tradeoff": "Smaller ecosystem and fewer third-party integrations.",
+        "concern": "Less mature tooling and potential challenges scaling the app.",
+        "best_for": "projects prioritizing rapid prototyping and performance over ecosystem size",
+        "short_name": ""
+      }
+    ],
+    "shared_context": [
+      "The project is a web-based SaaS product with a 6-month deadline.",
+      "The team consists of exactly 3 software engineers with varied experience levels.",
+      "The budget allows for some training but prefers minimizing costly refactoring later."
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Faye",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "background": "Faye recently joined the team and wants to ensure the project is maintainable long-term to build a strong portfolio piece.",
+      "private_goal": "To choose a framework that supports high maintainability and strong typing to minimize bugs over time.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    },
+    {
+      "id": "p2",
+      "name": "Felix",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "background": "Felix is under tight deadlines and prefers a framework that enables quick delivery with easy onboarding for junior developers.",
+      "private_goal": "To select a framework that maximizes initial development speed and team ramp-up efficiency.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    },
+    {
+      "id": "p3",
+      "name": "Yuki",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "background": "Yuki has experience with complex, scalable applications and wants a robust architecture to future-proof the project.",
+      "private_goal": "To adopt a comprehensive framework that ensures scalability and long-term robustness despite initial complexity.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a framework for the software engineering project. Here are the options:\nOption A - React 18 with TypeScript: initial development speed medium (estimated 3 months for MVP), long term maintainability high, learning curve moderate, community support very large\nOption B - Vue 3 with Composition API: initial development speed fast (estimated 2 months for MVP), long term maintainability medium, learning curve low, community support large\nOption C - Angular 14 with RxJS: initial development speed slow (estimated 4 months for MVP), long term maintainability very high, learning curve high, community support large\nOption D - SvelteKit with JavaScript: initial development speed very fast (estimated 1.5 months for MVP), long term maintainability medium-low, learning curve low, community support medium\nSome things we know: The project is a web-based SaaS product with a 6-month deadline.; The team consists of exactly 3 software engineers with varied experience levels.; The budget allows for some training but prefers minimizing costly refactoring later..\nWhat trade-offs are you most willing to accept when picking a framework for our project—speed of development, long-term maintainability, or ease of onboarding new developers?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a framework for the software engineering project. Here are the options: Option A - React 18 with TypeScript: initial development speed medium (estimated 3 months for MVP), long term maintainability high, learning curve moderate, community support very large Option B - Vue 3 with Composition API: initial development speed fast (estimated 2 months for MVP), long term maintainability medium, learning curve low, community support large Option C - Angular 14 with RxJS: initial development speed slow (estimated 4 months for MVP), long term maintainability very high, learning curve high, community support large Option D - SvelteKit with JavaScript: initial development speed very fast (estimated 1.5 months for MVP), long term maintainability medium-low, learning curve low, community support medium Some things we know: The project is a web-based SaaS product with a 6-month deadline.; The team consists of exactly 3 software engineers with varied experience levels.; The budget allows for some training but prefers minimizing costly refactoring later.. What trade-offs are you most willing to accept when picking a framework for our project—speed of development, long-term maintainability, or ease of onboarding new developers?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Hey everyone, just here!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Hey everyone, just here!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 60,
+      "tokens_out": 6,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": true
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I’m leaning Vue Composition since it’s faster and easier for juniors.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m leaning Vue Composition since it’s faster and easier for juniors.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 778,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "I’m leaning React TypeScript cause strong typing helps long-term.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’m leaning React TypeScript cause strong typing helps long-term.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 775,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "I’m leaning Angular RxJS because its robust architecture feels best for scaling despite the slow start.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m leaning Angular RxJS because its robust architecture feels best for scaling despite the slow start.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 786,
+      "tokens_out": 32,
+      "validation_issues": [
+        "REPETITIVE_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I know Vue’s learning curve fits our mixed skill levels best",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I know Vue’s learning curve fits our mixed skill levels best",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "develop under-discussed Option D with a real trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 553,
+      "tokens_out": 24,
+      "validation_issues": [
+        "REPETITIVE_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "SvelteKit’s way faster for MVPs but Angular’s built-in state management scales better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "SvelteKit’s way faster for MVPs but Angular’s built-in state management scales better.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "develop under-discussed Option D with a real trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 665,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Worried about training time needed for React TypeScript but agree it’s solid.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Worried about training time needed for React TypeScript but agree it’s solid.",
+        "act_type": "object",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "object",
+        "reason": "raise a soft objection without derailing the group",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 523,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I get our junior devs can contribute without much hand-holding",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I get our junior devs can contribute without much hand-holding",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 560,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Junior devs might struggle with TypeScript quirks initially.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Junior devs might struggle with TypeScript quirks initially.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "moves_lean": false
+      },
+      "tokens_in": 557,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Vue Composition’s simpler reactivity is nice but Angular’s RxJS handles complex async flows way better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Vue Composition’s simpler reactivity is nice but Angular’s RxJS handles complex async flows way better.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 595,
+      "tokens_out": 33,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Vue’s simplicity helps speed but maybe React’s ecosystem eases scaling later",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Vue’s simplicity helps speed but maybe React’s ecosystem eases scaling later",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 558,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "React’s ecosystem is huge but that doesn’t solve Angular’s tighter type safety and built-in RxJS advantages, right?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "React’s ecosystem is huge but that doesn’t solve Angular’s tighter type safety and built-in RxJS advantages, right?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "moves_lean": false
+      },
+      "tokens_in": 523,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "True, but Angular’s RxJS adds complexity for juniors.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, but Angular’s RxJS adds complexity for juniors.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "moves_lean": false
+      },
+      "tokens_in": 592,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "RxJS adds complexity but it’s essential for handling the async needs we’ll face, especially with varied experience levels.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "RxJS adds complexity but it’s essential for handling the async needs we’ll face, especially with varied experience levels.",
+        "act_type": "push_back",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "moves_lean": false
+      },
+      "tokens_in": 532,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "RxJS handles async well but React TypeScript scales cleaner long-term",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "RxJS handles async well but React TypeScript scales cleaner long-term",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "moves_lean": false
+      },
+      "tokens_in": 624,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I’ve onboarded juniors faster with Vue’s simpler syntax",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’ve onboarded juniors faster with Vue’s simpler syntax",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 566,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "The team's ability to manage Angular with RxJS complexity may impact our timeline given its slow initial development speed. We should consider if this trade-off aligns with our priorities.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The team's ability to manage Angular with RxJS complexity may impact our timeline given its slow initial development speed. We should consider if this trade-off aligns with our priorities.",
+        "act_type": "object",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "The team's ability to manage Angular with RxJS complexity may impact our timeline given its slow initial development speed. We should consider if this trade-off aligns with our priorities."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "object",
+        "reason": "raise a soft objection without derailing the group",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "moves_lean": false
+      },
+      "tokens_in": 767,
+      "tokens_out": 81,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "INVENTED_OPTION_ATTRIBUTE"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Worried Vue Composition might hide async complexity though I get the ease.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Worried Vue Composition might hide async complexity though I get the ease.",
+        "act_type": "object",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Worried Vue Composition might hide async complexity though I get the ease."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "object",
+        "reason": "raise a soft objection without derailing the group",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 571,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Felix do you know if Vue Composition means more cost for async bugs later compared to Angular RxJS?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Felix do you know if Vue Composition means more cost for async bugs later compared to Angular RxJS?",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "moves_lean": false
+      },
+      "tokens_in": 596,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Not sure on async bug costs but Vue feels lighter overall",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Not sure on async bug costs but Vue feels lighter overall",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "moves_lean": false
+      },
+      "tokens_in": 592,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Vue Composition feels more flexible for quick changes but Angular RxJS offers stronger type safety and consistency for long-term quality.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Vue Composition feels more flexible for quick changes but Angular RxJS offers stronger type safety and consistency for long-term quality.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 635,
+      "tokens_out": 36,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Async bugs might slow juniors but Vue feels more forgiving",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Async bugs might slow juniors but Vue feels more forgiving",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "moves_lean": false
+      },
+      "tokens_in": 607,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "True but React TypeScript’s types catch more than async bugs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "True but React TypeScript’s types catch more than async bugs.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "moves_lean": false
+      },
+      "tokens_in": 560,
+      "tokens_out": 26,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Angular’s consistency helps seniors stay aligned but Vue’s low friction fits our mix better",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Angular’s consistency helps seniors stay aligned but Vue’s low friction fits our mix better",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 22,
+        "moves_lean": false
+      },
+      "tokens_in": 647,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Agree Angular’s strictness helps seniors but might feel a bit distant for juniors still ramping up fast",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Agree Angular’s strictness helps seniors but might feel a bit distant for juniors still ramping up fast",
+        "act_type": "react",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "moves_lean": false
+      },
+      "tokens_in": 577,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "I select React 18 with TypeScript now because its strong typing reduces bugs effectively.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I select React 18 with TypeScript now because its strong typing reduces bugs effectively.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 726,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VOTE"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "We choose Vue 3 with Composition API now because it clearly improves our development speed and onboarding.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We choose Vue 3 with Composition API now because it clearly improves our development speed and onboarding.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 767,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VOTE"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "I pick Angular RxJS because its strong architecture will keep us solid as we scale up.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I pick Angular RxJS because its strong architecture will keep us solid as we scale up.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 549,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Felix, Yuki, what’s holding you back from React 18 with TypeScript, or is there another option you both think we could all get behind?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Felix, Yuki, what’s holding you back from React 18 with TypeScript, or is there another option you both think we could all get behind?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I’m choosing React TypeScript now, accepting the slower onboarding as part of the trade-off.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m choosing React TypeScript now, accepting the slower onboarding as part of the trade-off.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "say whether Option A works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 804,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_ACCEPT"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "I choose React 18 with TypeScript now, confirming we accept some upfront loss of strong structure.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I choose React 18 with TypeScript now, confirming we accept some upfront loss of strong structure.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "say whether Option A works for you; if you accept, give the one thing that makes it okay",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 780,
+      "tokens_out": 62,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_ACCEPT"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright, since we’re set on React 18 with TypeScript, let’s kick off by mapping out the initial 3-month MVP development timeline.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Alright, since we’re set on React 18 with TypeScript, let’s kick off by mapping out the initial 3-month MVP development timeline.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Alright, this works — React 18 with TypeScript should speed things up and help onboard the juniors.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Alright, this works — React 18 with TypeScript should speed things up and help onboard the juniors.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 165,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": true
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "reason": "all participants accepted or voted for the same option",
+    "turns": 29,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 29,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.088,
+    "turn_counts": {
+      "Faye": 6,
+      "Felix": 12,
+      "Yuki": 11
+    },
+    "avg_words_by_persona": {
+      "Faye": 10.5,
+      "Felix": 11.4,
+      "Yuki": 17.6
+    },
+    "question_density": 0.069,
+    "avg_words_per_turn": 13.6,
+    "repaired_turns": 5,
+    "repair_rate": 0.172,
+    "flagged_turns": 5,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 10,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 2
+      },
+      "B": {
+        "mentions": 6,
+        "reasons": 4,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 13,
+        "reasons": 7,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 0,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "successful",
+    "final_option": "A",
+    "min_discussion_turns": 15,
+    "setup_tokens_in": 2007,
+    "setup_tokens_out": 1046,
+    "dialogue_tokens_in": 19030,
+    "dialogue_tokens_out": 1084,
+    "total_tokens_in": 21037,
+    "total_tokens_out": 2130
+  },
+  "tokens": {
+    "setup_tokens_in": 2007,
+    "setup_tokens_out": 1046,
+    "dialogue_tokens_in": 19030,
+    "dialogue_tokens_out": 1084,
+    "total_tokens_in": 21037,
+    "total_tokens_out": 2130
+  }
+}

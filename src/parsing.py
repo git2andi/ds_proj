@@ -269,6 +269,15 @@ def _resolve_move(
     if clamped:
         stance = "neutral"
 
+    # On a decision turn, vote and accept are synonymous — both mean a binding commitment
+    # to one option. Normalise so state tracking (explicit_vote vs accepted_options) is
+    # consistent with the routed intent rather than the model's arbitrary label choice.
+    if focus_opt and intent and not clamped:
+        if intent.act == ActType.VOTE and stance == "accept":
+            stance = "vote"
+        elif intent.act == ActType.ACCEPT and stance == "vote":
+            stance = "accept"
+
     # A hedged/conditional acceptance ("might be okay", "works if we leave early") is not a
     # firm commitment, so it must not close the decision. Keep it neutral: the persona stays
     # an open holdout until the condition is actually resolved, instead of the chat declaring

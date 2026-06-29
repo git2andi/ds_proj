@@ -16,7 +16,6 @@
 #     personas.coalition_probability      how often participants share a preference (2v1, ...)
 #
 #   When/whether it concludes
-#     scenario.acceptance_score           bar for "I can live with this"
 #     conversation.concentration_to_narrow   how aligned before it goes to a vote
 #     conversation.discussion_depth           shapes the (derived, varying) discussion length
 #     conversation.*_per_participant           narrow-anyway / hard-stop caps, scaled by group size
@@ -63,11 +62,6 @@ simulation:
   setup_generation_attempts: 2
 
 scenario:
-  acceptance_score: 2               # <-- core dial: a persona can live with options scoring >= this
-  # Hidden per-participant utility: each persona privately rates every option in
-  # [score_min, score_max]; acceptance is gated by acceptance_score above.
-  score_min: 1
-  score_max: 5
   # --- structural: shape of the generated scenario, set once ---
   option_labels: ["A", "B", "C", "D"]
   public_attr_min: 3
@@ -96,10 +90,6 @@ personas:
     extraversion: [1, 5]                   # stubbornness does not imply talkativeness
     agreeableness: [1, 1]                  # the explicit stubbornness signal
     neuroticism: [2, 5]                    # concern can reinforce the fixed position
-  non_blocker_min_acceptable: 2
-  non_blocker_max_soft_rejections: 1
-  preferred_diversity_min_unique: 2
-  require_common_compromise: true
 
 conversation:
   # --- core dials: pacing and when the discussion turns into a decision ---
@@ -134,7 +124,6 @@ routing:
   extraversion_weight: 0.15    # was hardcoded 0.06; max spread now 0.60 vs low_turn_count_boost 0.20
   unresolved_objection_boost: 0.34
   preferred_option_gap_boost: 0.40
-  acceptable_option_gap_boost: 0.22
   direct_reply_probability: 0.35    # chance a reply/conflict turn is addressed at one person; most lines go to the room
   act_probabilities:                # mix of local moves the router samples in free discussion
     react: 0.15

@@ -61,8 +61,8 @@ class DialogueLogger:
             lines.append(f"- {option.public_line()}")
         lines += ["", "## Participants", ""]
         for persona in state.personas:
-            stubborn = " stubborn" if persona.traits.agreeableness == 1 else ""
-            lines.append(f"### {persona.name} ({persona.role}){stubborn}")
+            stubborn = " (stubborn)" if persona.traits.agreeableness == 1 else ""
+            lines.append(f"### {persona.name}{stubborn}")
             lines.append(
                 f"traits: open={persona.traits.openness} consc={persona.traits.conscientiousness} "
                 f"extra={persona.traits.extraversion} agree={persona.traits.agreeableness} "
@@ -70,17 +70,9 @@ class DialogueLogger:
                 f"compromise={persona.traits.compromise_willingness:.2f}"
             )
             lines.append(f"goal: {persona.private_goal}")
-            lines.append(f"prefers Option {persona.preferred_option}; accepts {persona.acceptable_options}; soft concerns {persona.soft_rejections}; hard rejects {persona.hard_rejections}")
-            if persona.option_scores:
-                lines.append("hidden scores: " + ", ".join(f"{opt}={persona.option_scores[opt]}" for opt in sorted(persona.option_scores)))
-            lines.append(f"concern: {persona.main_concern}")
-            for option_id, reasons in persona.reasons.items():
-                if reasons:
-                    lines.append(f"reasons for {option_id}: {' | '.join(reasons)}")
-            if persona.reservation:
-                lines.append(f"reservation: {persona.reservation}")
-            if persona.reconsider_if:
-                lines.append(f"would reconsider if: {persona.reconsider_if}")
+            lines.append(f"prefers: {', '.join(persona.preferred_options)}")
+            if persona.rejection:
+                lines.append(f"rejects: {persona.rejection} — {persona.rejection_reason}")
             lines.append("")
         lines += ["", "## Transcript", ""]
         for turn in state.turns:

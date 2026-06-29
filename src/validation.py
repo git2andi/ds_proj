@@ -35,7 +35,8 @@ _VISIBLE_COMMITMENT_CUES = {
     ActType.ACCEPT: re.compile(
         r"\b(?:accept(?:s|ed|ing)?|agree(?:s|d|ing)?(?:\s+to)?|on\s+board\s+with|"
         r"ok(?:ay)?\s+with|fine\s+with|works?\s+for\s+me|can\s+live\s+with|"
-        r"go(?:ing)?\s+with|choos(?:e|es|ing)|stick(?:s|ing)?\s+with|"
+        r"go(?:ing)?\s+with|choos(?:e|es|ing)|select(?:s|ed|ing)?|stick(?:s|ing)?\s+with|"
+        r"lock(?:s|ed|ing)?\s+(?:it\s+)?in|"
         r"i\s+support|supporting|i(?:'m|\s+am)\s+in\s+for)\b",
         re.I,
     ),
@@ -237,15 +238,29 @@ class MessageValidator:
 
     def _check_decision_clarity(self, text: str, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
         if move.present:
-            # Trailer present but contradicts the routed move.
-            if intent.act == ActType.VOTE and move.stance != "vote":
+            # "accept" and "vote" are synonymous on a decision turn — both mean a binding
+            # commitment to one option. Normalise before checking so the wrong-stance case
+            # (model writes stance=accept on a vote round) is treated as the right intent.
+            effective_stance = move.stance
+            if intent.act == ActType.VOTE and move.stance == "accept":
+                effective_stance = "vote"
+            elif intent.act == ActType.ACCEPT and move.stance == "vote":
+                effective_stance = "accept"
+
+            if intent.act == ActType.VOTE and effective_stance != "vote":
                 issues.append(ValidationIssue("UNCLEAR_VOTE", "repair", "Vote move did not report a vote."))
-            if intent.act == ActType.ACCEPT and move.stance != "accept":
+            if intent.act == ActType.ACCEPT and effective_stance != "accept":
                 issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept move did not report acceptance."))
             if intent.act == ActType.REJECT and move.stance not in {"reject", "object"}:
                 issues.append(ValidationIssue("UNCLEAR_REJECT", "repair", "Reject move did not report a rejection or objection."))
-            if intent.act in {ActType.VOTE, ActType.ACCEPT} and move.stance == intent.act.value:
-                if not move.option or not self._has_visible_commitment(text, move.option, intent.act):
+            if intent.act in {ActType.VOTE, ActType.ACCEPT} and effective_stance == intent.act.value:
+                # Use trailer opt when available; fall back to the sole option visible in text.
+                check_option = move.option
+                if not check_option:
+                    visible = self.resolver.ids_in_text(text)
+                    if len(visible) == 1:
+                        check_option = visible[0]
+                if not check_option or not self._has_visible_commitment(text, check_option, intent.act):
                     code = "UNCLEAR_VOTE" if intent.act == ActType.VOTE else "UNCLEAR_ACCEPT"
                     issues.append(ValidationIssue(
                         code,
@@ -253,25 +268,60 @@ class MessageValidator:
                         "Visible commitment must name and commit to the same option as the trailer.",
                     ))
         else:
-            # No trailer at all on a decision turn. Ask the model to confirm explicitly so
-            # the commitment is verifiable in the trailer rather than inferred from routing (KF03).
-            if intent.act == ActType.VOTE:
-                issues.append(ValidationIssue("UNCLEAR_VOTE", "repair", "Vote turn must end with a trailer confirming the choice."))
-            if intent.act == ActType.ACCEPT:
-                issues.append(ValidationIssue("UNCLEAR_ACCEPT", "repair", "Accept turn must end with a trailer confirming the choice."))
+            # No trailer. Check whether a visible commitment is clear enough to credit.
+            if intent.act in {ActType.VOTE, ActType.ACCEPT}:
+                visible = self.resolver.ids_in_text(text)
+                has_commit = (len(visible) == 1 and self._has_visible_commitment(text, visible[0], intent.act))
+                code = "UNCLEAR_VOTE" if intent.act == ActType.VOTE else "UNCLEAR_ACCEPT"
+                if has_commit:
+                    # Commitment is visible in the text but the trailer is missing — warn so
+                    # it shows in logs, but don't block state mutation (KF03: visible text wins).
+                    issues.append(ValidationIssue("MISSING_COMMITMENT_TRAILER", "warn",
+                                                   "Commitment visible in text but no machine trailer — repair recommended."))
+                else:
+                    issues.append(ValidationIssue(code, "repair",
+                                                   f"{code.replace('_', ' ').title()} turn must end with a trailer confirming the choice."))
         if intent.act == ActType.ACCEPT and "?" in text:
             issues.append(ValidationIssue("QUESTION_IN_CONFIRMATION", "repair", "Confirmation should be an answer, not a new question."))
 
     def _has_visible_commitment(self, text: str, option_id: str, act: ActType) -> bool:
-        """Require the commitment cue and selected option in the same contrast clause."""
+        """True when the text clearly commits to option_id.
+
+        Two cases:
+        1. Option alias and commitment cue appear in the same contrast clause
+           (handles "I'll go with Garden" or "selecting Mountain Cabin now").
+        2. Option alias appears anywhere in the text AND a commitment-cue clause
+           contains no other option alias (handles "Mountain Cabin has risks, but
+           I accept it" and "Farm Stay fits our needs; I'm selecting it now").
+        """
         cue = _VISIBLE_COMMITMENT_CUES[act]
         aliases = [alias for alias, owner in self.resolver.alias_to_id.items() if owner == option_id]
         aliases.append(f"option {option_id.lower()}")
         target = re.compile(
-            r"(?<!\w)(?:" + "|".join(re.escape(alias) for alias in sorted(set(aliases), key=len, reverse=True)) + r")(?!\w)",
+            r"(?<!\w)(?:" + "|".join(re.escape(a) for a in sorted(set(aliases), key=len, reverse=True)) + r")(?!\w)",
             re.I,
         )
-        return any(target.search(clause) and cue.search(clause) for clause in _CONTRAST_BOUNDARY.split(text))
+        clauses = _CONTRAST_BOUNDARY.split(text)
+        # Case 1: option + cue in same clause
+        if any(target.search(clause) and cue.search(clause) for clause in clauses):
+            return True
+        # Case 2: option mentioned anywhere + a cue clause that names no other option
+        if not target.search(text):
+            return False
+        other_ids = [oid for oid in self.resolver.by_id if oid != option_id]
+        if other_ids:
+            other_aliases = [a for a, owner in self.resolver.alias_to_id.items() if owner in other_ids]
+            other_aliases += [f"option {oid.lower()}" for oid in other_ids]
+            other_target = re.compile(
+                r"(?<!\w)(?:" + "|".join(re.escape(a) for a in sorted(set(other_aliases), key=len, reverse=True)) + r")(?!\w)",
+                re.I,
+            )
+        else:
+            other_target = None
+        for clause in clauses:
+            if cue.search(clause) and not (other_target and other_target.search(clause)):
+                return True
+        return False
 
     @staticmethod
     def _check_hard_blocker_vote(state: DialogueState, intent: MoveIntent, move: TurnMove, issues: list[ValidationIssue]) -> None:
@@ -342,8 +392,21 @@ class MessageValidator:
     def _check_soft_attributes(self, text: str, issues: list[ValidationIssue]) -> None:
         if _HEDGE_WORDS.search(text):
             return
+        # Check against card text: if the claim pattern fires but the matched term doesn't
+        # appear in any option card, it's more likely an invention than a paraphrase.
         if _SOFT_CLAIM_PATTERN.search(text):
+            refs = self.resolver.ids_in_text(text)
+            card_src = "\n".join(self.resolver.option_text(r) for r in refs if r in self.resolver.by_id).lower()
             issues.append(ValidationIssue("UNSUPPORTED_CLAIM", "warn", "Soft attribute (capacity/flexibility/availability) stated confidently without card support."))
+        if _INVENTED_FACILITY_PATTERN.search(text):
+            refs = self.resolver.ids_in_text(text)
+            card_src = "\n".join(self.resolver.option_text(r) for r in refs if r in self.resolver.by_id).lower()
+            m = _INVENTED_FACILITY_PATTERN.search(text)
+            noun = m.group(0).lower() if m else ""
+            # Only flag when the specific facility noun is absent from the option card
+            if noun and noun not in card_src:
+                issues.append(ValidationIssue("INVENTED_OPTION_ATTRIBUTE", "repair",
+                                               f"Claimed facility/feature '{noun}' not found in option card — remove it or say you're not sure."))
 
     def _check_card_reading(self, text: str, issues: list[ValidationIssue]) -> None:
         low = text.lower()
@@ -417,6 +480,18 @@ _SOFT_CLAIM_PATTERN = re.compile(
 )
 _HEDGE_WORDS = re.compile(
     r"\b(think|probably|likely|not sure|might|maybe|guess|could|seem|appears?|sounds?|imagine|believe|unsure|I'm not|unclear)\b",
+    re.I,
+)
+
+# Concrete facility/service nouns that participants often invent with confidence when they
+# are absent from the option card. Matched without hedge words → INVENTED_OPTION_ATTRIBUTE
+# (repair). Adding nouns here should be conservative: only add terms that are
+# specific enough to be wrong when invented, not generic descriptors like "features" or "setup".
+_INVENTED_FACILITY_PATTERN = re.compile(
+    r"\b(?:lodge[s]?|cabin[s]?|chalet[s]?|insulated\s+box(?:es)?|shuttle[s]?|"
+    r"(?:indoor|outdoor)\s+(?:space[s]?|area[s]?|seating)|"
+    r"group\s+discount[s]?|private\s+(?:room[s]?|dining|chef|beach)|"
+    r"(?:on[-\s]?site|free)\s+parking|public\s+transit|dedicated\s+seating)\b",
     re.I,
 )
 

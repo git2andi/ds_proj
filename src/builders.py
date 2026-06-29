@@ -59,15 +59,14 @@ class SetupBuilder:
         trait_rows = self._trait_rows(n)
         plan = self._preference_plan(n)
         pref_groups = self._preference_groups(plan)
-        common_option = random.choice([str(x) for x in cfg.scenario.option_labels]) if bool(cfg.personas.require_common_compromise) else None
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         last_error = ""
         for attempt in range(attempts):
             try:
-                scenario, options_json = self._generate_scenario(n, common_option)
-                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario, common_option)
+                scenario, options_json = self._generate_scenario(n)
+                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario)
                 self._validate_preference_plan(personas, plan)
-                self._validate_world(scenario, personas, common_option)
+                self._validate_world(scenario, personas)
                 return scenario, personas
             except Exception as exc:
                 last_error = f"{type(exc).__name__}: {exc}"
@@ -76,17 +75,17 @@ class SetupBuilder:
             f"Last error: {last_error}. Check the LLM endpoint/provider in config.yaml."
         )
 
-    def _generate_scenario(self, n: int, common_option: str | None) -> tuple[Scenario, list[dict]]:
-        data = self._llm.generate_json(prompts.setup_scenario(self.topic, n, common_option), profile="setup")
+    def _generate_scenario(self, n: int) -> tuple[Scenario, list[dict]]:
+        data = self._llm.generate_json(prompts.setup_scenario(self.topic, n), profile="setup")
         raw_scenario = data.get("scenario", data)
         scenario = self._parse_scenario(raw_scenario, n)
         options_json = raw_scenario.get("options", [])
         return scenario, options_json
 
     def _generate_personas(self, n: int, trait_rows: list[dict], pref_groups: list[list[str]],
-                           options_json: list[dict], scenario: Scenario, common_option: str | None) -> list[Persona]:
+                           options_json: list[dict], scenario: Scenario) -> list[Persona]:
         data = self._llm.generate_json(
-            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json, common_option),
+            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json),
             profile="setup",
         )
         return self._parse_personas(data.get("participants", []), trait_rows, scenario)
@@ -233,76 +232,39 @@ class SetupBuilder:
         return TraitProfile(**raw)
 
     def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, scenario: Scenario, idx: int, pid: str) -> Persona:
-        stubborn = traits.agreeableness == int(cfg.personas.trait_min)
         labels = scenario.option_ids
-        preferred = str(row.get("preferred_option") or "").strip().upper()
-        if preferred not in labels:
-            raise ValueError(f"participant {pid} has invalid/missing preferred_option: {row.get('preferred_option')!r}")
-        acceptable = self._clean_option_list(row.get("acceptable_options", []), labels)
-        if preferred not in acceptable:
-            raise ValueError(f"participant {pid} omitted preferred option from acceptable_options")
-        soft = self._clean_option_list(row.get("soft_rejections", []), labels)
-        hard_rej = self._clean_option_list(row.get("hard_rejections", []), labels) if stubborn else []
-        reasons_raw = row.get("reasons", {})
-        reasons: dict[str, list[str]] = {}
-        if isinstance(reasons_raw, dict):
-            for opt, vals in reasons_raw.items():
-                opt_id = str(opt).strip().upper()
-                if opt_id in labels and isinstance(vals, list):
-                    reasons[opt_id] = [str(v).strip() for v in vals if str(v).strip()]
-        # The model must justify its own preferred pick; an empty reason set means the
-        # setup response is unusable rather than something we silently fill in.
-        if not reasons.get(preferred):
-            raise ValueError(f"participant {pid} gave no reason for preferred option {preferred}")
-        acceptable = list(dict.fromkeys(acceptable))
-        soft = soft[: int(cfg.personas.non_blocker_max_soft_rejections) if not stubborn else len(soft)]
-        scores = self._build_scores(row.get("scores"), labels, preferred, acceptable, soft, hard_rej, pid)
+        # Parse preferred_options (1–2 items); fall back to old preferred_option field
+        raw_prefs = row.get("preferred_options") or []
+        if not isinstance(raw_prefs, list):
+            raw_prefs = [raw_prefs] if raw_prefs else []
+        preferred_options = [
+            str(x).strip().upper() for x in raw_prefs[:2]
+            if str(x).strip().upper() in labels
+        ]
+        if not preferred_options:
+            # backward-compat with old preferred_option single field
+            old = str(row.get("preferred_option") or "").strip().upper()
+            if old in labels:
+                preferred_options = [old]
+        if not preferred_options:
+            raise ValueError(f"participant {pid} has no valid preferred_options")
+        # Parse optional rejection (hard blockers only, but accepted from any row and validated later)
+        rej_raw = str(row.get("rejection") or "").strip().upper()
+        rejection: str | None = rej_raw if rej_raw in labels and rej_raw not in preferred_options else None
+        rejection_reason = str(row.get("rejection_reason") or "").strip() if rejection else ""
         return Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
-            role=_require(row.get("role"), f"participant {pid} role"),
             traits=traits,
-            speech_style=_require(row.get("speech_style"), f"participant {pid} speech_style"),
+            background=_require(
+                row.get("background") or row.get("backstory"),
+                f"participant {pid} background",
+            ),
             private_goal=_require(row.get("private_goal"), f"participant {pid} private_goal"),
-            backstory=_require(row.get("backstory"), f"participant {pid} backstory"),
-            main_concern=_require(row.get("main_concern"), f"participant {pid} main_concern"),
-            preferred_option=preferred,
-            acceptable_options=acceptable,
-            soft_rejections=soft,
-            hard_rejections=hard_rej,
-            reasons=reasons,
-            reservation=_require(row.get("reservation"), f"participant {pid} reservation"),
-            reconsider_if=_require(row.get("reconsider_if"), f"participant {pid} reconsider_if"),
-            option_scores=scores,
+            preferred_options=preferred_options,
+            rejection=rejection,
+            rejection_reason=rejection_reason,
         )
-
-    @staticmethod
-    def _build_scores(raw: Any, labels: list[str], preferred: str, acceptable: list[str], soft: list[str], hard: list[str], pid: str) -> dict[str, int]:
-        # Generated scores are part of the setup contract. Contradictions trigger a
-        # retry instead of being silently rewritten into a different preference world.
-        smin, smax = int(cfg.scenario.score_min), int(cfg.scenario.score_max)
-        thr = int(cfg.scenario.acceptance_score)
-        given = raw if isinstance(raw, dict) else {}
-        scores: dict[str, int] = {}
-        for opt in labels:
-            val = given.get(opt, given.get(opt.lower()))
-            try:
-                scores[opt] = int(val)
-            except (TypeError, ValueError):
-                raise ValueError(f"participant {pid} has no valid score for option {opt}")
-            if not smin <= scores[opt] <= smax:
-                raise ValueError(f"participant {pid} score for {opt} is outside {smin}-{smax}")
-        contradictions = [
-            opt for opt in labels
-            if (opt in acceptable and scores[opt] < thr)
-            or (opt not in acceptable and scores[opt] >= thr)
-            or (opt in set(soft) | set(hard) and scores[opt] >= thr)
-        ]
-        if scores[preferred] != max(scores.values()):
-            contradictions.append(preferred)
-        if contradictions:
-            raise ValueError(f"participant {pid} score/list contradiction for {sorted(set(contradictions))}")
-        return scores
 
     @staticmethod
     def _clean_name(raw: str) -> str:
@@ -311,19 +273,8 @@ class SetupBuilder:
         cap = int(cfg.scenario.option_name_max_words)
         return " ".join(words[:cap]) if len(words) > cap else " ".join(words)
 
-    @staticmethod
-    def _clean_option_list(value: Any, labels: list[str]) -> list[str]:
-        if not isinstance(value, list):
-            return []
-        return list(dict.fromkeys(str(x).strip().upper() for x in value if str(x).strip().upper() in labels))
-
     def _validate_preference_plan(self, personas: list[Persona], plan: dict[str, int]) -> None:
-        """Verify the LLM honored the sampled coalition structure.
-
-        Same-camp participants must share exactly one preferred option; participants in
-        different camps must choose different options. Raises ValueError to trigger a retry
-        rather than silently mutating personas and creating role/reason contradictions."""
-        pref_by_id = {p.id: p.preferred_option for p in personas}
+        pref_by_id = {p.id: p.preferred_options[0] for p in personas}
         camps: dict[int, set[str]] = {}
         for pid, camp_idx in plan.items():
             if pid in pref_by_id:
@@ -342,68 +293,7 @@ class SetupBuilder:
                 "retry to produce the required preference diversity."
             )
 
-    def _postprocess_personas(self, personas: list[Persona], scenario: Scenario) -> list[Persona]:
-        """Safe persona cleanup after generation and preference-plan validation.
-
-        Does NOT mutate preferred_option — the LLM owns that choice (enforced upstream by
-        _validate_preference_plan). Only adds missing reasons, resolves accept/reject
-        contradictions, ensures a shared compromise option, and re-syncs hidden scores."""
-        labels = scenario.option_ids
-        # Ensure the preferred option is always listed in acceptable_options (the LLM
-        # occasionally omits it). This is safe: you can always live with your own top choice.
-        for persona in personas:
-            if persona.preferred_option not in persona.acceptable_options:
-                persona.acceptable_options.insert(0, persona.preferred_option)
-        # Every preferred/acceptable option needs at least one reason for the turn prompts.
-        # Only add a derived reason for options the model was never asked to justify
-        # (e.g. an option added to acceptable_options via the common-compromise step below).
-        for persona in personas:
-            for opt in [persona.preferred_option] + persona.acceptable_options:
-                if not persona.reasons.get(opt):
-                    persona.reasons[opt] = [self._default_reason(scenario.option(opt))]
-        # Ensure a shared compromise option exists among non-stubborn participants.
-        if bool(cfg.personas.require_common_compromise):
-            counts = {opt: 0 for opt in labels}
-            for persona in personas:
-                if persona.traits.agreeableness == 1:
-                    continue
-                for opt in set(persona.acceptable_options + [persona.preferred_option]):
-                    counts[opt] += 1
-            common = max(labels, key=lambda opt: counts[opt])
-            for persona in personas:
-                if persona.traits.agreeableness > 1 and common not in persona.acceptable_options:
-                    persona.acceptable_options.append(common)
-                    persona.reasons.setdefault(common, [self._default_reason(scenario.option(common))])
-        # An option can't be both acceptable and rejected: acceptable wins.
-        for persona in personas:
-            acceptable = set(persona.acceptable_options) | {persona.preferred_option}
-            persona.soft_rejections = [o for o in persona.soft_rejections if o not in acceptable]
-            persona.hard_rejections = [o for o in persona.hard_rejections if o not in acceptable]
-        # Guarantee minimum acceptable-options count for non-stubborn participants.
-        # The LLM sometimes omits options; pick best-scoring fallback rather than retrying.
-        min_acc = int(cfg.personas.non_blocker_min_acceptable)
-        for persona in personas:
-            if persona.traits.agreeableness == 1:
-                continue
-            while len(persona.acceptable_options) < min_acc:
-                candidates = [
-                    o for o in sorted(labels, key=lambda x: persona.score_for(x), reverse=True)
-                    if o not in persona.acceptable_options and o not in persona.hard_rejections
-                ]
-                if not candidates:
-                    break
-                fallback = candidates[0]
-                persona.acceptable_options.append(fallback)
-                persona.reasons.setdefault(fallback, [self._default_reason(scenario.option(fallback))])
-        # Re-sync hidden scores after any acceptable-list changes above.
-        for persona in personas:
-            persona.option_scores = self._build_scores(
-                persona.option_scores, labels, persona.preferred_option,
-                persona.acceptable_options, persona.soft_rejections, persona.hard_rejections, persona.id,
-            )
-        return personas
-
-    def _validate_world(self, scenario: Scenario, personas: list[Persona], common_option: str | None = None) -> None:
+    def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
         labels = [str(x) for x in cfg.scenario.option_labels]
         if scenario.option_ids != labels:
             raise ValueError(f"option ids must be {labels}, got {scenario.option_ids}")
@@ -411,41 +301,15 @@ class SetupBuilder:
         if len(set(names)) != len(names):
             raise ValueError("participant names must be unique")
         for persona in personas:
-            if persona.preferred_option not in labels:
-                raise ValueError("invalid preferred option")
-            if persona.traits.agreeableness > 1 and len(persona.acceptable_options) < int(cfg.personas.non_blocker_min_acceptable):
-                raise ValueError("normal participant has too few acceptable options")
-            if persona.traits.agreeableness == 1 and persona.acceptable_options != [persona.preferred_option]:
-                raise ValueError("stubborn participant must accept only their preferred option")
-            acceptable = set(persona.acceptable_options)
-            rejected = set(persona.soft_rejections) | set(persona.hard_rejections)
-            if acceptable & rejected:
-                raise ValueError("option cannot be both acceptable and rejected")
-            if any(not persona.reasons.get(option_id) for option_id in acceptable):
-                raise ValueError("every acceptable option needs a grounded reason")
-        normal = [persona for persona in personas if persona.traits.agreeableness > 1]
-        if bool(cfg.personas.require_common_compromise) and normal:
-            common = set(normal[0].acceptable_options)
-            for persona in normal[1:]:
-                common &= set(persona.acceptable_options)
-            if not common:
-                raise ValueError("normal participants have no shared acceptable option")
-            if common_option and any(common_option not in persona.acceptable_options for persona in normal):
-                raise ValueError(f"normal participants must all accept planned compromise {common_option}")
+            if not persona.preferred_options:
+                raise ValueError(f"participant {persona.id} has no preferred options")
+            for opt in persona.preferred_options:
+                if opt not in labels:
+                    raise ValueError(f"participant {persona.id} has invalid preferred option {opt}")
+            if persona.rejection and persona.rejection not in labels:
+                raise ValueError(f"participant {persona.id} has invalid rejection {persona.rejection}")
+            if persona.rejection and persona.rejection in persona.preferred_options:
+                raise ValueError(f"participant {persona.id} cannot reject a preferred option")
+            if persona.traits.agreeableness == 1 and len(persona.preferred_options) > 1:
+                raise ValueError(f"hard blocker {persona.id} should have exactly one preferred option")
 
-    @staticmethod
-    def _default_reason(option: OptionCard) -> str:
-        # Used only for options this code structurally assigned (a coalition-reassigned
-        # preference or the forced common compromise) that the model never justified.
-        # Phrased as a plain personal reason, not a templated "Option X has the upside
-        # that ..." line that reads robotic when it surfaces in the chat.
-        if option.upside:
-            return option.upside
-        if option.best_for:
-            # best_for is a noun phrase ("Those prioritizing scenery"); lowercase the
-            # lead so it reads as a clause, not a broken mid-sentence capital.
-            fit = option.best_for[0].lower() + option.best_for[1:]
-            return f"it works for {fit}"
-        if option.tradeoff:
-            return "the trade-off feels manageable to me"
-        return "it fits what the group is after"

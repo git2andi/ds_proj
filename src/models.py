@@ -120,23 +120,16 @@ class TraitProfile:
 class Persona:
     id: str
     name: str
-    role: str
     traits: TraitProfile
-    speech_style: str
+    background: str
     private_goal: str
-    backstory: str
-    main_concern: str
-    preferred_option: str
-    acceptable_options: list[str]
-    soft_rejections: list[str]
-    hard_rejections: list[str]
-    reasons: dict[str, list[str]]
-    reservation: str
-    reconsider_if: str
-    option_scores: dict[str, int] = field(default_factory=dict)  # hidden 1..5 utility per option
+    preferred_options: list[str]        # 1–2 genuine favourites, ordered by preference
+    rejection: str | None = None        # optional; max one grounded rejection
+    rejection_reason: str = ""
 
-    def score_for(self, option_id: str) -> int:
-        return self.option_scores.get(option_id, 3)
+    @property
+    def preferred_option(self) -> str:
+        return self.preferred_options[0]
 
 
 @dataclass(slots=True)

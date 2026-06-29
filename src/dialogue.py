@@ -88,7 +88,8 @@ class Orchestrator:
         closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
         self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
         self._social_round(state, tracker, Phase.CLOSURE, int(cfg.utterances.word_budgets.farewell),
-                           lambda p, others, b, said: prompts.farewell_line(p, scenario, outcome, others, b, said))
+                           lambda p, others, b, said: prompts.farewell_line(p, scenario, outcome, others, b, said),
+                           validate_state=state)
         state.dialogue_tokens_in = self._llm.session_tokens_in
         state.dialogue_tokens_out = self._llm.session_tokens_out
         paths = self.logger.finish(state, outcome)
@@ -99,7 +100,7 @@ class Orchestrator:
     def _print_header(scenario, personas) -> None:
         print("\n" + "=" * 72)
         print(f"Topic: {scenario.topic}")
-        print("Participants: " + ", ".join(f"{p.name} ({p.role})" for p in personas))
+        print("Participants: " + ", ".join(p.name for p in personas))
         print("=" * 72)
 
     @staticmethod
@@ -109,27 +110,37 @@ class Orchestrator:
     def _moderator_say(self, prompt: str, state: DialogueState) -> str:
         """Generate a moderator facilitation line via the LLM and clean it to one line.
         Prior facilitator lines are fed back in so the moderator doesn't recite the same
-        stock phrasing twice (e.g. two identical 'anyone object or lock it in?' nudges)."""
+        stock phrasing twice (e.g. two identical 'anyone object or lock it in?' nudges).
+        A grounding check fires once after generation: if invalid option references appear,
+        the prompt retries once rather than leaking hallucinated option names into the transcript."""
         prior = [t.text for t in state.turns if t.speaker_id == "moderator"][1:]  # skip the fixed option board
         if prior:
             bullets = "; ".join(compact_words(p, 12) for p in prior[-3:])
             prompt += f"\n\nYou already said, earlier: {bullets}. Say this in different words — don't reuse that phrasing."
-        raw = self._llm.generate(prompt, profile="dialogue")
-        return clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
+        resolver = OptionResolver(state.scenario.options)
+        for attempt in range(2):
+            raw = self._llm.generate(prompt, profile="dialogue")
+            text = clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
+            if not resolver.invalid_option_refs(text):
+                return text
+            if attempt == 0:
+                prompt += "\n\nOnly use the exact option names listed above — no invented or paraphrased names."
+        return text  # accept the imperfect second attempt rather than aborting
 
-    def _social_round(self, state: DialogueState, tracker: "StateTracker", phase: Phase, budget: int, build_prompt) -> None:
+    def _social_round(self, state: DialogueState, tracker: "StateTracker", phase: Phase, budget: int, build_prompt, validate_state: DialogueState | None = None) -> None:
         """A quick, optional social beat (greeting at the start, sign-off at the end) from a
         trait-driven subset. Cosmetic only; each speaker is shown the prior lines so they don't
-        all read alike. `build_prompt(persona, others, budget, said)` returns the LLM prompt."""
+        all read alike. `build_prompt(persona, others, budget, said)` returns the LLM prompt.
+        `validate_state` is passed to _social_say for grounding checks (farewell only)."""
         said: list[str] = []
         for persona in self._social_speakers(state.personas):
             others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(build_prompt(persona, others, budget, said), persona, budget)
+            line = self._social_say(build_prompt(persona, others, budget, said), persona, budget, validate_state)
             if line:
                 said.append(line)
                 self._emit(tracker.apply_social(state, persona, line, phase, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
-    def _social_say(self, prompt: str, persona: Persona, budget: int) -> str | None:
+    def _social_say(self, prompt: str, persona: Persona, budget: int, state: DialogueState | None = None) -> str | None:
         # Greetings/goodbyes are cosmetic; a hiccup on one shouldn't sink the whole run, so
         # we skip that persona's line rather than fabricate or abort.
         try:
@@ -137,6 +148,20 @@ class Orchestrator:
         except Exception:
             return None
         text = clean_generated(raw, persona.name, budget)
+        # For farewell turns (state present), check that no invalid option names slipped in.
+        if text and state is not None:
+            resolver = OptionResolver(state.scenario.options)
+            if resolver.invalid_option_refs(text):
+                try:
+                    raw2 = self._llm.generate(
+                        prompt + "\n\nOnly use the exact option names listed above — no invented names.",
+                        profile="dialogue",
+                    )
+                    text2 = clean_generated(raw2, persona.name, budget)
+                    if text2 and not resolver.invalid_option_refs(text2):
+                        text = text2
+                except Exception:
+                    pass  # fall through with the original text
         return text or None
 
     @staticmethod
@@ -278,8 +303,8 @@ def initialise_state(scenario, personas) -> DialogueState:
         runtimes={
             persona.id: ParticipantRuntime(
                 persona_id=persona.id,
-                current_preference=persona.preferred_option,
-                hard_rejections={opt: "private hard rejection" for opt in persona.hard_rejections},
+                current_preference=persona.preferred_options[0],
+                hard_rejections={persona.rejection: persona.rejection_reason} if persona.rejection else {},
             )
             for persona in personas
         },
@@ -437,8 +462,7 @@ class StateTracker:
             rt.current_preference = act.explicit_vote
         elif act.proposes_option:
             rt.current_preference = act.proposes_option
-        elif (moves_lean and act.act_type == ActType.SUPPORT and act.option_refs
-              and act.option_refs[0] in set(persona.acceptable_options) | {persona.preferred_option}):
+        elif (moves_lean and act.act_type == ActType.SUPPORT and act.option_refs):
             rt.current_preference = act.option_refs[0]
         for option_id in act.accepts:
             rt.accepted_options.add(option_id)
@@ -452,12 +476,18 @@ class StateTracker:
 
     def _update_coverage(self, state: DialogueState, record: TurnRecord) -> None:
         act = record.act
+        # Only count visibly mentioned options — options inherited from routing intent but
+        # never spoken are not evidence that the option was actually examined.
+        visible_ids = self.resolver.ids_in_text(record.text)
         slots = classify_claim_slots(record.text)
-        for option_id in act.option_refs:
+        has_slots = bool(slots)
+        for option_id in visible_ids:
             if option_id in state.coverage:
                 cov = state.coverage[option_id]
                 cov.mentions += 1
-                if _looks_like_reason(record.text):
+                # A reason requires the option to be named AND a real claim slot attached —
+                # prevents any long sentence mentioning the option from inflating reason counts.
+                if has_slots:
                     cov.reasons += 1
                 cov.covered_slots.update(slots)
         for option_id in set(act.soft_rejects) | set(act.hard_rejects):
@@ -700,6 +730,15 @@ def max_words_for(intent: MoveIntent, persona) -> int:
     return min(trait_adjusted, int(cfg.utterances.max_chat_words))
 
 
+def _strip_body_semicolons(text: str) -> str:
+    """Replace semicolons in the message body with em-dashes. Protects the
+    [act=...; opt=...; stance=...] trailer, which legitimately contains semicolons."""
+    trailer_idx = text.rfind("[act=")
+    body = text[:trailer_idx] if trailer_idx != -1 else text
+    tail = text[trailer_idx:] if trailer_idx != -1 else ""
+    return body.replace(";", " —") + tail
+
+
 def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = strip_speaker_prefix(normalise_ws(text), speaker_name).strip().strip('"')
     if "\n" in text:
@@ -708,6 +747,7 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = fix_stock_phrases(text)
     text = _strip_considering_opener(text)
     text = _surface_cleanup(text)
+    text = _strip_body_semicolons(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
     return compact_words(text, hard_cap)
 
@@ -731,6 +771,8 @@ def _surface_cleanup(text: str) -> str:
     text = re.sub(r"\.{2,}", ".", text)
     text = re.sub(r"([!?])\1+", r"\1", text)
     text = re.sub(r'^["\x27]+|["\x27]+$', "", text).strip()
+    # Strip accidental option-letter prefix like "D=Some Option name..."
+    text = re.sub(r"^[A-Z]=", "", text).strip()
     return text
 
 

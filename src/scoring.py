@@ -6,7 +6,6 @@ the group back option X" drifting apart.
 
 from __future__ import annotations
 
-from config_loader import cfg
 from models import DialogueState, Persona
 
 
@@ -20,9 +19,7 @@ def current_lean(state: DialogueState, persona: Persona) -> str | None:
 
 def option_support(state: DialogueState, option_id: str) -> float:
     """How strongly the group currently backs an option: explicit votes and accepts
-    weigh most, then current leanings and initial preference, plus the hidden private
-    utility, minus rejections."""
-    acceptance = int(cfg.scenario.acceptance_score)
+    weigh most, then current leanings and initial preference, minus rejections."""
     score = 0.0
     for persona in state.personas:
         rt = state.runtimes[persona.id]
@@ -32,12 +29,8 @@ def option_support(state: DialogueState, option_id: str) -> float:
             score += 3.0
         if rt.current_preference == option_id:
             score += 2.0
-        if persona.preferred_option == option_id:
+        if option_id in persona.preferred_options:
             score += 1.0
-        # Latent acceptability is weighted lightly so an option only a few people *could*
-        # live with doesn't out-rank options people are actively backing — otherwise the
-        # group drifts onto a bland common compromise nobody actually argued for.
-        score += (persona.score_for(option_id) - acceptance) * 0.4
         if option_id in rt.hard_rejections:
             score -= 5.0
         elif option_id in rt.soft_rejections:
@@ -68,9 +61,9 @@ def best_overlap_option(state: DialogueState) -> str | None:
         camps: set[str] = set()
         for persona in state.personas:
             rt = state.runtimes[persona.id]
-            if opt in rt.hard_rejections or opt in persona.hard_rejections:
+            if opt in rt.hard_rejections:
                 continue
-            if leans[persona.id] == opt or opt in rt.accepted_options or opt in persona.acceptable_options:
+            if leans[persona.id] == opt or opt in rt.accepted_options or opt in persona.preferred_options:
                 backers += 1
                 if leans[persona.id]:
                     camps.add(leans[persona.id])

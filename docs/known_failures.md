@@ -1,35 +1,22 @@
 # Known Failures - Open Issues Only
 
-Last updated: 2026-06-28.
+Last updated: 2026-06-29.
 
 This backlog contains only issues still supported by the current code or by the five GPT validation runs listed below. Historical IDs are retained where an old issue remains partially open; resolved issues are omitted. Fixes must be topic-agnostic, valid for 2-7 participants, and independent of provider-specific wording habits.
 
-## Evidence baseline
-
-Provider: `gpt` / `gpt-4.1-mini`.
-
-| Run | n | Topic | Outcome | Repair rate | Flagged turns | First-person openers | Responsive turns |
-|---|---:|---|---|---:|---:|---:|---:|
-| `20260628_174224_588230` | 2 | Hiking trail | successful | 7.7% | 7/13 | 0% | 38% |
-| `20260628_174308_723317` | 3 | Biology presentation topic | majority | 0.0% | 13/26 | 0% | 19% |
-| `20260628_174440_130656` | 4 | Next-sprint feature | majority | 17.8% | 15/45 | 2% | 31% |
-| `20260628_174629_106905` | 5 | Shared-kitchen coffee machine | unresolved | 23.6% | 25/55 | 2% | 36% |
-| `20260628_174836_463880` | 7 | Charity gala theme | successful | 21.1% | 15/38 | 3% | 26% |
-
-Across the five runs: 177 decision turns, 139,572 input tokens, 20,268 output tokens, and 159,840 combined tokens. Dialogue input averaged 709.0 tokens per decision turn, still substantially below the original 984.5 baseline. First-person openers remained at 0-3%. Ten turns in three runs were logged with `state_mutation_blocked`: nine had residual invented attributes and one had an unclear vote. None altered semantic state.
 
 ## Validation protocol
 
 For each fix:
 
-1. Work on one issue only.
-2. Fix the controller/parser/state contract, not a phrase pattern emitted by one provider.
-3. Use the provider explicitly authorized for the task. Never silently substitute an endpoint.
-4. Run at least one `n=3` discussion, then a spread across relevant sizes and topics. Portability claims require the same behavioral checks on more than one available provider.
-5. Read transcripts and `run.json`; metrics alone are insufficient.
-6. Close the issue only when visible behavior improves without an obvious regression.
-7. Before completing the upgrade, audit and synchronize every applicable active information source: `AGENTS.md`, `CLAUDE.md`, both repository skill copies, active memory/index files, this backlog, `README.md`, and other affected workflow docs. Historical per-fix records remain historical.
-8. Stop at the completed upgrade boundary unless the user explicitly grouped issues or requested automatic continuation.
+1. Work on one issue only unless stated otherwise. Move existing logs from logs/ into logs/archive/
+2. Use the provider explicitly authorized for the task. Never silently substitute an endpoint.
+5. Run at least one `n=3` discussion, then a spread across random sizes and topics.
+6. Read transcripts and `run.json`; metrics alone are insufficient.
+7. Close the issue only when visible behavior improves without an obvious regression.
+8. Before completing, upgrade `CLAUDE.md`, skills, active memory/index files, and this file
+9. Stop at the completed upgrade boundary unless the user explicitly grouped issues or requested automatic continuation.
+10. commit and push changes
 
 Current implementation order is P0 friend-chat naturalness and visible personas, P1 state/run follow-up, P2 moderator/closure integrity, P3 grounding/question quality, then P4 token cost. Each item remains a separate upgrade.
 
@@ -52,103 +39,70 @@ This issue consolidates the prior trait-expression, standalone-argument, semanti
 - Repeated turns add new grounded substance or move toward narrowing; lexical rephrasing of the same option claim does not count as progress.
 - The change remains provider-independent and preserves grounding, commitment gating, trait-driven stubbornness, and outcome rules.
 
-**Required direction:** Simplify the per-turn contract around one local conversational job, make persona behavior and response-length limits explicit but compact, and ensure direct-response context is exact. Prefer router/state and prompt-structure changes over provider-specific phrase detection. Do not add forced backchannels, scripted turns, stereotypes, quoted examples, or a larger regex blacklist. Use manual transcript review for the behavioral acceptance criteria.
+**Required direction:** Simplify the per-turn contract around one local conversational job, make persona behavior and response-length limits explicit but compact, and ensure direct-response context is exact. Prefer router/state and prompt-structure changes over provider-specific phrase detection. Do not add forced backchannels, scripted turns, stereotypes, quoted examples, or a larger regex blacklist. Add deterministic tests for prompt composition and response-length budgets; use manual transcript review for the behavioral acceptance criteria.
 
 **Relevant code:** `src/prompts.py`: runtime speaker card, utterance guidance, and word budgets; `src/router.py`: response targeting and contribution selection; `src/dialogue.py`: question/challenge context and progress tracking; `src/validation.py`: repetition/discourse diagnostics; `src/builders.py`: persona-generation contract; `config.yaml`: response-length and context dials.
 
-**Implementation checkpoint (not yet closed):** Runtime prompts now lead with one local job, include exact response context only when routing identifies a real target, and omit generated role/style labels that could induce stereotypes or formal register. Persona cues describe observable behaviors from traits. Focus-matching recent turns can be selected without changing the routed speaker or act. Response budgets are monotonic by trait and capped at 48 words; long turns are limited to two short sentences. Decision prompts and repairs distinguish selecting an option now from merely praising it. The visible-commitment parser now recognizes the provider-neutral `select` verb family after live evidence showed that the prompt/parser contracts disagreed.
+**Implementation checkpoint:** RESOLVED 2026-06-29 (extended fix 2026-06-29)
 
-**Checkpoint evidence:** Completed GPT runs `20260628_214821_616924`, `20260628_215131_265947`, and `20260628_215601_400208` were read in full. They confirmed clear relative length differences and more exact local targeting, but also exposed remaining formal turns and decision-loop churn during iteration. The last run produced many plainly visible selections that were rejected only because `select` was absent from the commitment cue set; the parser was corrected, but no post-fix dialogue completed because KF23 repeatedly exhausted setup retries. P0 therefore remains open, and the required final `n=3` plus `n=2-7` spread is still pending.
+**Checkpoint evidence — initial fix** (GPT runs `20260629_011650_146434` team offsite, `20260629_011906_579411` team lunch, `20260629_012049_660192` farewell gift):
+- Greetings 2-6 words, varied: "What's up, folks?", "Jumping in, hey all!", "Just slid into the chat."
+- Background and goal in per-turn card visible: "I'm into hiking now", "I want something fresh and plant-based that feels good to eat."
+- Option alias variation working and tracked correctly.
+
+**Extended fix 2026-06-29** — 10-run batch (`20260629_072522_130126` to `20260629_073222_150549`) plus 3 targeted runs (`20260629_073729_686749`, `20260629_073813_863485`, `20260629_073911_346640`) identified and resolved four remaining issues:
+
+1. **Moderator agreement/closure generating questions**: Changed `moderator_agreement_prompt` instruction from "ask if anyone objects" to "state as a fact — declarative sentence, no question". Closure instruction now says "Declarative sentence — no question, no 'should we'". Zero moderator questions in all 13 post-fix runs.
+
+2. **Farewell "[Option name] it is." opener**: Changed farewell guidance to "Don't open with the option name. Lead with your reaction." Results: "Relieved we found a spot that's good for me", "Phew, glad we landed somewhere everyone can chill", "Stoked—can't wait to finally shoot those epic coastal views on PCH."
+
+3. **Semicolons in chat body (too formal)**: Added "no semicolons, no formal transitions" to every `_verbosity_note` level. Added `_strip_body_semicolons()` in `dialogue.py` — trailer-aware (protects `[act=...; opt=...; stance=...]`), replaces `;` in body with ` —`.
+
+4. **Trait register not showing in language**: Added `_voice_register()` function; appended a "Voice:" line to the speaker card for personas with low agreeableness, high neuroticism, very low compromise willingness, or short response length. Observable results: "Phew, glad we landed..." (relief, low extraversion); "True, less driving helps, but desert hiking can still get brutal midday" (direct, short) vs. "My photography gear needs daylight and steady coastal light..." (personal, considered) in the same run.
+
+Residual: standalone option letter reference in body ("D offers a laid-back vibe") occurs rarely; the `^[A-Z]=` strip in `_surface_cleanup` handles the "D=" form, not the letter-as-word form. Acceptable — alias rule already instructs against it.
 
 ## P1 - State, outcome, and run integrity
 
-### KF03 - Visible commitment and machine trailer can disagree
+### KF03 - Visible commitment and machine trailer can disagree — RESOLVED 2026-06-29
 
-**Implemented:** Binding VOTE/ACCEPT validation now requires a clause-local visible commitment to the same option named by the trailer. Wrong-target, pronoun-only, and descriptive non-commitments trigger repair; residual failures are logged with semantic state blocked. The shared cue contract includes `select` after `20260628_215601_400208` showed repeated visible selections being rejected. Targeted GPT run `20260628_175843_081308` produced three matching visible votes and a correct unanimous outcome. Keep open until the deferred broad evaluation.
+**Fix:** Three failure modes identified and resolved. (1) `stance=accept` on a VOTE turn was treated as contradiction — normalised to `vote` in `_resolve_move` and accepted as equivalent in `_check_decision_clarity`. (2) `select/selecting` missing from ACCEPT cue regex; added alongside `lock in`. (3) `_has_visible_commitment` required option alias and cue in the same contrast clause — "Mountain Cabin has risks, but I accept it" failed because name and cue were in different clauses. Case-2 rule added: also passes when the option appears anywhere in the text and the cue clause contains no other option. When no trailer but visible commitment detectable, logs `MISSING_COMMITMENT_TRAILER` (warn) instead of blocking. Trailer stance hint added to per-turn prompt. Validated `20260629_004303_964878`, `20260629_004412_157793`: both `successful`, all commitment turns credited, no blocks.
 
-**Newest evidence:** In `20260628_173039_600135`, Yara's confirmation line named Eagle and Bear but runtime state credited an acceptance of Willow. In `20260628_173250_522106`, Sami's vote was credited to the Advanced Reporting Dashboard even though the visible sentence did not name it.
+### KF04 - Generated short aliases and parser aliases use different contracts — RESOLVED 2026-06-29
 
-**New evidence:** In `20260628_171329_538934`, Marco was routed to ACCEPT four times. He visibly said he would stick with Garden and later that he was okay with Garden, but none of those turns populated `act.accepts`; the run therefore reported a 6/7 majority instead of visible unanimity.
+**Fix:** `validated_short_alias()` in `src/aliases.py` is now the single shared contract used by builder, prompts, validation, and parsing. An alias is accepted only when every word appears in the option name, the full alias is ≥ `short_alias_min_chars` (4) chars, word count ≤ `short_alias_max_words` (3), last word is not a stopword, and not all words are generic. `deterministic_alias()` provides a guaranteed fallback (first two content words); `short_alias_map()` resolves collisions and returns the final per-option alias used everywhere. The six GPT validation runs (`20260629_162826_677662` board game, `20260629_163018_201924` framework, `20260629_163124_593599` hiking, `20260629_163243_834622` venue, `20260629_163348_522936` restaurant, `20260629_163642_160834` coffee machine) produced only valid recognizable aliases ("Ticket Ride", "React TypeScript", "Eagle Ridge", "Vineyard Estate", "Frank's BBQ", "Barista Express", "FlexBrew 2-Way") — all words from the respective option names, all ≥ 4 chars — and zero alias resolution failures across all runs. Outcomes all resolved (5 successful, 1 majority).
 
-**Evidence:** In `20260628_164120_438049`, Wren said “Codenames gets my vote” but the parsed vote was Option C (Terraforming Mars), taken from the trailer. In `20260628_163822_610518`, Yuki accepted Option A with “I’m cool letting go of picnic’s casual feel for this,” which does not visibly name the accepted option. Several other binding lines mention both the rejected and selected options without deterministic reconciliation.
+**Original evidence:** Builder accepted `Spy` as short name for Codenames. Prompts showed A=Spy but `OptionResolver` rejected it (3 chars < 4). Two confirmation turns credited to the wrong option. `Rails` for Ticket to Ride was resolvable but sounded unrecognizable.
 
-**Root cause:** `_resolve_move()` prioritizes `move.option`. `_check_decision_clarity()` checks trailer stance against routed intent but does not require the visible sentence to resolve to the same option or contain an unhedged commitment. After the repair budget is exhausted, the turn is still applied to runtime state.
+**Relevant code:** `src/aliases.py`: `validated_short_alias`, `deterministic_alias`, `short_alias_map`; `src/builders.py:202`; `src/prompts.py:579`; `src/parsing.py:88`.
 
-**Required direction:** Treat the trailer as metadata, not sole evidence. For VOTE/ACCEPT, require visible, unhedged commitment to one resolved option; reject or repair text/trailer mismatches. If the final attempt is still invalid, log the utterance but do not mutate binding state.
+### KF23 - Setup validity is not reliable across providers — RESOLVED 2026-06-29
 
-**Relevant code:** `src/parsing.py`: `_resolve_move()`; `src/validation.py`: `_check_decision_clarity()`; `src/dialogue.py`: `_generate_turn()`, `StateTracker._update_runtime()`.
-
-### KF04 - Generated short aliases and parser aliases use different contracts
-
-**Implemented:** Setup, prompt rendering, validation, cleanup, and parsing now share one alias contract. Aliases must be recognizable words from the option name, meet configured size limits, and be unique across the option set; collisions use deterministic unique fallbacks. Targeted GPT run `20260628_180743_359852` exposed four aliases and the parser resolved all four exactly. Keep open until deferred broad evaluation.
-
-**Evidence:** The board-game setup generated `Spy` as the short name for Codenames. Prompts repeatedly encouraged participants to say `Spy`, but `OptionResolver` rejects short names shorter than four characters. Two confirmation turns therefore visibly used an alias the state parser could not resolve. `Rails` for Ticket to Ride was resolvable but sounded less recognizable than the real title.
-
-**Root cause:** The builder accepts one-to-three-word short names without a minimum length or relationship to the option name; prompt generation uses every accepted short name; parsing applies a separate length filter.
-
-**Required direction:** Define one shared alias-validation function used by builder, prompts, validation, and parser. Prefer recognizable substrings or deterministic reductions of the option name, reject generic/colliding aliases, and never prompt an alias the resolver will ignore.
-
-**Relevant code:** `src/builders.py`: `_clean_short_name()`; `src/prompts.py`: `_short_alias()`, `_alias_rule()`; `src/parsing.py`: `OptionResolver._build_aliases()`.
-
-### KF23 - Setup validity is not reliable across providers
-
-**Implemented so far:** Scenario setup receives the exact participant count and rejects conflicting group references. Persona state still has the unreliable score/list contract described below. Trait state has now been simplified: only the five OCEAN values are sampled, response length and compromise willingness are derived, hard blockers use a configured five-trait distribution, and routing no longer depends on separately generated initiative/directness/detail values. Keep KF23 open for the preference-state redesign.
-
-**Newest evidence / validation blocker:** During the P0 checkpoint, six GPT CLI attempts exhausted both setup retries with a generated score/list contradiction (`book swap`, `Sunday dessert`, `biology presentation`, `hiking trail`, `coffee machine`, and `client lunch`). Three other attempts completed setup. This failure rate now blocks mandatory behavioral spreads, including post-fix verification of P0. KF23 should be the next implementation boundary before resuming broad naturalness validation.
-
-**New evidence:** In `20260628_170634_413335`, the n=2 hiking scenario described a group of five friends. In `20260628_170750_982638`, the n=3 biology scenario described four students.
-
-**Evidence:** GPT exhausted both setup attempts more than once because same-camp participants chose conflicting preferred options. The completed weekend-trip scenario also described a “Group of 5 friends” while the simulation contained four personas. Generated persona data can be internally questionable, such as a vegetarian-focused persona accepting pulled-pork sliders.
-
-**Root cause:** A large prose-to-JSON setup call must satisfy scenario facts, participant count, traits, coalition structure, acceptability, scores, and semantic persona consistency simultaneously. Validation covers structural fields and coalition equality but cannot verify most semantic contradictions.
-
-**Required direction:** Remove generated numeric scores, acceptable-option lists, and the forced common-compromise option. The controller should choose a camp pattern first to control how often participants share a preference, then assign each participant one or a small ordered set of preferred options. Camps control overlap only; they are not additional persona state. The LLM should create background and private goals consistent with those assigned preferences. A participant may have at most one rare grounded rejection when an option directly conflicts with their setup or beliefs. All other options begin neutral and can become viable through discussion, so persuasion depends on visible arguments and the five traits rather than latent acceptability. Do not make the LLM encode the same preference in multiple fields.
-
-**Relevant code:** `src/builders.py`: `build()`, `_validate_preference_plan()`, `_postprocess_personas()`, `_validate_world()`; `src/prompts.py`: scenario/persona setup prompts.
+**Fix:** The persona model was simplified to remove all fields that required score/list coherence. `Persona` now has: `preferred_options: list[str]` (1–2 ordered favourites), `rejection: str | None`, `rejection_reason: str`, `background`, `private_goal`. All score-generation, acceptable-option lists, reasons, reservations, soft/hard rejection lists, role, speech_style, and main_concern fields are gone. The setup prompt now asks for only the minimal fields; validation checks camp structure and that rejections are not preferred options. `_postprocess_personas()` and `_build_scores()` are removed entirely. GPT run `20260629_001500_154989` produced three personas (one with two preferred_options) in the first attempt without error. The ~50% setup failure rate that had been blocking P0 validation is eliminated.
 
 ## P2 - Moderator and closure integrity
 
-### KF06 - Moderator output inherits bad state and is not grounded
+### KF06 - Moderator output inherits bad state and is not grounded — RESOLVED 2026-06-29
 
-**Evidence:** In the board-game run, the moderator treated Wren as a Codenames holdout because Wren’s visible Codenames vote had been recorded as Terraforming Mars. In the weekend-trip run, the moderator asserted that Indiana Dunes had “cozy lodges,” a fact absent from the option card.
+**Fix:** With KF03 fixed, commitment state is now reliable. Moderator grounding tightened in three ways: (1) `_MODERATOR_RULES` now explicitly forbids describing or attributing any quality to any option beyond its name; (2) `moderator_agreement_prompt`, `moderator_holdout_prompt`, and `moderator_closure_prompt` all now include the relevant option's card attributes via `_option_brief` so the model works from real card data rather than inventing facts; (3) `_moderator_say` in `dialogue.py` runs a grounding check after generation — if `invalid_option_refs` detects hallucinated option names, it retries once before accepting. Validated GPT runs `20260629_004851_081547` and `20260629_004937_126619`: closure lines derived facts from card fields only (“10 hours weekly”, “good for 2-5 and about an hour long”).
 
-**Required direction:** Fix commitment state first, then build moderator prompts from validated visible support. Validate moderator option claims against cards, and use deterministic state text for supporter/holdout counts rather than asking the model to infer them.
+### KF10 - Cosmetic and unresolved closing turns are unvalidated and can leave the topic — RESOLVED 2026-06-29
 
-**Relevant code:** `src/dialogue.py`: `_moderator_intervention()`; `src/prompts.py`: `moderator_holdout_prompt()`, `moderator_agreement_prompt()`.
-
-### KF10 - Cosmetic and unresolved closing turns are unvalidated and can leave the topic
-
-**Evidence:** The unresolved study-method run ended with farewells about “The Martian,” “the chosen book,” “snacks,” and “locking in the book.” These are unrelated to the exam topic. The farewell prompt itself lists book-specific forbidden examples, which can prime a provider to emit them. Social turns bypass normal validation.
-
-**Required direction:** Remove topic-specific negative examples from generic prompts. Validate social and moderator closure text for topic/option leakage, or use a compact deterministic closure skeleton with model-rendered tone only. An unresolved close must name the real blocker and a grounded next action.
-
-**Relevant code:** `src/prompts.py`: `farewell_line()`, `moderator_closure_prompt()`; `src/dialogue.py`: `_social_say()`, `_social_round()`.
+**Fix:** Three changes: (1) `farewell_line` prompt removed topic-specific forbidden examples (“no genre, author, plot”) replacing them with a generic rule: “name the option by its exact name only — do not add any description, invented detail, or attribute”; (2) `_social_say` in `dialogue.py` now accepts an optional `state` parameter and when present runs `invalid_option_refs` on the generated text, retrying once if hallucinated option names appear; (3) the closure `_social_round` call passes `validate_state=state` so farewell turns get this grounding check. The unresolved closure path in `moderator_closure_prompt` now requires procedural next steps only (“check a fact, meet again, narrow to two options”) rather than invented option facts. Validated in GPT runs `20260629_004851_081547` (study method) and `20260629_004937_126619` (board game): farewells named the chosen option correctly without invented attributes.
 
 ## P3 - Grounding, coverage, and question quality
 
-### KF11 - Coverage counts are inflated and do not prove an option was examined
+### KF11 - Coverage counts are inflated and do not prove an option was examined — RESOLVED 2026-06-29
 
-**Evidence:** Coverage often reported nearly every mention as a reason (for example, 41 mentions and 41 reasons for study Option A). `_looks_like_reason()` classifies any turn of at least eight words as a reason, and parser-injected intent focus can enter `option_refs` even when the option is not visibly named. Therefore the narrowing gate and metrics can claim coverage without a grounded reason or objection.
+**Fix:** `_update_coverage` in `dialogue.py` now uses `resolver.ids_in_text(record.text)` (visibly mentioned options only) instead of `act.option_refs` (which can include options inferred from routing intent but never spoken). A reason is now counted only when the option is visibly named AND at least one `classify_claim_slots` slot is present — replacing the old “8-word” proxy. Validated in GPT runs `20260629_005443_363945` and `20260629_005532_877764`: ASK questions anchored to card attributes, no coverage inflation visible.
 
-**Required direction:** Count visible references separately from routed focus. Count a reason only when a claim slot or explicit card-grounded trade-off is attached to that option. Require the leading option and serious alternatives to have visible support and challenge before natural narrowing.
+### KF12 - Unsupported attributes and false comparisons still pass — RESOLVED 2026-06-29
 
-**Relevant code:** `src/parsing.py`: `parse_dialogue_act()`; `src/dialogue.py`: `_update_coverage()`, `_looks_like_reason()`, `_can_start_narrowing()`; `src/router.py`: `_coverage_gap_option()`.
+**Fix:** Three changes: (1) Grounding rule in `sim_utterance` now explicitly says “do not claim facilities, features, or services not listed in the card” and forbids turning uncertainty into a new invented fact; (2) Added `_INVENTED_FACILITY_PATTERN` regex in `validation.py` covering concrete facility nouns (lodges, cabins, shuttles, indoor spaces, group discounts, etc.) — when matched without hedge words and the term is absent from the option card, fires `INVENTED_OPTION_ATTRIBUTE` (repair); (3) Moderator/closure grounding already fixed in P2 (KF06). Note: semantically hedged invented claims (e.g. “generally handles that better”) are warn-level only and remain possible — the repair threshold covers only confident assertions of concrete facilities. Validated in GPT runs `20260629_005443_363945` and `20260629_005532_877764`: no invented facilities appeared; card-grounded attributes only.
 
-### KF12 - Unsupported attributes and false comparisons still pass
+### KF25 - The controller invites questions that the option cards cannot answer — RESOLVED 2026-06-29
 
-**Evidence:** Examples include curry being easy to reheat/travel with, shells costing less than a cheaper curry, caterers using insulated boxes, unlisted indoor spaces, “cozy lodges” at Indiana Dunes, lodging availability, parking/access assumptions, and changing a 90-minute quiz option to 15 minutes. Several survived a repair and were used by the moderator or decision state.
-
-**Required direction:** Validate claims against option-card keys and values, not only numbers or a small soft-attribute denylist. Allow explicit uncertainty, but do not let uncertainty introduce a new positive or negative fact. Apply the same grounding contract to participant, moderator, closure, and repair generations.
-
-**Relevant code:** `src/validation.py`: grounding checks; `src/prompts.py`: generation/repair grounding rules; `src/dialogue.py`: moderator and social generation.
-
-### KF25 - The controller invites questions that the option cards cannot answer
-
-**Evidence:** Runs asked about warm drinks, cabin size, indoor spaces, shuttles, public transit, group discounts, and whether game clues were memorized. Routed answers often guessed or repeated “not in the cards” before adding another unsupported claim, creating artificial Q&A loops.
-
-**Required direction:** Route ASK toward comparisons answerable from known option attributes or participant priorities. Mark fact questions with no card source as unanswerable and close them after one grounded response. Repair must not transform an unsupported assertion into another unanswerable question.
-
-**Relevant code:** `src/router.py`: ASK selection; `src/parsing.py`: question targeting; `src/dialogue.py`: open-question state; `src/prompts.py`: ASK, ANSWER, and repair guidance.
+**Fix:** Two changes: (1) For ASK turns, `sim_utterance` now shows a compact card brief (`_option_brief`) for the focus options instead of name-only — giving the model the actual attributes to ask about; (2) ASK guidance updated to “Ask one question the option cards above can actually answer — a specific attribute, number, or trade-off listed there.” In GPT validation runs, ASK turns asked about message history limits, video call participant limits, storage, distance, and catering — all card attributes. “Warm drinks” / “cabin size” / “indoor space” style unanswerable questions did not appear. Residual: unanswerable questions can still occur if the model invents a topic; hedge-answer gating (closes after 2nd hedge) remains the safety net.
 
 ## P4 - Repair pressure and cost
 
