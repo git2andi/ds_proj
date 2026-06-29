@@ -318,8 +318,8 @@ def _distinct_from_prior(prior: list[str], what: str) -> str:
 
 
 def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int, prior: list[str]) -> str:
-    return f"""Write a 2-6 word casual hello from {persona.name} joining a group chat.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
-Plain and informal — like a real first message in a text thread. No topic, no opinion, no question, no emoji, no name prefix. Avoid "Hey everyone" — enter the chat differently: a quick state, a reaction to joining, or just sliding in."""
+    return f"""Write a 2-6 word casual hello from {persona.name} in a group text thread.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
+Plain and informal — like the very first text someone fires off in a chat. No topic, no opinion, no emoji, no name prefix. This is text — not walking into a room. No arrival phrases ("here I am", "just dropped in", "finally made it"). Avoid "Hey everyone". Just a casual hi, a short reaction, or a quick word."""
 
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
@@ -519,7 +519,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     high_compromise = t.compromise_willingness >= 0.6
     face = _face_work(persona, intent)
     if intent.act == ActType.OPENING:
-        common = " Name your pick casually and give one personal reason. Start with 'I' or 'My' — not the option name."
+        common = " Name your pick and one personal reason, as briefly as you'd text it. Not a formal position statement."
         spoken_ids = {turn.speaker_id for turn in state.turns if turn.speaker_id != "moderator"}
         if any(p.id in spoken_ids and p.preferred_option == persona.preferred_option
                for p in state.personas if p.id != persona.id):
@@ -528,7 +528,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
             return "Jump in — say what grabbed you." + common
         if _is_direct(t):
             return "Cut to the chase." + common
-        return "Say what you're leaning toward." + common
+        return "Say what you'd go for." + common
     if intent.act == ActType.ACCEPT:
         focus = intent.option_focus[0] if intent.option_focus else None
         if focus and focus != persona.preferred_option:
