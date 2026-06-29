@@ -731,12 +731,12 @@ def max_words_for(intent: MoveIntent, persona) -> int:
 
 
 def _strip_body_semicolons(text: str) -> str:
-    """Replace semicolons in the message body with em-dashes. Protects the
+    """Replace semicolons in the message body with commas. Protects the
     [act=...; opt=...; stance=...] trailer, which legitimately contains semicolons."""
     trailer_idx = text.rfind("[act=")
     body = text[:trailer_idx] if trailer_idx != -1 else text
     tail = text[trailer_idx:] if trailer_idx != -1 else ""
-    return body.replace(";", " —") + tail
+    return body.replace(";", ",") + tail
 
 
 def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
@@ -746,6 +746,7 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = fix_collective_voice(text)
     text = fix_stock_phrases(text)
     text = _strip_considering_opener(text)
+    text = _strip_iget_opener(text)
     text = _surface_cleanup(text)
     text = _strip_body_semicolons(text)
     hard_cap = max_words + int(cfg.utterances.hard_cap_extra_words)
@@ -753,6 +754,14 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
 
 
 _CONSIDERING_OPENER_STRIP = re.compile(r"^\s*considering\s+[^,.]{1,60}[,.]\s+", re.I)
+# "I get that X, but" / "I hear you, but" / "True, but" — banned in prompt but model
+# reaches for them anyway. Strip the acknowledgment prefix and keep the actual point.
+_IGET_OPENER_STRIP = re.compile(
+    r"^\s*(?:i\s+get\s+that\b.{0,90}?,\s*but\s+|"
+    r"i\s+hear\s+you\b[^,]{0,30},?\s*but\s+|"
+    r"true,\s*but\s+)",
+    re.I,
+)
 
 
 def _strip_considering_opener(text: str) -> str:
@@ -760,6 +769,17 @@ def _strip_considering_opener(text: str) -> str:
     The validation layer escalates this to repair, but the model sometimes regenerates
     it anyway. Strip it here so it can never survive into the final transcript."""
     m = _CONSIDERING_OPENER_STRIP.match(text)
+    if not m:
+        return text
+    rest = text[m.end():]
+    return rest[0].upper() + rest[1:] if rest else text
+
+
+def _strip_iget_opener(text: str) -> str:
+    """Strip 'I get that X, but', 'I hear you, but', 'True, but' openers.
+    These acknowledgment+pivot templates are banned in the prompt but persist;
+    stripping leaves only the actual point the speaker is making."""
+    m = _IGET_OPENER_STRIP.match(text)
     if not m:
         return text
     rest = text[m.end():]

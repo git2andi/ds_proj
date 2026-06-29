@@ -7,6 +7,7 @@ moderator/chat message.  Other modules pass structured data into these functions
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterable
 
 from aliases import short_alias_map
@@ -475,6 +476,20 @@ def _others_back(state: DialogueState, persona: Persona, option_focus: list[str]
     return False
 
 
+_SELF_OPENER = re.compile(r"^\s*(?:i\b|i['’]|we\b|we['’]|our\b)", re.I)
+
+
+def _opener_variety_hint(state: DialogueState, intent: MoveIntent) -> str:
+    """Return a prompt nudge when recent turns have all opened with 'I'/'we'.
+    Exempt commitment turns — 'I'll go with X' is expected and correct there."""
+    if intent.act in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+        return ""
+    recent = [t for t in state.turns if t.speaker_id != "moderator"][-3:]
+    if sum(1 for t in recent if _SELF_OPENER.match(t.text)) >= 2:
+        return "Recent turns all started with 'I' — open with something else: the other person's point, the option name, a reaction, or a verb."
+    return ""
+
+
 def _concession_bridge(persona: Persona, option_name: str = "") -> str:
     opt = option_name or "this"
     if persona.traits.compromise_willingness < 0.5:
@@ -519,7 +534,7 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     high_compromise = t.compromise_willingness >= 0.6
     face = _face_work(persona, intent)
     if intent.act == ActType.OPENING:
-        common = " Name your pick and one personal reason, as briefly as you'd text it. Not a formal position statement."
+        common = " Name your pick and one personal reason, as briefly as you'd text it. Not a formal position statement. No 'though/but/however' clause."
         spoken_ids = {turn.speaker_id for turn in state.turns if turn.speaker_id != "moderator"}
         if any(p.id in spoken_ids and p.preferred_option == persona.preferred_option
                for p in state.personas if p.id != persona.id):
@@ -534,19 +549,23 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Use a first-person acceptance verb + {opt_name}. No trailing 'though', 'provided', 'if', or 'now'. Don't open with '{opt_name} is [adjective]'. {bridge}"
+            return f"Use a first-person acceptance verb + {opt_name}. No 'now', no trailing 'though', 'provided', or 'if'. Don't open with '{opt_name} is [adjective]'. {bridge}"
         if _others_back(state, persona, intent.option_focus):
-            return "Use a first-person acceptance verb + the option name. No trailing conditions or 'now'. Don't echo others' phrasing."
-        return "Use a first-person acceptance verb + the option name. One brief personal reason. No trailing 'though', 'provided', 'if', or 'now'."
+            return "Use a first-person acceptance verb + the option name. No 'now', no trailing conditions. Don't echo others' phrasing."
+        return "Use a first-person acceptance verb + the option name. One brief personal reason. No 'now', no trailing 'though', 'provided', or 'if'."
     if intent.act == ActType.VOTE:
-        chorus = (" Others already voted this way — brief, don't echo them."
-                  if _others_back(state, persona, intent.option_focus) else "")
+        if _others_back(state, persona, intent.option_focus):
+            chorus = " Others already voted this way — brief, don't echo them."
+        elif any(t.act == ActType.VOTE for t in state.turns if t.speaker_id not in {persona.id, "moderator"}):
+            chorus = " Others already voted — one short phrase is enough."
+        else:
+            chorus = ""
         focus = intent.option_focus[0] if intent.option_focus else None
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Use a first-person commitment verb + {opt_name}. No trailing 'though', 'provided', 'if', or 'now'. {bridge}" + chorus
-        return "Use a first-person commitment verb + the option name. No trailing conditions or 'now'. One brief personal reason." + chorus
+            return f"Use a first-person commitment verb + {opt_name}. No 'now', no trailing 'though', 'provided', or 'if'. {bridge}" + chorus
+        return "Use a first-person commitment verb + the option name. No 'now', no trailing conditions. One brief personal reason." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -597,7 +616,7 @@ def _alias_rule(state: DialogueState, intent: MoveIntent) -> str:
 
 def _verbosity_note(persona: Persona, max_words: int) -> str:
     t = persona.traits
-    style = "Contractions OK. No semicolons, no 'we should', no 'we need to', no formal transitions. One thought — don't add a 'though/but/while' clause to balance the other side."
+    style = "Contractions OK. No semicolons, no em-dash between thoughts, no 'we should', no 'we need to', no formal transitions. One thought — no 'though/but/while' clause, nothing after a dash."
     if t.response_length >= 4:
         return f"Hard limit: {max_words} words, 1-2 sentences. Make the point — don't build a case. {style}"
     if t.response_length == 3:
@@ -669,6 +688,9 @@ def sim_utterance(
     rt = state.runtimes[persona.id]
     frame_hint = recent_frame_hint(_collect_recent_frames(state), rt.discourse_frames)
     frame_line = f"\n{frame_hint}" if frame_hint else ""
+    opener_hint = _opener_variety_hint(state, intent)
+    if opener_hint:
+        frame_line += f"\n{opener_hint}"
     if intent.option_focus and intent.act not in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
         focus_opt = intent.option_focus[0]
         if focus_opt in state.coverage:
