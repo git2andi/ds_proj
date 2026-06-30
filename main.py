@@ -55,6 +55,13 @@ def main() -> int:
                 f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} "
                 f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out)"
             )
+            warn_threshold = int(cfg.limits.get("warn_total_input_tokens", 0)) if "limits" in cfg else 0
+            if warn_threshold and tokens["total_tokens_in"] > warn_threshold:
+                print(
+                    f"WARNING: total input tokens {tokens['total_tokens_in']} exceeded "
+                    f"threshold {warn_threshold}; consider checking prompt/turn growth.",
+                    file=sys.stderr,
+                )
             print(f"Logs: {result.log_paths['dir']}")
         except Exception as exc:
             print(f"ERROR for topic {topic!r}: {type(exc).__name__}: {exc}", file=sys.stderr)

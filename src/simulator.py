@@ -30,7 +30,13 @@ def derive_simulator_parameters(traits: TraitProfile) -> SimulatorParameters:
 
 
 def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
+    """A small private agenda of pending communicative goals, tuned by parameters.
+
+    This is not a script: the router consumes items when the dialogue context makes
+    them useful. Final voting is owned by the controller, so there is no VOTE item.
+    """
     preferred = persona.preferred_option
+    p = persona.sim_params
     agenda = [
         AgendaItem(
             act=ActType.BUILD,
@@ -61,7 +67,49 @@ def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
                 priority=0.95,
             ),
         )
+    # Cooperative sims carry an intent to look for common ground.
+    if p.compromise_threshold <= 0.45 and not persona.rejection:
+        agenda.append(
+            AgendaItem(
+                act=ActType.PROPOSE_COMPROMISE,
+                option=preferred,
+                reason="look for a workable compromise the group could accept",
+                priority=0.55,
+            )
+        )
+    # Stubborn sims carry an intent to push back on a rival option.
+    if p.stubbornness >= 0.6:
+        agenda.append(
+            AgendaItem(
+                act=ActType.CHALLENGE,
+                option=None,
+                reason="object to the main rival option with a concrete concern",
+                priority=0.6,
+            )
+        )
     return agenda
+
+
+def refresh_agenda(persona: Persona, current_preference: str | None) -> None:
+    """Mark agenda items obsolete/blocked as the sim's stance evolves.
+
+    Keeps continuity honest: once a sim has moved off an option, its pending
+    items advocating that option no longer apply, and a hard blocker never carries
+    a live compromise intent toward its rejected option.
+    """
+    for item in persona.agenda:
+        if item.status != AgendaStatus.PENDING:
+            continue
+        if (
+            current_preference
+            and item.option
+            and item.option != current_preference
+            and item.act in {ActType.BUILD, ActType.ASK, ActType.PROPOSE_COMPROMISE}
+            and item.option == persona.preferred_option
+        ):
+            item.status = AgendaStatus.OBSOLETE
+        if item.act == ActType.PROPOSE_COMPROMISE and persona.rejection == current_preference:
+            item.status = AgendaStatus.BLOCKED
 
 
 def next_agenda_item(persona: Persona) -> tuple[int, AgendaItem] | None:

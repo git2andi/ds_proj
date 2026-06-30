@@ -36,7 +36,7 @@ simulation:
   min_participants: 2
   max_participants: 7
   random_seed: null
-  setup_generation_attempts: 2
+  setup_generation_attempts: 3
   max_repairs_per_turn: 1
 
 scenario:
@@ -136,6 +136,9 @@ validation:
   enabled: true
   grounding_check: true        # LLM fact-checker: flag utterances that invent facts beyond the option board
   grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise"]
+
+limits:
+  warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this
 
 consensus:
   majority_fraction: 0.51

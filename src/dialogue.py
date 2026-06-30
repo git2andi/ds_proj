@@ -39,7 +39,7 @@ from models import (
     TurnRecord,
 )
 from parsing import OptionResolver, parse_dialogue_act
-from simulator import mark_agenda_done, next_agenda_item
+from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
 from style import name_prefix_fraction, repeated_pattern, strip_leading_name, surface_pattern
 from utils import normalise_lines, normalise_ws, strip_speaker_prefix, weighted_choice
 
@@ -649,6 +649,8 @@ class DialogueRunner:
         elif act.proposes_option and self._can_shift_to(state.persona_by_id(record.speaker_id), act.proposes_option):
             if random.random() > state.persona_by_id(record.speaker_id).sim_params.compromise_threshold:
                 rt.current_preference = act.proposes_option
+
+        refresh_agenda(state.persona_by_id(record.speaker_id), rt.current_preference)
 
         after = self._snapshot_progress(state)
         state.no_progress_count = 0 if after != before else state.no_progress_count + 1

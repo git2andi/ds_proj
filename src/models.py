@@ -39,6 +39,8 @@ class AgendaStatus(str, Enum):
     PENDING = "pending"
     DONE = "done"
     SKIPPED = "skipped"
+    BLOCKED = "blocked"
+    OBSOLETE = "obsolete"
 
 
 LengthHint = Literal["short", "medium", "long"]

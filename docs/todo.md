@@ -37,79 +37,6 @@ Validation target:
 - In a four-option run, no option should remain completely untouched before
   voting unless the moderator or participants explicitly skip it.
 
-### 8. Strengthen agenda-based simulator behavior
-
-Current problem: agenda items are minimal. They help structure behavior, but they are not yet strong enough to make the sims look like persistent user simulators with goals and pending communicative tasks.
-
-Required behavior:
-- Each sim should have a small private agenda based on goal, initial preferences, blockers, and simulator parameters.
-- Agenda items should include pending communicative acts such as:
-  - state preference,
-  - ask practical constraint,
-  - object to option,
-  - answer challenge,
-  - propose compromise,
-  - give final vote.
-- Agenda items should have status: pending, completed, blocked, or obsolete.
-- The router should prefer agenda-compatible moves without scripting exact text.
-
-Implementation notes:
-- Keep agenda simple; do not rebuild a full ConvLab-style policy yet.
-- Use agenda for behavior selection, not hidden outcome evidence.
-- Log agenda status for later debugging and evaluation.
-
-Validation target:
-- In a transcript, each sim should show continuity between their goal, earlier statements, later objections, and final vote.
-
-### 9. Prepare evaluation layer, but keep it lightweight
-
-Current problem: evaluation exists as a scaffold, but it should be organized so later work can expand it without touching generation logic.
-
-Required behavior:
-- Keep evaluation separate from logging.
-- Include only stable basic metrics for now:
-  - participant turn counts,
-  - top speaker share,
-  - moderator ratio,
-  - visible vote count,
-  - outcome status,
-  - option coverage,
-  - unanswered direct-question count,
-  - name-prefix rate,
-  - repeated-opening-pattern count.
-- Prepare placeholders for later metrics without implementing complex scoring yet.
-
-Already added (2026-07-01): `unanswered_direct_questions`, `name_prefix_rate`,
-and `repeated_opening_patterns` are now in `evaluation.metrics_for`, alongside
-the existing turn counts, top-speaker share, moderator ratio, vote count,
-outcome, and option coverage.
-
-Remaining work:
-- Add TODO stubs for future metrics such as participation Gini, direct response
-  rate, question-answer completion, repetition score, and engagement realization
-  error.
-
-Validation target:
-- Metrics should expose the failures that are currently being manually spotted in transcripts.
-
-### 11. Keep token usage bounded, but do not optimize prematurely
-
-Current position: token usage around 5k-20k input tokens per typical `n=3` run is acceptable for now. Do not aggressively compress prompts if it worsens transcript quality.
-
-Required behavior:
-- Prevent token use from growing unbounded as group size increases.
-- Keep per-turn prompt context intentional.
-- Do not reintroduce extremely large transcripts such as 100k+ tokens per run.
-- Revisit token optimization only after simulator behavior stabilizes.
-
-Implementation notes:
-- Log total setup/dialogue input and output tokens as already done.
-- Add a warning threshold if a normal `n=3` run exceeds the configured upper range.
-- Do not make token optimization a priority unless it starts harming iteration speed or cost.
-
-Validation target:
-- Normal `n=3` runs should stay below the configured warning threshold unless the transcript is intentionally long.
-
 ### 12. Add optional corpus-inspired presets later
 
 Current problem: corpus statistics such as Delidata-style turn length, group size, and speaker dominance are known but not yet represented as selectable presets.
@@ -165,6 +92,21 @@ Validation target:
   switch (with `allow_vote_change`) or restate. Validated n=4: a true 4-way split
   became a clean majority via one compromise pass ("majority after split-vote
   compromise"); the leader was not re-prompted and the debate did not restart.
+- Issue #8 (agenda): richer parameter-tuned agenda (adds propose-compromise for
+  cooperative sims, object-to-rival for stubborn sims); `AgendaStatus` gains
+  BLOCKED/OBSOLETE; `refresh_agenda` retires items advocating an abandoned option
+  and blocks compromise toward a rejected option. Agenda is logged in run.json and
+  summarized by the `agenda_status` metric.
+- Issue #9 (evaluation): added `unanswered_direct_questions`, `name_prefix_rate`,
+  `repeated_opening_patterns`, `unsupported_fact_flags`, `agenda_status`, and a
+  `planned_metrics` stub dict for future scoring. Evaluation stays separate from
+  logging.
+- Issue #10 (tests): `tests/` (22 tests, no LLM) covers parsing, style, vote
+  overwrite, and outcome logic.
+- Issue #11 (token bound): `limits.warn_total_input_tokens` (default 30000); main
+  prints a warning when a run exceeds it. Typical n=3 runs are ~16k–21k input.
+- Setup reliability: `setup_generation_attempts` raised 2→3 to absorb occasional
+  malformed setup responses (too few attributes, preference mismatches).
 
 ## Newly observed issues
 

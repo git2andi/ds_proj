@@ -14,6 +14,23 @@ from models import DialogueState, RunOutcome
 from style import leading_name, surface_pattern
 
 
+# Planned-but-not-yet-implemented metrics. Kept as explicit stubs so later work
+# can fill them in without touching generation logic. Returned as a nested dict,
+# so the flat CSV (which drops dict/list values) is unaffected.
+_PLANNED_METRICS = (
+    "participation_gini",            # inequality of turn distribution
+    "direct_response_rate",          # share of direct questions answered by the target
+    "question_answer_completion",    # adjacency-pair completion ratio
+    "repetition_score",              # semantic/lexical repetition across turns
+    "engagement_realization_error",  # |expected engagement - realized turn share|
+    "compromise_success_rate",       # share of split votes resolved by the compromise step
+)
+
+
+def planned_metric_stubs() -> dict[str, None]:
+    return {name: None for name in _PLANNED_METRICS}
+
+
 def token_summary_for(state: DialogueState) -> dict[str, int]:
     return {
         "setup_tokens_in": int(state.setup_tokens_in),
@@ -85,12 +102,14 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             for opt, c in state.coverage.items()
         },
         "expected_engagement": expected_engagement,
+        "agenda_status": _agenda_status_counts(state),
         "outcome_status": outcome.status,
         "final_option": outcome.final_option,
         "min_discussion_turns": state.min_discussion_turns,
         "force_narrow_turns": state.force_narrow_turns,
         "hard_max_turns": state.hard_max_turns,
         "phase_history": list(state.phase_history),
+        "planned_metrics": planned_metric_stubs(),
     } | token_summary_for(state)
 
 
@@ -105,6 +124,15 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
         "hard_blocker_present": any(p.rejection for p in state.personas),
         **scalar,
     }
+
+
+def _agenda_status_counts(state: DialogueState) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for persona in state.personas:
+        for item in persona.agenda:
+            key = item.status.value if hasattr(item.status, "value") else str(item.status)
+            counts[key] = counts.get(key, 0) + 1
+    return counts
 
 
 def _final_support_fraction(state: DialogueState, outcome: RunOutcome) -> float:
