@@ -82,11 +82,11 @@ Return JSON only in this shape:
 {_schema(schema)}"""
 
 
-def setup_personas(topic: str, n: int, trait_rows: list[dict], pref_groups: list[list[str]], options_json: list[dict]) -> str:
+def setup_personas(topic: str, n: int, trait_rows: list[dict], required_preferences: dict[str, str], options_json: list[dict]) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
-    group_lines = "\n".join(
-        f"  - camp {i + 1}: {', '.join(f'{pid} ({names_by_id.get(pid, pid)})' for pid in g)}"
-        for i, g in enumerate(pref_groups)
+    preference_lines = "\n".join(
+        f"  - {pid} ({names_by_id.get(pid, pid)}): {option_id}"
+        for pid, option_id in sorted(required_preferences.items(), key=lambda item: int(item[0][1:]))
     )
     schema = {
         "participants": [
@@ -110,15 +110,15 @@ Options (already decided):
 Trait/control profiles to use exactly by id:
 {json.dumps(trait_rows, ensure_ascii=False, indent=2)}
 
-Preference camps — CRITICAL: same-camp participants MUST share the same preferred_options[0]:
-{group_lines}
+Required primary option for each participant — use exactly:
+{preference_lines}
 
 Requirements:
 - Use the exact name from each trait profile row. Do not change or substitute names.
-- preferred_options: ordered list; preferred_options[0] MUST match the camp assignment. Optionally add one more if it genuinely fits the persona. Maximum 2.
+- preferred_options: ordered list; preferred_options[0] MUST equal that participant's required primary option above. Optionally add one more if it genuinely fits the same background and goal. Maximum 2.
 - rejection: set only for participants with agreeableness=1 (hard blockers) when grounded in the option cards. Leave null for everyone else.
-- background: one sentence of private personal detail (a life situation, past experience, or personal constraint) that makes this decision matter to them in a specific way. Make it concrete and specific to who this person is, not a generic preference statement.
-- private_goal: what they personally want — must be consistent with their preferred pick.
+- background: one sentence of private personal detail (a life situation, past experience, or personal constraint) that specifically explains why their required primary option fits them. Keep it inside the shared decision context.
+- private_goal: what they personally want from this group decision; it must directly support their required primary option.
 - Everyone should try to reach a workable group decision; even a hard blocker remains civil.
 
 Return JSON only in this shape:
@@ -319,8 +319,8 @@ def _distinct_from_prior(prior: list[str], what: str) -> str:
 
 
 def greeting_line(persona: Persona, topic: str, others: list[str], max_words: int, prior: list[str]) -> str:
-    return f"""Write a 2-6 word casual hello from {persona.name} in a group text thread.{_audience_clause(others)}{_distinct_from_prior(prior, 'said hi')}
-Plain and informal — like the very first text someone fires off in a chat. No topic, no opinion, no emoji, no name prefix. This is text — not walking into a room. No arrival phrases ("here I am", "just dropped in", "finally made it"). Avoid "Hey everyone". Just a casual hi, a short reaction, or a quick word."""
+    return f"""One short opening line from {persona.name} before a group decision chat — hard limit: {max_words} words.{_audience_clause(others)}
+These people already know each other. Treat this as an ongoing thread, not a meeting people are arriving at. Plain and brief. No arrival announcement, no slang check-in, no topic commentary, no emoji, no name prefix."""
 
 
 def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, others: list[str], max_words: int, prior: list[str]) -> str:
@@ -338,12 +338,11 @@ def farewell_line(persona: Persona, scenario: Scenario, outcome: RunOutcome, oth
         tone = "No decision — name one specific thing blocking you, or how you feel leaving it unresolved. Don't just restate the impasse."
     audience = (f" Sign off to {others[0]} directly — this is a 2-person chat, not a group."
                 if len(others) == 1 else "")
-    bg_hint = f" {persona.name}'s background: {persona.background}" if persona.background else ""
     return f"""The discussion just wrapped: {result}.
 Write a short, casual sign-off from {persona.name} — hard limit: {max_words} words.
-These are colleagues who know each other well.{bg_hint}
-{tone}{audience}{_distinct_from_prior(prior, 'signed off')}
-Don't open with the option name. Lead with your reaction — one word about how you feel, what you're relieved about, or what comes next for you. You can say the name mid-sentence or use "it" or a short form.
+These are colleagues who know each other well.
+{tone}{audience}
+Don't open with the option name. One brief reaction or a sentence about what's next. You can say the name mid-sentence or use "it" or a short form.
 No invented details. Casual, like leaving a text chat. No formal closers, no name prefix, no emoji."""
 
 
@@ -363,8 +362,8 @@ def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveInte
     if intent.respond_to_turn is not None:
         for turn in state.turns:
             if turn.index == intent.respond_to_turn:
-                snippet = compact_words(turn.text, 20)
-                return f"Responding to {turn.speaker_name}: \"{snippet}\""
+                snippet = compact_words(turn.text, int(cfg.utterances.response_target_max_words))
+                return f'{turn.speaker_name} said: "{snippet}"'
     target_id = intent.addressee_id
     if not target_id:
         return ""
@@ -373,37 +372,40 @@ def _responding_to_line(state: DialogueState, persona: Persona, intent: MoveInte
             continue
         if target_id and turn.speaker_id != target_id:
             continue
-        return f"Responding to {turn.speaker_name}: \"{compact_words(turn.text, 20)}\""
+        snippet = compact_words(turn.text, int(cfg.utterances.response_target_max_words))
+        return f'{turn.speaker_name} said: "{snippet}"'
     return ""
 
 
-def _speaking_behavior(persona: Persona) -> str:
-    """Translate traits into observable turn behavior without persona labels."""
+def _turn_behavior(persona: Persona, intent: MoveIntent) -> str:
+    """Select compact, act-specific behavior directly from OCEAN traits."""
     t = persona.traits
     cues: list[str] = []
-    if t.conscientiousness >= 4:
-        cues.append("check one concrete constraint before agreeing")
-    elif t.conscientiousness <= 2:
-        cues.append("react to the practical gist without auditing every detail")
-    if t.neuroticism >= 3:
-        cues.append("state the risk that still needs resolving")
-    if t.openness >= 4:
-        cues.append("probe a useful alternative or missing trade-off")
-    if t.agreeableness >= 4:
-        cues.append("acknowledge the other side before disagreeing")
-    elif t.agreeableness <= 2:
-        cues.append("challenge weak reasoning plainly")
-    if _is_direct(t):
-        cues.append("put the bottom line early")
-    if _is_proactive(t):
-        cues.append("move the group toward a next step")
-    if t.compromise_willingness < 0.25:
-        cues.append("hold firm — state your position once, don't soften it")
-    elif t.compromise_willingness < 0.45:
-        cues.append("hold the concern until someone addresses it")
+    if intent.act in {ActType.ASK, ActType.COMPARE}:
+        cues.append("explore a less obvious trade-off" if t.openness >= 4 else "stay with the most practical known point")
+        if t.conscientiousness >= 4:
+            cues.append("pin down one concrete constraint")
+    elif intent.act in {ActType.OBJECT, ActType.PUSH_BACK, ActType.REJECT}:
+        cues.append("acknowledge the useful part before disagreeing" if t.agreeableness >= 4 else "challenge the weak point plainly")
+        if t.neuroticism >= 3:
+            cues.append("make the unresolved risk clear")
+    elif intent.act in {ActType.REACT, ActType.SUPPORT, ActType.ANSWER}:
+        cues.append("build on their point" if t.agreeableness >= 4 else "test their point instead of simply agreeing")
+        if t.conscientiousness >= 4:
+            cues.append("keep the reply tied to a concrete constraint")
+    elif intent.act == ActType.PROPOSE_COMPROMISE:
+        cues.append("move the group toward a decision" if _is_proactive(t) else "offer one modest next step")
+        if t.agreeableness >= 4:
+            cues.append("leave room for the holdout")
+    else:
+        cues.append("jump in directly" if t.extraversion >= 4 else "keep it reserved and economical")
+        if t.neuroticism >= 3:
+            cues.append("surface the concern before committing")
+    if t.compromise_willingness < 0.25 and intent.act in {ActType.ACCEPT, ActType.VOTE, ActType.REJECT}:
+        cues.append("hold the established position")
     if not cues:
-        cues.append("give one practical take and build on the conversation")
-    return "; ".join(cues[:3])
+        cues.append("make one practical contribution")
+    return "; ".join(cues[:2])
 
 
 def _is_direct(traits) -> bool:
@@ -416,36 +418,20 @@ def _is_proactive(traits) -> bool:
     )
 
 
-def _voice_register(persona: Persona) -> str:
-    """Linguistic register hint — shapes sentence-level style, not just behavior."""
-    t = persona.traits
-    parts: list[str] = []
-    if t.agreeableness <= 2:
-        parts.append("blunt — no diplomatic softening, lead with your point")
-    elif t.agreeableness >= 4:
-        parts.append("warm — a soft word before pushing back")
-    if t.neuroticism >= 3:
-        parts.append("cautious — name the worry before the upside")
-    if t.compromise_willingness < 0.25:
-        parts.append("firm — one clear stance, never walk it back mid-message")
-    if t.response_length <= 2:
-        parts.append("very short — fragments and single clauses are fine")
-    return "; ".join(parts) if parts else ""
-
-
 def runtime_speaker_card(persona: Persona, state: DialogueState, intent: MoveIntent) -> str:
     rt = state.runtimes[persona.id]
     lean = rt.current_preference or persona.preferred_option
     lean_name = state.scenario.option(lean).name if lean in state.scenario.option_ids else "undecided"
     lines = [
         f"Speaker: {persona.name}",
-        f"Background: {persona.background}",
-        f"Goal: {persona.private_goal}",
-        f"Lean: {lean_name} | Behavior: {_speaking_behavior(persona)}.",
+        f"Lean: {lean_name}",
+        f"For this turn: {_turn_behavior(persona, intent)}.",
     ]
-    register = _voice_register(persona)
-    if register:
-        lines.append(f"Voice: {register}.")
+    if intent.act == ActType.OPENING:
+        lines.insert(1, f"Background: {persona.background}")
+        lines.insert(2, f"Goal: {persona.private_goal}")
+    elif intent.respond_to_turn is None and intent.act != ActType.PROPOSE_COMPROMISE:
+        lines.insert(1, f"Personal stake: {compact_words(persona.private_goal, 16)}")
     if rt.already_said:
         recent_pts = "; ".join(f'"{compact_words(p, 10)}"' for p in rt.already_said[-2:])
         lines.append(f"Don't repeat these points you already made: {recent_pts}.")
@@ -486,7 +472,7 @@ def _opener_variety_hint(state: DialogueState, intent: MoveIntent) -> str:
         return ""
     recent = [t for t in state.turns if t.speaker_id != "moderator"][-3:]
     if sum(1 for t in recent if _SELF_OPENER.match(t.text)) >= 2:
-        return "Recent turns all started with 'I' — open with something else: the other person's point, the option name, a reaction, or a verb."
+        return "Recent turns all started with 'I' — lead from the other person's point, a reaction, a question, or a verb."
     return ""
 
 
@@ -518,14 +504,14 @@ def _face_work(persona: Persona, intent: MoveIntent) -> str:
             return " Don't just nod — show your own take."
     if intent.act == ActType.SUPPORT:
         if t.conscientiousness >= 4:
-            return " Point to one specific attribute from the card that convinced you."
+            return " Tie it to one concrete detail already in the point you're answering."
         if t.neuroticism >= 3:
             return " Back it, but name the one risk you're accepting."
     if intent.act == ActType.COMPARE:
         if _is_direct(t):
             return " State your preference plainly — no hedging."
         if t.neuroticism >= 3:
-            return " Acknowledge a downside on both sides before landing."
+            return " Name the one risk that decides it for you."
     return ""
 
 
@@ -549,10 +535,10 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Use a first-person acceptance verb + {opt_name}. No 'now', no trailing 'though', 'provided', or 'if'. Don't open with '{opt_name} is [adjective]'. {bridge}"
+            return f"Agree to {opt_name} in plain first-person chat language, not formal ballot wording. No 'now' or trailing conditions. {bridge}"
         if _others_back(state, persona, intent.option_focus):
-            return "Use a first-person acceptance verb + the option name. No 'now', no trailing conditions. Don't echo others' phrasing."
-        return "Use a first-person acceptance verb + the option name. One brief personal reason. No 'now', no trailing 'though', 'provided', or 'if'."
+            return "Clearly agree to the option in plain first-person chat language. Keep it brief and don't echo the others."
+        return "Clearly agree to the option in plain first-person chat language with one brief reason. No formal ballot wording or trailing conditions."
     if intent.act == ActType.VOTE:
         if _others_back(state, persona, intent.option_focus):
             chorus = " Others already voted this way — brief, don't echo them."
@@ -564,8 +550,8 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         if focus and focus != persona.preferred_option:
             opt_name = state.scenario.option(focus).name if focus in state.scenario.option_ids else ""
             bridge = _concession_bridge(persona, opt_name)
-            return f"Use a first-person commitment verb + {opt_name}. No 'now', no trailing 'though', 'provided', or 'if'. {bridge}" + chorus
-        return "Use a first-person commitment verb + the option name. No 'now', no trailing conditions. One brief personal reason." + chorus
+            return f"Clearly choose {opt_name} in plain first-person chat language. No formal ballot wording, process commentary, or trailing conditions. {bridge}" + chorus
+        return "Clearly choose the option in plain first-person chat language with one brief reason. No formal ballot wording or process commentary." + chorus
     if state.phase in {Phase.NARROWING, Phase.CONFIRMATION} or intent.act == ActType.REJECT:
         chorus = (" Others already backed this — brief or add a new angle."
                   if _others_back(state, persona, intent.option_focus) else "")
@@ -580,16 +566,16 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
     if intent.act == ActType.ANSWER:
         return "Answer the question first from the cards; if they do not cover it, say that plainly and move on. Never invent facts or re-ask." + face
     by_act = {
-        ActType.REACT: "React to what was just said — agree with a twist, push back on one specific word or claim, or add one new angle. Don't re-introduce your option as if it hasn't come up. Don't open with 'I get that', 'I hear you', or 'True, but'." + face,
+        ActType.REACT: "Deal with the exact point just made. Say what it changes, confirms, or misses. Don't restart your option case." + face,
         ActType.ASK: "Ask one question the option cards above can actually answer — a specific attribute, number, or trade-off listed there. Keep it casual." + face,
-        ActType.COMPARE: "Say the one thing your option has that matters more for YOUR situation — personal, from your background or constraint. Don't weigh both sides; your position is already known. Don't open with either option name." + face,
-        ActType.SUPPORT: "Give one concrete reason this option works for YOUR situation — your background or constraint, not a feature list. Start with 'I' or 'My' — not the option name." + face,
-        ActType.OBJECT: "Open with your worry — name the specific concern first, no 'I get that' lead-in. One concrete thing from the option card." + face,
+        ActType.COMPARE: "Reply to the local trade-off and say which one consideration matters more. Don't retell your background or summarize both options." + face,
+        ActType.SUPPORT: "Build on the local point with one new reason or consequence. Don't repeat your biography or give a fresh option pitch." + face,
+        ActType.OBJECT: "Name the specific problem in the local point. Don't restart your own case or use a generic acknowledgment." + face,
         ActType.PUSH_BACK: "Push back on the exact claim just made — not a general counterpoint. Don't open with 'I get that' or 'I hear you'." + face,
         ActType.PROPOSE_COMPROMISE: (
             "The group has covered the ground. Suggest directly that it's time to each pick one option — briefly explain your lean, then ask everyone to commit. No new trade-offs."
             if state.narrowing_called else
-            "Name one workable fix directly without inventing details beyond the cards."
+            "Connect two priorities already voiced and suggest one existing option as common ground. Don't add facts or simply restate your own preference."
         ) + face,
     }
     return by_act.get(intent.act, "Respond to the last point directly.")
@@ -703,8 +689,11 @@ def sim_utterance(
         ctx_line = "\nContext: " + "; ".join(compact_words(item, 12) for item in state.scenario.shared_context)
     verbosity = _verbosity_note(persona, max_words)
     if responding:
-        # Responding-to content appears once — right under the job, as the specific message to engage.
-        job_block = f"Job: {guidance}{address_note}\nMessage to address first: {responding}"
+        job_block = (
+            f"Reply to this exact point: {responding}\n"
+            f"Your one job: {guidance}{address_note}\n"
+            "Make the connection obvious without a generic acknowledgment. Don't restart your case or repeat your background."
+        )
     else:
         job_block = f"Job: {guidance}{address_note}"
     return f"""Next message in a casual group chat. One short message — one point. Write like you'd text a friend. Don't open with "I get that", "I hear you", or "True, but".
@@ -806,12 +795,19 @@ def repair_utterance(
         if target_id in state.scenario.option_ids:
             target = short_alias_map(state.scenario.options)[target_id]
             decision_block = (
-                f"\nDecision requirement: name {target} and visibly say you are selecting it now. "
+                f"\nDecision requirement: name {target} and visibly commit to it. "
                 "Praising it, describing it, or promising to present it is not a choice. The trailer is metadata only."
             )
+    response_block = ""
+    responding = _responding_to_line(state, persona, intent)
+    if responding:
+        response_block = (
+            f"\nKeep this as a direct reply to: {responding}. "
+            "Make that connection clear without a generic acknowledgment or a fresh option pitch."
+        )
     return f"""Rewrite {persona.name}'s line. Keep its grounded point and fulfill the routed act.
-Behavior: {_speaking_behavior(persona)}.
-Relevant options: {option_context}{recent_block}
+Behavior: {_turn_behavior(persona, intent)}.
+Relevant options: {option_context}{recent_block}{response_block}
 Line: {original_text}
 Fix: {fixes}.{decision_block}
 One natural line under {max_words} words; no prefix, quotes, invented facts, questions, or copied wording.

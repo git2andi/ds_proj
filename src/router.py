@@ -107,6 +107,21 @@ class TurnRouter:
             state.candidate_option = leading_option(state) or state.candidate_option
             state.phase = Phase.CONFIRMATION
             return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
+        # Multi-voter escape: when every remaining unvoted persona has already had
+        # max_vote_attempts_per_person VOTE turns in NARROWING without gaining
+        # explicit_vote, accept their current leans and move to confirmation rather
+        # than cycling until the hard-max cap.
+        if unvoted and len(unvoted) < len(state.personas):
+            threshold = int(cfg.conversation.max_vote_attempts_per_person)
+            attempt_counts: dict[str, int] = {p.id: 0 for p in unvoted}
+            for t in state.turns:
+                if t.phase == Phase.NARROWING and t.speaker_id in attempt_counts:
+                    if t.intent and t.intent.act == ActType.VOTE:
+                        attempt_counts[t.speaker_id] += 1
+            if all(c >= threshold for c in attempt_counts.values()):
+                state.candidate_option = leading_option(state) or state.candidate_option
+                state.phase = Phase.CONFIRMATION
+                return self._confirmation_intent(state) or self._discussion_intent(state, forced_act=ActType.PROPOSE_COMPROMISE)
         ordered = others if others else unvoted
         for persona in ordered:
             focus = ([persona.preferred_option] if persona.traits.agreeableness == 1
@@ -325,20 +340,7 @@ class TurnRouter:
         if state.readiness_score >= float(cfg.conversation.concentration_to_narrow):
             probs[ActType.PROPOSE_COMPROMISE.value] = float(probs.get(ActType.PROPOSE_COMPROMISE.value, 0.0)) + float(cfg.routing.late_discussion_compromise_bonus)
         persona = state.persona_by_id(speaker_id)
-        trait_mid = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
-        # openness: curious speakers ask more
-        curiosity = persona.traits.openness / trait_mid
-        probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * curiosity
-        # agreeableness: agreeable → react/support more, object/push-back less; disagreeable → reverse
-        agree_mod = 1.0 + (persona.traits.agreeableness - trait_mid) * 0.15
-        probs[ActType.REACT.value] = float(probs.get(ActType.REACT.value, 0.0)) * agree_mod
-        probs[ActType.SUPPORT.value] = float(probs.get(ActType.SUPPORT.value, 0.0)) * agree_mod
-        probs[ActType.OBJECT.value] = float(probs.get(ActType.OBJECT.value, 0.0)) * (2.0 - agree_mod)
-        probs[ActType.PUSH_BACK.value] = float(probs.get(ActType.PUSH_BACK.value, 0.0)) * (2.0 - agree_mod)
-        # conscientiousness: careful thinkers ask before reacting; low-consc speakers react first
-        consc_mod = 1.0 + (persona.traits.conscientiousness - trait_mid) * 0.15
-        probs[ActType.ASK.value] = float(probs.get(ActType.ASK.value, 0.0)) * consc_mod
-        probs[ActType.REACT.value] = float(probs.get(ActType.REACT.value, 0.0)) * (2.0 - consc_mod)
+        probs = self._trait_adjusted_act_probabilities(persona, probs)
         # When discussion stalls (2-3 turns without progress), boost questions and
         # comparisons to steer toward concrete details instead of restating preferences.
         if state.no_progress_count >= 2:
@@ -364,6 +366,32 @@ class TurnRouter:
         keys = [ActType(key) for key in probs.keys()]
         weights = [float(probs[key.value]) for key in keys]
         return weighted_choice(keys, weights)
+
+    @staticmethod
+    def _trait_adjusted_act_probabilities(persona: Persona, probabilities: dict) -> dict[str, float]:
+        """Apply OCEAN traits to move choice without generating extra persona state."""
+        probs = {str(key): float(value) for key, value in probabilities.items()}
+        traits = persona.traits
+        midpoint = (int(cfg.personas.trait_min) + int(cfg.personas.trait_max)) / 2.0
+        slope = float(cfg.routing.trait_act_slope)
+
+        def modifier(value: int) -> float:
+            return max(0.1, 1.0 + (value - midpoint) * slope)
+
+        openness = modifier(traits.openness)
+        conscientiousness = modifier(traits.conscientiousness)
+        extraversion = modifier(traits.extraversion)
+        agreeableness = modifier(traits.agreeableness)
+        neuroticism = modifier(traits.neuroticism)
+
+        probs[ActType.ASK.value] *= openness * conscientiousness * neuroticism
+        probs[ActType.COMPARE.value] *= openness
+        probs[ActType.REACT.value] *= agreeableness * extraversion * (2.0 - neuroticism)
+        probs[ActType.SUPPORT.value] *= agreeableness * (2.0 - neuroticism)
+        probs[ActType.OBJECT.value] *= (2.0 - agreeableness) * neuroticism * conscientiousness
+        probs[ActType.PUSH_BACK.value] *= (2.0 - agreeableness) * extraversion
+        probs[ActType.PROPOSE_COMPROMISE.value] *= agreeableness * extraversion * conscientiousness
+        return probs
 
     def _persuasion_intent(self, state: DialogueState, speaker_id: str) -> MoveIntent | None:
         """If the group is rallying behind an option this speaker can genuinely live with
@@ -429,16 +457,16 @@ class TurnRouter:
 
     @staticmethod
     def _local_response_turn_for(state: DialogueState, speaker_id: str, option_focus: list[str]) -> int | None:
-        """Find a recent, exact point about this move's focus without changing routing."""
+        """Prefer a recent point about the focus, then fall back to the latest other speaker."""
         focus = set(option_focus)
-        if not focus:
-            return None
         window = int(cfg.routing.recent_speaker_window)
         recent = [turn for turn in state.turns if turn.speaker_id != "moderator"][-window:]
+        if focus:
+            for turn in reversed(recent):
+                if turn.speaker_id != speaker_id and focus.intersection(turn.act.option_refs):
+                    return turn.index
         for turn in reversed(recent):
-            if turn.speaker_id == speaker_id:
-                continue
-            if focus.intersection(turn.act.option_refs):
+            if turn.speaker_id != speaker_id:
                 return turn.index
         return None
 

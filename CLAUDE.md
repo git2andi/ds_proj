@@ -28,7 +28,7 @@ Activate the `ds_proj` virtualenv. No requirements.txt install step — the venv
 Topic: Plan a weekend team offsite
 
 # Batch (one topic per line, # comments ignored)
-(ds_proj) PS> py .\main.py scenarios.txt
+(ds_proj) PS> py .\main.py evals\topics.txt
 
 # Headless (pipe a topic, using the venv python directly)
 "Example Topic" | & .\ds_proj\Scripts\python.exe .\main.py
@@ -48,7 +48,7 @@ The split is deliberate and load-bearing:
 
 ### Run flow
 
-1. **`builders.py`** — two sequential LLM calls: first generates option cards (with `shared_context` and `short_name`), then per-persona belief state (minimal: `name`, `background`, `private_goal`, `preferred_options` list of 1–2, optional `rejection`/`rejection_reason`). The controller samples only the five OCEAN traits and assigns preference camps before the LLM call; LLM never generates scores, acceptable lists, or reasons. Response length and compromise willingness are derived deterministically from traits; stubborn profiles come from separate five-trait ranges when `hard_blocker_probability` activates.
+1. **`builders.py`** — two sequential LLM stages: first generates option cards (with `shared_context` and `short_name`), then per-persona belief state (minimal: `name`, `background`, `private_goal`, `preferred_options` list of 1–2, optional `rejection`/`rejection_reason`). Before any provider call, the controller samples a configured preference-partition shape for the active group size. After option generation, it maps each shape part to a concrete option and gives every persona an explicit required primary. The LLM writes a background and goal coherent with that primary; it never infers cross-row camps. Scenario retries and persona retries are separate, so a bad persona response does not regenerate a valid scenario. Response length and compromise willingness are derived deterministically from traits; stubborn profiles come from separate five-trait ranges when `hard_blocker_probability` activates.
 2. **`router.py`** — emits a `MoveIntent` each turn. Priority: (1) answer pending question, (2) respond to unanswered challenge via `_unanswered_challenge`, (3) fill coverage gaps, (4) weighted speaker selection. Drives phases: opening → discussion → narrowing → confirmation → closure.
 3. **`dialogue.py`** — orchestration: calls the router, renders the turn via `prompts.sim_utterance`, parses the trailer, updates state, checks consensus. Contains `Orchestrator`, `DialogueController`, `StateTracker`, `ConsensusManager`.
 4. **`parsing.py`** — extracts the machine trailer `[act=…; opt=…; stance=…]` from each generated turn, resolves option references.
@@ -59,15 +59,21 @@ The split is deliberate and load-bearing:
 
 ### Prompt design
 
-The per-turn prompt uses a compact `runtime_speaker_card` that includes the persona's background, private goal, current lean, behavior cues derived from five traits, and a "Voice:" register note for personas with strongly expressed traits (blunt/warm/cautious/firm/very short). Generated role and speech-style labels are deliberately omitted. Each turn has one local job; when responding to a specific message that job block shows the exact message to address first, placed before the option facts. Full option cards are rendered for OPENING/COMPARE/VOTE; ASK acts get a compact attribute brief (`_option_brief`); other acts get option names only. Option name variety is encouraged — the prompt shows full-name → shortening pairs; the resolver handles both forms.
+The per-turn prompt uses a compact `runtime_speaker_card`. OPENING gets background and private goal; a targeted reply omits both so the model cannot restart its biography, while an untargeted non-opening move gets only a compact personal stake. Every card includes the current lean and one act-specific behavior cue derived from OCEAN. Generated role, speech-style, initiative, and directness fields are deliberately omitted.
 
-Face-work modifiers describe behavior for objection/push-back acts: agreeable speakers acknowledge the other side, cautious speakers surface risk, and direct speakers put the problem early. Response length uses "Hard limit: N words" framing co-located with "contractions OK, no semicolons, no 'we should', no formal transitions, one thought — no balancing clause" in every `_verbosity_note` level so both are enforced together.
+For reply-capable discussion acts, the router first finds a recent turn about the focused option and otherwise uses the latest other-speaker turn. The prompt places up to `response_target_max_words` of that exact message above option facts and gives one local job: engage it without a generic acknowledgment or fresh option pitch. Repair prompts retain the same response target. This adds context to an existing routed move; it does not inject speakers or turns.
 
-The target register is a chat among friends: "write like you'd text a friend" placed at the top of every `sim_utterance` prompt (before option facts) alongside an opener ban ("Don't open with 'I get that', 'I hear you', or 'True, but'"). Background and goal give each persona a specific personal angle. Greeting prompts constrained to 2-6 words with "Avoid 'Hey everyone'"; farewell instruction says "Don't open with the option name — lead with your reaction"; tone is differentiated by outcome (got pick / came around / resigned) and persona background. Moderator agreement and closure prompts are explicitly constrained to declarative statements — no questions.
+Face-work modifiers describe behavior for objection/push-back acts: agreeable speakers acknowledge the other side, cautious speakers surface risk, and direct speakers put the problem early. Response length uses "Hard limit: N words" framing co-located with "contractions OK, no semicolons, no em-dash between thoughts, no 'we should', no 'we need to', no formal transitions, one thought — no 'though/but/while' clause, nothing after a dash" in every `_verbosity_note` level so both are enforced together.
 
-VOTE and ACCEPT guidance requires a first-person commitment/acceptance verb, explicitly bans trailing "though", "provided", "if", and "now" (the last prevents the procedural "I choose X now" form). COMPARE guidance is one-sided only: "say the one thing your option has that matters more for your situation — don't weigh both sides". REACT/OBJECT/PUSH_BACK guidance explicitly bans "I get that" lead-ins.
+A pre-generation opener nudge (`_opener_variety_hint`) fires when the last two of three non-moderator turns all opened with "I/we/our" — it asks the model to start from the other person's point, a reaction, a question, or a verb instead. Exempted on VOTE/ACCEPT/REJECT turns where first-person choice language is expected.
 
-Deterministic surface cleanup (`dialogue.py`): semicolons in the message body replaced with em-dashes via `_strip_body_semicolons()` (trailer-aware, protects `[act=...; opt=...; stance=...]`). Accidental `A=`/`D=` prefixes stripped in `_surface_cleanup`.
+The target register is a chat among friends: "write like you'd text a friend" is placed at the top of every `sim_utterance` prompt. Moderator agreement and closure prompts are constrained to declarative statements.
+
+Social beats (greeting and farewell) are a single optional line from at most one speaker — the most extraverted persona, probability-gated by their score. Zero social lines is normal. Greeting and farewell prompts treat these as an ongoing thread, not an arrival event; farewells do not include persona background.
+
+VOTE and ACCEPT guidance asks for a visible choice in plain first-person chat language, not a formal ballot or process announcement. COMPARE, SUPPORT, REACT, and OBJECT operate on the local point and explicitly avoid biography restatement or a fresh option pitch.
+
+Deterministic surface cleanup (`dialogue.py`): semicolons in the message body replaced with commas via `_strip_body_semicolons()` (trailer-aware, protects `[act=...; opt=...; stance=...]`); "I get that X, but" / "I hear you, but" / "True, but" acknowledgment+pivot openers stripped by `_strip_iget_opener()` (keeps the actual point). Accidental `A=`/`D=` prefixes stripped in `_surface_cleanup`.
 
 ### Key design constraints
 
@@ -75,12 +81,13 @@ Deterministic surface cleanup (`dialogue.py`): semicolons in the message body re
 - **Commitment gating**: `accept`/`vote`/`reject` only count as binding on routed decision turns (narrowing/confirmation), not during free discussion. Hedged accepts ("still not sure", "not fully sold") are clamped to neutral.
 - **Trait-driven stubbornness**: `hard_blocker_probability` can select at most one participant whose five-trait profile uses agreeableness 1, low openness, and a firmer conscientiousness range. Everyone else uses agreeableness 3–5. Compromise willingness is derived from the five traits rather than sampled independently. No mechanical vote override — behaviour emerges from traits. If the LLM's trailer names a different option on a VOTE/ACCEPT turn, `HARD_BLOCKER_WRONG_VOTE` repair fires.
 - **Outcome taxonomy**: `successful` = every participant visibly voted/accepted the same option; `majority` = one option has ≥66% visible support; `unresolved` = no option met either threshold. Only explicit `explicit_vote` and `accepted_options` entries count — hidden preferences and routing leans are excluded.
-- **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition.
+- **Pacing is derived, not fixed**: `min_discussion_turns`, `force_narrow_turns`, `hard_max_turns` are computed per run from group size and composition. Two early-exit conditions can cut the floor short: full convergence + stall, or slot-exhaustion (all staked options have ≥ `slot_exhaustion_threshold` covered claim slots and progress is stalled). NARROWING also has a multi-voter escape: when each remaining unvoted participant has had `max_vote_attempts_per_person` consecutive VOTE turns without an explicit vote, the phase advances to CONFIRMATION rather than cycling.
 - **Concession bridges**: when a speaker accepts/votes for a non-preferred option, persona-specific bridge guidance fires.
 - **Prompts stay short**: llama3.3 ignores excess rules. Every new rule added to `sim_utterance` should come with an old one being cut or merged.
 - **Contribution-based routing**: for n>=4, speakers are skipped when their only available move is restating a known preference. Extraversion and recent participation drive turn frequency; no separately generated initiative/directness/detail controls exist.
+- **Trait-shaped contributions**: `trait_act_slope` controls how strongly OCEAN modifies free-discussion act weights. Act-specific prompt behavior makes the same traits visible in wording; response length remains derived from openness, conscientiousness, and extraversion.
 - **Stall-to-concrete routing**: when discussion stalls (2+ turns no progress), ASK probability doubles and SUPPORT dampens, steering toward concrete questions instead of preference restating.
-- **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`; possessive openers (`OptName's`) and `Considering X,` openers stripped; semicolons in the body replaced with em-dashes (`_strip_body_semicolons`, trailer-aware); accidental `A=`/`D=` option-letter prefixes stripped.
+- **Surface cleanup**: deterministic removal of space-before-punctuation, repeated punctuation, stray quotes in `clean_generated`; possessive openers (`OptName's`), `Considering X,` openers, and "I get that X, but"/"I hear you, but"/"True, but" openers stripped; semicolons in the body replaced with commas (`_strip_body_semicolons`, trailer-aware); accidental `A=`/`D=` option-letter prefixes stripped.
 - **No example seeding in guidance**: guidance strings must describe desired behavior, never demonstrate it with quoted phrases (e.g., never `"Try: 'What if we...'"`) — the model copies examples verbatim across all topics.
 - **Epistemic grounding rule**: the per-turn prompt explicitly forbids claiming facilities, features, or services not listed in the card, and bans turning uncertainty into a new invented fact. `_INVENTED_FACILITY_PATTERN` in `validation.py` catches confident facility-noun inventions (lodges, shuttles, indoor spaces, group discounts, etc.) and fires `INVENTED_OPTION_ATTRIBUTE` (repair) when absent from the card.
 - **Coverage gating**: `_update_coverage` in `dialogue.py` counts only options visibly named in text (via `ids_in_text`), not those inferred from routing intent. A reason is counted only when a claim slot is also present — prevents inflated reason counts from routine mentions.
@@ -103,11 +110,12 @@ Every upgrade follows this cycle (see `docs/known_failures.md` for the full prot
 
 1. Pick one item from the priority list in `docs/known_failures.md`.
 2. Implement the smallest provider-independent fix.
-3. Validate with the provider explicitly authorized for the task: one n=3 run is mandatory when live validation is requested, followed by the requested size/topic spread.
-4. Read every relevant `transcript.md` and `run.json`; metrics alone are insufficient.
-5. Update `docs/known_failures.md` with the result and any stable new failure pattern.
-6. Audit and synchronize `AGENTS.md`, this file, repository skills, active memory/index files, `README.md`, and any other affected information files before completing the upgrade.
-7. Do not start the next issue until this upgrade is fully verified; stop unless the user explicitly requested automatic continuation.
+3. Before live validation, move existing timestamped run directories from `logs/` into `logs/archive/`; preserve the archive and `logs/metrics.csv`.
+4. Validate with the provider explicitly authorized for the task: one n=3 run is mandatory when live validation is requested, followed by the requested size/topic spread.
+5. Read every relevant `transcript.md` and `run.json`; metrics alone are insufficient.
+6. Update `docs/known_failures.md` with the result and any stable new failure pattern.
+7. Audit and synchronize `AGENTS.md`, this file, repository skills, active memory/index files, `README.md`, and any other affected information files before completing the upgrade.
+8. Do not start the next issue until this upgrade is fully verified; stop unless the user explicitly requested automatic continuation.
 
 ### Evaluation files
 
@@ -117,3 +125,5 @@ Every upgrade follows this cycle (see `docs/known_failures.md` for the full prot
 ## Configuration quick reference
 
 The ~12 knobs worth touching are listed in `config.yaml` under the "DIALS THAT MATTER" header. Everything below that header is structural constants set once.
+
+`personas.preference_distribution.shape_weights` defines weighted primary-preference partitions separately for sizes 2–7. `forced_shape` is normally `null`; set it to an exact partition such as `[2, 1]` only for controlled runs. With four options, the least-clustered possible shapes for sizes 5–7 still contain repeated primaries.

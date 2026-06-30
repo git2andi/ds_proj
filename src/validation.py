@@ -377,7 +377,7 @@ class MessageValidator:
         # "American Red Cross feels like a safe bet..." — option name as plain sentence
         # subject during discussion. Fine in VOTE/ACCEPT turns where naming the option
         # is explicitly required; warn-only elsewhere.
-        if intent.act in {ActType.VOTE, ActType.ACCEPT}:
+        if intent.act in {ActType.OPENING, ActType.VOTE, ActType.ACCEPT}:
             return
         if any(p.match(text) for p in self._option_subject_openers):
             issues.append(ValidationIssue("OPTION_NAME_OPENER", "warn", "Opens with option name as subject — start with 'I', a reaction, or a fragment."))

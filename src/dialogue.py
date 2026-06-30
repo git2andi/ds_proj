@@ -166,13 +166,16 @@ class Orchestrator:
 
     @staticmethod
     def _social_speakers(personas: list[Persona]) -> list[Persona]:
-        """Pick who joins a social beat: more extraverted people are likelier to chime in,
-        but at least one always does, so greetings/goodbyes feel like 'some, sometimes all'."""
+        """Return at most one speaker for a social beat — the most extraverted persona,
+        with probability = extraversion / trait_max. Returns [] when the draw fails,
+        so greetings and farewells are a single optional line rather than a chorus."""
+        if not personas:
+            return []
+        best = max(personas, key=lambda p: p.traits.extraversion)
         trait_max = float(cfg.personas.trait_max)
-        chosen = [p for p in personas if random.random() < p.traits.extraversion / trait_max]
-        if not chosen:
-            chosen = [max(personas, key=lambda p: p.traits.extraversion)]
-        return chosen
+        if random.random() < best.traits.extraversion / trait_max:
+            return [best]
+        return []
 
     def _generate_turn(self, state: DialogueState, intent: MoveIntent, validator: MessageValidator) -> tuple[str, TurnMove, str, int, int, list[str], bool]:
         persona = state.persona_by_id(intent.speaker_id)
@@ -264,7 +267,7 @@ class Orchestrator:
             # Scale stall window with group size: a 5-person group needs more turns
             # before "no progress" actually means the discussion is circling.
             n = len(state.personas)
-            stall_window = int(conv.moderator_stall_window) + max(0, n - 3)
+            stall_window = int(conv.moderator_stall_window)
             min_turns_before_mod = n * 2
             if (state.no_progress_count >= stall_window
                     and participant_turn_count(state) >= min_turns_before_mod):
@@ -616,6 +619,20 @@ class DialogueController:
         # move to a vote instead of circling with agreement restating.
         if concentration_score(state) >= 1.0 and state.no_progress_count >= 2:
             return True
+        # Substance-exhausted narrowing: if every staked option has enough covered
+        # claim slots and progress has stalled, allow narrowing before the derived
+        # floor — continuing only adds restatements, not new grounded substance.
+        if state.no_progress_count >= 2:
+            staked = {opt for p in state.personas for opt in p.preferred_options}
+            slot_threshold = int(cfg.conversation.slot_exhaustion_threshold)
+            min_t = int(cfg.conversation.min_turns_per_participant_before_narrowing)
+            each_had_min = min((rt.turn_count for rt in state.runtimes.values()), default=0) >= min_t
+            all_staked_covered = staked and all(
+                len(state.coverage[opt].covered_slots) >= slot_threshold
+                for opt in staked if opt in state.coverage
+            )
+            if each_had_min and all_staked_covered:
+                return True
         if participant_turn_count(state) < state.min_discussion_turns:
             return False
         if sum(1 for c in state.coverage.values() if c.mentions > 0) < int(cfg.conversation.min_options_touched_before_narrowing):

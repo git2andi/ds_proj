@@ -1,9 +1,9 @@
-﻿# Master group-discussion simulator configuration.
+# Master group-discussion simulator configuration.
 # Rule: every tweakable numeric parameter used by the repo lives here.
 # Rule: every prompt/chat template lives in src/prompts.py.
 #
 # ============================================================================
-#  DIALS THAT MATTER  â€”  if you only ever touch a handful, touch these.
+#  DIALS THAT MATTER  —  if you only ever touch a handful, touch these.
 #  (Everything else in this file is a structural constant you set once.)
 #
 #   Naturalness / feel
@@ -13,7 +13,7 @@
 #   Group make-up
 #     simulation.num_participants         how many sims are in the room
 #     personas.hard_blocker_probability   chance one participant gets agreeableness=1 (very stubborn)
-#     personas.coalition_probability      how often participants share a preference (2v1, ...)
+#     personas.preference_distribution   weighted preference splits by group size
 #
 #   When/whether it concludes
 #     conversation.concentration_to_narrow   how aligned before it goes to a vote
@@ -74,7 +74,20 @@ scenario:
 personas:
   # --- core dials: these decide whether/how easily a chat resolves ---
   hard_blocker_probability: 0.04           # chance one participant gets agreeableness=1 (very stubborn traits)
-  coalition_probability: 0.4               # chance two+ participants share a preferred option (2v1, 3v1, ...)
+  preference_distribution:
+    # null samples from shape_weights. Set a list such as [2, 1] to force an
+    # exact split for the active participant count (useful for controlled evals).
+    forced_shape: null
+    # Each key is a participant count. Shape parts are primary-preference group
+    # sizes and weights for each count must sum to 1. With four options, n=5-7
+    # necessarily have repeated primaries; their least-clustered shapes come first.
+    shape_weights:
+      2: {"1-1": 0.80, "2": 0.20}
+      3: {"1-1-1": 0.50, "2-1": 0.45, "3": 0.05}
+      4: {"1-1-1-1": 0.35, "2-1-1": 0.40, "2-2": 0.15, "3-1": 0.10}
+      5: {"2-1-1-1": 0.40, "2-2-1": 0.30, "3-1-1": 0.20, "3-2": 0.10}
+      6: {"2-2-1-1": 0.35, "2-2-2": 0.25, "3-2-1": 0.25, "3-1-1-1": 0.15}
+      7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
   # --- structural: trait sampling + setup guardrails, set once ---
   trait_min: 1
   trait_max: 5
@@ -107,6 +120,8 @@ conversation:
     jitter_per_participant: [0.0, 1.5]   # random spread so runs differ even with similar groups
   moderator_stall_window: 4         # consecutive no-progress turns before the mod steps in
   moderator_max_interventions: 3    # cap on moderator nudges per run
+  max_vote_attempts_per_person: 2   # force CONFIRMATION when each holdout has had this many VOTE turns
+  slot_exhaustion_threshold: 3      # covered claim slots per staked option to permit early narrowing
   # --- structural: convergence/moderator fine print, set once ---
   min_turns_per_participant_before_narrowing: 2
   min_options_touched_before_narrowing: 2   # alternatives worth airing; dead options aren't forced in
@@ -121,18 +136,19 @@ routing:
   recent_speaker_penalty: 0.25
   low_turn_count_boost: 0.20    # lowered from 0.45 so extraversion can differentiate turn share
   unspoken_boost: 0.95
-  extraversion_weight: 0.15    # was hardcoded 0.06; max spread now 0.60 vs low_turn_count_boost 0.20
+  extraversion_weight: 0.22    # stronger trait-driven turn-share difference without overriding recency
   unresolved_objection_boost: 0.34
   preferred_option_gap_boost: 0.40
   direct_reply_probability: 0.35    # chance a reply/conflict turn is addressed at one person; most lines go to the room
   act_probabilities:                # mix of local moves the router samples in free discussion
-    react: 0.15
+    react: 0.20
     ask: 0.20                        # base only; scaled per-speaker by openness (curious people ask more)
     compare: 0.22
-    support: 0.15
+    support: 0.10
     object: 0.16
     push_back: 0.09
     propose_compromise: 0.07
+  trait_act_slope: 0.25             # strength of OCEAN influence on dialogue-act selection
   ask_after_question_damping: 0.40    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
   ask_quiet_window: 3                  # turns to look back for a recent question before damping asking
   persuasion_probability_factor: 0.40  # scales compromise_willingness into a per-turn chance of being won over
@@ -165,6 +181,7 @@ utterances:
   length_trait_word_step: 3         # words added/removed per point of response_length above/below the trait midpoint
   recent_turns_in_prompt: 4
   recent_turns_after_question: 4
+  response_target_max_words: 32     # preserve enough of the exact local point to answer it
   repair_recent_turns: 2
   max_focus_options_in_prompt: 3
   repair_issue_limit: 4
@@ -192,6 +209,11 @@ output:
   transcript_file: "transcript.md"
   json_file: "run.json"
   metrics_csv: "metrics.csv"    # master file, one appended row per run
+
+
+
+
+
 
 
 
