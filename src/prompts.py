@@ -585,10 +585,26 @@ def _move_guidance(state: DialogueState, persona: Persona, intent: MoveIntent) -
         bridge = _concession_bridge(persona, opt_name)
         return f"You're warming up to this. {bridge}"
     if intent.act == ActType.ANSWER:
-        return "Answer the question first from the cards; if they do not cover it, say that plainly and move on. Never invent facts or re-ask." + face
+        return (
+            "The only valid facts are those already in the card or shared_context. "
+            "If the question asks for something the card does not state, say 'the card doesn't say' and pivot to a point the card does support. "
+            "Never estimate, guess, or turn an unknown into a confident new fact. Never re-ask." + face
+        )
+    if intent.act == ActType.ASK:
+        # Extract the attribute keys from the focused option(s) so the model can only ask
+        # about things that are actually on the card, not implied/adjacent attributes.
+        card_keys: list[str] = []
+        for opt_id in (intent.option_focus or []):
+            if opt_id in state.scenario.option_ids:
+                card_keys.extend(state.scenario.option(opt_id).attrs.keys())
+        attr_list = ", ".join(dict.fromkeys(card_keys)) if card_keys else "the attributes above"
+        return (
+            f"Ask about ONE specific card attribute — one of: {attr_list}. "
+            "Do not ask about things not listed on the card (no weather, no proximity guesses, no service quality). "
+            "Keep it casual." + face
+        )
     by_act = {
         ActType.REACT: "Deal with the exact point just made. Say what it changes, confirms, or misses. Don't restart your option case." + face,
-        ActType.ASK: "Ask one question the option cards above can actually answer — a specific attribute, number, or trade-off listed there. Keep it casual." + face,
         ActType.COMPARE: "Reply to the local trade-off and say which one consideration matters more. Don't retell your background or summarize both options." + face,
         ActType.SUPPORT: "Build on the local point with one new reason or consequence. Don't repeat your biography or give a fresh option pitch." + face,
         ActType.OBJECT: "Name the specific problem in the local point. Don't restart your own case or use a generic acknowledgment." + face,
@@ -733,7 +749,7 @@ Option facts (reference only):
 Recent chat:
 {recent}
 
-No name prefix. No semicolons in the message. Never write an option letter (A/B/C/D) in the message — only in the trailer. Card/context facts only — if a detail isn't in the card, skip it entirely (don't speculate about it, don't ask about it). Don't end with a question unless your act is ASK.{alias_rule}
+No name prefix. No semicolons in the message. Never write an option letter (A/B/C/D) in the message — only in the trailer. Card/context facts only — if a detail isn't in the card or shared_context, skip it entirely; never estimate, guess, or invent a logistics detail (distance, quality, availability, weather, or service not listed). Don't end with a question unless your act is ASK.{alias_rule}
 End with: [act={intent.act.value}; opt=LETTER; stance=STANCE]. LETTER={opt_choices} or -; STANCE=vote|accept|object|reject|propose|neutral.{_trailer_stance_hint(intent)}"""
 
 

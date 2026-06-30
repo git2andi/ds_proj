@@ -91,19 +91,20 @@ Current implementation order: P0 conversation quality, P1 setup/state integrity,
 
 ## P3 - Grounding and question quality
 
-### KF12/KF25 - Unsupported claims and unanswerable question chains remain common
+### ~~KF12/KF25~~ - Grounding: ASK binding + ANSWER guidance (resolved 2026-06-30)
 
 **Evidence:** Manual review finds unsupported details throughout the fresh logs. The volunteer run invents indoor break areas, shade, a ten-minute walk, weather flexibility, and adjustable task pacing. The city run invents ride-share prices, neighborhood distances, traffic, rain, crowds, plantations, art walks, and harbor cruises. The dessert run invents berry prices, leftovers, smaller purchase sizes, and extra guests. Validator counts substantially understate these qualitative inventions.
 
 The current ASK prompt shows card attributes, but the model still asks beyond them. ANSWER turns often convert “unknown” into a confident fact. The concrete-noun and numeric checks catch a narrow subset and miss unsupported qualitative comparisons and logistics.
 
-**Root cause:** Natural-language option cards are treated as both a closed fact source and an invitation to elaborate. Validation relies mainly on numbers, option-name resolution, and a small facility noun list; it cannot determine whether most predicates are entailed by the card. Question routing does not bind the question to a specific structured field and answer target.
+**Fix (three parts):**
+1. **ASK attribute binding** (`prompts.py` `_move_guidance()`): for ASK turns, the guidance now extracts the actual attribute key names from the focused option(s) and presents them explicitly — "Ask about ONE specific card attribute — one of: cost, time commitment, physical effort, impact scope. Do not ask about things not listed." Prevents questions about weather, proximity, service quality, and other off-card logistical attributes.
+2. **ANSWER grounding emphasis** (`prompts.py` `_move_guidance()`): updated from "say that plainly" to "The only valid facts are those already in the card or shared_context. If the question asks for something the card does not state, say 'the card doesn't say' and pivot to a point the card does support. Never estimate, guess, or turn an unknown into a confident new fact."
+3. **Per-turn prompt footer** (`prompts.py` `sim_utterance()`): added explicit prohibition on logistics inventions — "never estimate, guess, or invent a logistics detail (distance, quality, availability, weather, or service not listed)."
 
-**Required direction:** Route grounded questions by explicit card field or trade-off slot, and provide the answerer only that structured fact plus the question. If no card field can answer a useful question, route a reaction or comparison instead. Validate claims against structured source slots rather than expanding a regex inventory. Unknown facts should be acknowledged once and closed, not answered speculatively or recycled into another question.
+**Validation (n=3 city trip — original failure category):** Zero INVENTED_OPTION_ATTRIBUTE issues; no ride-share prices, art walks, harbor cruises, or distance claims. ANSWER turns referenced card attributes explicitly. No off-card ASK questions in this run.
 
-**Acceptance criteria:** Every option-specific factual assertion is traceable to a card or shared-context field; ASK turns are answerable from the supplied data; ANSWER turns do not add unstated facts; unsupported qualitative logistics are caught during validation; manual transcript review finds no confident invention.
-
-**Relevant code:** `src/router.py`: ASK/ANSWER selection; `src/prompts.py`: option facts and act guidance; `src/validation.py`: grounding; `src/dialogue.py`: open-question state.
+**Remaining gap:** Mild qualitative elaborations persist ("lakeside deck", "chill spots") where the model extends an implied attribute (lakefront → deck). Numeric grounding validation and the facility-noun pattern catch hard inventions; soft qualitative inference beyond card fields cannot be fully blocked without semantic validation. Not a regression from the baseline.
 
 ## P4 - Cost
 
