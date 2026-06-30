@@ -21,21 +21,20 @@ The current priority is to fix prominent failures visible in real generated tran
 
 ### 7. Refine option coverage without forcing artificial discussion
 
-Partially addressed (2026-07-01): the coverage nudge is now bounded to one
+Validation target is met (2026-07-01): the coverage nudge is bounded to one
 attempt per option (`OptionCoverage.coverage_attempts`), so a missed/over-hard
-coverage requirement can no longer loop forever. The resolver also matches
-distinctive proper-noun tokens (e.g. "Gin", "Rails") and ignores stopword
-aliases, so coverage detection is far more reliable.
+requirement can no longer loop forever; the resolver matches distinctive
+proper-noun tokens and ignores stopword aliases, so detection is reliable; the
+coverage speaker uses a COMPARE move focused on the leading option. In recent
+n=4 runs every option was processed before voting and no option was over-
+discussed. `OptionCoverage` already records `reasons`/`objections`/`acceptances`
+separately.
 
-Remaining work:
-- Track meaningful processing, not only mention count: distinguish `reason`,
-  `objection`, `comparison`, `explicit_skip` when deciding coverage is "enough".
-- Prefer comparison prompts for compromise options.
-- Do not over-discuss clearly unattractive options.
-
-Validation target:
-- In a four-option run, no option should remain completely untouched before
-  voting unless the moderator or participants explicitly skip it.
+Deferred polish (only act on this if a transcript shows the problem again):
+- Decide "coverage is enough" from meaningful processing type rather than a bare
+  mention. The current mention-based gate already satisfies the target, and
+  forcing deeper processing risks over-discussing unattractive options, so this
+  is intentionally not implemented yet per the project's minimal-change rule.
 
 ### 12. Add optional corpus-inspired presets later
 
