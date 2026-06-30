@@ -16,19 +16,50 @@ py .\main.py scenarios.txt
 "Choose a coffee machine for the office" | py .\main.py
 ```
 
-Change participant count and provider settings in `config.yaml`.
+Change participant count and provider settings in `config.yaml`. The default provider is `gpt` (`gpt-4.1-mini`); keys are read from `.env`. Run the tests with `py -m pytest tests/ -q` (no LLM calls).
 
 ## Current source layout
 
-- `main.py`: entry point.
+- `main.py`: entry point (forces UTF-8 stdout for Windows consoles).
 - `config.yaml`: tunable parameters.
+- `src/config_loader.py`: loads and validates `config.yaml`; exposes `cfg`.
 - `src/prompts.py`: all LLM prompts and moderator templates.
-- `src/dialogue.py`: compact discussion controller and consensus logic.
+- `src/dialogue.py`: compact discussion controller, routing, obligations, voting, consensus.
 - `src/builders.py`: setup generation and persona parsing.
-- `src/models.py`: typed state.
-- `src/parsing.py`: option matching and `[act=...; opt=...; stance=...]` trailer parsing.
-- `src/llm_client.py`: provider abstraction.
-- `src/logger.py`: run logging.
+- `src/simulator.py`: OCEAN→parameter derivation and per-persona agenda.
+- `src/models.py`: typed state (scenario, personas, runtime, obligations, coverage).
+- `src/parsing.py`: option matching and visible-commitment/vote parsing.
+- `src/aliases.py`: the single option-alias contract (`short_alias_map`).
+- `src/style.py`: deterministic local surface-style tracker (name-prefix, repeated templates).
+- `src/llm_client.py`: provider abstraction (uni | groq | gemini | gpt).
+- `src/evaluation.py`: lightweight metrics (separate from logging).
+- `src/logger.py`: run logging (transcript, JSON, metrics CSV).
+- `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON).
+- `tests/`: deterministic, LLM-free tests.
+- `info/`: conceptual design notes for intended behavior.
+- `docs/todo.md`: open issues and the per-issue implementation protocol.
+
+## Key controller mechanisms (current as of 2026-07-01)
+
+- **Response obligations.** A direct question (moderator→participant or
+  participant→participant), detected from visible text, sets
+  `DialogueState.response_obligation`. The router consumes it before normal
+  speaker selection in both the discussion and decision loops, so the addressed
+  participant answers within the next turn. Obligations expire after a bounded
+  number of turns and are counted as `unanswered_direct_questions`.
+- **Surface-style control.** `src/style.py` tracks the last few participant turns
+  for name-prefix density and repeated concession/worry/trade-off templates. The
+  controller suppresses non-functional name prefixes (deterministic strip), biases
+  act selection away from templated streaks, and passes compact prompt flags.
+- **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
+  penalizes the second-to-last speaker to stop two participants ping-ponging.
+- **Vote stability.** Later vote rounds only re-prompt unclear/non-voters, and
+  `_set_vote` keeps an existing clear vote unless the text explicitly signals a
+  change (e.g. "actually I vote for", "switch to").
+- **Coverage is bounded.** Each option gets at most one coverage nudge
+  (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
+- **Alias safety.** Option aliases exclude stopwords/generic words (so "with",
+  "data", etc. never match) and include distinctive proper nouns ("Gin", "Rails").
 
 ## Current direction
 
@@ -44,3 +75,4 @@ The discussion should contain natural multi-party behavior: agreement, challenge
 - Never add facts outside option cards/shared context.
 - Keep the moderator sparse and neutral.
 - Put all LLM-facing prose in `src/prompts.py`.
+- Prefer controller/parser/validator/state fixes over enlarging prompts.

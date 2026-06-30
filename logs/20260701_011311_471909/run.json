@@ -1,0 +1,1138 @@
+{
+  "run_id": "20260701_011311_471909",
+  "topic": "Pick a team lunch spot downtown",
+  "scenario": {
+    "topic": "Pick a team lunch spot downtown",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most for our team lunch: speed, cost, atmosphere, or food variety?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Green Garden Vegan Bistro",
+        "attrs": {
+          "average_cost_per_person": "$18",
+          "average_wait_time_minutes": "15",
+          "seating_capacity": "small indoor",
+          "menu_variety": "vegan and vegetarian only"
+        },
+        "upside": "Healthy, fresh meals with a calm atmosphere",
+        "tradeoff": "Limited menu may not satisfy all tastes",
+        "concern": "Some team members might find vegan options restrictive",
+        "best_for": "prioritizing health and quiet dining",
+        "short_name": "Green Garden"
+      },
+      {
+        "id": "B",
+        "name": "Downtown Deli Express",
+        "attrs": {
+          "average_cost_per_person": "$12",
+          "average_wait_time_minutes": "5",
+          "seating_capacity": "counter and limited tables",
+          "menu_variety": "sandwiches, salads, quick bites"
+        },
+        "upside": "Fast service and budget-friendly prices",
+        "tradeoff": "Noisy environment and limited seating",
+        "concern": "Might feel rushed or cramped during peak lunch hours",
+        "best_for": "prioritizing speed and cost savings",
+        "short_name": "Deli Express"
+      },
+      {
+        "id": "C",
+        "name": "Bella Trattoria Italian Kitchen",
+        "attrs": {
+          "average_cost_per_person": "$25",
+          "average_wait_time_minutes": "20",
+          "seating_capacity": "medium indoor with cozy booths",
+          "menu_variety": "classic Italian dishes and wine options"
+        },
+        "upside": "High-quality food with a pleasant ambiance",
+        "tradeoff": "Slightly over budget and longer wait times",
+        "concern": "May not fit within the 1-hour lunch break comfortably",
+        "best_for": "prioritizing food quality and atmosphere",
+        "short_name": "Bella Trattoria"
+      },
+      {
+        "id": "D",
+        "name": "Skyline Rooftop Tapas Bar",
+        "attrs": {
+          "average_cost_per_person": "$22",
+          "average_wait_time_minutes": "10",
+          "seating_capacity": "outdoor rooftop seating",
+          "menu_variety": "small plates with diverse international flavors"
+        },
+        "upside": "Unique dining experience with city views",
+        "tradeoff": "Outdoor seating may be affected by weather",
+        "concern": "Might be too casual or distracting for a work lunch",
+        "best_for": "prioritizing atmosphere and variety",
+        "short_name": "Skyline Rooftop"
+      }
+    ],
+    "shared_context": [
+      "The team has exactly 3 people",
+      "Lunch break is 1 hour long starting at noon",
+      "Budget per person is about $20"
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nadia",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.7,
+        "stubbornness": 0.25,
+        "directness": 0.5625,
+        "compromise_threshold": 0.2124999999999999
+      },
+      "background": "I enjoy unique dining experiences with a lively atmosphere that can energize our team.",
+      "private_goal": "I want a fun and social lunch spot with good variety and a nice view.",
+      "preferred_options": [
+        "D",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Tala",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.675,
+        "initiative": 0.6499999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.55,
+        "directness": 0.6,
+        "compromise_threshold": 0.55
+      },
+      "background": "I prefer quick, budget-friendly meals that fit easily into a busy workday.",
+      "private_goal": "I want a fast, affordable lunch spot with minimal wait time.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Yuki",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.9624999999999999,
+        "verbosity": 1.0,
+        "initiative": 1.0,
+        "responsiveness": 0.825,
+        "stubbornness": 0.475,
+        "directness": 0.7999999999999999,
+        "compromise_threshold": 0.275
+      },
+      "background": "I value healthy, high-quality food options that support well-being and focus.",
+      "private_goal": "I want a calm, healthy dining experience that suits most dietary preferences.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a team lunch spot downtown.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Green Garden Vegan Bistro — average cost per person: $18; average wait time minutes: 15; seating capacity: small indoor (+ Healthy, fresh meals with a calm atmosphere; − Limited menu may not satisfy all tastes)\nB) Downtown Deli Express — average cost per person: $12; average wait time minutes: 5; seating capacity: counter and limited tables (+ Fast service and budget-friendly prices; − Noisy environment and limited seating)\nC) Bella Trattoria Italian Kitchen — average cost per person: $25; average wait time minutes: 20; seating capacity: medium indoor with cozy booths (+ High-quality food with a pleasant ambiance; − Slightly over budget and longer wait times)\nD) Skyline Rooftop Tapas Bar — average cost per person: $22; average wait time minutes: 10; seating capacity: outdoor rooftop seating (+ Unique dining experience with city views; − Outdoor seating may be affected by weather)\nContext: The team has exactly 3 people; Lunch break is 1 hour long starting at noon; Budget per person is about $20.\nWhat matters most for our team lunch: speed, cost, atmosphere, or food variety?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a team lunch spot downtown.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Green Garden Vegan Bistro — average cost per person: $18; average wait time minutes: 15; seating capacity: small indoor (+ Healthy, fresh meals with a calm atmosphere; − Limited menu may not satisfy all tastes)\nB) Downtown Deli Express — average cost per person: $12; average wait time minutes: 5; seating capacity: counter and limited tables (+ Fast service and budget-friendly prices; − Noisy environment and limited seating)\nC) Bella Trattoria Italian Kitchen — average cost per person: $25; average wait time minutes: 20; seating capacity: medium indoor with cozy booths (+ High-quality food with a pleasant ambiance; − Slightly over budget and longer wait times)\nD) Skyline Rooftop Tapas Bar — average cost per person: $22; average wait time minutes: 10; seating capacity: outdoor rooftop seating (+ Unique dining experience with city views; − Outdoor seating may be affected by weather)\nContext: The team has exactly 3 people; Lunch break is 1 hour long starting at noon; Budget per person is about $20.\nWhat matters most for our team lunch: speed, cost, atmosphere, or food variety?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Green Garden seems like the best fit for a calm, healthy meal within budget, though we should consider if everyone’s okay with a fully vegan menu.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Green Garden seems like the best fit for a calm, healthy meal within budget, though we should consider if everyone’s okay with a fully vegan menu.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 825,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Skyline's vibe and views could really lift our mood, even if it’s a bit pricier and weather-dependent.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Skyline's vibe and views could really lift our mood, even if it’s a bit pricier and weather-dependent.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 857,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Tala",
+      "text": "Deli Express looks solid—quick and cheap, which fits our tight break. Just worried it might get too cramped for us.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Deli Express looks solid—quick and cheap, which fits our tight break. Just worried it might get too cramped for us.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 864,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Nadia, Skyline sounds great for atmosphere, but with our hour and budget, Green Garden’s quick, healthy focus might keep us energized without rushing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nadia, Skyline sounds great for atmosphere, but with our hour and budget, Green Garden’s quick, healthy focus might keep us energized without rushing.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Green Garden, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 963,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Bella’s food sounds amazing but the wait and price might eat into our hour too much compared to Skyline’s quicker service and fun rooftop vibe.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Bella’s food sounds amazing but the wait and price might eat into our hour too much compared to Skyline’s quicker service and fun rooftop vibe.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 1024,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Nadia, do you think the small indoor seating at Green Garden would feel too cramped for us compared to Skyline or Deli Express?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nadia, do you think the small indoor seating at Green Garden would feel too cramped for us compared to Skyline or Deli Express?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "B",
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Green Garden",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 1,
+        "moves_lean": false
+      },
+      "tokens_in": 751,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Yuki, Green Garden might feel a bit tight, but it’s quieter than Deli and less weather-dependent than Skyline, which could help us relax more during lunch.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Yuki, Green Garden might feel a bit tight, but it’s quieter than Deli and less weather-dependent than Skyline, which could help us relax more during lunch.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "D",
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 786,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "True, Nadia, the quieter vibe at Green Garden suits us, but we should also consider if the limited vegan menu might leave someone unsatisfied.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "True, Nadia, the quieter vibe at Green Garden suits us, but we should also consider if the limited vegan menu might leave someone unsatisfied.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Green Garden with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 2,
+        "moves_lean": false
+      },
+      "tokens_in": 768,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Tala",
+      "text": "Green Garden’s vibe is nice, but with only 15-minute waits, Deli Express still wins for speed, and it’s way easier on the budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Garden’s vibe is nice, but with only 15-minute waits, Deli Express still wins for speed, and it’s way easier on the budget.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Green Garden, Deli Express, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 812,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Tala, Skyline’s wait is shorter than Bella’s and just a bit longer than Deli’s, but the city views and diverse small plates could really boost our.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Tala, Skyline’s wait is shorter than Bella’s and just a bit longer than Deli’s, but the city views and diverse small plates could really boost our.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "C",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Skyline Rooftop, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 780,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Tala",
+      "text": "The quick service at Deli means we won’t risk cutting lunch short, even if it gets noisy or cramped during peak times.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The quick service at Deli means we won’t risk cutting lunch short, even if it gets noisy or cramped during peak times.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Deli Express, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 758,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Tala, since speed’s key for you, do you think the limited seating at Deli might make us feel rushed, or would the quick turnaround still keep.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tala, since speed’s key for you, do you think the limited seating at Deli might make us feel rushed, or would the quick turnaround still keep.",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Deli Express, Green Garden, Skyline Rooftop",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 910,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Tala",
+      "text": "I get the cramped vibe concern, but since wait’s only 5 minutes, do you think quick table turnover eases the rush?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I get the cramped vibe concern, but since wait’s only 5 minutes, do you think quick table turnover eases the rush?",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Deli Express",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 1,
+        "moves_lean": false
+      },
+      "tokens_in": 760,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Tala, quick turnover helps, but with limited seating and noise, I worry it won’t feel as calm or restorative as we need midday.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tala, quick turnover helps, but with limited seating and noise, I worry it won’t feel as calm or restorative as we need midday.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 734,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Group, please share your final vote clearly by saying, “I vote for Skyline Rooftop” or another choice now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Group, please share your final vote clearly by saying, “I vote for Skyline Rooftop” or another choice now.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "I vote for Skyline Rooftop for its energizing view and vibe despite the slightly higher cost.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Skyline Rooftop for its energizing view and vibe despite the slightly higher cost.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 1241,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Tala",
+      "text": "I vote for Skyline Rooftop—it’s just a bit above budget but worth the fresh air and quick wait.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for Skyline Rooftop—it’s just a bit above budget but worth the fresh air and quick wait.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 701,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "I vote for Green Garden since it fits our budget and offers a calm, healthy atmosphere we all need.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Green Garden since it fits our budget and offers a calm, healthy atmosphere we all need.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 719,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Majority chose Skyline Rooftop Tapas Bar, so we'll go with that option.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Majority chose Skyline Rooftop Tapas Bar, so we'll go with that option.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "reason": "2/3 participants visibly committed to the winning option.",
+    "turns": 17,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "A"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "D"
+      },
+      "phase_history": [
+        "pacing: min=9, force=14, hard=20, distinct_initial_prefs=3, avg_compromise=0.65",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 15: narrowing — target discussion length reached",
+        "turn 19: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 9,
+      "force_narrow_turns": 14,
+      "hard_max_turns": 20
+    }
+  },
+  "metrics": {
+    "participant_turns": 17,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.15,
+    "turn_counts": {
+      "Nadia": 5,
+      "Tala": 5,
+      "Yuki": 7
+    },
+    "top_speaker_share": 0.412,
+    "avg_words_by_persona": {
+      "Nadia": 22.0,
+      "Tala": 20.8,
+      "Yuki": 23.4
+    },
+    "question_density": 0.118,
+    "avg_words_per_turn": 22.2,
+    "repaired_turns": 1,
+    "repair_rate": 0.059,
+    "flagged_turns": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Nadia": "D",
+      "Tala": "D",
+      "Yuki": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 8,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nadia": 0.737,
+      "Tala": 0.737,
+      "Yuki": 0.962
+    },
+    "outcome_status": "majority",
+    "final_option": "D",
+    "min_discussion_turns": 9,
+    "force_narrow_turns": 14,
+    "hard_max_turns": 20,
+    "phase_history": [
+      "pacing: min=9, force=14, hard=20, distinct_initial_prefs=3, avg_compromise=0.65",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 15: narrowing — target discussion length reached",
+      "turn 19: closure — majority visible after vote round 1",
+      "turn 20: closure — closed as majority"
+    ],
+    "setup_tokens_in": 1882,
+    "setup_tokens_out": 961,
+    "dialogue_tokens_in": 14641,
+    "dialogue_tokens_out": 546,
+    "total_tokens_in": 16523,
+    "total_tokens_out": 1507
+  },
+  "tokens": {
+    "setup_tokens_in": 1882,
+    "setup_tokens_out": 961,
+    "dialogue_tokens_in": 14641,
+    "dialogue_tokens_out": 546,
+    "total_tokens_in": 16523,
+    "total_tokens_out": 1507
+  }
+}

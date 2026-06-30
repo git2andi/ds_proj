@@ -9,9 +9,17 @@ from __future__ import annotations
 
 import re
 
-from aliases import short_alias_map
+from aliases import _GENERIC, _STOPWORDS, short_alias_map
 from models import ActType, DialogueAct, MoveIntent, OptionCard
 from utils import normalise_ws
+
+# Common words that must never become a standalone option alias: they appear in
+# ordinary sentences and would cause false option matches (e.g. "with", "data").
+_ALIAS_STOPWORDS = _STOPWORDS | _GENERIC | {
+    "with", "data", "open", "core", "team", "service", "services", "system",
+    "support", "framework", "extension", "edition", "version", "standard",
+    "cloud", "online", "based", "free", "premium", "basic", "pro",
+}
 
 _QUESTION = re.compile(r"\?")
 _RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
@@ -81,10 +89,17 @@ class OptionResolver:
             name = option.name.lower()
             aliases = {name}
             clean = re.sub(r"[^\wäöüÄÖÜß\s'-]", " ", name)
-            words = [w for w in clean.split() if len(w) >= 4]
+            words = [w for w in clean.split() if len(w) >= 4 and w not in _ALIAS_STOPWORDS]
             aliases.update(words)
             if len(words) >= 2:
                 aliases.add(" ".join(words[:2]))
+            # Distinctive proper nouns/brands are how people actually refer to an
+            # option (e.g. "Gin", "Rails", "SAS", "FastAPI"); capture capitalized
+            # tokens of length >= 3 from the original name even when < 4 chars.
+            aliases.update(
+                w.lower() for w in re.findall(r"[A-Z][A-Za-z]{2,}", option.name)
+                if w.lower() not in _ALIAS_STOPWORDS
+            )
             aliases.add(safe_short_names[option.id].lower())
             candidates[option.id] = {a.strip() for a in aliases if a.strip()}
         owners: dict[str, set[str]] = {}

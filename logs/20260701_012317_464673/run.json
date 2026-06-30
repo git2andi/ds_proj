@@ -1,0 +1,1690 @@
+{
+  "run_id": "20260701_012317_464673",
+  "topic": "Decide which programming language for a new internal tool",
+  "scenario": {
+    "topic": "Decide which programming language for a new internal tool",
+    "decision_kind": "tool_choice",
+    "opening_question": "What trade-offs are we willing to make between development speed, maintainability, and integration?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Python 3.10 with FastAPI Framework",
+        "attrs": {
+          "development_speed": "high",
+          "runtime_performance": "moderate",
+          "library_support": "extensive",
+          "team_experience": "moderate"
+        },
+        "upside": "Rapid prototyping and easy integration with APIs",
+        "tradeoff": "Moderate runtime performance may limit scalability",
+        "concern": "Some team members have limited experience with asynchronous Python",
+        "best_for": "Fast development and flexibility",
+        "short_name": "Python FastAPI"
+      },
+      {
+        "id": "B",
+        "name": "TypeScript with Node.js and Express",
+        "attrs": {
+          "development_speed": "moderate",
+          "runtime_performance": "good",
+          "type_safety": "strong",
+          "team_experience": "high"
+        },
+        "upside": "Strong typing reduces bugs and good performance on backend",
+        "tradeoff": "Longer initial setup and configuration time",
+        "concern": "Requires more boilerplate and build tooling",
+        "best_for": "Code maintainability and type safety",
+        "short_name": "TypeScript Node"
+      },
+      {
+        "id": "C",
+        "name": "Go 1.20 with Standard Library",
+        "attrs": {
+          "development_speed": "moderate",
+          "runtime_performance": "high",
+          "concurrency_support": "excellent",
+          "team_experience": "low"
+        },
+        "upside": "High performance and efficient concurrency handling",
+        "tradeoff": "Steeper learning curve for team unfamiliar with Go",
+        "concern": "Limited third-party libraries compared to other languages",
+        "best_for": "Performance and scalability",
+        "short_name": "Go Standard"
+      },
+      {
+        "id": "D",
+        "name": "C# with .NET Core 6",
+        "attrs": {
+          "development_speed": "moderate",
+          "runtime_performance": "high",
+          "ecosystem_maturity": "extensive",
+          "team_experience": "moderate"
+        },
+        "upside": "Robust ecosystem and good tooling support",
+        "tradeoff": "Requires Windows-based development environment for some tools",
+        "concern": "Potential overhead in deployment and licensing concerns",
+        "best_for": "Ecosystem maturity and tooling",
+        "short_name": "C# .NET"
+      }
+    ],
+    "shared_context": [
+      "The tool must be ready within 3 months",
+      "The team size is exactly 4 developers",
+      "The tool will integrate with existing internal APIs and databases"
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Leo",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.5375,
+        "compromise_threshold": 0.36250000000000004
+      },
+      "background": "As a backend developer with moderate Python experience, Leo values rapid prototyping and API integration.",
+      "private_goal": "To choose a language that enables fast development and flexibility for evolving requirements.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Beatriz",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.7,
+        "directness": 0.6,
+        "compromise_threshold": 0.6125
+      },
+      "background": "Beatriz is a senior developer experienced in TypeScript and values maintainable, strongly typed codebases.",
+      "private_goal": "To select a language that ensures code quality and reduces bugs through strong typing.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Hana",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4,
+        "initiative": 0.4,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.6499999999999999,
+        "compromise_threshold": 0.5125
+      },
+      "background": "Hana is a detail-oriented engineer focused on efficient development and moderate team experience.",
+      "private_goal": "To pick a language that balances development speed with team familiarity and manageable learning curve.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Faye",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.1,
+        "directness": 0.4625,
+        "compromise_threshold": 0.050000000000000044
+      },
+      "background": "Faye is a collaborative systems engineer interested in high performance and scalability despite low Go experience.",
+      "private_goal": "To adopt a performant, scalable language that can grow with the tool's demands.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Decide which programming language for a new internal tool.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Python 3.10 with FastAPI Framework — runtime performance: moderate; development speed: high; library support: extensive (+ Rapid prototyping and easy integration with APIs; − Moderate runtime performance may limit scalability)\nB) TypeScript with Node.js and Express — runtime performance: good; type safety: strong; development speed: moderate (+ Strong typing reduces bugs and good performance on backend; − Longer initial setup and configuration time)\nC) Go 1.20 with Standard Library — runtime performance: high; concurrency support: excellent; development speed: moderate (+ High performance and efficient concurrency handling; − Steeper learning curve for team unfamiliar with Go)\nD) C# with .NET Core 6 — runtime performance: high; development speed: moderate; ecosystem maturity: extensive (+ Robust ecosystem and good tooling support; − Requires Windows-based development environment for some tools)\nContext: The tool must be ready within 3 months; The team size is exactly 4 developers; The tool will integrate with existing internal APIs and databases.\nWhat trade-offs are we willing to make between development speed, maintainability, and integration?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Decide which programming language for a new internal tool.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Python 3.10 with FastAPI Framework — runtime performance: moderate; development speed: high; library support: extensive (+ Rapid prototyping and easy integration with APIs; − Moderate runtime performance may limit scalability)\nB) TypeScript with Node.js and Express — runtime performance: good; type safety: strong; development speed: moderate (+ Strong typing reduces bugs and good performance on backend; − Longer initial setup and configuration time)\nC) Go 1.20 with Standard Library — runtime performance: high; concurrency support: excellent; development speed: moderate (+ High performance and efficient concurrency handling; − Steeper learning curve for team unfamiliar with Go)\nD) C# with .NET Core 6 — runtime performance: high; development speed: moderate; ecosystem maturity: extensive (+ Robust ecosystem and good tooling support; − Requires Windows-based development environment for some tools)\nContext: The tool must be ready within 3 months; The team size is exactly 4 developers; The tool will integrate with existing internal APIs and databases.\nWhat trade-offs are we willing to make between development speed, maintainability, and integration?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "Python’s fast prototyping and API integration suit us well, though I wonder if we can handle async challenges within the tight timeline.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Python’s fast prototyping and API integration suit us well, though I wonder if we can handle async challenges within the tight timeline.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 797,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "Go’s performance and concurrency are huge pluses for scalability, though we’ll need to factor in ramp-up time given our low Go experience.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Go’s performance and concurrency are huge pluses for scalability, though we’ll need to factor in ramp-up time given our low Go experience.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 838,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "TypeScript’s strong typing really helps cut bugs, which matters for maintainability, though setup time might slow us down.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "TypeScript’s strong typing really helps cut bugs, which matters for maintainability, though setup time might slow us down.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 862,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Leo, I agree Python’s speed is a plus, but we should consider if async challenges might slow us down more than.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Leo, I agree Python’s speed is a plus, but we should consider if async challenges might slow us down more than.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 888,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Fast prototyping is great, but we risk more bugs without strong typing—can we afford that trade-off this time?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Fast prototyping is great, but we risk more bugs without strong typing—can we afford that trade-off this time?",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Python FastAPI, TypeScript Node, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1086,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Beatriz, strong typing helps, but given our timeline, I’m worried that learning async Python might slow us down more than expected.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Beatriz, strong typing helps, but given our timeline, I’m worried that learning async Python might slow us down more than expected.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 696,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "Go’s concurrency is a big win for scaling, but we should keep in mind the smaller library ecosystem might slow down integration with our APIs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Go’s concurrency is a big win for scaling, but we should keep in mind the smaller library ecosystem might slow down integration with our APIs.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 721,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "C# with.NET Core offers strong tooling and performance, but its Windows dependency and deployment overhead could challenge our cross-platform needs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "C# with.NET Core offers strong tooling and performance, but its Windows dependency and deployment overhead could challenge our cross-platform needs.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1288,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Beatriz, I see your point on tooling with C#, but Python’s quicker dev speed and API flexibility still feel safer for our tight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Beatriz, I see your point on tooling with C#, but Python’s quicker dev speed and API flexibility still feel safer for our tight.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about C# .NET, Python FastAPI, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 855,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "Python’s extensive library support means we won’t waste time building integrations from scratch, which really suits our tight deadline.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Python’s extensive library support means we won’t waste time building integrations from scratch, which really suits our tight deadline.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Python FastAPI, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 810,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "Leo, I get the library benefit, but Go’s performance and concurrency could really future-proof us, even if the learning curve is steeper for now.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Leo, I get the library benefit, but Go’s performance and concurrency could really future-proof us, even if the learning curve is steeper for now.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Go Standard, connected to the current discussion",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 754,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Faye, Go’s great for concurrency, but TypeScript’s strong typing helps catch bugs early, which we really need on a small team.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Faye, Go’s great for concurrency, but TypeScript’s strong typing helps catch bugs early, which we really need on a small team.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about TypeScript Node, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 760,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "How confident are we that everyone can ramp up on async Python quickly enough to meet our three-month deadline?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "How confident are we that everyone can ramp up on async Python quickly enough to meet our three-month deadline?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Python FastAPI",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 763,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Leo, async Python’s learning curve worries me more than the runtime speed tradeoff; strong typing in TypeScript will help us avoid costly bugs fast.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leo, async Python’s learning curve worries me more than the runtime speed tradeoff; strong typing in TypeScript will help us avoid costly bugs fast.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 703,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "Strong typing is solid, but the extra boilerplate in TypeScript might slow us initially; Go’s concurrency and speed could save time long-term despite the learning curve.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Strong typing is solid, but the extra boilerplate in TypeScript might slow us initially; Go’s concurrency and speed could save time long-term despite the learning curve.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about TypeScript Node, Python FastAPI, Go Standard",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 919,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "TypeScript’s strong typing is great, but I worry the initial setup might eat into our tight schedule more than async Python’s quirks.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "TypeScript’s strong typing is great, but I worry the initial setup might eat into our tight schedule more than async Python’s quirks.",
+        "act_type": "build",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "TypeScript’s strong typing is great, but I worry the initial setup might eat into our tight schedule more than async Python’s quirks."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about TypeScript Node, Python FastAPI, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 836,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Leo, your point about setup time is valid, but we should also consider how much faster we can iterate with Python’s extensive libraries.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Leo, your point about setup time is valid, but we should also consider how much faster we can iterate with Python’s extensive libraries.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare TypeScript Node, Python FastAPI, C# .NET with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 898,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "Hana, considering Go’s limited libraries, do we have any critical dependencies that might slow us down or block progress with Go?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Hana, considering Go’s limited libraries, do we have any critical dependencies that might slow us down or block progress with Go?",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Go Standard",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 811,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Faye, with Python, async learning is a hiccup but our moderate experience should keep us moving fast enough for the deadline.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Faye, with Python, async learning is a hiccup but our moderate experience should keep us moving fast enough for the deadline.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 712,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Team, please cast your final vote clearly by stating, \"I vote for Python FastAPI\" or your preferred option now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Team, please cast your final vote clearly by stating, \"I vote for Python FastAPI\" or your preferred option now.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "I vote for Python FastAPI because it lets us prototype quickly and adapt as requirements evolve.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Python FastAPI because it lets us prototype quickly and adapt as requirements evolve.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 731,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "I vote for Python FastAPI since it balances speed and our team's moderate experience well.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Python FastAPI since it balances speed and our team's moderate experience well.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 726,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "I vote for TypeScript with Node.js and Express for stronger typing and better long-term maintainability.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for TypeScript with Node.js and Express for stronger typing and better long-term maintainability.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": true,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1213,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "I vote for Option C because its high performance and concurrency best support our scaling needs despite the learning curve.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I vote for Option C because its high performance and concurrency best support our scaling needs despite the learning curve.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1197,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Group, please confirm your final choice clearly by stating, \"I vote for [Option]\" to finalize our decision.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Group, please confirm your final choice clearly by stating, \"I vote for [Option]\" to finalize our decision.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "I vote for Python FastAPI because it lets us move fast and handle API changes smoothly, even if some async.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Python FastAPI because it lets us move fast and handle API changes smoothly, even if some async.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 680,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "I vote for Python FastAPI; it’s the best balance between our speed needs and team skills, even.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Python FastAPI; it’s the best balance between our speed needs and team skills, even.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 690,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p4",
+      "speaker_name": "Faye",
+      "text": "I vote for Go because its high performance and concurrency support will help us scale efficiently despite the learning curve.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I vote for Go because its high performance and concurrency support will help us scale efficiently despite the learning curve.",
+        "act_type": "vote",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1213,
+      "tokens_out": 43,
+      "validation_issues": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": true
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "I vote for TypeScript Node because strong typing will keep our code stable and easier to maintain.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for TypeScript Node because strong typing will keep our code stable and easier to maintain.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 700,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion is closed without a decision due to no clear majority emerging.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The discussion is closed without a decision due to no clear majority emerging.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 27,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "B",
+        "p3": "A",
+        "p4": "C"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A",
+        "p4": "A"
+      },
+      "phase_history": [
+        "pacing: min=12, force=18, hard=26, distinct_initial_prefs=3, avg_compromise=0.62",
+        "turn 5: discussion — all participants gave an opening view",
+        "turn 20: narrowing — target discussion length reached",
+        "turn 30: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 18,
+      "hard_max_turns": 26
+    }
+  },
+  "metrics": {
+    "participant_turns": 27,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.129,
+    "turn_counts": {
+      "Leo": 6,
+      "Beatriz": 7,
+      "Hana": 7,
+      "Faye": 7
+    },
+    "top_speaker_share": 0.259,
+    "avg_words_by_persona": {
+      "Leo": 19.7,
+      "Beatriz": 19.0,
+      "Hana": 20.1,
+      "Faye": 22.6
+    },
+    "question_density": 0.111,
+    "avg_words_per_turn": 20.4,
+    "repaired_turns": 4,
+    "repair_rate": 0.148,
+    "flagged_turns": 1,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Leo": "A",
+      "Beatriz": "B",
+      "Hana": "A",
+      "Faye": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.333,
+    "repeated_opening_patterns": 3,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 14,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 7,
+        "reasons": 3,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 4,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Leo": 0.588,
+      "Beatriz": 0.475,
+      "Hana": 0.512,
+      "Faye": 0.588
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 18,
+    "hard_max_turns": 26,
+    "phase_history": [
+      "pacing: min=12, force=18, hard=26, distinct_initial_prefs=3, avg_compromise=0.62",
+      "turn 5: discussion — all participants gave an opening view",
+      "turn 20: narrowing — target discussion length reached",
+      "turn 30: closure — vote rounds exhausted without visible consensus",
+      "turn 31: closure — closed as unresolved"
+    ],
+    "setup_tokens_in": 1926,
+    "setup_tokens_out": 1021,
+    "dialogue_tokens_in": 23806,
+    "dialogue_tokens_out": 837,
+    "total_tokens_in": 25732,
+    "total_tokens_out": 1858
+  },
+  "tokens": {
+    "setup_tokens_in": 1926,
+    "setup_tokens_out": 1021,
+    "dialogue_tokens_in": 23806,
+    "dialogue_tokens_out": 837,
+    "total_tokens_in": 25732,
+    "total_tokens_out": 1858
+  }
+}

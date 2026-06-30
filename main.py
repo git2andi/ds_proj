@@ -3,6 +3,14 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+# Transcripts contain unicode (e.g. the "−" minus sign in option boards). On a
+# Windows console defaulting to cp1252 this would crash on print; force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+    except (AttributeError, ValueError):
+        pass
+
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:

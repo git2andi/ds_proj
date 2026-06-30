@@ -1,0 +1,1134 @@
+{
+  "run_id": "20260701_011116_864287",
+  "topic": "Book a flight to Stockholm",
+  "scenario": {
+    "topic": "Book a flight to Stockholm",
+    "decision_kind": "travel_destination",
+    "opening_question": "What matters most to us when booking this flight to Stockholm: cost, travel time, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Direct morning flight from JFK to Stockholm Arlanda",
+        "attrs": {
+          "cost": "$420 per person",
+          "flight_duration": "8 hours",
+          "departure_time": "8:00 AM"
+        },
+        "upside": "Shortest travel time with no layovers and early arrival",
+        "tradeoff": "Slightly above budget and limited seat availability",
+        "concern": "May be too early for some to get to the airport comfortably",
+        "best_for": "prioritizing speed and convenience",
+        "short_name": "Direct morning"
+      },
+      {
+        "id": "B",
+        "name": "Evening flight with one layover in London Heathrow",
+        "attrs": {
+          "cost": "$370 per person",
+          "flight_duration": "12 hours total",
+          "departure_time": "6:30 PM"
+        },
+        "upside": "Lower cost and more flexible ticket change options",
+        "tradeoff": "Longer travel time due to layover",
+        "concern": "Layover might be tiring and increase risk of delay",
+        "best_for": "budget-conscious travelers willing to trade time",
+        "short_name": "Evening layover"
+      },
+      {
+        "id": "C",
+        "name": "Red-eye flight with stopover in Reykjavik",
+        "attrs": {
+          "cost": "$390 per person",
+          "flight_duration": "14 hours total",
+          "departure_time": "11:45 PM"
+        },
+        "upside": "Overnight travel allows sleeping on plane and daytime arrival",
+        "tradeoff": "Long total travel time and late departure",
+        "concern": "Red-eye flights can be uncomfortable and disrupt sleep",
+        "best_for": "those who want to maximize daytime in Stockholm",
+        "short_name": "Red-eye Reykjavik"
+      },
+      {
+        "id": "D",
+        "name": "Afternoon flight with two short layovers via Paris and Copenhagen",
+        "attrs": {
+          "cost": "$350 per person",
+          "flight_duration": "15 hours total",
+          "departure_time": "2:00 PM"
+        },
+        "upside": "Cheapest option with multiple connection cities to explore briefly",
+        "tradeoff": "Longest travel time and higher chance of delays",
+        "concern": "Multiple layovers can be stressful and tiring for some",
+        "best_for": "travelers prioritizing lowest cost over speed",
+        "short_name": ""
+      }
+    ],
+    "shared_context": [
+      "The group consists of exactly 3 participants.",
+      "The trip is planned for next month with a flexible return date within one week.",
+      "The budget per person is around $400, but some flexibility is allowed for better options."
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Tala",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.8875,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.4,
+        "directness": 0.6625,
+        "compromise_threshold": 0.475
+      },
+      "background": "I prefer to save money but also want a reasonable travel time without too many stops.",
+      "private_goal": "I want a flight that balances cost and convenience, ideally with some flexibility.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Leo",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.5375000000000001,
+        "initiative": 0.525,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.575,
+        "compromise_threshold": 0.65
+      },
+      "background": "I get anxious about tight schedules and prefer to arrive rested even if it takes longer.",
+      "private_goal": "I want to maximize daytime in Stockholm and avoid stressful early departures.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Olga",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.875,
+        "initiative": 0.85,
+        "responsiveness": 0.7625,
+        "stubbornness": 0.25,
+        "directness": 0.7125,
+        "compromise_threshold": 0.26249999999999996
+      },
+      "background": "I like social and convenient travel but also want to keep costs reasonable.",
+      "private_goal": "I want a flight that is not too expensive and allows me to arrive early enough to enjoy the day.",
+      "preferred_options": [
+        "B",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Book a flight to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct morning flight from JFK to Stockholm Arlanda — cost: $420 per person; flight duration: 8 hours; departure time: 8:00 AM (+ Shortest travel time with no layovers and early arrival; − Slightly above budget and limited seat availability)\nB) Evening flight with one layover in London Heathrow — cost: $370 per person; flight duration: 12 hours total; departure time: 6:30 PM (+ Lower cost and more flexible ticket change options; − Longer travel time due to layover)\nC) Red-eye flight with stopover in Reykjavik — cost: $390 per person; flight duration: 14 hours total; departure time: 11:45 PM (+ Overnight travel allows sleeping on plane and daytime arrival; − Long total travel time and late departure)\nD) Afternoon flight with two short layovers via Paris and Copenhagen — cost: $350 per person; flight duration: 15 hours total; departure time: 2:00 PM (+ Cheapest option with multiple connection cities to explore briefly; − Longest travel time and higher chance of delays)\nContext: The group consists of exactly 3 participants.; The trip is planned for next month with a flexible return date within one week.; The budget per person is around $400, but some flexibility is allowed for better options.\nWhat matters most to us when booking this flight to Stockholm: cost, travel time, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Book a flight to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct morning flight from JFK to Stockholm Arlanda — cost: $420 per person; flight duration: 8 hours; departure time: 8:00 AM (+ Shortest travel time with no layovers and early arrival; − Slightly above budget and limited seat availability)\nB) Evening flight with one layover in London Heathrow — cost: $370 per person; flight duration: 12 hours total; departure time: 6:30 PM (+ Lower cost and more flexible ticket change options; − Longer travel time due to layover)\nC) Red-eye flight with stopover in Reykjavik — cost: $390 per person; flight duration: 14 hours total; departure time: 11:45 PM (+ Overnight travel allows sleeping on plane and daytime arrival; − Long total travel time and late departure)\nD) Afternoon flight with two short layovers via Paris and Copenhagen — cost: $350 per person; flight duration: 15 hours total; departure time: 2:00 PM (+ Cheapest option with multiple connection cities to explore briefly; − Longest travel time and higher chance of delays)\nContext: The group consists of exactly 3 participants.; The trip is planned for next month with a flexible return date within one week.; The budget per person is around $400, but some flexibility is allowed for better options.\nWhat matters most to us when booking this flight to Stockholm: cost, travel time, or convenience?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "The evening flight seems like a good balance—cost-effective and flexible, though I worry the layover might eat into our energy for the first day.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The evening flight seems like a good balance—cost-effective and flexible, though I worry the layover might eat into our energy for the first day.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "The evening flight seems like a good balance—cost-effective and flexible, though I worry the layover might eat into our energy for the first day."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 892,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "The evening flight makes sense for saving some cash and keeping ticket changes easy, but that layover might be a real drag.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The evening flight makes sense for saving some cash and keeping ticket changes easy, but that layover might be a real drag.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 898,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "C looks best to me since we’d get daytime in Stockholm, but I worry if sleeping on the plane will actually be.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "C looks best to me since we’d get daytime in Stockholm, but I worry if sleeping on the plane will actually be.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "C looks best to me since we’d get daytime in Stockholm, but I worry if sleeping on the plane will actually be."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 929,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "Leo, I get the sleep concern, but the evening flight’s flexible change policy is a real plus if plans shift last minute for any of us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Leo, I get the sleep concern, but the evening flight’s flexible change policy is a real plus if plans shift last minute for any of us.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Leo, I get the sleep concern, but the evening flight’s flexible change policy is a real plus if plans shift last minute for any of us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Evening layover, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 1013,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "The red-eye’s overnight travel is tempting for extra daytime, but I’m not sure if we’ll actually get good rest on that long stopover.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The red-eye’s overnight travel is tempting for extra daytime, but I’m not sure if we’ll actually get good rest on that long stopover.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 996,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "There’s also that afternoon flight with two short layovers—cheaper and a bit more adventurous, but it’s the longest trip and could wear us out before we.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "There’s also that afternoon flight with two short layovers—cheaper and a bit more adventurous, but it’s the longest trip and could wear us out before we.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 776,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Tala, the afternoon flight’s price is tempting, but those two layovers might actually increase the chance of delays more than the evening option’s single stop.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tala, the afternoon flight’s price is tempting, but those two layovers might actually increase the chance of delays more than the evening option’s single stop.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Afternoon flight, Evening layover, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 843,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Olga, true, but the overnight stop means we can actually rest during travel, which might help with the arrival energy despite the long trip.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Olga, true, but the overnight stop means we can actually rest during travel, which might help with the arrival energy despite the long trip.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Red-eye Reykjavik, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 774,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "Leo, resting is good, but do you think the red-eye’s discomfort might outweigh that benefit for us?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Leo, resting is good, but do you think the red-eye’s discomfort might outweigh that benefit for us?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Evening layover, Red-eye Reykjavik",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 827,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Tala, the red-eye might be tough to sleep through, but arriving early could really maximize our time there—still think it’s worth the discomfort?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Tala, the red-eye might be tough to sleep through, but arriving early could really maximize our time there—still think it’s worth the discomfort?",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 716,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Leo, the evening layover actually gives us a decent balance—lower cost and a single stop means less hassle, plus flexible ticket changes if plans shift.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Leo, the evening layover actually gives us a decent balance—lower cost and a single stop means less hassle, plus flexible ticket changes if plans shift.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Evening layover, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "moves_lean": false
+      },
+      "tokens_in": 786,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "I get that, but isn’t the risk of delays on the evening layover still stressful?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I get that, but isn’t the risk of delays on the evening layover still stressful?",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Evening layover, Red-eye Reykjavik, Direct morning",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 892,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Leo, that’s fair, but do you think the layover timing at Heathrow could give us enough buffer to handle any delays without missing connections?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Leo, that’s fair, but do you think the layover timing at Heathrow could give us enough buffer to handle any delays without missing connections?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Evening layover",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 1,
+        "moves_lean": false
+      },
+      "tokens_in": 765,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Olga, the flexible ticket change is a good point, but longer travel plus layover fatigue might cut into our first day more than we.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Olga, the flexible ticket change is a good point, but longer travel plus layover fatigue might cut into our first day more than we.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false
+      },
+      "tokens_in": 699,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Group, please share your final vote clearly by saying, \"I vote for evening layover\" or your preferred option.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Group, please share your final vote clearly by saying, \"I vote for evening layover\" or your preferred option.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I vote for evening layover because the cost savings and flexibility outweigh the longer travel time for us.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for evening layover because the cost savings and flexibility outweigh the longer travel time for us.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 717,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "I vote for evening layover because it keeps us under budget and we can rest during the day before the trip.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for evening layover because it keeps us under budget and we can rest during the day before the trip.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 733,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "I vote for Option C since arriving rested in daylight beats stressing over tight layovers.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for Option C since arriving rested in daylight beats stressing over tight layovers.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true
+      },
+      "tokens_in": 1199,
+      "tokens_out": 36,
+      "validation_issues": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": true
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group has chosen the evening flight with one layover in London Heathrow by majority.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The group has chosen the evening flight with one layover in London Heathrow by majority.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "2/3 participants visibly committed to the winning option.",
+    "turns": 17,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p3": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "C",
+        "p3": "B"
+      },
+      "phase_history": [
+        "pacing: min=9, force=14, hard=20, distinct_initial_prefs=2, avg_compromise=0.54",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 15: narrowing — target discussion length reached",
+        "turn 19: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 9,
+      "force_narrow_turns": 14,
+      "hard_max_turns": 20
+    }
+  },
+  "metrics": {
+    "participant_turns": 17,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.15,
+    "turn_counts": {
+      "Tala": 5,
+      "Leo": 7,
+      "Olga": 5
+    },
+    "top_speaker_share": 0.412,
+    "avg_words_by_persona": {
+      "Tala": 21.8,
+      "Leo": 20.9,
+      "Olga": 23.8
+    },
+    "question_density": 0.235,
+    "avg_words_per_turn": 22.0,
+    "repaired_turns": 1,
+    "repair_rate": 0.059,
+    "flagged_turns": 1,
+    "visible_vote_count": 2,
+    "visible_votes": {
+      "Tala": "B",
+      "Olga": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 10,
+        "reasons": 5,
+        "objections": 3,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 3,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Tala": 0.887,
+      "Leo": 0.588,
+      "Olga": 0.925
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "min_discussion_turns": 9,
+    "force_narrow_turns": 14,
+    "hard_max_turns": 20,
+    "phase_history": [
+      "pacing: min=9, force=14, hard=20, distinct_initial_prefs=2, avg_compromise=0.54",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 15: narrowing — target discussion length reached",
+      "turn 19: closure — majority visible after vote round 1",
+      "turn 20: closure — closed as majority"
+    ],
+    "setup_tokens_in": 1829,
+    "setup_tokens_out": 951,
+    "dialogue_tokens_in": 14834,
+    "dialogue_tokens_out": 536,
+    "total_tokens_in": 16663,
+    "total_tokens_out": 1487
+  },
+  "tokens": {
+    "setup_tokens_in": 1829,
+    "setup_tokens_out": 951,
+    "dialogue_tokens_in": 14834,
+    "dialogue_tokens_out": 536,
+    "total_tokens_in": 16663,
+    "total_tokens_out": 1487
+  }
+}

@@ -92,6 +92,7 @@ conversation:
   low_compromise_extra_turns: 1         # added when average compromise is low
   concentration_to_vote: 0.75           # visible leading lean share needed for early vote
   early_vote_extra_turns: 2             # after min_turns, wait this many turns before concentration can trigger voting
+  response_obligation_turns: 2          # turns a directly-addressed participant has to answer before the obligation lapses
   moderator_stall_window: 6             # no-progress turns before one moderator nudge
   moderator_cooldown_turns: 5
   moderator_max_interventions: 1
@@ -112,6 +113,12 @@ routing:
   direct_address_probability: 0.32
   extraversion_turn_weight: 0.12
   quiet_speaker_boost: 1.25
+
+style:
+  # Local surface-naturalness tracker over the last few participant turns.
+  name_prefix_window: 4              # how many recent participant turns to scan
+  name_prefix_max_fraction: 0.5     # above this share of name-prefixed openings, suppress names on non-functional turns
+  repeated_pattern_window: 3        # consecutive turns sharing one surface pattern before variation is forced
 
 utterances:
   recent_turns_in_prompt: 5

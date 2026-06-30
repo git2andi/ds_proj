@@ -209,6 +209,8 @@ class MoveIntent:
     respond_to_turn: int | None = None
     agenda_index: int | None = None
     moves_lean: bool = False
+    suppress_name_prefix: bool = False
+    avoid_pattern: str | None = None
 
 
 @dataclass(slots=True)
@@ -236,11 +238,30 @@ class OpenQuestion:
 
 
 @dataclass(slots=True)
+class ResponseObligation:
+    """A pending duty for one participant to respond to a direct address.
+
+    Created when the moderator or another participant directs a question at a
+    named participant. The router consumes it before normal speaker selection so
+    the addressed participant answers within the next turn or two.
+    """
+
+    target_id: str
+    source_id: str            # "moderator" or a persona id
+    question_text: str
+    expected_act: ActType
+    created_turn: int
+    expires_after: int        # turn_index after which the obligation lapses
+    option_focus: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
 class OptionCoverage:
     mentions: int = 0
     reasons: int = 0
     objections: int = 0
     acceptances: int = 0
+    coverage_attempts: int = 0  # times the controller routed a turn to cover this option
 
 
 @dataclass(slots=True)
@@ -291,6 +312,8 @@ class DialogueState:
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
     open_questions: list[OpenQuestion] = field(default_factory=list)
+    response_obligation: "ResponseObligation | None" = None
+    unanswered_obligations: int = 0
     candidate_option: str | None = None
     outcome: RunOutcome | None = None
     turn_index: int = 0

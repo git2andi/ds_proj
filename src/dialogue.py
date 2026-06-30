@@ -34,12 +34,21 @@ from models import (
     ParticipantRuntime,
     Persona,
     Phase,
+    ResponseObligation,
     RunOutcome,
     TurnRecord,
 )
 from parsing import OptionResolver, parse_dialogue_act
 from simulator import mark_agenda_done, next_agenda_item
+from style import name_prefix_fraction, repeated_pattern, strip_leading_name, surface_pattern
 from utils import normalise_lines, normalise_ws, strip_speaker_prefix, weighted_choice
+
+_VOTE_CHANGE = re.compile(
+    r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
+    r"actually\s+i\s+(?:vote|choose|support|pick|prefer)|on\s+second\s+thought|"
+    r"i'?ll\s+switch|then\s+i\s+switch|let'?s\s+switch)\b",
+    re.I,
+)
 
 _DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}
 _DISCUSSION_ACTS = {
@@ -141,11 +150,24 @@ class DialogueRunner:
     def _decision_loop(self, state: DialogueState) -> None:
         state.phase = Phase.NARROWING
         for round_index in range(int(cfg.conversation.max_vote_rounds)):
+            # Clear any direct question still owed from the discussion before voting.
+            self._resolve_pending_question(state)
             candidate = self._candidate_for_vote(state)
             state.candidate_option = candidate
-            reason = "let's test where everyone stands" if round_index == 0 else "the first vote did not settle it"
-            self._emit(self._moderator_vote_nudge(state, candidate, reason))
-            for persona in self._vote_order(state, candidate):
+            # Round 0 asks everyone; later rounds re-prompt only unclear/non-voters
+            # so participants who already cast a clear vote are not asked again.
+            order = self._vote_order(state, candidate)
+            if round_index > 0:
+                order = [p for p in order if not self._has_clear_vote(state, p.id)]
+                if not order:
+                    self._mark_phase(state, Phase.CLOSURE, "all participants already gave a clear vote")
+                    break
+            reason = "let's test where everyone stands" if round_index == 0 else "let's hear from whoever hasn't given a clear vote"
+            nudge_record, target_id = self._moderator_vote_nudge(state, candidate, reason)
+            self._emit(nudge_record)
+            if target_id:
+                order.sort(key=lambda p: p.id != target_id)
+            for persona in order:
                 self._emit(self._generate_and_append(state, self._vote_intent(state, persona, candidate)))
             provisional = ConsensusManager.finalize(state)
             if provisional.status in {"successful", "majority"}:
@@ -159,19 +181,15 @@ class DialogueRunner:
     # ------------------------------------------------------------------
 
     def _route_discussion_turn(self, state: DialogueState) -> MoveIntent:
-        open_question = self._next_answerable_question(state)
-        if open_question is not None:
-            return MoveIntent(
-                speaker_id=open_question.target_id,
-                act=ActType.ANSWER,
-                reason="answer the direct question, then add one implication for the decision",
-                addressee_id=open_question.asked_by,
-                option_focus=open_question.option_focus or self._focus_from_recent(state),
-                respond_to_turn=open_question.turn_id,
-            )
+        obligation = self._active_obligation(state)
+        if obligation is not None:
+            return self._obligation_intent(state, obligation)
 
         coverage_gap = self._coverage_gap_option(state)
         if coverage_gap is not None:
+            # One bounded coverage attempt per option: even if the realizer never
+            # names it cleanly, we do not re-route the same option forever.
+            state.coverage[coverage_gap].coverage_attempts += 1
             speaker = self._speaker_for_option_coverage(state, coverage_gap)
             current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
             focus = [coverage_gap]
@@ -215,7 +233,9 @@ class DialogueRunner:
         )
 
     def _choose_speaker(self, state: DialogueState) -> Persona:
-        last_speaker = self._last_participant_id(state)
+        recent_speakers = self._recent_participant_ids(state, 2)
+        last_speaker = recent_speakers[0] if recent_speakers else None
+        prior_speaker = recent_speakers[1] if len(recent_speakers) > 1 else None
         min_turns = min(rt.turn_count for rt in state.runtimes.values())
         candidates: list[Persona] = []
         weights: list[float] = []
@@ -228,7 +248,10 @@ class DialogueRunner:
             if rt.turn_count == min_turns:
                 base += float(cfg.routing.quiet_speaker_boost)
             elif rt.turn_count > min_turns:
-                base *= max(0.25, 1.0 - 0.25 * (rt.turn_count - min_turns))
+                base *= max(0.20, 1.0 - 0.30 * (rt.turn_count - min_turns))
+            # Discourage two speakers from ping-ponging when others are available.
+            if persona.id == prior_speaker and len(state.personas) > 2:
+                base *= 0.5
             candidates.append(persona)
             weights.append(base)
         if not candidates:
@@ -250,6 +273,18 @@ class DialogueRunner:
             raw["invite"] *= 0.5
         if self._latent_leading_count(state) >= max(2, math.ceil(0.5 * len(state.personas))):
             raw["propose_compromise"] = raw.get("propose_compromise", 0.0) + 0.10
+        # When recent turns are stuck in a concession/worry/trade-off-plus-objection
+        # shape, bias act selection toward moves that break the template.
+        recent_texts = self._recent_participant_texts(state, int(cfg.style.repeated_pattern_window))
+        recent_patterns = [surface_pattern(t) for t in recent_texts]
+        templated = sum(recent_patterns.count(p) for p in ("concede_but", "worry_but", "tradeoff_but"))
+        if templated >= 2:
+            raw["agree"] *= 0.4
+            raw["build"] = raw.get("build", 0.0) * 0.6
+            raw["challenge"] = raw.get("challenge", 0.0) * 0.7  # challenge tends to reuse the "but" shape too
+            raw["compare"] = raw.get("compare", 0.0) * 1.3
+            raw["ask"] = raw.get("ask", 0.0) * 1.4
+            raw["propose_compromise"] = raw.get("propose_compromise", 0.0) * 1.5
         mapping = {
             "build": ActType.BUILD,
             "agree": ActType.AGREE,
@@ -350,6 +385,7 @@ class DialogueRunner:
     # ------------------------------------------------------------------
 
     def _generate_and_append(self, state: DialogueState, intent: MoveIntent) -> TurnRecord:
+        self._apply_style_flags(state, intent)
         persona = state.persona_by_id(intent.speaker_id)
         max_words = self._max_words_for(intent, persona)
         recent_lines = self._recent_lines(state)
@@ -366,6 +402,8 @@ class DialogueRunner:
         )
         self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{persona.id}_{intent.act.value}")
         text, tokens_in, tokens_out = self._call_participant(prompt, persona.name, max_words)
+        if intent.suppress_name_prefix:
+            text = strip_leading_name(text, [p.name for p in state.personas])
         act = self._parse_act(state, persona, text, intent)
         report = self._validate_turn_text(text, state, persona, intent, act)
         repaired = False
@@ -487,12 +525,10 @@ class DialogueRunner:
                 cov.objections += 1
 
         if act.explicit_vote:
-            rt.explicit_vote = act.explicit_vote
-            rt.current_preference = act.explicit_vote
+            self._set_vote(rt, act.explicit_vote, act.text)
         for option_id in act.accepts:
             rt.accepted_options.add(option_id)
-            rt.explicit_vote = option_id
-            rt.current_preference = option_id
+            self._set_vote(rt, option_id, act.text)
             state.coverage[option_id].acceptances += 1
         for option_id, reason in act.soft_rejects.items():
             rt.soft_rejections[option_id] = reason
@@ -565,10 +601,13 @@ class DialogueRunner:
         participant_turns = participant_turn_count(state)
         if participant_turns < state.min_discussion_turns:
             return False
-        if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
-            return False
         if participant_turns >= state.hard_max_turns:
             return True
+        # Do not move to voting while a directly-addressed question is still owed.
+        if self._active_obligation(state) is not None:
+            return False
+        if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
+            return False
         if participant_turns >= state.force_narrow_turns:
             return True
         early_gate = state.min_discussion_turns + int(cfg.conversation.early_vote_extra_turns)
@@ -624,13 +663,13 @@ class DialogueRunner:
             return None
         candidate = self._latent_leading_option(state)
         candidate_name = state.scenario.option(candidate).name if candidate else None
-        target_name, requested_action, focus = self._moderator_intervention_details(state, candidate)
+        target_id, requested_action, focus = self._moderator_intervention_details(state, candidate)
         text = self._moderator_say(
             prompts.moderator_nudge_prompt(
                 state,
                 "discussion seems to be circling",
                 candidate_name,
-                target_name=target_name,
+                target_name=state.name_for(target_id) if target_id else None,
                 requested_action=requested_action,
                 focus_options=focus,
             ),
@@ -639,23 +678,43 @@ class DialogueRunner:
         self._intervention_count += 1
         self._last_intervention_turn = state.turn_index
         state.no_progress_count = 0
-        return self._append_moderator(state, text, Phase.DISCUSSION)
+        record = self._append_moderator(state, text, Phase.DISCUSSION)
+        if target_id:
+            self._set_obligation(
+                state,
+                target_id=target_id,
+                source_id="moderator",
+                text=text,
+                expected_act=ActType.ANSWER,
+                option_focus=focus,
+            )
+        return record
 
-    def _moderator_vote_nudge(self, state: DialogueState, candidate: str, reason: str) -> TurnRecord:
+    def _moderator_vote_nudge(self, state: DialogueState, candidate: str, reason: str) -> tuple[TurnRecord, str | None]:
         candidate_name = state.scenario.option(candidate).name
-        target_name, requested_action, focus = self._moderator_intervention_details(state, candidate, voting=True)
+        target_id, requested_action, focus = self._moderator_intervention_details(state, candidate, voting=True)
         text = self._moderator_say(
             prompts.moderator_nudge_prompt(
                 state,
                 reason,
                 candidate_name,
-                target_name=target_name,
+                target_name=state.name_for(target_id) if target_id else None,
                 requested_action=requested_action,
                 focus_options=focus or [candidate],
             ),
             state,
         )
-        return self._append_moderator(state, text, Phase.NARROWING)
+        record = self._append_moderator(state, text, Phase.NARROWING)
+        if target_id:
+            self._set_obligation(
+                state,
+                target_id=target_id,
+                source_id="moderator",
+                text=text,
+                expected_act=ActType.VOTE,
+                option_focus=focus or [candidate],
+            )
+        return record, target_id
 
     def _moderator_say(self, prompt: str, state: DialogueState) -> str:
         raw = self._llm.generate(prompt, profile="dialogue")
@@ -676,7 +735,7 @@ class DialogueRunner:
         gaps = [
             (option_id, coverage.mentions, coverage.reasons + coverage.objections)
             for option_id, coverage in state.coverage.items()
-            if coverage.mentions == 0
+            if coverage.mentions == 0 and coverage.coverage_attempts == 0
         ]
         if not gaps:
             return None
@@ -702,6 +761,7 @@ class DialogueRunner:
         *,
         voting: bool = False,
     ) -> tuple[str | None, str, list[str]]:
+        """Return (target_id, requested_action, focus_option_ids) for the moderator."""
         gap = self._coverage_gap_option(state)
         if gap is not None and not voting:
             return (
@@ -713,16 +773,16 @@ class DialogueRunner:
         open_question = self._next_answerable_question(state)
         if open_question is not None:
             return (
-                state.name_for(open_question.target_id),
+                open_question.target_id,
                 "ask for a direct answer to the pending question",
                 open_question.option_focus,
             )
 
-        uncommitted = [p for p in state.personas if not state.runtimes[p.id].explicit_vote]
-        if voting and len(uncommitted) == 1:
-            target = uncommitted[0]
+        # During finalization only unclear/non-voters should be prompted again.
+        unresolved = [p for p in state.personas if not self._has_clear_vote(state, p.id)]
+        if voting and len(unresolved) == 1:
             return (
-                target.name,
+                unresolved[0].id,
                 "ask for one unambiguous final vote, not conditional support",
                 [candidate] if candidate else [],
             )
@@ -737,11 +797,27 @@ class DialogueRunner:
             dissenters = [p for p in state.personas if state.runtimes[p.id].current_preference != candidate]
             if len(dissenters) == 1:
                 return (
-                    dissenters[0].name,
+                    dissenters[0].id,
                     "ask what remaining concern would need to be resolved to move",
                     [candidate, state.runtimes[dissenters[0].id].current_preference or dissenters[0].preferred_option],
                 )
         return (None, "ask for the strongest remaining concern before choosing", [candidate] if candidate else [])
+
+    @staticmethod
+    def _has_clear_vote(state: DialogueState, persona_id: str) -> bool:
+        return bool(state.runtimes[persona_id].explicit_vote)
+
+    @staticmethod
+    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str) -> None:
+        """Record a clear vote, protecting an existing one from silent overwrite.
+
+        A participant who already cast a clear vote keeps it unless their visible
+        text explicitly signals a change (e.g. 'actually I vote for', 'switch to').
+        """
+        if rt.explicit_vote and rt.explicit_vote != option_id and not _VOTE_CHANGE.search(text or ""):
+            return
+        rt.explicit_vote = option_id
+        rt.current_preference = option_id
 
     # ------------------------------------------------------------------
     # Utilities
@@ -780,9 +856,41 @@ class DialogueRunner:
     def _vote_order(self, state: DialogueState, candidate: str) -> list[Persona]:
         return sorted(state.personas, key=lambda p: (state.runtimes[p.id].current_preference != candidate, state.runtimes[p.id].turn_count))
 
+    def _resolve_pending_question(self, state: DialogueState) -> None:
+        """Let a directly-asked participant answer before a vote round starts."""
+        obligation = self._active_obligation(state)
+        if obligation is None or obligation.expected_act != ActType.ANSWER:
+            return
+        self._emit(self._generate_and_append(state, self._obligation_intent(state, obligation)))
+
     def _recent_lines(self, state: DialogueState) -> list[str]:
         limit = int(cfg.utterances.recent_turns_in_prompt)
         return [f"{turn.speaker_name}: {turn.text}" for turn in state.turns[-limit:]]
+
+    @staticmethod
+    def _recent_participant_texts(state: DialogueState, limit: int) -> list[str]:
+        texts = [t.text for t in state.turns if t.speaker_id != "moderator"]
+        return texts[-limit:]
+
+    def _apply_style_flags(self, state: DialogueState, intent: MoveIntent) -> None:
+        """Set compact surface-style flags (no LLM call) to keep dialogue varied.
+
+        Names are only suppressed for ordinary continuation turns: answering a
+        direct question, inviting a quiet participant, or a deliberate addressee
+        keep their functional name use.
+        """
+        names = [p.name for p in state.personas]
+        functional_naming = intent.act in {ActType.ANSWER, ActType.INVITE} or intent.addressee_id is not None
+        window = int(cfg.style.name_prefix_window)
+        recent = self._recent_participant_texts(state, window)
+        if not functional_naming and recent:
+            if name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
+                intent.suppress_name_prefix = True
+        if intent.act in _DISCUSSION_ACTS:
+            pattern_window = int(cfg.style.repeated_pattern_window)
+            intent.avoid_pattern = repeated_pattern(
+                self._recent_participant_texts(state, pattern_window), pattern_window
+            )
 
     def _recent_question_count(self, state: DialogueState) -> int:
         recent = [t for t in state.turns[-3:] if t.speaker_id != "moderator"]
@@ -799,13 +907,75 @@ class DialogueRunner:
         return state.open_questions[0] if state.open_questions else None
 
     def _register_question(self, state: DialogueState, record: TurnRecord) -> None:
-        if record.intent and record.intent.act not in {ActType.ASK, ActType.INVITE}:
-            return
+        # A direct question is detected from visible text (parser sets
+        # question_target_id), not from the routed act label: a question embedded
+        # in a challenge/compare turn still creates a response obligation.
         target = record.act.question_target_id
         if not target or target == record.speaker_id or target not in state.runtimes:
             return
         state.open_questions.append(OpenQuestion(turn_id=record.index, asked_by=record.speaker_id, target_id=target, text=record.text, option_focus=record.act.option_refs[:2]))
         state.open_questions = state.open_questions[-4:]
+        self._set_obligation(
+            state,
+            target_id=target,
+            source_id=record.speaker_id,
+            text=record.text,
+            expected_act=ActType.ANSWER,
+            option_focus=record.act.option_refs[:2],
+        )
+
+    def _set_obligation(
+        self,
+        state: DialogueState,
+        *,
+        target_id: str,
+        source_id: str,
+        text: str,
+        expected_act: ActType,
+        option_focus: list[str],
+    ) -> None:
+        if target_id not in state.runtimes or target_id == source_id:
+            return
+        window = max(1, int(cfg.conversation.get("response_obligation_turns", 2)))
+        state.response_obligation = ResponseObligation(
+            target_id=target_id,
+            source_id=source_id,
+            question_text=text,
+            expected_act=expected_act,
+            created_turn=state.turn_index,
+            expires_after=state.turn_index + 2 * window,  # turn_index counts moderator turns too
+            option_focus=[o for o in option_focus if o in state.scenario.option_ids][:2],
+        )
+
+    def _active_obligation(self, state: DialogueState) -> ResponseObligation | None:
+        ob = state.response_obligation
+        if ob is None:
+            return None
+        if ob.target_id not in state.runtimes:
+            state.response_obligation = None
+            return None
+        # Satisfied: the target has taken a turn since the obligation was created.
+        if any(t.speaker_id == ob.target_id and t.index > ob.created_turn for t in state.turns):
+            state.response_obligation = None
+            return None
+        # Lapsed: too many turns passed without the target answering.
+        if state.turn_index > ob.expires_after:
+            state.unanswered_obligations += 1
+            state.response_obligation = None
+            return None
+        return ob
+
+    def _obligation_intent(self, state: DialogueState, obligation: ResponseObligation) -> MoveIntent:
+        focus = obligation.option_focus or self._focus_from_recent(state)
+        if obligation.expected_act == ActType.VOTE:
+            return self._vote_intent(state, state.persona_by_id(obligation.target_id), state.candidate_option or (focus[0] if focus else state.personas[0].preferred_option))
+        return MoveIntent(
+            speaker_id=obligation.target_id,
+            act=ActType.ANSWER,
+            reason="answer the direct question you were just asked, then add one implication for the decision",
+            addressee_id=None if obligation.source_id == "moderator" else obligation.source_id,
+            option_focus=focus,
+        )
 
     @staticmethod
     def _close_answered_questions(state: DialogueState, speaker_id: str) -> None:
@@ -838,6 +1008,18 @@ class DialogueRunner:
             if turn.speaker_id != "moderator":
                 return turn.speaker_id
         return None
+
+    @staticmethod
+    def _recent_participant_ids(state: DialogueState, limit: int) -> list[str]:
+        """Most recent distinct participant speaker ids, newest first."""
+        out: list[str] = []
+        for turn in reversed(state.turns):
+            if turn.speaker_id == "moderator" or turn.speaker_id in out:
+                continue
+            out.append(turn.speaker_id)
+            if len(out) >= limit:
+                break
+        return out
 
     @staticmethod
     def _snapshot_progress(state: DialogueState) -> tuple:

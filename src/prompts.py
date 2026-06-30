@@ -120,6 +120,7 @@ Initial primary preference assignment. preferred_options[0] MUST match this exac
 Rules:
 - Use the exact id and name from each trait row.
 - preferred_options is the person's initial private preference, not a final vote. Add at most one secondary acceptable option if it fits.
+- A participant with agreeableness=1 must have exactly one preferred option (no secondary).
 - Participants want a workable group decision. High openness/agreeableness means easier compromise; low agreeableness means more resistance.
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
@@ -227,6 +228,11 @@ def sim_utterance(
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
         agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
+    style_notes = ""
+    if intent.suppress_name_prefix:
+        style_notes += "\n- Recent turns over-used names; do NOT open with another participant's name, just reply."
+    if intent.avoid_pattern in {"concede_but", "worry_but", "tradeoff_but"}:
+        style_notes += "\n- Avoid the 'fair point, but…' / 'X is good but I worry…' concession-objection shape used just now; make a different move (a plain claim, a direct question, a concrete comparison, or a firm stance)."
 
     return f"""Write {persona.name}'s next message in a natural group decision chat.
 
@@ -261,7 +267,7 @@ Style:
 - Add one new point, concern, answer, or stance shift. Avoid repeating the same reason from recent chat.
 - Ask a question only when the move is ask or invite; otherwise usually make a statement.
 - Never invent facts outside the option cards/shared context.
-- Do not append metadata, tags, JSON, or bracketed labels."""
+- Do not append metadata, tags, JSON, or bracketed labels.{style_notes}"""
 
 
 def repair_utterance(

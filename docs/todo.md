@@ -19,70 +19,6 @@ The current priority is to fix prominent failures visible in real generated tran
 
 ## Open issues, ordered by priority
 
-### 1. Enforce response obligations for direct questions
-
-Current problem: direct questions do not reliably receive answers from the addressed participant. This affects both moderator-to-user questions and user-to-user questions. In the Stockholm run, the moderator directly asks Anton whether the red-eye baggage policy is a deal-breaker, but Kenji answers next. Kenji also asks Anton a direct question about checked bags, and Anton does not answer that adjacency pair before the conversation moves on.
-
-Required behavior:
-- If the moderator addresses a named participant, the next participant turn should normally be assigned to that participant.
-- If one participant asks another participant a visible direct question, the next participant turn should normally be assigned to the addressed participant.
-- Other participants may interrupt only if the policy explicitly chooses an interruption/side-comment act.
-- The response must answer the pending question rather than starting a new argument or voting unless the question explicitly asked for a vote.
-- Response obligations should expire only after the target answers, the moderator cancels/redirects, or a hard closure condition is reached.
-
-Implementation notes:
-- Add a small `response_obligation` state object: `target_speaker`, `source_speaker`, `question_text`, `expected_act`, `created_turn`, `expires_after`.
-- Detect direct questions with existing visible text, not hidden metadata.
-- Make the router consume `response_obligation` before normal speaker selection.
-- Add a validation guard: if a targeted answer is required and the wrong speaker is selected/generated, repair by selecting the required target instead of only changing the prompt.
-- Log unanswered obligations in metrics.
-
-Validation target:
-- In an `n=3` run, every direct named question should be answered by the named participant within the next one or two participant turns.
-
-### 2. Reduce excessive name-prefixing and artificial address markers
-
-Current problem: many utterances start with the addressee name followed by a generic agreement/disagreement marker, e.g. `Kenji, true, but...`, `Lila, I get...`, `Anton, that is fair...`. Some addressing is good, but in the current output it becomes formulaic and makes the dialogue feel synthetic.
-
-Required behavior:
-- Keep direct names when they serve a clear interactional function: answering a direct question, challenging someone, clarifying a misunderstanding, or handing over to a specific user.
-- Avoid name-prefixing for ordinary continuation turns.
-- Avoid repeated openings such as `Name, I get...`, `Name, true, but...`, `Name, fair, but...` across consecutive turns.
-- Allow implicit response without a name when the local context is obvious.
-
-Implementation notes:
-- Add a lightweight local style tracker over the last 3-5 participant turns:
-  - count name-prefixed openings,
-  - detect repeated openings with regex,
-  - mark `avoid_name_prefix` for the next realization when name-prefix density is too high.
-- Prefer a compact prompt flag such as `avoid_name_prefix=True` over adding many naturalness instructions.
-- Add a repair only when the generated utterance repeats a recent opening pattern or starts with an unnecessary name prefix.
-
-Validation target:
-- In a normal `n=3` run, not more than roughly one third of participant turns should start with another participant's name unless the topic genuinely involves many direct questions.
-
-### 3. Break repetitive sentence templates
-
-Current problem: many turns use the same rhetorical structure: `X is good, but Y is a concern`, `I get that, but...`, `true, but...`, or `saving money is good, but comfort matters`. This creates fluent but samey assistant-like dialogue.
-
-Required behavior:
-- Participants should vary between concise claims, questions, comparisons, concessions, objections, summaries, and final commitments.
-- The same local template should not repeat several times in a row.
-- Different simulator parameters should produce visible differences in style:
-  - direct users: shorter, less hedged claims,
-  - cooperative users: bridge statements and summaries,
-  - stubborn users: stronger resistance and fewer concessions,
-  - low-engagement users: shorter turns unless directly asked.
-
-Implementation notes:
-- Add a local `surface_pattern` classifier for generated turns, e.g. `concede_but`, `cost_tradeoff`, `comfort_tradeoff`, `direct_vote`, `question`, `summary`.
-- Penalize or repair repeated `surface_pattern` values in consecutive turns.
-- Prefer changing move/act selection and repair checks before expanding the base prompt.
-- Keep voice guidance compact and parameter-driven.
-
-Validation target:
-- In an `n=3` run, the last 8 participant turns should not all follow the same concession-plus-objection template.
-
 ### 4. Prevent unsupported factual additions beyond the option board/context
 
 Current problem: sims sometimes add plausible but unsupported facts. In the Stockholm run, a participant mentions quieter airports and customs, and another suggests the direct SAS flight includes checked bags, even though these facts are not part of the shared option/context board. The generated option facts are allowed to be artificial, but once generated they are the hard world facts of the simulation.
@@ -100,30 +36,6 @@ Implementation notes:
 
 Validation target:
 - In a travel run, participants should not invent new services/policies such as checked baggage being included unless listed.
-
-### 5. Stabilize final-vote behavior and avoid redundant re-voting
-
-Current problem: finalization can become noisy. A participant may vote, then be asked again unnecessarily. Later votes can overwrite earlier votes, producing unstable visible votes. In the Stockholm run, Anton votes for Option A and later votes for Option C after another moderator prompt, while Lila repeats her vote for B.
-
-Required behavior:
-- Once a participant gives a clear final vote, do not ask them for another final vote unless their later visible text explicitly says they are changing their vote.
-- Separate observed vote states:
-  - no vote yet,
-  - weak/conditional support,
-  - clear final vote,
-  - explicit vote change.
-- If a participant gives a deal-breaker plus a clear vote, count the vote only if the commitment is syntactically clear and not conditional.
-- If a vote is unclear, ask the same participant one targeted clarification question.
-- Final-vote prompts must not restart the debate.
-
-Implementation notes:
-- Add `vote_status_by_persona` or equivalent observed-state tracking.
-- Do not overwrite clear votes unless text contains an explicit change marker such as `I changed my mind`, `then I switch to`, `actually I vote for`.
-- Moderator should ask only non-voters or unclear voters during finalization.
-- Add small deterministic tests for vote overwrite and clarification behavior.
-
-Validation target:
-- In a final vote round, each participant should normally produce at most one clear vote.
 
 ### 6. Improve unresolved-handling before closure
 
@@ -148,22 +60,21 @@ Validation target:
 
 ### 7. Refine option coverage without forcing artificial discussion
 
-Current problem: option coverage is better than before, but coverage should mean meaningful processing, not only raw mentions. Also, clearly unattractive options should not be over-discussed.
+Partially addressed (2026-07-01): the coverage nudge is now bounded to one
+attempt per option (`OptionCoverage.coverage_attempts`), so a missed/over-hard
+coverage requirement can no longer loop forever. The resolver also matches
+distinctive proper-noun tokens (e.g. "Gin", "Rails") and ignores stopword
+aliases, so coverage detection is far more reliable.
 
-Required behavior:
-- Before voting, each option should be at least mentioned, compared, rejected, or explicitly skipped.
-- Coverage prompts should be short and natural.
-- A participant does not need to like the covered option.
-- Do not over-discuss clearly unattractive options.
-- Coverage should happen before finalization, not after votes already started.
-
-Implementation notes:
-- Track meaningful processing, not only mention count: `reason`, `objection`, `comparison`, `explicit_skip`.
+Remaining work:
+- Track meaningful processing, not only mention count: distinguish `reason`,
+  `objection`, `comparison`, `explicit_skip` when deciding coverage is "enough".
 - Prefer comparison prompts for compromise options.
-- Avoid adding more than one coverage nudge unless the run is still clearly in discussion phase.
+- Do not over-discuss clearly unattractive options.
 
 Validation target:
-- In a four-option run, no option should remain completely untouched before voting unless the moderator or participants explicitly skip it.
+- In a four-option run, no option should remain completely untouched before
+  voting unless the moderator or participants explicitly skip it.
 
 ### 8. Strengthen agenda-based simulator behavior
 
@@ -207,35 +118,18 @@ Required behavior:
   - repeated-opening-pattern count.
 - Prepare placeholders for later metrics without implementing complex scoring yet.
 
-Implementation notes:
-- Do not spend a full implementation pass on advanced metrics yet.
-- Add TODO stubs for future metrics such as participation Gini, direct response rate, question-answer completion, repetition score, and engagement realization error.
+Already added (2026-07-01): `unanswered_direct_questions`, `name_prefix_rate`,
+and `repeated_opening_patterns` are now in `evaluation.metrics_for`, alongside
+the existing turn counts, top-speaker share, moderator ratio, vote count,
+outcome, and option coverage.
+
+Remaining work:
+- Add TODO stubs for future metrics such as participation Gini, direct response
+  rate, question-answer completion, repetition score, and engagement realization
+  error.
 
 Validation target:
 - Metrics should expose the failures that are currently being manually spotted in transcripts.
-
-### 10. Add automated tests for fragile logic
-
-Current problem: important behavior is currently validated mostly through manual runs. The fragile parts need small deterministic tests.
-
-Required tests:
-- visible option reference resolution,
-- clear vote detection,
-- conditional support rejection,
-- vote overwrite behavior,
-- majority/successful/unresolved outcome logic,
-- moderator-to-user response obligation,
-- user-to-user direct-question obligation,
-- option-coverage trigger,
-- repeated-speaker allowance only when justified,
-- name-prefix/repeated-template detector.
-
-Implementation notes:
-- Start with pure functions from `parsing.py`, outcome logic, style tracking, and routing policy.
-- Avoid tests that require live LLM calls.
-
-Validation target:
-- A local test command should catch the known Stockholm-style failures without needing an LLM call.
 
 ### 11. Keep token usage bounded, but do not optimize prematurely
 
@@ -275,14 +169,34 @@ Implementation notes:
 Validation target:
 - Presets should change runtime parameters measurably without requiring topic-specific hacks.
 
+## Resolved this pass (2026-07-01)
+
+- Issue #1 (response obligations): `ResponseObligation` state + router consumption
+  in both discussion and decision loops; direct questions detected from visible
+  text regardless of routed act. Validated n=3/n=4/n=5: every named question is
+  answered by the named participant within one turn.
+- Issue #2/#3 (name-prefix + repetitive templates): `src/style.py` local tracker;
+  deterministic name-prefix strip; routing bias away from concession/worry/
+  trade-off streaks; stronger speaker-balance (deficit weighting + ping-pong
+  penalty). Validated: name_prefix_rate ~0.18–0.33, top_speaker_share ~0.26–0.32.
+- Issue #5 (vote stability): later vote rounds only re-prompt unclear/non-voters;
+  `_set_vote` protects a clear vote from silent overwrite unless the text signals
+  an explicit change. Deterministic tests added.
+- Issue #10 (tests): `tests/` covers parsing, style, vote overwrite, and outcome
+  logic (22 tests, no LLM). Run with `py -m pytest tests/ -q`.
+- Critical parsing bug: stopwords such as "with" were used as standalone option
+  aliases (option D = "PostgreSQL **with** TimescaleDB"), causing false multi-
+  option matches that silently dropped clear votes and flipped a majority to
+  unresolved. Aliases now exclude a stopword/generic list.
+- Coverage loop (part of #7): a missed coverage detection forced the same option
+  focus every turn until the hard cap, manufacturing long repetitive runs; the
+  coverage nudge is now bounded to one attempt per option.
+
 ## Newly observed issues
 
 Add new validation findings here after each implementation pass. Include log path/date, topic, group size, and the smallest description of the failure.
 
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: moderator directly addressed Anton, but Kenji answered next.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: Kenji asked Anton a direct question, but Anton did not answer it before the flow moved to finalization.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: excessive name-prefixed openings made the dialogue formulaic.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: repeated concession-plus-objection sentence templates made speakers sound too similar.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: participants added unsupported factual assumptions beyond the option/context board.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: Anton produced two different final votes after redundant prompting.
-- `20260701_002531_085964`, `Book a flight to Stockholm`, `n=3`: unresolved outcome was technically valid, but closure happened after missed response obligations and repeated vote prompts.
+- Setup flakiness: the persona LLM occasionally violates the required primary
+  preference or gives a hard blocker two preferred options, forcing a setup
+  retry. Mitigated by an aligned prompt line, but the retry loop still absorbs
+  the occasional failure.
