@@ -1,80 +1,70 @@
-"""Option resolution and dialogue-act extraction.
+"""Visible-text parsing for option references and public commitments.
 
-State is not guessed from free prose. Each generated turn ends with a small
-machine-readable trailer, e.g. ``[act=accept; opt=C; stance=accept]``, which is
-parsed and stripped here. The option resolver only matches unambiguous option
-names/ids. There are deliberately no phrase "cue" lists: deciding whether a
-message is a vote/accept/reject is the model's job, reported via the trailer.
+Final outcomes must be based on what the transcript visibly says. This parser is
+therefore conservative: it only records a vote/acceptance when one option is
+mentioned unambiguously and the utterance contains a clear commitment phrase.
 """
 
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
 
 from aliases import short_alias_map
 from models import ActType, DialogueAct, MoveIntent, OptionCard
 from utils import normalise_ws
 
-# Stance values the model may report in a trailer.
-_STANCES = {"vote", "accept", "object", "reject", "propose", "neutral"}
-_STANCE_TO_ACT = {
-    "vote": ActType.VOTE,
-    "accept": ActType.ACCEPT,
-    "reject": ActType.REJECT,
-    "object": ActType.OBJECT,
-    "propose": ActType.PROPOSE_COMPROMISE,
-}
-# Stance assumed when the model omits the trailer, keyed by the routed intent.
-_INTENT_FALLBACK_STANCE = {
-    ActType.VOTE: "vote",
-    ActType.ACCEPT: "accept",
-    ActType.REJECT: "object",  # ambiguous reject -> soft; hard blocks come from persona data
-    ActType.PROPOSE_COMPROMISE: "propose",
-}
-# Routed moves on which a binding commitment (a final vote or accepting the group's pick)
-# is actually meaningful — the narrowing vote and the confirmation round.
-_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}
-
-# The trailer starts at a "[" immediately followed by act=/opt=/stance= and runs to the
-# final "]". The greedy ".*" deliberately swallows any inner brackets the model emits
-# (e.g. opt=[C, D]); without it such a trailer would leak into the chat unparsed.
-_TRAILER = re.compile(r"\[\s*((?:act|stance|opt)\s*=.*)\]", re.I | re.S)
-# Same trailer with its surrounding brackets dropped (some models omit them): a trailing
-# run of key=value fields at the very end of the message, with an optional stray bracket.
-_BARE_TRAILER = re.compile(
-    r"\[?\s*((?:act|opt|stance)\s*=\s*[^\s;,\]]+(?:\s*[;,]\s*(?:act|opt|stance)\s*=\s*[^\s;,\]]+)*)\s*\]?\s*$",
-    re.I,
-)
 _QUESTION = re.compile(r"\?")
-# A tentative/conditional acceptance ("might be okay", "works if we leave early", "I guess
-# that's fine") is not a firm commitment. Detected only to gate a confirmation ACCEPT so a
-# hedged line can't be miscounted as a clean acceptance and close the decision prematurely.
-_HEDGED_ACCEPT = re.compile(
-    r"\b(?:might|maybe|perhaps|possibly|i guess|i suppose|"
-    r"still\s+(?:deciding|not\s+(?:sure|sold|convinced))|not\s+fully\s+(?:sure|sold|convinced)|"
-    r"(?:okay|fine|work|works|good)\s+(?:for\s+\w+\s+)?if|as long as|provided that|only if)\b",
+_RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
+_GENUINE_QUESTION = re.compile(
+    r"\b(?:how\s+(?:many|much|long|far|about)|what(?:'s|\s+is|\s+are|\s+do|\s+does|\s+about|\s+if)"
+    r"|where|when|which|who|can\s+(?:we|it|they)|do\s+(?:we|they|you)|does\s+(?:it|that|this)"
+    r"|is\s+(?:it|there|that)|are\s+(?:there|they|we)|could\s+(?:we|it)|would\s+(?:it|that))\b",
     re.I,
 )
-
-
-def has_commitment_hedge(text: str) -> bool:
-    """Whether a decision statement remains tentative or conditional."""
-    return bool(_HEDGED_ACCEPT.search(text))
-
-
-@dataclass(slots=True)
-class TurnMove:
-    """Parsed trailer: what the speaker reports they just did.
-
-    ``present`` distinguishes "the model emitted a trailer" from "no trailer, so
-    fall back to the routed intent" — the validator only flags contradictions
-    when a trailer was actually present."""
-
-    act: ActType | None = None
-    option: str | None = None
-    stance: str = "neutral"
-    present: bool = False
+_HEDGE = re.compile(
+    r"\b(?:maybe|perhaps|possibly|might|could|leaning|not\s+sure|not\s+sold|not\s+convinced|"
+    r"for\s+now|unless|if|as\s+long\s+as|provided\s+that|i\s+guess|i\s+suppose|"
+    r"would\s+need|need\s+to\s+know|depends|still\s+unsure)\b",
+    re.I,
+)
+_COMMIT = re.compile(
+    r"\b(?:i\s+vote\s+for|my\s+vote\s+is|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"let'?s\s+go\s+with|we\s+should\s+go\s+with|go\s+with|settle\s+on|pick|choose|"
+    r"i\s+support|i\s+accept|i\s+can\s+support|i'?m\s+fine\s+with|fine\s+with|"
+    r"works\s+for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
+    re.I,
+)
+_SOFT_COMMIT = re.compile(
+    r"\b(?:i\s+can\s+support|i\s+support|i\s+accept|i'?m\s+fine\s+with|fine\s+with|"
+    r"works\s+for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
+    re.I,
+)
+_DIRECT_VOTE = re.compile(
+    r"\b(?:i\s+vote\s+for|my\s+vote\s+is|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"let'?s\s+go\s+with|we\s+should\s+go\s+with|settle\s+on|final\s+choice)\b",
+    re.I,
+)
+_CONDITIONAL_AFTER_COMMIT = re.compile(
+    r"\b(?:but|however|though|although|still|only\s+if|if\s+we|if\s+it|as\s+long\s+as|"
+    r"provided\s+that|are\s+we\s+okay|concern|worry|problem|issue|not\s+sure|unless)\b",
+    re.I,
+)
+_HARD_CONDITIONAL = re.compile(
+    r"(?:\?|\bonly\s+if\b|\bif\s+(?:we|it|they|you)\b|\bas\s+long\s+as\b|"
+    r"\bprovided\s+that\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|"
+    r"\bdepends\b|\bare\s+we\s+okay\b)",
+    re.I,
+)
+_REJECT = re.compile(
+    r"\b(?:i\s+reject|i\s+can'?t\s+support|cannot\s+support|not\s+okay\s+with|not\s+fine\s+with|"
+    r"dealbreaker|blocked|hard\s+no|no\s+for\s+me|i'?m\s+against)\b",
+    re.I,
+)
+_SOFT_OBJECT = re.compile(
+    r"\b(?:concern|worry|problem|issue|downside|too\s+expensive|too\s+far|too\s+late|risky|"
+    r"not\s+ideal|doesn'?t\s+fit|would\s+be\s+hard)\b",
+    re.I,
+)
 
 
 class OptionResolver:
@@ -85,10 +75,6 @@ class OptionResolver:
 
     @staticmethod
     def _build_aliases(options: list[OptionCard]) -> dict[str, str]:
-        # Collect candidate aliases per option, then drop any alias claimed by more
-        # than one option. This makes shared words harmless: "Night" in both
-        # "Bowling Night" and "Game Night" belongs to neither once collisions are
-        # removed, so an option only matches on its own distinctive words.
         candidates: dict[str, set[str]] = {}
         safe_short_names = short_alias_map(options)
         for option in options:
@@ -110,11 +96,13 @@ class OptionResolver:
     def ids_in_text(self, text: str) -> list[str]:
         lower = text.lower()
         found: list[str] = []
-        # Explicit "Option X" references first (single letters only ever match this way).
         for option_id in self.by_id:
-            if re.search(rf"\boption\s+{re.escape(option_id.lower())}\b", lower) and option_id not in found:
+            patterns = [
+                rf"\boption\s+{re.escape(option_id.lower())}\b",
+                rf"\b{re.escape(option_id.lower())}\)\b",
+            ]
+            if any(re.search(pattern, lower) for pattern in patterns) and option_id not in found:
                 found.append(option_id)
-        # Then distinctive name aliases, longest first so multi-word names win.
         for alias, option_id in sorted(self.alias_to_id.items(), key=lambda x: len(x[0]), reverse=True):
             if option_id in found:
                 continue
@@ -131,53 +119,37 @@ class OptionResolver:
         return self.by_id[option_id].prompt_card()
 
 
-def parse_trailer(raw: str, option_ids: list[str]) -> tuple[str, TurnMove]:
-    """Split a raw generation into (clean message, TurnMove). Tolerant of a
-    trailer that is bracketed, missing its brackets, malformed, or absent."""
-    move = TurnMove()
-    body: str | None = None
-    message = raw
-    bracketed = list(_TRAILER.finditer(raw))
-    if bracketed:
-        match = bracketed[-1]
-        body = match.group(1)
-        message = raw[: match.start()] + raw[match.end():]
-    else:
-        bare = _BARE_TRAILER.search(raw)
-        if bare:
-            body = bare.group(1)
-            message = raw[: bare.start()]
-    if body is None:
-        # No tag at all: clean up a lone option letter the model may have left dangling.
-        return normalise_ws(_strip_dangling_option_letter(raw, option_ids)), move
-    move.present = True
-    fields: dict[str, str] = {}
-    for part in re.split(r"[;,]", body):
-        if "=" in part:
-            key, value = part.split("=", 1)
-            fields[key.strip().lower()] = value.strip().lower()
-    act_raw = fields.get("act")
-    if act_raw:
-        try:
-            move.act = ActType(act_raw)
-        except ValueError:
-            move.act = None
-    opt_letters = re.sub(r"[^A-Z]", "", (fields.get("opt") or "").upper())
-    if opt_letters[:1] in option_ids:
-        move.option = opt_letters[:1]
-    stance = fields.get("stance", "neutral")
-    move.stance = stance if stance in _STANCES else "neutral"
-    return normalise_ws(message), move
+def visible_commitment(text: str, resolver: OptionResolver) -> tuple[str, str] | None:
+    """Return (stance, option_id) for clear visible commitments only.
 
+    stance is one of ``vote``, ``accept``, or ``reject``. Ambiguous or hedged
+    lines return None; false positives are worse than missed commitments here.
+    """
+    check_text = text.replace("’", "'").replace("‘", "'")
+    ids = resolver.ids_in_text(check_text)
+    if len(ids) != 1:
+        return None
+    option_id = ids[0]
+    if _REJECT.search(check_text):
+        return ("reject", option_id)
+    if not _COMMIT.search(check_text):
+        return None
+    direct_vote = _DIRECT_VOTE.search(check_text)
+    soft_commit = _SOFT_COMMIT.search(check_text)
 
-def _strip_dangling_option_letter(text: str, option_ids: list[str]) -> str:
-    """Remove a trailing isolated option letter left over from a malformed tag,
-    e.g. '...for in-depth analysis C' -> '...for in-depth analysis'."""
-    stripped = text.rstrip()
-    m = re.search(r"(?:^|\s)([A-Za-z])[.\s]*$", stripped)
-    if m and m.group(1).upper() in option_ids:
-        return stripped[: m.start(1)].rstrip(" .,;:-")
-    return text
+    # Conditional or question-like support is not a public final vote.
+    # Example: "I can support A, but are we okay with the higher cost?"
+    # remains unresolved until the speaker explicitly votes without conditions.
+    if _HARD_CONDITIONAL.search(check_text):
+        return None
+    if soft_commit and (_HEDGE.search(check_text) or _CONDITIONAL_AFTER_COMMIT.search(check_text)):
+        return None
+    if _HEDGE.search(check_text) and not direct_vote:
+        return None
+    if _CONDITIONAL_AFTER_COMMIT.search(check_text) and not direct_vote:
+        return None
+    stance = "vote" if direct_vote else "accept"
+    return (stance, option_id)
 
 
 def parse_dialogue_act(
@@ -187,29 +159,43 @@ def parse_dialogue_act(
     text: str,
     resolver: OptionResolver,
     participant_names: dict[str, str],
-    move: TurnMove | None = None,
     intent: MoveIntent | None = None,
     previous_speaker_id: str | None = None,
 ) -> DialogueAct:
     text = normalise_ws(text)
-    option_refs = resolver.ids_in_text(text)
+    check_text = text.replace("’", "'").replace("‘", "'")
+    option_refs = resolver.ids_in_text(check_text)
     addressee_id = _extract_addressee(text, speaker_id, participant_names)
     if addressee_id is None and _QUESTION.search(text) and previous_speaker_id and previous_speaker_id != speaker_id:
         if re.search(r"\b(?:you|your|that|what\s+about|how\s+about)\b", text, re.I):
             addressee_id = previous_speaker_id
     question_target = addressee_id if _QUESTION.search(text) and addressee_id else None
-    # Questions to the room ("How many can it seat?", "What's the vibe like?") have
-    # no explicit addressee but still deserve an answer. Pick the best respondent:
-    # whoever champions the mentioned option, or fall back to the previous speaker.
     if question_target is None and _QUESTION.search(text) and _is_genuine_question(text):
-        best = _best_respondent(speaker_id, option_refs, participant_names, previous_speaker_id)
-        if best:
-            question_target = best
+        question_target = _best_respondent(speaker_id, previous_speaker_id, participant_names)
 
-    hedged = has_commitment_hedge(text)
-    stance, focus_opt, act_type = _resolve_move(move, intent, option_refs, question_target, hedged)
-    if focus_opt and focus_opt not in option_refs:
-        option_refs = [focus_opt, *option_refs]
+    act_type = intent.act if intent else (ActType.ASK if question_target else ActType.REACT)
+    commitment = visible_commitment(text, resolver)
+    explicit_vote: str | None = None
+    accepts: list[str] = []
+    soft_rejects: dict[str, str] = {}
+    hard_rejects: dict[str, str] = {}
+    proposes_option: str | None = None
+
+    if commitment:
+        stance, option_id = commitment
+        if stance in {"vote", "accept"}:
+            explicit_vote = option_id
+            if stance == "accept":
+                accepts.append(option_id)
+            act_type = ActType.VOTE if stance == "vote" else ActType.ACCEPT
+        elif stance == "reject":
+            soft_rejects[option_id] = text
+            act_type = ActType.REJECT
+    elif option_refs:
+        if _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text):
+            soft_rejects[option_refs[0]] = text
+        if act_type == ActType.PROPOSE_COMPROMISE and len(option_refs) == 1:
+            proposes_option = option_refs[0]
 
     return DialogueAct(
         speaker_id=speaker_id,
@@ -218,100 +204,16 @@ def parse_dialogue_act(
         option_refs=option_refs,
         addressee_id=addressee_id,
         question_target_id=question_target,
-        explicit_vote=focus_opt if stance == "vote" else None,
-        accepts=[focus_opt] if stance == "accept" and focus_opt else [],
-        soft_rejects={focus_opt: text} if stance == "object" and focus_opt else {},
-        hard_rejects={focus_opt: text} if stance == "reject" and focus_opt else {},
-        proposes_option=focus_opt if stance == "propose" else None,
+        explicit_vote=explicit_vote,
+        accepts=accepts,
+        soft_rejects=soft_rejects,
+        hard_rejects=hard_rejects,
+        proposes_option=proposes_option,
     )
 
 
-def _resolve_move(
-    move: TurnMove | None,
-    intent: MoveIntent | None,
-    option_refs: list[str],
-    question_target: str | None,
-    hedged: bool = False,
-) -> tuple[str, str | None, ActType]:
-    focus_opt: str | None = None
-    if move and move.option:
-        focus_opt = move.option
-    elif len(option_refs) == 1:
-        focus_opt = option_refs[0]
-    elif intent and len(intent.option_focus) == 1:
-        # On no-trailer binding turns (VOTE/ACCEPT), the option must be visible in text.
-        # Using intent.option_focus here would ghost-commit to an option the speaker
-        # never mentioned, making invisible routing state look like social proof (KF03).
-        trailer_present = move and move.present
-        if trailer_present or intent.act not in {ActType.VOTE, ActType.ACCEPT}:
-            focus_opt = intent.option_focus[0]
-
-    # An opening turn only states an initial leaning — it can never be a vote, accept,
-    # or compromise proposal, no matter what stance the model put in its trailer.
-    # Clamp to a neutral opening so the first round can't be miscounted as commitments
-    # (which used to inflate option acceptances and skew consensus).
-    if intent and intent.act == ActType.OPENING:
-        return "neutral", focus_opt, ActType.OPENING
-
-    stance = move.stance if move and move.stance != "neutral" else "neutral"
-    if stance == "neutral" and intent:
-        stance = _INTENT_FALLBACK_STANCE.get(intent.act, "neutral")
-    # A question is never a binding commitment, even when the intent was ACCEPT/VOTE and
-    # the fallback stance would otherwise credit it. The model asked something instead of
-    # committing; don't let the fallback silently register a false acceptance that triggers
-    # premature consensus before the question is answered.
-    if question_target and stance in {"accept", "vote"}:
-        stance = "neutral"
-
-    # A binding commitment is only real on a routed decision turn (the vote round or
-    # confirmation). If the model tags an ordinary discussion line as a vote/accept, drop
-    # it to neutral: a mid-discussion "accept" used to be counted as a real acceptance,
-    # inflating the tally into a premature, often fake-unanimous outcome while the chat was
-    # still openly arguing. We also discard the trailer's act so the turn falls back to its
-    # routed move (e.g. SUPPORT), which still moves the lean — persuasion isn't lost, only
-    # the spurious binding accept.
-    clamped = bool(intent and intent.act not in _DECISION_ACTS and stance in {"vote", "accept"})
-    if clamped:
-        stance = "neutral"
-
-    # On a decision turn, vote and accept are synonymous — both mean a binding commitment
-    # to one option. Normalise so state tracking (explicit_vote vs accepted_options) is
-    # consistent with the routed intent rather than the model's arbitrary label choice.
-    if focus_opt and intent and not clamped:
-        if intent.act == ActType.VOTE and stance == "accept":
-            stance = "vote"
-        elif intent.act == ActType.ACCEPT and stance == "vote":
-            stance = "accept"
-
-    # A hedged/conditional acceptance ("might be okay", "works if we leave early") is not a
-    # firm commitment, so it must not close the decision. Keep it neutral: the persona stays
-    # an open holdout until the condition is actually resolved, instead of the chat declaring
-    # consensus off a tentative line.
-    if hedged and intent and intent.act in {ActType.VOTE, ActType.ACCEPT} and stance in {"vote", "accept"}:
-        stance = "neutral"
-
-    if stance in _STANCE_TO_ACT:
-        act_type = _STANCE_TO_ACT[stance]
-    elif move and move.act and not clamped:
-        act_type = move.act
-    elif intent and intent.act == ActType.OPENING:
-        act_type = ActType.OPENING
-    elif question_target or (intent and intent.act == ActType.ASK):
-        act_type = ActType.ASK
-    elif intent:
-        act_type = intent.act
-    else:
-        act_type = ActType.REACT
-    return stance, focus_opt, act_type
-
-
-_RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
-_GENUINE_QUESTION = re.compile(
-    r"\b(?:how\s+(?:many|much|long|far|about)|what(?:'s|\s+is|\s+are|\s+do|\s+does|\s+about|\s+if)"
-    r"|where|when|which|who|can\s+(?:we|it|they)|do\s+(?:we|they|you)|does\s+(?:it|that|this)"
-    r"|is\s+(?:it|there|that)|are\s+(?:there|they|we)|could\s+(?:we|it)|would\s+(?:it|that))\b",
-    re.I,
-)
+def has_commitment_hedge(text: str) -> bool:
+    return bool(_HEDGE.search(text))
 
 
 def _is_genuine_question(text: str) -> bool:
@@ -322,13 +224,10 @@ def _is_genuine_question(text: str) -> bool:
 
 def _best_respondent(
     speaker_id: str,
-    option_refs: list[str],
-    participant_names: dict[str, str],
     previous_speaker_id: str | None,
+    participant_names: dict[str, str],
 ) -> str | None:
     others = [pid for pid in participant_names if pid != speaker_id]
-    if not others:
-        return None
     if previous_speaker_id and previous_speaker_id in others:
         return previous_speaker_id
     return others[0] if others else None

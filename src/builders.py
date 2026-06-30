@@ -18,6 +18,7 @@ from aliases import validated_short_alias
 from config_loader import cfg, parse_preference_shape
 from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
+from simulator import build_initial_agenda, derive_simulator_parameters
 from utils import sample_int_range
 
 _TOPIC_COUNT_PATTERNS = [
@@ -313,10 +314,12 @@ class SetupBuilder:
         rej_raw = str(row.get("rejection") or "").strip().upper()
         rejection: str | None = rej_raw if rej_raw in labels and rej_raw not in preferred_options else None
         rejection_reason = str(row.get("rejection_reason") or "").strip() if rejection else ""
-        return Persona(
+        sim_params = derive_simulator_parameters(traits)
+        persona = Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
             traits=traits,
+            sim_params=sim_params,
             background=_require(
                 row.get("background") or row.get("backstory"),
                 f"participant {pid} background",
@@ -326,19 +329,39 @@ class SetupBuilder:
             rejection=rejection,
             rejection_reason=rejection_reason,
         )
+        persona.agenda = build_initial_agenda(persona)
+        return persona
 
     @staticmethod
     def _clean_name(raw: str) -> str:
-        words = raw.split()
-        cap = int(cfg.scenario.option_name_max_words)
-        if len(words) > cap:
-            truncated = words[:cap]
-            if truncated[-1].lower() in _INCOMPLETE_NAME_ENDINGS:
-                raise ValueError(
-                    f"Option name truncated mid-phrase (last word {truncated[-1]!r} is a function word): {raw!r}"
-                )
-            return " ".join(truncated)
-        return " ".join(words)
+        """Normalize an option name without treating cosmetic length as a setup failure.
+
+        The option name is not part of the factual source of truth; the full option
+        card still carries attributes, upside, tradeoff, and concern. Earlier
+        versions truncated at option_name_max_words and aborted when the cut ended
+        on a function word. That made valid travel names such as
+        "Two-stop flight with short layovers in Boston and Copenhagen" fail even
+        though the scenario was usable.
+
+        We therefore keep complete names up to a permissive cap and only shorten
+        genuinely excessive names. If shortening is required, we avoid ending on
+        connector words, but we do not fail the whole run for name wording.
+        """
+        words = str(raw).split()
+        if not words:
+            return ""
+
+        configured_cap = int(cfg.scenario.option_name_max_words)
+        # Cosmetic names produced by slower/local models are often 9-12 words.
+        # Treat the configured cap as a display target, not as a hard validator.
+        hard_cap = max(configured_cap, 12)
+        if len(words) <= hard_cap:
+            return " ".join(words)
+
+        shortened = words[:hard_cap]
+        while len(shortened) > 2 and shortened[-1].lower().strip(",.;:-") in _INCOMPLETE_NAME_ENDINGS:
+            shortened.pop()
+        return " ".join(shortened)
 
     @staticmethod
     def _validate_preference_assignments(

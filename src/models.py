@@ -1,7 +1,8 @@
-"""Core typed objects for the simulator.
+"""Typed objects for the option-grounded multi-user simulator.
 
-The LLM may generate text, but routing, consensus, logging, and validation operate
-on these objects only.
+The project simulates several user simulators in a shared decision environment.
+LLMs render utterances, but the environment owns the option board, simulator
+parameters, agenda items, routing state, visible commitments, and outcome logic.
 """
 
 from __future__ import annotations
@@ -15,23 +16,29 @@ class Phase(str, Enum):
     OPENING = "opening"
     DISCUSSION = "discussion"
     NARROWING = "narrowing"
-    CONFIRMATION = "confirmation"
     CLOSURE = "closure"
 
 
 class ActType(str, Enum):
     OPENING = "opening"
-    ANSWER = "answer"
-    REACT = "react"
+    BUILD = "build"
+    AGREE = "agree"
+    CHALLENGE = "challenge"
     ASK = "ask"
-    SUPPORT = "support"
-    OBJECT = "object"
+    ANSWER = "answer"
     COMPARE = "compare"
-    PUSH_BACK = "push_back"
+    INVITE = "invite"
     PROPOSE_COMPROMISE = "propose_compromise"
     VOTE = "vote"
     ACCEPT = "accept"
     REJECT = "reject"
+    REACT = "react"
+
+
+class AgendaStatus(str, Enum):
+    PENDING = "pending"
+    DONE = "done"
+    SKIPPED = "skipped"
 
 
 LengthHint = Literal["short", "medium", "long"]
@@ -46,23 +53,26 @@ class OptionCard:
     tradeoff: str = ""
     concern: str = ""
     best_for: str = ""
-    short_name: str = ""  # LLM-generated casual nickname; fallback computed from name
+    short_name: str = ""
 
-    def public_line(self) -> str:
-        attrs = ", ".join(f"{k}: {v}" for k, v in self.attrs.items())
-        parts = [f"{self.id}) {self.name}"]
-        if attrs:
-            parts.append(attrs)
+    def public_line(self, max_attrs: int = 3, note_words: int = 9) -> str:
+        attr_bits = [
+            f"{key.replace('_', ' ')}: {value}"
+            for key, value in ordered_attrs(self.attrs)[: max(0, max_attrs)]
+        ]
+        details = "; ".join(attr_bits)
+        suffix_bits: list[str] = []
         if self.upside:
-            parts.append(f"plus: {self.upside}")
+            suffix_bits.append(f"+ {_clip_words(self.upside, note_words)}")
         if self.tradeoff:
-            parts.append(f"trade-off: {self.tradeoff}")
-        return "; ".join(parts)
+            suffix_bits.append(f"− {_clip_words(self.tradeoff, note_words)}")
+        suffix = f" ({'; '.join(suffix_bits)})" if suffix_bits else ""
+        return f"{self.id}) {self.name}" + (f" — {details}" if details else "") + suffix
 
     def prompt_card(self) -> str:
-        attrs = ", ".join(f"{k}={v}" for k, v in self.attrs.items())
+        attrs = ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in ordered_attrs(self.attrs))
         pieces = [
-            f"Option {self.id}: {self.name}",
+            f"{self.id}) {self.name}",
             f"attrs: {attrs}" if attrs else "attrs: none",
             f"upside: {self.upside}" if self.upside else "",
             f"tradeoff: {self.tradeoff}" if self.tradeoff else "",
@@ -72,6 +82,32 @@ class OptionCard:
         return "; ".join(p for p in pieces if p)
 
 
+def _clip_words(text: str, limit: int) -> str:
+    words = str(text).split()
+    if len(words) <= limit:
+        return str(text).strip().rstrip(" .;:")
+    return " ".join(words[:limit]).rstrip(" ,.;:") + "…"
+
+
+def ordered_attrs(attrs: dict[str, str]) -> list[tuple[str, str]]:
+    priority = [
+        "cost", "price", "budget", "wait", "duration", "time", "length", "pages",
+        "genre", "rating", "release", "difficulty", "availability", "flight",
+        "departure", "arrival", "baggage", "distance", "drive", "capacity",
+        "temperature", "ambiance", "setting", "activity", "effort", "battery",
+        "comfort", "privacy", "accuracy", "safety", "space", "yield", "maintenance",
+    ]
+
+    def rank_for(key: str) -> tuple[int, str]:
+        normalised = key.lower().replace("_", " ")
+        for index, needle in enumerate(priority):
+            if needle in normalised:
+                return index, normalised
+        return 999, normalised
+
+    return sorted(attrs.items(), key=lambda item: rank_for(item[0]))
+
+
 @dataclass(slots=True)
 class Scenario:
     topic: str
@@ -79,6 +115,7 @@ class Scenario:
     opening_question: str
     options: list[OptionCard]
     shared_context: list[str] = field(default_factory=list)
+    environment_type: str = "option_grounded_group_decision"
 
     @property
     def option_ids(self) -> list[str]:
@@ -100,20 +137,47 @@ class TraitProfile:
     neuroticism: int
 
     @property
-    def response_length(self) -> int:
-        """Derive chat length from talkativeness, deliberation, and openness."""
-        value = (2 * self.extraversion + self.conscientiousness + self.openness) / 4
-        return max(1, min(5, round(value)))
-
-    @property
     def compromise_willingness(self) -> float:
-        """Derive cooperation from the five traits; agreeableness dominates."""
         agree = (self.agreeableness - 1) / 4
         openness = (self.openness - 1) / 4
         calm = (5 - self.neuroticism) / 4
         value = 0.65 * agree + 0.20 * openness + 0.15 * calm
-        floor = 0.05 if self.agreeableness == 1 else 0.45
+        floor = 0.05 if self.agreeableness == 1 else 0.35
         return max(floor, min(0.95, value))
+
+
+@dataclass(slots=True)
+class SimulatorParameters:
+    """Operational controls for a simulated user.
+
+    OCEAN traits are retained as a compact personality source, but routing and
+    prompts use these explicit parameters because they are easier to tune and
+    evaluate.
+    """
+
+    engagement: float
+    verbosity: float
+    initiative: float
+    responsiveness: float
+    stubbornness: float
+    directness: float
+    compromise_threshold: float
+
+    def clipped(self) -> "SimulatorParameters":
+        return SimulatorParameters(**{name: _clip01(getattr(self, name)) for name in self.__dataclass_fields__})
+
+
+def _clip01(value: float) -> float:
+    return max(0.0, min(1.0, float(value)))
+
+
+@dataclass(slots=True)
+class AgendaItem:
+    act: ActType
+    option: str | None = None
+    reason: str = ""
+    priority: float = 1.0
+    status: AgendaStatus = AgendaStatus.PENDING
 
 
 @dataclass(slots=True)
@@ -121,11 +185,13 @@ class Persona:
     id: str
     name: str
     traits: TraitProfile
+    sim_params: SimulatorParameters
     background: str
     private_goal: str
-    preferred_options: list[str]        # 1–2 genuine favourites, ordered by preference
-    rejection: str | None = None        # optional; max one grounded rejection
+    preferred_options: list[str]
+    rejection: str | None = None
     rejection_reason: str = ""
+    agenda: list[AgendaItem] = field(default_factory=list)
 
     @property
     def preferred_option(self) -> str:
@@ -141,10 +207,7 @@ class MoveIntent:
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
     respond_to_turn: int | None = None
-    # True only when the router is deliberately handing the speaker a change-of-mind
-    # (the persuasion "won over" turn). A SUPPORT move only moves the persona's lean
-    # when this is set, so ordinary discussion/coverage-gap support of an acceptable
-    # option no longer silently drifts their stance.
+    agenda_index: int | None = None
     moves_lean: bool = False
 
 
@@ -170,7 +233,6 @@ class OpenQuestion:
     target_id: str
     text: str
     option_focus: list[str] = field(default_factory=list)
-    hedge_count: int = 0  # times answered with a hedge; cleared after second hedge
 
 
 @dataclass(slots=True)
@@ -179,7 +241,6 @@ class OptionCoverage:
     reasons: int = 0
     objections: int = 0
     acceptances: int = 0
-    covered_slots: set[str] = field(default_factory=set)
 
 
 @dataclass(slots=True)
@@ -187,14 +248,12 @@ class ParticipantRuntime:
     persona_id: str
     turn_count: int = 0
     last_spoke_turn: int | None = None
-    stated_priority: str = ""
-    current_preference: str | None = None
-    explicit_vote: str | None = None
+    current_preference: str | None = None  # latent simulator preference, not public evidence
+    explicit_vote: str | None = None       # observed public commitment from visible text
     accepted_options: set[str] = field(default_factory=set)
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
     already_said: list[str] = field(default_factory=list)
-    discourse_frames: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -208,11 +267,10 @@ class TurnRecord:
     intent: MoveIntent | None = None
     tokens_in: int = 0
     tokens_out: int = 0
-    validation_issues: list[str] = field(default_factory=list)  # issues remaining after any repair
-    repaired: bool = False  # whether a repair attempt actually ran for this turn
-    repair_trigger_codes: list[str] = field(default_factory=list)  # codes that triggered the repair (pre-repair)
-    state_mutation_blocked: bool = False  # invalid text is logged but cannot alter semantic state
-    is_social: bool = False  # greeting/farewell cosmetic turn — excluded from decision metrics
+    validation_issues: list[str] = field(default_factory=list)
+    repaired: bool = False
+    repair_trigger_codes: list[str] = field(default_factory=list)
+    state_mutation_blocked: bool = False
 
 
 @dataclass(slots=True)
@@ -236,13 +294,8 @@ class DialogueState:
     candidate_option: str | None = None
     outcome: RunOutcome | None = None
     turn_index: int = 0
-    readiness_score: float = 0.0
     no_progress_count: int = 0
-    facilitator_force_narrow: bool = False
-    narrowing_called: bool = False  # deferred one turn so a participant can call for a vote naturally
-    confirmation_start_turns: int | None = None  # participant-turn count when confirmation began
-    # Pacing targets derived once per run (group size + composition), so length varies
-    # and scales with the number of participants instead of using one fixed floor.
+    phase_history: list[str] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0
     hard_max_turns: int = 0
@@ -276,19 +329,3 @@ class DialogueRunResult:
     outcome: RunOutcome
     log_paths: dict[str, str]
     token_summary: dict[str, int]
-
-
-@dataclass(slots=True)
-class ValidationIssue:
-    code: str
-    severity: str
-    message: str
-
-
-@dataclass(slots=True)
-class ValidationResult:
-    ok: bool
-    issues: list[ValidationIssue] = field(default_factory=list)
-
-    def codes(self) -> list[str]:
-        return [issue.code for issue in self.issues]

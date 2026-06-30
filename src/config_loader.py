@@ -99,7 +99,7 @@ class Config(Section):
             "simulation.min_participants",
             "simulation.max_participants",
             "scenario.option_labels",
-            "conversation.hard_max_turns_per_participant",
+            "conversation.max_discussion_turns_per_participant",
             "output.log_dir",
         ]
         for key in required:

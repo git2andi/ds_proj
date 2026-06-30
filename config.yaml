@@ -1,29 +1,5 @@
-# Master group-discussion simulator configuration.
-# Rule: every tweakable numeric parameter used by the repo lives here.
-# Rule: every prompt/chat template lives in src/prompts.py.
-#
-# ============================================================================
-#  DIALS THAT MATTER  â€”  if you only ever touch a handful, touch these.
-#  (Everything else in this file is a structural constant you set once.)
-#
-#   Naturalness / feel
-#     llm.sampling.dialogue.temperature   higher = more varied/loose chat
-#     utterances.word_budgets             how long each kind of turn runs
-#
-#   Group make-up
-#     simulation.num_participants         how many sims are in the room
-#     personas.hard_blocker_probability   chance one participant gets agreeableness=1 (very stubborn)
-#     personas.preference_distribution   weighted preference splits by group size
-#
-#   When/whether it concludes
-#     conversation.concentration_to_narrow   how aligned before it goes to a vote
-#     conversation.discussion_depth           shapes the (derived, varying) discussion length
-#     conversation.*_per_participant           narrow-anyway / hard-stop caps, scaled by group size
-#
-#   Moderator presence
-#     conversation.moderator_stall_window      how soon the mod breaks a circle
-#     conversation.moderator_max_interventions  how chatty the mod is overall
-# ============================================================================
+# Option-grounded multi-user simulator configuration.
+# Keep this file small: only parameters that are useful to tune live here.
 
 llm:
   provider: "gpt"                     # uni | groq | gemini | gpt
@@ -35,52 +11,70 @@ llm:
   endpoints:
     uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   timeouts:
-    request_seconds: 240   # headroom for the larger n=6/7 setup call (one big JSON) on a slow endpoint
+    request_seconds: 240
   gemini_rpm_delay_seconds: 12
   sampling:
-    # dialogue.temperature is the main naturalness dial; setup/repair are kept
-    # cooler on purpose (valid JSON / faithful rewrites).
+    setup:
+      temperature: 0.35
+      top_k: 45
+      top_p: 0.90
     dialogue:
       temperature: 0.82
       top_k: 60
       top_p: 0.94
-    setup:
-      temperature: 0.34
-      top_k: 45
-      top_p: 0.88
     repair:
-      temperature: 0.22
+      temperature: 0.20
       top_k: 25
-      top_p: 0.78
+      top_p: 0.80
+
+environment:
+  type: "option_grounded_group_decision"
+  source_of_truth: "generated_option_board"
 
 simulation:
-  num_participants: 3               # <-- core dial: group size
-  min_participants: 2               # structural: bounds checked at load time
+  num_participants: 3
+  min_participants: 2
   max_participants: 7
-  random_seed: null                 # set an int for reproducible runs
-  max_repairs_per_turn: 1
+  random_seed: null
   setup_generation_attempts: 2
+  max_repairs_per_turn: 1
 
 scenario:
-  # --- structural: shape of the generated scenario, set once ---
   option_labels: ["A", "B", "C", "D"]
   public_attr_min: 3
   public_attr_max: 5
-  option_prompt_max_words: 34
-  option_name_max_words: 8
+  option_prompt_max_words: 46
+  option_name_max_words: 12
+  option_board_attr_max: 3              # shown in transcript/moderator opening; full facts remain available to prompts
+  option_board_note_max_words: 9
+  shared_context_max_items: 3
+  shared_context_max_words: 18
   short_alias_min_chars: 4
   short_alias_max_words: 3
 
 personas:
-  # --- core dials: these decide whether/how easily a chat resolves ---
-  hard_blocker_probability: 0.04           # chance one participant gets agreeableness=1 (very stubborn traits)
+  # OCEAN traits are sampled here, then converted into explicit simulator parameters
+  # in src/simulator.py: engagement, verbosity, initiative, responsiveness,
+  # stubbornness, directness, and compromise_threshold.
+  # Chance that exactly one participant is sampled as a hard blocker.
+  # A hard blocker gets agreeableness=1 and normally cannot accept their rejected option.
+  hard_blocker_probability: 0.06
+  trait_min: 1
+  trait_max: 5
+  trait_ranges:
+    openness: [2, 5]
+    conscientiousness: [2, 5]
+    extraversion: [1, 5]
+    agreeableness: [2, 5]
+    neuroticism: [1, 4]
+  hard_blocker_trait_ranges:
+    openness: [1, 2]
+    conscientiousness: [3, 5]
+    extraversion: [1, 5]
+    agreeableness: [1, 1]
+    neuroticism: [3, 5]
   preference_distribution:
-    # null samples from shape_weights. Set a list such as [2, 1] to force an
-    # exact split for the active participant count (useful for controlled evals).
     forced_shape: null
-    # Each key is a participant count. Shape parts are primary-preference group
-    # sizes and weights for each count must sum to 1. With four options, n=5-7
-    # necessarily have repeated primaries; their least-clustered shapes come first.
     shape_weights:
       2: {"1-1": 0.80, "2": 0.20}
       3: {"1-1-1": 0.50, "2-1": 0.45, "3": 0.05}
@@ -88,137 +82,59 @@ personas:
       5: {"2-1-1-1": 0.40, "2-2-1": 0.30, "3-1-1": 0.20, "3-2": 0.10}
       6: {"2-2-1-1": 0.35, "2-2-2": 0.25, "3-2-1": 0.25, "3-1-1-1": 0.15}
       7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
-  # --- structural: trait sampling + setup guardrails, set once ---
-  trait_min: 1
-  trait_max: 5
-  trait_ranges:
-    openness: [2, 5]
-    conscientiousness: [2, 5]
-    extraversion: [1, 5]
-    agreeableness: [3, 5]
-    neuroticism: [1, 3]
-  hard_blocker_trait_ranges:
-    openness: [1, 2]                       # resistant to alternatives
-    conscientiousness: [3, 5]             # holds a deliberate, principled position
-    extraversion: [1, 5]                   # stubbornness does not imply talkativeness
-    agreeableness: [1, 1]                  # the explicit stubbornness signal
-    neuroticism: [2, 5]                    # concern can reinforce the fixed position
 
 conversation:
-  # --- core dials: pacing and when the discussion turns into a decision ---
-  concentration_to_narrow: 0.6      # fraction of group sharing the leading lean before narrowing
-  # How long the discussion runs is NOT a fixed number of turns. It is derived per run from
-  # group size and composition (+ jitter), so a quick-agreeing trio is short while a big,
-  # split, stubborn group runs long. All three caps below scale with participant count.
-  force_narrow_turns_per_participant: 8   # narrow regardless after this * participants
-  hard_max_turns_per_participant: 12      # hard stop after this * participants
-  discussion_depth:                  # shapes the derived "talk this much before narrowing" target
-    base_per_participant: 2.0
-    contention_weight: 1.5           # more distinct starting preferences -> longer
-    stubbornness_weight: 1.0         # lower mean compromise_willingness -> longer
-    deliberation_weight: 1.0         # higher openness/conscientiousness -> longer
-    jitter_per_participant: [0.0, 1.5]   # random spread so runs differ even with similar groups
-  moderator_stall_window: 4         # consecutive no-progress turns before the mod steps in
-  moderator_max_interventions: 3    # cap on moderator nudges per run
-  max_vote_attempts_per_person: 2   # force CONFIRMATION when each holdout has had this many VOTE turns
-  slot_exhaustion_threshold: 3      # covered claim slots per staked option to permit early narrowing
-  # --- structural: convergence/moderator fine print, set once ---
-  min_turns_per_participant_before_narrowing: 2
-  min_options_touched_before_narrowing: 2   # alternatives worth airing; dead options aren't forced in
-  no_progress_window_turns: 6
-  moderator_cooldown_turns: 5       # min turns between moderator interventions
-  max_confirmation_turns: 8         # cap on accept/reject churn before forcing a close (anti flip-flop)
-
-# --- Below here is tuning you did once. Rarely worth touching. -------------
+  # The controller derives actual turn caps from n and traits. These are per participant.
+  min_discussion_turns_per_participant: 3.0
+  target_discussion_turns_per_participant: 4.0
+  max_discussion_turns_per_participant: 6.0
+  contention_extra_turns: 2            # added when starting preferences are split
+  low_compromise_extra_turns: 1         # added when average compromise is low
+  concentration_to_vote: 0.75           # visible leading lean share needed for early vote
+  early_vote_extra_turns: 2             # after min_turns, wait this many turns before concentration can trigger voting
+  moderator_stall_window: 6             # no-progress turns before one moderator nudge
+  moderator_cooldown_turns: 5
+  moderator_max_interventions: 1
+  max_vote_rounds: 2
+  require_option_coverage_before_vote: true  # each option should be mentioned/compared once before final voting when feasible
 
 routing:
-  recent_speaker_window: 5
-  recent_speaker_penalty: 0.25
-  low_turn_count_boost: 0.20    # lowered from 0.45 so extraversion can differentiate turn share
-  unspoken_boost: 0.95
-  extraversion_weight: 0.22    # stronger trait-driven turn-share difference without overriding recency
-  unresolved_objection_boost: 0.34
-  preferred_option_gap_boost: 0.40
-  direct_reply_probability: 0.35    # chance a reply/conflict turn is addressed at one person; most lines go to the room
-  act_probabilities:                # mix of local moves the router samples in free discussion
-    react: 0.20
-    ask: 0.20                        # base only; scaled per-speaker by openness (curious people ask more)
-    compare: 0.22
-    support: 0.10
-    object: 0.16
-    push_back: 0.09
-    propose_compromise: 0.07
-  trait_act_slope: 0.25             # strength of OCEAN influence on dialogue-act selection
-  ask_after_question_damping: 0.40    # multiply ask weight when a question was asked recently (avoids Q&A-only stretches)
-  ask_quiet_window: 3                  # turns to look back for a recent question before damping asking
-  persuasion_probability_factor: 0.40  # scales compromise_willingness into a per-turn chance of being won over
-  persuasion_min_speaker_turns: 2      # a persona must have spoken (defended) at least this many times before being won over
-  persuasion_support_margin: 1.0       # a rival option must beat the speaker's current lean by this much support to pull them
-  late_discussion_compromise_bonus: 0.10
-  no_progress_compromise_probability: 0.55
-  length_hint_probabilities:
-    short: 0.28
-    medium: 0.54
-    long: 0.18
-  length_trait_slope: 0.5             # how strongly response_length pulls the length hint toward short/long
+  # Lightweight conversational move mix. The engine samples from these, then applies local constraints.
+  move_weights:
+    build: 0.23       # add a reason or extend common ground
+    agree: 0.14       # agree with someone and add a small reason
+    challenge: 0.16   # object or push back
+    ask: 0.10         # ask a concrete question
+    answer: 0.10      # answer an open question
+    compare: 0.16     # compare two options
+    invite: 0.05      # pull a quiet participant in
+    propose_compromise: 0.06
+  direct_address_probability: 0.32
+  extraversion_turn_weight: 0.12
+  quiet_speaker_boost: 1.25
 
 utterances:
-  # word_budgets is a core feel dial; the rest is prompt-window bookkeeping.
+  recent_turns_in_prompt: 5
+  response_target_max_words: 22
   word_budgets:
-    opening: 26
-    short: 18
-    medium: 30
-    long: 36
-    answer: 30
-    ask: 24
-    vote: 24
-    confirm: 20
-    closure: 22
-    greeting: 14                     # quick hello as the group gathers
-    farewell: 18                     # quick sign-off acknowledging the outcome
-  hard_cap_extra_words: 8
-  max_chat_words: 48               # even the most expansive participant stays in chat-message territory
-  length_trait_word_step: 3         # words added/removed per point of response_length above/below the trait midpoint
-  recent_turns_in_prompt: 4
-  recent_turns_after_question: 4
-  response_target_max_words: 32     # preserve enough of the exact local point to answer it
-  repair_recent_turns: 2
-  max_focus_options_in_prompt: 3
-  repair_issue_limit: 4
+    opening: 22
+    discussion: 24
+    ask: 22
+    answer: 24
+    vote: 18
+    moderator: 22
+    closure: 18
 
 validation:
-  enabled: true                   # master switch for all deterministic guardrails
-  own_similarity_threshold: 0.62  # repetition sensitivity vs the speaker's own turns
-  group_similarity_threshold: 0.72
-  duplicate_threshold: 0.85       # near-identical to another speaker's recent turn -> repair (even for accepts)
-  max_shared_phrase_words: 6      # reusing a 6+ word run from another speaker's recent turn -> repair (echo guard; option/participant names excluded)
-  repeated_start_window: 5
-  repeated_start_word_count: 3
-  max_consecutive_first_person_openers: 2  # how many turns in a row may open with a self-anchored stance ("I"/"I'm"/"we"/"our") before the next such opener is rewritten
-  max_question_chain: 2
-  repair_on_warning: false        # whether warning-level issues also trigger a repair
-  max_new_numbers_without_source: 1
+  enabled: true
 
 consensus:
-  majority_fallback_fraction: 0.66   # support needed for a fallback pick; a clear 2/3 majority carries
+  majority_fraction: 0.51
 
 output:
   log_dir: "logs"
-  write_prompts: false          # when true, all prompts for a run go to one prompts.jsonl
+  write_prompts: false
   prompt_file: "prompts.jsonl"
   transcript_file: "transcript.md"
   json_file: "run.json"
-  metrics_csv: "metrics.csv"    # master file, one appended row per run
-
-
-
-
-
-
-
-
-
-
-
-
-
+  metrics_csv: "metrics.csv"
