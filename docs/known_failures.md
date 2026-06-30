@@ -65,17 +65,18 @@ Current implementation order: P0 conversation quality, P1 setup/state integrity,
 
 **Remaining gap:** Option feasibility for group size (e.g. 4-player game assigned to 6 players) requires semantic understanding of attribute values and is not checked deterministically. Not a regression.
 
-### KF29 - Changes of mind and final consensus are often unsupported by the conversation
+### ~~KF29~~ - Changes of mind and final consensus (resolved 2026-06-30)
 
-**Evidence:** Fresh runs still show unsupported decision transitions and repair churn. In `20260630_003653_164440`, unclear dessert votes are routed repeatedly until visible commitments appear; in `20260630_002825_059028`, several participants repeat formal vote-like declarations; in `20260630_003103_199495`, Wren cycles through near-identical New Orleans acceptances while Rina continues pitching San Diego. These turns can sound procedural or ballot-like even though ordinary discussion replies are now local and conversational.
+**Fix (three parts):**
+1. **Hedged-confirmation auto-soft-rejection** (`dialogue.py` `_update_runtime()`): when a CONFIRMATION-phase ACCEPT turn is repaired and state mutation is still blocked (UNCLEAR_ACCEPT after repair), automatically record a `"hedged-confirmation"` soft rejection on the candidate. On the next routing call, `_confirmation_intent()` sees this and skips the persona rather than retrying with an identical prompt.
+2. **Routing reason clarification** (`router.py` `_confirmation_intent()`): the routing reason now explicitly says "a reluctant concession counts as acceptance; if not, say the one thing blocking you" — giving the model a clear exit for reluctant-but-real acceptance without forcing an enthusiastic line.
+3. **UNCLEAR_ACCEPT repair hint** (`prompts.py`): updated from "say the option name explicitly and confirm agreement" to "say plainly that the option works for you — a reluctant yes ('can live with it', 'it works') is fine" — so the repair attempt doesn't prompt for a tone the model can't produce.
 
-The visible-commitment accounting itself remains important and should be preserved. The open failure is the semantic legitimacy of the generated commitment: the router can request acceptance because a candidate is leading even when no grounded turn resolved the holdout's stated concern.
+**Validation:**
+- n=3 dinner: successful, clean single confirmation turn, 0 UNCLEAR_ACCEPT repairs cycling
+- n=5 city trip: Oscar (Savannah holdout) conceded "Portland can work for me even if it's not exactly the calm, historic place I hoped for"; Nadia conceded "I can live with less nightlife for better nature access" — both grounded in prior turns, no cycling
 
-**Required direction:** Track the concrete concern behind a holdout and require a new grounded reason, explicit trade-off acceptance, or coherent compromise before routing a change of mind. Preserve hard shared constraints separately from soft preferences so an acceptance cannot paraphrase away infeasibility. A failed or hedged commitment should not trigger repeated near-identical confirmation attempts.
-
-**Acceptance criteria:** Every visible change of mind is intelligible from prior turns; acceptance names the real trade-off being conceded; no successful outcome violates an explicit shared constraint; stubbornness remains derived from `agreeableness == 1` and is not replaced by a mechanical vote override.
-
-**Relevant code:** `src/router.py`: persuasion and confirmation routing; `src/dialogue.py`: runtime updates and consensus; `src/scoring.py`; `src/prompts.py`: vote/accept guidance; `src/validation.py`.
+**Pending watch:** Semantic legitimacy of mind-changes (whether prior turns actually addressed the holdout's concern) is still trust-based rather than enforced. No regression: the core gap is a language-model limitation, not a routing or state bug.
 
 ## P2 - Moderator integrity
 

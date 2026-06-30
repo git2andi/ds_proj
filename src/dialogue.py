@@ -476,6 +476,17 @@ class StateTracker:
         for option_id, reason in act.hard_rejects.items():
             rt.hard_rejections[option_id] = reason
             rt.accepted_options.discard(option_id)
+        # If a routed ACCEPT in CONFIRMATION still failed after repair (state mutation
+        # blocked), the persona cannot or will not commit. Record a soft decline so
+        # _confirmation_intent() skips them instead of re-routing the same prompt.
+        if (record.intent and record.intent.act == ActType.ACCEPT
+                and state.phase == Phase.CONFIRMATION
+                and record.state_mutation_blocked
+                and record.repaired
+                and record.intent.option_focus):
+            candidate = record.intent.option_focus[0]
+            if candidate not in rt.hard_rejections and candidate not in rt.accepted_options:
+                rt.soft_rejections.setdefault(candidate, "hedged-confirmation")
 
     def _update_coverage(self, state: DialogueState, record: TurnRecord) -> None:
         act = record.act

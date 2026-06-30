@@ -163,7 +163,11 @@ class TurnRouter:
                 speaker_id=persona.id,
                 act=ActType.ACCEPT if can_accept else ActType.REJECT,
                 option_focus=[candidate],
-                reason=f"say whether Option {candidate} works for you; if you accept, give the one thing that makes it okay",
+                reason=(
+                    f"say in one plain sentence whether Option {candidate} works for you — "
+                    "a reluctant concession ('I can live with it') counts as acceptance; "
+                    "if not, say the one thing blocking you"
+                ),
                 length_hint="short",
             )
         return None

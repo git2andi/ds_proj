@@ -734,7 +734,7 @@ _REPAIR_HINTS = {
     "SELF_REPETITION": "you already made this point — add something new or move toward deciding",
     "MISSING_COMMITMENT_TRAILER": "append a machine trailer [act=...; opt=LETTER; stance=vote/accept] at the end",
     "UNCLEAR_VOTE": "say the option name explicitly and commit without hedging; use stance=vote in the trailer",
-    "UNCLEAR_ACCEPT": "say the option name explicitly and confirm agreement; use stance=accept in the trailer",
+    "UNCLEAR_ACCEPT": "say plainly that the option works for you — a reluctant yes ('can live with it', 'it works') is fine; append [act=accept; opt=LETTER; stance=accept]",
     "UNCLEAR_REJECT": "clearly state your objection",
     "QUESTION_IN_CONFIRMATION": "make it a statement, not a question",
     "UNWANTED_QUESTION": "don't respond with a question — if answering, give a direct answer or hedge; otherwise make a statement",
