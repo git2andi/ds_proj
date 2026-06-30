@@ -117,8 +117,8 @@ Requirements:
 - Use the exact name from each trait profile row. Do not change or substitute names.
 - preferred_options: ordered list; preferred_options[0] MUST equal that participant's required primary option above. Optionally add one more if it genuinely fits the same background and goal. Maximum 2.
 - rejection: set only for participants with agreeableness=1 (hard blockers) when grounded in the option cards. Leave null for everyone else.
-- background: one sentence of private personal detail (a life situation, past experience, or personal constraint) that specifically explains why their required primary option fits them. Keep it inside the shared decision context.
-- private_goal: what they personally want from this group decision; it must directly support their required primary option.
+- background: one sentence of private personal detail (a habit, past experience, or constraint) that explains why their required primary option fits them. Must stay inside the decision context described in shared_context — do not invent a separate event, relationship, or situation not mentioned there.
+- private_goal: what they personally want from this group decision; it must directly support their required primary option and be achievable within the constraints described in shared_context.
 - Everyone should try to reach a workable group decision; even a hard blocker remains civil.
 
 Return JSON only in this shape:

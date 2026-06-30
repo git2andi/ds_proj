@@ -210,5 +210,34 @@ class PreferenceDistributionTests(unittest.TestCase):
         self.assertEqual(builder._llm.persona_calls, 2)
 
 
+class SetupCoherenceTests(unittest.TestCase):
+    def test_topic_count_mismatch_raises_before_llm(self) -> None:
+        class NoCallLLM:
+            calls = 0
+            def generate_json(self, prompt, *, profile):
+                self.calls += 1
+                raise AssertionError("LLM must not be called")
+
+        for topic in [
+            "Plan a lunch for 5 colleagues",
+            "Choose a city for our team of four friends",
+            "Pick an activity for a group of 4 people",
+        ]:
+            builder = SetupBuilder.__new__(SetupBuilder)
+            builder.topic = topic
+            builder._llm = NoCallLLM()
+            with self.assertRaises(ValueError, msg=f"Expected ValueError for topic: {topic!r}"):
+                builder.build(3)
+            self.assertEqual(builder._llm.calls, 0, f"LLM was called for topic: {topic!r}")
+
+    def test_topic_without_count_does_not_raise(self) -> None:
+        builder = SetupBuilder.__new__(SetupBuilder)
+        builder.topic = "Plan a team lunch"
+        try:
+            builder._validate_topic_participant_count(builder.topic, 3)
+        except ValueError:
+            self.fail("Topic without explicit count should not raise")
+
+
 if __name__ == "__main__":
     unittest.main()

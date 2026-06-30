@@ -15,10 +15,19 @@ from typing import Any
 
 import prompts
 from aliases import validated_short_alias
-from config_loader import cfg
+from config_loader import cfg, parse_preference_shape
 from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, TraitProfile
 from utils import sample_int_range
+
+_TOPIC_COUNT_PATTERNS = [
+    re.compile(r"(?P<count>\d+|two|three|four|five|six|seven)\s+(?:friends|students|colleagues|participants|players|teammates|people|of\s+us)\b", re.I),
+    re.compile(r"\bgroup\s+of\s+(?P<count>\d+|two|three|four|five|six|seven)\b", re.I),
+    re.compile(r"\bteam\s+of\s+(?P<count>\d+|two|three|four|five|six|seven)\b", re.I),
+]
+_TOPIC_COUNT_WORDS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+
+_INCOMPLETE_NAME_ENDINGS = frozenset({"a", "an", "the", "to", "from", "and", "or", "of", "in", "at", "by", "for", "with", "on", "via", "but", "&"})
 
 _NAME_POOL = [
     "Amir", "Beatriz", "Callum", "Daria", "Emeka", "Faye", "Goran", "Hana",
@@ -56,23 +65,42 @@ class SetupBuilder:
         self._llm = get_llm_client()
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
+        self._validate_topic_participant_count(self.topic, n)
+        preference_shape = self._preference_shape(n, len(cfg.scenario.option_labels))
         trait_rows = self._trait_rows(n)
-        plan = self._preference_plan(n)
-        pref_groups = self._preference_groups(plan)
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
-        last_error = ""
-        for attempt in range(attempts):
+        scenario: Scenario | None = None
+        options_json: list[dict] = []
+        scenario_errors: list[str] = []
+        for _ in range(attempts):
             try:
                 scenario, options_json = self._generate_scenario(n)
-                personas = self._generate_personas(n, trait_rows, pref_groups, options_json, scenario)
-                self._validate_preference_plan(personas, plan)
+                break
+            except Exception as exc:
+                scenario_errors.append(f"{type(exc).__name__}: {exc}")
+        if scenario is None:
+            raise RuntimeError(
+                f"Scenario setup failed at scenario stage for topic {self.topic!r} "
+                f"after {attempts} attempt(s): {' | '.join(scenario_errors)}. "
+                "Check the authorized LLM endpoint/provider in config.yaml."
+            )
+
+        required_preferences = self._preference_assignments(n, scenario.option_ids, preference_shape)
+        persona_errors: list[str] = []
+        for _ in range(attempts):
+            try:
+                personas = self._generate_personas(
+                    n, trait_rows, required_preferences, options_json, scenario
+                )
+                self._validate_preference_assignments(personas, required_preferences)
                 self._validate_world(scenario, personas)
                 return scenario, personas
             except Exception as exc:
-                last_error = f"{type(exc).__name__}: {exc}"
+                persona_errors.append(f"{type(exc).__name__}: {exc}")
         raise RuntimeError(
-            f"Scenario setup failed for topic {self.topic!r} after {attempts} attempt(s). "
-            f"Last error: {last_error}. Check the LLM endpoint/provider in config.yaml."
+            f"Scenario setup failed at persona stage for topic {self.topic!r} "
+            f"after {attempts} attempt(s): {' | '.join(persona_errors)}. "
+            "The validated scenario was preserved across persona retries."
         )
 
     def _generate_scenario(self, n: int) -> tuple[Scenario, list[dict]]:
@@ -82,10 +110,10 @@ class SetupBuilder:
         options_json = raw_scenario.get("options", [])
         return scenario, options_json
 
-    def _generate_personas(self, n: int, trait_rows: list[dict], pref_groups: list[list[str]],
+    def _generate_personas(self, n: int, trait_rows: list[dict], required_preferences: dict[str, str],
                            options_json: list[dict], scenario: Scenario) -> list[Persona]:
         data = self._llm.generate_json(
-            prompts.setup_personas(self.topic, n, trait_rows, pref_groups, options_json),
+            prompts.setup_personas(self.topic, n, trait_rows, required_preferences, options_json),
             profile="setup",
         )
         return self._parse_personas(data.get("participants", []), trait_rows, scenario)
@@ -107,32 +135,48 @@ class SetupBuilder:
             })
         return rows
 
-    def _preference_plan(self, n: int) -> dict[str, int]:
-        """Assign each participant id to a preference "camp". Most runs keep everyone in
-        their own camp (all distinct), but with coalition_probability two or more share a
-        camp, producing 2v1 / 3v1 / 5v2-style splits. Always at least two camps so there
-        is something to discuss."""
-        labels = [str(x) for x in cfg.scenario.option_labels]
-        max_camps = min(n, len(labels))
-        if max_camps <= 2 or n <= 2:
-            camps = max(2, max_camps) if n >= 2 else 1
-        elif random.random() < float(cfg.personas.coalition_probability):
-            camps = random.randint(2, max_camps - 1)   # force at least one shared pair
+    def _preference_shape(self, n: int, option_count: int) -> tuple[int, ...]:
+        distribution = cfg.personas.preference_distribution
+        forced = distribution.get("forced_shape")
+        if forced is not None:
+            shape = parse_preference_shape(forced)
         else:
-            camps = max_camps
-        ids = [f"p{i + 1}" for i in range(n)]
-        random.shuffle(ids)
-        plan: dict[str, int] = {}
-        for idx, pid in enumerate(ids):
-            plan[pid] = idx if idx < camps else random.randint(0, camps - 1)
-        return plan
+            weights_by_size = distribution.shape_weights
+            raw_weights = weights_by_size.get(n, weights_by_size.get(str(n)))
+            if not isinstance(raw_weights, dict) or not raw_weights:
+                raise ValueError(f"No preference shape weights configured for group size {n}")
+            shape_names = list(raw_weights)
+            shape = parse_preference_shape(random.choices(
+                shape_names,
+                weights=[float(raw_weights[name]) for name in shape_names],
+                k=1,
+            )[0])
+        if sum(shape) != n:
+            raise ValueError(f"Preference shape {shape} must sum to participant count {n}")
+        if len(shape) > option_count:
+            raise ValueError(
+                f"Preference shape {shape} needs {len(shape)} distinct options, but only {option_count} exist"
+            )
+        return shape
 
-    @staticmethod
-    def _preference_groups(plan: dict[str, int]) -> list[list[str]]:
-        camps: dict[int, list[str]] = {}
-        for pid, camp in plan.items():
-            camps.setdefault(camp, []).append(pid)
-        return [sorted(members, key=lambda p: int(p[1:])) for _, members in sorted(camps.items())]
+    def _preference_assignments(
+        self,
+        n: int,
+        option_ids: list[str],
+        shape: tuple[int, ...] | None = None,
+    ) -> dict[str, str]:
+        """Assign a concrete required primary option to every participant before prompting."""
+        shape = shape or self._preference_shape(n, len(option_ids))
+        ids = [f"p{i + 1}" for i in range(n)]
+        chosen_options = random.sample(option_ids, len(shape))
+        random.shuffle(ids)
+        assignments: dict[str, str] = {}
+        cursor = 0
+        for group_size, option_id in zip(shape, chosen_options):
+            for pid in ids[cursor:cursor + group_size]:
+                assignments[pid] = option_id
+            cursor += group_size
+        return assignments
 
     def _sample_traits(self, stubborn: bool) -> TraitProfile:
         ranges = cfg.personas.hard_blocker_trait_ranges if stubborn else cfg.personas.trait_ranges
@@ -164,6 +208,23 @@ class SetupBuilder:
             options=options,
             shared_context=shared_context,
         )
+
+    @staticmethod
+    def _validate_topic_participant_count(topic: str, n: int) -> None:
+        """Fail fast if the topic explicitly names a group size that contradicts configured n.
+        Raises before any LLM call so the user gets a clear message rather than a
+        contradicted world that passes structural validation."""
+        for pattern in _TOPIC_COUNT_PATTERNS:
+            match = pattern.search(topic)
+            if not match:
+                continue
+            raw = match.group("count").lower()
+            count = int(raw) if raw.isdigit() else _TOPIC_COUNT_WORDS.get(raw)
+            if count and count != n:
+                raise ValueError(
+                    f"Topic mentions {count} participant(s) but simulation.num_participants={n}. "
+                    f"Set num_participants={count} in config.yaml or rephrase the topic to omit the count."
+                )
 
     @staticmethod
     def _validate_participant_references(shared_context: list[str], n: int) -> None:
@@ -268,30 +329,30 @@ class SetupBuilder:
 
     @staticmethod
     def _clean_name(raw: str) -> str:
-        # Cap over-long names without cutting mid-title or appending punctuation.
         words = raw.split()
         cap = int(cfg.scenario.option_name_max_words)
-        return " ".join(words[:cap]) if len(words) > cap else " ".join(words)
-
-    def _validate_preference_plan(self, personas: list[Persona], plan: dict[str, int]) -> None:
-        pref_by_id = {p.id: p.preferred_options[0] for p in personas}
-        camps: dict[int, set[str]] = {}
-        for pid, camp_idx in plan.items():
-            if pid in pref_by_id:
-                camps.setdefault(camp_idx, set()).add(pref_by_id[pid])
-        camp_options: dict[int, str] = {}
-        for camp_idx, prefs in sorted(camps.items()):
-            if len(prefs) > 1:
+        if len(words) > cap:
+            truncated = words[:cap]
+            if truncated[-1].lower() in _INCOMPLETE_NAME_ENDINGS:
                 raise ValueError(
-                    f"Preference camp {camp_idx} members chose conflicting options {prefs} — "
-                    "retry so the LLM can honor the coalition structure."
+                    f"Option name truncated mid-phrase (last word {truncated[-1]!r} is a function word): {raw!r}"
                 )
-            camp_options[camp_idx] = next(iter(prefs))
-        if len(set(camp_options.values())) < len(camp_options):
-            raise ValueError(
-                f"Different preference camps converged on the same option {camp_options} — "
-                "retry to produce the required preference diversity."
-            )
+            return " ".join(truncated)
+        return " ".join(words)
+
+    @staticmethod
+    def _validate_preference_assignments(
+        personas: list[Persona], required_preferences: dict[str, str]
+    ) -> None:
+        personas_by_id = {persona.id: persona for persona in personas}
+        if set(personas_by_id) != set(required_preferences):
+            raise ValueError("persona ids do not match the required preference assignments")
+        for pid, required in required_preferences.items():
+            actual = personas_by_id[pid].preferred_option
+            if actual != required:
+                raise ValueError(
+                    f"participant {pid} primary preference must be {required}, got {actual}"
+                )
 
     def _validate_world(self, scenario: Scenario, personas: list[Persona]) -> None:
         labels = [str(x) for x in cfg.scenario.option_labels]

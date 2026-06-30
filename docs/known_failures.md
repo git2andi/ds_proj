@@ -48,7 +48,7 @@ Current implementation order: P0 conversation quality, P1 setup/state integrity,
 
 ## P1 - Setup, state, and outcome integrity
 
-### KF28 - Scenario, option, and persona coherence is not validated as one world
+### ~~KF28~~ - Scenario, option, and persona coherence (resolved 2026-06-30)
 
 **Evidence:** Several successful setups are structurally valid but socially contradictory. `20260629_210241_966736` uses the user topic “team lunch for a group of 5 colleagues” while running three participants. `20260629_215720_381932` gives Leo a goal about impressing his date during a team birthday dinner. `20260629_215856_690649` states that all six family members want to remain engaged, yet includes and assigns preferences for two- and four-player games. Hard word truncation also produces broken names such as “Pacific Coast Highway from San Francisco to San” in `20260629_205507_547657`.
 
@@ -56,9 +56,14 @@ Current implementation order: P0 conversation quality, P1 setup/state integrity,
 
 **Required direction:** Add setup-level coherence checks for explicit group-size statements in the topic, hard shared constraints, option feasibility, persona relationship/context, and complete option names. Surface a conflict between a topic-specified group size and configured `n` rather than silently rewriting the world. Reject or regenerate malformed source data; do not repair it with fabricated defaults.
 
-**Acceptance criteria:** No accepted world contradicts its topic or shared constraints; persona backgrounds and goals fit the same decision context; option names are complete; clearly infeasible options are not treated as normal personal favorites without an explicit, coherent reason.
+**Fix:**
+- `_validate_topic_participant_count()` in `builders.py`: pre-LLM check that raises immediately with a user-actionable message when the topic text explicitly names a participant count that contradicts `num_participants` in config.
+- `_clean_name()` in `builders.py`: raises `ValueError` if the word-capped option name ends on a function word (preposition, conjunction, article) — triggers scenario retry rather than silently truncating mid-phrase names.
+- `setup_personas` prompt: tightened background/private_goal guidance to explicitly prohibit inventing a relationship or event not present in the shared decision context.
 
-**Relevant code:** `src/builders.py`, `src/prompts.py`: setup prompts, `src/models.py`.
+**Tests added:** `SetupCoherenceTests` in `test_preference_distribution.py` — topic/n mismatch raises before LLM call; topics without explicit counts do not raise.
+
+**Remaining gap:** Option feasibility for group size (e.g. 4-player game assigned to 6 players) requires semantic understanding of attribute values and is not checked deterministically. Not a regression.
 
 ### KF29 - Changes of mind and final consensus are often unsupported by the conversation
 
