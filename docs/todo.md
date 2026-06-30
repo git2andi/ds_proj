@@ -19,45 +19,6 @@ The current priority is to fix prominent failures visible in real generated tran
 
 ## Open issues, ordered by priority
 
-### 4. Prevent unsupported factual additions beyond the option board/context
-
-Current problem: sims sometimes add plausible but unsupported facts. In the Stockholm run, a participant mentions quieter airports and customs, and another suggests the direct SAS flight includes checked bags, even though these facts are not part of the shared option/context board. The generated option facts are allowed to be artificial, but once generated they are the hard world facts of the simulation.
-
-Required behavior:
-- Sims may reason from provided facts, but they must not introduce new concrete logistical facts, included services, policies, locations, hidden fees, timing consequences, or operational assumptions unless those are present in the option board/context.
-- Sims may express uncertainty as uncertainty: `we do not know whether checked bags are included` is allowed if the fact is absent.
-- Option positives/negatives and attributes are the authoritative fact base.
-
-Implementation notes:
-- Add a compact `known_fact_terms` / `unsupported_fact_risk_terms` check for common concrete additions: included baggage, customs, visa, airport security, hotel, refund policy, seat availability, weather, exact arrival time, etc.
-- Do not try to solve this with a huge prompt. Use a small validation warning/repair when unsupported concrete facts appear.
-- Allow domain-generic reasoning only if it follows from listed attributes, e.g. red-eye + no checked baggage → discomfort / packing light.
-- Consider adding `unknowns` to the scenario board later, but do not invent them during dialogue.
-
-Validation target:
-- In a travel run, participants should not invent new services/policies such as checked baggage being included unless listed.
-
-### 6. Improve unresolved-handling before closure
-
-Current problem: unresolved status can be correct, but the path to unresolved should feel socially and procedurally justified. In the Stockholm run, the final unresolved state is technically valid because votes split D/B/C, but the conversation contains missed answers and repeated vote prompts before closure.
-
-Required behavior:
-- Close as unresolved only after:
-  - required response obligations are resolved or explicitly abandoned,
-  - each participant has had a chance to clarify one final stance,
-  - no unique majority is visible,
-  - no obvious compromise option has pending discussion.
-- If votes are split, the moderator should summarize the split once and either ask for one compromise attempt or close if no movement occurs.
-- Avoid repeated final-vote prompts after a clear split.
-
-Implementation notes:
-- Add a small `closure_attempts` or `compromise_attempted` flag.
-- If all participants voted for different options, trigger one `split_vote_compromise_prompt` before unresolved closure, unless hard max turns is reached.
-- Keep this bounded so unresolved runs do not drag on.
-
-Validation target:
-- Split votes should produce either one bounded compromise attempt or a clean unresolved close, not repeated vote loops.
-
 ### 7. Refine option coverage without forcing artificial discussion
 
 Partially addressed (2026-07-01): the coverage nudge is now bounded to one
@@ -191,6 +152,19 @@ Validation target:
 - Coverage loop (part of #7): a missed coverage detection forced the same option
   focus every turn until the hard cap, manufacturing long repetitive runs; the
   coverage nudge is now bounded to one attempt per option.
+- Issue #4 (unsupported facts): GPT grounding endpoint (`prompts.grounding_check`,
+  gated by `validation.grounding_check`) flags utterances that invent facts beyond
+  the option board and drives one repair toward grounded text; opinions,
+  derivations, and uncertainty are allowed. Validated functionally (catches
+  "includes free checked bags / quiet airports", passes "$170 more saves 8 hours")
+  and across n=2/n=3 runs with zero false positives. Metric:
+  `unsupported_fact_flags`.
+- Issue #6 (unresolved handling): when standard vote rounds leave no majority,
+  `_maybe_split_vote_compromise` runs once — the moderator summarizes the split
+  and names one candidate, and only participants who can move are invited to
+  switch (with `allow_vote_change`) or restate. Validated n=4: a true 4-way split
+  became a clean majority via one compromise pass ("majority after split-vote
+  compromise"); the leader was not re-prompted and the debate did not restart.
 
 ## Newly observed issues
 

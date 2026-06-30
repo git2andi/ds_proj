@@ -1,0 +1,807 @@
+{
+  "run_id": "20260701_014314_494742",
+  "topic": "Choose a CRM tool for a small sales team",
+  "scenario": {
+    "topic": "Choose a CRM tool for a small sales team",
+    "decision_kind": "tool_choice",
+    "opening_question": "What matters more to you: ease of use or advanced customization?",
+    "options": [
+      {
+        "id": "A",
+        "name": "HubSpot CRM Free Plan",
+        "attrs": {
+          "cost": "free",
+          "integration_count": "20+",
+          "user_limit": "unlimited"
+        },
+        "upside": "No cost with solid core features and many integrations",
+        "tradeoff": "Limited advanced automation and reporting features",
+        "concern": "May require paid upgrades as team or needs grow",
+        "best_for": "teams prioritizing zero cost and easy onboarding",
+        "short_name": "HubSpot Free"
+      },
+      {
+        "id": "B",
+        "name": "Zoho CRM Standard Edition",
+        "attrs": {
+          "cost": "$20 per user per month",
+          "customization_level": "medium",
+          "mobile_app_rating": "4.2/5"
+        },
+        "upside": "Good balance of features and customization at affordable price",
+        "tradeoff": "Somewhat steeper learning curve compared to simpler tools",
+        "concern": "Occasional interface glitches reported by users",
+        "best_for": "teams needing moderate customization within budget",
+        "short_name": "Zoho Standard"
+      },
+      {
+        "id": "C",
+        "name": "Pipedrive Essential Plan",
+        "attrs": {
+          "cost": "$15 per user per month",
+          "pipeline_visualization": "strong",
+          "email_integration": "basic"
+        },
+        "upside": "Excellent visual sales pipeline and easy deal tracking",
+        "tradeoff": "Limited email automation and reporting features",
+        "concern": "Might lack depth for complex sales processes",
+        "best_for": "teams focused on visual pipeline management",
+        "short_name": "Pipedrive Essential"
+      },
+      {
+        "id": "D",
+        "name": "Salesforce Essentials Edition",
+        "attrs": {
+          "cost": "$25 per user per month",
+          "automation_capabilities": "advanced",
+          "support_level": "24/7 phone and chat"
+        },
+        "upside": "Powerful automation and strong customer support",
+        "tradeoff": "Higher cost and more complex setup for small teams",
+        "concern": "May be overwhelming for users new to CRM systems",
+        "best_for": "teams wanting advanced features and dedicated support",
+        "short_name": "Salesforce Essentials"
+      }
+    ],
+    "shared_context": [
+      "We are a small sales team of exactly 2 people.",
+      "Our monthly budget for CRM tools is capped at $50.",
+      "We want a CRM that helps track leads and improves follow-ups."
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Yara",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.65,
+        "stubbornness": 0.4,
+        "directness": 0.5,
+        "compromise_threshold": 0.32499999999999996
+      },
+      "background": "Yara values cost-efficiency and ease of onboarding for small teams new to CRM tools.",
+      "private_goal": "She wants a CRM that is free to start with and can handle growth without complexity.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Vince",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.5875,
+        "initiative": 0.625,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.6875,
+        "compromise_threshold": 0.6
+      },
+      "background": "Vince focuses on reliable features and moderate customization to support a growing sales team.",
+      "private_goal": "He wants a CRM that balances affordability with customization and decent mobile support.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a CRM tool for a small sales team.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) HubSpot CRM Free Plan — cost: free; integration count: 20+; user limit: unlimited (+ No cost with solid core features and many integrations; − Limited advanced automation and reporting features)\nB) Zoho CRM Standard Edition — cost: $20 per user per month; mobile app rating: 4.2/5; customization level: medium (+ Good balance of features and customization at affordable price; − Somewhat steeper learning curve compared to simpler tools)\nC) Pipedrive Essential Plan — cost: $15 per user per month; email integration: basic; pipeline visualization: strong (+ Excellent visual sales pipeline and easy deal tracking; − Limited email automation and reporting features)\nD) Salesforce Essentials Edition — cost: $25 per user per month; automation capabilities: advanced; support level: 24/7 phone and chat (+ Powerful automation and strong customer support; − Higher cost and more complex setup for small teams)\nContext: We are a small sales team of exactly 2 people.; Our monthly budget for CRM tools is capped at $50.; We want a CRM that helps track leads and improves follow-ups.\nWhat matters more to you: ease of use or advanced customization?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a CRM tool for a small sales team.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) HubSpot CRM Free Plan — cost: free; integration count: 20+; user limit: unlimited (+ No cost with solid core features and many integrations; − Limited advanced automation and reporting features)\nB) Zoho CRM Standard Edition — cost: $20 per user per month; mobile app rating: 4.2/5; customization level: medium (+ Good balance of features and customization at affordable price; − Somewhat steeper learning curve compared to simpler tools)\nC) Pipedrive Essential Plan — cost: $15 per user per month; email integration: basic; pipeline visualization: strong (+ Excellent visual sales pipeline and easy deal tracking; − Limited email automation and reporting features)\nD) Salesforce Essentials Edition — cost: $25 per user per month; automation capabilities: advanced; support level: 24/7 phone and chat (+ Powerful automation and strong customer support; − Higher cost and more complex setup for small teams)\nContext: We are a small sales team of exactly 2 people.; Our monthly budget for CRM tools is capped at $50.; We want a CRM that helps track leads and improves follow-ups.\nWhat matters more to you: ease of use or advanced customization?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "HubSpot’s free plan covers our basics without cost, but I worry it might limit us once we want more customization or mobile flexibility.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "HubSpot’s free plan covers our basics without cost, but I worry it might limit us once we want more customization or mobile flexibility.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "HubSpot’s free plan covers our basics without cost, but I worry it might limit us once we want more customization or mobile flexibility."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1111,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Yara",
+      "text": "HubSpot’s free plan fits our budget and is easy for us to start with, though growth might need upgrades.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "HubSpot’s free plan fits our budget and is easy for us to start with, though growth might need upgrades.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1150,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "True, it’s free and simple, but it does offer over 20 integrations, which could help us connect tools without extra cost.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, it’s free and simple, but it does offer over 20 integrations, which could help us connect tools without extra cost.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about HubSpot Free, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 1219,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Yara",
+      "text": "Zoho’s customization could help us tailor follow-ups better, but its learning curve might slow us down initially.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Zoho’s customization could help us tailor follow-ups better, but its learning curve might slow us down initially.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1416,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Pipedrive’s pipeline visuals might really help us stay organized, but I’m not sure its basic email integration will cover our follow-up needs well enough.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Pipedrive’s pipeline visuals might really help us stay organized, but I’m not sure its basic email integration will cover our follow-up needs well enough.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1422,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Yara",
+      "text": "Salesforce offers great automation and support, but it might be too complex and costly for just two of us starting out.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Salesforce offers great automation and support, but it might be too complex and costly for just two of us starting out.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1189,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "Salesforce is powerful but might bury us in features we don’t need now. Zoho strikes a better balance for customization without the complexity.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Salesforce is powerful but might bury us in features we don’t need now. Zoho strikes a better balance for customization without the complexity.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Salesforce Essentials, HubSpot Free, Zoho Standard with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1358,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Yara",
+      "text": "Vince, since HubSpot scales well without complicating things, starting free lets us avoid upfront costs while we test what we actually need.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Vince, since HubSpot scales well without complicating things, starting free lets us avoid upfront costs while we test what we actually need.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about HubSpot Free, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "avoid_pattern": "tradeoff_but"
+      },
+      "tokens_in": 1088,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Everyone, please share your final vote clearly by stating, \"I vote for [option]\" so we can see where we stand.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Everyone, please share your final vote clearly by stating, \"I vote for [option]\" so we can see where we stand.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Yara",
+      "text": "I vote for HubSpot Free since it’s free, easy for us to start, and won’t overwhelm us now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for HubSpot Free since it’s free, easy for us to start, and won’t overwhelm us now.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 732,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Vince",
+      "text": "I vote for HubSpot Free because it keeps costs down while letting us customize enough to stay flexible.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for HubSpot Free because it keeps costs down while letting us customize enough to stay flexible.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "avoid_pattern": null
+      },
+      "tokens_in": 712,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "All agreed on the HubSpot CRM Free Plan; the decision is finalized and ready to implement.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "All agreed on the HubSpot CRM Free Plan; the decision is finalized and ready to implement.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 10,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A"
+      },
+      "phase_history": [
+        "pacing: min=6, force=8, hard=12, distinct_initial_prefs=1, avg_compromise=0.54",
+        "turn 3: discussion — all participants gave an opening view",
+        "turn 9: narrowing — target discussion length reached",
+        "turn 12: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 6,
+      "force_narrow_turns": 8,
+      "hard_max_turns": 12
+    }
+  },
+  "metrics": {
+    "participant_turns": 10,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.231,
+    "turn_counts": {
+      "Yara": 5,
+      "Vince": 5
+    },
+    "top_speaker_share": 0.5,
+    "avg_words_by_persona": {
+      "Yara": 19.4,
+      "Vince": 21.8
+    },
+    "question_density": 0.0,
+    "avg_words_per_turn": 20.6,
+    "repaired_turns": 0,
+    "repair_rate": 0.0,
+    "flagged_turns": 0,
+    "visible_vote_count": 2,
+    "visible_votes": {
+      "Yara": "A",
+      "Vince": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.1,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 5,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Yara": 0.325,
+      "Vince": 0.512
+    },
+    "outcome_status": "successful",
+    "final_option": "A",
+    "min_discussion_turns": 6,
+    "force_narrow_turns": 8,
+    "hard_max_turns": 12,
+    "phase_history": [
+      "pacing: min=6, force=8, hard=12, distinct_initial_prefs=1, avg_compromise=0.54",
+      "turn 3: discussion — all participants gave an opening view",
+      "turn 9: narrowing — target discussion length reached",
+      "turn 12: closure — successful visible after vote round 1",
+      "turn 13: closure — closed as successful"
+    ],
+    "setup_tokens_in": 2484,
+    "setup_tokens_out": 1370,
+    "dialogue_tokens_in": 11761,
+    "dialogue_tokens_out": 379,
+    "total_tokens_in": 14245,
+    "total_tokens_out": 1749
+  },
+  "tokens": {
+    "setup_tokens_in": 2484,
+    "setup_tokens_out": 1370,
+    "dialogue_tokens_in": 11761,
+    "dialogue_tokens_out": 379,
+    "total_tokens_in": 14245,
+    "total_tokens_out": 1749
+  }
+}

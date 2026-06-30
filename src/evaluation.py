@@ -70,6 +70,10 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "unanswered_direct_questions": int(state.unanswered_obligations),
         "name_prefix_rate": round(name_prefixed / n_turns, 3),
         "repeated_opening_patterns": repeated_openings,
+        "unsupported_fact_flags": sum(
+            1 for t in participant_turns
+            if "UNSUPPORTED_FACT" in (list(t.validation_issues) + list(t.repair_trigger_codes))
+        ),
         "final_support_fraction": _final_support_fraction(state, outcome),
         "option_coverage": {
             opt: {

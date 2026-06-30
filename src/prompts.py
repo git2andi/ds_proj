@@ -288,6 +288,9 @@ def repair_utterance(
     required_focus = ""
     if intent.option_focus and "MISSING_REQUIRED_OPTION_FOCUS" in issue_codes:
         required_focus = f" Mention and discuss Option {intent.option_focus[0]} explicitly."
+    grounding = ""
+    if "UNSUPPORTED_FACT" in issue_codes:
+        grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
     return f"""Repair this generated chat line.
 
 Speaker: {persona.name}
@@ -298,7 +301,30 @@ Allowed option facts:
 Recent chat:
 {recent}
 
-Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus} Do not append metadata, tags, JSON, or bracketed labels."""
+Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding} Do not append metadata, tags, JSON, or bracketed labels."""
+
+
+def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:
+    """Prompt a strict fact-checker: does the line invent facts beyond the board?"""
+    cards = _option_cards(focus_options or state.scenario.options)
+    context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) or "none"
+    return f"""You are a strict fact-checker for a simulated group decision.
+The ONLY facts that exist in this world are in the option cards and shared context.
+
+Option cards:
+{cards}
+Shared context: {context}
+
+Message to check:
+"{utterance}"
+
+A message is UNSUPPORTED only if it states a NEW concrete fact that is not in, and
+not directly implied by, the cards/context: e.g. an invented service, included or
+excluded feature, fee, policy, location, exact time/number, or operational detail.
+Opinions, priorities, trade-off reasoning, questions, and uncertainty are ALWAYS allowed.
+Reasoning that follows from a listed attribute is allowed.
+
+Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
 
 
 def _option_names(state: DialogueState, ids: list[str]) -> str:

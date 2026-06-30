@@ -211,6 +211,7 @@ class MoveIntent:
     moves_lean: bool = False
     suppress_name_prefix: bool = False
     avoid_pattern: str | None = None
+    allow_vote_change: bool = False
 
 
 @dataclass(slots=True)
@@ -315,6 +316,7 @@ class DialogueState:
     response_obligation: "ResponseObligation | None" = None
     unanswered_obligations: int = 0
     candidate_option: str | None = None
+    compromise_attempted: bool = False
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

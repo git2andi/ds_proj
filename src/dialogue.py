@@ -174,7 +174,68 @@ class DialogueRunner:
                 state.outcome = provisional
                 self._mark_phase(state, Phase.CLOSURE, f"{provisional.status} visible after vote round {round_index + 1}")
                 return
+        # No majority after the standard rounds: one bounded compromise attempt
+        # (summarize the split, propose one option) before closing as unresolved.
+        if self._maybe_split_vote_compromise(state):
+            provisional = ConsensusManager.finalize(state)
+            if provisional.status in {"successful", "majority"}:
+                state.outcome = provisional
+                self._mark_phase(state, Phase.CLOSURE, f"{provisional.status} after split-vote compromise")
+                return
         self._mark_phase(state, Phase.CLOSURE, "vote rounds exhausted without visible consensus")
+
+    def _maybe_split_vote_compromise(self, state: DialogueState) -> bool:
+        """One bounded compromise pass when votes are split with no majority.
+
+        The moderator summarizes the split and names one candidate; participants
+        who can move are invited to switch to it or restate their vote. Runs at
+        most once per run and only if some participant could plausibly move.
+        """
+        if state.compromise_attempted or participant_turn_count(state) >= state.hard_max_turns:
+            return False
+        votes = [rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in state.scenario.option_ids]
+        if len(set(votes)) < 2:
+            return False
+        leader = Counter(votes).most_common(1)[0][0]
+        movers = [
+            p for p in state.personas
+            if state.runtimes[p.id].explicit_vote != leader and self._can_shift_to(p, leader)
+        ]
+        if not movers:
+            return False
+        state.compromise_attempted = True
+        state.candidate_option = leader
+        leader_name = state.scenario.option(leader).name
+        text = self._moderator_say(
+            prompts.moderator_nudge_prompt(
+                state,
+                "the votes are split with no majority",
+                leader_name,
+                requested_action=(
+                    f"summarize the split in one line and ask whether {leader_name} is an "
+                    "acceptable compromise, without restarting the debate"
+                ),
+                focus_options=[leader],
+            ),
+            state,
+        )
+        self._emit(self._append_moderator(state, text, Phase.NARROWING))
+        for persona in movers:
+            current = state.runtimes[persona.id].current_preference or persona.preferred_option
+            intent = MoveIntent(
+                speaker_id=persona.id,
+                act=ActType.VOTE,
+                reason=(
+                    "the group is split; either clearly switch to the proposed compromise if you "
+                    "can accept it, or clearly restate the option you still choose and why"
+                ),
+                option_focus=[leader, current] if current != leader else [leader],
+                length_hint="short",
+                moves_lean=True,
+                allow_vote_change=True,
+            )
+            self._emit(self._generate_and_append(state, intent))
+        return True
 
     # ------------------------------------------------------------------
     # Routing policy: who / what / whom
@@ -405,7 +466,9 @@ class DialogueRunner:
         if intent.suppress_name_prefix:
             text = strip_leading_name(text, [p.name for p in state.personas])
         act = self._parse_act(state, persona, text, intent)
-        report = self._validate_turn_text(text, state, persona, intent, act)
+        report, gti, gto = self._collect_report(text, state, persona, intent, act, focus_options)
+        tokens_in += gti
+        tokens_out += gto
         repaired = False
         trigger_codes = list(report.issues)
         attempts = int(cfg.simulation.max_repairs_per_turn)
@@ -426,7 +489,9 @@ class DialogueRunner:
             tokens_in += ti
             tokens_out += to
             candidate_act = self._parse_act(state, persona, candidate_text, intent)
-            candidate_report = self._validate_turn_text(candidate_text, state, persona, intent, candidate_act)
+            candidate_report, gti, gto = self._collect_report(candidate_text, state, persona, intent, candidate_act, focus_options)
+            tokens_in += gti
+            tokens_out += gto
             if not candidate_report.issues or len(candidate_report.issues) <= len(report.issues):
                 text, act, report = candidate_text, candidate_act, candidate_report
 
@@ -498,6 +563,45 @@ class DialogueRunner:
             block = True
         return ValidationReport(list(dict.fromkeys(issues)), block)
 
+    def _collect_report(
+        self,
+        text: str,
+        state: DialogueState,
+        persona: Persona,
+        intent: MoveIntent,
+        act: DialogueAct,
+        focus_options: list,
+    ) -> tuple[ValidationReport, int, int]:
+        """Regex validation plus an optional LLM grounding check; returns extra tokens."""
+        report = self._validate_turn_text(text, state, persona, intent, act)
+        issue, gti, gto = self._grounding_issue(text, state, intent, focus_options)
+        if issue and issue not in report.issues:
+            report.issues.append(issue)  # non-blocking; drives one repair toward grounded text
+        return report, gti, gto
+
+    def _grounding_issue(
+        self,
+        text: str,
+        state: DialogueState,
+        intent: MoveIntent,
+        focus_options: list,
+    ) -> tuple[str | None, int, int]:
+        if not bool(cfg.validation.get("enabled", True)) or not bool(cfg.validation.get("grounding_check", False)):
+            return None, 0, 0
+        allowed = set(cfg.validation.get("grounding_acts", []))
+        if allowed and intent.act.value not in allowed:
+            return None, 0, 0
+        if not text.strip():
+            return None, 0, 0
+        prompt = prompts.grounding_check(utterance=text, state=state, focus_options=focus_options)
+        try:
+            data = self._llm.generate_json(prompt, profile="repair")
+        except Exception:
+            # A flaky judge must never block generation; treat as grounded.
+            return None, self._llm.last_tokens_in, self._llm.last_tokens_out
+        unsupported = bool(data.get("unsupported")) if isinstance(data, dict) else False
+        return ("UNSUPPORTED_FACT" if unsupported else None), self._llm.last_tokens_in, self._llm.last_tokens_out
+
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
@@ -524,11 +628,12 @@ class DialogueRunner:
             if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects:
                 cov.objections += 1
 
+        allow_change = bool(record.intent and record.intent.allow_vote_change)
         if act.explicit_vote:
-            self._set_vote(rt, act.explicit_vote, act.text)
+            self._set_vote(rt, act.explicit_vote, act.text, force=allow_change)
         for option_id in act.accepts:
             rt.accepted_options.add(option_id)
-            self._set_vote(rt, option_id, act.text)
+            self._set_vote(rt, option_id, act.text, force=allow_change)
             state.coverage[option_id].acceptances += 1
         for option_id, reason in act.soft_rejects.items():
             rt.soft_rejections[option_id] = reason
@@ -808,13 +913,14 @@ class DialogueRunner:
         return bool(state.runtimes[persona_id].explicit_vote)
 
     @staticmethod
-    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str) -> None:
+    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False) -> None:
         """Record a clear vote, protecting an existing one from silent overwrite.
 
         A participant who already cast a clear vote keeps it unless their visible
-        text explicitly signals a change (e.g. 'actually I vote for', 'switch to').
+        text explicitly signals a change (e.g. 'actually I vote for', 'switch to'),
+        or ``force`` is set (used in the explicit split-vote compromise step).
         """
-        if rt.explicit_vote and rt.explicit_vote != option_id and not _VOTE_CHANGE.search(text or ""):
+        if rt.explicit_vote and rt.explicit_vote != option_id and not force and not _VOTE_CHANGE.search(text or ""):
             return
         rt.explicit_vote = option_id
         rt.current_preference = option_id
