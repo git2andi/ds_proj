@@ -34,6 +34,7 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 - `config.yaml`: all tunable numeric parameters and provider configuration.
 - `src/prompts.py`: all prose sent to the LLM or printed as moderator text.
 - `src/models.py`: typed scenario, persona, turn, runtime, and outcome state.
+- `src/aliases.py`: shared validation, fallback, and collision handling for option aliases.
 - `src/builders.py`: scenario and persona setup; invalid worlds retry, then raise.
 - `src/router.py`: speaker and dialogue-act selection.
 - `src/dialogue.py`: orchestration, phase control, state tracking, and consensus.
@@ -45,13 +46,21 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 - `evals/topics.txt`: optional batch topic corpus.
 - `docs/known_failures.md`: current issue backlog and validation protocol.
 
+## Run flow
+
+1. `builders.py` generates option cards, then personas. The controller samples a configured primary-preference partition before provider calls and assigns each persona a required primary after option generation. Scenario and persona retries are isolated.
+2. `router.py` produces a `MoveIntent`, prioritizing pending answers, unanswered challenges, coverage gaps, then weighted speaker selection across opening, discussion, narrowing, confirmation, and closure.
+3. `dialogue.py` renders each routed move, parses its machine trailer, updates typed state, and checks consensus through the orchestrator, controller, tracker, and consensus manager.
+4. `validation.py` repairs structural failures; style findings remain diagnostics. Moderator and farewell text receive a lightweight option-reference check before entering the transcript.
+5. `logger.py` writes the transcript, structured run data, aggregate metrics, and optional prompt traces.
+
 ## Design constraints
 
 - Keep fixes topic-agnostic and valid for every group size from 2 through 7.
 - Put tunable numbers in `config.yaml`; do not scatter numeric dials through code.
 - Put LLM and moderator prose in `src/prompts.py`.
 - Do not fabricate fallback content when setup or generation fails; surface the failure.
-- Preserve commitment gating: accept, vote, and reject become binding only during routed decision phases. Hedged acceptance stays neutral.
+- Preserve commitment gating: accept, vote, and reject become binding only during routed decision phases. Visible support requires one named option plus an explicit first-person choice or acceptance; typographic apostrophes are normalized, and uncertain or conditional wording stays neutral.
 - Outcomes use visible commitments only: `successful` is unanimous visible support, `majority` meets the configured fallback fraction, and otherwise the result is `unresolved`.
 - Stubbornness is trait-driven through `agreeableness == 1`; do not add a separate hard-blocker flag or mechanical vote override.
 - Pacing is derived from group size and composition, not a fixed turn count.
@@ -59,6 +68,12 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 - Keep option claims grounded in option cards. Missing facts are unknown, not an invitation to invent details.
 - Do not add forced routing or injected turns solely to make dialogue seem natural; naturalness should emerge from traits and existing dynamics.
 - Attaching an exact recent message to an already-routed contribution is context, not a forced turn. Prefer the most recent relevant option point, then the latest other-speaker turn.
+- Count option coverage only from option names visible in generated text. Count a reason only when a claim slot is present.
+- Ground ASK and ANSWER turns in option-card attributes and shared context. Unknown facts stay unknown; a second hedged answer closes an unanswerable question.
+- Keep moderator state language distinct from binding votes. Never say someone voted without a visible vote, and do not propose merging fixed options.
+- Classify a pending participant from transcript evidence as a visible supporter, an actual alternative/objection, or a missing explicit commitment. Ask the last group only for confirmation; never call them holdouts.
+- Keep confirmation from cycling on the same failed acceptance: a repaired but still unclear confirmation becomes a soft rejection for routing purposes.
+- Reject setup before dialogue when a topic's explicit participant count contradicts configuration or an option name is structurally truncated.
 
 ## Conversation target
 
@@ -67,6 +82,25 @@ Live runs require a reachable provider; there is no offline or mock LLM mode.
 - OCEAN also shapes dialogue-act weights and act-specific turn behavior: openness favors exploration, conscientiousness concrete constraints, extraversion participation and initiative, agreeableness building versus challenging, and neuroticism risk sensitivity. These remain derived effects, not new persona fields.
 - Configured response length must produce observable differences between personas, while even the longest setting remains appropriate for a chat rather than a speech or mini-essay.
 - Non-opening discussion replies should receive one exact local message to answer. Targeted replies omit the full background/private goal and must not restart the speaker's option pitch or biography. Openings retain personal context so the initial positions still feel motivated.
+- Reply-capable acts receive the focused option's most recent relevant turn, falling back to the latest other-speaker turn. Repair prompts retain that target.
+- Turn behavior uses at most two act-specific OCEAN cues. Trait effects remain derived: routing uses `trait_act_slope`, response length uses openness/conscientiousness/extraversion, and objection behavior reflects agreeableness, caution, and directness.
+- Social beats are optional, limited to one probability-gated line from the most extraverted persona, and must not duplicate moderator work.
+- Deterministic surface cleanup removes malformed punctuation and boilerplate openers while preserving the machine trailer. Structural validation still decides whether a participant turn needs repair.
+- A repair may not replace a state-valid turn with a new state-blocking defect; retain the original generated line when a rewrite regresses semantic validity.
+
+## Pacing and outcomes
+
+- Compute discussion floors and hard limits from group size and composition. Full convergence plus stall, or exhausted claim slots plus stall, may end discussion early.
+- If every remaining voter exhausts configured vote attempts, advance from narrowing to confirmation instead of cycling.
+- Only `explicit_vote` and `accepted_options` count toward outcomes. Hidden preferences, routing leans, and unverified trailers do not.
+- Finalization scans visible support across every option rather than trusting the controller's current candidate. Moderator summaries and closures use visible preferences/commitments rather than hidden or routing-derived leans.
+- `successful` requires unanimous visible support. `majority` requires the configured visible-support fraction. Everything else is `unresolved`.
+
+## Outputs and configuration
+
+Each run writes `logs/<run_id>/transcript.md`, `run.json`, and optionally `prompts.jsonl`; aggregate rows append to `logs/metrics.csv`. Core diagnostics include outcome status, support fraction, repair/flag counts, question density, turn length, and option coverage.
+
+The primary tuning controls are grouped under `DIALS THAT MATTER` in `config.yaml`. Preference partition weights are defined separately for group sizes 2-7; `forced_shape` is reserved for controlled runs.
 
 ## Change workflow
 

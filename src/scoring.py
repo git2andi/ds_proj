@@ -6,7 +6,10 @@ the group back option X" drifting apart.
 
 from __future__ import annotations
 
-from models import DialogueState, Persona
+from collections import Counter
+
+from models import ActType, DialogueState, Persona
+from parsing import OptionResolver
 
 
 def current_lean(state: DialogueState, persona: Persona) -> str | None:
@@ -42,6 +45,77 @@ def leading_option(state: DialogueState) -> str | None:
     if not state.scenario.option_ids:
         return None
     return max(state.scenario.option_ids, key=lambda opt: option_support(state, opt))
+
+
+def visible_support_ids(state: DialogueState, option_id: str) -> list[str]:
+    """Participants with a binding visible vote or acceptance for ``option_id``."""
+    return [
+        persona.id
+        for persona in state.personas
+        if state.runtimes[persona.id].explicit_vote == option_id
+        or option_id in state.runtimes[persona.id].accepted_options
+    ]
+
+
+def visible_preference_option(state: DialogueState, persona_id: str) -> str | None:
+    """Latest option the participant visibly chose or leaned toward in the transcript."""
+    resolver = OptionResolver(state.scenario.options)
+    for turn in reversed(state.turns):
+        if turn.speaker_id != persona_id or turn.is_social:
+            continue
+        if turn.act.explicit_vote:
+            return turn.act.explicit_vote
+        if turn.act.accepts:
+            return turn.act.accepts[0]
+        visible_options = resolver.ids_in_text(turn.text)
+        if len(visible_options) != 1:
+            continue
+        if turn.intent and turn.intent.act in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+            return visible_options[0]
+        if turn.act.act_type == ActType.OPENING or (turn.intent and turn.intent.moves_lean):
+            return visible_options[0]
+    return None
+
+
+def visible_leading_option(state: DialogueState) -> str | None:
+    preferences = [visible_preference_option(state, persona.id) for persona in state.personas]
+    counts = Counter(option_id for option_id in preferences if option_id)
+    return counts.most_common(1)[0][0] if counts else None
+
+
+def visible_preference_concentration(state: DialogueState) -> float:
+    preferences = [visible_preference_option(state, persona.id) for persona in state.personas]
+    counts = Counter(option_id for option_id in preferences if option_id)
+    return (counts.most_common(1)[0][1] / len(state.personas)) if counts and state.personas else 0.0
+
+
+def visible_candidate_status(
+    state: DialogueState,
+    persona_id: str,
+    candidate_id: str,
+) -> tuple[str, str | None]:
+    """Return ``(supporter|holdout|missing, visible_alternative)``.
+
+    Hidden persona preferences and initialized routing leans are excluded. A failed
+    decision turn naming the candidate is aligned but still ``missing`` because its
+    visible text did not establish a binding commitment.
+    """
+    if persona_id in visible_support_ids(state, candidate_id):
+        return "supporter", None
+    for turn in reversed(state.turns):
+        if turn.speaker_id != persona_id or turn.is_social:
+            continue
+        if candidate_id in turn.act.hard_rejects or candidate_id in turn.act.soft_rejects:
+            return "holdout", None
+        if turn.act.explicit_vote and turn.act.explicit_vote != candidate_id:
+            return "holdout", turn.act.explicit_vote
+        alternatives = [option_id for option_id in turn.act.accepts if option_id != candidate_id]
+        if alternatives:
+            return "holdout", alternatives[0]
+    visible_preference = visible_preference_option(state, persona_id)
+    if visible_preference:
+        return ("missing", None) if visible_preference == candidate_id else ("holdout", visible_preference)
+    return "missing", None
 
 
 def best_overlap_option(state: DialogueState) -> str | None:

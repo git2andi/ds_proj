@@ -27,7 +27,7 @@ from models import (
 )
 from parsing import OptionResolver, TurnMove, parse_dialogue_act, parse_trailer
 from router import TurnRouter
-from scoring import current_lean, leading_option
+from scoring import current_lean, leading_option, visible_candidate_status, visible_leading_option, visible_preference_concentration, visible_support_ids
 from utils import compact_words, normalise_lines, normalise_ws, strip_speaker_prefix
 from validation import MessageValidator, blocks_state_mutation, classify_claim_slots, classify_discourse_frames, fix_collective_voice, fix_stock_phrases, strip_possessive_opener
 
@@ -64,7 +64,7 @@ class Orchestrator:
         self._emit(tracker.apply_moderator(state, prompts.moderator_opening(scenario), phase=Phase.OPENING))
         # Options board first, then people say hi, then opinions.
         self._social_round(state, tracker, Phase.OPENING, int(cfg.utterances.word_budgets.greeting),
-                           lambda p, others, b, said: prompts.greeting_line(p, scenario.topic, others, b, said))
+                           prompts.greeting_line)
 
         while not self.controller.should_stop(state):
             self.controller.update_phase(state)
@@ -88,7 +88,7 @@ class Orchestrator:
         closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
         self._emit(tracker.apply_moderator(state, closing, phase=Phase.CLOSURE))
         self._social_round(state, tracker, Phase.CLOSURE, int(cfg.utterances.word_budgets.farewell),
-                           lambda p, others, b, said: prompts.farewell_line(p, scenario, outcome, others, b, said),
+                           lambda p, others, b: prompts.farewell_line(p, scenario, outcome, state, others, b),
                            validate_state=state)
         state.dialogue_tokens_in = self._llm.session_tokens_in
         state.dialogue_tokens_out = self._llm.session_tokens_out
@@ -141,15 +141,12 @@ class Orchestrator:
 
     def _social_round(self, state: DialogueState, tracker: "StateTracker", phase: Phase, budget: int, build_prompt, validate_state: DialogueState | None = None) -> None:
         """A quick, optional social beat (greeting at the start, sign-off at the end) from a
-        trait-driven subset. Cosmetic only; each speaker is shown the prior lines so they don't
-        all read alike. `build_prompt(persona, others, budget, said)` returns the LLM prompt.
+        trait-driven subset. `build_prompt(persona, others, budget)` returns the LLM prompt.
         `validate_state` is passed to _social_say for grounding checks (farewell only)."""
-        said: list[str] = []
         for persona in self._social_speakers(state.personas):
             others = [p.name for p in state.personas if p.id != persona.id]
-            line = self._social_say(build_prompt(persona, others, budget, said), persona, budget, validate_state)
+            line = self._social_say(build_prompt(persona, others, budget), persona, budget, validate_state)
             if line:
-                said.append(line)
                 self._emit(tracker.apply_social(state, persona, line, phase, self._llm.last_tokens_in, self._llm.last_tokens_out))
 
     def _social_say(self, prompt: str, persona: Persona, budget: int, state: DialogueState | None = None) -> str | None:
@@ -231,13 +228,18 @@ class Orchestrator:
                 max_words=max_words,
             )
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{intent.speaker_id}_repair")
-            message, move = parse_trailer(self._llm.generate(repair_prompt, profile="repair"), option_ids)
-            text = clean_generated(message, persona.name, max_words)
-            text = strip_possessive_opener(text, state.scenario.options)
+            message, candidate_move = parse_trailer(self._llm.generate(repair_prompt, profile="repair"), option_ids)
+            candidate_text = clean_generated(message, persona.name, max_words)
+            candidate_text = strip_possessive_opener(candidate_text, state.scenario.options)
             total_tokens_in += self._llm.last_tokens_in
             total_tokens_out += self._llm.last_tokens_out
-            result = validator.validate(text, state, intent, move)
-            issues = result.codes()
+            candidate_result = validator.validate(candidate_text, state, intent, candidate_move)
+            candidate_issues = candidate_result.codes()
+            # A style/format repair must not destroy a semantically usable turn. Keep the
+            # provider's original line when the rewrite introduces a blocking state defect.
+            if _repair_regresses_state(issues, candidate_issues):
+                break
+            text, move, result, issues = candidate_text, candidate_move, candidate_result, candidate_issues
         # No fabricated fallback: keep the model's real (possibly imperfect) message and
         # record the remaining issues so they are visible in the logs and metrics.
         return text, move, prompt, total_tokens_in, total_tokens_out, issues, repaired, trigger_codes
@@ -268,8 +270,8 @@ class Orchestrator:
             return None
 
         if state.phase == Phase.DISCUSSION and everyone_spoke_once(state):
-            if concentration_score(state) >= 1.0:
-                candidate = leading_option(state)
+            if visible_preference_concentration(state) >= 1.0:
+                candidate = visible_leading_option(state)
                 if candidate:
                     self._register_intervention(state)
                     state.no_progress_count = 0
@@ -290,13 +292,25 @@ class Orchestrator:
                 return self._moderator_say(prompts.moderator_stall_prompt(state), state)
 
         if state.phase == Phase.CONFIRMATION and state.candidate_option:
-            holdouts = [h for h in _candidate_holdouts(state, state.candidate_option) if h not in self._nudged_holdouts]
+            pending = [h for h in _candidate_holdouts(state, state.candidate_option) if h not in self._nudged_holdouts]
             # Nudge one or two standouts directly; the confirmation router then has each of
             # them answer in turn. With three or more, leave it to normal routing.
-            if 1 <= len(holdouts) <= 2:
-                self._nudged_holdouts.update(holdouts)
+            if 1 <= len(pending) <= 2:
+                actual = [
+                    participant_id
+                    for participant_id in pending
+                    if visible_candidate_status(state, participant_id, state.candidate_option)[0] == "holdout"
+                ]
+                missing = [participant_id for participant_id in pending if participant_id not in actual]
+                self._nudged_holdouts.update(pending)
                 self._register_intervention(state)
-                return self._moderator_say(prompts.moderator_holdout_prompt(state, state.candidate_option, holdouts), state)
+                prompt = prompts.moderator_holdout_prompt(
+                    state,
+                    state.candidate_option,
+                    actual,
+                    missing,
+                )
+                return self._moderator_say(prompt, state)
         return None
 
     def _register_intervention(self, state: DialogueState) -> None:
@@ -679,26 +693,24 @@ class DialogueController:
 
 class ConsensusManager:
     def detect(self, state: DialogueState) -> RunOutcome | None:
-        candidate = state.candidate_option or self.leading_candidate(state)
-        if not candidate:
-            return None
-        if self._all_accepted_or_voted(state, candidate):
-            return RunOutcome("successful", candidate, "all participants accepted or voted for the same option", participant_turn_count(state))
+        for option_id in state.scenario.option_ids:
+            if self._all_accepted_or_voted(state, option_id):
+                return RunOutcome("successful", option_id, "all participants visibly accepted or voted for the same option", participant_turn_count(state))
         return None
 
     def finalize(self, state: DialogueState) -> RunOutcome:
         detected = self.detect(state)
         if detected:
             return detected
-        # Prefer the option that entered confirmation (the group narrowed to it); fall back
-        # to the live leading option only if no candidate was set. This prevents preference
-        # drift during long proposal rounds from overriding what the group actually voted on.
-        candidate = state.candidate_option or self.leading_candidate(state)
-        if candidate:
-            fraction = self.support_fraction(state, candidate)
-            if fraction >= float(cfg.consensus.majority_fallback_fraction):
-                return RunOutcome("majority", candidate, f"majority outcome with visible support fraction {fraction:.2f}", participant_turn_count(state))
-        return RunOutcome("unresolved", None, "no option reached explicit acceptance by all participants", participant_turn_count(state))
+        support = {
+            option_id: len(visible_support_ids(state, option_id))
+            for option_id in state.scenario.option_ids
+        }
+        candidate = max(support, key=support.get) if support else None
+        fraction = self.support_fraction(state, candidate) if candidate else 0.0
+        if candidate and fraction >= float(cfg.consensus.majority_fallback_fraction):
+            return RunOutcome("majority", candidate, f"majority outcome with visible support fraction {fraction:.2f}", participant_turn_count(state))
+        return RunOutcome("unresolved", None, "no option reached the configured visible-support majority", participant_turn_count(state))
 
     def leading_candidate(self, state: DialogueState) -> str | None:
         return leading_option(state)
@@ -706,12 +718,7 @@ class ConsensusManager:
     def support_fraction(self, state: DialogueState, option_id: str) -> float:
         """Count only visible VOTE and ACCEPT turns. Hidden preferences and routing-
         assigned leans do not count as social proof in the transcript."""
-        supporters = sum(
-            1 for persona in state.personas
-            if state.runtimes[persona.id].explicit_vote == option_id
-            or option_id in state.runtimes[persona.id].accepted_options
-        )
-        return supporters / max(1, len(state.personas))
+        return len(visible_support_ids(state, option_id)) / max(1, len(state.personas))
 
     @staticmethod
     def _all_accepted_or_voted(state: DialogueState, option_id: str) -> bool:
@@ -845,6 +852,10 @@ def participant_turn_count(state: DialogueState) -> int:
     return sum(rt.turn_count for rt in state.runtimes.values())
 
 
+def _repair_regresses_state(current_issues: list[str], candidate_issues: list[str]) -> bool:
+    return blocks_state_mutation(candidate_issues) and not blocks_state_mutation(current_issues)
+
+
 def concentration_score(state: DialogueState) -> float:
     leans = [current_lean(state, p) for p in state.personas]
     leans = [l for l in leans if l]
@@ -875,12 +886,6 @@ def previous_participant_speaker(state: DialogueState, exclude: str | None = Non
         if turn.speaker_id != "moderator" and turn.speaker_id != exclude:
             return turn.speaker_id
     return None
-
-
-def _looks_like_reason(text: str) -> bool:
-    # A turn "carries a reason" if it is substantive rather than a bare reaction.
-    # Length is a deliberately simple, content-agnostic proxy (no keyword list).
-    return len(text.split()) >= 8
 
 
 _HEDGE_ANSWER_PATTERN = re.compile(

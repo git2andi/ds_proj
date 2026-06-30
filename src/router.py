@@ -581,21 +581,6 @@ class TurnRouter:
                 return turn
         return None
 
-    @staticmethod
-    def _consecutive_same_speaker(state: DialogueState) -> int:
-        count = 0
-        for turn in reversed(state.turns):
-            if turn.speaker_id == "moderator":
-                continue
-            if count == 0:
-                count = 1
-                pid = turn.speaker_id
-            elif turn.speaker_id == pid:
-                count += 1
-            else:
-                break
-        return count
-
     def _length_hint(self, persona: Persona) -> str:
         # Bias length toward the persona's verbosity so a terse speaker and a chatty one
         # read differently, instead of every turn drawing the same random length.

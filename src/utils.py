@@ -11,10 +11,6 @@ from typing import Any, TypeVar
 T = TypeVar("T")
 
 
-def clamp(value: float, low: float, high: float) -> float:
-    return max(low, min(high, value))
-
-
 def normalise_ws(text: str) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     text = re.sub(r"\s+([.!?,;:?!])", r"\1", text)
@@ -63,11 +59,6 @@ def weighted_choice(items: Sequence[T], weights: Sequence[float]) -> T:
         if acc >= threshold:
             return item
     return items[-1]
-
-
-def sample_range(rng: Sequence[float]) -> float:
-    lo, hi = float(rng[0]), float(rng[1])
-    return random.uniform(lo, hi)
 
 
 def sample_int_range(rng: Sequence[int]) -> int:

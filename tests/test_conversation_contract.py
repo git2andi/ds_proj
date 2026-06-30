@@ -13,7 +13,7 @@ if str(SRC) not in sys.path:
 
 import prompts  # noqa: E402
 from config_loader import cfg  # noqa: E402
-from dialogue import Orchestrator, initialise_state  # noqa: E402
+from dialogue import ConsensusManager, Orchestrator, _repair_regresses_state, initialise_state  # noqa: E402
 from models import (  # noqa: E402
     ActType,
     DialogueAct,
@@ -21,11 +21,15 @@ from models import (  # noqa: E402
     OptionCard,
     Persona,
     Phase,
+    RunOutcome,
     Scenario,
     TraitProfile,
     TurnRecord,
 )
+from parsing import OptionResolver, TurnMove, parse_dialogue_act  # noqa: E402
 from router import TurnRouter  # noqa: E402
+from scoring import visible_candidate_status, visible_preference_concentration  # noqa: E402
+from validation import MessageValidator  # noqa: E402
 
 
 def _persona(pid: str, name: str, traits: TraitProfile, preference: str, background: str = "Private history") -> Persona:
@@ -76,6 +80,28 @@ def _state():
         intent=MoveIntent("p1", ActType.OBJECT, "raise concern", option_focus=["A"]),
     ))
     return state, p1, p2
+
+
+def _three_person_state():
+    base, p1, p2 = _state()
+    p3 = _persona("p3", "Cy", TraitProfile(3, 3, 3, 3, 2), "C")
+    state = initialise_state(base.scenario, [p1, p2, p3])
+    state.phase = Phase.CONFIRMATION
+    return state, p1, p2, p3
+
+
+def _record_vote(state, persona: Persona, option_id: str) -> None:
+    state.runtimes[persona.id].explicit_vote = option_id
+    state.runtimes[persona.id].current_preference = option_id
+    state.turns.append(TurnRecord(
+        index=len(state.turns) + 1,
+        speaker_id=persona.id,
+        speaker_name=persona.name,
+        text=f"I choose {state.scenario.option(option_id).name}.",
+        phase=state.phase,
+        act=DialogueAct(persona.id, "", ActType.VOTE, option_refs=[option_id], explicit_vote=option_id),
+        intent=MoveIntent(persona.id, ActType.VOTE, "vote", option_focus=[option_id]),
+    ))
 
 
 class ConversationContractTests(unittest.TestCase):
@@ -176,7 +202,7 @@ class ConversationContractTests(unittest.TestCase):
         )
         self.assertIn("Keep this as a direct reply", prompt)
         self.assertIn("The steep finish worries me", prompt)
-        self.assertIn("visibly commit to it", prompt)
+        self.assertIn("explicit first-person choice or acceptance", prompt)
         self.assertNotIn("selecting it now", prompt)
 
     def test_decision_guidance_uses_plain_chat_not_ballot_templates(self) -> None:
@@ -185,10 +211,142 @@ class ConversationContractTests(unittest.TestCase):
         accept = MoveIntent("p2", ActType.ACCEPT, "accept", option_focus=["A"])
         vote_guidance = prompts._move_guidance(state, p2, vote)
         accept_guidance = prompts._move_guidance(state, p2, accept)
-        self.assertIn("plain first-person chat language", vote_guidance)
-        self.assertIn("plain first-person chat language", accept_guidance)
-        self.assertNotIn("commitment verb", vote_guidance)
-        self.assertNotIn("acceptance verb", accept_guidance)
+        self.assertIn("first-person wording", vote_guidance)
+        self.assertIn("explicitly accept", accept_guidance)
+        self.assertIn("no hedging", vote_guidance.lower())
+        self.assertIn("no hedging", accept_guidance.lower())
+
+    def test_visible_commitment_handles_typographic_contractions_and_acceptance(self) -> None:
+        state, _, _ = _state()
+        validator = MessageValidator(OptionResolver(state.scenario.options), {"p1": "Ana", "p2": "Bo"})
+        self.assertTrue(validator._has_visible_commitment("I’m voting for Beta Trail.", "B", ActType.VOTE))
+        self.assertTrue(validator._has_visible_commitment("Beta Trail works for me.", "B", ActType.VOTE))
+        self.assertTrue(validator._has_visible_commitment("Beta Trail is my choice.", "B", ActType.VOTE))
+        self.assertTrue(validator._has_visible_commitment("I’m ready to commit to Beta Trail.", "B", ActType.ACCEPT))
+
+    def test_visible_commitment_rejects_preference_and_hedges(self) -> None:
+        state, _, _ = _state()
+        validator = MessageValidator(OptionResolver(state.scenario.options), {"p1": "Ana", "p2": "Bo"})
+        self.assertFalse(validator._has_visible_commitment("Beta Trail is the best option.", "B", ActType.VOTE))
+        self.assertFalse(validator._has_visible_commitment("Beta Trail is not my choice.", "B", ActType.VOTE))
+        self.assertFalse(validator._has_visible_commitment("Beta Trail isn’t my top pick, but I can handle the extra effort.", "B", ActType.ACCEPT))
+        self.assertFalse(validator._has_visible_commitment("Beta Trail works for me if the path is quiet.", "B", ActType.ACCEPT))
+        self.assertFalse(validator._has_visible_commitment("I’m still deciding, but I vote for Beta Trail.", "B", ActType.VOTE))
+
+    def test_hedged_vote_does_not_mutate_binding_state(self) -> None:
+        state, _, p2 = _state()
+        intent = MoveIntent("p2", ActType.VOTE, "vote", option_focus=["B"])
+        act = parse_dialogue_act(
+            speaker_id=p2.id,
+            speaker_name=p2.name,
+            text="I’m still deciding, but I vote for Beta Trail.",
+            resolver=OptionResolver(state.scenario.options),
+            participant_names={"p1": "Ana", "p2": "Bo"},
+            move=TurnMove(act=ActType.VOTE, option="B", stance="vote", present=True),
+            intent=intent,
+        )
+        self.assertIsNone(act.explicit_vote)
+
+    def test_repair_cannot_replace_valid_vote_with_blocked_rewrite(self) -> None:
+        self.assertTrue(_repair_regresses_state(["REPEATED_START"], ["UNCLEAR_VOTE"]))
+        self.assertFalse(_repair_regresses_state(["UNCLEAR_VOTE"], ["UNCLEAR_VOTE"]))
+        self.assertFalse(_repair_regresses_state(["UNCLEAR_VOTE"], []))
+
+    def test_outcome_uses_visible_support_instead_of_controller_candidate(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        state.candidate_option = "A"
+        _record_vote(state, p1, "B")
+        _record_vote(state, p2, "B")
+        _record_vote(state, p3, "A")
+        outcome = ConsensusManager().finalize(state)
+        self.assertEqual((outcome.status, outcome.final_option), ("majority", "B"))
+        self.assertEqual(outcome.reason, "majority outcome with visible support fraction 0.67")
+
+    def test_success_and_unresolved_follow_visible_commitment_counts(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        state.candidate_option = "A"
+        for persona in (p1, p2, p3):
+            _record_vote(state, persona, "B")
+        self.assertEqual(ConsensusManager().detect(state).final_option, "B")
+
+        split, p1, p2, p3 = _three_person_state()
+        for persona, option_id in zip((p1, p2, p3), ("A", "B", "C")):
+            _record_vote(split, persona, option_id)
+        outcome = ConsensusManager().finalize(split)
+        self.assertEqual((outcome.status, outcome.final_option), ("unresolved", None))
+        self.assertIn("visible-support majority", outcome.reason)
+
+    def test_moderator_separates_holdout_from_missing_commitment(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        _record_vote(state, p1, "B")
+        state.turns.append(TurnRecord(
+            index=2,
+            speaker_id=p2.id,
+            speaker_name=p2.name,
+            text="Beta Trail is easiest for me.",
+            phase=Phase.OPENING,
+            act=DialogueAct(p2.id, "", ActType.OPENING, option_refs=["B"]),
+            intent=MoveIntent(p2.id, ActType.OPENING, "opening", option_focus=["B"]),
+        ))
+        _record_vote(state, p3, "A")
+
+        self.assertEqual(visible_candidate_status(state, p2.id, "B"), ("missing", None))
+        self.assertEqual(visible_candidate_status(state, p3.id, "B"), ("holdout", "A"))
+
+        missing_prompt = prompts.moderator_holdout_prompt(state, "B", [], [p2.id])
+        self.assertIn("Ask only for a direct confirmation", missing_prompt)
+        self.assertIn("no visible alternative or objection", missing_prompt)
+
+        mixed_prompt = prompts.moderator_holdout_prompt(state, "B", [p3.id], [p2.id])
+        self.assertIn("Cy visibly backed another option", mixed_prompt)
+        self.assertIn("Bo has not visibly committed", mixed_prompt)
+        self.assertIn("Do not call Bo opposed", mixed_prompt)
+
+    def test_moderator_concentration_ignores_hidden_or_corrupted_controller_leans(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        for runtime in state.runtimes.values():
+            runtime.current_preference = "A"
+        for persona, option_id in zip((p1, p2, p3), ("A", "B", "C")):
+            state.turns.append(TurnRecord(
+                index=len(state.turns) + 1,
+                speaker_id=persona.id,
+                speaker_name=persona.name,
+                text=f"{state.scenario.option(option_id).name} fits me.",
+                phase=Phase.OPENING,
+                act=DialogueAct(persona.id, "", ActType.OPENING, option_refs=[option_id]),
+                intent=MoveIntent(persona.id, ActType.OPENING, "opening", option_focus=[option_id]),
+            ))
+        self.assertAlmostEqual(visible_preference_concentration(state), 1 / 3)
+        split = prompts._camp_split(state)
+        self.assertIn("1 leaning toward Alpha Trail", split)
+        self.assertIn("1 leaning toward Beta Trail", split)
+        self.assertIn("1 leaning toward Gamma Trail", split)
+
+    def test_majority_closure_names_visible_non_support(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        _record_vote(state, p1, "B")
+        _record_vote(state, p2, "B")
+        _record_vote(state, p3, "A")
+        outcome = RunOutcome("majority", "B", "visible majority", 3)
+        prompt = prompts.moderator_closure_prompt(outcome, state.scenario, state)
+        self.assertIn("Ana, Bo visibly supported Beta Trail", prompt)
+        self.assertIn("Cy visibly backed Alpha Trail", prompt)
+        self.assertIn("agreement wasn't unanimous", prompt)
+
+        farewell = prompts.farewell_line(p3, state.scenario, outcome, state, [p1.name, p2.name], 18)
+        self.assertIn("without your visible support", farewell)
+        self.assertIn("without implying that you agreed", farewell)
+
+    def test_unresolved_closure_uses_visible_commitments_not_hidden_leans(self) -> None:
+        state, p1, p2, p3 = _three_person_state()
+        _record_vote(state, p1, "A")
+        _record_vote(state, p2, "B")
+        outcome = RunOutcome("unresolved", None, "no majority", 2)
+        prompt = prompts.moderator_closure_prompt(outcome, state.scenario, state)
+        self.assertIn("Ana visibly supported Alpha Trail", prompt)
+        self.assertIn("Bo visibly supported Beta Trail", prompt)
+        self.assertIn("Cy made no visible commitment", prompt)
+        self.assertIn("preferences were expressed but no final commitment", prompt)
 
 
 class SocialBeatTests(unittest.TestCase):
@@ -225,17 +383,17 @@ class SocialBeatTests(unittest.TestCase):
         self.assertTrue(found_empty, "low-extraversion persona should sometimes produce no social beat")
 
     def test_farewell_prompt_omits_background(self) -> None:
-        from models import RunOutcome
         persona = _persona("p1", "Ana", TraitProfile(3, 3, 3, 3, 2), "A", background="Ana grew up near the coast.")
         outcome = RunOutcome(status="successful", final_option="A", reason="unanimous", turns=10)
         options = [OptionCard("A", "Alpha", "Alpha", {"x": "1"}, "up", "trade", "concern", "best")]
         scenario = Scenario("Pick one", "generic", "What matters?", options, [])
-        prompt = prompts.farewell_line(persona, scenario, outcome, ["Bo"], 18, [])
+        state = initialise_state(scenario, [persona])
+        prompt = prompts.farewell_line(persona, scenario, outcome, state, ["Bo"], 18)
         self.assertNotIn(persona.background, prompt)
 
     def test_greeting_prompt_avoids_arrival_framing(self) -> None:
         persona = _persona("p1", "Ana", TraitProfile(3, 3, 3, 3, 2), "A")
-        prompt = prompts.greeting_line(persona, "pick a lunch spot", ["Bo"], 14, [])
+        prompt = prompts.greeting_line(persona, ["Bo"], 14)
         self.assertNotIn("first text", prompt)
         self.assertNotIn("fires off", prompt)
         self.assertIn("ongoing thread", prompt)

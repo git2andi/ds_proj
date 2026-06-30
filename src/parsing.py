@@ -52,10 +52,15 @@ _QUESTION = re.compile(r"\?")
 # hedged line can't be miscounted as a clean acceptance and close the decision prematurely.
 _HEDGED_ACCEPT = re.compile(
     r"\b(?:might|maybe|perhaps|possibly|i guess|i suppose|"
-    r"still\s+not\s+(?:sure|sold|convinced)|not\s+fully\s+(?:sure|sold|convinced)|"
+    r"still\s+(?:deciding|not\s+(?:sure|sold|convinced))|not\s+fully\s+(?:sure|sold|convinced)|"
     r"(?:okay|fine|work|works|good)\s+(?:for\s+\w+\s+)?if|as long as|provided that|only if)\b",
     re.I,
 )
+
+
+def has_commitment_hedge(text: str) -> bool:
+    """Whether a decision statement remains tentative or conditional."""
+    return bool(_HEDGED_ACCEPT.search(text))
 
 
 @dataclass(slots=True)
@@ -201,7 +206,7 @@ def parse_dialogue_act(
         if best:
             question_target = best
 
-    hedged = bool(_HEDGED_ACCEPT.search(text))
+    hedged = has_commitment_hedge(text)
     stance, focus_opt, act_type = _resolve_move(move, intent, option_refs, question_target, hedged)
     if focus_opt and focus_opt not in option_refs:
         option_refs = [focus_opt, *option_refs]
@@ -282,7 +287,7 @@ def _resolve_move(
     # firm commitment, so it must not close the decision. Keep it neutral: the persona stays
     # an open holdout until the condition is actually resolved, instead of the chat declaring
     # consensus off a tentative line.
-    if hedged and intent and intent.act == ActType.ACCEPT and stance == "accept":
+    if hedged and intent and intent.act in {ActType.VOTE, ActType.ACCEPT} and stance in {"vote", "accept"}:
         stance = "neutral"
 
     if stance in _STANCE_TO_ACT:

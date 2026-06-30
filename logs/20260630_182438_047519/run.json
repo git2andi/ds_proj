@@ -1,0 +1,1824 @@
+{
+  "run_id": "20260630_182438_047519",
+  "topic": "Choose a lunch spot for the client meeting",
+  "scenario": {
+    "topic": "Choose a lunch spot for the client meeting",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most to you for the client lunch: impressing with ambiance, staying within budget, speed of service, or offering diverse dietary options?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Green Olive Mediterranean Bistro",
+        "attrs": {
+          "average_cost_per_person": "$65",
+          "average_meal_duration": "90 minutes",
+          "dietary_options": "vegetarian, vegan, gluten-free",
+          "distance_from_office": "1.2 miles"
+        },
+        "upside": "Offers a relaxed atmosphere with a variety of healthy options suitable for most diets.",
+        "tradeoff": "Longer meal duration might push the meeting close to the 2 PM limit.",
+        "concern": "Some clients may find the ambiance too casual for a formal business lunch.",
+        "best_for": "prioritizing dietary inclusivity and a calm setting",
+        "short_name": "Green Olive"
+      },
+      {
+        "id": "B",
+        "name": "Bistro 47 Steakhouse",
+        "attrs": {
+          "average_cost_per_person": "$75",
+          "average_meal_duration": "60 minutes",
+          "dietary_options": "meat-centric, limited vegetarian",
+          "distance_from_office": "0.8 miles"
+        },
+        "upside": "High-end steakhouse with a professional atmosphere that impresses clients.",
+        "tradeoff": "Limited vegetarian options could be a problem for non-meat eaters.",
+        "concern": "At the top of the budget, leaving little room for extras or drinks.",
+        "best_for": "making a strong impression with upscale dining",
+        "short_name": "Bistro 47"
+      },
+      {
+        "id": "C",
+        "name": "Quick Bites Urban Cafe",
+        "attrs": {
+          "average_cost_per_person": "$40",
+          "average_meal_duration": "45 minutes",
+          "dietary_options": "standard menu with some vegetarian options",
+          "distance_from_office": "0.5 miles"
+        },
+        "upside": "Fast service and affordable pricing allow more time for discussion and potential extras.",
+        "tradeoff": "Casual setting might not feel special enough for a client meeting.",
+        "concern": "Menu is limited and may not satisfy all dietary preferences fully.",
+        "best_for": "prioritizing time efficiency and budget savings",
+        "short_name": "Quick Bites"
+      },
+      {
+        "id": "D",
+        "name": "Sakura Sushi & Sake Lounge",
+        "attrs": {
+          "average_cost_per_person": "$70",
+          "average_meal_duration": "75 minutes",
+          "dietary_options": "seafood-focused, vegetarian options available",
+          "distance_from_office": "1.5 miles"
+        },
+        "upside": "Unique dining experience with fresh sushi and a stylish environment.",
+        "tradeoff": "Longer travel distance and meal duration might reduce meeting time.",
+        "concern": "Seafood-heavy menu might not appeal to all clients, especially those with allergies.",
+        "best_for": "offering a memorable and trendy dining experience",
+        "short_name": "Sakura Sushi"
+      }
+    ],
+    "shared_context": [
+      "The lunch meeting is scheduled for 12:30 PM and must finish by 2 PM.",
+      "There are exactly 3 participants deciding together, including the client.",
+      "The total budget for the meal is $75 per person."
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Jasper",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 1
+      },
+      "background": "Jasper values accommodating diverse dietary needs because he often hosts clients with strict dietary restrictions.",
+      "private_goal": "Ensure the lunch spot offers inclusive dietary options and a calm atmosphere to make all clients comfortable.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    },
+    {
+      "id": "p2",
+      "name": "Kira",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "background": "Kira prefers efficient meetings due to a packed schedule and limited time for client lunches.",
+      "private_goal": "Choose a lunch spot that is budget-friendly and allows a shorter meal duration to maximize meeting time.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    },
+    {
+      "id": "p3",
+      "name": "Elif",
+      "traits": {
+        "openness": 1,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 1,
+        "neuroticism": 2
+      },
+      "background": "Elif prioritizes making a strong impression on clients and believes a professional atmosphere is key.",
+      "private_goal": "Select an upscale, professional venue that impresses clients even if it stretches the budget slightly.",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": ""
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a lunch spot for the client meeting. Here are the options:\nOption A - The Green Olive Mediterranean Bistro: average cost per person $65, average meal duration 90 minutes, dietary options vegetarian, vegan, gluten-free, distance from office 1.2 miles\nOption B - Bistro 47 Steakhouse: average cost per person $75, average meal duration 60 minutes, dietary options meat-centric, limited vegetarian, distance from office 0.8 miles\nOption C - Quick Bites Urban Cafe: average cost per person $40, average meal duration 45 minutes, dietary options standard menu with some vegetarian options, distance from office 0.5 miles\nOption D - Sakura Sushi & Sake Lounge: average cost per person $70, average meal duration 75 minutes, dietary options seafood-focused, vegetarian options available, distance from office 1.5 miles\nSome things we know: The lunch meeting is scheduled for 12:30 PM and must finish by 2 PM.; There are exactly 3 participants deciding together, including the client.; The total budget for the meal is $75 per person..\nWhat matters most to you for the client lunch: impressing with ambiance, staying within budget, speed of service, or offering diverse dietary options?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a lunch spot for the client meeting. Here are the options: Option A - The Green Olive Mediterranean Bistro: average cost per person $65, average meal duration 90 minutes, dietary options vegetarian, vegan, gluten-free, distance from office 1.2 miles Option B - Bistro 47 Steakhouse: average cost per person $75, average meal duration 60 minutes, dietary options meat-centric, limited vegetarian, distance from office 0.8 miles Option C - Quick Bites Urban Cafe: average cost per person $40, average meal duration 45 minutes, dietary options standard menu with some vegetarian options, distance from office 0.5 miles Option D - Sakura Sushi & Sake Lounge: average cost per person $70, average meal duration 75 minutes, dietary options seafood-focused, vegetarian options available, distance from office 1.5 miles Some things we know: The lunch meeting is scheduled for 12:30 PM and must finish by 2 PM.; There are exactly 3 participants deciding together, including the client.; The total budget for the meal is $75 per person.. What matters most to you for the client lunch: impressing with ambiance, staying within budget, speed of service, or offering diverse dietary options?",
+        "act_type": "react",
+        "option_refs": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Let’s review our options quickly and finalize the next steps.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s review our options quickly and finalize the next steps.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 73,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": true
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive feels right with all the dietary options and a chill vibe for everyone.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive feels right with all the dietary options and a chill vibe for everyone.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 832,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Quick Bites keeps it fast and under budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Quick Bites keeps it fast and under budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 856,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Bistro 47 has the right vibe to impress and the timing fits perfectly with our schedule.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Bistro 47 has the right vibe to impress and the timing fits perfectly with our schedule.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state an initial priority without voting yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 873,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "The timing works, but Quick Bites saves us a lot more time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The timing works, but Quick Bites saves us a lot more time.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "moves_lean": false
+      },
+      "tokens_in": 581,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Quick Bites might save a few minutes but the quality and experience will slow us down more than we save.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Quick Bites might save a few minutes but the quality and experience will slow us down more than we save.",
+        "act_type": "reject",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {
+          "B": "Quick Bites might save a few minutes but the quality and experience will slow us down more than we save."
+        },
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "moves_lean": false
+      },
+      "tokens_in": 581,
+      "tokens_out": 35,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive’s menu has plenty of options that won't slow us down but still feel like a real meal, so we stay efficient and on budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive’s menu has plenty of options that won't slow us down but still feel like a real meal, so we stay efficient and on budget.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": 7,
+        "moves_lean": false
+      },
+      "tokens_in": 585,
+      "tokens_out": 41,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "How long does a typical meal last at Green Olive usually?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "How long does a typical meal last at Green Olive usually?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 655,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "The card doesn't say how long meals last at Green Olive but their menu lets us keep things quick without cutting quality.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The card doesn't say how long meals last at Green Olive but their menu lets us keep things quick without cutting quality.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "moves_lean": false
+      },
+      "tokens_in": 672,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Green Olive feels more formal so less chance to relax and chat.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Olive feels more formal so less chance to relax and chat.",
+        "act_type": "object",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Green Olive feels more formal so less chance to relax and chat."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "moves_lean": false
+      },
+      "tokens_in": 697,
+      "tokens_out": 25,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive’s a bit more formal but it’s also close by so we won’t waste time traveling between spots.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive’s a bit more formal but it’s also close by so we won’t waste time traveling between spots.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": 11,
+        "moves_lean": false
+      },
+      "tokens_in": 638,
+      "tokens_out": 35,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Being close to the client’s office means less hassle overall.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Being close to the client’s office means less hassle overall.",
+        "act_type": "react",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 10,
+        "moves_lean": false
+      },
+      "tokens_in": 626,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Closer means less chance of traffic messing up timing so we keep the meeting smooth and on schedule.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Closer means less chance of traffic messing up timing so we keep the meeting smooth and on schedule.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "moves_lean": false
+      },
+      "tokens_in": 640,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Jasper how long does a meal usually last at Bistro 47 so we can plan timing?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Jasper how long does a meal usually last at Bistro 47 so we can plan timing?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one targeted question that helps the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": 14,
+        "moves_lean": false
+      },
+      "tokens_in": 650,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "The card doesn’t say how long meals last at Bistro 47 but Green Olive’s proximity helps us stick to the schedule.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The card doesn’t say how long meals last at Bistro 47 but Green Olive’s proximity helps us stick to the schedule.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question before the thread moves on",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "moves_lean": false
+      },
+      "tokens_in": 649,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Jasper, without knowing Bistro 47’s meal length, relying on Green Olive’s proximity doesn’t guarantee we’ll finish on time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Jasper, without knowing Bistro 47’s meal length, relying on Green Olive’s proximity doesn’t guarantee we’ll finish on time.",
+        "act_type": "object",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Jasper, without knowing Bistro 47’s meal length, relying on Green Olive’s proximity doesn’t guarantee we’ll finish on time."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "push_back",
+        "reason": "push back on a point while staying cooperative",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "long",
+        "respond_to_turn": 16,
+        "moves_lean": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "If Bistro 47’s timing’s unknown we risk rushing or running late without a buffer.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "If Bistro 47’s timing’s unknown we risk rushing or running late without a buffer.",
+        "act_type": "support",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "respond to Elif's objection",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 17,
+        "moves_lean": false
+      },
+      "tokens_in": 664,
+      "tokens_out": 30,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Quick Bites gives us more control over pacing and breaks.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Quick Bites gives us more control over pacing and breaks.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "moves_lean": false
+      },
+      "tokens_in": 692,
+      "tokens_out": 25,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive’s menu offers enough variety to keep everyone happy without slowing us down too much.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive’s menu offers enough variety to keep everyone happy without slowing us down too much.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 622,
+      "tokens_out": 34,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "If the meal drags, we might overshoot our budget with extra drinks or sides.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "If the meal drags, we might overshoot our budget with extra drinks or sides.",
+        "act_type": "reject",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {
+          "B": "If the meal drags, we might overshoot our budget with extra drinks or sides."
+        },
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 18,
+        "moves_lean": false
+      },
+      "tokens_in": 618,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Elif, you’re right about timing risks but Green Olive’s steady pace lowers that effort risk.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Elif, you’re right about timing risks but Green Olive’s steady pace lowers that effort risk.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "react",
+        "reason": "react naturally to the last useful point",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 17,
+        "moves_lean": false
+      },
+      "tokens_in": 659,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Lack of clear pricing here makes it risky to count on staying within our budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Lack of clear pricing here makes it risky to count on staying within our budget.",
+        "act_type": "object",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Lack of clear pricing here makes it risky to count on staying within our budget."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "object",
+        "reason": "raise a soft objection without derailing the group",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 22,
+        "moves_lean": false
+      },
+      "tokens_in": 882,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "REPEATED_START",
+        "POSSESSIVE_SUBJECT"
+      ],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Being local means we can adjust orders last minute if someone changes plans",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Being local means we can adjust orders last minute if someone changes plans",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a concrete reason for an option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 23,
+        "moves_lean": false
+      },
+      "tokens_in": 616,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive offers a fresh choice that fits budget and keeps us on time",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive offers a fresh choice that fits budget and keeps us on time",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 634,
+      "tokens_out": 30,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Quick Bites lets us relax and keep the vibe casual.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Quick Bites lets us relax and keep the vibe casual.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "weigh the real trade-offs between options and say which side you land on",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "moves_lean": false
+      },
+      "tokens_in": 669,
+      "tokens_out": 25,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "I pick Bistro 47 for its upscale vibe that’ll definitely impress the client.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I pick Bistro 47 for its upscale vibe that’ll definitely impress the client.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 625,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "I pick Green Olive for its calm vibe and solid options for all diets.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I pick Green Olive for its calm vibe and solid options for all diets.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 641,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "I pick Quick Bites for the fast service and budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I pick Quick Bites for the fast service and budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group has discussed enough, so name your current pick and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Kira, Elif, what’s holding you back from The Green Olive Mediterranean Bistro, or is there another spot that might work for everyone?",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Kira, Elif, what’s holding you back from The Green Olive Mediterranean Bistro, or is there another spot that might work for everyone?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "The budget seems tight for a 12:30 client lunch that must impress.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The budget seems tight for a 12:30 client lunch that must impress.",
+        "act_type": "reject",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {
+          "A": "The budget seems tight for a 12:30 client lunch that must impress."
+        },
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "reject",
+        "reason": "say in one plain sentence whether Option A works for you — a reluctant concession ('I can live with it') counts as acceptance; if not, say the one thing blocking you",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 845,
+      "tokens_out": 60,
+      "validation_issues": [
+        "INVENTED_OPTION_ATTRIBUTE"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "INVENTED_OPTION_ATTRIBUTE",
+        "POSSESSIVE_SUBJECT"
+      ],
+      "state_mutation_blocked": true,
+      "is_social": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Green Olive’s not my first pick but I can live with the price.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Olive’s not my first pick but I can live with the price.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "say in one plain sentence whether Option A works for you — a reluctant concession ('I can live with it') counts as acceptance; if not, say the one thing blocking you",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 629,
+      "tokens_out": 27,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Green Olive won’t impress the client the way Bistro 47 can.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Green Olive won’t impress the client the way Bistro 47 can.",
+        "act_type": "reject",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {
+          "A": "Green Olive won’t impress the client the way Bistro 47 can."
+        },
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "reject",
+        "reason": "say in one plain sentence whether Option A works for you — a reluctant concession ('I can live with it') counts as acceptance; if not, say the one thing blocking you",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 609,
+      "tokens_out": 26,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Green Olive has solid reviews on flavor and atmosphere.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Olive has solid reviews on flavor and atmosphere.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 649,
+      "tokens_out": 26,
+      "validation_issues": [
+        "OPTION_NAME_OPENER"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Bistro 47’s vibe fits the client’s style better and the steaks last longer than quick bites.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Bistro 47’s vibe fits the client’s style better and the steaks last longer than quick bites.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 586,
+      "tokens_out": 36,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "They do have some vegetarian options if that matters.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p2",
+        "text": "They do have some vegetarian options if that matters.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 633,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p1",
+      "speaker_name": "Jasper",
+      "text": "Green Olive’s menu has enough variety to keep everyone happy here.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Olive’s menu has enough variety to keep everyone happy here.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 602,
+      "tokens_out": 28,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Bistro 47’s menu has enough variety to cover any picky eaters too.",
+      "phase": "confirmation",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Bistro 47’s menu has enough variety to cover any picky eaters too.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "suggest a workable compromise using an existing option",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "moves_lean": false
+      },
+      "tokens_in": 584,
+      "tokens_out": 32,
+      "validation_issues": [
+        "POSSESSIVE_SUBJECT"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we don’t all see eye to eye—Elif seems to prefer a different spot, but we’re leaning toward The Green Olive Mediterranean Bistro. I’ll go ahead and book a table.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we don’t all see eye to eye—Elif seems to prefer a different spot, but we’re leaning toward The Green Olive Mediterranean Bistro. I’ll go ahead and book a table.",
+        "act_type": "react",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "is_social": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "reason": "majority outcome with visible support fraction 0.67",
+    "turns": 35,
+    "metadata": {}
+  },
+  "metrics": {
+    "participant_turns": 35,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.077,
+    "turn_counts": {
+      "Jasper": 12,
+      "Kira": 11,
+      "Elif": 12
+    },
+    "avg_words_by_persona": {
+      "Jasper": 17.1,
+      "Kira": 10.5,
+      "Elif": 14.5
+    },
+    "question_density": 0.057,
+    "avg_words_per_turn": 14.1,
+    "repaired_turns": 2,
+    "repair_rate": 0.057,
+    "flagged_turns": 16,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 16,
+        "reasons": 14,
+        "objections": 1,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 9,
+        "reasons": 8,
+        "objections": 4,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 8,
+        "reasons": 8,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 0,
+        "reasons": 0,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "outcome_status": "majority",
+    "final_option": "A",
+    "min_discussion_turns": 16,
+    "setup_tokens_in": 2053,
+    "setup_tokens_out": 1095,
+    "dialogue_tokens_in": 23807,
+    "dialogue_tokens_out": 1179,
+    "total_tokens_in": 25860,
+    "total_tokens_out": 2274
+  },
+  "tokens": {
+    "setup_tokens_in": 2053,
+    "setup_tokens_out": 1095,
+    "dialogue_tokens_in": 23807,
+    "dialogue_tokens_out": 1179,
+    "total_tokens_in": 25860,
+    "total_tokens_out": 2274
+  }
+}

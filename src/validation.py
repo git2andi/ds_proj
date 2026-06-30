@@ -7,7 +7,7 @@ import re
 from aliases import short_alias_map
 from config_loader import cfg
 from models import ActType, DialogueState, MoveIntent, ValidationIssue, ValidationResult
-from parsing import OptionResolver, TurnMove
+from parsing import OptionResolver, TurnMove, has_commitment_hedge
 from utils import extract_numbers, jaccard_text
 
 
@@ -28,18 +28,18 @@ STATE_BLOCKING_ISSUES = frozenset({
 
 _VISIBLE_COMMITMENT_CUES = {
     ActType.VOTE: re.compile(
-        r"\b(?:vote(?:d|s|ing)?(?:\s+for)?|choos(?:e|es|ing)|select(?:s|ed|ing)?|pick(?:s|ed|ing)?|"
-        r"go(?:ing)?\s+with|sett(?:le|les|ling)\s+on|my\s+(?:choice|pick|vote)|gets?\s+my\s+vote|"
-        r"i(?:'m|\s+am)\s+(?:going|committing|voting)\s+(?:with|for)|i(?:'ll|will)\s+(?:go|take|vote)\s+(?:with|for)?|"
+        r"\b(?:i\s+(?:vote(?:\s+for)?|choose|select|pick)|"
+        r"i(?:'m|\s+am)\s+(?:going\s+with|committing\s+to|voting\s+for)|"
+        r"i(?:'ll|\s+will)\s+(?:go\s+with|take|vote\s+for|choose|select|pick)|"
+        r"(?:is|as)\s+my\s+(?:choice|pick|vote)|my\s+(?:choice|pick|vote)\s+is|gets?\s+my\s+vote|"
         r"that(?:'s|s|\s+is)\s+my\s+(?:pick|choice|vote))\b",
         re.I,
     ),
     ActType.ACCEPT: re.compile(
-        r"\b(?:accept(?:s|ed|ing)?|agree(?:s|d|ing)?(?:\s+to)?|on\s+board\s+with|"
+        r"\b(?:i\s+(?:can\s+)?accept|i\s+agree(?:\s+to)?|on\s+board\s+with|"
         r"ok(?:ay)?\s+with|fine\s+with|works?\s+for\s+me|can\s+live\s+with|"
-        r"go(?:ing)?\s+with|choos(?:e|es|ing)|select(?:s|ed|ing)?|stick(?:s|ing)?\s+with|"
-        r"lock(?:s|ed|ing)?\s+(?:it\s+)?in|i\s+support|supporting|"
-        r"i(?:'m|\s+am)\s+in\s+for|i(?:'m|\s+am)\s+in\b|i(?:'ll|will)\s+(?:take|go\s+with)|"
+        r"i\s+(?:stick\s+with|lock\s+(?:it\s+)?in|commit\s+to|support)|i(?:'m|\s+am)\s+ready\s+to\s+commit\s+to|"
+        r"i(?:'m|\s+am)\s+in\s+for|i(?:'m|\s+am)\s+in\b|i(?:'ll|\s+will)\s+(?:take|go\s+with)|"
         r"that(?:'ll|will)\s+work|that\s+works|i(?:'m|\s+am)\s+on\s+board)\b",
         re.I,
     ),
@@ -291,14 +291,21 @@ class MessageValidator:
         """True when the text clearly commits to option_id.
 
         Two cases:
-        1. Option alias and commitment cue appear in the same contrast clause
-           (handles "I'll go with Garden" or "selecting Mountain Cabin now").
-        2. Option alias appears anywhere in the text AND a commitment-cue clause
-           contains no other option alias (handles "Mountain Cabin has risks, but
-           I accept it" and "Farm Stay fits our needs; I'm selecting it now").
+        1. Option alias and commitment cue appear in the same contrast clause.
+        2. Option alias appears anywhere in the text and a commitment-cue clause
+           contains no other option alias.
         """
-        cue = _VISIBLE_COMMITMENT_CUES[act]
-        aliases = [alias for alias, owner in self.resolver.alias_to_id.items() if owner == option_id]
+        text = text.replace("’", "'").replace("‘", "'")
+        if has_commitment_hedge(text):
+            return False
+        # A routed vote may be phrased as acceptance and vice versa. Both are visible
+        # support when they clearly name one option; the route still owns state storage.
+        cues = tuple(_VISIBLE_COMMITMENT_CUES.values())
+        aliases = [
+            alias.replace("’", "'").replace("‘", "'")
+            for alias, owner in self.resolver.alias_to_id.items()
+            if owner == option_id
+        ]
         aliases.append(f"option {option_id.lower()}")
         target = re.compile(
             r"(?<!\w)(?:" + "|".join(re.escape(a) for a in sorted(set(aliases), key=len, reverse=True)) + r")(?!\w)",
@@ -306,14 +313,18 @@ class MessageValidator:
         )
         clauses = _CONTRAST_BOUNDARY.split(text)
         # Case 1: option + cue in same clause
-        if any(target.search(clause) and cue.search(clause) for clause in clauses):
+        if any(target.search(clause) and any(cue.search(clause) for cue in cues) for clause in clauses):
             return True
         # Case 2: option mentioned anywhere + a cue clause that names no other option
         if not target.search(text):
             return False
         other_ids = [oid for oid in self.resolver.by_id if oid != option_id]
         if other_ids:
-            other_aliases = [a for a, owner in self.resolver.alias_to_id.items() if owner in other_ids]
+            other_aliases = [
+                a.replace("’", "'").replace("‘", "'")
+                for a, owner in self.resolver.alias_to_id.items()
+                if owner in other_ids
+            ]
             other_aliases += [f"option {oid.lower()}" for oid in other_ids]
             other_target = re.compile(
                 r"(?<!\w)(?:" + "|".join(re.escape(a) for a in sorted(set(other_aliases), key=len, reverse=True)) + r")(?!\w)",
@@ -322,7 +333,7 @@ class MessageValidator:
         else:
             other_target = None
         for clause in clauses:
-            if cue.search(clause) and not (other_target and other_target.search(clause)):
+            if any(cue.search(clause) for cue in cues) and not (other_target and other_target.search(clause)):
                 return True
         return False
 

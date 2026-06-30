@@ -1,119 +1,219 @@
-# Known Failures - Open Issues Only
+# Known Failures - Open Backlog Only
 
 Last updated: 2026-06-30.
 
-This backlog contains only issues still supported by the current implementation or the current logs. Resolved issues and implementation history are intentionally omitted. Fixes must remain topic-agnostic, work for 2-7 participants, preserve visible-commitment outcome rules, and avoid provider-specific phrase patches.
+Scope: this file tracks only open failures still supported by the latest supplied validation logs and the latest `known_failures(6).md`. Resolved implementation history was removed. The backlog is ordered by priority, not by discovery order.
 
-## Audit basis
+Audit basis: KI01 was validated on GPT across n=2-7 with zero final unclear commitments. Grouped KI02/KI03 validation used controlled GPT runs at n=2, n=3, n=5, and n=7 (`20260630_182438_047519` through `20260630_184518_521015`): three successful outcomes, one majority, and one unresolved outcome across 160 participant turns. Visible support reproduced every status; actual holdout interventions targeted only participants who had visibly backed another option, and the missing-commitment path has deterministic coverage. Other backlog evidence still comes from the supplied 13-run corpus in `logs - Copy.zip`.
 
-The current audit read every `transcript.md` and `run.json` in the eight active GPT validation runs from `20260630_002124_450800` through `20260630_003653_164440`, covering all group sizes 2-7 and 252 decision turns. The prior 18-run audit set was moved to `logs/archive/` before validation.
+Core rule: outcome support must be based on visible transcript text only. A participant counts as supporting an option only when their generated message contains a clear vote or acceptance for that option. Hidden `acceptable_options`, hidden scores, routed intent, or unverified trailers must not count as support by themselves.
 
-The active runs contain 36 repaired and 92 flagged decision turns. Exact response context was routed on 134 of 143 eligible turns (93.7%, up from 71.7% in the archived baseline), and manual review confirms that discussion replies normally engage the targeted point instead of restarting a standalone pitch. Response length strongly distinguishes personas; for example, the `n=6` board-game run averages 21.1 words for the high-extraversion/high-response-length participant and 9.5-9.8 for three low-extraversion/short participants. Remaining repetition, social-round templates, commitment churn, and grounding failures are tracked below rather than folded back into one broad naturalness issue.
+---
 
 ## Validation protocol
 
-For each fix:
+1. Fix one issue at a time unless issues are explicitly grouped.
+2. Validate on mixed topics and group sizes, especially n=2, n=3, n=5, and n=7.
+3. Read transcripts manually. Metrics and validator counts are not sufficient.
+4. Check outcome correctness from visible dialogue, not only `run.json` state.
+5. Keep fixes topic-agnostic and provider-agnostic. Avoid adding phrase patches that only solve one observed transcript.
+6. Close an issue only when the visible dialogue improves without regressions in grounding, pacing, moderator behavior, or outcome integrity.
 
-1. Work on one issue only unless the user explicitly groups issues.
-2. Use the provider explicitly authorized for the task. Never silently substitute an endpoint.
-3. Run one mandatory `n=3` discussion, then the requested spread across `n=2-7` when behavioral validation is required.
-4. Read every relevant `transcript.md` and `run.json`; metrics and validator counts are not sufficient.
-5. Compare against the concrete evidence and acceptance criteria in the issue, including regressions in grounding, commitment gating, persona behavior, and pacing.
-6. Close an issue only when the target behavior improves across topics and sizes without an obvious regression.
-7. Before completion, synchronize all applicable active guidance listed in `AGENTS.md`.
-8. Stop at the completed issue boundary unless the user explicitly asks to continue.
+---
 
-Current implementation order: P0 conversation quality, P1 setup/state integrity, P2 moderator integrity, P3 grounding, then P4 token cost. Each item is an independent upgrade.
+## P1 - Moderator and narrowing naturalness
 
-## P0 - Conversation quality
+### KI04 - Lone-holdout intervention should be direct and specific
 
-### ~~KF26~~ - Cosmetic greeting and farewell rounds (resolved 2026-06-30)
+**Problem:** When all or nearly all participants support one option except one person, the moderator still uses generic phrasing such as “what’s holding you back from X, or is there another option everyone could get behind?” This is functional but repetitive and not socially precise.
 
-**Fix:** `_social_speakers()` now returns at most one speaker — the most extraverted persona with probability = `extraversion / trait_max` — so a social beat is an optional single line rather than a round-the-table chorus. `farewell_line()` prompt no longer includes persona background (was causing biography callbacks). `greeting_line()` reframed from “casual hello / first text someone fires off” to “opening line before an ongoing-thread discussion” to reduce slang-arrival templates.
+**Required direction:** If there is one real holdout, address only that person. The moderator should ask:
+- what specific concern remains;
+- whether a named condition would make the candidate acceptable;
+- or whether the holdout has a concrete alternative that could gain support.
 
-**Tests added:** `SocialBeatTests` in `test_conversation_contract.py` — at-most-one speaker, most-extraverted selection, empty-return probability, farewell omits background, greeting avoids arrival framing.
+Do not ask the whole group when the blocker is one person. Do not use the same narrowing template every time.
 
-**Pending watch:** If live runs show that zero-greeting outcomes in n=2 feel abrupt, the probability floor could be raised for small groups. Not a regression yet.
+**Acceptance criteria:** Lone-holdout interventions feel like a natural facilitator addressing the current social state, not a repeated stock transition.
 
-### ~~KF14/KF27~~ - Pacing / NARROWING churn (resolved 2026-06-30)
+---
 
-**Fix (three parts):**
-1. **Multi-voter NARROWING escape** (`router.py` `_vote_intent()`): when every remaining unvoted persona has had `max_vote_attempts_per_person` (config, default 2) VOTE-intent narrowing turns without gaining `explicit_vote`, force-advance to CONFIRMATION rather than cycling until the hard cap. Addresses 50-turn NARROWING loops where multiple voters kept producing UNCLEAR_VOTE turns.
-2. **Stall window de-scaling** (`dialogue.py` `_moderator_intervention()`): removed `+ max(0, n - 3)` from stall window — larger groups now trigger stall interventions at the same pace as small groups instead of being more lenient.
-3. **Slot-exhaustion early narrowing** (`dialogue.py` `_can_start_narrowing()`): when every staked option has ≥ `slot_exhaustion_threshold` (config, default 3) covered claim slots, progress has stalled, and each participant has had their minimum turns, narrowing can begin before the derived turn-floor. Prevents semantic circling after substance is exhausted.
+### KI05 - Narrowing is still too moderator-led
 
-**Validation (n=7 city topic):** NARROWING phase 50 → 9 turns; SELF_REPETITION warnings 15 → 0; total turns 88 → 73. n=3 board-game run remained natural at 21 participant turns.
+**Problem:** Narrowing mostly happens through moderator prompts. Participants rarely initiate natural convergence themselves, even when the dialogue clearly shows a leading option or exhausted alternatives.
 
-**Pending watch:** Discussion length at n=7 (~49 turns) is still on the longer side; adjusting `slot_exhaustion_threshold` downward or `base_per_participant` could shorten further if needed.
+**Required direction:** Allow participant-led narrowing acts. A participant should sometimes say things like:
+- “It sounds like we’re mostly between A and B now.”
+- “If X solves the timing issue, I could move there.”
+- “I think Y is becoming the realistic choice.”
 
-## P1 - Setup, state, and outcome integrity
+This should be routed based on state, not just phrased as another support turn.
 
-### ~~KF28~~ - Scenario, option, and persona coherence (resolved 2026-06-30)
+**Acceptance criteria:** Some runs narrow through participant initiative before the moderator forces the phase transition.
 
-**Evidence:** Several successful setups are structurally valid but socially contradictory. `20260629_210241_966736` uses the user topic “team lunch for a group of 5 colleagues” while running three participants. `20260629_215720_381932` gives Leo a goal about impressing his date during a team birthday dinner. `20260629_215856_690649` states that all six family members want to remain engaged, yet includes and assigns preferences for two- and four-player games. Hard word truncation also produces broken names such as “Pacific Coast Highway from San Francisco to San” in `20260629_205507_547657`.
+---
 
-**Root cause:** Validation checks field shape, option IDs, explicit participant counts in `shared_context`, and preference membership, but not consistency between the user topic, shared context, option feasibility, persona goals, and selected group size. Option names are truncated mechanically instead of rejected or regenerated.
+### KI06 - Moderator intervention phrasing is repetitive
 
-**Required direction:** Add setup-level coherence checks for explicit group-size statements in the topic, hard shared constraints, option feasibility, persona relationship/context, and complete option names. Surface a conflict between a topic-specified group size and configured `n` rather than silently rewriting the world. Reject or regenerate malformed source data; do not repair it with fabricated defaults.
+**Problem:** Even when the moderator targets roughly the right issue, the phrasing repeats the same structure: “what’s holding you back from X, or is there another option…”. This makes the moderator sound mechanical.
 
-**Fix:**
-- `_validate_topic_participant_count()` in `builders.py`: pre-LLM check that raises immediately with a user-actionable message when the topic text explicitly names a participant count that contradicts `num_participants` in config.
-- `_clean_name()` in `builders.py`: raises `ValueError` if the word-capped option name ends on a function word (preposition, conjunction, article) — triggers scenario retry rather than silently truncating mid-phrase names.
-- `setup_personas` prompt: tightened background/private_goal guidance to explicitly prohibit inventing a relationship or event not present in the shared decision context.
+**Required direction:** Add state-conditioned moderator forms rather than more random paraphrases:
+- lone holdout: ask one blocker question;
+- two camps: ask a bridge/comparison question;
+- missing vote: ask for explicit confirmation;
+- exhausted discussion: summarize the trade-off and move to a decision;
+- unresolved: name the blocker and next action.
 
-**Tests added:** `SetupCoherenceTests` in `test_preference_distribution.py` — topic/n mismatch raises before LLM call; topics without explicit counts do not raise.
+**Acceptance criteria:** Moderator turns vary because the underlying social situation differs, not because of cosmetic wording randomization.
 
-**Remaining gap:** Option feasibility for group size (e.g. 4-player game assigned to 6 players) requires semantic understanding of attribute values and is not checked deterministically. Not a regression.
+---
 
-### ~~KF29~~ - Changes of mind and final consensus (resolved 2026-06-30)
+## P2 - Natural conversation flow
 
-**Fix (three parts):**
-1. **Hedged-confirmation auto-soft-rejection** (`dialogue.py` `_update_runtime()`): when a CONFIRMATION-phase ACCEPT turn is repaired and state mutation is still blocked (UNCLEAR_ACCEPT after repair), automatically record a `"hedged-confirmation"` soft rejection on the candidate. On the next routing call, `_confirmation_intent()` sees this and skips the persona rather than retrying with an identical prompt.
-2. **Routing reason clarification** (`router.py` `_confirmation_intent()`): the routing reason now explicitly says "a reluctant concession counts as acceptance; if not, say the one thing blocking you" — giving the model a clear exit for reluctant-but-real acceptance without forcing an enthusiastic line.
-3. **UNCLEAR_ACCEPT repair hint** (`prompts.py`): updated from "say the option name explicitly and confirm agreement" to "say plainly that the option works for you — a reluctant yes ('can live with it', 'it works') is fine" — so the repair attempt doesn't prompt for a tone the model can't produce.
+### KI07 - Social beat content still sounds procedural
 
-**Validation:**
-- n=3 dinner: successful, clean single confirmation turn, 0 UNCLEAR_ACCEPT repairs cycling
-- n=5 city trip: Oscar (Savannah holdout) conceded "Portland can work for me even if it's not exactly the calm, historic place I hoped for"; Nadia conceded "I can live with less nightlife for better nature access" — both grounded in prior turns, no cycling
+**Problem:** At-most-one greeting/farewell is an improvement, but the remaining social beat often sounds like a moderator line: “Let’s quickly align…”, “Let’s finalize this quickly…”, “Let’s quickly weigh our options…”. This is not a natural participant greeting.
 
-**Pending watch:** Semantic legitimacy of mind-changes (whether prior turns actually addressed the holdout's concern) is still trust-based rather than enforced. No regression: the core gap is a language-model limitation, not a routing or state bug.
+**Required direction:** Keep optional single-speaker social beats, but make them genuinely social or remove them. A participant opening should sound like a light entry into an ongoing chat, not a process command.
 
-## P2 - Moderator integrity
+**Acceptance criteria:** Social beats no longer duplicate moderator function and no longer contain repeated “quickly align/finalize/weigh” templates.
 
-### ~~KF06~~ - Moderator state claims, completeness, and impossible compromises (resolved 2026-06-30)
+---
 
-**Fix (three parts):**
-1. **No-blend rule** added to `_MODERATOR_RULES` in `prompts.py`: “Do not suggest combining, blending, or merging options — the options are fixed.” Eliminates dog-name/option-blend proposals.
-2. **Lean vs. vote language**: `_camp_split()` now uses “leaning toward X” instead of “N for X”; new `_vote_summary()` function lists only personas with explicit `explicit_vote` entries; `_MODERATOR_RULES` now includes “say 'leaning toward' or 'seems to prefer', never 'voted for', unless someone explicitly cast a visible vote”; `moderator_agreement_prompt()` passes `_vote_summary()` and instructs “Use 'leaning toward' if no one has explicitly voted yet.”
-3. **Completeness check** in `_moderator_say()` (`dialogue.py`): after generation, checks whether the text ends in sentence-final punctuation (`.!?`); if not, retries with an explicit instruction to finish the sentence. Combined with the existing invalid-option-ref retry — both checks can fire on the same attempt and both steer the retry prompt.
+### KI08 - Local flow still overuses standalone argument-card turns
 
-**Validation (n=3 volunteer project):** Moderator said “Elif, since you seem to prefer...” (lean language, not vote language) and “Looks like Painting and Renovation at Local Youth Center is the plan, so let's arrange to collect the $100 needed for paint and supplies by midweek” (card-grounded, complete sentence).
+**Problem:** Many participant turns still read as independent mini-arguments rather than situated replies. The latest logs improved response targeting, but dialogues still often alternate preference statements instead of building on prior turns with short uptake, partial agreement, clarification, or direct answer.
 
-## P3 - Grounding and question quality
+**Required direction:** Improve local turn acts before adding more global prompt rules. Encourage:
+- direct answer to the previous speaker;
+- short backchannels when appropriate;
+- explicit uptake of a named concern;
+- brief concessions before new arguments;
+- fewer self-contained option pitches after the opening phase.
 
-### ~~KF12/KF25~~ - Grounding: ASK binding + ANSWER guidance (resolved 2026-06-30)
+**Acceptance criteria:** A reader can follow a local thread across several turns, rather than seeing a sequence of isolated claims.
 
-**Evidence:** Manual review finds unsupported details throughout the fresh logs. The volunteer run invents indoor break areas, shade, a ten-minute walk, weather flexibility, and adjustable task pacing. The city run invents ride-share prices, neighborhood distances, traffic, rain, crowds, plantations, art walks, and harbor cruises. The dessert run invents berry prices, leftovers, smaller purchase sizes, and extra guests. Validator counts substantially understate these qualitative inventions.
+---
 
-The current ASK prompt shows card attributes, but the model still asks beyond them. ANSWER turns often convert “unknown” into a confident fact. The concrete-noun and numeric checks catch a narrow subset and miss unsupported qualitative comparisons and logistics.
+### KI09 - Trait effects are improved but need more measurable behavioral dimensions
 
-**Fix (three parts):**
-1. **ASK attribute binding** (`prompts.py` `_move_guidance()`): for ASK turns, the guidance now extracts the actual attribute key names from the focused option(s) and presents them explicitly — "Ask about ONE specific card attribute — one of: cost, time commitment, physical effort, impact scope. Do not ask about things not listed." Prevents questions about weather, proximity, service quality, and other off-card logistical attributes.
-2. **ANSWER grounding emphasis** (`prompts.py` `_move_guidance()`): updated from "say that plainly" to "The only valid facts are those already in the card or shared_context. If the question asks for something the card does not state, say 'the card doesn't say' and pivot to a point the card does support. Never estimate, guess, or turn an unknown into a confident new fact."
-3. **Per-turn prompt footer** (`prompts.py` `sim_utterance()`): added explicit prohibition on logistics inventions — "never estimate, guess, or invent a logistics detail (distance, quality, availability, weather, or service not listed)."
+**Problem:** Response length now appears meaningfully trait-sensitive, but trait expression should not reduce to word count. For evaluation, traits need observable behavioral effects across multiple dimensions.
 
-**Validation (n=3 city trip — original failure category):** Zero INVENTED_OPTION_ATTRIBUTE issues; no ride-share prices, art walks, harbor cruises, or distance claims. ANSWER turns referenced card attributes explicitly. No off-card ASK questions in this run.
+**Required direction:** Preserve the current response-length effect and make other trait effects measurable:
+- extraversion: initiative, directness, willingness to address others;
+- agreeableness: concession frequency and face-work;
+- conscientiousness: practical constraints and detail checks;
+- neuroticism: risk sensitivity and blocker persistence;
+- openness: novelty/creativity arguments.
 
-**Remaining gap:** Mild qualitative elaborations persist ("lakeside deck", "chill spots") where the model extends an implied attribute (lakefront → deck). Numeric grounding validation and the facility-noun pattern catch hard inventions; soft qualitative inference beyond card fields cannot be fully blocked without semantic validation. Not a regression from the baseline.
+**Acceptance criteria:** Trait effects can be measured from transcripts without reading hidden persona fields.
 
-## P4 - Cost
+---
 
-### KF16 - Token cost remains structurally high
+### KI10 - Semantic legitimacy of mind changes is still weak
 
-**Evidence:** The eight active validation runs use 179,197 dialogue input tokens and 16,694 setup input tokens. Dialogue input averages 711.1 tokens per decision turn, excluding setup. Repetition, repair churn, and long large-group runs still increase cost without improving decision quality.
+**Problem:** Participants sometimes concede because the phase requires convergence, not because their earlier concern was visibly addressed. The language may be acceptable, but the social movement can feel unearned.
 
-**Required direction:** Address P0-P3 before optimizing away context needed for correctness. Then remove duplicated state and rules, pass only the exact response target and structured facts required by the routed act, and make repair prompts issue-specific. Track quality and repair rate per input token by provider and group size.
+**Required direction:** Before a participant changes position, the dialogue should contain at least one visible answer, trade-off acceptance, or condition that addresses their earlier blocker. If not, route a question or condition-setting turn instead of immediate concession.
+
+**Acceptance criteria:** Concessions read as motivated by prior dialogue, not by controller pressure.
+
+---
+
+## P3 - Grounding and scenario control
+
+### KI11 - Soft qualitative hallucinations still appear
+
+**Problem:** Numeric and hard logistical hallucinations improved, but soft unsupported details still leak through. Examples include recipes being sent after a cooking class, ingredient sourcing, rain fallback behavior, or implied facilities that are not in the card.
+
+**Required direction:** Keep numeric grounding checks, but add a lightweight guard for common unsupported qualitative logistics: availability, included extras, service behavior, weather fallback, staff behavior, room/space features, and post-event materials.
+
+**Acceptance criteria:** Participants hedge or ask about unsupported qualitative details instead of asserting them as facts.
+
+---
+
+### KI12 - User-specified option lists are not always preserved
+
+**Problem:** When the user topic explicitly names candidate options, scenario generation may still introduce a new option. For example, a topic asking about ramen, sandwich place, or falafel cart should not silently add a fourth unrelated restaurant type unless the system is explicitly allowed to propose alternatives.
+
+**Required direction:** Detect explicit option-list topics and preserve the listed options. If the system needs four options for its internal format, either ask/generate only when allowed or mark the added option as an explicit “other suggestion” rather than pretending it was part of the user’s original choice set.
+
+**Acceptance criteria:** The scenario does not change the user’s decision frame without making that change explicit.
+
+---
+
+### KI13 - Option short-name / alias quality remains inconsistent
+
+**Problem:** Some latest runs contain empty `short_name` values for one or more options. This can weaken natural references and visible commitment parsing.
+
+**Required direction:** Ensure every option has a safe short name or intentionally disable alias use for that option. Avoid unsafe generic one-word aliases.
+
+**Acceptance criteria:** Short names are always present when aliasing is enabled, and visible option references resolve consistently.
+
+---
+
+### KI14 - Setup feasibility still needs semantic checks for option constraints
+
+**Problem:** Earlier setup fixes improved topic-count mismatch and broken option names, but semantic feasibility remains only partially checked. Example class: assigning a two- or four-player game to a six-person family decision, or generating options that violate hard shared constraints.
+
+**Required direction:** Add limited deterministic checks for common structured attributes: number of players, group size, budget, time, duration, and capacity. Do not attempt broad world knowledge validation.
+
+**Acceptance criteria:** Obvious card/shared-context contradictions are rejected or regenerated before dialogue starts.
+
+---
+
+## P4 - Repetition, repair pressure, and metrics
+
+### KI15 - Repetition checks miss semantic loops
+
+**Problem:** Exact string repetition is better controlled, but semantic loops remain: participants repeat the same underlying claim in different wording, especially during narrowing and majority formation.
+
+**Required direction:** Track recent `(option, claim-slot, polarity)` patterns and suppress repeated semantic moves when they do not add a new concern, condition, or concession.
+
+**Acceptance criteria:** Repetition decreases without making participants unnaturally terse or preventing legitimate re-emphasis during voting.
+
+---
+
+
+### KI16 - Prompt complexity can worsen dialogue naturalness
+
+**Problem:** The prompt stack has accumulated many global rules, bans, guidance snippets, validation hints, grounding instructions, trait instructions, and repair-specific constraints. Some of this is necessary and already protects working behavior, but too much instruction density can make the model produce procedural, over-controlled dialogue instead of natural local conversation. It can also increase generic compliance phrases, moderator-like participant turns, and repair pressure.
+
+**Required direction:** Reduce prompt complexity carefully without deleting working controller logic. Preserve the deterministic state machine, visible commitment rules, grounding constraints, trait behavior, and existing successful validations. Simplify by moving stable checks into deterministic code where possible, passing only act-relevant guidance, and removing duplicated or low-value prompt rules. Avoid large prompt rewrites that reintroduce older failures.
+
+**Acceptance criteria:** Prompts become shorter and more act-specific, while transcripts become more natural or at least do not regress. No regression in visible-support outcome correctness, grounding, trait visibility, setup coherence, or moderator targeting.
+
+---
+
+### KI17 - Repair cost remains high
+
+**Problem:** The latest 13 runs contain 143 repaired turns over 500 participant turns. Repairs are still a major cost driver and often cluster around vote clarity and grounding.
+
+**Required direction:** Fix the dominant causes first (`UNCLEAR_VOTE`, then grounding/qualitative claims), then reduce repair prompt size and make repair prompts issue-specific.
+
+**Acceptance criteria:** Repaired-turn rate falls materially without increasing invalid commitments, hallucinations, or unresolved outcomes.
+
+---
+
+### KI18 - Token cost remains structurally high
+
+**Problem:** Latest dialogue input averages about 781 tokens per participant decision turn. Large and repair-heavy runs remain expensive.
+
+**Required direction:** Do not optimize away context before P0-P3 stabilize. Then shorten repeated global rules, pass only act-relevant option facts, compact group state, and accumulate quality-per-token metrics by group size and provider.
 
 **Acceptance criteria:** Input tokens per decision turn fall materially without regressions in grounding, local responsiveness, persona visibility, commitment integrity, or setup reliability.
 
-**Relevant code:** `src/prompts.py`, `src/dialogue.py`, `config.yaml`.
+---
+
+### KI19 - Metrics should separate decision turns, moderator turns, social beats, and repairs
+
+**Problem:** Some quality metrics become hard to interpret when social beats, repaired generations, final closure, and decision turns are mixed. This matters more now because social beats are optional and repairs are frequent.
+
+**Required direction:** Report separate counts for:
+- decision participant turns;
+- social participant turns;
+- moderator turns;
+- generated attempts including repairs;
+- final accepted turns only.
+
+**Acceptance criteria:** Metrics explain the transcript rather than hiding where cost and quality failures occur.
