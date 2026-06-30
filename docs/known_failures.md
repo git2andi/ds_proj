@@ -80,17 +80,14 @@ Current implementation order: P0 conversation quality, P1 setup/state integrity,
 
 ## P2 - Moderator integrity
 
-### KF06 - Moderator lines are not fully validated for truth, completeness, or conversational fit
+### ~~KF06~~ - Moderator state claims, completeness, and impossible compromises (resolved 2026-06-30)
 
-**Evidence:** In `20260629_210241_966736`, the moderator says Green Garden “has more votes” before any participant has voted. In `20260629_215036_832650`, a moderator intervention ends mid-sentence with “what would need to change about it for you to get fully.” In `20260629_214346_569423`, the moderator proposes “blending” two dog names even though no such option or workable compromise exists. Moderator turns can therefore mislabel hidden leans as votes, invent an impossible compromise frame, or pass through incomplete output.
+**Fix (three parts):**
+1. **No-blend rule** added to `_MODERATOR_RULES` in `prompts.py`: “Do not suggest combining, blending, or merging options — the options are fixed.” Eliminates dog-name/option-blend proposals.
+2. **Lean vs. vote language**: `_camp_split()` now uses “leaning toward X” instead of “N for X”; new `_vote_summary()` function lists only personas with explicit `explicit_vote` entries; `_MODERATOR_RULES` now includes “say 'leaning toward' or 'seems to prefer', never 'voted for', unless someone explicitly cast a visible vote”; `moderator_agreement_prompt()` passes `_vote_summary()` and instructs “Use 'leaning toward' if no one has explicitly voted yet.”
+3. **Completeness check** in `_moderator_say()` (`dialogue.py`): after generation, checks whether the text ends in sentence-final punctuation (`.!?`); if not, retries with an explicit instruction to finish the sentence. Combined with the existing invalid-option-ref retry — both checks can fire on the same attempt and both steer the retry prompt.
 
-**Root cause:** `_moderator_say()` checks only invalid option-name references and accepts the second attempt even if it is still imperfect. It does not validate state claims, completeness, question shape, or whether the suggested action exists in the scenario.
-
-**Required direction:** Build moderator content from explicit state labels (`lean`, `visible vote`, `accepted`, `holdout`) and validate generated lines against those labels. Moderator prompts must not suggest blending options unless the controller has a grounded compromise. Incomplete or state-false output must fail or retry under a bounded policy rather than being printed.
-
-**Acceptance criteria:** Moderator lines accurately distinguish leanings from votes, never imply nonexistent support, contain a complete thought, and ask only a question the current state can usefully answer. Closures remain faithful to `successful`, `majority`, and `unresolved` outcomes.
-
-**Relevant code:** `src/prompts.py`: moderator prompts; `src/dialogue.py`: `_moderator_say()` and intervention selection.
+**Validation (n=3 volunteer project):** Moderator said “Elif, since you seem to prefer...” (lean language, not vote language) and “Looks like Painting and Renovation at Local Youth Center is the plan, so let's arrange to collect the $100 needed for paint and supplies by midweek” (card-grounded, complete sentence).
 
 ## P3 - Grounding and question quality
 

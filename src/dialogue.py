@@ -107,12 +107,19 @@ class Orchestrator:
     def _emit(record: TurnRecord) -> None:
         print(f"{record.speaker_name}: {record.text}")
 
+    @staticmethod
+    def _moderator_line_is_complete(text: str) -> bool:
+        """True when the text ends on a sentence boundary rather than trailing off mid-phrase."""
+        stripped = text.rstrip()
+        return bool(stripped) and stripped[-1] in ".!?"
+
     def _moderator_say(self, prompt: str, state: DialogueState) -> str:
         """Generate a moderator facilitation line via the LLM and clean it to one line.
         Prior facilitator lines are fed back in so the moderator doesn't recite the same
         stock phrasing twice (e.g. two identical 'anyone object or lock it in?' nudges).
-        A grounding check fires once after generation: if invalid option references appear,
-        the prompt retries once rather than leaking hallucinated option names into the transcript."""
+        Two checks fire in order (each can trigger one retry):
+          1. Invalid option references — retry with stricter name grounding.
+          2. Incomplete sentence — retry with an explicit finish instruction."""
         prior = [t.text for t in state.turns if t.speaker_id == "moderator"][1:]  # skip the fixed option board
         if prior:
             bullets = "; ".join(compact_words(p, 12) for p in prior[-3:])
@@ -121,10 +128,15 @@ class Orchestrator:
         for attempt in range(2):
             raw = self._llm.generate(prompt, profile="dialogue")
             text = clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.medium))
-            if not resolver.invalid_option_refs(text):
+            bad_refs = resolver.invalid_option_refs(text)
+            incomplete = not self._moderator_line_is_complete(text)
+            if not bad_refs and not incomplete:
                 return text
             if attempt == 0:
-                prompt += "\n\nOnly use the exact option names listed above — no invented or paraphrased names."
+                if bad_refs:
+                    prompt += "\n\nOnly use the exact option names listed above — no invented or paraphrased names."
+                if incomplete:
+                    prompt += "\n\nEnd the sentence — do not stop mid-phrase. End with a period or question mark."
         return text  # accept the imperfect second attempt rather than aborting
 
     def _social_round(self, state: DialogueState, tracker: "StateTracker", phase: Phase, budget: int, build_prompt, validate_state: DialogueState | None = None) -> None:

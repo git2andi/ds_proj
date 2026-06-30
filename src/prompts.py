@@ -149,18 +149,37 @@ _MODERATOR_VOICE = (
 )
 _MODERATOR_RULES = (
     "Use only the names and facts given here — do not invent names, votes, reasons, or any quality, "
-    "attribute, or description of any option beyond its name. No quotes, no name prefix, no lists, no emoji."
+    "attribute, or description of any option beyond its name. "
+    "Say 'leaning toward' or 'seems to prefer', never 'voted for', unless someone explicitly cast a visible vote. "
+    "Do not suggest combining, blending, or merging options — the options are fixed. "
+    "No quotes, no name prefix, no lists, no emoji."
 )
 
 
 def _camp_split(state: DialogueState) -> str:
-    """A compact tally of how the room is divided right now, e.g.
-    '3 for City Break, 3 for Mountain Resort, 1 undecided' — so the moderator can name the
-    actual split instead of a vague 'we're going in circles'."""
+    """Compact tally of current leanings — explicitly labelled as leans, not votes.
+    '3 leaning toward City Break, 1 undecided' — so the moderator uses correct state language."""
     from collections import Counter
     counts = Counter(_lean_name(state, p) for p in state.personas)
-    parts = [f"{n} for {name}" if name != "no clear pick" else f"{n} undecided" for name, n in counts.most_common()]
+    parts = [
+        f"{n} leaning toward {name}" if name != "no clear pick" else f"{n} undecided"
+        for name, n in counts.most_common()
+    ]
     return ", ".join(parts)
+
+
+def _vote_summary(state: DialogueState) -> str:
+    """List of personas who have cast explicit visible votes, for use in moderator prompts
+    that must distinguish leanings from binding commitments."""
+    voted = [
+        f"{p.name} voted for {state.scenario.option(rt.explicit_vote).name}"
+        for p in state.personas
+        if (rt := state.runtimes[p.id]).explicit_vote
+        and rt.explicit_vote in state.scenario.option_ids
+    ]
+    if not voted:
+        return "No explicit votes yet — only leanings."
+    return "; ".join(voted)
 
 
 def moderator_stall_prompt(state: DialogueState) -> str:
@@ -215,10 +234,12 @@ def _holdout_info(state: DialogueState) -> tuple[str, str]:
 def moderator_agreement_prompt(state: DialogueState, candidate_id: str) -> str:
     option = state.scenario.option(candidate_id)
     whole = "you both" if len(state.personas) == 2 else "the group"
+    votes = _vote_summary(state)
     return f"""{_MODERATOR_VOICE} (max 28 words) for this moment.
 Topic: {state.scenario.topic}
 Candidate: {_option_brief(option)}
-State as a fact that {whole} seem to be landing on {option.name}. Declarative sentence — no question, no "should we", no "anyone object". {_MODERATOR_RULES}"""
+Votes so far: {votes}
+State as a fact that {whole} seem to be leaning toward or have chosen {option.name}. Use "leaning toward" if no one has explicitly voted yet. Declarative sentence — no question, no "should we", no "anyone object". {_MODERATOR_RULES}"""
 
 
 def moderator_holdout_prompt(state: DialogueState, candidate_id: str, holdout_ids: list[str]) -> str:
