@@ -1,0 +1,2141 @@
+{
+  "run_id": "20260701_174655_693111",
+  "topic": "Decide which cloud provider to migrate the app to",
+  "scenario": {
+    "topic": "Decide which cloud provider to migrate the app to",
+    "decision_kind": "generic_decision",
+    "opening_question": "What matters most to us when choosing a cloud provider: cost, performance, or ease of migration?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Amazon Web Services EC2 and RDS",
+        "attrs": {
+          "monthly_cost_estimate": "$14,000",
+          "migration_time_estimate": "4 months",
+          "support_level": "24/7 enterprise support",
+          "scalability": "high"
+        },
+        "upside": "Industry-leading scalability and global availability zones",
+        "tradeoff": "Higher complexity in configuration and management",
+        "concern": "Potentially steep learning curve for the team",
+        "best_for": "teams prioritizing performance and scalability",
+        "short_name": ""
+      },
+      {
+        "id": "B",
+        "name": "Microsoft Azure App Services and SQL Database",
+        "attrs": {
+          "monthly_cost_estimate": "$12,500",
+          "migration_time_estimate": "3 months",
+          "support_level": "business hours support",
+          "integration": "strong with Microsoft tools"
+        },
+        "upside": "Faster migration with strong integration to existing Microsoft stack",
+        "tradeoff": "Slightly less mature ecosystem for some open-source tools",
+        "concern": "Support outside business hours may be limited",
+        "best_for": "teams invested in Microsoft technologies and faster migration",
+        "short_name": "Azure App"
+      },
+      {
+        "id": "C",
+        "name": "Google Cloud Platform Compute Engine and Cloud SQL",
+        "attrs": {
+          "monthly_cost_estimate": "$13,000",
+          "migration_time_estimate": "5 months",
+          "support_level": "24/7 standard support",
+          "machine_learning_tools": "advanced"
+        },
+        "upside": "Strong machine learning and data analytics tools",
+        "tradeoff": "Migration may take longer due to less mature migration tooling",
+        "concern": "Potential vendor lock-in with proprietary APIs",
+        "best_for": "teams focused on data and AI capabilities",
+        "short_name": "Google Cloud"
+      },
+      {
+        "id": "D",
+        "name": "DigitalOcean Droplets and Managed Databases",
+        "attrs": {
+          "monthly_cost_estimate": "$9,000",
+          "migration_time_estimate": "2 months",
+          "support_level": "community and ticket-based support",
+          "ease_of_use": "high"
+        },
+        "upside": "Lowest cost and fastest migration time",
+        "tradeoff": "Less enterprise-grade features and scalability",
+        "concern": "Limited support options for critical incidents",
+        "best_for": "small teams prioritizing cost and speed",
+        "short_name": "DigitalOcean"
+      }
+    ],
+    "shared_context": [
+      "The team consists of exactly 6 participants.",
+      "We need to migrate our main customer-facing app within the next 6 months.",
+      "Our budget for cloud services is capped at $15,000 per month."
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Yuki",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.3625,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.5874999999999999,
+        "compromise_threshold": 0.36250000000000004
+      },
+      "background": "As a developer focused on integration with Microsoft tools, Yuki values streamlined migration and compatibility.",
+      "private_goal": "I want a cloud provider that offers fast migration and strong integration with our existing Microsoft stack.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Hana",
+      "traits": {
+        "openness": 1,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 1,
+        "neuroticism": 5
+      },
+      "sim_params": {
+        "engagement": 1.0,
+        "verbosity": 0.75,
+        "initiative": 0.7,
+        "responsiveness": 0.55,
+        "stubbornness": 1.0,
+        "directness": 1.0,
+        "compromise_threshold": 0.95
+      },
+      "background": "Hana manages infrastructure and prioritizes advanced AI and data capabilities for future growth.",
+      "private_goal": "I want a cloud provider with strong machine learning tools to leverage data analytics effectively.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "D",
+      "rejection_reason": "DigitalOcean lacks enterprise-grade features and scalability, which conflicts with Hana's focus on advanced AI and growth.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "D",
+          "reason": "raise the hard concern about D: DigitalOcean lacks enterprise-grade features and scalability, which conflicts with Hana's focus on advanced AI and growth.",
+          "priority": 0.95,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Vera",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 1.0,
+        "initiative": 1.0,
+        "responsiveness": 0.875,
+        "stubbornness": 0.25,
+        "directness": 0.675,
+        "compromise_threshold": 0.07499999999999996
+      },
+      "background": "Vera works closely with the team and values a balance between migration speed and integration with Microsoft technologies.",
+      "private_goal": "I want a cloud provider that ensures faster migration and good compatibility with our current tools.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Kenji",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.5375,
+        "compromise_threshold": 0.6
+      },
+      "background": "Kenji is concerned about support availability and prefers providers with reliable business hours support.",
+      "private_goal": "I want a provider that offers dependable support during business hours to minimize downtime.",
+      "preferred_options": [
+        "B",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Diego",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.9624999999999999,
+        "verbosity": 0.9375,
+        "initiative": 0.9249999999999999,
+        "responsiveness": 0.6,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.875,
+        "compromise_threshold": 0.5375
+      },
+      "background": "Diego is focused on leveraging AI capabilities but also values cost-effectiveness.",
+      "private_goal": "I want a cloud provider with strong AI tools but that also keeps costs reasonable.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Quinn",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.7749999999999999,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.7625,
+        "stubbornness": 0.475,
+        "directness": 0.65,
+        "compromise_threshold": 0.375
+      },
+      "background": "Quinn values ease of use and quick migration to reduce disruption for the small team.",
+      "private_goal": "I want the migration to be as fast and smooth as possible with minimal complexity.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Decide which cloud provider to migrate the app to.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Amazon Web Services EC2 and RDS — monthly cost estimate: $14,000; migration time estimate: 4 months; scalability: high (+ Industry-leading scalability and global availability zones; − Higher complexity in configuration and management)\nB) Microsoft Azure App Services and SQL Database — monthly cost estimate: $12,500; migration time estimate: 3 months; integration: strong with Microsoft tools (+ Faster migration with strong integration to existing Microsoft stack; − Slightly less mature ecosystem for some open-source tools)\nC) Google Cloud Platform Compute Engine and Cloud SQL — monthly cost estimate: $13,000; migration time estimate: 5 months; machine learning tools: advanced (+ Strong machine learning and data analytics tools; − Migration may take longer due to less mature migration…)\nD) DigitalOcean Droplets and Managed Databases — monthly cost estimate: $9,000; migration time estimate: 2 months; ease of use: high (+ Lowest cost and fastest migration time; − Less enterprise-grade features and scalability)\nContext: The team consists of exactly 6 participants.; We need to migrate our main customer-facing app within the next 6 months.; Our budget for cloud services is capped at $15,000 per month.\nWhat matters most to us when choosing a cloud provider: cost, performance, or ease of migration?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Decide which cloud provider to migrate the app to.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Amazon Web Services EC2 and RDS — monthly cost estimate: $14,000; migration time estimate: 4 months; scalability: high (+ Industry-leading scalability and global availability zones; − Higher complexity in configuration and management)\nB) Microsoft Azure App Services and SQL Database — monthly cost estimate: $12,500; migration time estimate: 3 months; integration: strong with Microsoft tools (+ Faster migration with strong integration to existing Microsoft stack; − Slightly less mature ecosystem for some open-source tools)\nC) Google Cloud Platform Compute Engine and Cloud SQL — monthly cost estimate: $13,000; migration time estimate: 5 months; machine learning tools: advanced (+ Strong machine learning and data analytics tools; − Migration may take longer due to less mature migration…)\nD) DigitalOcean Droplets and Managed Databases — monthly cost estimate: $9,000; migration time estimate: 2 months; ease of use: high (+ Lowest cost and fastest migration time; − Less enterprise-grade features and scalability)\nContext: The team consists of exactly 6 participants.; We need to migrate our main customer-facing app within the next 6 months.; Our budget for cloud services is capped at $15,000 per month.\nWhat matters most to us when choosing a cloud provider: cost, performance, or ease of migration?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "Azure stands out because it can speed up migration and fits well with the Microsoft tools we already use, which should reduce friction for us.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Azure stands out because it can speed up migration and fits well with the Microsoft tools we already use, which should reduce friction for us.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1174,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "I want us to prioritize strong AI tools since that’s where we can really innovate and differentiate.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I want us to prioritize strong AI tools since that’s where we can really innovate and differentiate.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1213,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p6",
+      "speaker_name": "Quinn",
+      "text": "I want us to focus on making the migration as smooth and quick as possible to avoid disrupting our small team’s workflow.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I want us to focus on making the migration as smooth and quick as possible to avoid disrupting our small team’s workflow.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1258,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "I want us to prioritize the AI and data tools we’ll need as we grow, which only one provider here clearly leads on.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I want us to prioritize the AI and data tools we’ll need as we grow, which only one provider here clearly leads on.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1318,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Choosing the option with strong Microsoft integration makes sense for a smoother transition, though I wonder about support.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Choosing the option with strong Microsoft integration makes sense for a smoother transition, though I wonder about support.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1300,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Kenji",
+      "text": "Support during business hours is crucial for us, and Azure seems reliable there, but what about urgent issues.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Support during business hours is crucial for us, and Azure seems reliable there, but what about urgent issues.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 975,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p6",
+      "speaker_name": "Quinn",
+      "text": "Kenji, I get the support concern, but remember DigitalOcean’s biggest win is how fast we can migrate—just two months, minimizing downtime.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Kenji, I get the support concern, but remember DigitalOcean’s biggest win is how fast we can migrate—just two months, minimizing downtime.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "Kenji, I get the support concern, but remember DigitalOcean’s biggest win is how fast we can migrate—just two months, minimizing downtime."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "add a new grounded reason about DigitalOcean, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1060,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p4",
+      "speaker_name": "Kenji",
+      "text": "Amazon’s 24/7 support and scalability could justify the longer migration despite higher complexity and costs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Amazon’s 24/7 support and scalability could justify the longer migration despite higher complexity and costs.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 2063,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "I want us to weigh how Google Cloud’s advanced AI tools could future-proof us, even if migration takes a bit longer. Can we afford that delay for better long-term capabilities?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I want us to weigh how Google Cloud’s advanced AI tools could future-proof us, even if migration takes a bit longer. Can we afford that delay for better long-term capabilities?",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1036,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p4",
+      "speaker_name": "Kenji",
+      "text": "I want us to remember that 24/7 support really cuts downtime risk, which matters more than future AI tools now.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I want us to remember that 24/7 support really cuts downtime risk, which matters more than future AI tools now.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1031,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "We get top-tier machine learning and data analytics that can actually transform our product, not just keep it running.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "We get top-tier machine learning and data analytics that can actually transform our product, not just keep it running.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "add a new grounded reason about Google Cloud, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1078,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "I respect the focus on support, Kenji, but we can’t overlook that Google Cloud’s AI tools are unmatched for driving innovation and scaling data insights.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I respect the focus on support, Kenji, but we can’t overlook that Google Cloud’s AI tools are unmatched for driving innovation and scaling data insights.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Google Cloud, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1150,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Diego, I get the AI appeal, but with Azure we can migrate faster and keep our Microsoft tools working smoothly—less.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Diego, I get the AI appeal, but with Azure we can migrate faster and keep our Microsoft tools working smoothly—less.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Azure App, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1044,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p6",
+      "speaker_name": "Quinn",
+      "text": "Yuki, Azure’s integration is solid, but DigitalOcean still beats it on speed and simplicity.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Yuki, Azure’s integration is solid, but DigitalOcean still beats it on speed and simplicity.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "add a new grounded reason about Azure App, DigitalOcean, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1206,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "We get a faster migration with Azure, which is crucial given our six-month deadline, plus it minimizes disruptions by working smoothly with our current Microsoft tools.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We get a faster migration with Azure, which is crucial given our six-month deadline, plus it minimizes disruptions by working smoothly with our current Microsoft tools.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Azure App, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 1159,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "I get the migration speed concern, but can we clarify if Google Cloud’s longer migration could still fit within our six-month window? That’s a hard limit for us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I get the migration speed concern, but can we clarify if Google Cloud’s longer migration could still fit within our six-month window? That’s a hard limit for us.",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "I get the migration speed concern, but can we clarify if Google Cloud’s longer migration could still fit within our six-month window? That’s a hard limit for us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Google Cloud",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 803,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "We can fit Google Cloud’s migration within six months, but it leaves little room for unexpected delays.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We can fit Google Cloud’s migration within six months, but it leaves little room for unexpected delays.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1079,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "I reject DigitalOcean outright—its lack of enterprise-grade features and limited support make it a ticking time bomb for us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I reject DigitalOcean outright—its lack of enterprise-grade features and limited support make it a ticking time bomb for us.",
+        "act_type": "reject",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "I reject DigitalOcean outright—its lack of enterprise-grade features and limited support make it a ticking time bomb for us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about DigitalOcean",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1158,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "Hana makes a strong point about support. Do we know if Azure’s business hours support will be enough for us, or will we need to budget extra for.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Hana makes a strong point about support. Do we know if Azure’s business hours support will be enough for us, or will we need to budget extra for.",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Azure App",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 765,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "Vera, Azure’s business hours support might be risky for 24/7 app stability. For Google Cloud, does their standard 24/7 support include proactive incident management or.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Vera, Azure’s business hours support might be risky for 24/7 app stability. For Google Cloud, does their standard 24/7 support include proactive incident management or.",
+        "act_type": "ask",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Vera, Azure’s business hours support might be risky for 24/7 app stability. For Google Cloud, does their standard 24/7 support include proactive incident management or."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Google Cloud",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 821,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Kenji",
+      "text": "Can someone confirm if Google’s 24/7 support actively prevents downtime or just responds when issues arise?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Can someone confirm if Google’s 24/7 support actively prevents downtime or just responds when issues arise?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Google Cloud, Azure App, Amazon Web",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 943,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "Google Cloud offers 24/7 standard support, but it’s unclear if that includes proactive incident prevention or only reactive responses.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Google Cloud offers 24/7 standard support, but it’s unclear if that includes proactive incident prevention or only reactive responses.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1949,
+      "tokens_out": 108,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "I get the support concern, but the faster migration and smooth Microsoft integration might balance that risk for us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get the support concern, but the faster migration and smooth Microsoft integration might balance that risk for us.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "I get the support concern, but the faster migration and smooth Microsoft integration might balance that risk for us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Google Cloud, Azure App, DigitalOcean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1371,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "I agree with you, Yuki, that faster migration is a big win here. We should just make sure our team can cover the support hours gap or plan for critical escalation.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I agree with you, Yuki, that faster migration is a big win here. We should just make sure our team can cover the support hours gap or plan for critical escalation.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Azure App with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1112,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "I want us to focus on the AI edge Google Cloud gives without breaking the budget. Yes, migration might stretch to five months, but those advanced tools will pay off.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I want us to focus on the AI edge Google Cloud gives without breaking the budget. Yes, migration might stretch to five months, but those advanced tools will pay off.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "compare Google Cloud with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1097,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "We need to accept a longer migration if it means getting the AI tools that scale with us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We need to accept a longer migration if it means getting the AI tools that scale with us.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Google Cloud with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "agenda_index": 3,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1144,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Group, please share your final vote clearly by stating \"I vote for Azure App\" or your preferred option now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Group, please share your final vote clearly by stating \"I vote for Azure App\" or your preferred option now.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "I vote for Azure App because we can handle support hours and keep migration smooth.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Azure App because we can handle support hours and keep migration smooth.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 726,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p4",
+      "speaker_name": "Kenji",
+      "text": "Support during business hours is crucial to me; I vote for Azure App.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Support during business hours is crucial to me; I vote for Azure App.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 724,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "I vote for Azure App because the three-month migration fits our timeline better, and the integration will reduce extra work for us.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Azure App because the three-month migration fits our timeline better, and the integration will reduce extra work for us.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 724,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p6",
+      "speaker_name": "Quinn",
+      "text": "I vote for Azure App because the three-month migration timeline is realistic and keeps disruption minimal.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I vote for Azure App because the three-month migration timeline is realistic and keeps disruption minimal.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 705,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p5",
+      "speaker_name": "Diego",
+      "text": "I vote for Azure App. The migration speed and Microsoft integration outweigh the slightly higher cost, and we can still explore AI tools.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I vote for Azure App. The migration speed and Microsoft integration outweigh the slightly higher cost, and we can still explore AI tools.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 700,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p2",
+      "speaker_name": "Hana",
+      "text": "Speed matters, but Google’s advanced AI tools are crucial; I vote for Option C.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Speed matters, but Google’s advanced AI tools are crucial; I vote for Option C.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1283,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Microsoft Azure App Services and SQL Database as the final decision.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The majority chose Microsoft Azure App Services and SQL Database as the final decision.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "5/6 participants visibly committed to the winning option.",
+    "turns": 32,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "C",
+        "p3": "B",
+        "p4": "B",
+        "p5": "B",
+        "p6": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "C",
+        "p3": "B",
+        "p4": "B",
+        "p5": "B",
+        "p6": "B"
+      },
+      "phase_history": [
+        "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.52",
+        "turn 7: discussion — all participants gave an opening view",
+        "turn 27: narrowing — target discussion length reached",
+        "turn 34: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 18,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 38
+    }
+  },
+  "metrics": {
+    "participant_turns": 32,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.086,
+    "turn_counts": {
+      "Yuki": 4,
+      "Hana": 7,
+      "Vera": 6,
+      "Kenji": 5,
+      "Diego": 6,
+      "Quinn": 4
+    },
+    "top_speaker_share": 0.219,
+    "avg_words_by_persona": {
+      "Yuki": 18.0,
+      "Hana": 20.4,
+      "Vera": 24.8,
+      "Kenji": 16.4,
+      "Diego": 24.5,
+      "Quinn": 18.2
+    },
+    "question_density": 0.094,
+    "avg_words_per_turn": 20.8,
+    "repaired_turns": 3,
+    "repair_rate": 0.094,
+    "flagged_turns": 0,
+    "visible_vote_count": 6,
+    "visible_votes": {
+      "Yuki": "B",
+      "Hana": "C",
+      "Vera": "B",
+      "Kenji": "B",
+      "Diego": "B",
+      "Quinn": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.125,
+    "option_opening_rate": 0.156,
+    "name_or_option_opening_rate": 0.281,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 1,
+    "final_support_fraction": 0.833,
+    "option_coverage": {
+      "A": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 14,
+        "reasons": 6,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 3,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 3,
+        "reasons": 2,
+        "objections": 2,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Yuki": 0.362,
+      "Hana": 1.0,
+      "Vera": 0.925,
+      "Kenji": 0.325,
+      "Diego": 0.962,
+      "Quinn": 0.775
+    },
+    "agenda_status": {
+      "done": 12,
+      "pending": 10,
+      "obsolete": 2
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "min_discussion_turns": 18,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 38,
+    "phase_history": [
+      "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.52",
+      "turn 7: discussion — all participants gave an opening view",
+      "turn 27: narrowing — target discussion length reached",
+      "turn 34: closure — majority visible after vote round 1",
+      "turn 35: closure — closed as majority"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2123,
+    "setup_tokens_out": 1277,
+    "dialogue_tokens_in": 35544,
+    "dialogue_tokens_out": 1474,
+    "total_tokens_in": 37667,
+    "total_tokens_out": 2751
+  },
+  "tokens": {
+    "setup_tokens_in": 2123,
+    "setup_tokens_out": 1277,
+    "dialogue_tokens_in": 35544,
+    "dialogue_tokens_out": 1474,
+    "total_tokens_in": 37667,
+    "total_tokens_out": 2751
+  }
+}

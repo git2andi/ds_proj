@@ -1,0 +1,2022 @@
+{
+  "run_id": "20260701_175134_641179",
+  "topic": "Decide on a policy for remote versus in-office work days",
+  "scenario": {
+    "topic": "Decide on a policy for remote versus in-office work days",
+    "decision_kind": "schedule_choice",
+    "opening_question": "How should we balance remote and in-office days to keep productivity and team connection strong?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Fixed Two Days In-Office Weekly",
+        "attrs": {
+          "in_office_days_per_week": "2",
+          "remote_days_per_week": "3",
+          "meeting_days": "In-office days only",
+          "commute_requirement": "Mandatory on in-office days"
+        },
+        "upside": "Ensures regular face-to-face collaboration twice a week.",
+        "tradeoff": "Limits flexibility for employees who prefer more remote work.",
+        "concern": "Some may find commuting twice a week disruptive or costly.",
+        "best_for": "Teams prioritizing consistent in-person interaction.",
+        "short_name": "Two Days"
+      },
+      {
+        "id": "B",
+        "name": "Flexible Choice With Mandatory Core Hours",
+        "attrs": {
+          "in_office_days_per_week": "Employee choice",
+          "remote_days_per_week": "Employee choice",
+          "core_hours": "10am-3pm daily",
+          "meeting_days": "Any day during core hours"
+        },
+        "upside": "Maximizes individual flexibility while ensuring overlap for meetings.",
+        "tradeoff": "Less predictable in-office presence may reduce spontaneous collaboration.",
+        "concern": "Core hours may not suit all time zones or personal schedules.",
+        "best_for": "Teams valuing flexibility with some guaranteed overlap.",
+        "short_name": "Flexible Core"
+      },
+      {
+        "id": "C",
+        "name": "Three Consecutive In-Office Days Weekly",
+        "attrs": {
+          "in_office_days_per_week": "3",
+          "remote_days_per_week": "2",
+          "meeting_days": "In-office days preferred",
+          "commute_requirement": "Mandatory on in-office days"
+        },
+        "upside": "Concentrates in-person work for deeper collaboration and project focus.",
+        "tradeoff": "Longer consecutive commute may cause fatigue or scheduling conflicts.",
+        "concern": "Less flexibility for personal appointments during in-office stretch.",
+        "best_for": "Teams needing blocks of in-person collaboration.",
+        "short_name": "Three Consecutive"
+      },
+      {
+        "id": "D",
+        "name": "Fully Remote With Quarterly Office Meetups",
+        "attrs": {
+          "in_office_days_per_week": "0",
+          "remote_days_per_week": "5",
+          "office_meetups_per_year": "4",
+          "travel_budget": "Company covers meetup travel"
+        },
+        "upside": "Maximizes remote work flexibility and reduces daily commute stress.",
+        "tradeoff": "Less frequent in-person interaction may weaken team bonds.",
+        "concern": "Quarterly meetups may be costly and inconvenient for some.",
+        "best_for": "Teams prioritizing remote flexibility with occasional face time.",
+        "short_name": "Fully Remote"
+      }
+    ],
+    "shared_context": [
+      "The team has exactly 5 members.",
+      "The company supports flexible work but wants clear guidelines.",
+      "The goal is to maintain collaboration while respecting personal work preferences."
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Tala",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.325,
+        "directness": 0.825,
+        "compromise_threshold": 0.25
+      },
+      "background": "I value flexibility and occasional in-person meetings to maintain team cohesion without daily commuting.",
+      "private_goal": "I want a policy that maximizes remote work while preserving some face-to-face interaction.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Gemma",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.4375,
+        "verbosity": 0.4625,
+        "initiative": 0.475,
+        "responsiveness": 0.7,
+        "stubbornness": 0.475,
+        "directness": 0.4375,
+        "compromise_threshold": 0.375
+      },
+      "background": "I prefer predictable schedules with regular in-office days to better manage my work-life balance.",
+      "private_goal": "I want a fixed routine that limits commuting frequency to twice a week.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Isla",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.775,
+        "stubbornness": 0.4,
+        "directness": 0.8624999999999999,
+        "compromise_threshold": 0.42499999999999993
+      },
+      "background": "I thrive with structured blocks of in-person collaboration to focus deeply on projects.",
+      "private_goal": "I want consecutive in-office days to maximize team synergy and minimize daily commuting stress.",
+      "preferred_options": [
+        "C",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Oscar",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.7749999999999999,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.65,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.6875,
+        "compromise_threshold": 0.4624999999999999
+      },
+      "background": "I enjoy in-person collaboration but appreciate some flexibility to manage personal appointments.",
+      "private_goal": "I want a balance between consecutive in-office days and remote days for flexibility.",
+      "preferred_options": [
+        "C",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Wyatt",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.625,
+        "verbosity": 0.6625000000000001,
+        "initiative": 0.675,
+        "responsiveness": 0.875,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.55,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "I value flexible scheduling with guaranteed overlapping hours to coordinate with teammates across time zones.",
+      "private_goal": "I want a policy that supports remote work while ensuring daily core hours for meetings.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Decide on a policy for remote versus in-office work days.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Fixed Two Days In-Office Weekly — commute requirement: Mandatory on in-office days; in office days per week: 2; meeting days: In-office days only (+ Ensures regular face-to-face collaboration twice a week; − Limits flexibility for employees who prefer more remote work)\nB) Flexible Choice With Mandatory Core Hours — core hours: 10am-3pm daily; in office days per week: Employee choice; meeting days: Any day during core hours (+ Maximizes individual flexibility while ensuring overlap for meetings; − Less predictable in-office presence may reduce spontaneous collaboration)\nC) Three Consecutive In-Office Days Weekly — commute requirement: Mandatory on in-office days; in office days per week: 3; meeting days: In-office days preferred (+ Concentrates in-person work for deeper collaboration and project focus; − Longer consecutive commute may cause fatigue or scheduling conflicts)\nD) Fully Remote With Quarterly Office Meetups — travel budget: Company covers meetup travel; in office days per week: 0; office meetups per year: 4 (+ Maximizes remote work flexibility and reduces daily commute stress; − Less frequent in-person interaction may weaken team bonds)\nContext: The team has exactly 5 members.; The company supports flexible work but wants clear guidelines.; The goal is to maintain collaboration while respecting personal work preferences.\nHow should we balance remote and in-office days to keep productivity and team connection strong?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Decide on a policy for remote versus in-office work days.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Fixed Two Days In-Office Weekly — commute requirement: Mandatory on in-office days; in office days per week: 2; meeting days: In-office days only (+ Ensures regular face-to-face collaboration twice a week; − Limits flexibility for employees who prefer more remote work)\nB) Flexible Choice With Mandatory Core Hours — core hours: 10am-3pm daily; in office days per week: Employee choice; meeting days: Any day during core hours (+ Maximizes individual flexibility while ensuring overlap for meetings; − Less predictable in-office presence may reduce spontaneous collaboration)\nC) Three Consecutive In-Office Days Weekly — commute requirement: Mandatory on in-office days; in office days per week: 3; meeting days: In-office days preferred (+ Concentrates in-person work for deeper collaboration and project focus; − Longer consecutive commute may cause fatigue or scheduling conflicts)\nD) Fully Remote With Quarterly Office Meetups — travel budget: Company covers meetup travel; in office days per week: 0; office meetups per year: 4 (+ Maximizes remote work flexibility and reduces daily commute stress; − Less frequent in-person interaction may weaken team bonds)\nContext: The team has exactly 5 members.; The company supports flexible work but wants clear guidelines.; The goal is to maintain collaboration while respecting personal work preferences.\nHow should we balance remote and in-office days to keep productivity and team connection strong?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "Maximizing remote work keeps us productive without daily commuting stress, but we should watch for how less frequent meetups might impact team synergy.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Maximizing remote work keeps us productive without daily commuting stress, but we should watch for how less frequent meetups might impact team synergy.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1180,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Three consecutive days in the office create a solid block for collaboration and reduce context switching.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Three consecutive days in the office create a solid block for collaboration and reduce context switching.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1183,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Blocking three days in the office helps us build momentum and reduces daily transitions.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Blocking three days in the office helps us build momentum and reduces daily transitions.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1252,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "I like how Flexible Core lets us pick our days but still guarantees we’re all synced up during key hours, which feels.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I like how Flexible Core lets us pick our days but still guarantees we’re all synced up during key hours, which feels.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1249,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "I appreciate how this gives us a clear routine, which helps avoid last-minute schedule chaos.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I appreciate how this gives us a clear routine, which helps avoid last-minute schedule chaos.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1270,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I respect how three days build momentum, Isla, but fully remote with quarterly meetups still lets us connect deeply without the weekly commute grind.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I respect how three days build momentum, Isla, but fully remote with quarterly meetups still lets us connect deeply without the weekly commute grind.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Fully Remote, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1048,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Two fixed days guarantee regular face time but split momentum and can feel disjointed.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Two fixed days guarantee regular face time but split momentum and can feel disjointed.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1145,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "Tala, I get that fully remote is convenient, but two fixed days make sure we don’t lose touch midweek.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Tala, I get that fully remote is convenient, but two fixed days make sure we don’t lose touch midweek.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Two Days, connected to the current discussion",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1007,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Three consecutive days build real momentum for focused work and collaboration, which we can’t get from scattered in-office times.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Three consecutive days build real momentum for focused work and collaboration, which we can’t get from scattered in-office times.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Three Consecutive, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 1045,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I hear the momentum argument, Oscar, but can three consecutive days’ commute fatigue affect productivity later in the week? How would we handle that risk?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I hear the momentum argument, Oscar, but can three consecutive days’ commute fatigue affect productivity later in the week? How would we handle that risk?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Three Consecutive, Fully Remote, Two Days",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 915,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "I accept that longer commutes could tire us, but concentrating office days helps us plan personal time around work better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I accept that longer commutes could tire us, but concentrating office days helps us plan personal time around work better.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1015,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "I get the planning benefit, Oscar, but I worry three consecutive days might make it harder for some to handle unexpected personal needs midweek.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I get the planning benefit, Oscar, but I worry three consecutive days might make it harder for some to handle unexpected personal needs midweek.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "I get the planning benefit, Oscar, but I worry three consecutive days might make it harder for some to handle unexpected personal needs midweek."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Flexible Core, Three Consecutive",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1190,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "Wyatt, if unexpected personal needs come up, fully remote would let us handle them without disrupting the team.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Wyatt, if unexpected personal needs come up, fully remote would let us handle them without disrupting the team.",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Fully Remote",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": "concede_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 868,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Wyatt, three consecutive days do require more upfront planning to manage personal things, but they also reduce the back-and-forth of switching between remote and office modes.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Wyatt, three consecutive days do require more upfront planning to manage personal things, but they also reduce the back-and-forth of switching between remote and office modes.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Three Consecutive, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1042,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "I like that flexible core hours guarantee daily overlap, which feels crucial for keeping us connected despite varied schedules.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I like that flexible core hours guarantee daily overlap, which feels crucial for keeping us connected despite varied schedules.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "add a new grounded reason about Flexible Core, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1079,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "I appreciate that core hours keep us synced, but having fixed days helps me really settle into a routine.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I appreciate that core hours keep us synced, but having fixed days helps me really settle into a routine.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Flexible Core, Two Days, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1194,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "Would having flexible in-office days but fixed core hours still let us plan meetings early enough to avoid last-minute scrambling?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Would having flexible in-office days but fixed core hours still let us plan meetings early enough to avoid last-minute scrambling?",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Flexible Core",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 780,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I get why fixed days give you routine, Gemma, but that also means less flexibility if something unexpected comes up.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get why fixed days give you routine, Gemma, but that also means less flexibility if something unexpected comes up.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Two Days, Flexible Core, Fully Remote, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1362,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Two consecutive days in-office strike a better balance by ensuring regular face-to-face time without requiring the longer commitment three days straight demands.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Two consecutive days in-office strike a better balance by ensuring regular face-to-face time without requiring the longer commitment three days straight demands.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Two Days, Three Consecutive, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1167,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "Oscar, do you think two fixed days might make scheduling personal appointments harder for anyone?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Oscar, do you think two fixed days might make scheduling personal appointments harder for anyone?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Two Days",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 721,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Fixed two days could limit flexibility, especially for those juggling appointments outside work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Fixed two days could limit flexibility, especially for those juggling appointments outside work.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 966,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Oscar, two days might sound less demanding, but three consecutive days actually help us build real momentum on projects without breaking flow midweek.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Oscar, two days might sound less demanding, but three consecutive days actually help us build real momentum on projects without breaking flow midweek.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Three Consecutive, Two Days, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1179,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Group, please share your final vote clearly by saying, \"I vote for...\" so we can see where everyone stands.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Group, please share your final vote clearly by saying, \"I vote for...\" so we can see where everyone stands.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "I vote for three consecutive days. It creates a rhythm that lets us sync deeply and tackle complex tasks together.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for three consecutive days. It creates a rhythm that lets us sync deeply and tackle complex tasks together.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 773,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "I vote for three consecutive days. It helps us dive deeper without constantly switching gears, even if the longer.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I vote for three consecutive days. It helps us dive deeper without constantly switching gears, even if the longer.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 750,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "I vote for two days because it gives us regular face time without overwhelming the.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for two days because it gives us regular face time without overwhelming the.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 727,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "Keeping daily core hours is crucial, so I vote for Flexible Core to balance focus and teamwork.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Keeping daily core hours is crucial, so I vote for Flexible Core to balance focus and teamwork.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 750,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I vote for fully remote. We get maximum flexibility and reduce commute stress, which keeps us productive.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for fully remote. We get maximum flexibility and reduce commute stress, which keeps us productive.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 721,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Votes are split across all options; would agreeing on three consecutive in-office days weekly work as a compromise for everyone?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Votes are split across all options; would agreeing on three consecutive in-office days weekly work as a compromise for everyone?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p1",
+      "speaker_name": "Tala",
+      "text": "I see the focus benefits of three days in-office, so I vote for Option C.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I see the focus benefits of three days in-office, so I vote for Option C.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group is split; either clearly switch to the proposed compromise if you can accept it, or clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": true
+      },
+      "tokens_in": 1228,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p2",
+      "speaker_name": "Gemma",
+      "text": "Wyatt, three consecutive days might tire us; I vote for Option A.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Wyatt, three consecutive days might tire us; I vote for Option A.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; either clearly switch to the proposed compromise if you can accept it, or clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": true
+      },
+      "tokens_in": 1264,
+      "tokens_out": 48,
+      "validation_issues": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": true
+    },
+    {
+      "index": 33,
+      "speaker_id": "p5",
+      "speaker_name": "Wyatt",
+      "text": "I understand the commute tradeoff, but three days improve syncing, so I vote for Option C.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I understand the commute tradeoff, but three days improve syncing, so I vote for Option C.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "the group is split; either clearly switch to the proposed compromise if you can accept it, or clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": true
+      },
+      "tokens_in": 1224,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority has chosen Three Consecutive In-Office Days Weekly; the decision is now finalized.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The majority has chosen Three Consecutive In-Office Days Weekly; the decision is now finalized.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "reason": "4/5 participants visibly committed to the winning option.",
+    "turns": 30,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "A",
+        "p3": "C",
+        "p4": "C",
+        "p5": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "A",
+        "p3": "C",
+        "p4": "C",
+        "p5": "C"
+      },
+      "phase_history": [
+        "pacing: min=15, force=22, hard=32, distinct_initial_prefs=4, avg_compromise=0.67",
+        "turn 6: discussion — all participants gave an opening view",
+        "turn 23: narrowing — target discussion length reached",
+        "turn 29: closure — all participants already gave a clear vote",
+        "turn 33: closure — majority after split-vote compromise"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 22,
+      "hard_max_turns": 32
+    }
+  },
+  "metrics": {
+    "participant_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.118,
+    "turn_counts": {
+      "Tala": 7,
+      "Gemma": 6,
+      "Isla": 5,
+      "Oscar": 6,
+      "Wyatt": 6
+    },
+    "top_speaker_share": 0.233,
+    "avg_words_by_persona": {
+      "Tala": 20.3,
+      "Gemma": 15.8,
+      "Isla": 19.4,
+      "Oscar": 18.2,
+      "Wyatt": 19.7
+    },
+    "question_density": 0.1,
+    "avg_words_per_turn": 18.7,
+    "repaired_turns": 3,
+    "repair_rate": 0.1,
+    "flagged_turns": 1,
+    "visible_vote_count": 5,
+    "visible_votes": {
+      "Tala": "C",
+      "Gemma": "A",
+      "Isla": "C",
+      "Oscar": "C",
+      "Wyatt": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.2,
+    "option_opening_rate": 0.167,
+    "name_or_option_opening_rate": 0.367,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 0.8,
+    "option_coverage": {
+      "A": {
+        "mentions": 10,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 5,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 13,
+        "reasons": 7,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 6,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Tala": 0.85,
+      "Gemma": 0.438,
+      "Isla": 0.85,
+      "Oscar": 0.775,
+      "Wyatt": 0.625
+    },
+    "agenda_status": {
+      "done": 6,
+      "pending": 11,
+      "obsolete": 2
+    },
+    "outcome_status": "majority",
+    "final_option": "C",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 22,
+    "hard_max_turns": 32,
+    "phase_history": [
+      "pacing: min=15, force=22, hard=32, distinct_initial_prefs=4, avg_compromise=0.67",
+      "turn 6: discussion — all participants gave an opening view",
+      "turn 23: narrowing — target discussion length reached",
+      "turn 29: closure — all participants already gave a clear vote",
+      "turn 33: closure — majority after split-vote compromise",
+      "turn 34: closure — closed as majority"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2086,
+    "setup_tokens_out": 1182,
+    "dialogue_tokens_in": 31944,
+    "dialogue_tokens_out": 1271,
+    "total_tokens_in": 34030,
+    "total_tokens_out": 2453
+  },
+  "tokens": {
+    "setup_tokens_in": 2086,
+    "setup_tokens_out": 1182,
+    "dialogue_tokens_in": 31944,
+    "dialogue_tokens_out": 1271,
+    "total_tokens_in": 34030,
+    "total_tokens_out": 2453
+  }
+}

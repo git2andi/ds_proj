@@ -1,0 +1,2389 @@
+{
+  "run_id": "20260701_174906_280716",
+  "topic": "Select a book for the office book club's next quarter",
+  "scenario": {
+    "topic": "Select a book for the office book club's next quarter",
+    "decision_kind": "generic_decision",
+    "opening_question": "What balance of enjoyment, challenge, and discussion depth do we want for our next book club read?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Night Circus by Erin Morgenstern",
+        "attrs": {
+          "length_pages": "387",
+          "genre": "Fantasy",
+          "reading_difficulty": "Moderate",
+          "popularity_rating": "High"
+        },
+        "upside": "Engaging magical realism with vivid imagery sparks imaginative discussion.",
+        "tradeoff": "Some find the nonlinear timeline confusing and pacing uneven.",
+        "concern": "May feel too whimsical or light for those wanting deeper themes.",
+        "best_for": "Readers prioritizing immersive storytelling and creative atmosphere.",
+        "short_name": "Night Circus"
+      },
+      {
+        "id": "B",
+        "name": "Educated by Tara Westover",
+        "attrs": {
+          "length_pages": "334",
+          "genre": "Memoir",
+          "reading_difficulty": "Moderate",
+          "popularity_rating": "Very High"
+        },
+        "upside": "Powerful true story invites meaningful conversations about family and resilience.",
+        "tradeoff": "Emotional intensity may be heavy for some participants.",
+        "concern": "Less fictional narrative may reduce appeal for those wanting escapism.",
+        "best_for": "Readers seeking impactful real-life stories and personal growth themes.",
+        "short_name": "Educated"
+      },
+      {
+        "id": "C",
+        "name": "Project Hail Mary by Andy Weir",
+        "attrs": {
+          "length_pages": "496",
+          "genre": "Science Fiction",
+          "reading_difficulty": "Moderate to High",
+          "popularity_rating": "High"
+        },
+        "upside": "Fast-paced sci-fi with problem-solving and humor encourages lively debate.",
+        "tradeoff": "Longer length and technical details may deter casual readers.",
+        "concern": "Some might find the science jargon overwhelming or dry.",
+        "best_for": "Readers interested in science-driven plots and adventurous narratives.",
+        "short_name": "Hail Mary"
+      },
+      {
+        "id": "D",
+        "name": "The Overstory by Richard Powers",
+        "attrs": {
+          "length_pages": "512",
+          "genre": "Literary Fiction",
+          "reading_difficulty": "High",
+          "popularity_rating": "Moderate"
+        },
+        "upside": "Deep environmental themes and interconnected stories foster thoughtful discussion.",
+        "tradeoff": "Complex structure and length require more time and focus.",
+        "concern": "May be too dense or slow for readers preferring lighter reads.",
+        "best_for": "Readers valuing literary depth and ecological awareness.",
+        "short_name": "Overstory"
+      }
+    ],
+    "shared_context": [
+      "The book club has exactly 7 participants.",
+      "The next quarter's book should be completed within 3 months.",
+      "Books should be accessible in paperback or ebook format within a $15 budget."
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Leo",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4625,
+        "initiative": 0.475,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.6499999999999999,
+        "compromise_threshold": 0.4624999999999999
+      },
+      "background": "Leo enjoys literary fiction that challenges readers with deep themes and complex narratives.",
+      "private_goal": "He wants the book club to select a meaningful, thought-provoking book that encourages reflection.",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Nico",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.55,
+        "directness": 0.6,
+        "compromise_threshold": 0.44999999999999996
+      },
+      "background": "Nico values books that spark lively discussion and have rich thematic content, especially on environmental or social issues.",
+      "private_goal": "He hopes the group picks a book that encourages thoughtful debate and awareness of important topics.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Amir",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 1.0,
+        "stubbornness": 0.1,
+        "directness": 0.7875,
+        "compromise_threshold": 0.050000000000000044
+      },
+      "background": "Amir appreciates impactful real-life stories that promote personal growth and resilience.",
+      "private_goal": "He wants the book club to choose a memoir that inspires and fosters meaningful conversations.",
+      "preferred_options": [
+        "B",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Kira",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4625,
+        "initiative": 0.475,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.4,
+        "directness": 0.6499999999999999,
+        "compromise_threshold": 0.42499999999999993
+      },
+      "background": "Kira enjoys immersive fantasy novels with creative atmospheres and imaginative storytelling.",
+      "private_goal": "She wants the book club to pick a book that offers an engaging and magical reading experience.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Isla",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.675,
+        "initiative": 0.6499999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.55,
+        "directness": 0.6,
+        "compromise_threshold": 0.55
+      },
+      "background": "Isla prefers books that are accessible and not too dense, but still offer meaningful themes.",
+      "private_goal": "She wants the group to select a book that balances depth with readability and keeps interest high.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Vera",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.6625,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.7124999999999999,
+        "compromise_threshold": 0.6
+      },
+      "background": "Vera is interested in science-driven stories but dislikes overly technical or jargon-heavy books.",
+      "private_goal": "She wants a book that challenges her intellectually without being too dry or inaccessible.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "D",
+      "rejection_reason": "Finds 'The Overstory' too dense and slow, conflicting with her preference for engaging narratives.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "D",
+          "reason": "raise the hard concern about D: Finds 'The Overstory' too dense and slow, conflicting with her preference for engaging narratives.",
+          "priority": 0.95,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "name": "Wyatt",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.2875,
+        "verbosity": 0.325,
+        "initiative": 0.35,
+        "responsiveness": 0.7,
+        "stubbornness": 0.475,
+        "directness": 0.375,
+        "compromise_threshold": 0.375
+      },
+      "background": "Wyatt looks for books that foster group harmony and are not too challenging or divisive.",
+      "private_goal": "He wants the book club to pick a book that most people can enjoy without feeling overwhelmed.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Select a book for the office book club's next quarter.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Night Circus by Erin Morgenstern — length pages: 387; genre: Fantasy; popularity rating: High (+ Engaging magical realism with vivid imagery sparks imaginative discussion; − Some find the nonlinear timeline confusing and pacing uneven)\nB) Educated by Tara Westover — length pages: 334; genre: Memoir; popularity rating: Very High (+ Powerful true story invites meaningful conversations about family and…; − Emotional intensity may be heavy for some participants)\nC) Project Hail Mary by Andy Weir — length pages: 496; genre: Science Fiction; popularity rating: High (+ Fast-paced sci-fi with problem-solving and humor encourages lively debate; − Longer length and technical details may deter casual readers)\nD) The Overstory by Richard Powers — length pages: 512; genre: Literary Fiction; popularity rating: Moderate (+ Deep environmental themes and interconnected stories foster thoughtful discussion; − Complex structure and length require more time and focus)\nContext: The book club has exactly 7 participants.; The next quarter's book should be completed within 3 months.; Books should be accessible in paperback or ebook format within a $15 budget.\nWhat balance of enjoyment, challenge, and discussion depth do we want for our next book club read?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Select a book for the office book club's next quarter.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Night Circus by Erin Morgenstern — length pages: 387; genre: Fantasy; popularity rating: High (+ Engaging magical realism with vivid imagery sparks imaginative discussion; − Some find the nonlinear timeline confusing and pacing uneven)\nB) Educated by Tara Westover — length pages: 334; genre: Memoir; popularity rating: Very High (+ Powerful true story invites meaningful conversations about family and…; − Emotional intensity may be heavy for some participants)\nC) Project Hail Mary by Andy Weir — length pages: 496; genre: Science Fiction; popularity rating: High (+ Fast-paced sci-fi with problem-solving and humor encourages lively debate; − Longer length and technical details may deter casual readers)\nD) The Overstory by Richard Powers — length pages: 512; genre: Literary Fiction; popularity rating: Moderate (+ Deep environmental themes and interconnected stories foster thoughtful discussion; − Complex structure and length require more time and focus)\nContext: The book club has exactly 7 participants.; The next quarter's book should be completed within 3 months.; Books should be accessible in paperback or ebook format within a $15 budget.\nWhat balance of enjoyment, challenge, and discussion depth do we want for our next book club read?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Amir",
+      "text": "Educated stands out for its raw, real-life impact and the way it challenges us to reflect on personal growth.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Educated stands out for its raw, real-life impact and the way it challenges us to reflect on personal growth.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1157,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Nico",
+      "text": "I’m drawn to something that pushes us beyond just a story—this one’s complexity could really challenge us to think deeply about how our lives connect.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m drawn to something that pushes us beyond just a story—this one’s complexity could really challenge us to think deeply about how our lives connect.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1190,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p5",
+      "speaker_name": "Isla",
+      "text": "I appreciate books that make us think without feeling like a slog, and this one’s rich themes might keep us hooked despite its.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I appreciate books that make us think without feeling like a slog, and this one’s rich themes might keep us hooked despite its.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1212,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "I want something engaging but not too dry, so Hail Mary’s mix of humor and science works well.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I want something engaging but not too dry, so Hail Mary’s mix of humor and science works well.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1297,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "Considering its depth, we should also think about whether everyone can commit to its length and complexity comfortably.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Considering its depth, we should also think about whether everyone can commit to its length and complexity comfortably.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1279,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Kira",
+      "text": "I like how Night Circus creates a vivid, magical world that’s fun to get lost in.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I like how Night Circus creates a vivid, magical world that’s fun to get lost in.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 964,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p7",
+      "speaker_name": "Wyatt",
+      "text": "Deep themes are worth it if we trust everyone can keep up.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Deep themes are worth it if we trust everyone can keep up.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 982,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "Wyatt, I get that, but we can’t ignore how some might drop off if the science jargon gets too heavy.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Wyatt, I get that, but we can’t ignore how some might drop off if the science jargon gets too heavy.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p7",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "add a new grounded reason about Hail Mary, connected to the current discussion",
+        "addressee_id": "p7",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1057,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Nico",
+      "text": "The Overstory’s environmental focus is perfect for deep talks, but its length and complexity might be tough for those wanting a lighter read.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The Overstory’s environmental focus is perfect for deep talks, but its length and complexity might be tough for those wanting a lighter read.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1713,
+      "tokens_out": 81,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "I get that deep talks are good, Nico, but slow pacing risks losing most of us before we even start.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I get that deep talks are good, Nico, but slow pacing risks losing most of us before we even start.",
+        "act_type": "challenge",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Overstory",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1114,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p4",
+      "speaker_name": "Kira",
+      "text": "I think its nonlinear timeline actually keeps things fresh and unpredictable, which could keep us hooked despite pacing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I think its nonlinear timeline actually keeps things fresh and unpredictable, which could keep us hooked despite pacing.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Night Circus, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 1083,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Amir",
+      "text": "Kira, that nonlinear style does make the story more engaging. I also appreciate how it’s a real memoir that pushes us to reflect on resilience and personal growth.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Kira, that nonlinear style does make the story more engaging. I also appreciate how it’s a real memoir that pushes us to reflect on resilience and personal growth.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Educated, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1090,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p5",
+      "speaker_name": "Isla",
+      "text": "I like how it’s not just about environment, but how everything’s connected—makes the reading feel meaningful despite the challenge.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I like how it’s not just about environment, but how everything’s connected—makes the reading feel meaningful despite the challenge.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "add a new grounded reason about Overstory, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1068,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p7",
+      "speaker_name": "Wyatt",
+      "text": "Kira, Hail Mary’s pace is more consistent, but the science might lose some of us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Kira, Hail Mary’s pace is more consistent, but the science might lose some of us.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "compare",
+        "reason": "compare Overstory, Hail Mary with one clear trade-off",
+        "addressee_id": "p4",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1187,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "I appreciate that challenge, but the way it weaves personal stories with environmental themes could really spark some deep conversations.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I appreciate that challenge, but the way it weaves personal stories with environmental themes could really spark some deep conversations.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Overstory, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1069,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p5",
+      "speaker_name": "Isla",
+      "text": "Since it’s pretty long and dense, do we think everyone can realistically finish it in three months without feeling rushed?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Since it’s pretty long and dense, do we think everyone can realistically finish it in three months without feeling rushed?",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Overstory",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 827,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "I think we can handle a longer read if it’s meaningful, but we should consider how much time everyone.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I think we can handle a longer read if it’s meaningful, but we should consider how much time everyone.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1017,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p4",
+      "speaker_name": "Kira",
+      "text": "Would the nonlinear timeline in Night Circus make it harder for us to stay on track reading together?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Would the nonlinear timeline in Night Circus make it harder for us to stay on track reading together?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Night Circus",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 750,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p7",
+      "speaker_name": "Wyatt",
+      "text": "It’s long and dense but could bring us together with its deep themes.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "It’s long and dense but could bring us together with its deep themes.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "build",
+        "reason": "add a new grounded reason about Overstory, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1020,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Nico",
+      "text": "Wyatt, I get that the deep themes could unite us, but its complexity might slow some down or frustrate casual readers.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Wyatt, I get that the deep themes could unite us, but its complexity might slow some down or frustrate casual readers.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p7",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Overstory, Hail Mary with one clear trade-off",
+        "addressee_id": "p7",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1137,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Amir",
+      "text": "Nico, that’s a fair point about complexity slowing readers down. Educated hits hard emotionally but stays straightforward, making it easier to follow while sparking real conversations about growth.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nico, that’s a fair point about complexity slowing readers down. Educated hits hard emotionally but stays straightforward, making it easier to follow while sparking real conversations about growth.",
+        "act_type": "agree",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point, but add a small new angle about Educated",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1036,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Nico",
+      "text": "Its interconnected stories offer a unique way to explore environmental themes from multiple perspectives, which could spark deeper discussions than a straightforward narrative might.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Its interconnected stories offer a unique way to explore environmental themes from multiple perspectives, which could spark deeper discussions than a straightforward narrative might.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Overstory, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "allow_vote_change": false
+      },
+      "tokens_in": 1097,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p7",
+      "speaker_name": "Wyatt",
+      "text": "Complexity risks losing some of us before discussions start.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Complexity risks losing some of us before discussions start.",
+        "act_type": "challenge",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Overstory, Educated",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1191,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "True, but skipping the challenge might mean missing out on some really rewarding discussions down the line.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "True, but skipping the challenge might mean missing out on some really rewarding discussions down the line.",
+        "act_type": "challenge",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Overstory, Hail Mary",
+        "addressee_id": "p7",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1155,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "Leo, I get that challenge is good, but can we finish Hail Mary in three months without rushing?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Leo, I get that challenge is good, but can we finish Hail Mary in three months without rushing?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Hail Mary",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 781,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "Vera, I hear you on the time crunch; Hail Mary’s length could stretch us thin.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Vera, I hear you on the time crunch; Hail Mary’s length could stretch us thin.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 972,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p3",
+      "speaker_name": "Amir",
+      "text": "Educated offers a powerful, real-life story that fits our timeframe better and stays within budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Educated offers a powerful, real-life story that fits our timeframe better and stays within budget.",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Educated",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 27,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 751,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "I’m not convinced a memoir will spark the debates we want; we need that edge from a story with bigger.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I’m not convinced a memoir will spark the debates we want; we need that edge from a story with bigger.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "compare",
+        "reason": "compare Hail Mary with one clear trade-off",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 28,
+        "agenda_index": 3,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1094,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p4",
+      "speaker_name": "Kira",
+      "text": "I get wanting that edge, Vera, but the magical world here could actually spark some really creative debates.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I get wanting that edge, Vera, but the magical world here could actually spark some really creative debates.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "compare Night Circus with one clear trade-off",
+        "addressee_id": "p6",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 29,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1049,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p5",
+      "speaker_name": "Isla",
+      "text": "I agree, Kira—creative debates would be great, but we should also consider if everyone can stay engaged with something this dense over three months.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I agree, Kira—creative debates would be great, but we should also consider if everyone can stay engaged with something this dense over three months.",
+        "act_type": "agree",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "agree",
+        "reason": "agree with the recent point, but add a small new angle about Overstory",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 30,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1022,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Everyone, please share your final vote clearly by saying, \"I vote for [book title]\" so we can see where we stand.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Everyone, please share your final vote clearly by saying, \"I vote for [book title]\" so we can see where we stand.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p2",
+      "speaker_name": "Nico",
+      "text": "I vote for Option D because its environmental themes push us to reflect on our world’s impact deeply.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I vote for Option D because its environmental themes push us to reflect on our world’s impact deeply.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1264,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p5",
+      "speaker_name": "Isla",
+      "text": "Choosing something that challenges us but isn’t overwhelming is key, so I vote for Overstory.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Choosing something that challenges us but isn’t overwhelming is key, so I vote for Overstory.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 724,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p7",
+      "speaker_name": "Wyatt",
+      "text": "I vote for Overstory. It’s tough but could bring us together.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p7",
+        "text": "I vote for Overstory. It’s tough but could bring us together.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 731,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p1",
+      "speaker_name": "Leo",
+      "text": "I vote for Overstory because its layered storytelling will keep us engaged even with the.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I vote for Overstory because its layered storytelling will keep us engaged even with the.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 698,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p3",
+      "speaker_name": "Amir",
+      "text": "I vote for Educated because it’s a powerful memoir that truly inspires resilience and sparks meaningful conversation.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Educated because it’s a powerful memoir that truly inspires resilience and sparks meaningful conversation.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 715,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p4",
+      "speaker_name": "Kira",
+      "text": "Magic and atmosphere make the Night Circus a memorable journey. I vote for Night Circus.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Magic and atmosphere make the Night Circus a memorable journey. I vote for Night Circus.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 698,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "p6",
+      "speaker_name": "Vera",
+      "text": "Overstory is too dense for our timeframe; I vote for Educated.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Overstory is too dense for our timeframe; I vote for Educated.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "allow_vote_change": false
+      },
+      "tokens_in": 1288,
+      "tokens_out": 48,
+      "validation_issues": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": true
+    },
+    {
+      "index": 40,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group will read The Overstory by Richard Powers, chosen by majority vote.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The group will read The Overstory by Richard Powers, chosen by majority vote.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "reason": "4/7 participants visibly committed to the winning option.",
+    "turns": 37,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "B",
+        "p4": "A",
+        "p5": "D",
+        "p7": "D"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "D",
+        "p4": "A",
+        "p5": "D",
+        "p6": "C",
+        "p7": "D"
+      },
+      "phase_history": [
+        "pacing: min=21, force=30, hard=44, distinct_initial_prefs=4, avg_compromise=0.58",
+        "turn 8: discussion — all participants gave an opening view",
+        "turn 31: narrowing — target discussion length reached",
+        "turn 39: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 21,
+      "force_narrow_turns": 30,
+      "hard_max_turns": 44
+    }
+  },
+  "metrics": {
+    "participant_turns": 37,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.075,
+    "turn_counts": {
+      "Leo": 6,
+      "Nico": 5,
+      "Amir": 5,
+      "Kira": 5,
+      "Isla": 5,
+      "Vera": 6,
+      "Wyatt": 5
+    },
+    "top_speaker_share": 0.162,
+    "avg_words_by_persona": {
+      "Leo": 17.3,
+      "Nico": 22.2,
+      "Amir": 21.4,
+      "Kira": 17.0,
+      "Isla": 20.2,
+      "Vera": 17.8,
+      "Wyatt": 12.0
+    },
+    "question_density": 0.081,
+    "avg_words_per_turn": 18.2,
+    "repaired_turns": 3,
+    "repair_rate": 0.081,
+    "flagged_turns": 1,
+    "visible_vote_count": 6,
+    "visible_votes": {
+      "Leo": "D",
+      "Nico": "D",
+      "Amir": "B",
+      "Kira": "A",
+      "Isla": "D",
+      "Wyatt": "D"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.189,
+    "option_opening_rate": 0.135,
+    "name_or_option_opening_rate": 0.324,
+    "repeated_opening_patterns": 4,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 0.571,
+    "option_coverage": {
+      "A": {
+        "mentions": 3,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 4,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 4,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 5,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Leo": 0.512,
+      "Nico": 0.737,
+      "Amir": 0.85,
+      "Kira": 0.512,
+      "Isla": 0.737,
+      "Vera": 0.4,
+      "Wyatt": 0.287
+    },
+    "agenda_status": {
+      "done": 14,
+      "pending": 12,
+      "obsolete": 1
+    },
+    "outcome_status": "majority",
+    "final_option": "D",
+    "min_discussion_turns": 21,
+    "force_narrow_turns": 30,
+    "hard_max_turns": 44,
+    "phase_history": [
+      "pacing: min=21, force=30, hard=44, distinct_initial_prefs=4, avg_compromise=0.58",
+      "turn 8: discussion — all participants gave an opening view",
+      "turn 31: narrowing — target discussion length reached",
+      "turn 39: closure — majority visible after vote round 1",
+      "turn 40: closure — closed as majority"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2209,
+    "setup_tokens_out": 1366,
+    "dialogue_tokens_in": 38829,
+    "dialogue_tokens_out": 1383,
+    "total_tokens_in": 41038,
+    "total_tokens_out": 2749
+  },
+  "tokens": {
+    "setup_tokens_in": 2209,
+    "setup_tokens_out": 1366,
+    "dialogue_tokens_in": 38829,
+    "dialogue_tokens_out": 1383,
+    "total_tokens_in": 41038,
+    "total_tokens_out": 2749
+  }
+}
