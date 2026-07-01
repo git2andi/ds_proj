@@ -24,17 +24,18 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `config.yaml`: tunable parameters.
 - `src/config_loader.py`: loads and validates `config.yaml`; exposes `cfg`.
 - `src/prompts.py`: all LLM prompts and moderator templates.
-- `src/dialogue.py`: compact discussion controller, routing, obligations, voting, consensus.
+- `src/dialogue.py`: compact discussion controller — routing, obligations, voting, moderator.
+- `src/consensus.py`: outcome logic (`ConsensusManager`, `participant_turn_count`), visible-vote only.
 - `src/builders.py`: setup generation and persona parsing.
 - `src/simulator.py`: OCEAN→parameter derivation and per-persona agenda.
 - `src/models.py`: typed state (scenario, personas, runtime, obligations, coverage).
 - `src/parsing.py`: option matching and visible-commitment/vote parsing.
 - `src/aliases.py`: the single option-alias contract (`short_alias_map`).
-- `src/style.py`: deterministic local surface-style tracker (name-prefix, repeated templates).
+- `src/style.py`: deterministic surface-style tracker (name/option openings, repeated templates).
 - `src/llm_client.py`: provider abstraction (uni | groq | gemini | gpt).
 - `src/evaluation.py`: lightweight metrics (separate from logging).
 - `src/logger.py`: run logging (transcript, JSON, metrics CSV).
-- `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON).
+- `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
 - `tests/`: deterministic, LLM-free tests.
 - `info/`: conceptual design notes for intended behavior.
 - `docs/todo.md`: open issues and the per-issue implementation protocol.
@@ -48,9 +49,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
   participant answers within the next turn. Obligations expire after a bounded
   number of turns and are counted as `unanswered_direct_questions`.
 - **Surface-style control.** `src/style.py` tracks the last few participant turns
-  for name-prefix density and repeated concession/worry/trade-off templates. The
-  controller suppresses non-functional name prefixes (deterministic strip), biases
-  act selection away from templated streaks, and passes compact prompt flags.
+  for name-prefix density, option-name openings, repeated opening words, and repeated
+  concession/worry/trade-off templates. The controller strips non-functional name
+  prefixes, biases act selection away from templated streaks, and passes compact
+  prompt flags (suppress name/option opening, vary opening). Word budgets are
+  trait-driven (`_word_bounds`) so verbosity/engagement produce a visible length
+  spread; `sim_utterance` length/tone guidance is concrete and parameter-driven.
 - **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
   penalizes the second-to-last speaker to stop two participants ping-ponging.
 - **Vote stability.** Later vote rounds only re-prompt unclear/non-voters, and

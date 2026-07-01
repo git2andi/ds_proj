@@ -13,6 +13,9 @@ from collections.abc import Iterable
 
 # Leading "Name," or "Name:" address marker at the very start of a turn.
 _NAME_PREFIX = re.compile(r"^\s*([A-Za-zÀ-ÖØ-öø-ÿ][\wÀ-ÖØ-öø-ÿ'-]+)\s*[,:]\s+")
+# A leading article/determiner that often precedes an option name opening.
+_LEAD_ARTICLE = re.compile(r"^\s*(?:the|a|an|that|this|option)\s+", re.I)
+_OPTION_LETTER = re.compile(r"^\s*option\s+[a-z]\b", re.I)
 
 _AGREE_OPENER = re.compile(
     r"^\s*(?:[A-Za-zÀ-ÿ'-]+\s*[,:]\s*)?"  # optional leading name
@@ -54,6 +57,72 @@ def name_prefix_fraction(texts: list[str], names: Iterable[str]) -> float:
         return 0.0
     hits = sum(1 for t in texts if leading_name(t, names))
     return hits / len(texts)
+
+
+# Short words that must not count as an option-opener even if they start a name.
+_OPENER_STOP = frozenset({
+    "the", "a", "an", "and", "for", "with", "our", "new", "one", "two",
+    "option", "plan", "standard", "premium", "basic", "pro", "free", "cloud",
+})
+
+
+def option_opener_terms(aliases: Iterable[str]) -> set[str]:
+    """Tokens/phrases that signal a turn is opening on an option name.
+
+    Includes the full alias and its distinctive first word (>= 3 chars), so both
+    'The rooftop lounge…' and single brand words like 'Trello…'/'ClickUp…' count.
+    """
+    terms: set[str] = set()
+    for alias in aliases:
+        al = str(alias).lower().strip()
+        if not al:
+            continue
+        terms.add(al)
+        first = al.split()[0]
+        if len(first) >= 3 and first not in _OPENER_STOP:
+            terms.add(first)
+    return terms
+
+
+def leading_option(text: str, aliases: Iterable[str]) -> bool:
+    """True if a turn opens with an option name/alias (e.g. 'The rooftop lounge…', 'Trello…')."""
+    if not text:
+        return False
+    body = _NAME_PREFIX.sub("", text).strip()
+    body_l = body.lower()
+    if _OPTION_LETTER.match(body_l):
+        return True
+    terms = option_opener_terms(aliases)
+    if opening_signature(text) in terms:
+        return True
+    stripped = _LEAD_ARTICLE.sub("", body_l)
+    return any(" " in t and (stripped.startswith(t) or body_l.startswith(t)) for t in terms)
+
+
+def option_opening_fraction(texts: list[str], aliases: Iterable[str]) -> float:
+    """Share of recent turns that open with an option name/alias."""
+    aliases = list(aliases)
+    if not texts:
+        return 0.0
+    return sum(1 for t in texts if leading_option(t, aliases)) / len(texts)
+
+
+def opening_signature(text: str) -> str:
+    """First meaningful word of a turn, ignoring a leading name/article."""
+    body = _NAME_PREFIX.sub("", text or "").strip().lower()
+    body = _LEAD_ARTICLE.sub("", body)
+    match = re.match(r"[a-zà-ÿ']+", body)
+    return match.group(0) if match else ""
+
+
+def repeated_opening_token(texts: list[str], window: int) -> str | None:
+    """Return the opening word shared by the last ``window`` turns, if any."""
+    if window <= 1 or len(texts) < window:
+        return None
+    sigs = [opening_signature(t) for t in texts[-window:]]
+    if sigs[0] and all(s == sigs[0] for s in sigs):
+        return sigs[0]
+    return None
 
 
 def surface_pattern(text: str) -> str:

@@ -20,11 +20,11 @@ import prompts
 from aliases import short_alias_map
 from builders import SetupBuilder
 from config_loader import cfg
+from consensus import ConsensusManager, participant_turn_count
 from logger import DialogueLogger, token_summary_for
 from llm_client import get_llm_client
 from models import (
     ActType,
-    AgendaStatus,
     DialogueAct,
     DialogueRunResult,
     DialogueState,
@@ -35,13 +35,19 @@ from models import (
     Persona,
     Phase,
     ResponseObligation,
-    RunOutcome,
     TurnRecord,
 )
 from parsing import OptionResolver, parse_dialogue_act
 from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
-from style import name_prefix_fraction, repeated_pattern, strip_leading_name, surface_pattern
-from utils import normalise_lines, normalise_ws, strip_speaker_prefix, weighted_choice
+from style import (
+    name_prefix_fraction,
+    option_opening_fraction,
+    repeated_opening_token,
+    repeated_pattern,
+    strip_leading_name,
+    surface_pattern,
+)
+from utils import clean_generated, normalise_lines, weighted_choice
 
 _VOTE_CHANGE = re.compile(
     r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
@@ -448,7 +454,7 @@ class DialogueRunner:
     def _generate_and_append(self, state: DialogueState, intent: MoveIntent) -> TurnRecord:
         self._apply_style_flags(state, intent)
         persona = state.persona_by_id(intent.speaker_id)
-        max_words = self._max_words_for(intent, persona)
+        min_words, max_words = self._word_bounds(intent, persona)
         recent_lines = self._recent_lines(state)
         focus_options = [state.scenario.option(i) for i in intent.option_focus if i in state.scenario.option_ids]
         addressee_name = state.name_for(intent.addressee_id) if intent.addressee_id else None
@@ -460,6 +466,7 @@ class DialogueRunner:
             focus_options=focus_options,
             addressee_name=addressee_name,
             max_words=max_words,
+            min_words=min_words,
         )
         self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{persona.id}_{intent.act.value}")
         text, tokens_in, tokens_out = self._call_participant(prompt, persona.name, max_words)
@@ -988,12 +995,21 @@ class DialogueRunner:
         keep their functional name use.
         """
         names = [p.name for p in state.personas]
-        functional_naming = intent.act in {ActType.ANSWER, ActType.INVITE} or intent.addressee_id is not None
+        # Only inviting a quiet participant truly needs a leading name; answers and
+        # addressed turns can respond without opening on the name, so they are still
+        # subject to suppression when name-prefix density is high.
+        functional_naming = intent.act == ActType.INVITE
         window = int(cfg.style.name_prefix_window)
         recent = self._recent_participant_texts(state, window)
         if not functional_naming and recent:
             if name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
                 intent.suppress_name_prefix = True
+        alias_values = list(short_alias_map(state.scenario.options).values())
+        if recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
+            intent.suppress_option_opening = True
+        opening_window = int(cfg.style.repeated_opening_window)
+        if repeated_opening_token(self._recent_participant_texts(state, opening_window), opening_window):
+            intent.vary_opening = True
         if intent.act in _DISCUSSION_ACTS:
             pattern_window = int(cfg.style.repeated_pattern_window)
             intent.avoid_pattern = repeated_pattern(
@@ -1150,7 +1166,8 @@ class DialogueRunner:
         return self._latent_leading_count(state) / max(1, len(state.personas))
 
     @staticmethod
-    def _max_words_for(intent: MoveIntent, persona: Persona) -> int:
+    def _word_bounds(intent: MoveIntent, persona: Persona) -> tuple[int, int]:
+        """Trait-driven (min, max) word budget so verbosity/engagement are visible."""
         budgets = cfg.utterances.word_budgets
         if intent.act == ActType.OPENING:
             base = int(budgets.opening)
@@ -1162,7 +1179,12 @@ class DialogueRunner:
             base = int(budgets.vote)
         else:
             base = int(budgets.discussion)
-        return max(7, base + round((persona.sim_params.verbosity - 0.5) * 8))
+        p = persona.sim_params
+        # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
+        factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30
+        max_words = max(6, round(base * factor))
+        min_words = max(3, round(max_words * (0.30 + 0.25 * p.verbosity)))
+        return min_words, max_words
 
     @staticmethod
     def _print_header(state: DialogueState) -> None:
@@ -1186,78 +1208,3 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
     return state
 
 
-def participant_turn_count(state: DialogueState) -> int:
-    return sum(1 for turn in state.turns if turn.speaker_id != "moderator")
-
-
-class ConsensusManager:
-    @staticmethod
-    def finalize(state: DialogueState) -> RunOutcome:
-        votes = {
-            persona.id: state.runtimes[persona.id].explicit_vote
-            for persona in state.personas
-            if state.runtimes[persona.id].explicit_vote in state.scenario.option_ids
-        }
-        counts = Counter(votes.values())
-        turns = participant_turn_count(state)
-        metadata = {
-            "visible_votes": votes,
-            "latent_preferences": {pid: rt.current_preference for pid, rt in state.runtimes.items()},
-            "phase_history": list(state.phase_history),
-            "candidate_option": state.candidate_option,
-            "min_discussion_turns": state.min_discussion_turns,
-            "force_narrow_turns": state.force_narrow_turns,
-            "hard_max_turns": state.hard_max_turns,
-        }
-        if not counts:
-            return RunOutcome("unresolved", None, "No visible votes or acceptances were produced.", turns, metadata)
-        winner, support = counts.most_common(1)[0]
-        if support == len(state.personas):
-            return RunOutcome("successful", winner, "All participants visibly committed to the same option.", turns, metadata)
-        threshold = math.ceil(float(cfg.consensus.majority_fraction) * len(state.personas))
-        if support >= threshold and list(counts.values()).count(support) == 1:
-            return RunOutcome("majority", winner, f"{support}/{len(state.personas)} participants visibly committed to the winning option.", turns, metadata)
-        return RunOutcome("unresolved", None, "Visible commitments did not produce a unique majority.", turns, metadata)
-
-
-def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
-    text = strip_speaker_prefix(text, speaker_name)
-    text = normalise_ws(text.replace("\n", " "))
-    text = text.strip('"“”')
-    text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
-    text = _remove_generic_filler_tail(text)
-    words = text.split()
-    if len(words) > max_words:
-        chopped = " ".join(words[:max_words]).rstrip(" ,;:")
-        sentence_end = max(chopped.rfind("."), chopped.rfind("!"), chopped.rfind("?"))
-        if sentence_end >= max(10, len(chopped) // 2):
-            text = chopped[: sentence_end + 1].strip()
-        else:
-            text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
-            if text and text[-1] not in ".!?":
-                text += "."
-    return text
-
-
-def _remove_generic_filler_tail(text: str) -> str:
-    patterns = [
-        r"\s*(?:what do you think|thoughts|any thoughts)\??$",
-        r"\s*(?:what about you|does that help|does that work)\??$",
-        r"\s*(?:right|yeah)\??$",
-    ]
-    out = text
-    for pattern in patterns:
-        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
-    return out.strip()
-
-
-def _remove_dangling_fragment(text: str) -> str:
-    patterns = [
-        r"\s+(?:even if|even though|although|though|because|since|but|while|whereas|if|when|with|without)$",
-        r"\s+(?:though|although|but|because|since|if)\s+(?:it|that|this|we|they|there|the)\s+(?:might|could|would|is|are|was|were|has|have)?\s*$",
-        r"\s+(?:what|what do|what do you|can|can you|does|does that),?\.?$",
-    ]
-    out = text
-    for pattern in patterns:
-        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
-    return out

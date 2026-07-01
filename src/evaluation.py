@@ -10,8 +10,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from aliases import short_alias_map
 from models import DialogueState, RunOutcome
-from style import leading_name, surface_pattern
+from style import leading_name, leading_option, surface_pattern
 
 
 # Planned-but-not-yet-implemented metrics. Kept as explicit stubs so later work
@@ -63,7 +64,9 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     top_turn_share = round(max(turn_counts.values(), default=0) / max(1, len(participant_turns)), 3)
     expected_engagement = {p.name: round(p.sim_params.engagement, 3) for p in state.personas}
     names = [p.name for p in state.personas]
+    alias_values = list(short_alias_map(state.scenario.options).values())
     name_prefixed = sum(1 for t in participant_turns if leading_name(t.text, names))
+    option_opened = sum(1 for t in participant_turns if leading_option(t.text, alias_values))
     patterns = [surface_pattern(t.text) for t in participant_turns]
     templated = {"concede_but", "worry_but", "tradeoff_but"}
     repeated_openings = sum(
@@ -86,6 +89,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "visible_votes": visible_votes,
         "unanswered_direct_questions": int(state.unanswered_obligations),
         "name_prefix_rate": round(name_prefixed / n_turns, 3),
+        "option_opening_rate": round(option_opened / n_turns, 3),
+        "name_or_option_opening_rate": round((name_prefixed + option_opened) / n_turns, 3),
         "repeated_opening_patterns": repeated_openings,
         "unsupported_fact_flags": sum(
             1 for t in participant_turns

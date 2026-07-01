@@ -4,11 +4,17 @@ from __future__ import annotations
 
 from style import (
     leading_name,
+    leading_option,
     name_prefix_fraction,
+    opening_signature,
+    option_opening_fraction,
+    repeated_opening_token,
     repeated_pattern,
     strip_leading_name,
     surface_pattern,
 )
+
+ALIASES = ["rooftop lounge", "hotel banquet", "Go with Gin"]
 
 NAMES = ["Anton", "Kenji", "Lila"]
 
@@ -52,3 +58,23 @@ def test_repeated_pattern_ignores_varied_turns():
         "The direct flight is fastest.",
     ]
     assert repeated_pattern(texts, 3) is None
+
+
+def test_leading_option_detects_option_openings():
+    assert leading_option("The rooftop lounge is lively.", ALIASES) is True
+    assert leading_option("Go with Gin offers top performance.", ALIASES) is True
+    assert leading_option("Option C looks best.", ALIASES) is True
+    assert leading_option("I think we should move fast.", ALIASES) is False
+
+
+def test_option_opening_fraction():
+    texts = ["The hotel banquet is elegant", "I worry about cost", "Go with Gin scales well"]
+    assert option_opening_fraction(texts, ALIASES) == round(2 / 3, 10) or abs(option_opening_fraction(texts, ALIASES) - 2 / 3) < 1e-9
+
+
+def test_opening_signature_and_repeat():
+    assert opening_signature("The rooftop lounge is nice") == "rooftop"
+    assert opening_signature("Kenji, we should decide") == "we"
+    texts = ["Maybe we wait", "Maybe try B", "Maybe go cheaper"]
+    assert repeated_opening_token(texts, 3) == "maybe"
+    assert repeated_opening_token(["Yes", "No", "Maybe"], 3) is None

@@ -212,6 +212,8 @@ class MoveIntent:
     agenda_index: int | None = None
     moves_lean: bool = False
     suppress_name_prefix: bool = False
+    suppress_option_opening: bool = False
+    vary_opening: bool = False
     avoid_pattern: str | None = None
     allow_vote_change: bool = False
 

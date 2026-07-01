@@ -203,6 +203,7 @@ def sim_utterance(
     focus_options: list[OptionCard],
     addressee_name: str | None,
     max_words: int,
+    min_words: int = 6,
 ) -> str:
     aliases = short_alias_map(state.scenario.options)
     cards = _option_cards(focus_options or state.scenario.options)
@@ -228,9 +229,25 @@ def sim_utterance(
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
         agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
+    if params.verbosity <= 0.4:
+        length_note = f"Keep it very short ({min_words}-{max_words} words), blunt and to the point; a sentence fragment is fine."
+    elif params.verbosity >= 0.7:
+        length_note = f"Two short clauses or sentences are okay ({min_words}-{max_words} words)."
+    else:
+        length_note = f"Aim for {min_words}-{max_words} words, one casual sentence."
+    if params.directness >= 0.65:
+        tone_note = " Say it plainly, almost no hedging."
+    elif params.directness <= 0.35:
+        tone_note = " Keep the wording soft and tentative."
+    else:
+        tone_note = ""
     style_notes = ""
     if intent.suppress_name_prefix:
         style_notes += "\n- Recent turns over-used names; do NOT open with another participant's name, just reply."
+    if intent.suppress_option_opening:
+        style_notes += "\n- Do NOT start with an option name or 'The <option>'; lead with your point, a verb, 'I', 'we', or a question."
+    if intent.vary_opening:
+        style_notes += "\n- Recent turns all opened with the same word; start this one a different way."
     if intent.avoid_pattern in {"concede_but", "worry_but", "tradeoff_but"}:
         style_notes += "\n- Avoid the 'fair point, but…' / 'X is good but I worry…' concession-objection shape used just now; make a different move (a plain claim, a direct question, a concrete comparison, or a firm stance)."
 
@@ -260,9 +277,9 @@ Recent chat:
 
 Style:
 - One message only, no name prefix, no quotes, no bullet list.
-- Aim for {8 if max_words > 16 else 5}-{max_words} words. Full casual sentence, not a meeting speech.
-- Follow the voice guidance; make this person sound distinct from the others without becoming a caricature.
-- Vary sentence shape. Do not keep starting with "I'm leaning", "feels", or the option name.
+- {length_note}{tone_note}
+- Follow the voice guidance; make this person clearly sound different from the others in length and tone.
+- Vary sentence shape and opening. Do not start with an option name, "The <option>", "I'm leaning", or "feels".
 - Use names, "you", "we", "us", short option names, or no option name when that fits.
 - Add one new point, concern, answer, or stance shift. Avoid repeating the same reason from recent chat.
 - Ask a question only when the move is ask or invite; otherwise usually make a statement.

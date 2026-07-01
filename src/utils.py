@@ -106,3 +106,48 @@ def compact_words(text: str, max_words: int) -> str:
     if not trimmed:
         trimmed = words[:max_words]
     return " ".join(trimmed).rstrip(" ,;:") + "."
+
+
+def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
+    """Normalize a raw model utterance: drop speaker prefix, metadata trailer,
+    generic filler, and enforce a word cap without leaving a dangling fragment."""
+    text = strip_speaker_prefix(text, speaker_name)
+    text = normalise_ws(text.replace("\n", " "))
+    text = text.strip('"“”')
+    text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
+    text = _remove_generic_filler_tail(text)
+    words = text.split()
+    if len(words) > max_words:
+        chopped = " ".join(words[:max_words]).rstrip(" ,;:")
+        sentence_end = max(chopped.rfind("."), chopped.rfind("!"), chopped.rfind("?"))
+        if sentence_end >= max(10, len(chopped) // 2):
+            text = chopped[: sentence_end + 1].strip()
+        else:
+            text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
+            if text and text[-1] not in ".!?":
+                text += "."
+    return text
+
+
+def _remove_generic_filler_tail(text: str) -> str:
+    patterns = [
+        r"\s*(?:what do you think|thoughts|any thoughts)\??$",
+        r"\s*(?:what about you|does that help|does that work)\??$",
+        r"\s*(?:right|yeah)\??$",
+    ]
+    out = text
+    for pattern in patterns:
+        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
+    return out.strip()
+
+
+def _remove_dangling_fragment(text: str) -> str:
+    patterns = [
+        r"\s+(?:even if|even though|although|though|because|since|but|while|whereas|if|when|with|without)$",
+        r"\s+(?:though|although|but|because|since|if)\s+(?:it|that|this|we|they|there|the)\s+(?:might|could|would|is|are|was|were|has|have)?\s*$",
+        r"\s+(?:what|what do|what do you|can|can you|does|does that),?\.?$",
+    ]
+    out = text
+    for pattern in patterns:
+        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
+    return out

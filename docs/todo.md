@@ -58,6 +58,22 @@ Validation target:
 
 ## Resolved this pass (2026-07-01)
 
+- Issue #13 (naturalness cleanup): `src/style.py` now detects option-name openings
+  (`leading_option`/`option_opener_terms`, incl. single brand words like "Trello")
+  and repeated opening words (`repeated_opening_token`); the controller sets
+  compact prompt flags (suppress name/option opening, vary opening) and word budgets
+  are trait-driven (`_word_bounds`: verbosity/engagement give a real length spread,
+  low floor for terse sims). `sim_utterance` length/tone guidance is now concrete
+  and parameter-driven. Validated n=3/4/5: combined name+option opening rate ~0.18–0.26
+  (target <1/3), repeated_opening_patterns ~1–2, and per-persona avg words clearly
+  track verbosity (e.g. a v=0.26 sim at ~14 words vs chatty sims at ~21). New metrics:
+  `option_opening_rate`, `name_or_option_opening_rate`.
+- Issue #14 (dialogue.py bloat): outcome logic moved to `src/consensus.py`
+  (`ConsensusManager`, `participant_turn_count`); text post-processing moved to
+  `utils.py` (`clean_generated` + helpers); removed dead imports (`AgendaStatus`,
+  `RunOutcome`, unused utils). dialogue.py 1286→1210 lines; no behavior change,
+  tests green. Controller routing/moderator methods deliberately left in place to
+  preserve cohesion and avoid regressions. No duplicated functions were found.
 - Issue #1 (response obligations): `ResponseObligation` state + router consumption
   in both discussion and decision loops; direct questions detected from visible
   text regardless of routed act. Validated n=3/n=4/n=5: every named question is
