@@ -1,0 +1,2557 @@
+{
+  "run_id": "20260703_015258_769092",
+  "topic": "Select the standing dessert for the Sunday family lunches",
+  "scenario": {
+    "topic": "Select the standing dessert for the Sunday family lunches",
+    "decision_kind": "generic_decision",
+    "opening_question": "What dessert should we make our regular treat for Sunday family lunches considering taste, prep time, and everyone’s preferences?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Classic Homemade Apple Pie",
+        "attrs": {
+          "cost": "$12 per batch",
+          "prep_time": "1 hour",
+          "servings": "6 slices",
+          "difficulty": "medium"
+        },
+        "upside": "Warm, comforting flavor that appeals to most ages",
+        "tradeoff": "Requires oven time and some baking skill",
+        "concern": "Some family members dislike cinnamon or cooked fruit textures",
+        "best_for": "those valuing tradition and a home-baked feel",
+        "short_name": "Apple Pie"
+      },
+      {
+        "id": "B",
+        "name": "No-Bake Chocolate Cheesecake",
+        "attrs": {
+          "cost": "$14 per batch",
+          "prep_time": "45 minutes",
+          "servings": "6 slices",
+          "difficulty": "easy"
+        },
+        "upside": "Rich and creamy with minimal oven use",
+        "tradeoff": "Needs refrigeration for several hours before serving",
+        "concern": "May be too rich or heavy for some tastes",
+        "best_for": "those wanting quick prep and indulgent flavor",
+        "short_name": "Chocolate Cheesecake"
+      },
+      {
+        "id": "C",
+        "name": "Lemon Blueberry Pound Cake",
+        "attrs": {
+          "cost": "$10 per batch",
+          "prep_time": "1.5 hours",
+          "servings": "8 slices",
+          "difficulty": "medium"
+        },
+        "upside": "Light, fruity, and slightly tangy with extra servings",
+        "tradeoff": "Longer baking time and requires cooling before serving",
+        "concern": "Some may find it less sweet or too citrusy",
+        "best_for": "those preferring fresh fruit flavors and extra portions",
+        "short_name": "Lemon Pound Cake"
+      },
+      {
+        "id": "D",
+        "name": "Mixed Berry Greek Yogurt Parfaits",
+        "attrs": {
+          "cost": "$13 per batch",
+          "prep_time": "30 minutes",
+          "servings": "6 individual cups",
+          "difficulty": "easy"
+        },
+        "upside": "Healthy, customizable, and no baking required",
+        "tradeoff": "Less traditional dessert feel and requires fresh ingredients weekly",
+        "concern": "Some family members may want a more indulgent dessert",
+        "best_for": "those prioritizing health and quick assembly",
+        "short_name": "Berry Parfaits"
+      }
+    ],
+    "shared_context": [
+      "The family size is exactly 6 people.",
+      "The dessert should be affordable, with a budget limit of $15 per dessert batch.",
+      "Dessert prep time should not exceed 1.5 hours to keep lunch on schedule."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Yuki",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.8125,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.7749999999999999,
+        "compromise_threshold": 0.4624999999999999
+      },
+      "background": "I enjoy desserts that offer fresh fruit flavors and can serve more people during our family lunches.",
+      "private_goal": "I want a light, fruity dessert that can be shared easily and feels refreshing.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Daria",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.55,
+        "directness": 0.5375,
+        "compromise_threshold": 0.5
+      },
+      "background": "I appreciate traditional, home-baked desserts that bring a warm and comforting feel to our family meals.",
+      "private_goal": "I want a dessert that feels classic and familiar, evoking a sense of tradition.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Uri",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.9624999999999999,
+        "verbosity": 0.875,
+        "initiative": 0.85,
+        "responsiveness": 0.9375,
+        "stubbornness": 0.25,
+        "directness": 0.7625,
+        "compromise_threshold": 0.17500000000000004
+      },
+      "background": "I value desserts that are comforting and appeal to all ages, especially those with a traditional touch.",
+      "private_goal": "I want a dessert that everyone will enjoy and that feels like a family staple.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Priya",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7,
+        "directness": 0.6375,
+        "compromise_threshold": 0.6125
+      },
+      "background": "I prefer desserts with fresh fruit flavors that offer a lighter alternative to heavy sweets.",
+      "private_goal": "I want a dessert that is fruity and provides more servings for the whole family.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Rina",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.7,
+        "stubbornness": 0.25,
+        "directness": 0.5625,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "I like classic homemade desserts that bring a sense of tradition and warmth to family gatherings.",
+      "private_goal": "I want a dessert that feels home-baked and comforting for everyone to enjoy.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Cleo",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.6625000000000001,
+        "verbosity": 0.5375000000000001,
+        "initiative": 0.525,
+        "responsiveness": 0.9375,
+        "stubbornness": 0.25,
+        "directness": 0.6375,
+        "compromise_threshold": 0.22499999999999998
+      },
+      "background": "I prefer indulgent desserts that are easy to prepare and require minimal oven use.",
+      "private_goal": "I want a rich, creamy dessert that can be quickly made without much baking.",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": "A",
+      "rejection_reason": "I find the baking skill and oven time required for the apple pie too demanding and prefer no-bake options.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": "A",
+          "reason": "raise the hard concern about A: I find the baking skill and oven time required for the apple pie too demanding and prefer no-bake options.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Select the standing dessert for the Sunday family lunches.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Classic Homemade Apple Pie — cost: $12 per batch; prep time: 1 hour; difficulty: medium (+ Warm, comforting flavor that appeals to most ages; − Requires oven time and some baking skill)\nB) No-Bake Chocolate Cheesecake — cost: $14 per batch; prep time: 45 minutes; difficulty: easy (+ Rich and creamy with minimal oven use; − Needs refrigeration for several hours before serving)\nC) Lemon Blueberry Pound Cake — cost: $10 per batch; prep time: 1.5 hours; difficulty: medium (+ Light, fruity, and slightly tangy with extra servings; − Longer baking time and requires cooling before serving)\nD) Mixed Berry Greek Yogurt Parfaits — cost: $13 per batch; prep time: 30 minutes; difficulty: easy (+ Healthy, customizable, and no baking required; − Less traditional dessert feel and requires fresh ingredients weekly)\nContext: The family size is exactly 6 people.; The dessert should be affordable, with a budget limit of $15 per dessert batch.; Dessert prep time should not exceed 1.5 hours to keep lunch on schedule.\nWhat dessert should we make our regular treat for Sunday family lunches considering taste, prep time, and everyone’s preferences?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Select the standing dessert for the Sunday family lunches.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Classic Homemade Apple Pie — cost: $12 per batch; prep time: 1 hour; difficulty: medium (+ Warm, comforting flavor that appeals to most ages; − Requires oven time and some baking skill)\nB) No-Bake Chocolate Cheesecake — cost: $14 per batch; prep time: 45 minutes; difficulty: easy (+ Rich and creamy with minimal oven use; − Needs refrigeration for several hours before serving)\nC) Lemon Blueberry Pound Cake — cost: $10 per batch; prep time: 1.5 hours; difficulty: medium (+ Light, fruity, and slightly tangy with extra servings; − Longer baking time and requires cooling before serving)\nD) Mixed Berry Greek Yogurt Parfaits — cost: $13 per batch; prep time: 30 minutes; difficulty: easy (+ Healthy, customizable, and no baking required; − Less traditional dessert feel and requires fresh ingredients weekly)\nContext: The family size is exactly 6 people.; The dessert should be affordable, with a budget limit of $15 per dessert batch.; Dessert prep time should not exceed 1.5 hours to keep lunch on schedule.\nWhat dessert should we make our regular treat for Sunday family lunches considering taste, prep time, and everyone’s preferences?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "You know, Apple Pie really hits that warm, home-baked vibe we all love—it’s like a cozy hug on a plate!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "You know, Apple Pie really hits that warm, home-baked vibe we all love—it’s like a cozy hug on a plate!",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 735,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Apple Pie’s the top pick so far. It fits the budget, serves everyone, and actually feels like something our family would look forward to every week.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Apple Pie’s the top pick so far. It fits the budget, serves everyone, and actually feels like something our family would look forward to every week.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 797,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "Serving more than six slices is a big plus for the Lemon Pound Cake, plus it’s fresh and tangy to lighten things up!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Serving more than six slices is a big plus for the Lemon Pound Cake, plus it’s fresh and tangy to lighten things up!",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 867,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "We need something light and fresh that can actually stretch to eight servings without pushing the budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We need something light and fresh that can actually stretch to eight servings without pushing the budget.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 923,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "It’s worth remembering some of us aren’t crazy about cinnamon or cooked fruit textures, which Apple Pie has.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "It’s worth remembering some of us aren’t crazy about cinnamon or cooked fruit textures, which Apple Pie has.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 882,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "Let’s not forget the no-bake Chocolate Cheesecake stays under budget and prep time while giving us that rich, creamy dessert.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Let’s not forget the no-bake Chocolate Cheesecake stays under budget and prep time while giving us that rich, creamy dessert.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 670,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Cleo, what would make Apple Pie workable for you? Would tweaking the cinnamon or fruit texture fix it, or do we need a different dessert entirely?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Cleo, what would make Apple Pie workable for you? Would tweaking the cinnamon or fruit texture fix it, or do we need a different dessert entirely?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": "p6",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "Cleo clearly can't accept Apple Pie; ask them one genuine question about what would make it workable or what they'd need instead — no pressure",
+        "addressee_id": "p6",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 639,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "You can’t fix the oven time or baking skill needed, Uri, so I just can’t back Apple Pie here—it’s a dealbreaker.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "You can’t fix the oven time or baking skill needed, Uri, so I just can’t back Apple Pie here—it’s a dealbreaker.",
+        "act_type": "reject",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "You can’t fix the oven time or baking skill needed, Uri, so I just can’t back Apple Pie here—it’s a dealbreaker."
+        },
+        "hard_rejects": {
+          "A": "You can’t fix the oven time or baking skill needed, Uri, so I just can’t back Apple Pie here—it’s a dealbreaker."
+        },
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 704,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Berry Parfaits cost a bit more but prep is quick and easy—no baking drama.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Berry Parfaits cost a bit more but prep is quick and easy—no baking drama.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 705,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Let’s remember Apple Pie fits neatly under budget and serves exactly six, so no leftovers or waste to worry about.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Let’s remember Apple Pie fits neatly under budget and serves exactly six, so no leftovers or waste to worry about.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "Let’s remember Apple Pie fits neatly under budget and serves exactly six, so no leftovers or waste to worry about."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Apple Pie, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 666,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Daria’s right about the budget and portions, but the baking skill isn’t a minor hurdle—someone has to own it every time. We can’t just switch off on prep day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Daria’s right about the budget and portions, but the baking skill isn’t a minor hurdle—someone has to own it every time. We can’t just switch off on prep day.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "the last point raised a concern about Apple Pie, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 738,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "Cleo, I get the oven hassle, but what if we designate a baking pro for Apple Pie just once a month?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Cleo, I get the oven hassle, but what if we designate a baking pro for Apple Pie just once a month?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": "p6",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "propose_compromise",
+        "reason": "test whether Apple Pie could be common ground without claiming it is already decided",
+        "addressee_id": "p6",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 709,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "Designating a baking pro monthly still means someone’s tied up an hour with the oven each time, which slows things down; Chocolate.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Designating a baking pro monthly still means someone’s tied up an hour with the oven each time, which slows things down; Chocolate.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 774,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "Chocolate’s quick prep is a win for sure, but needing hours of refrigeration means it’s not ready to serve right away.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Chocolate’s quick prep is a win for sure, but needing hours of refrigeration means it’s not ready to serve right away.",
+        "act_type": "agree",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 692,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "You’re right, Cleo, oven time can be a pain, but think about how that warm, cozy apple aroma fills the whole house—that’s a vibe no fridge-chilled dessert.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "You’re right, Cleo, oven time can be a pain, but think about how that warm, cozy apple aroma fills the whole house—that’s a vibe no fridge-chilled dessert.",
+        "act_type": "agree",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Apple Pie",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 756,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Serving eight slices means leftover Lemon Pound Cake could spoil or get wasted since we only have six eaters, and cooling time adds hassle before lunch.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Serving eight slices means leftover Lemon Pound Cake could spoil or get wasted since we only have six eaters, and cooling time adds hassle before lunch.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Apple Pie, Lemon Pound Cake with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 868,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "Rina, does the apple aroma really make up for some family members not liking cinnamon or cooked fruit textures?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Rina, does the apple aroma really make up for some family members not liking cinnamon or cooked fruit textures?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Apple Pie, Lemon Pound Cake, Berry Parfaits",
+        "addressee_id": "p5",
+        "option_focus": [
+          "A",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 877,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "Sure, the aroma alone won’t fix the texture or cinnamon gripe for everyone, Priya, but that warm, homemade feel is hard to beat at family lunches.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Sure, the aroma alone won’t fix the texture or cinnamon gripe for everyone, Priya, but that warm, homemade feel is hard to beat at family lunches.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 756,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "I get that, but maybe we can tweak the recipe to ease the cinnamon or texture issues without losing that classic warmth?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I get that, but maybe we can tweak the recipe to ease the cinnamon or texture issues without losing that classic warmth?",
+        "act_type": "challenge",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 629,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "Daria, that’s a smart call—toning down cinnamon or tossing in a bit less sugar could keep the warmth without the quirks some don’t love.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Daria, that’s a smart call—toning down cinnamon or tossing in a bit less sugar could keep the warmth without the quirks some don’t love.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 702,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Eight slices are too many for six people, but the lemon pound cake’s light fruity taste beats apple pie’s heavier, cinnamon risk.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Eight slices are too many for six people, but the lemon pound cake’s light fruity taste beats apple pie’s heavier, cinnamon risk.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Lemon Pound Cake, Apple Pie with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 761,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "Daria, even with tweaks, apple pie still needs baking skills and oven time—chocolate cheesecake skips that and stays rich but quick.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Daria, even with tweaks, apple pie still needs baking skills and oven time—chocolate cheesecake skips that and stays rich but quick.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "compare",
+        "reason": "compare Apple Pie, Chocolate Cheesecake, Lemon Pound Cake with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 814,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "We could stick with the apple pie since it perfectly matches our group size and prep time, and it really brings that cozy.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We could stick with the apple pie since it perfectly matches our group size and prep time, and it really brings that cozy.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Lemon Pound Cake, Apple Pie, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 719,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "If apple pie serves exactly six but lemon pound cake gives two extra slices, do we want those leftovers or just enough for everyone?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "If apple pie serves exactly six but lemon pound cake gives two extra slices, do we want those leftovers or just enough for everyone?",
+        "act_type": "ask",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Lemon Pound Cake, Apple Pie",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 739,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Leftovers could be nice, but cooling time for the lemon cake might slow things down more than we want on Sunday.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leftovers could be nice, but cooling time for the lemon cake might slow things down more than we want on Sunday.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 748,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Cooling takes time, but that means we won’t rush it and mess up the texture.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cooling takes time, but that means we won’t rush it and mess up the texture.",
+        "act_type": "challenge",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 671,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you each share your final pick now—just name the one option you’re definitely going with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you each share your final pick now—just name the one option you’re definitely going with?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Apple Pie gets my vote. It fits the time, budget, and nobody ends up with weird leftovers to deal with.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Apple Pie gets my vote. It fits the time, budget, and nobody ends up with weird leftovers to deal with.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 681,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Let’s stick to something everyone’s used to, so I’m all in for Apple Pie this time.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Let’s stick to something everyone’s used to, so I’m all in for Apple Pie this time.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 699,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p5",
+      "speaker_name": "Rina",
+      "text": "I’d go with Apple Pie to keep that warm, homey vibe everyone seems to enjoy.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I’d go with Apple Pie to keep that warm, homey vibe everyone seems to enjoy.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1062,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "We need something fresh and easy to share with everyone, so I’m all in for Lemon Pound Cake since it’s light and won’t weigh us down after lunch.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We need something fresh and easy to share with everyone, so I’m all in for Lemon Pound Cake since it’s light and won’t weigh us down after lunch.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 755,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "Let’s get more slices per person without going heavy—that’s why I’m picking Lemon Pound Cake.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Let’s get more slices per person without going heavy—that’s why I’m picking Lemon Pound Cake.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 740,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "My pick is No-Bake Chocolate Cheesecake for its quick prep and creamy texture.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "My pick is No-Bake Chocolate Cheesecake for its quick prep and creamy texture.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1189,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re split between Apple Pie, Lemon Pound Cake, and Chocolate Cheesecake—can everyone live with Classic Homemade Apple Pie without reopening?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re split between Apple Pie, Lemon Pound Cake, and Chocolate Cheesecake—can everyone live with Classic Homemade Apple Pie without reopening?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p1",
+      "speaker_name": "Yuki",
+      "text": "Apple Pie works for me if it keeps things simple and warm, though I’m giving up extra servings and that fresh zing from lemon.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Apple Pie works for me if it keeps things simple and warm, though I’m giving up extra servings and that fresh zing from lemon.",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Lemon Pound Cake (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 806,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p4",
+      "speaker_name": "Priya",
+      "text": "My pick is Lemon Blueberry Pound Cake for its extra servings and fresh, fruity flavor.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p4",
+        "text": "My pick is Lemon Blueberry Pound Cake for its extra servings and fresh, fruity flavor.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Lemon Pound Cake (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "works for me"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1299,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p6",
+      "speaker_name": "Cleo",
+      "text": "Keep in mind, no-bake means less fuss on Sunday—Chocolate Cheesecake gets my vote.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Keep in mind, no-bake means less fuss on Sunday—Chocolate Cheesecake gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "vote",
+        "reason": "the group is split; briefly restate the option you still choose and react to the split in one line — you are not switching",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is",
+          "works for me"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 840,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great — Classic Homemade Apple Pie it is, then.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great — Classic Homemade Apple Pie it is, then.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "reason": "4/6 participants visibly committed to the winning option.",
+    "turns": 35,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A",
+        "p4": "C",
+        "p5": "A",
+        "p6": "B"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A",
+        "p4": "C",
+        "p5": "A",
+        "p6": "B"
+      },
+      "phase_history": [
+        "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.64",
+        "turn 7: discussion — all participants gave an opening view",
+        "turn 27: narrowing — target discussion length reached",
+        "turn 34: closure — all participants already gave a clear vote",
+        "turn 38: closure — majority after split-vote compromise"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 18,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 38
+    }
+  },
+  "metrics": {
+    "participant_turns": 35,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.103,
+    "turn_counts": {
+      "Yuki": 6,
+      "Daria": 6,
+      "Uri": 5,
+      "Priya": 6,
+      "Rina": 6,
+      "Cleo": 6
+    },
+    "top_speaker_share": 0.171,
+    "avg_words_by_persona": {
+      "Yuki": 20.0,
+      "Daria": 20.0,
+      "Uri": 25.4,
+      "Priya": 19.5,
+      "Rina": 22.2,
+      "Cleo": 18.3
+    },
+    "question_density": 0.143,
+    "avg_words_per_turn": 20.8,
+    "repaired_turns": 3,
+    "repair_rate": 0.086,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 6,
+    "visible_votes": {
+      "Yuki": "A",
+      "Daria": "A",
+      "Uri": "A",
+      "Priya": "C",
+      "Rina": "A",
+      "Cleo": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.143,
+    "option_opening_rate": 0.143,
+    "i_opening_rate": 0.086,
+    "we_opening_rate": 0.086,
+    "name_or_option_opening_rate": 0.286,
+    "repeated_opening_patterns": 5,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 19,
+        "reasons": 8,
+        "objections": 3,
+        "acceptances": 2
+      },
+      "B": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Yuki": 0.812,
+      "Daria": 0.588,
+      "Uri": 0.962,
+      "Priya": 0.737,
+      "Rina": 0.737,
+      "Cleo": 0.663
+    },
+    "agenda_status": {
+      "obsolete": 2,
+      "pending": 19,
+      "done": 1
+    },
+    "outcome_status": "majority",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 18,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 38,
+    "phase_history": [
+      "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.64",
+      "turn 7: discussion — all participants gave an opening view",
+      "turn 27: narrowing — target discussion length reached",
+      "turn 34: closure — all participants already gave a clear vote",
+      "turn 38: closure — majority after split-vote compromise",
+      "turn 39: closure — closed as majority"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2180,
+    "setup_tokens_out": 1266,
+    "dialogue_tokens_in": 28505,
+    "dialogue_tokens_out": 1337,
+    "total_tokens_in": 30685,
+    "total_tokens_out": 2603
+  },
+  "tokens": {
+    "setup_tokens_in": 2180,
+    "setup_tokens_out": 1266,
+    "dialogue_tokens_in": 28505,
+    "dialogue_tokens_out": 1337,
+    "total_tokens_in": 30685,
+    "total_tokens_out": 2603
+  }
+}

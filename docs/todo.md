@@ -87,22 +87,6 @@ Do not consider evaluation now - we'll do that in depth once the discussion is w
 
 ---
 
-#### I11 (P1). Slim the per-turn prompt and make grounding checks selective
-
-**Observed in:** n=3 runs at 29-32k input tokens, n=5/6 at ~50k (target for n=3: 10-20k). `sim_utterance()` resends full persona background, private goal, all OCEAN values, all seven simulator parameters, voice guidance, full style rules, option cards, shared context, recent chat, agenda, and move instructions every turn; the LLM grounding judge (`validation.grounding_check`) adds a call per eligible turn and still misses subtle claims (plant run `logs/archive/20260702_150339_911975`: unsupported biology/allergy-style claims).
-
-**Fix:**
-
-- Compact voice capsule (persona name + 1-2 line register + only behavior-critical parameters) instead of raw OCEAN + all params; build once per persona.
-- Focus option cards + one-line board summary unless the act compares across the board; relevant recent lines (include the target turn even if older) instead of blindly last N.
-- Drop the `Ask a question only when the move is ask or invite` rule (too restrictive; embedded questions are natural).
-- Grounding: default the LLM judge off; run it only when a regex tripwire fires (numbers/units not present in cards, policy/service words, medical/allergy claims, weather/time claims). Repair or fallback on confirmed hits.
-- Keep word budgets and recent-line counts in `config.yaml`. Do not slim so far that commitments become unparseable.
-
-**Verify:** compare `total_tokens_in` on n=3 before/after (target ≤ 20k); repair rate does not spike; unsupported-fact flags do not rise on a plant/allergy-style topic; transcript reads less formulaic.
-
----
-
 #### I12 (P1). Trait-consistent length variation and anti-echo style control
 
 **Merged:** the two old length/style issues plus a new observation — verbatim reason echo: in the soundtrack run Nico and Emeka both say "for its unique and culturally rich atmosphere" word-for-word (vote + compromise turn); the anti-chorus mechanism covers commitment *phrase families* but not copied reason clauses.
@@ -126,6 +110,8 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 ---
 
 ## 4. Resolved / dropped since the last revision
+
+- **I11: Slim per-turn prompt + selective grounding** — done 2026-07-03. `sim_utterance` drops the raw OCEAN and simulator-parameter dumps (voice guidance + server-side length/tone notes already encode them), condenses the style block, and removes the "ask only on ask/invite" restriction; repair prompts scope cards to the intent's focus options. Grounding runs in `grounding_mode: tripwire` (default): the LLM judge is only called when a regex tripwire finds a suspicious concrete claim (number or policy/medical/weather-style term absent from the cards/context, cached per run); `grounding_acts` now includes vote/accept/reject (fixes the LastPass-2FA vote-turn leak class). Verified: 6 no-LLM tests (`tests/test_grounding_tripwire.py`); tokens: n=3 `20260703_015156` **19.4k** (was 25-35k, target ≤20k ✓, one invented fact tripped and repaired), n=6 `20260703_015258` **30.7k** (was 50-56k); repair rate stable; the n=6 dessert transcript shows full negotiation around a visible dealbreaker that stays respected.
 
 - **I10: Targeted evidence-based moderator interventions** — done 2026-07-03. Vote calls are option-neutral: `_moderator_vote_nudge` passes no candidate name and no focus options, and the requested action forbids naming/suggesting options or asking about "leaning" (fixes the "which Space Station option" leak). The stall-nudge menu now prefers: unresolved visible blocker on the candidate → ask that person once what would make it workable (`mod:` probe key); visible split → ask the group to weigh the two live favorites head-to-head; then the existing holdout/generic branches. Nudge prompt instructs varied phrasing. Verified: 4 no-LLM tests (`tests/test_moderator.py`), runs `20260703_014630` (n=3 logo: neutral vote call, honest holdout, majority 2/3) and `20260703_014744` (n=5 cabin: clean "name your final pick" call, minority beat with one switch + one honest holdout, majority 4/5).
 - **I9: Reactive act selection; agenda as weak fallback** — done 2026-07-03. `_reactive_intent` runs before the agenda with probability-gated adjacency-pair moves: a challenged option gets defended by an advocate (never the challenger), an answer gets a follow-up (agree/challenge/ask by traits), an unresolved blocker on the leading option gets probed exactly once (`state.blocker_probes`), and a visible split triggers a head-to-head compare or compromise test. Agenda firing probability cut to 0.25+0.25·initiative. `_reason_for_act` is stance-aware: a challenge never targets the speaker's own pick (restaurant-run flip-flop fix). Verified: 6 no-LLM tests (`tests/test_reactive_acts.py`), runs `20260703_014042` (n=3 password manager: defense beats, follow-ups, honest 3-way unresolved) and `20260703_014226` (n=6 feast, forced blocker: spit-roast thread asked→answered→acknowledged, blocker probed and honestly held, accurate split summary, honest unresolved). New I11 evidence noted: a vote turn claimed a card fact from another option (LastPass "two-factor" from Dashlane's card) — vote acts skip grounding.

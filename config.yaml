@@ -153,7 +153,8 @@ corpus:
 validation:
   enabled: true
   grounding_check: true        # LLM fact-checker: flag utterances that invent facts beyond the option board
-  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise"]
+  grounding_mode: "tripwire"   # tripwire: judge only lines with suspicious concrete claims | always: judge every eligible turn
+  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "vote", "accept", "reject"]
 
 limits:
   warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this

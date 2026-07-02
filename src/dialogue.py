@@ -569,6 +569,8 @@ class DialogueRunner:
         return act
 
     _last_target_speaker: str | None = None
+    _world_text: str | None = None
+    _world_state_id: int | None = None
 
     def _choose_target_turn(self, state: DialogueState, speaker: Persona, act: ActType) -> TurnRecord | None:
         """Score a pool of recent threads instead of always taking the last line.
@@ -886,6 +888,12 @@ class DialogueRunner:
             return None, 0, 0
         if not text.strip():
             return None, 0, 0
+        # Tripwire mode (default): only pay for the LLM judge when the line
+        # contains a suspicious concrete claim — a number or a policy/medical/
+        # weather-style term that does not occur in the option cards or shared
+        # context (issue I11).
+        if str(cfg.validation.get("grounding_mode", "tripwire")) == "tripwire" and not self._grounding_tripwire(text, state):
+            return None, 0, 0
         # Always judge against the full option board: comparisons legitimately
         # restate other options' card facts, so a focus-scoped fact base
         # produces false UNSUPPORTED_FACT flags (issue #18).
@@ -941,6 +949,30 @@ class DialogueRunner:
                 return f"One option we haven't really talked about: {aliases[gap]}. How does it stack up against {aliases[other]}?"
             return f"One option we haven't really talked about: {aliases[gap]}. Worth a quick look before we decide."
         return f"I'm sticking with {aliases[target]} on this one."
+
+    _SUSPECT_CLAIM = re.compile(
+        r"\b(?:polic(?:y|ies)|includ(?:es|ed|ing)|refund\w*|warrant(?:y|ies)|reservation|discount\w*|"
+        r"free\s+(?:of|shipping|entry|parking|wifi|drinks?)|allerg\w*|toxic\w*|poison\w*|"
+        r"forecast\w*|guarantee[ds]?|certified|award[- ]?winn\w*|complimentary|licens\w*)\b",
+        re.I,
+    )
+
+    def _grounding_tripwire(self, text: str, state: DialogueState) -> bool:
+        """True when the line makes a concrete claim not present in the world facts."""
+        world = getattr(self, "_world_text", None)
+        if world is None or self._world_state_id != id(state):
+            world = " ".join(
+                [option.prompt_card() for option in state.scenario.options] + list(state.scenario.shared_context)
+            ).lower()
+            self._world_text = world
+            self._world_state_id = id(state)
+        for number in re.findall(r"\d+(?:[.,:]\d+)?", text):
+            if number not in world:
+                return True
+        for match in self._SUSPECT_CLAIM.finditer(text):
+            if match.group(0).lower() not in world:
+                return True
+        return False
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:

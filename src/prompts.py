@@ -270,17 +270,14 @@ def sim_utterance(
 
     return f"""Write {persona.name}'s next message in a natural group decision chat.
 
-Environment: option-grounded multi-user decision simulation.
 Topic: {state.scenario.topic}
 Shared context: {context}
-Available options: {', '.join(f'{o.id}={aliases[o.id]}' for o in state.scenario.options)}
+Options: {', '.join(f'{o.id}={aliases[o.id]}' for o in state.scenario.options)}
 
-Simulated user:
+Speaker:
 - background: {persona.background}
 - private goal: {persona.private_goal}
-- OCEAN 1-5: openness={persona.traits.openness}, conscientiousness={persona.traits.conscientiousness}, extraversion={persona.traits.extraversion}, agreeableness={persona.traits.agreeableness}, neuroticism={persona.traits.neuroticism}
-- simulator parameters 0-1: engagement={params.engagement:.2f}, verbosity={params.verbosity:.2f}, initiative={params.initiative:.2f}, responsiveness={params.responsiveness:.2f}, stubbornness={params.stubbornness:.2f}, directness={params.directness:.2f}, compromise_threshold={params.compromise_threshold:.2f}
-- voice guidance: {voice}
+- voice: {voice}
 - initial preference: {initial_name}; current internal lean: {current_name}{blocked}
 
 Move to render: {intent.act.value}
@@ -293,15 +290,11 @@ Recent chat:
 {recent}
 
 Style:
-- One message only, no name prefix, no quotes, no bullet list.
+- One message only; no name prefix, quotes, bullets, metadata, or bracketed labels.
 - {length_note}{tone_note}
-- Follow the voice guidance exactly: personas must differ in register, not just content — sentence shape, bluntness, and energy should make it obvious who is speaking without the name. Contractions and casual interjections ('Honestly', 'Look', 'Fine') are welcome where they fit the voice.
-- Vary sentence shape and opening. Do not start with an option name, "The <option>", "I'm leaning", or "feels".
-- Use names, "you", "we", "us", short option names, or no option name when that fits.
-- Add one new point, concern, answer, or stance shift. Avoid repeating the same reason from recent chat.
-- Ask a question only when the move is ask or invite; otherwise usually make a statement.
-- Never invent facts outside the option cards/shared context.
-- Do not append metadata, tags, JSON, or bracketed labels.{style_notes}"""
+- Follow the voice exactly — sentence shape, bluntness, and energy should make the speaker recognizable without the name. Contractions and casual interjections fit.
+- Vary sentence shape and opening; do not open with an option name, "I'm leaning", or "feels". Names, "you", "we", or no option name are all fine.
+- Add one new point, concern, answer, or stance shift; don't repeat reasons from the recent chat. Never invent facts beyond the option facts above.{style_notes}"""
 
 
 def repair_utterance(
@@ -314,7 +307,8 @@ def repair_utterance(
     intent: MoveIntent,
     max_words: int,
 ) -> str:
-    cards = _option_cards(state.scenario.options)
+    focus = [state.scenario.option(o) for o in intent.option_focus if o in state.scenario.option_ids]
+    cards = _option_cards(focus or state.scenario.options)
     recent = "\n".join(recent_lines[-3:]) if recent_lines else "(no recent turns)"
     clear_commit = ""
     if intent.act.value in {"vote", "accept"}:

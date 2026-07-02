@@ -129,6 +129,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Setup repair.** Persona rows that drop/reorder the controller-assigned primary
   preference are repaired deterministically (`builders.repair_preferred_options`)
   rather than retried; a rejection of the required option still fails the attempt.
+- **Tripwire grounding.** `validation.grounding_mode: tripwire` (default) calls
+  the LLM fact-judge only when a regex tripwire finds a suspicious concrete
+  claim (a number or policy/medical/weather-style term absent from the option
+  cards/shared context); `always` restores per-turn judging. Decision acts are
+  now grounded too. The per-turn prompt sends a voice capsule instead of raw
+  OCEAN/parameter dumps (n=3 runs ≈ 15-20k input tokens).
 - **Hard-cap enforcement.** Hard numeric caps in shared context (budget, distance,
   duration — soft "around $X" phrasings excluded) are extracted by
   `builders.shared_context_caps` and violating option attributes are clamped in
