@@ -314,6 +314,27 @@ def used_commitment_phrases(texts: list[str]) -> list[str]:
     return [label for label, pattern in _PHRASE_FAMILIES if any(pattern.search(t or "") for t in texts)]
 
 
+# Reason clause following a commitment ("… for its inclusive menu", "… because
+# it solves the timing issue"). Used to stop voters echoing each other's
+# justification word-for-word (issue I12).
+_REASON_TAIL = re.compile(
+    r"\b(?:because|since|for\s+(?:its|their|the|a|an)|"
+    r"to\s+(?:keep|boost|get|make|support|avoid|stay|showcase|promote|improve))\b\s*.{8,70}",
+    re.I,
+)
+
+
+def round_reason_snippets(texts: list[str]) -> list[str]:
+    """Reason clauses already used in this round's commitments (max 10 words each)."""
+    snippets: list[str] = []
+    for text in texts:
+        match = _REASON_TAIL.search(text or "")
+        if match:
+            snippet = match.group(0).strip().rstrip(".!?,;")
+            snippets.append(" ".join(snippet.split()[:10]))
+    return snippets
+
+
 def _commitment_object(check_text: str, resolver: OptionResolver) -> str | None:
     """Disambiguate a multi-option line by the words around the commitment phrase.
 

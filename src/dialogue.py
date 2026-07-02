@@ -37,7 +37,13 @@ from models import (
     ResponseObligation,
     TurnRecord,
 )
-from parsing import OptionResolver, commitment_has_reason, parse_dialogue_act, used_commitment_phrases
+from parsing import (
+    OptionResolver,
+    commitment_has_reason,
+    parse_dialogue_act,
+    round_reason_snippets,
+    used_commitment_phrases,
+)
 from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
 from style import (
     first_person_opening_fraction,
@@ -643,7 +649,13 @@ class DialogueRunner:
         names = short_alias_map(state.scenario.options)
         focus_names = ", ".join(names[o] for o in focus) if focus else "the options"
         if act == ActType.BUILD:
-            return f"add a new grounded reason about {focus_names}, connected to the current discussion"
+            # Rotate the move purpose so back-to-back build turns don't all
+            # become the same trade-off-statement shape (issue I12).
+            return random.choice([
+                f"add a new grounded reason about {focus_names}, connected to the current discussion",
+                f"bring up a practical, everyday consideration about {focus_names} that hasn't come up yet",
+                f"say plainly what matters most to you personally in this choice and how {focus_names} fits that",
+            ])
         current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
         current_name = names.get(current, current)
         if act == ActType.AGREE:
@@ -1547,10 +1559,15 @@ class DialogueRunner:
             intent.avoid_pattern = repeated_pattern(
                 self._recent_participant_texts(state, pattern_window), pattern_window
             )
-        # Deterministic anti-chorus for decision beats: phrase families already
-        # used in this round are forbidden for the next voter (issue #25).
-        if intent.act in _DECISION_ACTS and not intent.avoid_phrases:
-            intent.avoid_phrases = used_commitment_phrases(self._current_round_texts(state))
+        # Deterministic anti-chorus for decision beats: phrase families AND
+        # justification snippets already used in this round are off-limits for
+        # the next voter (issues #25 and I12).
+        if intent.act in _DECISION_ACTS:
+            round_texts = self._current_round_texts(state)
+            if not intent.avoid_phrases:
+                intent.avoid_phrases = used_commitment_phrases(round_texts)
+            if not intent.avoid_reasons:
+                intent.avoid_reasons = round_reason_snippets(round_texts)
 
     def _recent_question_count(self, state: DialogueState) -> int:
         recent = [t for t in state.turns[-3:] if t.speaker_id != "moderator"]
@@ -1722,6 +1739,9 @@ class DialogueRunner:
         p = persona.sim_params
         # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
         factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30
+        # Per-turn jitter around the persona's average so consecutive turns by
+        # the same sim vary naturally instead of hitting one fixed length (I12).
+        factor *= random.uniform(0.90, 1.10)
         max_words = max(6, round(base * factor))
         min_words = max(3, round(max_words * (0.30 + 0.25 * p.verbosity)))
         return min_words, max_words

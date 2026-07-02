@@ -218,6 +218,7 @@ class MoveIntent:
     vary_opening: bool = False
     avoid_pattern: str | None = None
     avoid_phrases: list[str] = field(default_factory=list)
+    avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
     allow_vote_change: bool = False
 
 

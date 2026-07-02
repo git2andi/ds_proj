@@ -87,18 +87,6 @@ Do not consider evaluation now - we'll do that in depth once the discussion is w
 
 ---
 
-#### I12 (P1). Trait-consistent length variation and anti-echo style control
-
-**Merged:** the two old length/style issues plus a new observation — verbatim reason echo: in the soundtrack run Nico and Emeka both say "for its unique and culturally rich atmosphere" word-for-word (vote + compromise turn); the anti-chorus mechanism covers commitment *phrase families* but not copied reason clauses.
-
-**Fix:**
-
-- Length: keep `verbosity`-derived budgets (`_word_bounds`), add small per-turn jitter around the sim's average; act type modulates (answers/compare longer, votes/acknowledgements shorter); low-verbosity sims may produce meaningful fragments; high-verbosity sims never essays. Config-tunable bounds stay.
-- Style rotation at controller level, not more prompt prose: rotate move purposes (plain answer, short challenge, practical constraint, social preference, compromise test, explicit vote); suppress recently overused openings and commitment families (exists) **and** recently used reason clauses — pass the previous voters' reason phrases as an avoid-list on decision turns, mirroring `avoid_phrases`.
-- Allow occasional casual acknowledgements (`Yeah`, `Fair`, `Honestly`) where persona-appropriate; don't force trade-off structure.
-
-**Verify:** `avg_words_by_persona` spread matches verbosity ordering with per-turn variance; option-opening/name-prefix/I-opening rates stay under thresholds; no duplicated reason clause across two voters in a round; manual read remains mandatory.
-
 ### Phase E — documentation
 
 ---
@@ -111,6 +99,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I12: Length variation + anti-echo style control** — done 2026-07-03. `_word_bounds` gets ±10% per-turn jitter around the trait budget (verbosity ordering and switch headroom preserved, tested); decision turns pass `avoid_reasons` (justification snippets already used this round, extracted by `parsing.round_reason_snippets`) alongside the existing commitment-family avoid list, and the prompt demands a different reason in the voter's own words; BUILD move purposes rotate across three framings (grounded reason / practical consideration / personal priority). Verified: 4 no-LLM tests (`tests/test_style_variation.py`), runs `20260703_015624` (n=3 chant, 18.2k tokens: three distinct vote reasons, natural bridge switch) and `20260703_015733` (n=5 board game, 23.6k tokens: five distinct vote justifications, avg words per persona spread 18.0–23.4, switches concede the pressed point).
 - **I11: Slim per-turn prompt + selective grounding** — done 2026-07-03. `sim_utterance` drops the raw OCEAN and simulator-parameter dumps (voice guidance + server-side length/tone notes already encode them), condenses the style block, and removes the "ask only on ask/invite" restriction; repair prompts scope cards to the intent's focus options. Grounding runs in `grounding_mode: tripwire` (default): the LLM judge is only called when a regex tripwire finds a suspicious concrete claim (number or policy/medical/weather-style term absent from the cards/context, cached per run); `grounding_acts` now includes vote/accept/reject (fixes the LastPass-2FA vote-turn leak class). Verified: 6 no-LLM tests (`tests/test_grounding_tripwire.py`); tokens: n=3 `20260703_015156` **19.4k** (was 25-35k, target ≤20k ✓, one invented fact tripped and repaired), n=6 `20260703_015258` **30.7k** (was 50-56k); repair rate stable; the n=6 dessert transcript shows full negotiation around a visible dealbreaker that stays respected.
 
 - **I10: Targeted evidence-based moderator interventions** — done 2026-07-03. Vote calls are option-neutral: `_moderator_vote_nudge` passes no candidate name and no focus options, and the requested action forbids naming/suggesting options or asking about "leaning" (fixes the "which Space Station option" leak). The stall-nudge menu now prefers: unresolved visible blocker on the candidate → ask that person once what would make it workable (`mod:` probe key); visible split → ask the group to weigh the two live favorites head-to-head; then the existing holdout/generic branches. Nudge prompt instructs varied phrasing. Verified: 4 no-LLM tests (`tests/test_moderator.py`), runs `20260703_014630` (n=3 logo: neutral vote call, honest holdout, majority 2/3) and `20260703_014744` (n=5 cabin: clean "name your final pick" call, minority beat with one switch + one honest holdout, majority 4/5).

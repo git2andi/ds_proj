@@ -61,7 +61,10 @@ Change participant count and provider settings in `config.yaml`. The default pro
   prefixes, biases act selection away from templated streaks, and passes compact
   prompt flags (suppress name/option opening, vary opening). Word budgets are
   trait-driven (`_word_bounds`) so verbosity/engagement produce a visible length
-  spread; `sim_utterance` length/tone guidance is concrete and parameter-driven.
+  spread with ±10% per-turn jitter; `sim_utterance` length/tone guidance is
+  concrete and parameter-driven. Decision turns avoid both commitment-phrase
+  families and justification snippets already used in the round
+  (`avoid_phrases` / `avoid_reasons`), and BUILD move purposes rotate.
 - **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
   penalizes the second-to-last speaker to stop two participants ping-ponging.
 - **Reactive act selection.** `_reactive_intent` fires before the agenda:

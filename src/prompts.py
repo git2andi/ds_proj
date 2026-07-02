@@ -234,6 +234,9 @@ def sim_utterance(
         if intent.avoid_phrases:
             forbidden = "; ".join(f"'{p}'" for p in intent.avoid_phrases)
             decision_instruction += f"\nEarlier speakers already used these phrasings — do NOT use them: {forbidden}."
+        if intent.avoid_reasons:
+            used = "; ".join(f"'{r}'" for r in intent.avoid_reasons[:3])
+            decision_instruction += f"\nEarlier voters already gave these justifications — give a DIFFERENT reason of your own, in your own words: {used}."
     elif intent.act.value == "reject":
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
