@@ -78,6 +78,13 @@ _HARD_CONDITIONAL = re.compile(
     r"\bdepends\b|\bare\s+we\s+okay\b)",
     re.I,
 )
+# On sanctioned switch turns (the controller explicitly invited a vote change and
+# asked for a bridge clause), only genuine prerequisites still block a commitment.
+# Concessive riders ("as long as", "though", "but") are the requested bridge shape.
+_SANCTION_BLOCK = re.compile(
+    r"(?:\?|\bonly\s+if\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|\bdepends\b)",
+    re.I,
+)
 _REJECT = re.compile(
     r"\b(?:i\s+reject|i\s+can'?t\s+support|cannot\s+support|not\s+okay\s+with|not\s+fine\s+with|"
     r"dealbreaker|blocked|hard\s+no|no\s+for\s+me|i'?m\s+against)\b",
@@ -228,11 +235,22 @@ def _commitment_object(check_text: str, resolver: OptionResolver) -> str | None:
     return None
 
 
-def visible_commitment(text: str, resolver: OptionResolver) -> tuple[str, str] | None:
+def visible_commitment(
+    text: str,
+    resolver: OptionResolver,
+    *,
+    sanctioned_switch: bool = False,
+) -> tuple[str, str] | None:
     """Return (stance, option_id) for clear visible commitments only.
 
     stance is one of ``vote``, ``accept``, or ``reject``. Ambiguous or hedged
     lines return None; false positives are worse than missed commitments here.
+
+    ``sanctioned_switch`` marks a turn where the controller explicitly allowed a
+    vote change and instructed a bridge clause ("commit AND say what makes it
+    workable despite preferring X"). On those turns a concessive rider after the
+    commitment ("as long as", "even though", "but") must not void the commitment
+    (issue I2) — only questions and genuine prerequisites still block.
     """
     check_text = text.replace("’", "'").replace("‘", "'")
     ids = resolver.ids_in_text(check_text)
@@ -250,6 +268,11 @@ def visible_commitment(text: str, resolver: OptionResolver) -> tuple[str, str] |
         return None
     direct_vote = _DIRECT_VOTE.search(check_text)
     soft_commit = _SOFT_COMMIT.search(check_text)
+
+    if sanctioned_switch:
+        if _SANCTION_BLOCK.search(check_text):
+            return None
+        return ("vote" if direct_vote else "accept", option_id)
 
     # Conditional or question-like support is not a public final vote.
     # Example: "I can support A, but are we okay with the higher cost?"
@@ -288,7 +311,9 @@ def parse_dialogue_act(
         question_target = _best_respondent(speaker_id, previous_speaker_id, participant_names)
 
     act_type = intent.act if intent else (ActType.ASK if question_target else ActType.REACT)
-    commitment = visible_commitment(text, resolver)
+    commitment = visible_commitment(
+        text, resolver, sanctioned_switch=bool(intent and intent.allow_vote_change)
+    )
     explicit_vote: str | None = None
     accepts: list[str] = []
     soft_rejects: dict[str, str] = {}

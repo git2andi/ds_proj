@@ -67,6 +67,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Vote stability.** Later vote rounds only re-prompt unclear/non-voters, and
   `_set_vote` keeps an existing clear vote unless the text explicitly signals a
   change (e.g. "actually I vote for", "switch to").
+- **Sanctioned switches.** On turns where the controller explicitly invites a
+  vote change (`intent.allow_vote_change`, i.e. minority check and split-vote
+  compromise), the parser accepts a commitment with a concessive bridge clause
+  ("X works for me even though …", "as long as …"); questions and genuine
+  prerequisites ("only if", "unless") still block. Everywhere else commitment
+  parsing stays strictly conservative.
 - **Coverage is bounded.** Each option gets at most one coverage nudge
   (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
 - **Alias safety.** Option aliases exclude stopwords/generic words (so "with",

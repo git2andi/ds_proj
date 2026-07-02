@@ -1,0 +1,1853 @@
+{
+  "run_id": "20260702_224909_879361",
+  "topic": "Decide which food truck to book for the department summer party",
+  "scenario": {
+    "topic": "Decide which food truck to book for the department summer party",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most to us for the summer party: variety, cost, speed, or dietary options?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Taco Fiesta Truck",
+        "attrs": {
+          "cost_per_person": "$12",
+          "menu_variety": "Mexican tacos and sides",
+          "serving_speed": "fast",
+          "dietary_options": "vegetarian and gluten-free tacos"
+        },
+        "upside": "Offers quick service and popular Mexican flavors",
+        "tradeoff": "Limited dessert options and no vegan meals",
+        "concern": "Some attendees might want more diverse cuisine",
+        "best_for": "speed and familiar crowd-pleasers",
+        "short_name": "Taco Fiesta"
+      },
+      {
+        "id": "B",
+        "name": "Green Garden Vegan Truck",
+        "attrs": {
+          "cost_per_person": "$15",
+          "menu_variety": "100% plant-based wraps and bowls",
+          "serving_speed": "moderate",
+          "dietary_options": "vegan, gluten-free, nut-free"
+        },
+        "upside": "Healthy, inclusive menu suitable for many diets",
+        "tradeoff": "Higher cost and slower serving time",
+        "concern": "Might not satisfy attendees craving meat options",
+        "best_for": "dietary inclusivity and health-conscious guests",
+        "short_name": "Green Garden"
+      },
+      {
+        "id": "C",
+        "name": "BBQ Smokehouse Express",
+        "attrs": {
+          "cost_per_person": "$13",
+          "menu_variety": "smoked meats with classic sides",
+          "serving_speed": "moderate",
+          "dietary_options": "limited vegetarian options"
+        },
+        "upside": "Hearty, filling meals with robust flavors",
+        "tradeoff": "Longer wait times and fewer diet accommodations",
+        "concern": "Not suitable for vegetarians or those avoiding red meat",
+        "best_for": "guests prioritizing flavor and portion size",
+        "short_name": "BBQ Smokehouse"
+      },
+      {
+        "id": "D",
+        "name": "Global Street Bites Truck",
+        "attrs": {
+          "cost_per_person": "$14",
+          "menu_variety": "international small plates from 5 countries",
+          "serving_speed": "variable",
+          "dietary_options": "mixed, some vegetarian and gluten-free"
+        },
+        "upside": "Diverse menu offering something new for everyone",
+        "tradeoff": "Inconsistent serving speed and slightly higher cost",
+        "concern": "Menu complexity may slow service and confuse choices",
+        "best_for": "variety and adventurous eaters",
+        "short_name": "Global Street"
+      }
+    ],
+    "shared_context": [
+      "The party is next Friday afternoon from 1pm to 4pm",
+      "Budget is capped at $500 total for food",
+      "There are exactly 4 people deciding and about 30 attendees expected"
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Sven",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.8125,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.9375,
+        "stubbornness": 0.1,
+        "directness": 0.7,
+        "compromise_threshold": 0.050000000000000044
+      },
+      "background": "I value healthy and inclusive food options that accommodate diverse dietary needs in our team.",
+      "private_goal": "I want to ensure the food truck offers vegan and gluten-free choices for everyone.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Uri",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.8875,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.7,
+        "compromise_threshold": 0.6375
+      },
+      "background": "I prefer quick, familiar food that keeps the party lively and energetic.",
+      "private_goal": "I want fast service and popular flavors that most people will enjoy without delay.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": "B",
+      "rejection_reason": "Green Garden is too slow and expensive, and lacks meat options which I think most will want.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "B",
+          "reason": "raise the hard concern about B: Green Garden is too slow and expensive, and lacks meat options which I think most will want.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Vera",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.6249999999999999,
+        "directness": 0.5375,
+        "compromise_threshold": 0.575
+      },
+      "background": "I enjoy trying new and diverse cuisines that can spark interesting conversations at our event.",
+      "private_goal": "I want a variety of international dishes that cater to different tastes and encourage adventurous eating.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Wren",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.6625,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.7124999999999999,
+        "compromise_threshold": 0.65
+      },
+      "background": "I prioritize hearty, satisfying meals that provide good value and filling portions for everyone.",
+      "private_goal": "I want to pick a food truck that offers robust flavors and enough food to keep everyone full.",
+      "preferred_options": [
+        "C",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Decide which food truck to book for the department summer party.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Taco Fiesta Truck — cost per person: $12; dietary options: vegetarian and gluten-free tacos; menu variety: Mexican tacos and sides (+ Offers quick service and popular Mexican flavors; − Limited dessert options and no vegan meals)\nB) Green Garden Vegan Truck — cost per person: $15; dietary options: vegan, gluten-free, nut-free; menu variety: 100% plant-based wraps and bowls (+ Healthy, inclusive menu suitable for many diets; − Higher cost and slower serving time)\nC) BBQ Smokehouse Express — cost per person: $13; dietary options: limited vegetarian options; menu variety: smoked meats with classic sides (+ Hearty, filling meals with robust flavors; − Longer wait times and fewer diet accommodations)\nD) Global Street Bites Truck — cost per person: $14; dietary options: mixed, some vegetarian and gluten-free; menu variety: international small plates from 5 countries (+ Diverse menu offering something new for everyone; − Inconsistent serving speed and slightly higher cost)\nContext: The party is next Friday afternoon from 1pm to 4pm; Budget is capped at $500 total for food; There are exactly 4 people deciding and about 30 attendees expected.\nWhat matters most to us for the summer party: variety, cost, speed, or dietary options?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Decide which food truck to book for the department summer party.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Taco Fiesta Truck — cost per person: $12; dietary options: vegetarian and gluten-free tacos; menu variety: Mexican tacos and sides (+ Offers quick service and popular Mexican flavors; − Limited dessert options and no vegan meals)\nB) Green Garden Vegan Truck — cost per person: $15; dietary options: vegan, gluten-free, nut-free; menu variety: 100% plant-based wraps and bowls (+ Healthy, inclusive menu suitable for many diets; − Higher cost and slower serving time)\nC) BBQ Smokehouse Express — cost per person: $13; dietary options: limited vegetarian options; menu variety: smoked meats with classic sides (+ Hearty, filling meals with robust flavors; − Longer wait times and fewer diet accommodations)\nD) Global Street Bites Truck — cost per person: $14; dietary options: mixed, some vegetarian and gluten-free; menu variety: international small plates from 5 countries (+ Diverse menu offering something new for everyone; − Inconsistent serving speed and slightly higher cost)\nContext: The party is next Friday afternoon from 1pm to 4pm; Budget is capped at $500 total for food; There are exactly 4 people deciding and about 30 attendees expected.\nWhat matters most to us for the summer party: variety, cost, speed, or dietary options?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Green Garden stands out for covering all major dietary needs, which really matters given our team's diversity.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Garden stands out for covering all major dietary needs, which really matters given our team's diversity.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1610,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Fast service keeps things moving, so Taco Fiesta fits perfectly with our party’s vibe and time frame.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Fast service keeps things moving, so Taco Fiesta fits perfectly with our party’s vibe and time frame.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1706,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "We need something filling and flavorful—BBQ hits that spot but veggie options are a real miss.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We need something filling and flavorful—BBQ hits that spot but veggie options are a real miss.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1694,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "More international flair fits the vibe, but can we handle the slow pace with Global Street?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "More international flair fits the vibe, but can we handle the slow pace with Global Street?",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1736,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "Global Street’s pace worries me, plus $14 per person pushes the budget tight for 30 people.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Global Street’s pace worries me, plus $14 per person pushes the budget tight for 30 people.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1824,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Quick service is a dealbreaker here, and Global Street’s pace could really drag us down.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Quick service is a dealbreaker here, and Global Street’s pace could really drag us down.",
+        "act_type": "reject",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "Quick service is a dealbreaker here, and Global Street’s pace could really drag us down."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Global Street, Taco Fiesta, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1602,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Green Garden’s menu nails dietary needs with vegan and gluten-free options, which keeps everyone included—even if it means a bit slower service.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Garden’s menu nails dietary needs with vegan and gluten-free options, which keeps everyone included—even if it means a bit slower service.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Green Garden, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1535,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "More variety means more chances to spark conversations despite slower service.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "More variety means more chances to spark conversations despite slower service.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Global Street, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1501,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "Variety’s fine, but Green Garden won’t fill us up or satisfy meat cravings.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Variety’s fine, but Green Garden won’t fill us up or satisfy meat cravings.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about BBQ Smokehouse, Green Garden",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1565,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Wren, you’re right about meat cravings, but can Green Garden stretch the budget if we add some heartier sides or extras to keep everyone satisfied?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Wren, you’re right about meat cravings, but can Green Garden stretch the budget if we add some heartier sides or extras to keep everyone satisfied?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Green Garden",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 865,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "We don’t know if Green Garden can add extras within budget, but slower service risks dragging us down.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We don’t know if Green Garden can add extras within budget, but slower service risks dragging us down.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1570,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "How bad is Global Street’s speed variation? Could it slow us more than Green Garden?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "How bad is Global Street’s speed variation? Could it slow us more than Green Garden?",
+        "act_type": "ask",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Global Street",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 778,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "We don’t know exact delays, but Global Street’s inconsistency sounds worse than Green Garden’s steady slow pace.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We don’t know exact delays, but Global Street’s inconsistency sounds worse than Green Garden’s steady slow pace.",
+        "act_type": "answer",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1570,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Global Street’s menu might slow things down even more with all those different dishes to prep.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Global Street’s menu might slow things down even more with all those different dishes to prep.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Global Street, Green Garden, Taco Fiesta, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1673,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Slower service is a downside, but Green Garden’s fully plant-based menu covers all dietary needs without guesswork.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Slower service is a downside, but Green Garden’s fully plant-based menu covers all dietary needs without guesswork.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Slower service is a downside, but Green Garden’s fully plant-based menu covers all dietary needs without guesswork."
+        },
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Green Garden with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1578,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "Diversity costs extra and adds chaos; can we afford both with 30 people?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Diversity costs extra and adds chaos; can we afford both with 30 people?",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Global Street with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 2,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1493,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "We can’t know exact costs beyond the $15 per person for Green Garden here, but with 30 people that’s $450—still under budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We can’t know exact costs beyond the $15 per person for Green Garden here, but with 30 people that’s $450—still under budget.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1578,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Fast service means we keep the party moving without long lines, and $12 a person on Taco Fiesta leaves room for drinks or extras.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Fast service means we keep the party moving without long lines, and $12 a person on Taco Fiesta leaves room for drinks or extras.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Taco Fiesta, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1573,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can we each say which option we’re definitely going with so we know where we stand?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can we each say which option we’re definitely going with so we know where we stand?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Green Garden gets my vote for sure. It keeps everyone covered, and we can skip worrying about food allergies or preferences.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Garden gets my vote for sure. It keeps everyone covered, and we can skip worrying about food allergies or preferences.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 845,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "I'd go with Taco Fiesta for its fast service and affordable price.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'd go with Taco Fiesta for its fast service and affordable price.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1593,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "Count me in for Global Street Bites Truck for its diverse international menu.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Count me in for Global Street Bites Truck for its diverse international menu.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1448,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "My pick is BBQ Smokehouse Express for hearty, filling meals.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "My pick is BBQ Smokehouse Express for hearty, filling meals.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "gets my vote",
+          "I'd go with"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1454,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like votes are split four ways; can everyone live with Green Garden Vegan Truck without reopening the debate?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like votes are split four ways; can everyone live with Green Garden Vegan Truck without reopening the debate?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "I’d go with Taco Fiesta Truck for its quick service and budget-friendly Mexican tacos everyone enjoys.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’d go with Taco Fiesta Truck for its quick service and budget-friendly Mexican tacos everyone enjoys.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; briefly restate the option you still choose and react to the split in one line — you are not switching",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1515,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Vera",
+      "text": "Global Street Bites Truck gets my vote for its diverse menu and unique international flavors.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Global Street Bites Truck gets my vote for its diverse menu and unique international flavors.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Global Street (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1427,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p4",
+      "speaker_name": "Wren",
+      "text": "My pick is BBQ Smokehouse Express for hearty, filling meals that everyone can enjoy.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p4",
+        "text": "My pick is BBQ Smokehouse Express for hearty, filling meals that everyone can enjoy.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring BBQ Smokehouse (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1554,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we didn’t land on anything clear this time around.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we didn’t land on anything clear this time around.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 25,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "D",
+        "p4": "C"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "B",
+        "p4": "B"
+      },
+      "phase_history": [
+        "pacing: min=12, force=18, hard=26, distinct_initial_prefs=4, avg_compromise=0.52",
+        "turn 5: discussion — all participants gave an opening view",
+        "turn 19: narrowing — target discussion length reached",
+        "turn 24: closure — all participants already gave a clear vote",
+        "turn 28: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 18,
+      "hard_max_turns": 26
+    }
+  },
+  "metrics": {
+    "participant_turns": 25,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.138,
+    "turn_counts": {
+      "Sven": 6,
+      "Uri": 6,
+      "Vera": 6,
+      "Wren": 7
+    },
+    "top_speaker_share": 0.28,
+    "avg_words_by_persona": {
+      "Sven": 20.7,
+      "Uri": 16.7,
+      "Vera": 13.8,
+      "Wren": 14.9
+    },
+    "question_density": 0.16,
+    "avg_words_per_turn": 16.4,
+    "repaired_turns": 6,
+    "repair_rate": 0.24,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Sven": "B",
+      "Uri": "A",
+      "Vera": "D",
+      "Wren": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.04,
+    "option_opening_rate": 0.24,
+    "i_opening_rate": 0.08,
+    "we_opening_rate": 0.16,
+    "name_or_option_opening_rate": 0.28,
+    "repeated_opening_patterns": 0,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 4,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 10,
+        "reasons": 3,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 3,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 8,
+        "reasons": 2,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Sven": 0.812,
+      "Uri": 0.887,
+      "Vera": 0.325,
+      "Wren": 0.4
+    },
+    "agenda_status": {
+      "done": 7,
+      "pending": 7,
+      "obsolete": 2
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 18,
+    "hard_max_turns": 26,
+    "phase_history": [
+      "pacing: min=12, force=18, hard=26, distinct_initial_prefs=4, avg_compromise=0.52",
+      "turn 5: discussion — all participants gave an opening view",
+      "turn 19: narrowing — target discussion length reached",
+      "turn 24: closure — all participants already gave a clear vote",
+      "turn 28: closure — vote rounds exhausted without visible consensus",
+      "turn 29: closure — closed as unresolved"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 1965,
+    "setup_tokens_out": 1083,
+    "dialogue_tokens_in": 38052,
+    "dialogue_tokens_out": 1008,
+    "total_tokens_in": 40017,
+    "total_tokens_out": 2091
+  },
+  "tokens": {
+    "setup_tokens_in": 1965,
+    "setup_tokens_out": 1083,
+    "dialogue_tokens_in": 38052,
+    "dialogue_tokens_out": 1008,
+    "total_tokens_in": 40017,
+    "total_tokens_out": 2091
+  }
+}

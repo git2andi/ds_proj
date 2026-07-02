@@ -72,23 +72,6 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ---
 
-#### I2 (P0, new). The controller's own switch instruction contradicts the commitment parser
-
-**Observed in:** same costume run. The minority-check/compromise intents instruct movers to commit "AND say in one clause what makes it workable despite preferring X". Gemma complied: `My pick is the Retro 80s Neon Workout Crew—I'm good with the outfits as long as we keep things cool and comfortable.` The parser's `_HARD_CONDITIONAL` (`as long as`) voided the commitment; her recorded vote silently stayed B. Result: outcome `majority 4/6` while the transcript reads unanimous — the inverse of I1 (valid visible text ignored instead of invalid text printed). The same mechanism can silently discard any bridge-clause switch in `_minority_check` / `_maybe_split_vote_compromise`.
-
-**Fix (pick the narrow one):**
-
-- On sanctioned switch turns only (`intent.allow_vote_change` true), accept a direct commitment even when a trailing concession/condition clause follows, provided the line contains no question mark and the commitment object is unambiguous. Everywhere else the conservative rules stay exactly as they are.
-- Alternatively (fallback if the above proves too loose): change the instruction to demand the commitment as its own unconditional sentence, bridge clause in a separate sentence, and parse per-sentence. Prefer the parser-side fix — it keeps the natural phrasing.
-- Audit `_semantic_block` + `_validate_turn_text` for VOTE/ACCEPT intents so a bridge-clause commitment doesn't first get flagged `UNCLEAR_VISIBLE_COMMITMENT` and repaired into something stiffer.
-
-**Verify:**
-
-- No-LLM tests: `My pick is X—I'm good with it as long as we keep it simple.` parses as acceptance of X **only** under a sanctioned-switch intent; the identical text under a normal discussion intent still parses as no commitment.
-- Rerun a majority-then-minority-check scenario: every visible switch in the transcript must appear in `visible_votes`; outcome status must match a human reading of the transcript.
-
----
-
 #### I3 (P0). Parser/state vocabulary for blockers, conditions, and switches
 
 Promoted from old P2 because I4/I5 need this machinery. The parser already rejects hedged/conditional commitments well; what is missing are explicit categories the controller can act on.
@@ -262,6 +245,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I2: Sanctioned-switch bridge clauses parse as commitments** — done 2026-07-02. `visible_commitment(..., sanctioned_switch=True)` (wired from `intent.allow_vote_change`) accepts a commitment with a concessive rider ("as long as", "even though", "despite"); questions and genuine prerequisites (`only if`, `unless`, `would need`, `depends`) still block. Conservative rules unchanged everywhere else. Verified: 8 no-LLM tests (`tests/test_sanctioned_switch.py`, incl. the exact Gemma line), runs `20260702_224801` (n=3 synth, unanimous), `20260702_224909` (n=4 forced 4-way split → honest unresolved), `20260702_225046` (n=5 forced 3-2 → minority check, Faye's visible switch recorded, unanimous matches transcript).
 - **I1: Blocked invalid decision turns never printed** — done 2026-07-02. `_generate_and_append` now replaces still-blocking text after repair with `_safe_fallback_text` (deterministic, parser-clean per intent: blockers commit to an allowed alternative, unclear votes become one clear commitment, coverage turns name the required option). Counters `fallback_turns` / `invalid_printed_turn_count` added to metrics. Verified: 6 no-LLM tests (`tests/test_fallback.py`), n=3 run `logs/archive/.../20260702_224207_607026` (dog name, majority consistent with transcript), n=5 forced-blocker run `20260702_224346_818603` (mural; blocker never accepts B, both counters 0). Also fixed: PowerShell BOM leaking into piped topics (`main.py`).
 - **Duplicated `expected_act` field in `ResponseObligation`** — already fixed; `models.py` declares it once (verified 2026-07-02). Dropped.
 - Old unordered P0s ("invalid blocking turns", "hidden preference movement", "blockers ignored in voting", "hard constraints", "vote readiness") → reorganized into I1-I6 with new evidence added (bridge-clause parser conflict, camp vote flips, third-option switch, persona-goal contradiction).
