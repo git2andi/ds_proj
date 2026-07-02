@@ -301,6 +301,7 @@ class TurnRecord:
     repaired: bool = False
     repair_trigger_codes: list[str] = field(default_factory=list)
     state_mutation_blocked: bool = False
+    used_fallback: bool = False
 
 
 @dataclass(slots=True)
@@ -329,6 +330,8 @@ class DialogueState:
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0
+    fallback_turn_count: int = 0
+    invalid_printed_turn_count: int = 0
     phase_history: list[str] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0

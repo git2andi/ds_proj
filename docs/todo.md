@@ -72,30 +72,6 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ---
 
-#### I1 (P0). Blocked invalid decision turns must never be printed
-
-**Observed in:** `logs/archive/20260702_151019_800548`, `Pick a group costume theme for the street carnival`, n=6. Oscar is a hard blocker against `A: Retro 80s Neon`. His minority-check line `Count me in for the Retro 80s Neon Workout Crew.` was flagged `HARD_BLOCKER_ACCEPTED_REJECTED_OPTION` and state mutation was blocked (recorded vote stayed D), but the line was printed — the transcript visibly contradicts the blocker AND the recorded outcome (transcript reads unanimous; outcome says majority 4/6).
-
-**Root cause:** `_generate_and_append()` repairs up to `max_repairs_per_turn`, then appends the final text even if blocking issues remain; the block only prevents state mutation.
-
-**Fix:**
-
-- Treat blocking validation issues as transcript blockers, not only state blockers.
-- After the repair loop, if a blocking issue remains, do not append the LLM text. Use a deterministic safe fallback per intent:
-  - hard-blocker contradiction → reject or commit to an acceptable alternative (never the rejected option);
-  - unclear vote/acceptance → one clear commitment to an allowed option;
-  - invalid option reference / missing required focus → safe neutral line naming valid options.
-- Add `_safe_fallback_text(state, persona, intent, report) -> str`; re-parse and re-validate the fallback before appending; if even that fails, append a safe non-commitment line (`I can't back that one, so I'd rather stay with <allowed option>.`).
-- Prefer a valid fallback over a dropped turn (turn-taking stays intact).
-- Count fallback use: `fallback_turn_count`, and a metric `invalid_printed_turn_count` (turns appended while a blocking issue remained) that must be 0.
-
-**Verify:**
-
-- No-LLM test: persona with `rejection='A'`, generated vote accepts A twice (original + repair) → appended text must not accept A, state unchanged or moved to a valid alternative.
-- Rerun a costume-like topic with a forced hard blocker (`hard_blocker_probability` temporarily high). No blocker visibly accepts their rejected option; `invalid_printed_turn_count == 0`.
-
----
-
 #### I2 (P0, new). The controller's own switch instruction contradicts the commitment parser
 
 **Observed in:** same costume run. The minority-check/compromise intents instruct movers to commit "AND say in one clause what makes it workable despite preferring X". Gemma complied: `My pick is the Retro 80s Neon Workout Crew—I'm good with the outfits as long as we keep things cool and comfortable.` The parser's `_HARD_CONDITIONAL` (`as long as`) voided the commitment; her recorded vote silently stayed B. Result: outcome `majority 4/6` while the transcript reads unanimous — the inverse of I1 (valid visible text ignored instead of invalid text printed). The same mechanism can silently discard any bridge-clause switch in `_minority_check` / `_maybe_split_vote_compromise`.
@@ -286,6 +262,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I1: Blocked invalid decision turns never printed** — done 2026-07-02. `_generate_and_append` now replaces still-blocking text after repair with `_safe_fallback_text` (deterministic, parser-clean per intent: blockers commit to an allowed alternative, unclear votes become one clear commitment, coverage turns name the required option). Counters `fallback_turns` / `invalid_printed_turn_count` added to metrics. Verified: 6 no-LLM tests (`tests/test_fallback.py`), n=3 run `logs/archive/.../20260702_224207_607026` (dog name, majority consistent with transcript), n=5 forced-blocker run `20260702_224346_818603` (mural; blocker never accepts B, both counters 0). Also fixed: PowerShell BOM leaking into piped topics (`main.py`).
 - **Duplicated `expected_act` field in `ResponseObligation`** — already fixed; `models.py` declares it once (verified 2026-07-02). Dropped.
 - Old unordered P0s ("invalid blocking turns", "hidden preference movement", "blockers ignored in voting", "hard constraints", "vote readiness") → reorganized into I1-I6 with new evidence added (bridge-clause parser conflict, camp vote flips, third-option switch, persona-goal contradiction).
 - Old P1/P2s (targeting, act selection, moderator, prompt cost, grounding, length, style, parser categories, metrics, docs) → I3, I7-I13.

@@ -42,6 +42,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
 
 ## Key controller mechanisms (current as of 2026-07-02)
 
+- **Transcript-safe fallbacks.** A turn that still carries blocking validation
+  issues after the repair pass is never printed. `_safe_fallback_text` substitutes
+  a deterministic, parser-clean line for the intent (a hard blocker commits to an
+  allowed alternative, an unclear vote becomes one clear commitment, a coverage
+  turn names the required option). Metrics: `fallback_turns`,
+  `invalid_printed_turn_count` (must stay 0).
 - **Response obligations.** A direct question (moderator→participant or
   participant→participant), detected from visible text, sets
   `DialogueState.response_obligation`. The router consumes it before normal

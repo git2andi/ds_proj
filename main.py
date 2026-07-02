@@ -32,7 +32,8 @@ def _topics_from_args(argv: list[str]) -> list[str]:
             return topics
         return [" ".join(argv[1:]).strip()]
     if not sys.stdin.isatty():
-        piped = sys.stdin.read().strip()
+        # PowerShell pipes prepend a UTF-8 BOM; strip it so it never pollutes the topic.
+        piped = sys.stdin.read().lstrip("﻿").strip()
         if piped:
             return [line.strip() for line in piped.splitlines() if line.strip()]
     topic = input("Topic: ").strip()

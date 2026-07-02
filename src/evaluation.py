@@ -86,6 +86,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "repaired_turns": sum(1 for t in participant_turns if t.repaired),
         "repair_rate": round(sum(1 for t in participant_turns if t.repaired) / n_turns, 3),
         "flagged_turns": sum(1 for t in participant_turns if t.validation_issues),
+        "fallback_turns": int(state.fallback_turn_count),
+        "invalid_printed_turn_count": int(state.invalid_printed_turn_count),
         "visible_vote_count": len(visible_votes),
         "visible_votes": visible_votes,
         "unanswered_direct_questions": int(state.unanswered_obligations),

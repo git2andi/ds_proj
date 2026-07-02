@@ -590,6 +590,20 @@ class DialogueRunner:
                 text, act, report = candidate_text, candidate_act, candidate_report
 
         block = report.block_state_mutation or self._semantic_block(persona, intent, act)
+        used_fallback = False
+        if block:
+            # Blocking issues survived generation + repair: the LLM text must not
+            # reach the transcript (issue I1). Replace it with a deterministic
+            # fallback for this intent, re-parse, and re-validate before appending.
+            text = self._safe_fallback_text(state, persona, intent, report)
+            act = self._parse_act(state, persona, text, intent)
+            report = self._validate_turn_text(text, state, persona, intent, act)
+            used_fallback = True
+            state.fallback_turn_count += 1
+            block = report.block_state_mutation or self._semantic_block(persona, intent, act)
+            if block:
+                # Should be unreachable: the fallback is built to parse cleanly.
+                state.invalid_printed_turn_count += 1
         record = self._append_participant(
             state,
             persona,
@@ -603,6 +617,7 @@ class DialogueRunner:
             trigger_codes,
             block,
         )
+        record.used_fallback = used_fallback
         if not block:
             self._apply_semantics(state, record)
             mark_agenda_done(persona, intent.agenda_index)
@@ -697,6 +712,47 @@ class DialogueRunner:
             return None, self._llm.last_tokens_in, self._llm.last_tokens_out
         unsupported = bool(data.get("unsupported")) if isinstance(data, dict) else False
         return ("UNSUPPORTED_FACT" if unsupported else None), self._llm.last_tokens_in, self._llm.last_tokens_out
+
+    @staticmethod
+    def _safe_fallback_text(state: DialogueState, persona: Persona, intent: MoveIntent, report: ValidationReport) -> str:
+        """Deterministic replacement for LLM text that kept blocking issues after repair.
+
+        The wording is chosen so the conservative parser reads it exactly as
+        intended: decision turns yield one unambiguous commitment to an allowed
+        option, blocker turns never accept the rejected option, and discussion
+        turns stay commitment-free. Phrasings avoid every hedge/conditional/
+        rejection pattern in parsing.py.
+        """
+        aliases = short_alias_map(state.scenario.options)
+        rt = state.runtimes[persona.id]
+        blocked = persona.rejection
+        target = next(
+            o
+            for o in [rt.current_preference, persona.preferred_option, *state.scenario.option_ids]
+            if o in state.scenario.option_ids and o != blocked
+        )
+        if intent.act in _DECISION_ACTS:
+            templates = [
+                ("gets my vote", "{o} gets my vote."),
+                ("I'd go with", "I'd go with {o}."),
+                ("my pick is", "My pick is {o}."),
+                ("I vote for", "I vote for {o}."),
+            ]
+            label, template = next(
+                ((l, t) for l, t in templates if l not in intent.avoid_phrases),
+                templates[0],
+            )
+            line = template.format(o=aliases[target])
+            if blocked and "HARD_BLOCKER_ACCEPTED_REJECTED_OPTION" in report.issues:
+                return f"I can't get behind {aliases[blocked]}, so {line[0].lower() + line[1:]}"
+            return line
+        if "MISSING_REQUIRED_OPTION_FOCUS" in report.issues and intent.option_focus:
+            gap = intent.option_focus[0]
+            other = target if target != gap else next((o for o in state.scenario.option_ids if o != gap), None)
+            if other:
+                return f"One option we haven't really talked about: {aliases[gap]}. How does it stack up against {aliases[other]}?"
+            return f"One option we haven't really talked about: {aliases[gap]}. Worth a quick look before we decide."
+        return f"I'm sticking with {aliases[target]} on this one."
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
