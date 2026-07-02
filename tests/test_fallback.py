@@ -134,7 +134,6 @@ def test_generate_and_append_replaces_blocking_text():
         reason="r",
         option_focus=["A", "B"],
         allow_vote_change=True,
-        moves_lean=True,
     )
     record = runner._generate_and_append(state, intent)
 

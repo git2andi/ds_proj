@@ -1,0 +1,2232 @@
+{
+  "run_id": "20260702_230908_256241",
+  "topic": "Pick a restaurant for the team dinner that also works for vegetarians",
+  "scenario": {
+    "topic": "Pick a restaurant for the team dinner that also works for vegetarians",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most for our team dinner: menu variety, atmosphere, cost, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Green Leaf Vegan Bistro",
+        "attrs": {
+          "average_cost_per_person": "$35",
+          "distance_from_office": "15 minutes by car",
+          "vegetarian_options": "100% vegan menu",
+          "ambiance": "casual and quiet"
+        },
+        "upside": "All dishes are plant-based, ensuring variety for vegetarians",
+        "tradeoff": "Limited options for non-vegetarians who prefer meat",
+        "concern": "Some team members might find the menu too specialized or unfamiliar",
+        "best_for": "prioritizing vegetarian-friendly menu and healthy options",
+        "short_name": "Green Leaf"
+      },
+      {
+        "id": "B",
+        "name": "The Rustic Grill Steakhouse",
+        "attrs": {
+          "average_cost_per_person": "$40",
+          "distance_from_office": "10 minutes walking",
+          "vegetarian_options": "3 main vegetarian dishes",
+          "ambiance": "lively and rustic"
+        },
+        "upside": "Great atmosphere with hearty options for meat lovers",
+        "tradeoff": "Vegetarian choices are limited and less varied",
+        "concern": "Vegetarians may feel underserved or have fewer appealing choices",
+        "best_for": "prioritizing atmosphere and meat-based menu",
+        "short_name": "Rustic Grill"
+      },
+      {
+        "id": "C",
+        "name": "Sunset Mediterranean Kitchen",
+        "attrs": {
+          "average_cost_per_person": "$30",
+          "distance_from_office": "20 minutes by public transit",
+          "vegetarian_options": "wide variety of vegetarian and vegan dishes",
+          "ambiance": "bright and casual"
+        },
+        "upside": "Affordable with diverse vegetarian and non-vegetarian options",
+        "tradeoff": "Longer travel time might be inconvenient for some",
+        "concern": "Public transit timing may not align well with everyone’s schedule",
+        "best_for": "balancing cost and menu variety for all diets",
+        "short_name": ""
+      },
+      {
+        "id": "D",
+        "name": "Downtown Fusion Tapas Bar",
+        "attrs": {
+          "average_cost_per_person": "$38",
+          "distance_from_office": "5 minutes walking",
+          "vegetarian_options": "several vegetarian small plates",
+          "ambiance": "trendy and social"
+        },
+        "upside": "Close by with a social atmosphere and shareable plates",
+        "tradeoff": "Smaller portions may not satisfy everyone’s appetite",
+        "concern": "Noise level might be too high for those preferring quiet dinners",
+        "best_for": "prioritizing convenience and social atmosphere",
+        "short_name": "Fusion Tapas"
+      }
+    ],
+    "shared_context": [
+      "The team dinner is planned for next Friday evening",
+      "Budget per person is around $30 to $40",
+      "There are exactly 5 participants including 2 vegetarians",
+      "The goal is to find a restaurant that suits everyone’s dietary needs and preferences"
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Faye",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.5875,
+        "initiative": 0.625,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.6875,
+        "compromise_threshold": 0.6
+      },
+      "background": "Faye values healthy and vegetarian-friendly dining options that encourage trying new foods.",
+      "private_goal": "She wants a restaurant with a strong vegetarian menu that also feels welcoming to non-vegetarians.",
+      "preferred_options": [
+        "B",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Yara",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.2875,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.45,
+        "compromise_threshold": 0.48749999999999993
+      },
+      "background": "Yara prefers familiar and lively environments and enjoys hearty meals but is open to vegetarian options if they are good.",
+      "private_goal": "She wants a restaurant with a good atmosphere and some vegetarian dishes, but not too specialized.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Elif",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.4,
+        "directness": 0.6375,
+        "compromise_threshold": 0.2875
+      },
+      "background": "Elif is conscientious about convenience and prefers calm, quiet places with good vegetarian options.",
+      "private_goal": "She wants a nearby restaurant with several vegetarian small plates and a quiet ambiance.",
+      "preferred_options": [
+        "D",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Sami",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.675,
+        "initiative": 0.6499999999999999,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.6375,
+        "compromise_threshold": 0.6375
+      },
+      "background": "Sami enjoys social and lively settings with hearty meat options and prefers to avoid places with limited vegetarian choices.",
+      "private_goal": "He wants a restaurant with a lively atmosphere and good meat dishes, and rejects places with very limited vegetarian options.",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": "A",
+      "rejection_reason": "Green Leaf's fully vegan menu is too specialized and lacks meat options, which conflicts with Sami's preference for hearty meat dishes.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "A",
+          "reason": "raise the hard concern about A: Green Leaf's fully vegan menu is too specialized and lacks meat options, which conflicts with Sami's preference for hearty meat dishes.",
+          "priority": 0.95,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Mina",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.3625,
+        "verbosity": 0.325,
+        "initiative": 0.35,
+        "responsiveness": 0.825,
+        "stubbornness": 0.25,
+        "directness": 0.5499999999999999,
+        "compromise_threshold": 0.26249999999999996
+      },
+      "background": "Mina values a quiet and agreeable environment with affordable and diverse vegetarian options.",
+      "private_goal": "She wants a place that balances cost and menu variety, especially with good vegetarian choices.",
+      "preferred_options": [
+        "D",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a restaurant for the team dinner that also works for vegetarians.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Green Leaf Vegan Bistro — average cost per person: $35; distance from office: 15 minutes by car; ambiance: casual and quiet (+ All dishes are plant-based, ensuring variety for vegetarians; − Limited options for non-vegetarians who prefer meat)\nB) The Rustic Grill Steakhouse — average cost per person: $40; distance from office: 10 minutes walking; ambiance: lively and rustic (+ Great atmosphere with hearty options for meat lovers; − Vegetarian choices are limited and less varied)\nC) Sunset Mediterranean Kitchen — average cost per person: $30; distance from office: 20 minutes by public transit; ambiance: bright and casual (+ Affordable with diverse vegetarian and non-vegetarian options; − Longer travel time might be inconvenient for some)\nD) Downtown Fusion Tapas Bar — average cost per person: $38; distance from office: 5 minutes walking; ambiance: trendy and social (+ Close by with a social atmosphere and shareable plates; − Smaller portions may not satisfy everyone’s appetite)\nContext: The team dinner is planned for next Friday evening; Budget per person is around $30 to $40; There are exactly 5 participants including 2 vegetarians.\nWhat matters most for our team dinner: menu variety, atmosphere, cost, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a restaurant for the team dinner that also works for vegetarians.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Green Leaf Vegan Bistro — average cost per person: $35; distance from office: 15 minutes by car; ambiance: casual and quiet (+ All dishes are plant-based, ensuring variety for vegetarians; − Limited options for non-vegetarians who prefer meat)\nB) The Rustic Grill Steakhouse — average cost per person: $40; distance from office: 10 minutes walking; ambiance: lively and rustic (+ Great atmosphere with hearty options for meat lovers; − Vegetarian choices are limited and less varied)\nC) Sunset Mediterranean Kitchen — average cost per person: $30; distance from office: 20 minutes by public transit; ambiance: bright and casual (+ Affordable with diverse vegetarian and non-vegetarian options; − Longer travel time might be inconvenient for some)\nD) Downtown Fusion Tapas Bar — average cost per person: $38; distance from office: 5 minutes walking; ambiance: trendy and social (+ Close by with a social atmosphere and shareable plates; − Smaller portions may not satisfy everyone’s appetite)\nContext: The team dinner is planned for next Friday evening; Budget per person is around $30 to $40; There are exactly 5 participants including 2 vegetarians.\nWhat matters most for our team dinner: menu variety, atmosphere, cost, or convenience?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p4",
+      "speaker_name": "Sami",
+      "text": "Rustic Grill nails the vibe and meat options we want, but I worry the vegetarians might feel a bit left out with just.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Rustic Grill nails the vibe and meat options we want, but I worry the vegetarians might feel a bit left out with just.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Rustic Grill nails the vibe and meat options we want, but I worry the vegetarians might feel a bit left out with just."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1630,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Rustic Grill has the best vibe and meat choices, but only three vegetarian mains might feel tight for us.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Rustic Grill has the best vibe and meat choices, but only three vegetarian mains might feel tight for us.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1670,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Liking the lively vibe and hearty meals, but wondering if three veggie options really cut it for us.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Liking the lively vibe and hearty meals, but wondering if three veggie options really cut it for us.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1683,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Close and good for veggies, but the social buzz might get loud for some.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Close and good for veggies, but the social buzz might get loud for some.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1724,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p5",
+      "speaker_name": "Mina",
+      "text": "Close and social works if we can handle smaller portions at Fusion Tapas.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Close and social works if we can handle smaller portions at Fusion Tapas.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1752,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Sami",
+      "text": "You can’t beat Rustic Grill for that lively, rustic buzz—plus it’s just a quick walk, which makes after-dinner plans easier.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "You can’t beat Rustic Grill for that lively, rustic buzz—plus it’s just a quick walk, which makes after-dinner plans easier.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Rustic Grill, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1556,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Green Leaf nails vegetarian variety, but it might leave meat eaters feeling left out—Rustic Grill still edges it with atmosphere.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Leaf nails vegetarian variety, but it might leave meat eaters feeling left out—Rustic Grill still edges it with atmosphere.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1486,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p5",
+      "speaker_name": "Mina",
+      "text": "Sunset’s veggie spread is solid and hits our budget, but that transit time’s a pain.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Sunset’s veggie spread is solid and hits our budget, but that transit time’s a pain.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1563,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Sami",
+      "text": "Green Leaf’s vibe is way too chill and quiet for a team night, plus zero meat options—can’t have that for us meat lovers!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Green Leaf’s vibe is way too chill and quiet for a team night, plus zero meat options—can’t have that for us meat lovers!",
+        "act_type": "challenge",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Green Leaf",
+        "addressee_id": "p5",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1597,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Close walk and vegetarian small plates at Fusion Tapas make it easier for us all to share.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Close walk and vegetarian small plates at Fusion Tapas make it easier for us all to share.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Fusion Tapas, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1540,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "The vibe’s solid for a casual night, and Rustic Grill’s three veggie mains aren’t great but could work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The vibe’s solid for a casual night, and Rustic Grill’s three veggie mains aren’t great but could work.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Rustic Grill, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1517,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p5",
+      "speaker_name": "Mina",
+      "text": "Rustic Grill sounds lively but I worry the limited veggie options won’t cut it for us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Rustic Grill sounds lively but I worry the limited veggie options won’t cut it for us.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Rustic Grill sounds lively but I worry the limited veggie options won’t cut it for us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Rustic Grill, Fusion Tapas, Sunset Mediterranean Kitchen",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1675,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Three veggie mains aren’t perfect, but Rustic Grill’s walkable location keeps things simple after work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Three veggie mains aren’t perfect, but Rustic Grill’s walkable location keeps things simple after work.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Rustic Grill, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1522,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Does the longer trip to Sunset Mediterranean put off anyone else given the budget and timing?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Does the longer trip to Sunset Mediterranean put off anyone else given the budget and timing?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Rustic Grill, Fusion Tapas, Sunset Mediterranean Kitchen",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1039,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Longer trip sucks but Sunset’s veggie variety might actually make everyone happier overall.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Longer trip sucks but Sunset’s veggie variety might actually make everyone happier overall.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Sunset Mediterranean Kitchen, Rustic Grill could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1544,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "How noisy is Fusion Tapas really? Quiet matters more than trendy for me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "How noisy is Fusion Tapas really? Quiet matters more than trendy for me.",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Fusion Tapas",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 839,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "If Rustic Grill’s veggie choices feel limited, do we know if they can customize or add more for us?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "If Rustic Grill’s veggie choices feel limited, do we know if they can customize or add more for us?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Rustic Grill",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Faye, no info on customizing there, but three veggie mains still feels tight for two vegetarians.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Faye, no info on customizing there, but three veggie mains still feels tight for two vegetarians.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1486,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p4",
+      "speaker_name": "Sami",
+      "text": "Okay, three veggie mains at Rustic is borderline—do we know if their lively vibe means it gets too loud for a chill dinner?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Okay, three veggie mains at Rustic is borderline—do we know if their lively vibe means it gets too loud for a chill dinner?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Rustic Grill",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 822,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Lively definitely means louder, Sami. That vibe won’t help us relax after work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Lively definitely means louder, Sami. That vibe won’t help us relax after work.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1495,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "Three veggie dishes isn’t enough for us, and the loud vibe won’t help the vegetarians feel comfortable or welcome.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Three veggie dishes isn’t enough for us, and the loud vibe won’t help the vegetarians feel comfortable or welcome.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Rustic Grill with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1442,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Sunset has better veggie variety and a chill vibe, but the longer commute might annoy us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Sunset has better veggie variety and a chill vibe, but the longer commute might annoy us.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Sunset Mediterranean Kitchen, Rustic Grill with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1501,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you each say which spot you’re definitely going with so we can see where we stand?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you each say which spot you’re definitely going with so we can see where we stand?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p4",
+      "speaker_name": "Sami",
+      "text": "I’m all in for Rustic Grill—great meat, lively buzz, and three veggie options beat none!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m all in for Rustic Grill—great meat, lively buzz, and three veggie options beat none!",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 918,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Faye",
+      "text": "My pick is Rustic Grill because the vibe suits us and the veggie options are workable.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "My pick is Rustic Grill because the vibe suits us and the veggie options are workable.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1390,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p5",
+      "speaker_name": "Mina",
+      "text": "Fusion Tapas works for me—quiet enough and enough variety without breaking the budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Fusion Tapas works for me—quiet enough and enough variety without breaking the budget.",
+        "act_type": "accept",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [
+          "D"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 913,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Let’s go with Sunset Mediterranean Kitchen since it keeps things fresh and covers everyone’s plates.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Let’s go with Sunset Mediterranean Kitchen since it keeps things fresh and covers everyone’s plates.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is",
+          "works for me"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 877,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "I'd go with Fusion Tapas for its closeness and veggie small plates.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'd go with Fusion Tapas for its closeness and veggie small plates.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is",
+          "works for me"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1434,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re split three ways—could everyone live with The Rustic Grill Steakhouse to move forward?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re split three ways—could everyone live with The Rustic Grill Steakhouse to move forward?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Count me in for The Rustic Grill Steakhouse because of its lively vibe and decent vegetarian options.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for The Rustic Grill Steakhouse because of its lively vibe and decent vegetarian options.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Sunset Mediterranean Kitchen (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1482,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p3",
+      "speaker_name": "Elif",
+      "text": "Fusion Tapas gets my vote.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Fusion Tapas gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Fusion Tapas (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1543,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 33,
+      "speaker_id": "p5",
+      "speaker_name": "Mina",
+      "text": "The Rustic Grill Steakhouse works for me if everyone’s okay with the vegetarian options.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The Rustic Grill Steakhouse works for me if everyone’s okay with the vegetarian options.",
+        "act_type": "accept",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [
+          "B"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Fusion Tapas (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "gets my vote"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1541,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great — The Rustic Grill Steakhouse it is, then!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great — The Rustic Grill Steakhouse it is, then!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "4/5 participants visibly committed to the winning option.",
+    "turns": 30,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "D",
+        "p4": "B",
+        "p5": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "D",
+        "p4": "B",
+        "p5": "B"
+      },
+      "phase_history": [
+        "pacing: min=15, force=22, hard=32, distinct_initial_prefs=2, avg_compromise=0.55",
+        "turn 6: discussion — all participants gave an opening view",
+        "turn 23: narrowing — target discussion length reached",
+        "turn 29: closure — all participants already gave a clear vote",
+        "turn 33: closure — majority after split-vote compromise"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 22,
+      "hard_max_turns": 32
+    }
+  },
+  "metrics": {
+    "participant_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.118,
+    "turn_counts": {
+      "Faye": 6,
+      "Yara": 6,
+      "Elif": 8,
+      "Sami": 5,
+      "Mina": 5
+    },
+    "top_speaker_share": 0.267,
+    "avg_words_by_persona": {
+      "Faye": 18.0,
+      "Yara": 16.2,
+      "Elif": 13.2,
+      "Sami": 20.8,
+      "Mina": 14.2
+    },
+    "question_density": 0.133,
+    "avg_words_per_turn": 16.2,
+    "repaired_turns": 5,
+    "repair_rate": 0.167,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 5,
+    "visible_votes": {
+      "Faye": "B",
+      "Yara": "B",
+      "Elif": "D",
+      "Sami": "B",
+      "Mina": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.033,
+    "option_opening_rate": 0.333,
+    "i_opening_rate": 0.067,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.367,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 0.8,
+    "option_coverage": {
+      "A": {
+        "mentions": 2,
+        "reasons": 1,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 13,
+        "reasons": 6,
+        "objections": 2,
+        "acceptances": 1
+      },
+      "C": {
+        "mentions": 5,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 6,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 1
+      }
+    },
+    "expected_engagement": {
+      "Faye": 0.512,
+      "Yara": 0.287,
+      "Elif": 0.4,
+      "Sami": 0.737,
+      "Mina": 0.362
+    },
+    "agenda_status": {
+      "done": 9,
+      "pending": 6,
+      "obsolete": 4
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 22,
+    "hard_max_turns": 32,
+    "phase_history": [
+      "pacing: min=15, force=22, hard=32, distinct_initial_prefs=2, avg_compromise=0.55",
+      "turn 6: discussion — all participants gave an opening view",
+      "turn 23: narrowing — target discussion length reached",
+      "turn 29: closure — all participants already gave a clear vote",
+      "turn 33: closure — majority after split-vote compromise",
+      "turn 34: closure — closed as majority"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2083,
+    "setup_tokens_out": 1243,
+    "dialogue_tokens_in": 42724,
+    "dialogue_tokens_out": 963,
+    "total_tokens_in": 44807,
+    "total_tokens_out": 2206
+  },
+  "tokens": {
+    "setup_tokens_in": 2083,
+    "setup_tokens_out": 1243,
+    "dialogue_tokens_in": 42724,
+    "dialogue_tokens_out": 963,
+    "total_tokens_in": 44807,
+    "total_tokens_out": 2206
+  }
+}

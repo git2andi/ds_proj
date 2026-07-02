@@ -37,7 +37,7 @@ from models import (
     ResponseObligation,
     TurnRecord,
 )
-from parsing import OptionResolver, parse_dialogue_act, used_commitment_phrases
+from parsing import OptionResolver, commitment_has_reason, parse_dialogue_act, used_commitment_phrases
 from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
 from style import (
     first_person_opening_fraction,
@@ -138,7 +138,6 @@ class DialogueRunner:
                 act=ActType.OPENING,
                 reason="state the current favorite and one grounded reason without making a final vote",
                 option_focus=[persona.preferred_option],
-                moves_lean=True,
             )
             self._emit(self._generate_and_append(state, intent))
         self._mark_phase(state, Phase.DISCUSSION, "all participants gave an opening view")
@@ -232,7 +231,7 @@ class DialogueRunner:
         )
         self._emit(self._append_moderator(state, text, Phase.NARROWING))
         for persona in dissenters:
-            can_move = self._can_shift_to(persona, winner)
+            can_move = self._can_shift_to(state, persona, winner)
             current = state.runtimes[persona.id].current_preference or persona.preferred_option
             current_name = aliases.get(current, current)
             intent = MoveIntent(
@@ -248,7 +247,6 @@ class DialogueRunner:
                 ),
                 option_focus=[winner, current] if current != winner else [winner],
                 length_hint="short",
-                moves_lean=can_move,
                 allow_vote_change=can_move,
             )
             self._emit(self._generate_and_append(state, intent))
@@ -267,7 +265,7 @@ class DialogueRunner:
             return False
         leader = Counter(votes).most_common(1)[0][0]
         dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != leader]
-        movers = [p for p in dissenters if self._can_shift_to(p, leader)]
+        movers = [p for p in dissenters if self._can_shift_to(state, p, leader)]
         if not movers:
             return False
         state.compromise_attempted = True
@@ -310,7 +308,6 @@ class DialogueRunner:
                 ),
                 option_focus=[leader, current] if current != leader else [leader],
                 length_hint="short",
-                moves_lean=can_move,
                 allow_vote_change=can_move,
             )
             self._emit(self._generate_and_append(state, intent))
@@ -340,7 +337,6 @@ class DialogueRunner:
                 act=ActType.COMPARE,
                 reason="briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
                 option_focus=focus,
-                moves_lean=False,
             )
 
         speaker = self._choose_speaker(state)
@@ -369,7 +365,6 @@ class DialogueRunner:
             option_focus=focus,
             respond_to_turn=target_turn.index if target_turn else None,
             agenda_index=agenda_index,
-            moves_lean=moves_lean,
         )
 
     def _choose_speaker(self, state: DialogueState) -> Persona:
@@ -514,16 +509,21 @@ class DialogueRunner:
                 reason="cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
                 option_focus=[alternative, candidate] if alternative != candidate else [alternative],
                 length_hint="short",
-                moves_lean=True,
             )
         if self._should_compromise_to_candidate(state, persona, candidate):
+            switching = current != candidate
             return MoveIntent(
                 speaker_id=persona.id,
-                act=ActType.ACCEPT if current != candidate else ActType.VOTE,
-                reason="make a clear visible commitment to the likely group option",
+                act=ActType.ACCEPT if switching else ActType.VOTE,
+                reason=(
+                    "others have visibly backed this option; commit to it clearly and add one short "
+                    "clause on why you can accept it"
+                    if switching
+                    else "make a clear visible commitment to the option you have been backing"
+                ),
                 option_focus=[candidate],
                 length_hint="short",
-                moves_lean=True,
+                allow_vote_change=switching,
             )
         return MoveIntent(
             speaker_id=persona.id,
@@ -531,7 +531,6 @@ class DialogueRunner:
             reason="cast a clear visible vote for the option they actually choose now",
             option_focus=[current if current in state.scenario.option_ids else candidate],
             length_hint="short",
-            moves_lean=True,
         )
 
     # ------------------------------------------------------------------
@@ -670,6 +669,21 @@ class DialogueRunner:
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
             issues.append("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION")
             block = True
+        # A visible, unresolved active blocker (I3) binds like a setup rejection:
+        # committing to that option needs a resolution in the same line.
+        rt = state.runtimes[persona.id]
+        committed = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
+        for option_id in committed:
+            if option_id in rt.hard_rejections and act.resolves_blocker != option_id:
+                issues.append("BLOCKED_OPTION_ACCEPTED")
+                block = True
+        # A sanctioned switch may only land on the offered option or the sim's
+        # own current/initial preference (restate); never a third option.
+        if intent.allow_vote_change and act.explicit_vote and intent.option_focus:
+            allowed = set(intent.option_focus) | {rt.current_preference, persona.preferred_option}
+            if act.explicit_vote not in allowed:
+                issues.append("OFF_TARGET_SWITCH")
+                block = True
         return ValidationReport(list(dict.fromkeys(issues)), block)
 
     def _collect_report(
@@ -726,10 +740,13 @@ class DialogueRunner:
         aliases = short_alias_map(state.scenario.options)
         rt = state.runtimes[persona.id]
         blocked = persona.rejection
+        # Restate-first: never fabricate consent. The sim's own current/initial
+        # preference wins over the intent's offered options; runtime blockers
+        # (parsed dealbreakers) disqualify a target just like the setup rejection.
+        candidates = [rt.current_preference, persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
         target = next(
-            o
-            for o in [rt.current_preference, persona.preferred_option, *state.scenario.option_ids]
-            if o in state.scenario.option_ids and o != blocked
+            (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.hard_rejections),
+            next(o for o in state.scenario.option_ids if o != blocked),
         )
         if intent.act in _DECISION_ACTS:
             templates = [
@@ -764,8 +781,10 @@ class DialogueRunner:
 
     def _apply_semantics(self, state: DialogueState, record: TurnRecord) -> None:
         rt = state.runtimes[record.speaker_id]
+        persona = state.persona_by_id(record.speaker_id)
         act = record.act
         before = self._snapshot_progress(state)
+        prior_vote = rt.explicit_vote
 
         if act.question_target_id:
             self._register_question(state, record)
@@ -780,11 +799,20 @@ class DialogueRunner:
             if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
 
+        # A visible resolution clears a parsed blocker for THIS sim only, and it
+        # must run before votes so "that fixes my concern; I can live with X"
+        # counts. The persona-level setup rejection is never cleared by a casual
+        # line; it needs the explicit compromise path.
+        if act.resolves_blocker and act.resolves_blocker != persona.rejection:
+            rt.hard_rejections.pop(act.resolves_blocker, None)
+
         allow_change = bool(record.intent and record.intent.allow_vote_change)
-        if act.explicit_vote:
+        if act.explicit_vote and act.explicit_vote not in rt.hard_rejections:
             vote_stance = "accept" if act.explicit_vote in act.accepts else "vote"
             self._set_vote(rt, act.explicit_vote, act.text, force=allow_change, stance=vote_stance)
         for option_id in act.accepts:
+            if option_id in rt.hard_rejections:
+                continue  # an actively blocked option needs a visible resolution first
             rt.accepted_options.add(option_id)
             self._set_vote(rt, option_id, act.text, force=allow_change, stance="accept")
             state.coverage[option_id].acceptances += 1
@@ -792,23 +820,32 @@ class DialogueRunner:
             rt.soft_rejections[option_id] = reason
         for option_id, reason in act.hard_rejects.items():
             rt.hard_rejections[option_id] = reason
-        # A visible resolution clears a parsed blocker for THIS sim only. The
-        # persona-level setup rejection is never cleared by a casual line; it
-        # needs the explicit compromise path (see I4).
-        if act.resolves_blocker and act.resolves_blocker != state.persona_by_id(record.speaker_id).rejection:
-            rt.hard_rejections.pop(act.resolves_blocker, None)
 
+        # Record visible vote movement (first vote away from the initial
+        # preference, or a change of an earlier vote) with whether the line
+        # carried a reason clause — the I7 metric for "switches need reasons".
+        if rt.explicit_vote and rt.explicit_vote != prior_vote:
+            baseline = prior_vote or persona.preferred_option
+            if rt.explicit_vote != baseline:
+                rt.switch_events.append({
+                    "from": baseline,
+                    "to": rt.explicit_vote,
+                    "has_reason": commitment_has_reason(act.text),
+                })
+
+        # Latent lean may move only on a visible signal in the parsed text:
+        # a vote/acceptance (handled by _set_vote), a visible compromise offer
+        # or proposal, or explicit conditional support. Never from routing
+        # intent alone (issue I4).
         if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
             rt.current_preference = record.intent.option_focus[0]
-        elif record.intent and record.intent.moves_lean and record.intent.option_focus:
-            candidate = record.intent.option_focus[0]
-            if candidate != rt.current_preference and self._can_shift_to(state.persona_by_id(record.speaker_id), candidate):
-                rt.current_preference = candidate
-        elif act.proposes_option and self._can_shift_to(state.persona_by_id(record.speaker_id), act.proposes_option):
-            if random.random() > state.persona_by_id(record.speaker_id).sim_params.compromise_threshold:
-                rt.current_preference = act.proposes_option
+        else:
+            signal = act.offers_compromise or act.proposes_option or act.conditional_support
+            if signal and signal != rt.current_preference and self._can_shift_to(state, persona, signal):
+                if random.random() > persona.sim_params.compromise_threshold:
+                    rt.current_preference = signal
 
-        refresh_agenda(state.persona_by_id(record.speaker_id), rt.current_preference)
+        refresh_agenda(persona, rt.current_preference)
 
         after = self._snapshot_progress(state)
         state.no_progress_count = 0 if after != before else state.no_progress_count + 1
@@ -893,12 +930,20 @@ class DialogueRunner:
         return latent or state.personas[0].preferred_option
 
     def _should_compromise_to_candidate(self, state: DialogueState, persona: Persona, candidate: str) -> bool:
-        if not self._can_shift_to(persona, candidate):
+        """Whether this sim's vote turn asks them to commit to the candidate.
+
+        Requires *visible* pressure: at least one other participant has visibly
+        voted for / accepted the candidate, or someone visibly proposed it as
+        common ground. Latent lean concentration is not evidence (issue I4).
+        """
+        if not self._can_shift_to(state, persona, candidate):
             return False
         rt = state.runtimes[persona.id]
         if rt.current_preference == candidate:
             return True
-        support = self._latent_leading_count(state)
+        support = self._visible_support_count(state, candidate, exclude=persona.id)
+        if support == 0 and not self._visibly_proposed(state, candidate):
+            return False
         pressure = support / max(1, len(state.personas) - 1)
         probability = 0.10 + 0.65 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
         if candidate in persona.preferred_options:
@@ -906,8 +951,26 @@ class DialogueRunner:
         return random.random() < min(0.95, probability)
 
     @staticmethod
-    def _can_shift_to(persona: Persona, option_id: str) -> bool:
+    def _visible_support_count(state: DialogueState, option_id: str, exclude: str | None = None) -> int:
+        return sum(
+            1
+            for pid, rt in state.runtimes.items()
+            if pid != exclude and (rt.explicit_vote == option_id or option_id in rt.accepted_options)
+        )
+
+    @staticmethod
+    def _visibly_proposed(state: DialogueState, option_id: str) -> bool:
+        return any(
+            t.act.offers_compromise == option_id or t.act.proposes_option == option_id
+            for t in state.turns
+            if t.speaker_id != "moderator"
+        )
+
+    def _can_shift_to(self, state: DialogueState, persona: Persona, option_id: str) -> bool:
         if persona.rejection == option_id:
+            return False
+        # A visible, unresolved blocker binds exactly like a setup rejection.
+        if option_id in state.runtimes[persona.id].hard_rejections:
             return False
         if persona.sim_params.stubbornness >= 0.85 and option_id != persona.preferred_option:
             return random.random() < 0.04
@@ -1296,7 +1359,7 @@ class DialogueRunner:
         return []
 
     def _rival_option(self, state: DialogueState, speaker: Persona, exclude: set[str]) -> str | None:
-        candidates = [o for o in state.scenario.option_ids if o not in exclude and self._can_shift_to(speaker, o)]
+        candidates = [o for o in state.scenario.option_ids if o not in exclude and self._can_shift_to(state, speaker, o)]
         if not candidates:
             return None
         leading = self._latent_leading_option(state)

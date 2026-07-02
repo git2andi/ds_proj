@@ -210,7 +210,6 @@ class MoveIntent:
     length_hint: LengthHint = "medium"
     respond_to_turn: int | None = None
     agenda_index: int | None = None
-    moves_lean: bool = False
     suppress_name_prefix: bool = False
     suppress_option_opening: bool = False
     suppress_i_opening: bool = False
@@ -287,6 +286,8 @@ class ParticipantRuntime:
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
     already_said: list[str] = field(default_factory=list)
+    # Visible vote movements: {"from": old-or-initial, "to": new, "has_reason": bool}.
+    switch_events: list[dict] = field(default_factory=list)
 
 
 @dataclass(slots=True)

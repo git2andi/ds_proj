@@ -75,6 +75,15 @@ Change participant count and provider settings in `config.yaml`. The default pro
   parsing stays strictly conservative.
 - **Coverage is bounded.** Each option gets at most one coverage nudge
   (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
+- **Visible-evidence stance movement.** Latent lean (`current_preference`) moves
+  only on parsed signals (vote/acceptance, compromise offer, proposal,
+  conditional support) gated by `_can_shift_to`, which also respects parsed
+  runtime blockers. Committing to an actively blocked option is a blocking
+  validation issue (`BLOCKED_OPTION_ACCEPTED`) unless the same line resolves the
+  blocker; sanctioned switches may only land on offered/current/initial options
+  (`OFF_TARGET_SWITCH`). Vote-time compromise (`_should_compromise_to_candidate`)
+  requires visible support or a visible proposal, never latent concentration.
+  Vote movements are recorded as `switch_events` (from→to, has_reason).
 - **Blocker vocabulary.** The parser detects option-tied active blockers
   ("dealbreaker", "doesn't work for me", with negation guard), explicit blocker
   resolutions ("that fixes my concern; I can live with X"), conditional support,

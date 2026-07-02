@@ -72,32 +72,6 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ---
 
-#### I4 (P0). Visible text is the only source of public stance movement
-
-**Observed in:**
-
-- `logs/archive/20260702_150459_577768`, brunch, n=3: Isla names Sunny Side's vegetarian gap "a dealbreaker if we care about food variety", Zeke agrees it's "a non-starter" — two turns later she votes Sunny Side with no visible resolution.
-- `logs/archive/20260702_150822_781090`, summer camp, n=5: Amir and Callum argue for Sailing/Arts and against Robotics ("breaks the budget") for the whole discussion, then both vote Robotics "despite the higher cost" with no visible turnaround; asked whether he "can live with Robotics", Uri instead switches to a *third* option (Sailing) and the forced `allow_vote_change` accepts it.
-- `logs/archive/20260702_150710_502883`, soundtrack, n=4: Pavel opens for World Music, votes Indie Pop, then switches back — movements driven by latent lean, not by anything said.
-
-**Root cause:** `_apply_semantics()` updates `current_preference` from `intent.moves_lean`/`proposes_option`; `_vote_intent()` + `_should_compromise_to_candidate()` then roll dice toward the latent leader at vote time; `_can_shift_to()` checks only persona `rejection` and stubbornness, not parsed blockers/objections.
-
-**Fix:**
-
-- Never update `current_preference` from `moves_lean` alone; a lean shift requires the parsed act to show acceptance, proposal, or explicit softening toward that option.
-- `_can_shift_to()` must also check `runtime.active_blockers` and unresolved parsed hard rejections (from I3).
-- A sim cannot vote for an actively blocked option unless a `blocker_resolution` line from that sim exists; `_vote_intent` for a blocked candidate keeps the current blocked-alternative path.
-- `_should_compromise_to_candidate()` may only fire when there is *visible* pressure: parsed votes/acceptances for the candidate from others, or a visible compromise proposal — not `_latent_leading_count`. The rendered switch reason should reference what visibly happened.
-- Sanctioned switch turns (`allow_vote_change`) must constrain the accepted target: in `_minority_check`, only winner-or-restate counts; a commitment to a third option is rejected (repair → fallback per I1).
-- Record `visible_switch_reason` (I3) whenever `explicit_vote`/`current_preference` moves away from the initial preference; log it in run.json.
-
-**Verify:**
-
-- No-LLM tests: dealbreaker then vote for same option is blocked without a resolution line; switch A→B requires a visible reason; minority-check turn committing to a third option is not applied.
-- Run a 3-sim split topic and a dietary/accessibility-flavored topic: a sim switches only if the transcript states why; dealbreakers stay respected.
-
----
-
 #### I5 (P0). Vote readiness and candidate choice from visible evidence, not latent concentration
 
 **Observed in:** soundtrack run and several quick split-to-consensus endings — narrowing starts because internal preferences concentrate (`_latent_concentration >= concentration_to_vote`), and `_candidate_for_vote()` picks the latent leader, before the transcript shows agreement, resolved objections, or compromise.
@@ -162,6 +136,8 @@ Do not consider evaluation now - we'll do that in depth once the discussion is w
 
 **Observed in:** sequential preference/trade-off statements with little challenge, persuasion, or compromise; the agenda + weighted sampling in `_route_discussion_turn`/`_choose_discussion_act` isn't tied to adjacency-pair logic (agenda fires with p≈0.45–0.80 before context is even considered).
 
+**Also observed (2026-07-02, run `20260702_230908`, n=5 restaurant):** a sim whose latent preference is X can be routed into challenge/agree turns that drift rhetorically *against* X right before voting X ("Three veggie dishes isn't enough for us …" → "My pick is Rustic Grill") — the intent's move purpose ignores the sim's own stance. Act/purpose selection should keep a sim's discussion moves roughly consistent with their current lean (defend, soften, or visibly switch — not argue against their own pick and then vote for it).
+
 **Fix:**
 
 - Add a small `conversation_need(state) -> need` helper: `answer_obligation`, `resolve_blocker`, `cover_option`, `compare_split`, `invite_holdout`, `narrow`, `continue_discussion`.
@@ -225,6 +201,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I4: Visible text is the only source of public stance movement** — done 2026-07-02. `moves_lean` removed entirely; latent lean moves only on parsed signals (compromise offer / proposal / conditional support) gated by `_can_shift_to`, which now also checks runtime `hard_rejections`. Votes/acceptances for an actively blocked option are skipped in `_apply_semantics` and flagged blocking in validation (`BLOCKED_OPTION_ACCEPTED`, waived when the same line resolves the blocker). Sanctioned switches may only land on offered/current/initial options (`OFF_TARGET_SWITCH`); the safe fallback is restate-first and blocker-aware. `_should_compromise_to_candidate` requires visible support or a visible proposal (no latent pressure); switch events (from→to, has_reason) recorded per sim. Verified: 12 no-LLM tests (`tests/test_visible_stance.py`), runs `20260702_230750` (n=3 hallway paint: round-1 votes all match argued positions, switch only in visible minority beat) and `20260702_230908` (n=5 dietary: split→compromise, one live fallback restated the holdout's own pick, outcome matches transcript).
 - **I3: Parser/state vocabulary for blockers, conditions, switches** — done 2026-07-02. `parsing.py` gained `active_blocker_option` (option-tied vetoes with negation guard), `blocker_resolution_option` (explicit resolution heads; conditional residue blocks), `conditional_support_option`, `compromise_offer_option` (incl. question forms), `commitment_has_reason`; `_COMMIT`/`_DIRECT_VOTE` now cover "I'd switch to" and "I can live with". `DialogueAct` carries `resolves_blocker` / `conditional_support` / `offers_compromise`; parsed blockers land in the existing `ParticipantRuntime.hard_rejections` (reused instead of a new field), resolutions clear parser-derived entries only — never the persona-level setup rejection. Verified: 15 no-LLM tests (`tests/test_blockers.py`), regression runs `20260702_225756` (n=3 RPG, majority consistent) and `20260702_225926` (n=6 volunteering, split→compromise with two visible switches, majority 5/6 matches transcript).
 - **I2: Sanctioned-switch bridge clauses parse as commitments** — done 2026-07-02. `visible_commitment(..., sanctioned_switch=True)` (wired from `intent.allow_vote_change`) accepts a commitment with a concessive rider ("as long as", "even though", "despite"); questions and genuine prerequisites (`only if`, `unless`, `would need`, `depends`) still block. Conservative rules unchanged everywhere else. Verified: 8 no-LLM tests (`tests/test_sanctioned_switch.py`, incl. the exact Gemma line), runs `20260702_224801` (n=3 synth, unanimous), `20260702_224909` (n=4 forced 4-way split → honest unresolved), `20260702_225046` (n=5 forced 3-2 → minority check, Faye's visible switch recorded, unanimous matches transcript).
 - **I1: Blocked invalid decision turns never printed** — done 2026-07-02. `_generate_and_append` now replaces still-blocking text after repair with `_safe_fallback_text` (deterministic, parser-clean per intent: blockers commit to an allowed alternative, unclear votes become one clear commitment, coverage turns name the required option). Counters `fallback_turns` / `invalid_printed_turn_count` added to metrics. Verified: 6 no-LLM tests (`tests/test_fallback.py`), n=3 run `logs/archive/.../20260702_224207_607026` (dog name, majority consistent with transcript), n=5 forced-blocker run `20260702_224346_818603` (mural; blocker never accepts B, both counters 0). Also fixed: PowerShell BOM leaking into piped topics (`main.py`).
