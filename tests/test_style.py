@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from style import (
+    leading_we,
+    we_opening_fraction,
+    first_person_opening_fraction,
+    leading_first_person,
     leading_name,
     leading_option,
     name_prefix_fraction,
@@ -78,3 +82,32 @@ def test_opening_signature_and_repeat():
     texts = ["Maybe we wait", "Maybe try B", "Maybe go cheaper"]
     assert repeated_opening_token(texts, 3) == "maybe"
     assert repeated_opening_token(["Yes", "No", "Maybe"], 3) is None
+
+
+def test_leading_first_person_detected():
+    assert leading_first_person("I think the villa is best.")
+    assert leading_first_person("I'd go with the cheaper one.")
+    assert leading_first_person("Rosa, I'm not sure about that.")
+    assert not leading_first_person("The villa is best, I think.")
+    assert not leading_first_person("It seems fine to me.")
+    assert not leading_first_person("Isn't that too expensive?")
+
+
+def test_first_person_opening_fraction():
+    texts = ["I like A.", "We should compare costs.", "I'd pick B.", "I worry about C."]
+    assert first_person_opening_fraction(texts) == 0.75
+    assert first_person_opening_fraction([]) == 0.0
+
+
+def test_leading_we_detected():
+    assert leading_we("We should compare the costs first.")
+    assert leading_we("We're getting quick rounds with this.")
+    assert leading_we("Anton, we'd lose the morning slot.")
+    assert not leading_we("Weather might be an issue.")
+    assert not leading_we("I think we should decide.")
+
+
+def test_we_opening_fraction():
+    texts = ["We get X.", "We should Y.", "Games are cheap.", "We can Z."]
+    assert we_opening_fraction(texts) == 0.75
+    assert we_opening_fraction([]) == 0.0

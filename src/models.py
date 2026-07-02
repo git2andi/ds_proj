@@ -213,8 +213,11 @@ class MoveIntent:
     moves_lean: bool = False
     suppress_name_prefix: bool = False
     suppress_option_opening: bool = False
+    suppress_i_opening: bool = False
+    suppress_we_opening: bool = False
     vary_opening: bool = False
     avoid_pattern: str | None = None
+    avoid_phrases: list[str] = field(default_factory=list)
     allow_vote_change: bool = False
 
 
@@ -276,6 +279,7 @@ class ParticipantRuntime:
     last_spoke_turn: int | None = None
     current_preference: str | None = None  # latent simulator preference, not public evidence
     explicit_vote: str | None = None       # observed public commitment from visible text
+    vote_stance: str | None = None         # how the vote was stated: "vote" (direct) or "accept"
     accepted_options: set[str] = field(default_factory=set)
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
@@ -321,6 +325,7 @@ class DialogueState:
     unanswered_obligations: int = 0
     candidate_option: str | None = None
     compromise_attempted: bool = False
+    minority_check_attempted: bool = False
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

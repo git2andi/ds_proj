@@ -1,0 +1,1442 @@
+{
+  "run_id": "20260702_151335_165355",
+  "topic": "Plan an outdoor activity for the department picnic day",
+  "scenario": {
+    "topic": "Plan an outdoor activity for the department picnic day",
+    "decision_kind": "activity_choice",
+    "opening_question": "What matters most for our picnic day: relaxation, activity level, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Guided Kayaking Tour on Nearby Lake",
+        "attrs": {
+          "cost_per_person": "$40",
+          "duration_hours": "2.5",
+          "physical_effort": "moderate",
+          "distance_to_location_miles": "15"
+        },
+        "upside": "Engaging physical activity with scenic views and team bonding",
+        "tradeoff": "Requires moderate fitness and some prior swimming comfort",
+        "concern": "Weather-dependent and limited to daylight hours",
+        "best_for": "active participants who want an adventurous experience",
+        "short_name": "Kayaking Tour"
+      },
+      {
+        "id": "B",
+        "name": "Picnic and Lawn Games at City Park",
+        "attrs": {
+          "cost_total": "$50",
+          "duration_hours": "4",
+          "physical_effort": "light",
+          "distance_to_location_miles": "5"
+        },
+        "upside": "Low-cost, flexible timing with casual socializing opportunities",
+        "tradeoff": "Less structured activity might feel less engaging for some",
+        "concern": "Potential crowding on weekends and limited shelter if it rains",
+        "best_for": "those prioritizing relaxation and easy logistics",
+        "short_name": "Lawn Games"
+      },
+      {
+        "id": "C",
+        "name": "Hiking and Picnic at State Park Trailhead",
+        "attrs": {
+          "cost_total": "$30",
+          "duration_hours": "3",
+          "physical_effort": "high",
+          "distance_to_location_miles": "25"
+        },
+        "upside": "Great exercise combined with nature immersion and privacy",
+        "tradeoff": "Longer travel and higher physical demand may exclude some",
+        "concern": "Trail conditions could be challenging for less experienced hikers",
+        "best_for": "fitness-focused participants who enjoy nature and solitude",
+        "short_name": "Hiking Picnic"
+      },
+      {
+        "id": "D",
+        "name": "Outdoor Movie Screening with Food Truck",
+        "attrs": {
+          "cost_per_person": "$35",
+          "duration_hours": "3",
+          "physical_effort": "minimal",
+          "distance_to_location_miles": "10"
+        },
+        "upside": "Relaxed atmosphere with entertainment and easy food options",
+        "tradeoff": "Less active and dependent on good weather and equipment setup",
+        "concern": "Some may find it less engaging or too passive",
+        "best_for": "participants wanting a low-effort social experience",
+        "short_name": "Movie Screening"
+      }
+    ],
+    "shared_context": [
+      "The department picnic is scheduled for a Saturday afternoon from 12 PM to 5 PM",
+      "The budget for the activity portion is capped at $150 total",
+      "Exactly 3 participants will decide on the main outdoor activity"
+    ],
+    "environment_type": "option_grounded_group_decision"
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Zara",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.6,
+        "compromise_threshold": 0.4125
+      },
+      "background": "I enjoy casual social events that allow for easy mingling without too much physical strain.",
+      "private_goal": "I want a relaxed, low-cost activity that encourages light socializing and flexibility.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Callum",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 1.0,
+        "verbosity": 0.875,
+        "initiative": 0.85,
+        "responsiveness": 1.0,
+        "stubbornness": 0.175,
+        "directness": 0.85,
+        "compromise_threshold": 0.13749999999999996
+      },
+      "background": "I like organized, low-effort activities that provide a fun social atmosphere with minimal hassle.",
+      "private_goal": "I want an easy, enjoyable event with entertainment and good food options that everyone can enjoy.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Tala",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.775,
+        "stubbornness": 0.625,
+        "directness": 0.6749999999999999,
+        "compromise_threshold": 0.48749999999999993
+      },
+      "background": "I prioritize fitness and immersive nature experiences, but I am cautious about overly social or crowded events.",
+      "private_goal": "I want a physically challenging activity that offers privacy and a strong connection to nature.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Plan an outdoor activity for the department picnic day.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Guided Kayaking Tour on Nearby Lake — cost per person: $40; duration hours: 2.5; distance to location miles: 15 (+ Engaging physical activity with scenic views and team bonding; − Requires moderate fitness and some prior swimming comfort)\nB) Picnic and Lawn Games at City Park — cost total: $50; duration hours: 4; distance to location miles: 5 (+ Low-cost, flexible timing with casual socializing opportunities; − Less structured activity might feel less engaging for some)\nC) Hiking and Picnic at State Park Trailhead — cost total: $30; duration hours: 3; distance to location miles: 25 (+ Great exercise combined with nature immersion and privacy; − Longer travel and higher physical demand may exclude some)\nD) Outdoor Movie Screening with Food Truck — cost per person: $35; duration hours: 3; distance to location miles: 10 (+ Relaxed atmosphere with entertainment and easy food options; − Less active and dependent on good weather and equipment…)\nContext: The department picnic is scheduled for a Saturday afternoon from 12 PM to 5 PM; The budget for the activity portion is capped at $150 total; Exactly 3 participants will decide on the main outdoor activity.\nWhat matters most for our picnic day: relaxation, activity level, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Plan an outdoor activity for the department picnic day.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Guided Kayaking Tour on Nearby Lake — cost per person: $40; duration hours: 2.5; distance to location miles: 15 (+ Engaging physical activity with scenic views and team bonding; − Requires moderate fitness and some prior swimming comfort)\nB) Picnic and Lawn Games at City Park — cost total: $50; duration hours: 4; distance to location miles: 5 (+ Low-cost, flexible timing with casual socializing opportunities; − Less structured activity might feel less engaging for some)\nC) Hiking and Picnic at State Park Trailhead — cost total: $30; duration hours: 3; distance to location miles: 25 (+ Great exercise combined with nature immersion and privacy; − Longer travel and higher physical demand may exclude some)\nD) Outdoor Movie Screening with Food Truck — cost per person: $35; duration hours: 3; distance to location miles: 10 (+ Relaxed atmosphere with entertainment and easy food options; − Less active and dependent on good weather and equipment…)\nContext: The department picnic is scheduled for a Saturday afternoon from 12 PM to 5 PM; The budget for the activity portion is capped at $150 total; Exactly 3 participants will decide on the main outdoor activity.\nWhat matters most for our picnic day: relaxation, activity level, or convenience?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "Movie screening fits the budget and keeps things chill with food trucks, which is perfect for us wanting low effort.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Movie screening fits the budget and keeps things chill with food trucks, which is perfect for us wanting low effort.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1610,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "Lawn games keep things light and social without breaking the budget, plus we can move around freely if it gets crowded.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lawn games keep things light and social without breaking the budget, plus we can move around freely if it gets crowded.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1656,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Tala",
+      "text": "Offers real privacy and pushes fitness, but the travel might wear some out.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Offers real privacy and pushes fitness, but the travel might wear some out.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1686,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "We can keep it easy on everyone’s energy and still have room to grab snacks or just chill between games.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We can keep it easy on everyone’s energy and still have room to grab snacks or just chill between games.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Lawn Games, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1740,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "Kayaking would be a more active change of pace and still fits the budget for three people.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Kayaking would be a more active change of pace and still fits the budget for three people.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1846,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Tala",
+      "text": "Kayaking’s active but not as private or peaceful as hiking; that matters to me more than a change.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Kayaking’s active but not as private or peaceful as hiking; that matters to me more than a change.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1511,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "It keeps things super chill and social with minimal effort, and the food truck means we don’t have to fuss over snacks.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "It keeps things super chill and social with minimal effort, and the food truck means we don’t have to fuss over snacks.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Movie Screening, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1591,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "Callum’s right about keeping it low-key, but do we have a backup plan if the park gets too crowded or the weather turns?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Callum’s right about keeping it low-key, but do we have a backup plan if the park gets too crowded or the weather turns?",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Lawn Games",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 849,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "We don’t have details on crowd levels or weather here, but a movie setup relies on good weather and equipment, so a rain plan is smart.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We don’t have details on crowd levels or weather here, but a movie setup relies on good weather and equipment, so a rain plan is smart.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1601,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Tala",
+      "text": "Weather’s unpredictable, so maybe we should consider options less affected by crowding or rain.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Weather’s unpredictable, so maybe we should consider options less affected by crowding or rain.",
+        "act_type": "challenge",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on the recent point or name a real concern about Movie Screening, Hiking Picnic, Lawn Games",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 2822,
+      "tokens_out": 68,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "Crowding’s a real risk at the park, but it’s way cheaper and keeps us moving a bit.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Crowding’s a real risk at the park, but it’s way cheaper and keeps us moving a bit.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Lawn Games, Movie Screening with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1497,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "If the movie needs good weather, how far are we willing to travel to a backup spot or indoor option?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "If the movie needs good weather, how far are we willing to travel to a backup spot or indoor option?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Movie Screening",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 1,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 837,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "Traveling much beyond 10 miles for a backup seems tricky with our time frame and budget, especially since the movie already costs $35 per person.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Traveling much beyond 10 miles for a backup seems tricky with our time frame and budget, especially since the movie already costs $35 per person.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1499,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "Zara, lawn games cost way less and keep things casual, but crowding could kill the vibe.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Zara, lawn games cost way less and keep things casual, but crowding could kill the vibe.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Movie Screening, Lawn Games with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "moves_lean": false,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1548,
+      "tokens_out": 66,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you share which option you’re definitely going with so we know where the group stands?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you share which option you’re definitely going with so we know where the group stands?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Zara",
+      "text": "Count me in for picnic and lawn games at City Park.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Count me in for picnic and lawn games at City Park.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1402,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Tala",
+      "text": "We need something that actually challenges us physically, so I’m all in for hiking.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We need something that actually challenges us physically, so I’m all in for hiking.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 895,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "My pick is the outdoor movie screening with food truck for a relaxed, fun evening.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "My pick is the outdoor movie screening with food truck for a relaxed, fun evening.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "make a clear visible commitment to the likely group option",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1453,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re split three ways—could everyone live with Picnic and Lawn Games at City Park without reopening the debate?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re split three ways—could everyone live with Picnic and Lawn Games at City Park without reopening the debate?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Callum",
+      "text": "I’d go with Picnic and Lawn Games at City Park since it’s budget-friendly, social, and flexible for everyone.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’d go with Picnic and Lawn Games at City Park since it’s budget-friendly, social, and flexible for everyone.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Lawn Games (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1476,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Tala",
+      "text": "I’d go with Picnic and Lawn Games at City Park since it’s budget-friendly and keeps us outdoors.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’d go with Picnic and Lawn Games at City Park since it’s budget-friendly and keeps us outdoors.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Lawn Games (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "moves_lean": true,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1378,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great — picnic and lawn games at City Park it is, then.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great — picnic and lawn games at City Park it is, then.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 19,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "B"
+      },
+      "phase_history": [
+        "pacing: min=9, force=14, hard=20, distinct_initial_prefs=3, avg_compromise=0.65",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 15: narrowing — target discussion length reached",
+        "turn 19: closure — all participants already gave a clear vote",
+        "turn 22: closure — successful after split-vote compromise"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 9,
+      "force_narrow_turns": 14,
+      "hard_max_turns": 20
+    }
+  },
+  "metrics": {
+    "participant_turns": 19,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.174,
+    "turn_counts": {
+      "Zara": 6,
+      "Callum": 8,
+      "Tala": 5
+    },
+    "top_speaker_share": 0.421,
+    "avg_words_by_persona": {
+      "Zara": 19.5,
+      "Callum": 19.2,
+      "Tala": 15.2
+    },
+    "question_density": 0.105,
+    "avg_words_per_turn": 18.3,
+    "repaired_turns": 5,
+    "repair_rate": 0.263,
+    "flagged_turns": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Zara": "B",
+      "Callum": "B",
+      "Tala": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.053,
+    "option_opening_rate": 0.263,
+    "i_opening_rate": 0.105,
+    "we_opening_rate": 0.158,
+    "name_or_option_opening_rate": 0.316,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 1,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 2,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 6,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Zara": 0.737,
+      "Callum": 1.0,
+      "Tala": 0.4
+    },
+    "agenda_status": {
+      "done": 4,
+      "pending": 5,
+      "obsolete": 3
+    },
+    "outcome_status": "successful",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 9,
+    "force_narrow_turns": 14,
+    "hard_max_turns": 20,
+    "phase_history": [
+      "pacing: min=9, force=14, hard=20, distinct_initial_prefs=3, avg_compromise=0.65",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 15: narrowing — target discussion length reached",
+      "turn 19: closure — all participants already gave a clear vote",
+      "turn 22: closure — successful after split-vote compromise",
+      "turn 23: closure — closed as successful"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 1874,
+    "setup_tokens_out": 971,
+    "dialogue_tokens_in": 29673,
+    "dialogue_tokens_out": 956,
+    "total_tokens_in": 31547,
+    "total_tokens_out": 1927
+  },
+  "tokens": {
+    "setup_tokens_in": 1874,
+    "setup_tokens_out": 971,
+    "dialogue_tokens_in": 29673,
+    "dialogue_tokens_out": 956,
+    "total_tokens_in": 31547,
+    "total_tokens_out": 1927
+  }
+}

@@ -40,7 +40,7 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `info/`: conceptual design notes for intended behavior.
 - `docs/todo.md`: open issues and the per-issue implementation protocol.
 
-## Key controller mechanisms (current as of 2026-07-01)
+## Key controller mechanisms (current as of 2026-07-02)
 
 - **Response obligations.** A direct question (moderator→participant or
   participant→participant), detected from visible text, sets
@@ -49,7 +49,8 @@ Change participant count and provider settings in `config.yaml`. The default pro
   participant answers within the next turn. Obligations expire after a bounded
   number of turns and are counted as `unanswered_direct_questions`.
 - **Surface-style control.** `src/style.py` tracks the last few participant turns
-  for name-prefix density, option-name openings, repeated opening words, and repeated
+  for name-prefix density, option-name openings, first-person "I …" opening
+  density, repeated opening words, and repeated
   concession/worry/trade-off templates. The controller strips non-functional name
   prefixes, biases act selection away from templated streaks, and passes compact
   prompt flags (suppress name/option opening, vary opening). Word budgets are
@@ -63,7 +64,23 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Coverage is bounded.** Each option gets at most one coverage nudge
   (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
 - **Alias safety.** Option aliases exclude stopwords/generic words (so "with",
-  "data", etc. never match) and include distinctive proper nouns ("Gin", "Rails").
+  "data", "analytics", "warehouse", etc. never match) and include distinctive
+  proper nouns ("Gin", "Rails").
+- **Natural consensus calls.** The moderator asks where people land in plain
+  language and never dictates a quoted vote formula; participants commit in
+  their own words, and the parser's commitment patterns cover the natural forms
+  ("I'd go with", "my vote's on", "I'm all in for") while hedges/conditionals
+  still block.
+- **Corpus presets (optional).** `corpus.preset` in `config.yaml` (default null)
+  folds corpus statistics into runtime parameters at load time: typical turns per
+  participant → turn caps, preferred group size → `num_participants`. Dominance
+  targets (`top_speaker_share`, `dominance_range`, `imbalance_tolerance`) switch
+  `_choose_speaker` from strict equalization to share-aware weighting
+  (`utils.preset_dominance_weight`). Soft targets, not hard constraints; with no
+  preset the simulator behaves exactly as configured.
+- **Setup repair.** Persona rows that drop/reorder the controller-assigned primary
+  preference are repaired deterministically (`builders.repair_preferred_options`)
+  rather than retried; a rejection of the required option still fails the attempt.
 
 ## Current direction
 

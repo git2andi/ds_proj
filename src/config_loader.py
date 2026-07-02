@@ -34,6 +34,64 @@ def parse_preference_shape(value: Any) -> tuple[int, ...]:
     return parts
 
 
+def apply_corpus_preset(data: dict) -> dict | None:
+    """Fold the active corpus preset into runtime parameters.
+
+    Presets are optional: with ``corpus.preset`` null the config is untouched.
+    Corpus-level fields map onto existing tunables — typical discussion length
+    onto the per-participant turn caps, preferred group size onto
+    ``simulation.num_participants`` (clamped to the configured range). Dominance
+    fields are returned for the speaker router. Returns the resolved preset
+    (with its name) or ``None``.
+    """
+    corpus = data.get("corpus") or {}
+    name = corpus.get("preset")
+    if not name:
+        return None
+    presets = corpus.get("presets") or {}
+    if name not in presets or not isinstance(presets[name], dict):
+        raise ValueError(f"corpus.preset {name!r} has no mapping under corpus.presets")
+    preset = presets[name]
+
+    turns = preset.get("turns_per_participant")
+    if turns is not None:
+        t = float(turns)
+        if t <= 0:
+            raise ValueError("corpus preset turns_per_participant must be positive")
+        conv = data.setdefault("conversation", {})
+        conv["min_discussion_turns_per_participant"] = round(0.75 * t, 2)
+        conv["target_discussion_turns_per_participant"] = t
+        conv["max_discussion_turns_per_participant"] = round(1.5 * t, 2)
+
+    size = preset.get("preferred_group_size")
+    if size is not None:
+        sim = data.setdefault("simulation", {})
+        lo = int(sim.get("min_participants", 2))
+        hi = int(sim.get("max_participants", 7))
+        sim["num_participants"] = max(lo, min(hi, int(size)))
+
+    resolved: dict = {"name": str(name)}
+    if "top_speaker_share" in preset:
+        share = float(preset["top_speaker_share"])
+        if not 0.0 < share <= 1.0:
+            raise ValueError("corpus preset top_speaker_share must be in (0, 1]")
+        resolved["top_speaker_share"] = share
+    if "dominance_range" in preset:
+        rng = list(preset["dominance_range"])
+        if len(rng) != 2:
+            raise ValueError("corpus preset dominance_range must contain [min, max]")
+        dom_lo, dom_hi = float(rng[0]), float(rng[1])
+        if not 0.0 <= dom_lo <= dom_hi <= 1.0:
+            raise ValueError("corpus preset dominance_range must satisfy 0 <= min <= max <= 1")
+        resolved["dominance_range"] = (dom_lo, dom_hi)
+    if "imbalance_tolerance" in preset:
+        tol = float(preset["imbalance_tolerance"])
+        if not 0.0 <= tol < 1.0:
+            raise ValueError("corpus preset imbalance_tolerance must be in [0, 1)")
+        resolved["imbalance_tolerance"] = tol
+    return resolved
+
+
 class Section:
     def __init__(self, data: Any) -> None:
         self._raw = data
@@ -71,7 +129,9 @@ class Config(Section):
         self.root = path.parent
         with path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
+        corpus_active = apply_corpus_preset(data)
         super().__init__(data)
+        self.corpus_active = corpus_active
         self._validate()
 
     def _require(self, dotted: str) -> Any:

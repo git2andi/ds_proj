@@ -44,6 +44,33 @@ def _sample_names(n: int) -> list[str]:
     return random.sample(_NAME_POOL, min(n, len(_NAME_POOL)))
 
 
+def repair_preferred_options(
+    preferred: list[str],
+    rejection: str | None,
+    required: str | None,
+    single_only: bool,
+) -> list[str]:
+    """Deterministically align a persona's preference list with its assignment.
+
+    The controller assigns the required primary option before prompting, so a
+    row that drops or reorders it is a formatting slip, not a different world —
+    repair it instead of failing the whole persona batch. A rejection of the
+    required option is a real contradiction and raises so the attempt retries.
+    Hard blockers (``single_only``) keep exactly one preferred option.
+    """
+    repaired = list(preferred)
+    if required:
+        if rejection == required:
+            raise ValueError(f"rejection {rejection} contradicts required preference {required}")
+        if required in repaired:
+            repaired.remove(required)
+        repaired.insert(0, required)
+        repaired = repaired[:2]
+    if single_only:
+        repaired = repaired[:1]
+    return repaired
+
+
 def _require(value: Any, field: str) -> str:
     """Return the stripped string value, or raise if the model omitted it.
 
@@ -117,7 +144,7 @@ class SetupBuilder:
             prompts.setup_personas(self.topic, n, trait_rows, required_preferences, options_json),
             profile="setup",
         )
-        return self._parse_personas(data.get("participants", []), trait_rows, scenario)
+        return self._parse_personas(data.get("participants", []), trait_rows, scenario, required_preferences)
 
     def _trait_rows(self, n: int) -> list[dict[str, Any]]:
         hard_id = None
@@ -269,11 +296,13 @@ class SetupBuilder:
             best_for=_require(raw.get("best_for") or raw.get("best for"), f"option {expected_id} best_for"),
         )
 
-    def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario) -> list[Persona]:
+    def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario,
+                        required_preferences: dict[str, str] | None = None) -> list[Persona]:
         if not isinstance(rows, list):
             raise ValueError("participants must be a list")
         traits_by_id = {row["id"]: self._trait_from_row(row) for row in trait_rows}
         names_by_id = {row["id"]: row.get("name", "") for row in trait_rows}
+        required_preferences = required_preferences or {}
         personas: list[Persona] = []
         for idx, row in enumerate(rows[: len(trait_rows)]):
             if not isinstance(row, dict):
@@ -283,7 +312,9 @@ class SetupBuilder:
                 pid = f"p{idx + 1}"
             if names_by_id.get(pid):
                 row["name"] = names_by_id[pid]
-            personas.append(self._persona_from_row(row, traits_by_id[pid], scenario, idx, pid))
+            personas.append(self._persona_from_row(
+                row, traits_by_id[pid], scenario, idx, pid, required_preferences.get(pid)
+            ))
         if len(personas) != len(trait_rows):
             raise ValueError("wrong number of participants")
         return personas
@@ -293,7 +324,8 @@ class SetupBuilder:
         raw = row["traits"]
         return TraitProfile(**raw)
 
-    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, scenario: Scenario, idx: int, pid: str) -> Persona:
+    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, scenario: Scenario, idx: int, pid: str,
+                          required: str | None = None) -> Persona:
         labels = scenario.option_ids
         # Parse preferred_options (1–2 items); fall back to old preferred_option field
         raw_prefs = row.get("preferred_options") or []
@@ -308,12 +340,15 @@ class SetupBuilder:
             old = str(row.get("preferred_option") or "").strip().upper()
             if old in labels:
                 preferred_options = [old]
-        if not preferred_options:
-            raise ValueError(f"participant {pid} has no valid preferred_options")
         # Parse optional rejection (hard blockers only, but accepted from any row and validated later)
         rej_raw = str(row.get("rejection") or "").strip().upper()
         rejection: str | None = rej_raw if rej_raw in labels and rej_raw not in preferred_options else None
         rejection_reason = str(row.get("rejection_reason") or "").strip() if rejection else ""
+        preferred_options = repair_preferred_options(
+            preferred_options, rejection, required, single_only=traits.agreeableness == 1
+        )
+        if not preferred_options:
+            raise ValueError(f"participant {pid} has no valid preferred_options")
         sim_params = derive_simulator_parameters(traits)
         persona = Persona(
             id=pid,

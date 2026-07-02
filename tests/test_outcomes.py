@@ -80,3 +80,68 @@ def test_outcome_unresolved_tie():
 def test_outcome_unresolved_no_votes():
     out = ConsensusManager.finalize(_state({"p1": None, "p2": None}))
     assert out.status == "unresolved"
+
+
+def test_transcript_vote_round_yields_majority():
+    """End-to-end regression for logs/20260702_092804_559743: the exact vote-round
+    lines that once closed as unresolved must parse and produce a 2/3 majority."""
+    from parsing import OptionResolver, visible_commitment
+
+    options = [
+        OptionCard(id="A", name="Amazon Redshift Data Warehouse", short_name="Redshift"),
+        OptionCard(id="B", name="Google BigQuery Serverless Analytics", short_name="BigQuery"),
+        OptionCard(id="C", name="PostgreSQL on Single VM", short_name="PostgreSQL VM"),
+        OptionCard(id="D", name="ClickHouse Managed Cloud Service", short_name="ClickHouse Cloud"),
+    ]
+    resolver = OptionResolver(options)
+    lines = {
+        "p1": "I'm going with ClickHouse for its fast queries, low maintenance, and reasonable cost.",
+        "p2": "I'd go with Redshift for its scalability and seamless AWS integration despite the higher cost.",
+        "p3": "My vote is ClickHouse for fast, low-maintenance analytics that fit our $120 monthly budget and provide millisecond responses.",
+    }
+    votes = {}
+    for pid, text in lines.items():
+        commitment = visible_commitment(text, resolver)
+        assert commitment is not None, f"{pid} vote must parse: {text}"
+        stance, option_id = commitment
+        assert stance == "vote"
+        votes[pid] = option_id
+
+    scenario = Scenario(topic="t", decision_kind="generic_decision", opening_question="q", options=options)
+    personas = [_persona(pid, "D") for pid in votes]
+    state = initialise_state(scenario, personas)
+    for pid, vote in votes.items():
+        state.runtimes[pid].explicit_vote = vote
+    out = ConsensusManager.finalize(state)
+    assert out.status == "majority" and out.final_option == "D"
+
+
+def test_direct_vote_overrides_accept_derived_vote():
+    """#23: 'Daily News seems like a solid pick' (accept) must not lock out the
+    formal 'Comedy Stories gets my vote' round vote."""
+    rt = ParticipantRuntime(persona_id="p1", explicit_vote="A", vote_stance="accept")
+    DialogueRunner._set_vote(rt, "B", "Comedy Stories from Real Life gets my vote for keeping things light.")
+    assert rt.explicit_vote == "B" and rt.vote_stance == "vote"
+
+
+def test_direct_vote_still_protected_from_direct_overwrite():
+    rt = ParticipantRuntime(persona_id="p1", explicit_vote="A", vote_stance="vote")
+    DialogueRunner._set_vote(rt, "B", "B gets my vote now.")
+    assert rt.explicit_vote == "A"  # no explicit change signal
+
+
+def test_accept_does_not_override_direct_vote():
+    rt = ParticipantRuntime(persona_id="p1", explicit_vote="A", vote_stance="vote")
+    DialogueRunner._set_vote(rt, "B", "B works for me too.", stance="accept")
+    assert rt.explicit_vote == "A"
+
+
+def test_switch_turn_gets_budget_headroom():
+    """#24: a compromise switch (allow_vote_change) must have room for the bridge clause."""
+    from models import ActType, MoveIntent
+    persona = _persona("p1", "A")
+    plain = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="r")
+    switch = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="r", allow_vote_change=True)
+    _, plain_max = DialogueRunner._word_bounds(plain, persona)
+    _, switch_max = DialogueRunner._word_bounds(switch, persona)
+    assert switch_max > plain_max

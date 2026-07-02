@@ -11,8 +11,9 @@ from __future__ import annotations
 from typing import Any
 
 from aliases import short_alias_map
+from config_loader import cfg
 from models import DialogueState, RunOutcome
-from style import leading_name, leading_option, surface_pattern
+from style import leading_first_person, leading_name, leading_option, leading_we, surface_pattern
 
 
 # Planned-but-not-yet-implemented metrics. Kept as explicit stubs so later work
@@ -90,6 +91,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "unanswered_direct_questions": int(state.unanswered_obligations),
         "name_prefix_rate": round(name_prefixed / n_turns, 3),
         "option_opening_rate": round(option_opened / n_turns, 3),
+        "i_opening_rate": round(sum(1 for t in participant_turns if leading_first_person(t.text)) / n_turns, 3),
+        "we_opening_rate": round(sum(1 for t in participant_turns if leading_we(t.text)) / n_turns, 3),
         "name_or_option_opening_rate": round((name_prefixed + option_opened) / n_turns, 3),
         "repeated_opening_patterns": repeated_openings,
         "unsupported_fact_flags": sum(
@@ -110,6 +113,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "agenda_status": _agenda_status_counts(state),
         "outcome_status": outcome.status,
         "final_option": outcome.final_option,
+        "corpus_preset": (getattr(cfg, "corpus_active", None) or {}).get("name", ""),
         "min_discussion_turns": state.min_discussion_turns,
         "force_narrow_turns": state.force_narrow_turns,
         "hard_max_turns": state.hard_max_turns,

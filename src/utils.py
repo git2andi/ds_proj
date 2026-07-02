@@ -66,6 +66,44 @@ def sample_int_range(rng: Sequence[int]) -> int:
     return random.randint(lo, hi)
 
 
+def preset_dominance_weight(
+    base: float,
+    is_dominant: bool,
+    turn_count: int,
+    total_turns: int,
+    n: int,
+    preset: dict,
+    quiet_boost: float,
+) -> float:
+    """Corpus-preset speaker weighting.
+
+    Instead of strict turn-count equalization, keep the designated dominant
+    speaker near the preset's expected top share (never above the dominance
+    band) and rebalance the others only once their turn share drifts past the
+    imbalance tolerance around a fair 1/n split.
+    """
+    fair = 1.0 / max(1, n)
+    share = (turn_count / total_turns) if total_turns > 0 else fair
+    tol = float(preset.get("imbalance_tolerance", 0.15))
+    if is_dominant:
+        dom_lo, dom_hi = preset.get("dominance_range", (fair, 1.0))
+        target = min(float(preset.get("top_speaker_share", fair)), float(dom_hi))
+        # Structural turns (opening/vote rounds) are evenly distributed, so the
+        # free discussion turns must overshoot to reach the corpus-level share.
+        if share < float(dom_lo):
+            return base * (2.0 + 4.0 * (target - share))
+        if share < target:
+            return base * (1.0 + 3.0 * (target - share))
+        if share > float(dom_hi):
+            return base * 0.35
+        return base
+    if share < fair - tol:
+        return base + quiet_boost
+    if share > fair + tol:
+        return base * 0.5
+    return base
+
+
 def extract_json_object(text: str) -> dict[str, Any]:
     text = text.strip()
     if text.startswith("```"):
@@ -95,6 +133,29 @@ _DANGLING_TRAIL = {
     "because", "so", "that", "is", "are", "in", "on", "at", "as", "if", "from",
 }
 
+# Only used on chopped text (where the ending is known to be cut): a trailing
+# wh-word or "about" is a fragment there, even though it can end a full sentence.
+_CHOP_TRAIL = _DANGLING_TRAIL | {
+    "who", "whom", "whose", "which", "what", "when", "where", "why", "how", "about",
+}
+
+# A chopped stub that still reads as a question ("does the slower setup bother
+# you more") keeps its "?"; a stub whose interrogative clause was cut away
+# ("We get fresh seafood and a chic vibe at Sushi Bar") must not.
+_INTERROGATIVE_STUB = re.compile(
+    r"\b(?:what|who|whom|whose|which|when|where|why|how|anyone|anybody)\b"
+    r"|\b(?:do|does|did|are|is|was|were|can|could|should|would|will|shall|am)\s+"
+    r"(?:i|we|you|they|it|he|she|that|this|there|anyone|everyone|any|the|our|a|an)\b",
+    re.I,
+)
+
+# A coordinated interrogative tail cut mid-clause: "..., but what about those who".
+_BROKEN_QUESTION_TAIL = re.compile(
+    r"[,;]?\s*(?:and|but|or|so)?\s*(?:what|how)\s+about\s+"
+    r"(?:the|a|an|those|these|that|this|them|it|us|anyone|everyone)?\s*(?:who|which|that)?\s*$",
+    re.I,
+)
+
 
 def compact_words(text: str, max_words: int) -> str:
     words = normalise_ws(text).split()
@@ -118,14 +179,26 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = _remove_generic_filler_tail(text)
     words = text.split()
     if len(words) > max_words:
+        # If the line being cut was a question, the chopped stub keeps its
+        # interrogative intent; ending it with "." would hide it from
+        # question/obligation detection.
+        was_question = text.rstrip().endswith("?")
         chopped = " ".join(words[:max_words]).rstrip(" ,;:")
         sentence_end = max(chopped.rfind("."), chopped.rfind("!"), chopped.rfind("?"))
         if sentence_end >= max(10, len(chopped) // 2):
             text = chopped[: sentence_end + 1].strip()
         else:
             text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
+            text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
+            # A chop can still end on a bare function word ("... what and",
+            # "... more than the") or a cut wh-word; strip those.
+            tail = text.split()
+            while tail and tail[-1].lower().rstrip(".,;:") in _CHOP_TRAIL:
+                tail.pop()
+            if tail:
+                text = " ".join(tail).rstrip(" ,;:")
             if text and text[-1] not in ".!?":
-                text += "."
+                text += "?" if was_question and _INTERROGATIVE_STUB.search(text) else "."
     return text
 
 

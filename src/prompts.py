@@ -169,6 +169,8 @@ def moderator_nudge_prompt(
 Use MUCA-style control: decide what to ask, when to intervene, and who to address.
 Write one short progress nudge, under {cfg.utterances.word_budgets.moderator} words.
 Do not vote, do not decide, do not add facts, and do not repeat the option board.
+Sound like a person in the chat, not a script: never dictate a quoted reply
+template (no "please state your final vote clearly by saying 'I vote for …'").
 Reason to intervene: {reason}
 Address this target if useful: {target}
 Requested action: {action}
@@ -191,6 +193,8 @@ Final option: {final}
 Reason: {outcome.reason}
 
 Write one short closing line under {cfg.utterances.word_budgets.closure} words.
+Sound conversational, like a person wrapping up a chat, not a formal announcement
+("Great — X it is, then." rather than "X has been chosen based on majority commitment").
 Do not add new reasons or facts. No farewell. No speaker prefix."""
 
 
@@ -222,9 +226,14 @@ def sim_utterance(
     voice = _voice_guidance(persona)
     decision_instruction = ""
     if intent.act.value in {"vote", "accept"}:
-        decision_instruction = "\nFor this decision turn, visibly commit with an unambiguous final vote, preferably 'I vote for ...'. Do not add a new question after the vote."
+        decision_instruction = "\nFor this decision turn, commit clearly to exactly one option in your own words (like 'I'd go with X', 'X gets my vote', 'my pick is X', or 'X works for me'). Use a different commitment phrasing than the previous voters in the chat. No hedging, no 'leaning', no conditions, no question after it."
+        if intent.avoid_phrases:
+            forbidden = "; ".join(f"'{p}'" for p in intent.avoid_phrases)
+            decision_instruction += f"\nEarlier speakers already used these phrasings — do NOT use them: {forbidden}."
     elif intent.act.value == "reject":
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
+    elif intent.act.value == "answer":
+        decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
     agenda = ""
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
@@ -245,7 +254,11 @@ def sim_utterance(
     if intent.suppress_name_prefix:
         style_notes += "\n- Recent turns over-used names; do NOT open with another participant's name, just reply."
     if intent.suppress_option_opening:
-        style_notes += "\n- Do NOT start with an option name or 'The <option>'; lead with your point, a verb, 'I', 'we', or a question."
+        style_notes += "\n- Do NOT start with an option name or 'The <option>'; lead with your point, a verb, or a question. You may still name the option mid-sentence — if you mean a different option than the previous message discussed, name it instead of saying 'this one' or 'it'."
+    if intent.suppress_i_opening:
+        style_notes += "\n- Too many recent messages start with 'I …'; open this one differently — with the topic, the other person's point, an option fact, or a question."
+    if intent.suppress_we_opening:
+        style_notes += "\n- Too many recent messages start with 'We …'; open this one differently — with the point itself, the option's detail, the other person, or a question."
     if intent.vary_opening:
         style_notes += "\n- Recent turns all opened with the same word; start this one a different way."
     if intent.avoid_pattern in {"concede_but", "worry_but", "tradeoff_but"}:
@@ -278,7 +291,7 @@ Recent chat:
 Style:
 - One message only, no name prefix, no quotes, no bullet list.
 - {length_note}{tone_note}
-- Follow the voice guidance; make this person clearly sound different from the others in length and tone.
+- Follow the voice guidance exactly: personas must differ in register, not just content — sentence shape, bluntness, and energy should make it obvious who is speaking without the name. Contractions and casual interjections ('Honestly', 'Look', 'Fine') are welcome where they fit the voice.
 - Vary sentence shape and opening. Do not start with an option name, "The <option>", "I'm leaning", or "feels".
 - Use names, "you", "we", "us", short option names, or no option name when that fits.
 - Add one new point, concern, answer, or stance shift. Avoid repeating the same reason from recent chat.
@@ -301,7 +314,10 @@ def repair_utterance(
     recent = "\n".join(recent_lines[-3:]) if recent_lines else "(no recent turns)"
     clear_commit = ""
     if intent.act.value in {"vote", "accept"}:
-        clear_commit = " Include exactly one clear final vote to one option, e.g. 'I vote for Option B'. Do not ask a question after it."
+        clear_commit = " The line MUST contain an explicit commitment to exactly one option — use one of these forms: 'I'd go with X', 'X gets my vote', 'my pick is X', 'X works for me', 'count me in for X'. No hedging, no 'even if', no 'leaning', and no question after it."
+        if intent.avoid_phrases:
+            already = "; ".join(f"'{p}'" for p in intent.avoid_phrases)
+            clear_commit += f" Earlier speakers already used {already} — pick one of the OTHER forms from the list."
     required_focus = ""
     if intent.option_focus and "MISSING_REQUIRED_OPTION_FOCUS" in issue_codes:
         required_focus = f" Mention and discuss Option {intent.option_focus[0]} explicitly."
@@ -340,6 +356,15 @@ not directly implied by, the cards/context: e.g. an invented service, included o
 excluded feature, fee, policy, location, exact time/number, or operational detail.
 Opinions, priorities, trade-off reasoning, questions, and uncertainty are ALWAYS allowed.
 Reasoning that follows from a listed attribute is allowed.
+Paraphrasing or summarizing any card's wording is allowed, for ANY option, not just
+the one the message is mainly about. Comparing options through their listed
+attributes is allowed and grounded (e.g. "X costs more and takes longer than Y"
+when the cards list those costs/durations). Commonsense risk that follows from an
+attribute is allowed (an outdoor activity depending on weather; a long session
+being tiring), and statements of uncertainty are ALWAYS allowed ("we don't know
+the forecast", "it might get canceled"). If every concrete claim traces back to
+some card attribute, upside, tradeoff, or concern — or is such reasoning or
+uncertainty — reply false.
 
 Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
 
@@ -351,11 +376,12 @@ def _option_names(state: DialogueState, ids: list[str]) -> str:
 
 
 def _public_state_summary(state: DialogueState) -> str:
+    aliases = short_alias_map(state.scenario.options)
     votes = []
     for persona in state.personas:
         vote = state.runtimes[persona.id].explicit_vote
         if vote:
-            votes.append(f"{persona.name}->{vote}")
+            votes.append(f"{persona.name}->{aliases.get(vote, vote)}")
     untouched = [oid for oid, cov in state.coverage.items() if cov.mentions == 0]
     open_q = [f"{state.name_for(q.target_id)} owes answer" for q in state.open_questions[-2:]]
     parts = []
@@ -368,26 +394,32 @@ def _public_state_summary(state: DialogueState) -> str:
 
 
 def _voice_guidance(persona: Persona) -> str:
+    """Contrastive, concrete register instructions. Abstract adjectives get
+    flattened by the model into one polite voice; micro-examples do not."""
     p = persona.sim_params
     parts: list[str] = []
-    if p.directness >= 0.70:
+    if p.directness >= 0.75:
+        parts.append("blunt: plain declaratives, no softeners (e.g. 'Too pricey. Not worth it.')")
+    elif p.directness >= 0.60:
         parts.append("direct, concrete, low hedging")
     elif p.directness <= 0.35:
-        parts.append("careful, softer wording")
-    if p.stubbornness >= 0.70:
+        parts.append("tentative: hedges like 'maybe' or 'I guess', suggests rather than insists")
+    if p.stubbornness >= 0.80:
+        parts.append("digs in: dismisses alternatives curtly, keeps returning to their own priority, concedes nothing without a strong reason")
+    elif p.stubbornness >= 0.60:
         parts.append("pushes their concern instead of agreeing too quickly")
     elif p.compromise_threshold <= 0.35:
         parts.append("actively looks for workable compromise")
     if p.engagement >= 0.70:
-        parts.append("proactive and opinionated")
+        parts.append("energetic, jumps in with opinions; the odd exclamation fits")
     elif p.engagement <= 0.35:
-        parts.append("brief, selective, only speaks when useful")
+        parts.append("dry and minimal; only speaks when it adds something")
+    if p.verbosity <= 0.35:
+        parts.append("clipped: fragments over full sentences (e.g. 'Games. Cheap, fun, done.')")
+    elif p.verbosity >= 0.70:
+        parts.append("flowing: happily adds a second thought or a small aside")
     if p.responsiveness >= 0.70:
         parts.append("reacts to the previous speaker by name when natural")
-    if p.verbosity <= 0.35:
-        parts.append("short and plain")
-    elif p.verbosity >= 0.70:
-        parts.append("slightly more explanatory")
     return "; ".join(parts) if parts else "balanced, natural, no assistant-like phrasing"
 
 

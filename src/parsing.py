@@ -19,36 +19,51 @@ _ALIAS_STOPWORDS = _STOPWORDS | _GENERIC | {
     "with", "data", "open", "core", "team", "service", "services", "system",
     "support", "framework", "extension", "edition", "version", "standard",
     "cloud", "online", "based", "free", "premium", "basic", "pro",
+    "analytics", "warehouse", "database", "serverless", "managed", "hosted",
+    "platform", "solution", "single", "plan", "suite", "tool", "tools", "package",
+    "neighborhood", "community", "local", "event", "center", "food", "project",
+    "class", "course", "workshop", "session", "activity", "group", "program",
+    "assistance", "weekly", "monthly", "morning", "evening", "weekend",
 }
 
 _QUESTION = re.compile(r"\?")
 _RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
 _GENUINE_QUESTION = re.compile(
     r"\b(?:how\s+(?:many|much|long|far|about)|what(?:'s|\s+is|\s+are|\s+do|\s+does|\s+about|\s+if)"
-    r"|where|when|which|who|can\s+(?:we|it|they)|do\s+(?:we|they|you)|does\s+(?:it|that|this)"
-    r"|is\s+(?:it|there|that)|are\s+(?:there|they|we)|could\s+(?:we|it)|would\s+(?:it|that))\b",
+    r"|where|when|which|who|can\s+(?:we|it|they|you|anyone)|do\s+(?:we|they|you|i)|does\s+(?:it|that|this|anyone)"
+    r"|is\s+(?:it|there|that|anyone)|are\s+(?:there|they|we|you|any)|could\s+(?:we|it|you|anyone)|would\s+(?:it|that|we|you|anyone)"
+    r"|should\s+(?:we|i|you|they)|shall\s+we|will\s+(?:we|it|that)|has\s+anyone|any\s+of\s+us)\b",
     re.I,
 )
 _HEDGE = re.compile(
-    r"\b(?:maybe|perhaps|possibly|might|could|leaning|not\s+sure|not\s+sold|not\s+convinced|"
+    r"\b(?:maybe|perhaps|possibly|might|could|leaning|seems?|sounds\s+like|"
+    r"not\s+sure|not\s+sold|not\s+convinced|"
     r"for\s+now|unless|if|as\s+long\s+as|provided\s+that|i\s+guess|i\s+suppose|"
     r"would\s+need|need\s+to\s+know|depends|still\s+unsure)\b",
     re.I,
 )
 _COMMIT = re.compile(
-    r"\b(?:i\s+vote\s+for|my\s+vote\s+is|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
+    r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
+    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|go\s+with|settle\s+on|pick|choose|"
     r"i\s+support|i\s+accept|i\s+can\s+support|i'?m\s+fine\s+with|fine\s+with|"
-    r"works\s+for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
+    r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
     re.I,
 )
 _SOFT_COMMIT = re.compile(
     r"\b(?:i\s+can\s+support|i\s+support|i\s+accept|i'?m\s+fine\s+with|fine\s+with|"
-    r"works\s+for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
+    r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
     re.I,
 )
 _DIRECT_VOTE = re.compile(
-    r"\b(?:i\s+vote\s+for|my\s+vote\s+is|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
+    r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
+    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|settle\s+on|final\s+choice)\b",
     re.I,
 )
@@ -134,6 +149,85 @@ class OptionResolver:
         return self.by_id[option_id].prompt_card()
 
 
+def _option_positions(segment: str, resolver: OptionResolver) -> list[tuple[int, str]]:
+    """Earliest match position per option in ``segment``, sorted by position."""
+    lower = segment.lower()
+    hits: dict[str, int] = {}
+    for option_id in resolver.by_id:
+        m = re.search(rf"\boption\s+{re.escape(option_id.lower())}\b", lower)
+        if m:
+            hits[option_id] = min(hits.get(option_id, 1 << 30), m.start())
+    for alias, option_id in resolver.alias_to_id.items():
+        m = re.search(rf"\b{re.escape(alias)}\b", lower)
+        if m:
+            hits[option_id] = min(hits.get(option_id, 1 << 30), m.start())
+    return sorted((pos, oid) for oid, pos in hits.items())
+
+
+# Canonical commitment-phrase families with display labels, used to stop one
+# family ("Count me in for ...") dominating a vote round (issue #25).
+_PHRASE_FAMILIES: list[tuple[str, re.Pattern]] = [
+    ("count me in for", re.compile(r"\bcount\s+me\s+in\s+for\b", re.I)),
+    ("I'm all in for", re.compile(r"\bi'?m\s+(?:all\s+)?in\s+for\b", re.I)),
+    ("gets my vote", re.compile(r"\bgets?\s+my\s+vote\b", re.I)),
+    ("my vote is", re.compile(r"\bmy\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)\b", re.I)),
+    ("I'd go with", re.compile(r"\bi'?(?:d|ll)\s+go\s+with\b", re.I)),
+    ("I'm going with", re.compile(r"\bi'?m\s+going\s+with\b", re.I)),
+    ("my pick is", re.compile(r"\bmy\s+pick\s+is\b|\bis\s+my\s+pick\b|\bthat'?s\s+my\s+pick\b", re.I)),
+    ("my choice is", re.compile(r"\b(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+choice\b|\bmy\s+top\s+choice\s+is\b", re.I)),
+    ("I vote for", re.compile(r"\bi\s+vote\s+for\b", re.I)),
+    ("works for me", re.compile(r"\bworks\s+(?:best\s+)?for\s+me\b", re.I)),
+    ("let's go with", re.compile(r"\blet'?s\s+go\s+with\b", re.I)),
+    ("I'm sold on", re.compile(r"\bi'?m\s+sold\s+on\b", re.I)),
+]
+
+
+def used_commitment_phrases(texts: list[str]) -> list[str]:
+    """Which commitment-phrase families appear in ``texts`` (display labels)."""
+    return [label for label, pattern in _PHRASE_FAMILIES if any(pattern.search(t or "") for t in texts)]
+
+
+def _commitment_object(check_text: str, resolver: OptionResolver) -> str | None:
+    """Disambiguate a multi-option line by the words around the commitment phrase.
+
+    "I'd go with Garden Beds to improve our neighborhood green space" resolves
+    to two options on the full text (a generic token of another option's name
+    appears in the reason clause), but the object of the commitment itself is
+    unambiguous: the first option named after the phrase ("go with X ..."), or
+    the nearest one before it ("X gets my vote"). A coordinated pair right at
+    the object ("either X or Y", "X or Y") stays ambiguous.
+    """
+    match = _COMMIT.search(check_text)
+    if not match:
+        return None
+    after = re.split(r"[.;!?]", check_text[match.end():])[0]
+    before = re.split(r"[.;!?]", check_text[: match.start()])[-1]
+    after_hits = _option_positions(after, resolver)
+    before_hits = _option_positions(before, resolver)
+    after_distance = after_hits[0][0] if after_hits else None
+    before_distance = len(before) - before_hits[-1][0] if before_hits else None
+
+    if after_distance is not None and (before_distance is None or after_distance <= before_distance):
+        first_pos, first_id = after_hits[0]
+        if re.search(r"\beither\b", after[:first_pos], re.I):
+            return None
+        others = [(pos, oid) for pos, oid in after_hits[1:] if oid != first_id]
+        if others and others[0][0] - first_pos < 40 and re.search(
+            r"\b(?:or|and|vs\.?|versus)\b", after[first_pos: others[0][0]], re.I
+        ):
+            return None
+        return first_id
+    if before_distance is not None:
+        last_pos, last_id = before_hits[-1]
+        others = [(pos, oid) for pos, oid in before_hits[:-1] if oid != last_id]
+        if others and last_pos - others[-1][0] < 40 and re.search(
+            r"\b(?:either|or|and|vs\.?|versus)\b", before[others[-1][0]: last_pos], re.I
+        ):
+            return None
+        return last_id
+    return None
+
+
 def visible_commitment(text: str, resolver: OptionResolver) -> tuple[str, str] | None:
     """Return (stance, option_id) for clear visible commitments only.
 
@@ -142,6 +236,11 @@ def visible_commitment(text: str, resolver: OptionResolver) -> tuple[str, str] |
     """
     check_text = text.replace("’", "'").replace("‘", "'")
     ids = resolver.ids_in_text(check_text)
+    if len(ids) > 1:
+        near = _commitment_object(check_text, resolver)
+        if near is None:
+            return None
+        ids = [near]
     if len(ids) != 1:
         return None
     option_id = ids[0]

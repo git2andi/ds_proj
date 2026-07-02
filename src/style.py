@@ -107,6 +107,36 @@ def option_opening_fraction(texts: list[str], aliases: Iterable[str]) -> float:
     return sum(1 for t in texts if leading_option(t, aliases)) / len(texts)
 
 
+_I_OPENER = re.compile(r"^i(?:'m|'d|'ll|'ve)?\b", re.I)
+_WE_OPENER = re.compile(r"^we(?:'re|'d|'ll|'ve)?\b", re.I)
+
+
+def leading_first_person(text: str) -> bool:
+    """True if a turn's sentence (after any name prefix) opens with 'I …'."""
+    body = _NAME_PREFIX.sub("", text or "").strip()
+    return bool(_I_OPENER.match(body))
+
+
+def first_person_opening_fraction(texts: list[str]) -> float:
+    """Share of recent turns that open with first-person 'I/I'm/I'd/I'll/I've'."""
+    if not texts:
+        return 0.0
+    return sum(1 for t in texts if leading_first_person(t)) / len(texts)
+
+
+def leading_we(text: str) -> bool:
+    """True if a turn's sentence (after any name prefix) opens with 'We …'."""
+    body = _NAME_PREFIX.sub("", text or "").strip()
+    return bool(_WE_OPENER.match(body))
+
+
+def we_opening_fraction(texts: list[str]) -> float:
+    """Share of recent turns that open with 'We/We're/We'd/We'll/We've'."""
+    if not texts:
+        return 0.0
+    return sum(1 for t in texts if leading_we(t)) / len(texts)
+
+
 def opening_signature(text: str) -> str:
     """First meaningful word of a turn, ignoring a leading name/article."""
     body = _NAME_PREFIX.sub("", text or "").strip().lower()

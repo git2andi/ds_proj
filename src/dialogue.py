@@ -37,9 +37,11 @@ from models import (
     ResponseObligation,
     TurnRecord,
 )
-from parsing import OptionResolver, parse_dialogue_act
+from parsing import OptionResolver, parse_dialogue_act, used_commitment_phrases
 from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
 from style import (
+    first_person_opening_fraction,
+    we_opening_fraction,
     name_prefix_fraction,
     option_opening_fraction,
     repeated_opening_token,
@@ -47,7 +49,7 @@ from style import (
     strip_leading_name,
     surface_pattern,
 )
-from utils import clean_generated, normalise_lines, weighted_choice
+from utils import clean_generated, normalise_lines, preset_dominance_weight, weighted_choice
 
 _VOTE_CHANGE = re.compile(
     r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
@@ -177,6 +179,11 @@ class DialogueRunner:
                 self._emit(self._generate_and_append(state, self._vote_intent(state, persona, candidate)))
             provisional = ConsensusManager.finalize(state)
             if provisional.status in {"successful", "majority"}:
+                if provisional.status == "majority":
+                    # A majority should not end the chat mid-conversation: give
+                    # the holdouts one visible beat before closing (issue #26).
+                    self._minority_check(state, provisional.final_option)
+                    provisional = ConsensusManager.finalize(state)
                 state.outcome = provisional
                 self._mark_phase(state, Phase.CLOSURE, f"{provisional.status} visible after vote round {round_index + 1}")
                 return
@@ -189,6 +196,62 @@ class DialogueRunner:
                 self._mark_phase(state, Phase.CLOSURE, f"{provisional.status} after split-vote compromise")
                 return
         self._mark_phase(state, Phase.CLOSURE, "vote rounds exhausted without visible consensus")
+
+    def _minority_check(self, state: DialogueState, winner: str | None) -> None:
+        """One bounded beat after a majority forms: the moderator acknowledges it
+        and the holdouts each get one visible turn — accept the majority option
+        (with a bridge clause) if they can move, or briefly restate what holds
+        them back. May upgrade the outcome to unanimity; runs at most once and
+        is skipped after the split-compromise pass (those dissenters were just
+        asked)."""
+        if state.minority_check_attempted or state.compromise_attempted:
+            return
+        if winner not in state.scenario.option_ids:
+            return
+        if participant_turn_count(state) >= state.hard_max_turns:
+            return
+        dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != winner]
+        if not dissenters:
+            return
+        state.minority_check_attempted = True
+        winner_name = state.scenario.option(winner).name
+        aliases = short_alias_map(state.scenario.options)
+        text = self._moderator_say(
+            prompts.moderator_nudge_prompt(
+                state,
+                "a clear majority has formed but a few chose differently",
+                winner_name,
+                requested_action=(
+                    f"acknowledge the majority for {winner_name} in a friendly line and ask those who "
+                    "chose differently whether they can live with it or what still holds them back — "
+                    "do not reopen the full debate"
+                ),
+                focus_options=[winner],
+            ),
+            state,
+        )
+        self._emit(self._append_moderator(state, text, Phase.NARROWING))
+        for persona in dissenters:
+            can_move = self._can_shift_to(persona, winner)
+            current = state.runtimes[persona.id].current_preference or persona.preferred_option
+            current_name = aliases.get(current, current)
+            intent = MoveIntent(
+                speaker_id=persona.id,
+                act=ActType.VOTE,
+                reason=(
+                    "most of the group has landed on the majority option; either accept it with a "
+                    f"direct commitment and one clause on what makes it workable despite preferring "
+                    f"{current_name}, or briefly state what still holds you back and restate your pick"
+                    if can_move
+                    else "most of the group has landed on the majority option; briefly restate your "
+                    "pick and your reservation in one line — you are not switching"
+                ),
+                option_focus=[winner, current] if current != winner else [winner],
+                length_hint="short",
+                moves_lean=can_move,
+                allow_vote_change=can_move,
+            )
+            self._emit(self._generate_and_append(state, intent))
 
     def _maybe_split_vote_compromise(self, state: DialogueState) -> bool:
         """One bounded compromise pass when votes are split with no majority.
@@ -203,10 +266,8 @@ class DialogueRunner:
         if len(set(votes)) < 2:
             return False
         leader = Counter(votes).most_common(1)[0][0]
-        movers = [
-            p for p in state.personas
-            if state.runtimes[p.id].explicit_vote != leader and self._can_shift_to(p, leader)
-        ]
+        dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != leader]
+        movers = [p for p in dissenters if self._can_shift_to(p, leader)]
         if not movers:
             return False
         state.compromise_attempted = True
@@ -218,27 +279,39 @@ class DialogueRunner:
                 "the votes are split with no majority",
                 leader_name,
                 requested_action=(
-                    f"summarize the split in one line and ask whether {leader_name} is an "
-                    "acceptable compromise, without restarting the debate"
+                    f"summarize the split in one line and ask whether everyone could live with "
+                    f"{leader_name}, without restarting the debate; {leader_name} is one side's "
+                    "pick, so don't call it a middle ground"
                 ),
                 focus_options=[leader],
             ),
             state,
         )
         self._emit(self._append_moderator(state, text, Phase.NARROWING))
-        for persona in movers:
+        # Everyone who is not on the leader gets one closing beat: movers may
+        # switch, the rest briefly restate — so a failed compromise does not
+        # end the chat one turn after the split summary (issue #22).
+        aliases = short_alias_map(state.scenario.options)
+        for persona in dissenters:
+            can_move = persona in movers
             current = state.runtimes[persona.id].current_preference or persona.preferred_option
+            current_name = aliases.get(current, current)
             intent = MoveIntent(
                 speaker_id=persona.id,
                 act=ActType.VOTE,
                 reason=(
-                    "the group is split; either clearly switch to the proposed compromise if you "
-                    "can accept it, or clearly restate the option you still choose and why"
+                    "the group is split; if you can accept the proposed compromise, switch to it "
+                    f"with a direct commitment AND say in one clause what makes it acceptable to you "
+                    f"despite preferring {current_name} (what you give up or what it still delivers); "
+                    "otherwise clearly restate the option you still choose and why"
+                    if can_move
+                    else "the group is split; briefly restate the option you still choose and react "
+                    "to the split in one line — you are not switching"
                 ),
                 option_focus=[leader, current] if current != leader else [leader],
                 length_hint="short",
-                moves_lean=True,
-                allow_vote_change=True,
+                moves_lean=can_move,
+                allow_vote_change=can_move,
             )
             self._emit(self._generate_and_append(state, intent))
         return True
@@ -304,6 +377,14 @@ class DialogueRunner:
         last_speaker = recent_speakers[0] if recent_speakers else None
         prior_speaker = recent_speakers[1] if len(recent_speakers) > 1 else None
         min_turns = min(rt.turn_count for rt in state.runtimes.values())
+        preset = getattr(cfg, "corpus_active", None)
+        total_turns = sum(rt.turn_count for rt in state.runtimes.values())
+        dominant_id = None
+        if preset:
+            dominant_id = max(
+                state.personas,
+                key=lambda p: (p.sim_params.engagement + 0.5 * p.sim_params.initiative, p.id),
+            ).id
         candidates: list[Persona] = []
         weights: list[float] = []
         for persona in state.personas:
@@ -312,7 +393,13 @@ class DialogueRunner:
             rt = state.runtimes[persona.id]
             p = persona.sim_params
             base = 0.35 + p.engagement + 0.35 * p.initiative
-            if rt.turn_count == min_turns:
+            if preset:
+                base = preset_dominance_weight(
+                    base, persona.id == dominant_id, rt.turn_count,
+                    total_turns, len(state.personas), preset,
+                    float(cfg.routing.quiet_speaker_boost),
+                )
+            elif rt.turn_count == min_turns:
                 base += float(cfg.routing.quiet_speaker_boost)
             elif rt.turn_count > min_turns:
                 base *= max(0.20, 1.0 - 0.30 * (rt.turn_count - min_turns))
@@ -581,7 +668,7 @@ class DialogueRunner:
     ) -> tuple[ValidationReport, int, int]:
         """Regex validation plus an optional LLM grounding check; returns extra tokens."""
         report = self._validate_turn_text(text, state, persona, intent, act)
-        issue, gti, gto = self._grounding_issue(text, state, intent, focus_options)
+        issue, gti, gto = self._grounding_issue(text, state, intent)
         if issue and issue not in report.issues:
             report.issues.append(issue)  # non-blocking; drives one repair toward grounded text
         return report, gti, gto
@@ -591,7 +678,6 @@ class DialogueRunner:
         text: str,
         state: DialogueState,
         intent: MoveIntent,
-        focus_options: list,
     ) -> tuple[str | None, int, int]:
         if not bool(cfg.validation.get("enabled", True)) or not bool(cfg.validation.get("grounding_check", False)):
             return None, 0, 0
@@ -600,7 +686,10 @@ class DialogueRunner:
             return None, 0, 0
         if not text.strip():
             return None, 0, 0
-        prompt = prompts.grounding_check(utterance=text, state=state, focus_options=focus_options)
+        # Always judge against the full option board: comparisons legitimately
+        # restate other options' card facts, so a focus-scoped fact base
+        # produces false UNSUPPORTED_FACT flags (issue #18).
+        prompt = prompts.grounding_check(utterance=text, state=state, focus_options=list(state.scenario.options))
         try:
             data = self._llm.generate_json(prompt, profile="repair")
         except Exception:
@@ -637,10 +726,11 @@ class DialogueRunner:
 
         allow_change = bool(record.intent and record.intent.allow_vote_change)
         if act.explicit_vote:
-            self._set_vote(rt, act.explicit_vote, act.text, force=allow_change)
+            vote_stance = "accept" if act.explicit_vote in act.accepts else "vote"
+            self._set_vote(rt, act.explicit_vote, act.text, force=allow_change, stance=vote_stance)
         for option_id in act.accepts:
             rt.accepted_options.add(option_id)
-            self._set_vote(rt, option_id, act.text, force=allow_change)
+            self._set_vote(rt, option_id, act.text, force=allow_change, stance="accept")
             state.coverage[option_id].acceptances += 1
         for option_id, reason in act.soft_rejects.items():
             rt.soft_rejections[option_id] = reason
@@ -897,13 +987,15 @@ class DialogueRunner:
         if voting and len(unresolved) == 1:
             return (
                 unresolved[0].id,
-                "ask for one unambiguous final vote, not conditional support",
+                "ask them casually which option they'll actually go with — one definite pick, no conditions; "
+                "don't ask what they're 'leaning' toward",
                 [candidate] if candidate else [],
             )
         if voting:
             return (
                 None,
-                "ask everyone for an unambiguous final vote using a clear phrase like 'I vote for ...'",
+                "ask the group, in a natural way, where everyone lands — each person should name the one option "
+                "they're going with; ask for a definite pick, not what people are 'leaning' toward",
                 [candidate] if candidate else [],
             )
 
@@ -922,16 +1014,23 @@ class DialogueRunner:
         return bool(state.runtimes[persona_id].explicit_vote)
 
     @staticmethod
-    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False) -> None:
+    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:
         """Record a clear vote, protecting an existing one from silent overwrite.
 
         A participant who already cast a clear vote keeps it unless their visible
         text explicitly signals a change (e.g. 'actually I vote for', 'switch to'),
         or ``force`` is set (used in the explicit split-vote compromise step).
+        Exception (issue #23): a formal direct vote replaces a commitment that
+        was only an acceptance earlier in discussion — otherwise a casual
+        "X works for me" locks out the actual vote round and manufactures a
+        phantom split. A direct vote never silently replaces another direct
+        vote (issue #5).
         """
         if rt.explicit_vote and rt.explicit_vote != option_id and not force and not _VOTE_CHANGE.search(text or ""):
-            return
+            if not (stance == "vote" and rt.vote_stance == "accept"):
+                return
         rt.explicit_vote = option_id
+        rt.vote_stance = stance
         rt.current_preference = option_id
 
     # ------------------------------------------------------------------
@@ -987,6 +1086,16 @@ class DialogueRunner:
         texts = [t.text for t in state.turns if t.speaker_id != "moderator"]
         return texts[-limit:]
 
+    @staticmethod
+    def _current_round_texts(state: DialogueState) -> list[str]:
+        """Participant turns since the last moderator line — i.e. this vote/beat round."""
+        texts: list[str] = []
+        for turn in reversed(state.turns):
+            if turn.speaker_id == "moderator":
+                break
+            texts.append(turn.text)
+        return texts
+
     def _apply_style_flags(self, state: DialogueState, intent: MoveIntent) -> None:
         """Set compact surface-style flags (no LLM call) to keep dialogue varied.
 
@@ -1007,6 +1116,12 @@ class DialogueRunner:
         alias_values = list(short_alias_map(state.scenario.options).values())
         if recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
             intent.suppress_option_opening = True
+        # Decision turns are exempt: "I vote/I'd go with" is natural and parser-relevant there.
+        if recent and intent.act not in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+            if first_person_opening_fraction(recent) >= float(cfg.style.i_opening_max_fraction):
+                intent.suppress_i_opening = True
+            if we_opening_fraction(recent) >= float(cfg.style.we_opening_max_fraction):
+                intent.suppress_we_opening = True
         opening_window = int(cfg.style.repeated_opening_window)
         if repeated_opening_token(self._recent_participant_texts(state, opening_window), opening_window):
             intent.vary_opening = True
@@ -1015,6 +1130,10 @@ class DialogueRunner:
             intent.avoid_pattern = repeated_pattern(
                 self._recent_participant_texts(state, pattern_window), pattern_window
             )
+        # Deterministic anti-chorus for decision beats: phrase families already
+        # used in this round are forbidden for the next voter (issue #25).
+        if intent.act in _DECISION_ACTS and not intent.avoid_phrases:
+            intent.avoid_phrases = used_commitment_phrases(self._current_round_texts(state))
 
     def _recent_question_count(self, state: DialogueState) -> int:
         recent = [t for t in state.turns[-3:] if t.speaker_id != "moderator"]
@@ -1099,6 +1218,9 @@ class DialogueRunner:
             reason="answer the direct question you were just asked, then add one implication for the decision",
             addressee_id=None if obligation.source_id == "moderator" else obligation.source_id,
             option_focus=focus,
+            # Without this the prompt never shows WHICH question is owed, and
+            # group-directed questions get pivoted around instead of answered.
+            respond_to_turn=obligation.created_turn,
         )
 
     @staticmethod
@@ -1177,6 +1299,10 @@ class DialogueRunner:
             base = int(budgets.answer)
         elif intent.act in _DECISION_ACTS:
             base = int(budgets.vote)
+            # A compromise switch needs room for the bridge clause ("water
+            # matters to me, but ...") on top of the direct commitment.
+            if intent.allow_vote_change:
+                base += 8
         else:
             base = int(budgets.discussion)
         p = persona.sim_params

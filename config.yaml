@@ -119,6 +119,8 @@ style:
   name_prefix_window: 4              # how many recent participant turns to scan
   name_prefix_max_fraction: 0.4     # above this share of name-prefixed openings, suppress names on non-functional turns
   option_opening_max_fraction: 0.25 # above this share of option-name openings, tell the next turn to lead differently
+  i_opening_max_fraction: 0.35      # above this share of first-person "I ..." openings, tell the next non-decision turn to lead differently
+  we_opening_max_fraction: 0.30     # same mechanism for "We ..." openings
   repeated_opening_window: 3        # consecutive turns sharing one opening word before variation is forced
   repeated_pattern_window: 3        # consecutive turns sharing one surface pattern before variation is forced
 
@@ -133,6 +135,20 @@ utterances:
     vote: 18
     moderator: 22
     closure: 18
+
+corpus:
+  # Optional corpus-inspired presets. With preset null the simulator behaves as
+  # configured above. An active preset folds its fields into runtime parameters
+  # at load time (group size, turn pacing) and gives the speaker router a
+  # dominance target instead of strict equalization. No topic-specific logic.
+  preset: null                        # null | delidata
+  presets:
+    delidata:
+      turns_per_participant: 4.5      # typical discussion length per participant
+      preferred_group_size: 5
+      top_speaker_share: 0.40         # expected turn share of the most active speaker
+      dominance_range: [0.30, 0.50]   # acceptable band for the top speaker's share
+      imbalance_tolerance: 0.15       # deviation from fair share before rebalancing kicks in
 
 validation:
   enabled: true
