@@ -109,11 +109,16 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Alias safety.** Option aliases exclude stopwords/generic words (so "with",
   "data", "analytics", "warehouse", etc. never match) and include distinctive
   proper nouns ("Gin", "Rails").
-- **Natural consensus calls.** The moderator asks where people land in plain
-  language and never dictates a quoted vote formula; participants commit in
-  their own words, and the parser's commitment patterns cover the natural forms
-  ("I'd go with", "my vote's on", "I'm all in for") while hedges/conditionals
-  still block.
+- **Natural consensus calls.** The moderator asks for definite picks in plain
+  language, never dictates a quoted vote formula, and vote calls are
+  option-neutral (the candidate is never named in the question); participants
+  commit in their own words, and the parser's commitment patterns cover the
+  natural forms ("I'd go with", "my vote's on", "I'm all in for") while
+  hedges/conditionals still block.
+- **Targeted moderation.** Stall nudges prefer concrete visible issues: probe an
+  unresolved blocker on the candidate once, ask the group to weigh a visible
+  split head-to-head, or address the single holdout — generic "strongest
+  remaining concern" only as last resort.
 - **Corpus presets (optional).** `corpus.preset` in `config.yaml` (default null)
   folds corpus statistics into runtime parameters at load time: typical turns per
   participant → turn caps, preferred group size → `num_participants`. Dominance

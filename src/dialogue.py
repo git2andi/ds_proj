@@ -1249,16 +1249,17 @@ class DialogueRunner:
         return record
 
     def _moderator_vote_nudge(self, state: DialogueState, candidate: str, reason: str) -> tuple[TurnRecord, str | None]:
-        candidate_name = state.scenario.option(candidate).name
         target_id, requested_action, focus = self._moderator_intervention_details(state, candidate, voting=True)
+        # Vote calls are option-neutral: never hand the prompt a candidate name
+        # it could merge into the question (issue I10).
         text = self._moderator_say(
             prompts.moderator_nudge_prompt(
                 state,
                 reason,
-                candidate_name,
+                None,
                 target_name=state.name_for(target_id) if target_id else None,
                 requested_action=requested_action,
-                focus_options=focus or [candidate],
+                focus_options=focus,
             ),
             state,
         )
@@ -1270,7 +1271,7 @@ class DialogueRunner:
                 source_id="moderator",
                 text=text,
                 expected_act=ActType.VOTE,
-                option_focus=focus or [candidate],
+                option_focus=focus,
             )
         return record, target_id
 
@@ -1337,22 +1338,52 @@ class DialogueRunner:
             )
 
         # During finalization only unclear/non-voters should be prompted again.
+        # Vote calls stay option-neutral: the moderator invites picks without
+        # naming any option, so the candidate can never leak into the question
+        # ("which Space Station option are you going with", I10).
         unresolved = [p for p in state.personas if not self._has_clear_vote(state, p.id)]
         if voting and len(unresolved) == 1:
             return (
                 unresolved[0].id,
                 "ask them casually which option they'll actually go with — one definite pick, no conditions; "
-                "don't ask what they're 'leaning' toward",
-                [candidate] if candidate else [],
+                "do not name or suggest any option yourself, and don't ask what they're 'leaning' toward",
+                [],
             )
         if voting:
             return (
                 None,
-                "ask the group, in a natural way, where everyone lands — each person should name the one option "
-                "they're going with; ask for a definite pick, not what people are 'leaning' toward",
-                [candidate] if candidate else [],
+                "invite everyone to give their final pick now — each person names the one option they're "
+                "going with, definite wording; do not name or suggest any option yourself, and never use "
+                "the word 'leaning'",
+                [],
             )
 
+        aliases = short_alias_map(state.scenario.options)
+        if candidate:
+            # An unresolved visible blocker on the likely candidate is the most
+            # useful thing to surface; ask that person directly, once.
+            probe_key = f"mod:{candidate}"
+            blockers = [p for p in state.personas if candidate in state.runtimes[p.id].hard_rejections]
+            if blockers and probe_key not in state.blocker_probes:
+                state.blocker_probes.add(probe_key)
+                return (
+                    blockers[0].id,
+                    f"ask them what would need to change about {aliases[candidate]} for it to work for them, "
+                    "or what they could support instead — one genuine question, no pressure",
+                    [candidate],
+                )
+        # A visible split deserves a head-to-head request before any narrowing.
+        supported = sorted(
+            (oid for oid in state.scenario.option_ids if self._visible_support_count(state, oid) >= 1),
+            key=lambda oid: -self._visible_support_count(state, oid),
+        )
+        if len(supported) >= 2:
+            return (
+                None,
+                f"ask the group to weigh {aliases[supported[0]]} against {aliases[supported[1]]} on the "
+                "trade-off that actually divides them — no verdict, just the comparison",
+                supported[:2],
+            )
         if candidate:
             dissenters = [p for p in state.personas if state.runtimes[p.id].current_preference != candidate]
             if len(dissenters) == 1:

@@ -173,6 +173,8 @@ Write one short progress nudge, under {cfg.utterances.word_budgets.moderator} wo
 Do not vote, do not decide, do not add facts, and do not repeat the option board.
 Sound like a person in the chat, not a script: never dictate a quoted reply
 template (no "please state your final vote clearly by saying 'I vote for …'").
+Vary your phrasing between interventions; avoid stock phrases like "where everyone stands".
+Follow the requested action exactly — if it says not to name an option, name none.
 Reason to intervene: {reason}
 Address this target if useful: {target}
 Requested action: {action}
