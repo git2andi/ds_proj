@@ -1,18 +1,34 @@
 # Info notes
 
-This folder contains compact design notes for the intended final behavior of the option-grounded multi-user simulator.
 
-Read in this order:
 
-1. `00_overview.md`
-2. `01_option_generation.md`
-3. `02_sim_generation.md`
-4. `03_agentic_behavior.md`
-5. `04_moderator_behavior.md`
-6. `05_discussion_formation.md`
-7. `06_turn_taking.md`
-8. `07_consensus_and_outcomes.md`
-9. `08_evaluation_and_logging.md`
-10. `09_topic_examples.md`
+## A. Current pipeline summary
 
-These files are intentionally brief and implementation-oriented. They describe how the project should work conceptually while the code evolves through the open issues in `todo.md`.
+The current project is already built around a reasonable high-level architecture:
+
+`main.py` calls `DialogueRunner(topic).run()`.
+
+The actual pipeline is:
+
+1. `src/builders.py`
+   Generates the scenario, option board, shared context, personas, initial preference assignments, and hard blockers.
+
+2. `src/simulator.py`
+   Converts OCEAN/persona traits into operational parameters such as engagement, verbosity, stubbornness, initiative, responsiveness, and compromise threshold. It also builds a weak initial agenda.
+
+3. `src/dialogue.py`
+   Runs the whole conversation. It creates the opening, controls participant turns, selects speakers, selects speech acts, chooses addressees/target turns, handles moderator interventions, starts vote rounds, attempts compromise, and closes the run.
+
+4. `src/prompts.py`
+   Builds prompts for setup, moderator turns, participant turns, repair prompts, grounding checks, and closure.
+
+5. `src/parsing.py`
+   Extracts visible option references, addressees, questions, rejections, proposals, and commitments from generated text.
+
+6. `src/consensus.py`
+   Computes final outcome from explicit visible votes/acceptances.
+
+7. `src/logger.py` and `src/evaluation.py`
+   Save transcripts, JSON logs, token stats, and basic dialogue metrics.
+
+The intended architecture in `info/00_overview.md`, `info/03_agentic_behavior (1).md`, and `info/07_consensus_and_outcomes (1).md` is mostly correct: the LLM should render individual utterances, while the controller manages turn-taking, state, and consensus. The problem is not the high-level idea. The problem is that several controller decisions still use hidden state too strongly, while invalid generated text can remain visible in the transcript.
