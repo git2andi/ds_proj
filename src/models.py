@@ -118,6 +118,7 @@ class Scenario:
     options: list[OptionCard]
     shared_context: list[str] = field(default_factory=list)
     environment_type: str = "option_grounded_group_decision"
+    setup_notes: list[str] = field(default_factory=list)  # deterministic setup repairs (e.g. cap clamps)
 
     @property
     def option_ids(self) -> list[str]:

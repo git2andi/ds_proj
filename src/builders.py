@@ -30,6 +30,112 @@ _TOPIC_COUNT_WORDS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "sev
 
 _INCOMPLETE_NAME_ENDINGS = frozenset({"a", "an", "the", "to", "from", "and", "or", "of", "in", "at", "by", "for", "with", "on", "via", "but", "&"})
 
+# --- I6: hard shared-context caps vs option attributes -----------------------
+# Soft qualifiers make a number a guideline, not a cap.
+_SOFT_CAP = re.compile(r"\b(?:around|about|roughly|approximately|moderate|flexible)\b", re.I)
+_CAP_WORDS = r"(?:fixed\s+at|capped\s+at|caps?\s+at|cap\s+of|limited\s+to|max(?:imum)?\s+(?:of\s+|at\s+)?|no\s+more\s+than|at\s+most|up\s+to|under|within)"
+_MONEY_CAP = re.compile(rf"\b{_CAP_WORDS}\s*[$€£]\s*([\d,]+(?:\.\d{{1,2}})?)", re.I)
+_UNIT_CAP = re.compile(
+    rf"\b{_CAP_WORDS}\s*([\d,]+(?:\.\d+)?)\s*(miles?|km|kilometers?|minutes?|mins?|hours?|hrs?)\b",
+    re.I,
+)
+_PER_UNIT = re.compile(r"\bper\s+([a-z]+)\b", re.I)
+_MONEY_KEYS = ("cost", "price", "budget", "fee", "rate")
+_UNIT_FAMILY = {
+    "mile": "miles", "miles": "miles",
+    "km": "km", "kilometer": "km", "kilometers": "km",
+    "minute": "minutes", "minutes": "minutes", "min": "minutes", "mins": "minutes",
+    "hour": "hours", "hours": "hours", "hr": "hours", "hrs": "hours",
+}
+_UNIT_KEYS = {
+    "miles": ("distance", "drive", "commute", "travel"),
+    "km": ("distance", "drive", "commute", "travel"),
+    "minutes": ("time", "duration", "travel", "wait", "setup", "commute"),
+    "hours": ("time", "duration", "travel", "wait", "setup", "commute"),
+}
+
+
+def _to_number(raw: str) -> float:
+    return float(raw.replace(",", ""))
+
+
+def _format_like(value: float, template: str) -> str:
+    """Format a number in the same style as the number inside ``template``."""
+    text = str(int(value)) if float(value).is_integer() else f"{value:g}"
+    if "," in template and value >= 1000:
+        text = f"{int(value):,}"
+    return text
+
+
+def shared_context_caps(shared_context: list[str]) -> list[dict]:
+    """Hard numeric caps stated in shared context.
+
+    Each cap: {"kind": "money"|unit-family, "value": float, "per": str|None,
+    "source": fact}. Soft phrasings ("around $200") are ignored on purpose.
+    """
+    caps: list[dict] = []
+    for fact in shared_context:
+        if _SOFT_CAP.search(fact):
+            continue
+        per = _PER_UNIT.search(fact)
+        per_word = per.group(1).lower() if per else None
+        money = _MONEY_CAP.search(fact)
+        if money:
+            caps.append({"kind": "money", "value": _to_number(money.group(1)), "per": per_word, "source": fact})
+        unit = _UNIT_CAP.search(fact)
+        if unit:
+            family = _UNIT_FAMILY[unit.group(2).lower()]
+            caps.append({"kind": family, "value": _to_number(unit.group(1)), "per": per_word, "source": fact})
+    return caps
+
+
+def _attr_number(kind: str, key: str, value: str) -> tuple[float, str] | None:
+    """(numeric value, matched substring) of an attr relevant to a cap kind."""
+    key_l = key.lower().replace("_", " ")
+    if kind == "money":
+        if not any(k in key_l for k in _MONEY_KEYS):
+            return None
+        match = re.search(r"[$€£]?\s*([\d,]+(?:\.\d{1,2})?)", value)
+    else:
+        if not any(k in key_l for k in _UNIT_KEYS.get(kind, ())):
+            return None
+        match = re.search(rf"([\d,]+(?:\.\d+)?)\s*(?:{'|'.join(u for u, f in _UNIT_FAMILY.items() if f == kind)})\b", value, re.I)
+    if not match:
+        return None
+    return _to_number(match.group(1)), match.group(1)
+
+
+def _per_basis(text: str) -> str | None:
+    match = _PER_UNIT.search(text)
+    return match.group(1).lower() if match else None
+
+
+def enforce_shared_caps(scenario: Scenario) -> list[str]:
+    """Clamp option attributes that violate a hard shared-context cap.
+
+    A cap and an attribute are only compared when their per-unit basis matches
+    (a '$500 total' budget never clamps a 'cost per person' attribute). Returns
+    human-readable repair notes; mutates the offending attr values in place.
+    """
+    notes: list[str] = []
+    caps = shared_context_caps(scenario.shared_context)
+    for cap in caps:
+        for option in scenario.options:
+            for key, value in list(option.attrs.items()):
+                basis = _per_basis(key) or _per_basis(value)
+                if basis != cap["per"]:
+                    continue
+                parsed = _attr_number(cap["kind"], key, value)
+                if parsed is None or parsed[0] <= cap["value"]:
+                    continue
+                number, matched = parsed
+                option.attrs[key] = value.replace(matched, _format_like(cap["value"], matched), 1)
+                notes.append(
+                    f"option {option.id} attr '{key}' clamped from {matched} to cap "
+                    f"{cap['value']:g} (shared context: {cap['source']!r})"
+                )
+    return notes
+
 _NAME_POOL = [
     "Amir", "Beatriz", "Callum", "Daria", "Emeka", "Faye", "Goran", "Hana",
     "Ivan", "Juno", "Kenji", "Lila", "Marco", "Nadia", "Oscar", "Priya",
@@ -135,7 +241,20 @@ class SetupBuilder:
         data = self._llm.generate_json(prompts.setup_scenario(self.topic, n), profile="setup")
         raw_scenario = data.get("scenario", data)
         scenario = self._parse_scenario(raw_scenario, n)
+        # Hard numeric caps in shared context must hold for every option; a
+        # violating attribute is clamped deterministically instead of letting an
+        # invalid option win the discussion (issue I6).
+        scenario.setup_notes.extend(enforce_shared_caps(scenario))
         options_json = raw_scenario.get("options", [])
+        if scenario.setup_notes:
+            # Keep the persona prompt consistent with the clamped option cards.
+            by_id = {option.id: option for option in scenario.options}
+            for row in options_json:
+                oid = str(row.get("id", "")).strip().upper()
+                if oid in by_id and isinstance(row.get("attrs"), dict):
+                    for key in list(row["attrs"]):
+                        if key.strip() in by_id[oid].attrs:
+                            row["attrs"][key] = by_id[oid].attrs[key.strip()]
         return scenario, options_json
 
     def _generate_personas(self, n: int, trait_rows: list[dict], required_preferences: dict[str, str],

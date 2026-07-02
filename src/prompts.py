@@ -74,6 +74,7 @@ Rules:
 - Do not use unknown, TBD, live availability, current weather, or facts that need internet lookup.
 - Options should expose real trade-offs, not one obvious winner.
 - shared_context must be general context known to everyone, not hidden persona facts.
+- If shared_context states a numeric limit (budget cap, max distance, max duration), every option must satisfy it — never create an option that violates a stated cap.
 - If shared_context mentions the group size, it must say exactly {n}.
 
 Return JSON only:
@@ -125,6 +126,7 @@ Rules:
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
 - background and private_goal must be one sentence each, specific to this topic, and grounded in the option cards/shared context.
+- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.
 
 Return JSON only:
 {_schema(schema)}"""

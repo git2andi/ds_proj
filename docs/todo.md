@@ -70,25 +70,7 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ### Phase A — transcript–state integrity
 
----
-
-#### I6 (P0). Hard shared constraints enforced at setup; persona goals must not contradict their assigned preference
-
-**Observed in:**
-
-- Summer camp run: shared context fixes the budget at `$300 per child`, option D (Robotics) costs `$320` — and wins. No validator connects the two.
-- Brunch run (new): `builders` assigns required primary preferences randomly *before* the persona LLM writes goals; Isla was assigned Sunny Side (card: "Limited vegetarian options") and the LLM gave her a vegan-lifestyle goal. Her dealbreaker-then-vote incoherence starts at setup.
-
-**Fix (keep it lightweight, no constraint solver):**
-
-- Post-generation scenario validator: regex-extract simple numeric caps from shared context (`budget … $300`, `fixed at`, `under`, `no more than`, `max`; capacity minimums; distance maximums) and check against `OptionCard.attrs` keys (`cost`, `price`, `budget`, `capacity`, `distance`, `duration`). On violation: regenerate once, else rewrite the offending attr to a valid nearby value, else mark the option not viable — a not-viable option never becomes a vote candidate.
-- Persona coherence: `setup_personas` prompt must state that `background`/`private_goal` have to be *compatible with the participant's assigned primary preference* (the assignment is already in the prompt) — the goal should explain why they lean that way, and must not name a need the preferred option's card explicitly fails. Rely on the instruction plus the existing retry loop; keep persona reads a mandatory manual check in validation runs (a deterministic contradiction detector would be fuzzy — do not build one).
-
-**Verify:**
-
-- No-LLM unit tests for cap extraction and option validation.
-- Prompt topics with budget/distance/availability constraints: violating options never win; setup logs show repair or not-viable marking.
-- Read personas in validation runs: no goal contradicts its own assigned preference.
+All Phase A issues (I1–I6) are resolved; see section 4.
 
 ### Phase B — measurement
 
@@ -182,6 +164,8 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 ---
 
 ## 4. Resolved / dropped since the last revision
+
+- **I6: Setup hard-constraint validator + persona-goal coherence** — done 2026-07-03. `builders.shared_context_caps` extracts hard numeric caps (money with per-unit basis; distance/time with unit families; soft phrasings like "around $200" ignored) and `enforce_shared_caps` clamps violating option attrs in place (per-basis mismatch — "$500 total" vs "cost per person" — is deliberately skipped); repairs recorded in `Scenario.setup_notes` (in run.json) and synced into the persona-prompt JSON. Setup prompts gained two rules: options must satisfy stated caps; persona goals must be consistent with the assigned primary preference and never state a need the preferred option's card explicitly fails. Verified: 9 no-LLM tests (`tests/test_setup_constraints.py`), runs `20260703_012913` (n=3, $50 gift: all options at/below cap, unanimous) and `20260703_013003` (n=5, 10-mile venue: caps respected at source, majority 4/5, live fallback restated the holdout).
 
 - **I5: Vote readiness/candidate from visible evidence** — done 2026-07-03. Early narrowing now requires a visible support cluster (≥2 sims' votes/acceptances; ≥1 for n=2) or visible support plus a visible compromise proposal, with no open question and no active blocker on the candidate; `concentration_to_vote` removed from config, `_latent_concentration` deleted. `_candidate_for_vote` scores visible votes (×2), acceptances, and visible proposals; latent lean only breaks ties or fills the no-evidence fallback (shapes whom the moderator asks, never the outcome). Stall-nudge candidate is visible-first. Verified: 8 no-LLM tests (`tests/test_vote_readiness.py`), runs `20260703_012304` (n=3 book circle: 3-way split → compromise → unanimous, all switches visible) and `20260703_012412` (n=4 surplus: 4-way split, one visible switch, honest unresolved; a "scheduling could be a dealbreaker" line correctly registered as an active blocker on the workshop option).
 - **I4: Visible text is the only source of public stance movement** — done 2026-07-02. `moves_lean` removed entirely; latent lean moves only on parsed signals (compromise offer / proposal / conditional support) gated by `_can_shift_to`, which now also checks runtime `hard_rejections`. Votes/acceptances for an actively blocked option are skipped in `_apply_semantics` and flagged blocking in validation (`BLOCKED_OPTION_ACCEPTED`, waived when the same line resolves the blocker). Sanctioned switches may only land on offered/current/initial options (`OFF_TARGET_SWITCH`); the safe fallback is restate-first and blocker-aware. `_should_compromise_to_candidate` requires visible support or a visible proposal (no latent pressure); switch events (from→to, has_reason) recorded per sim. Verified: 12 no-LLM tests (`tests/test_visible_stance.py`), runs `20260702_230750` (n=3 hallway paint: round-1 votes all match argued positions, switch only in visible minority beat) and `20260702_230908` (n=5 dietary: split→compromise, one live fallback restated the holdout's own pick, outcome matches transcript).

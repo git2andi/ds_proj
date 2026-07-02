@@ -114,6 +114,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Setup repair.** Persona rows that drop/reorder the controller-assigned primary
   preference are repaired deterministically (`builders.repair_preferred_options`)
   rather than retried; a rejection of the required option still fails the attempt.
+- **Hard-cap enforcement.** Hard numeric caps in shared context (budget, distance,
+  duration — soft "around $X" phrasings excluded) are extracted by
+  `builders.shared_context_caps` and violating option attributes are clamped in
+  place (`enforce_shared_caps`), respecting per-unit basis. Repairs are recorded
+  in `Scenario.setup_notes`. Persona goals must be consistent with the assigned
+  primary preference (setup prompt rule).
 
 ## Current direction
 
