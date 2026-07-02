@@ -75,6 +75,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
   parsing stays strictly conservative.
 - **Coverage is bounded.** Each option gets at most one coverage nudge
   (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
+- **Blocker vocabulary.** The parser detects option-tied active blockers
+  ("dealbreaker", "doesn't work for me", with negation guard), explicit blocker
+  resolutions ("that fixes my concern; I can live with X"), conditional support,
+  and compromise offers (incl. question forms). Parsed blockers accumulate in
+  `ParticipantRuntime.hard_rejections`; a visible resolution clears parser-derived
+  entries but never the persona-level setup rejection.
 - **Alias safety.** Option aliases exclude stopwords/generic words (so "with",
   "data", "analytics", "warehouse", etc. never match) and include distinctive
   proper nouns ("Gin", "Rails").

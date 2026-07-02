@@ -234,6 +234,9 @@ class DialogueAct:
     soft_rejects: dict[str, str] = field(default_factory=dict)
     hard_rejects: dict[str, str] = field(default_factory=dict)
     proposes_option: str | None = None
+    resolves_blocker: str | None = None    # option whose earlier blocker this line resolves
+    conditional_support: str | None = None  # option supported only conditionally
+    offers_compromise: str | None = None    # option visibly proposed as common ground
 
 
 @dataclass(slots=True)

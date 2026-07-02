@@ -777,7 +777,7 @@ class DialogueRunner:
             cov.mentions += 1
             if act.act_type in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.PROPOSE_COMPROMISE, ActType.OPENING}:
                 cov.reasons += 1
-            if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects:
+            if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
 
         allow_change = bool(record.intent and record.intent.allow_vote_change)
@@ -792,6 +792,11 @@ class DialogueRunner:
             rt.soft_rejections[option_id] = reason
         for option_id, reason in act.hard_rejects.items():
             rt.hard_rejections[option_id] = reason
+        # A visible resolution clears a parsed blocker for THIS sim only. The
+        # persona-level setup rejection is never cleared by a casual line; it
+        # needs the explicit compromise path (see I4).
+        if act.resolves_blocker and act.resolves_blocker != state.persona_by_id(record.speaker_id).rejection:
+            rt.hard_rejections.pop(act.resolves_blocker, None)
 
         if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
             rt.current_preference = record.intent.option_focus[0]

@@ -49,12 +49,14 @@ _COMMIT = re.compile(
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
     r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|go\s+with|settle\s+on|pick|choose|"
+    r"i'?(?:d|ll)\s+switch\s+to|i\s+can\s+live\s+with|"
     r"i\s+support|i\s+accept|i\s+can\s+support|i'?m\s+fine\s+with|fine\s+with|"
     r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
     re.I,
 )
 _SOFT_COMMIT = re.compile(
     r"\b(?:i\s+can\s+support|i\s+support|i\s+accept|i'?m\s+fine\s+with|fine\s+with|"
+    r"i\s+can\s+live\s+with|"
     r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
     re.I,
 )
@@ -64,6 +66,7 @@ _DIRECT_VOTE = re.compile(
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
     r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
+    r"i'?(?:d|ll)\s+switch\s+to|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|settle\s+on|final\s+choice)\b",
     re.I,
 )
@@ -95,6 +98,123 @@ _SOFT_OBJECT = re.compile(
     r"not\s+ideal|doesn'?t\s+fit|would\s+be\s+hard)\b",
     re.I,
 )
+
+# --- I3 vocabulary: active blockers, resolutions, compromise offers, reasons ---
+
+# Strong option-tied vetoes. Stronger than _SOFT_OBJECT: while active, the sim
+# cannot vote for the option without a visible resolution (consumed in I4).
+_ACTIVE_BLOCKER = re.compile(
+    r"\b(?:dealbreaker|deal\s+breaker|hard\s+no|hard\s+pass|"
+    r"i\s+can'?t\s+support|i\s+cannot\s+support|i\s+won'?t\s+support|"
+    r"not\s+okay\s+with|not\s+fine\s+with|doesn'?t\s+work\s+for\s+me|"
+    r"can'?t\s+get\s+behind|i'?m\s+out\s+on|non-?starter)\b",
+    re.I,
+)
+# Noun-shaped triggers get a negation guard ("that's not a dealbreaker").
+_BLOCKER_NOUN = re.compile(r"\b(?:dealbreaker|deal\s+breaker|hard\s+no|hard\s+pass|non-?starter)\b", re.I)
+_BLOCKER_NEGATION = re.compile(
+    r"(?:\bnot\b|\bno\s+longer\b|\bisn'?t\b|\bwasn'?t\b|\bhardly\b|\bwouldn'?t\s+be\b|\bfar\s+from\b)"
+    r"\s+(?:really\s+|quite\s+|exactly\s+|necessarily\s+)?(?:a\s+|the\s+)?$",
+    re.I,
+)
+# A blocker counts as resolved only when the same sim visibly says so, with no
+# hard-conditional residue ("if we…", "only if…") left in the line.
+# _RESOLUTION_HEAD phrases explicitly reference the resolved concern; when one is
+# present, the mention of "concern/worry/issue" must not re-trip the conditional
+# guard in visible_commitment ("That fixes my concern; I can live with X").
+_RESOLUTION_HEAD = re.compile(
+    r"\b(?:that\s+(?:addresses|fixes|solves|resolves|settles|covers|handles)\s+(?:my|the|it)|"
+    r"my\s+(?:concern|worry|issue)\s+is\s+(?:addressed|resolved|gone|covered|handled)|"
+    r"no\s+longer\s+a\s+(?:dealbreaker|problem|blocker|non-?starter)|"
+    r"not\s+a\s+(?:dealbreaker|problem|blocker)\s+anymore|i'?m\s+okay\s+with\s+it\s+now)\b",
+    re.I,
+)
+_RESOLUTION = re.compile(
+    rf"{_RESOLUTION_HEAD.pattern}|\bi\s+can\s+live\s+with\b",
+    re.I,
+)
+# Visible compromise proposals, including question forms ("could we all live with X?").
+_COMPROMISE_OFFER = re.compile(
+    r"\b(?:could|can|would)\s+(?:we|everyone|you\s+all|y'?all)\s+(?:all\s+)?live\s+with\b|"
+    r"\bwhat\s+if\s+we\s+(?:went|go|all\s+went|all\s+go)\s+with\b|"
+    r"\bmeet\s+in\s+the\s+middle\s+(?:on|with|at)\b|"
+    r"\bwould\s+(?:that|this|it)\s+work\s+for\s+everyone\b|"
+    r"\bas\s+a\s+(?:compromise|middle\s+ground)\b",
+    re.I,
+)
+# Does a commitment carry a visible reason clause? (Consumed by I4: a switch
+# away from the initial preference needs a stated reason.)
+_REASON_MARKER = re.compile(
+    r"\b(?:because|since|despite|even\s+though|"
+    r"for\s+(?:its|their|the|a|an)\b|to\s+(?:keep|boost|get|make|support|showcase|save|avoid|stay)\b|"
+    r"so\s+(?:we|it|everyone|the)\b|"
+    r"it\s+(?:solves|fixes|keeps|gives|covers|fits|means|delivers|works|saves|hits))\b|—|:\s",
+    re.I,
+)
+
+
+def _nearest_option(check_text: str, start: int, end: int, resolver: OptionResolver) -> str | None:
+    """The option mentioned closest to a phrase match, within its sentence."""
+    after = re.split(r"[.;!?]", check_text[end:])[0]
+    before = re.split(r"[.;!?]", check_text[:start])[-1]
+    after_hits = _option_positions(after, resolver)
+    before_hits = _option_positions(before, resolver)
+    after_distance = after_hits[0][0] if after_hits else None
+    before_distance = len(before) - before_hits[-1][0] if before_hits else None
+    if after_distance is not None and (before_distance is None or after_distance <= before_distance):
+        return after_hits[0][1]
+    if before_distance is not None:
+        return before_hits[-1][1]
+    # Fall back to a unique option mention anywhere in the line.
+    ids = resolver.ids_in_text(check_text)
+    return ids[0] if len(ids) == 1 else None
+
+
+def active_blocker_option(check_text: str, resolver: OptionResolver) -> str | None:
+    """Option the line visibly vetoes ('X is a dealbreaker for me'), if any."""
+    match = _ACTIVE_BLOCKER.search(check_text)
+    if not match:
+        return None
+    if _BLOCKER_NOUN.match(match.group(0)) and _BLOCKER_NEGATION.search(check_text[: match.start()]):
+        return None
+    return _nearest_option(check_text, match.start(), match.end(), resolver)
+
+
+def blocker_resolution_option(check_text: str, resolver: OptionResolver) -> str | None:
+    """Option whose earlier blocker this line visibly resolves, if any."""
+    match = _RESOLUTION.search(check_text)
+    if not match:
+        return None
+    if _HARD_CONDITIONAL.search(check_text):
+        return None
+    return _nearest_option(check_text, match.start(), match.end(), resolver)
+
+
+def conditional_support_option(check_text: str, resolver: OptionResolver) -> str | None:
+    """Option supported only conditionally ('I can support A, but only if…')."""
+    match = _COMMIT.search(check_text)
+    if not match or _REJECT.search(check_text):
+        return None
+    if not (_HARD_CONDITIONAL.search(check_text) or _HEDGE.search(check_text) or _CONDITIONAL_AFTER_COMMIT.search(check_text)):
+        return None
+    ids = resolver.ids_in_text(check_text)
+    if len(ids) > 1:
+        near = _commitment_object(check_text, resolver)
+        ids = [near] if near else ids
+    return ids[0] if len(ids) == 1 else None
+
+
+def compromise_offer_option(check_text: str, resolver: OptionResolver) -> str | None:
+    """Option visibly proposed as common ground, including in question form."""
+    match = _COMPROMISE_OFFER.search(check_text)
+    if not match:
+        return None
+    return _nearest_option(check_text, match.start(), match.end(), resolver)
+
+
+def commitment_has_reason(text: str) -> bool:
+    """True when a commitment line carries a visible reason clause."""
+    return bool(_REASON_MARKER.search(text.replace("’", "'")))
 
 
 class OptionResolver:
@@ -279,11 +399,15 @@ def visible_commitment(
     # remains unresolved until the speaker explicitly votes without conditions.
     if _HARD_CONDITIONAL.search(check_text):
         return None
-    if soft_commit and (_HEDGE.search(check_text) or _CONDITIONAL_AFTER_COMMIT.search(check_text)):
+    # An explicit blocker-resolution head names the old concern; that mention
+    # must not count as a fresh condition ("That fixes my concern; I can live
+    # with X" is an acceptance).
+    resolution_head = bool(_RESOLUTION_HEAD.search(check_text))
+    if soft_commit and not resolution_head and (_HEDGE.search(check_text) or _CONDITIONAL_AFTER_COMMIT.search(check_text)):
         return None
-    if _HEDGE.search(check_text) and not direct_vote:
+    if _HEDGE.search(check_text) and not direct_vote and not resolution_head:
         return None
-    if _CONDITIONAL_AFTER_COMMIT.search(check_text) and not direct_vote:
+    if _CONDITIONAL_AFTER_COMMIT.search(check_text) and not direct_vote and not resolution_head:
         return None
     stance = "vote" if direct_vote else "accept"
     return (stance, option_id)
@@ -336,6 +460,15 @@ def parse_dialogue_act(
         if act_type == ActType.PROPOSE_COMPROMISE and len(option_refs) == 1:
             proposes_option = option_refs[0]
 
+    blocker = active_blocker_option(check_text, resolver)
+    if blocker and blocker != explicit_vote:
+        hard_rejects[blocker] = text
+    resolves_blocker = blocker_resolution_option(check_text, resolver)
+    if resolves_blocker in hard_rejects:
+        resolves_blocker = None  # one line cannot both raise and resolve a blocker
+    conditional_support = None if commitment else conditional_support_option(check_text, resolver)
+    offers_compromise = compromise_offer_option(check_text, resolver)
+
     return DialogueAct(
         speaker_id=speaker_id,
         text=text,
@@ -348,6 +481,9 @@ def parse_dialogue_act(
         soft_rejects=soft_rejects,
         hard_rejects=hard_rejects,
         proposes_option=proposes_option,
+        resolves_blocker=resolves_blocker,
+        conditional_support=conditional_support,
+        offers_compromise=offers_compromise,
     )
 
 

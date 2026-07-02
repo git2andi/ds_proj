@@ -72,26 +72,6 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ---
 
-#### I3 (P0). Parser/state vocabulary for blockers, conditions, and switches
-
-Promoted from old P2 because I4/I5 need this machinery. The parser already rejects hedged/conditional commitments well; what is missing are explicit categories the controller can act on.
-
-**Fix:**
-
-- Parser outputs / helper predicates: `active_blocker` (option-tied `dealbreaker`, `can't support`, `hard no`, `doesn't work for me`, `not okay with`, `cannot support`, `blocked`), `blocker_resolution` (`that addresses my concern`, `that fixes it`, `if we do X I can support Y` when X is affirmed, `I can live with Y because…` without hard-conditional residue), `conditional_support`, `visible_switch_reason` (commitment to a non-initial option + a because/so clause), `compromise_offer`.
-- Runtime state: `ParticipantRuntime.active_blockers: dict[option_id, reason]`, populated from parsed active blockers (in addition to persona-level `rejection`); cleared only by a parsed resolution from the same sim.
-- Keep conservative defaults: ambiguous lines never count as final votes.
-
-**Verify (no-LLM tests):**
-
-- `I can support A, but only if…` → conditional, not a vote.
-- `Sunny Side is a dealbreaker for me` → active blocker on A.
-- `That fixes my concern; I can live with A` → resolved blocker + acceptance.
-- `I'd switch to B because it solves the budget issue` → visible switch with reason.
-- Compare turn mentioning B → no support for B.
-
----
-
 #### I4 (P0). Visible text is the only source of public stance movement
 
 **Observed in:**
@@ -245,6 +225,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I3: Parser/state vocabulary for blockers, conditions, switches** — done 2026-07-02. `parsing.py` gained `active_blocker_option` (option-tied vetoes with negation guard), `blocker_resolution_option` (explicit resolution heads; conditional residue blocks), `conditional_support_option`, `compromise_offer_option` (incl. question forms), `commitment_has_reason`; `_COMMIT`/`_DIRECT_VOTE` now cover "I'd switch to" and "I can live with". `DialogueAct` carries `resolves_blocker` / `conditional_support` / `offers_compromise`; parsed blockers land in the existing `ParticipantRuntime.hard_rejections` (reused instead of a new field), resolutions clear parser-derived entries only — never the persona-level setup rejection. Verified: 15 no-LLM tests (`tests/test_blockers.py`), regression runs `20260702_225756` (n=3 RPG, majority consistent) and `20260702_225926` (n=6 volunteering, split→compromise with two visible switches, majority 5/6 matches transcript).
 - **I2: Sanctioned-switch bridge clauses parse as commitments** — done 2026-07-02. `visible_commitment(..., sanctioned_switch=True)` (wired from `intent.allow_vote_change`) accepts a commitment with a concessive rider ("as long as", "even though", "despite"); questions and genuine prerequisites (`only if`, `unless`, `would need`, `depends`) still block. Conservative rules unchanged everywhere else. Verified: 8 no-LLM tests (`tests/test_sanctioned_switch.py`, incl. the exact Gemma line), runs `20260702_224801` (n=3 synth, unanimous), `20260702_224909` (n=4 forced 4-way split → honest unresolved), `20260702_225046` (n=5 forced 3-2 → minority check, Faye's visible switch recorded, unanimous matches transcript).
 - **I1: Blocked invalid decision turns never printed** — done 2026-07-02. `_generate_and_append` now replaces still-blocking text after repair with `_safe_fallback_text` (deterministic, parser-clean per intent: blockers commit to an allowed alternative, unclear votes become one clear commitment, coverage turns name the required option). Counters `fallback_turns` / `invalid_printed_turn_count` added to metrics. Verified: 6 no-LLM tests (`tests/test_fallback.py`), n=3 run `logs/archive/.../20260702_224207_607026` (dog name, majority consistent with transcript), n=5 forced-blocker run `20260702_224346_818603` (mural; blocker never accepts B, both counters 0). Also fixed: PowerShell BOM leaking into piped topics (`main.py`).
 - **Duplicated `expected_act` field in `ResponseObligation`** — already fixed; `models.py` declares it once (verified 2026-07-02). Dropped.
