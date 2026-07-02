@@ -64,6 +64,10 @@ Change participant count and provider settings in `config.yaml`. The default pro
   spread; `sim_utterance` length/tone guidance is concrete and parameter-driven.
 - **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
   penalizes the second-to-last speaker to stop two participants ping-ponging.
+- **Thread-scored targeting.** `_choose_target_turn` scores the last few
+  participant turns (open questions, objections/blockers, minority voices,
+  leading/under-discussed options) instead of always answering the latest line;
+  answer acts deterministically target the pending question.
 - **Vote stability.** Later vote rounds only re-prompt unclear/non-voters, and
   `_set_vote` keeps an existing clear vote unless the text explicitly signals a
   change (e.g. "actually I vote for", "switch to").

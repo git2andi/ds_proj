@@ -83,19 +83,6 @@ Do not consider evaluation now - we'll do that in depth once the discussion is w
 
 ---
 
-#### I8 (P1). Thread-scored target selection instead of latest-turn bias
-
-**Observed in:** all recent logs — participants react almost only to the immediately previous line; questions get one answer and the thread dies. `_choose_target_turn()` returns `participant_turns[-1]` for most acts and with p=0.7 otherwise.
-
-**Fix:**
-
-- Replace with a scored target pool: open direct questions; group-directed questions; unresolved objections; active blockers; minority/holdout positions; recent claims about the leading candidate; under-discussed viable options; non-latest participant turns from the last 4-6.
-- Hard obligations still win. Otherwise score, don't take recency; include social balance (don't always target the same high-engagement sim). Let non-latest turns be referenced by content or speaker name.
-
-**Verify:** in n=4/n=5 runs, some turns respond to non-immediately-previous points; a direct question usually gets answer + acknowledgement/challenge/follow-up before the topic jumps; `direct_response_rate` (I7) improves against the archived baseline.
-
----
-
 #### I9 (P1). Reactive act selection; agenda as weak fallback
 
 **Observed in:** sequential preference/trade-off statements with little challenge, persuasion, or compromise; the agenda + weighted sampling in `_route_discussion_turn`/`_choose_discussion_act` isn't tied to adjacency-pair logic (agenda fires with p≈0.45–0.80 before context is even considered).
@@ -118,6 +105,7 @@ Largely unblocked by I3–I5 (the moderator then has real visible state to point
 
 - Interventions choose from: ask a blocker what would resolve their concern; ask a holdout whether a compromise works; ask the group to compare the two leading options; request missing practical evidence; call a vote only when I5's readiness holds.
 - Never close right after private convergence; keep `moderator_max_interventions` low; phrasing stays plain (no "where everyone stands" boilerplate — vary it).
+- **Also observed (2026-07-03, run `20260703_013408`, n=5 escape room):** the group vote call merged the candidate name into the question — "can you each share which Space Station option you're definitely going with" — nonsensical phrasing; the vote-call prompt must keep the candidate as context only, never inside the group question.
 
 **Verify:** moderator turns reference a concrete visible issue; the moderator is never the only reason consensus forms; `moderator_ratio` stays low.
 
@@ -165,6 +153,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I8: Thread-scored target selection** — done 2026-07-03. `_choose_target_turn` scores a pool of the last `routing.target_window` (6) participant turns: open questions +2.0, embedded questions +0.5, objections/blockers +1.0, leading-candidate turns +0.6, under-discussed-option turns +0.4, minority voices +0.6, mild recency decay, ×0.6 damping on re-targeting the same speaker; ANSWER acts deterministically target the pending question's turn. Verified: 4 no-LLM tests (`tests/test_targeting.py`), runs `20260703_013408` (n=5 escape room: multi-turn threads — Noir script-lead thread revisited across four non-adjacent turns) and `20260703_013615` (n=3 choir: two question threads asked, answered, and followed up; outcomes consistent).
 - **I6: Setup hard-constraint validator + persona-goal coherence** — done 2026-07-03. `builders.shared_context_caps` extracts hard numeric caps (money with per-unit basis; distance/time with unit families; soft phrasings like "around $200" ignored) and `enforce_shared_caps` clamps violating option attrs in place (per-basis mismatch — "$500 total" vs "cost per person" — is deliberately skipped); repairs recorded in `Scenario.setup_notes` (in run.json) and synced into the persona-prompt JSON. Setup prompts gained two rules: options must satisfy stated caps; persona goals must be consistent with the assigned primary preference and never state a need the preferred option's card explicitly fails. Verified: 9 no-LLM tests (`tests/test_setup_constraints.py`), runs `20260703_012913` (n=3, $50 gift: all options at/below cap, unanimous) and `20260703_013003` (n=5, 10-mile venue: caps respected at source, majority 4/5, live fallback restated the holdout).
 
 - **I5: Vote readiness/candidate from visible evidence** — done 2026-07-03. Early narrowing now requires a visible support cluster (≥2 sims' votes/acceptances; ≥1 for n=2) or visible support plus a visible compromise proposal, with no open question and no active blocker on the candidate; `concentration_to_vote` removed from config, `_latent_concentration` deleted. `_candidate_for_vote` scores visible votes (×2), acceptances, and visible proposals; latent lean only breaks ties or fills the no-evidence fallback (shapes whom the moderator asks, never the outcome). Stall-nudge candidate is visible-first. Verified: 8 no-LLM tests (`tests/test_vote_readiness.py`), runs `20260703_012304` (n=3 book circle: 3-way split → compromise → unanimous, all switches visible) and `20260703_012412` (n=4 surplus: 4-way split, one visible switch, honest unresolved; a "scheduling could be a dealbreaker" line correctly registered as an active blocker on the workshop option).

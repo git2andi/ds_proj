@@ -450,15 +450,58 @@ class DialogueRunner:
             return ActType.BUILD
         return act
 
+    _last_target_speaker: str | None = None
+
     def _choose_target_turn(self, state: DialogueState, speaker: Persona, act: ActType) -> TurnRecord | None:
-        participant_turns = [t for t in state.turns if t.speaker_id not in {"moderator", speaker.id}]
-        if not participant_turns:
+        """Score a pool of recent threads instead of always taking the last line.
+
+        Open questions, objections/blockers, minority voices, and turns about the
+        leading or under-discussed options outrank plain recency, so earlier
+        unresolved points get revisited instead of dying after one reply (I8).
+        """
+        pool = [t for t in state.turns if t.speaker_id not in {"moderator", speaker.id}]
+        if not pool:
             return None
-        if act in {ActType.AGREE, ActType.CHALLENGE, ActType.ASK, ActType.ANSWER, ActType.INVITE}:
-            return participant_turns[-1]
-        if random.random() < 0.7:
-            return participant_turns[-1]
-        return random.choice(participant_turns[-min(4, len(participant_turns)):])
+        # An answer turn must target the pending question when one exists.
+        if act == ActType.ANSWER:
+            question = self._next_answerable_question(state)
+            if question:
+                for turn in pool:
+                    if turn.index == question.turn_id:
+                        return turn
+            return pool[-1]
+        window = pool[-int(cfg.routing.get("target_window", 6)):]
+        leading = self._visible_candidate(state) or self._latent_leading_option(state)
+        under = self._least_mentioned_option(state)
+        open_turn_ids = {q.turn_id for q in state.open_questions}
+        latest_index = window[-1].index
+        weights: list[float] = []
+        for turn in window:
+            score = 1.0 / (1.0 + 0.6 * (latest_index - turn.index))
+            if turn.index in open_turn_ids:
+                score += 2.0
+            elif "?" in turn.text:
+                score += 0.5
+            if turn.act.soft_rejects or turn.act.hard_rejects:
+                score += 1.0
+            if leading and leading in turn.act.option_refs:
+                score += 0.6
+            if under and under in turn.act.option_refs:
+                score += 0.4
+            rt = state.runtimes.get(turn.speaker_id)
+            if leading and rt and rt.current_preference and rt.current_preference != leading:
+                score += 0.6  # minority/holdout voices stay in play
+            if turn.speaker_id == self._last_target_speaker:
+                score *= 0.6  # don't keep targeting the same person
+            weights.append(score)
+        chosen = weighted_choice(window, weights)
+        self._last_target_speaker = chosen.speaker_id
+        return chosen
+
+    @staticmethod
+    def _least_mentioned_option(state: DialogueState) -> str | None:
+        pairs = sorted(state.coverage.items(), key=lambda kv: (kv[1].mentions, kv[0]))
+        return pairs[0][0] if pairs else None
 
     def _focus_options(self, state: DialogueState, speaker: Persona, act: ActType, target_turn: TurnRecord | None) -> list[str]:
         ids: list[str] = []
