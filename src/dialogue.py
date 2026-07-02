@@ -339,9 +339,16 @@ class DialogueRunner:
                 option_focus=focus,
             )
 
+        # Reactive adjacency-pair moves (defend a challenged pick, follow up an
+        # answer, probe a blocker, compare a visible split) come before the
+        # agenda: local context drives acts, the agenda only fills quiet moments.
+        reactive = self._reactive_intent(state)
+        if reactive is not None:
+            return reactive
+
         speaker = self._choose_speaker(state)
         agenda_pair = next_agenda_item(speaker)
-        if agenda_pair and random.random() < (0.45 + 0.35 * speaker.sim_params.initiative):
+        if agenda_pair and random.random() < (0.25 + 0.25 * speaker.sim_params.initiative):
             agenda_index, agenda_item = agenda_pair
             act = agenda_item.act
             focus = [agenda_item.option] if agenda_item.option in state.scenario.option_ids else []
@@ -366,6 +373,117 @@ class DialogueRunner:
             respond_to_turn=target_turn.index if target_turn else None,
             agenda_index=agenda_index,
         )
+
+    def _reactive_intent(self, state: DialogueState) -> MoveIntent | None:
+        """Adjacency-pair moves driven by what just visibly happened (issue I9).
+
+        Checked in order, each with a probability gate so runs don't become a
+        rigid script: a challenged option gets defended by an advocate, an
+        answer gets a follow-up, an active blocker on the leading option gets
+        probed once, and a visible split gets an explicit comparison.
+        """
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        if not participant_turns:
+            return None
+        last = participant_turns[-1]
+        aliases = short_alias_map(state.scenario.options)
+
+        # 1. Defense: the last turn challenged/objected to an option someone
+        #    else currently backs — that advocate responds.
+        challenged = list(last.act.soft_rejects) or (
+            last.act.option_refs if last.intent and last.intent.act == ActType.CHALLENGE else []
+        )
+        for option_id in challenged:
+            advocates = [
+                p for p in state.personas
+                if p.id != last.speaker_id and state.runtimes[p.id].current_preference == option_id
+            ]
+            if advocates and random.random() < 0.75:
+                speaker = max(advocates, key=lambda p: p.sim_params.engagement + 0.3 * p.sim_params.stubbornness)
+                return MoveIntent(
+                    speaker_id=speaker.id,
+                    act=ActType.BUILD,
+                    reason=(
+                        f"the last point raised a concern about {aliases[option_id]}, which you back — "
+                        "respond to it directly: defend it with a grounded reason or concede the point honestly"
+                    ),
+                    option_focus=[option_id],
+                    respond_to_turn=last.index,
+                    addressee_id=last.speaker_id if random.random() < 0.5 else None,
+                )
+
+        # 2. Follow-up: an answer was just given; someone reacts to it instead
+        #    of the topic silently jumping.
+        if last.intent and last.intent.act == ActType.ANSWER and random.random() < 0.6:
+            speaker = self._choose_speaker(state)
+            if speaker.id != last.speaker_id:
+                act = weighted_choice(
+                    [ActType.AGREE, ActType.CHALLENGE, ActType.ASK],
+                    [0.4 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
+                     0.3 + speaker.sim_params.stubbornness * 0.4,
+                     0.25 + speaker.sim_params.initiative * 0.2],
+                )
+                focus = last.act.option_refs[:2]
+                return MoveIntent(
+                    speaker_id=speaker.id,
+                    act=act,
+                    reason="react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+                    option_focus=focus,
+                    respond_to_turn=last.index,
+                )
+
+        # 3. Blocker probe: the leading option has an unresolved visible blocker;
+        #    a supporter asks once what would make it workable.
+        leading = self._visible_candidate(state) or self._latent_leading_option(state)
+        if leading and leading not in state.blocker_probes:
+            blockers = [p for p in state.personas if leading in state.runtimes[p.id].hard_rejections]
+            askers = [
+                p for p in state.personas
+                if p.id != last.speaker_id and p not in blockers
+            ]
+            if blockers and askers:
+                state.blocker_probes.add(leading)
+                blocker = blockers[0]
+                speaker = max(askers, key=lambda p: p.sim_params.responsiveness)
+                return MoveIntent(
+                    speaker_id=speaker.id,
+                    act=ActType.ASK,
+                    reason=(
+                        f"{blocker.name} clearly can't accept {aliases[leading]}; ask them one genuine "
+                        "question about what would make it workable or what they'd need instead — no pressure"
+                    ),
+                    addressee_id=blocker.id,
+                    option_focus=[leading],
+                )
+
+        # 4. Visible split: two options both have visible backing and nobody has
+        #    compared them head-to-head recently.
+        supported = [oid for oid in state.scenario.option_ids if self._visible_support_count(state, oid) >= 1]
+        if len(supported) >= 2 and random.random() < 0.5:
+            recent = participant_turns[-4:]
+            recently_compared = any(
+                t.intent and t.intent.act in {ActType.COMPARE, ActType.PROPOSE_COMPROMISE} for t in recent
+            )
+            if not recently_compared:
+                speaker = self._choose_speaker(state)
+                pair = sorted(supported, key=lambda oid: -self._visible_support_count(state, oid))[:2]
+                act = (
+                    ActType.PROPOSE_COMPROMISE
+                    if speaker.sim_params.compromise_threshold <= 0.4 and random.random() < 0.5
+                    else ActType.COMPARE
+                )
+                return MoveIntent(
+                    speaker_id=speaker.id,
+                    act=act,
+                    reason=(
+                        f"the group is visibly split between {aliases[pair[0]]} and {aliases[pair[1]]}; "
+                        + ("test whether one of them could be common ground without claiming it's decided"
+                           if act == ActType.PROPOSE_COMPROMISE
+                           else "put them side by side on the trade-off that actually divides the group")
+                    ),
+                    option_focus=pair,
+                )
+        return None
 
     def _choose_speaker(self, state: DialogueState) -> Persona:
         recent_speakers = self._recent_participant_ids(state, 2)
@@ -524,10 +642,20 @@ class DialogueRunner:
         focus_names = ", ".join(names[o] for o in focus) if focus else "the options"
         if act == ActType.BUILD:
             return f"add a new grounded reason about {focus_names}, connected to the current discussion"
+        current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+        current_name = names.get(current, current)
         if act == ActType.AGREE:
-            return f"agree with the recent point, but add a small new angle about {focus_names}"
+            return f"agree with the recent point where it genuinely fits your view, and add a small new angle about {focus_names}"
         if act == ActType.CHALLENGE:
-            return f"push back on the recent point or name a real concern about {focus_names}"
+            # Never route a sim into arguing against their own pick right before
+            # voting for it (issue I9, restaurant run).
+            rivals = [o for o in focus if o != current]
+            if rivals:
+                return (
+                    f"push back on {names[rivals[0]]} with one concrete concern — "
+                    f"you currently favor {current_name}, so aim at the rival, not your own pick"
+                )
+            return f"name a concern others might raise about {current_name}, and say why it still holds up for you"
         if act == ActType.ASK:
             return f"ask one concrete question that helps compare {focus_names}"
         if act == ActType.ANSWER:

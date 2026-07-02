@@ -83,22 +83,6 @@ Do not consider evaluation now - we'll do that in depth once the discussion is w
 
 ---
 
-#### I9 (P1). Reactive act selection; agenda as weak fallback
-
-**Observed in:** sequential preference/trade-off statements with little challenge, persuasion, or compromise; the agenda + weighted sampling in `_route_discussion_turn`/`_choose_discussion_act` isn't tied to adjacency-pair logic (agenda fires with p≈0.45–0.80 before context is even considered).
-
-**Also observed (2026-07-02, run `20260702_230908`, n=5 restaurant):** a sim whose latent preference is X can be routed into challenge/agree turns that drift rhetorically *against* X right before voting X ("Three veggie dishes isn't enough for us …" → "My pick is Rustic Grill") — the intent's move purpose ignores the sim's own stance. Act/purpose selection should keep a sim's discussion moves roughly consistent with their current lean (defend, soften, or visibly switch — not argue against their own pick and then vote for it).
-
-**Fix:**
-
-- Add a small `conversation_need(state) -> need` helper: `answer_obligation`, `resolve_blocker`, `cover_option`, `compare_split`, `invite_holdout`, `narrow`, `continue_discussion`.
-- Local dependencies drive acts: question → answer; answer → acknowledge/challenge/follow-up; challenge → defense/clarification/softening; two support turns → invite holdout or test consensus; visible split → compare or propose compromise; active blocker → ask what resolves it; stalled repeated reasons → practical constraint or reframe.
-- Agenda items only fill `continue_discussion`; no run marches through the same act sequence; sims need not consume every item.
-
-**Verify:** n=3 and n=5 transcripts each contain at least one question-answer pair, one challenge/concern, one visible narrowing/compromise attempt; act sequences differ across sims/runs; `question_answer_completion` (I7) improves.
-
----
-
 #### I10 (P1). Moderator interventions must be targeted and evidence-based
 
 Largely unblocked by I3–I5 (the moderator then has real visible state to point at). Remaining work:
@@ -153,6 +137,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I9: Reactive act selection; agenda as weak fallback** — done 2026-07-03. `_reactive_intent` runs before the agenda with probability-gated adjacency-pair moves: a challenged option gets defended by an advocate (never the challenger), an answer gets a follow-up (agree/challenge/ask by traits), an unresolved blocker on the leading option gets probed exactly once (`state.blocker_probes`), and a visible split triggers a head-to-head compare or compromise test. Agenda firing probability cut to 0.25+0.25·initiative. `_reason_for_act` is stance-aware: a challenge never targets the speaker's own pick (restaurant-run flip-flop fix). Verified: 6 no-LLM tests (`tests/test_reactive_acts.py`), runs `20260703_014042` (n=3 password manager: defense beats, follow-ups, honest 3-way unresolved) and `20260703_014226` (n=6 feast, forced blocker: spit-roast thread asked→answered→acknowledged, blocker probed and honestly held, accurate split summary, honest unresolved). New I11 evidence noted: a vote turn claimed a card fact from another option (LastPass "two-factor" from Dashlane's card) — vote acts skip grounding.
 - **I8: Thread-scored target selection** — done 2026-07-03. `_choose_target_turn` scores a pool of the last `routing.target_window` (6) participant turns: open questions +2.0, embedded questions +0.5, objections/blockers +1.0, leading-candidate turns +0.6, under-discussed-option turns +0.4, minority voices +0.6, mild recency decay, ×0.6 damping on re-targeting the same speaker; ANSWER acts deterministically target the pending question's turn. Verified: 4 no-LLM tests (`tests/test_targeting.py`), runs `20260703_013408` (n=5 escape room: multi-turn threads — Noir script-lead thread revisited across four non-adjacent turns) and `20260703_013615` (n=3 choir: two question threads asked, answered, and followed up; outcomes consistent).
 - **I6: Setup hard-constraint validator + persona-goal coherence** — done 2026-07-03. `builders.shared_context_caps` extracts hard numeric caps (money with per-unit basis; distance/time with unit families; soft phrasings like "around $200" ignored) and `enforce_shared_caps` clamps violating option attrs in place (per-basis mismatch — "$500 total" vs "cost per person" — is deliberately skipped); repairs recorded in `Scenario.setup_notes` (in run.json) and synced into the persona-prompt JSON. Setup prompts gained two rules: options must satisfy stated caps; persona goals must be consistent with the assigned primary preference and never state a need the preferred option's card explicitly fails. Verified: 9 no-LLM tests (`tests/test_setup_constraints.py`), runs `20260703_012913` (n=3, $50 gift: all options at/below cap, unanimous) and `20260703_013003` (n=5, 10-mile venue: caps respected at source, majority 4/5, live fallback restated the holdout).
 

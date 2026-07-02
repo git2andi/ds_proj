@@ -337,6 +337,7 @@ class DialogueState:
     no_progress_count: int = 0
     fallback_turn_count: int = 0
     invalid_printed_turn_count: int = 0
+    blocker_probes: set[str] = field(default_factory=set)  # options whose blocker was already probed
     phase_history: list[str] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0

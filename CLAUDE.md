@@ -64,6 +64,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
   spread; `sim_utterance` length/tone guidance is concrete and parameter-driven.
 - **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
   penalizes the second-to-last speaker to stop two participants ping-ponging.
+- **Reactive act selection.** `_reactive_intent` fires before the agenda:
+  challenged options get defended by an advocate, answers get follow-ups,
+  an unresolved blocker on the leading option is probed once, and visible
+  splits trigger head-to-head comparisons. The per-persona agenda only fills
+  quiet moments. Challenge reasons are stance-aware (never argue against the
+  speaker's own pick).
 - **Thread-scored targeting.** `_choose_target_turn` scores the last few
   participant turns (open questions, objections/blockers, minority voices,
   leading/under-discussed options) instead of always answering the latest line;
