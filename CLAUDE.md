@@ -75,6 +75,12 @@ Change participant count and provider settings in `config.yaml`. The default pro
   parsing stays strictly conservative.
 - **Coverage is bounded.** Each option gets at most one coverage nudge
   (`OptionCoverage.coverage_attempts`), so a detection miss cannot loop forever.
+- **Visible-evidence vote readiness.** Early narrowing requires a visible support
+  cluster (or visible support plus a visible compromise proposal) with no open
+  question and no active blocker on the candidate; latent concentration never
+  triggers voting. `_candidate_for_vote` scores visible votes/acceptances/
+  proposals; latent lean only breaks ties. Hard turn caps still force a visible
+  vote.
 - **Visible-evidence stance movement.** Latent lean (`current_preference`) moves
   only on parsed signals (vote/acceptance, compromise offer, proposal,
   conditional support) gated by `_can_shift_to`, which also respects parsed

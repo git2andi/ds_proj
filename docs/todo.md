@@ -72,24 +72,6 @@ Work top to bottom. Phase A restores transcript–state integrity (everything la
 
 ---
 
-#### I5 (P0). Vote readiness and candidate choice from visible evidence, not latent concentration
-
-**Observed in:** soundtrack run and several quick split-to-consensus endings — narrowing starts because internal preferences concentrate (`_latent_concentration >= concentration_to_vote`), and `_candidate_for_vote()` picks the latent leader, before the transcript shows agreement, resolved objections, or compromise.
-
-**Fix:**
-
-- `_ready_for_vote()` minimum conditions (all from visible/parsed state): participant turns ≥ `min_discussion_turns`; no active response obligation; no unanswered direct question about the candidate; no active blocker against the candidate; option coverage satisfied when configured; at least one visible support cluster (parsed acceptances/votes/proposals from ≥ 2 distinct sims) or a visible compromise/narrowing turn proposing the candidate.
-- Keep the hard cap: at `hard_max_turns`, force a visible vote rather than endless discussion; `force_narrow_turns` stays as a soft trigger but the candidate must still be visibly grounded.
-- `_candidate_for_vote()`: primary = visible votes/acceptances, secondary = visible proposals + coverage-weighted discussion; latent preference only as tie-breaker.
-- Rename the vote reason away from `internal lean concentration held…`.
-
-**Verify:**
-
-- No-LLM tests: latent preferences converge but no visible support cluster → `_ready_for_vote()` false; visible cluster present → true after the turn gate.
-- Rerun a soundtrack-like topic: the moderator calls the vote only after visible narrowing; the vote candidate is an option the transcript actually favors.
-
----
-
 #### I6 (P0). Hard shared constraints enforced at setup; persona goals must not contradict their assigned preference
 
 **Observed in:**
@@ -201,6 +183,7 @@ After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this
 
 ## 4. Resolved / dropped since the last revision
 
+- **I5: Vote readiness/candidate from visible evidence** — done 2026-07-03. Early narrowing now requires a visible support cluster (≥2 sims' votes/acceptances; ≥1 for n=2) or visible support plus a visible compromise proposal, with no open question and no active blocker on the candidate; `concentration_to_vote` removed from config, `_latent_concentration` deleted. `_candidate_for_vote` scores visible votes (×2), acceptances, and visible proposals; latent lean only breaks ties or fills the no-evidence fallback (shapes whom the moderator asks, never the outcome). Stall-nudge candidate is visible-first. Verified: 8 no-LLM tests (`tests/test_vote_readiness.py`), runs `20260703_012304` (n=3 book circle: 3-way split → compromise → unanimous, all switches visible) and `20260703_012412` (n=4 surplus: 4-way split, one visible switch, honest unresolved; a "scheduling could be a dealbreaker" line correctly registered as an active blocker on the workshop option).
 - **I4: Visible text is the only source of public stance movement** — done 2026-07-02. `moves_lean` removed entirely; latent lean moves only on parsed signals (compromise offer / proposal / conditional support) gated by `_can_shift_to`, which now also checks runtime `hard_rejections`. Votes/acceptances for an actively blocked option are skipped in `_apply_semantics` and flagged blocking in validation (`BLOCKED_OPTION_ACCEPTED`, waived when the same line resolves the blocker). Sanctioned switches may only land on offered/current/initial options (`OFF_TARGET_SWITCH`); the safe fallback is restate-first and blocker-aware. `_should_compromise_to_candidate` requires visible support or a visible proposal (no latent pressure); switch events (from→to, has_reason) recorded per sim. Verified: 12 no-LLM tests (`tests/test_visible_stance.py`), runs `20260702_230750` (n=3 hallway paint: round-1 votes all match argued positions, switch only in visible minority beat) and `20260702_230908` (n=5 dietary: split→compromise, one live fallback restated the holdout's own pick, outcome matches transcript).
 - **I3: Parser/state vocabulary for blockers, conditions, switches** — done 2026-07-02. `parsing.py` gained `active_blocker_option` (option-tied vetoes with negation guard), `blocker_resolution_option` (explicit resolution heads; conditional residue blocks), `conditional_support_option`, `compromise_offer_option` (incl. question forms), `commitment_has_reason`; `_COMMIT`/`_DIRECT_VOTE` now cover "I'd switch to" and "I can live with". `DialogueAct` carries `resolves_blocker` / `conditional_support` / `offers_compromise`; parsed blockers land in the existing `ParticipantRuntime.hard_rejections` (reused instead of a new field), resolutions clear parser-derived entries only — never the persona-level setup rejection. Verified: 15 no-LLM tests (`tests/test_blockers.py`), regression runs `20260702_225756` (n=3 RPG, majority consistent) and `20260702_225926` (n=6 volunteering, split→compromise with two visible switches, majority 5/6 matches transcript).
 - **I2: Sanctioned-switch bridge clauses parse as commitments** — done 2026-07-02. `visible_commitment(..., sanctioned_switch=True)` (wired from `intent.allow_vote_change`) accepts a commitment with a concessive rider ("as long as", "even though", "despite"); questions and genuine prerequisites (`only if`, `unless`, `would need`, `depends`) still block. Conservative rules unchanged everywhere else. Verified: 8 no-LLM tests (`tests/test_sanctioned_switch.py`, incl. the exact Gemma line), runs `20260702_224801` (n=3 synth, unanimous), `20260702_224909` (n=4 forced 4-way split → honest unresolved), `20260702_225046` (n=5 forced 3-2 → minority check, Faye's visible switch recorded, unanimous matches transcript).

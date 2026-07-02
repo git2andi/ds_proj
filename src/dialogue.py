@@ -912,10 +912,42 @@ class DialogueRunner:
             return False
         if participant_turns >= state.force_narrow_turns:
             return True
+        # Early narrowing needs visible transcript evidence, never latent
+        # concentration (issue I5): a support cluster or a visibly proposed
+        # compromise, with no open question or active blocker on the candidate.
         early_gate = state.min_discussion_turns + int(cfg.conversation.early_vote_extra_turns)
-        if participant_turns >= early_gate and self._latent_concentration(state) >= float(cfg.conversation.concentration_to_vote):
+        if participant_turns < early_gate:
+            return False
+        candidate = self._visible_candidate(state)
+        if candidate is None:
+            return False
+        if self._candidate_blocked(state, candidate) or self._open_question_about(state, candidate):
+            return False
+        support = self._visible_support_count(state, candidate)
+        cluster = 2 if len(state.personas) >= 3 else 1
+        if support >= cluster:
             return True
-        return False
+        return support >= 1 and self._visibly_proposed(state, candidate)
+
+    def _visible_candidate(self, state: DialogueState) -> str | None:
+        """Option with the most visible backing (votes + acceptances), if any."""
+        counts = {oid: self._visible_support_count(state, oid) for oid in state.scenario.option_ids}
+        best = max(counts.values())
+        if best == 0:
+            return None
+        leaders = sorted(oid for oid, c in counts.items() if c == best)
+        if len(leaders) > 1:
+            latent = self._latent_leading_option(state)
+            return latent if latent in leaders else leaders[0]
+        return leaders[0]
+
+    @staticmethod
+    def _candidate_blocked(state: DialogueState, candidate: str) -> bool:
+        return any(candidate in rt.hard_rejections for rt in state.runtimes.values())
+
+    @staticmethod
+    def _open_question_about(state: DialogueState, candidate: str) -> bool:
+        return any(candidate in q.option_focus for q in state.open_questions)
 
     def _vote_reason(self, state: DialogueState) -> str:
         participant_turns = participant_turn_count(state)
@@ -923,11 +955,38 @@ class DialogueRunner:
             return "hard cap reached; forcing a visible vote instead of closing early"
         if participant_turns >= state.force_narrow_turns:
             return "target discussion length reached"
-        return "internal lean concentration held after enough back-and-forth"
+        return "visible support for one option held after enough back-and-forth"
 
     def _candidate_for_vote(self, state: DialogueState) -> str:
-        latent = self._latent_leading_option(state)
-        return latent or state.personas[0].preferred_option
+        """Vote candidate from visible evidence; latent lean only breaks ties.
+
+        Visible votes and acceptances weigh double, visible compromise offers
+        and proposals count once. With no visible evidence at all (a first vote
+        round after low-commitment discussion), fall back to the latent leader —
+        it only shapes whom the moderator asks about, never the outcome.
+        """
+        scores: Counter[str] = Counter()
+        option_ids = set(state.scenario.option_ids)
+        for rt in state.runtimes.values():
+            if rt.explicit_vote in option_ids:
+                scores[rt.explicit_vote] += 2
+            for oid in rt.accepted_options:
+                if oid in option_ids and oid != rt.explicit_vote:
+                    scores[oid] += 1
+        for turn in state.turns:
+            if turn.speaker_id == "moderator":
+                continue
+            for oid in {turn.act.offers_compromise, turn.act.proposes_option}:
+                if oid in option_ids:
+                    scores[oid] += 1
+        if scores:
+            best = max(scores.values())
+            leaders = sorted(oid for oid, s in scores.items() if s == best)
+            latent = self._latent_leading_option(state)
+            if latent in leaders:
+                return latent
+            return leaders[0]
+        return self._latent_leading_option(state) or state.personas[0].preferred_option
 
     def _should_compromise_to_candidate(self, state: DialogueState, persona: Persona, candidate: str) -> bool:
         """Whether this sim's vote turn asks them to commit to the candidate.
@@ -989,7 +1048,7 @@ class DialogueRunner:
             return None
         if state.turn_index - self._last_intervention_turn < int(cfg.conversation.moderator_cooldown_turns):
             return None
-        candidate = self._latent_leading_option(state)
+        candidate = self._visible_candidate(state) or self._latent_leading_option(state)
         candidate_name = state.scenario.option(candidate).name if candidate else None
         target_id, requested_action, focus = self._moderator_intervention_details(state, candidate)
         text = self._moderator_say(
@@ -1407,9 +1466,6 @@ class DialogueRunner:
     def _latent_leading_count(state: DialogueState) -> int:
         counts = Counter(rt.current_preference for rt in state.runtimes.values() if rt.current_preference)
         return counts.most_common(1)[0][1] if counts else 0
-
-    def _latent_concentration(self, state: DialogueState) -> float:
-        return self._latent_leading_count(state) / max(1, len(state.personas))
 
     @staticmethod
     def _word_bounds(intent: MoveIntent, persona: Persona) -> tuple[int, int]:
