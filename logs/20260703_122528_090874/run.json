@@ -1,77 +1,72 @@
 {
-  "run_id": "20260703_014226_050481",
-  "topic": "Plan the menu centerpiece for the medieval feast reenactment",
+  "run_id": "20260703_122528_090874",
+  "topic": "Decide on a shared laundry schedule system for our apartment building",
   "scenario": {
-    "topic": "Plan the menu centerpiece for the medieval feast reenactment",
-    "decision_kind": "generic_decision",
-    "opening_question": "What kind of centerpiece best balances authenticity, visual impact, and ease of preparation for our medieval feast?",
+    "topic": "Decide on a shared laundry schedule system for our apartment building",
+    "decision_kind": "schedule_choice",
+    "opening_question": "How should we balance fairness, convenience, and flexibility in our laundry schedule?",
     "options": [
       {
         "id": "A",
-        "name": "Roast Whole Pig on Spit",
+        "name": "Fixed Weekly Time Slots Assigned by Rotation",
         "attrs": {
-          "cost": "$140",
-          "preparation_time": "6 hours",
-          "servings": "6-8 people",
-          "authenticity_level": "high"
+          "time_per_slot": "2 hours",
+          "slots_per_week": "3 per resident",
+          "enforcement": "strict adherence required"
         },
-        "upside": "Highly authentic and visually impressive with dramatic presentation",
-        "tradeoff": "Requires long preparation and constant attention during cooking",
-        "concern": "May be difficult to transport and manage at the venue",
-        "best_for": "Those prioritizing authenticity and spectacle",
-        "short_name": "Roast Pig"
+        "upside": "Ensures equal and predictable laundry times for everyone",
+        "tradeoff": "Less flexibility if plans change or emergencies arise",
+        "concern": "May cause frustration if someone misses their slot and cannot reschedule easily",
+        "best_for": "Residents prioritizing fairness and predictability",
+        "short_name": "Fixed Slots"
       },
       {
         "id": "B",
-        "name": "Elaborate Fruit and Cheese Pyramid",
+        "name": "First-Come, First-Served Sign-Up Sheet Online",
         "attrs": {
-          "cost": "$90",
-          "preparation_time": "2 hours",
-          "servings": "6 people",
-          "authenticity_level": "medium"
+          "time_per_slot": "1.5 hours",
+          "slots_per_day": "8 total",
+          "access_method": "mobile app or website"
         },
-        "upside": "Elegant and colorful centerpiece that is easy to assemble and serve",
-        "tradeoff": "Less dramatic and less historically central than meat-based options",
-        "concern": "May not fully satisfy guests expecting a hearty medieval feast centerpiece",
-        "best_for": "Those valuing ease and variety over heavy authenticity",
-        "short_name": "Fruit Pyramid"
+        "upside": "Maximizes flexibility and allows residents to choose convenient times",
+        "tradeoff": "Risk of popular slots filling quickly, causing competition",
+        "concern": "May lead to last-minute conflicts or unfair advantage for early sign-ups",
+        "best_for": "Residents valuing flexibility and self-management",
+        "short_name": "First-Come"
       },
       {
         "id": "C",
-        "name": "Stuffed Game Birds Platter",
+        "name": "Evening and Weekend Priority for Working Residents",
         "attrs": {
-          "cost": "$130",
-          "preparation_time": "4 hours",
-          "servings": "6 people",
-          "authenticity_level": "high"
+          "priority_hours": "6 PM to 10 PM weekdays plus weekends",
+          "non-priority_hours": "7 AM to 6 PM weekdays",
+          "slot_length": "2 hours"
         },
-        "upside": "Authentic medieval dish with rich flavors and elegant presentation",
-        "tradeoff": "Requires skillful preparation and careful timing to avoid dryness",
-        "concern": "Some guests may have dietary restrictions or dislike game meat",
-        "best_for": "Those wanting authentic taste with manageable cooking effort",
-        "short_name": "Game Birds"
+        "upside": "Accommodates residents with typical 9-5 jobs by reserving prime times",
+        "tradeoff": "Limits availability for non-working or flexible schedule residents during peak times",
+        "concern": "May feel unfair to residents with irregular schedules or night shifts",
+        "best_for": "Residents with standard work hours needing convenient laundry times",
+        "short_name": "Evening Priority"
       },
       {
         "id": "D",
-        "name": "Giant Honey-Glazed Mead Cake",
+        "name": "Shared Open Schedule with Maximum 2-Hour Use Limit",
         "attrs": {
-          "cost": "$70",
-          "preparation_time": "3 hours",
-          "servings": "6 people",
-          "authenticity_level": "medium"
+          "max_consecutive_use": "2 hours",
+          "no reservations": "true",
+          "enforcement": "self-monitoring and courtesy"
         },
-        "upside": "Sweet centerpiece that reflects medieval flavors and is easy to share",
-        "tradeoff": "Less visually dramatic and not a main course centerpiece",
-        "concern": "Might not satisfy guests looking for a savory or substantial dish",
-        "best_for": "Those prioritizing ease and thematic sweetness",
-        "short_name": "Mead Cake"
+        "upside": "Allows spontaneous laundry use without scheduling hassle",
+        "tradeoff": "Higher chance of conflicts and waiting during busy periods",
+        "concern": "May cause frustration if some residents monopolize machines or ignore limits",
+        "best_for": "Residents preferring casual, low-commitment approach",
+        "short_name": "Open Schedule"
       }
     ],
     "shared_context": [
-      "The feast is scheduled for next Saturday evening",
-      "Budget for the centerpiece is capped at $150",
-      "Exactly 6 participants will attend the feast",
-      "The goal is to create an impressive, authentic medieval centerpiece"
+      "Apartment building has 6 residents sharing 2 washers and 2 dryers",
+      "Laundry hours allowed are from 7 AM to 10 PM daily",
+      "Goal is to create a schedule that minimizes conflicts and wait times"
     ],
     "environment_type": "option_grounded_group_decision",
     "setup_notes": []
@@ -79,89 +74,76 @@
   "personas": [
     {
       "id": "p1",
-      "name": "Xena",
+      "name": "Amir",
       "traits": {
-        "openness": 2,
-        "conscientiousness": 3,
-        "extraversion": 2,
-        "agreeableness": 1,
-        "neuroticism": 4
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 1
       },
       "sim_params": {
-        "engagement": 0.47500000000000003,
-        "verbosity": 0.4,
-        "initiative": 0.4,
-        "responsiveness": 0.425,
-        "stubbornness": 0.9249999999999999,
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
         "directness": 0.6375,
-        "compromise_threshold": 0.9125
+        "compromise_threshold": 0.48749999999999993
       },
-      "background": "Xena is focused on delivering a feast centerpiece that is highly authentic and visually impressive to honor medieval traditions.",
-      "private_goal": "I want the centerpiece to be the Roast Whole Pig on Spit because it offers the highest authenticity and spectacle.",
+      "background": "As someone with a busy work schedule, I need laundry times that fit around my typical 9-5 job hours.",
+      "private_goal": "I want a system that reserves convenient evening and weekend laundry times for working residents like me.",
       "preferred_options": [
-        "A"
+        "C",
+        "B"
       ],
-      "rejection": "D",
-      "rejection_reason": "The Mead Cake is too sweet and not substantial enough for the centerpiece I want.",
+      "rejection": null,
+      "rejection_reason": "",
       "agenda": [
         {
           "act": "build",
-          "option": "A",
+          "option": "C",
           "reason": "state one grounded reason for the initial preference",
           "priority": 1.0,
-          "status": "done"
-        },
-        {
-          "act": "challenge",
-          "option": "D",
-          "reason": "raise the hard concern about D: The Mead Cake is too sweet and not substantial enough for the centerpiece I want.",
-          "priority": 0.95,
-          "status": "pending"
+          "status": "obsolete"
         },
         {
           "act": "ask",
-          "option": "A",
+          "option": "C",
           "reason": "ask about a practical constraint that could affect the choice",
           "priority": 0.7,
-          "status": "pending"
+          "status": "obsolete"
         },
         {
           "act": "compare",
-          "option": "A",
+          "option": "C",
           "reason": "compare the preferred option with a realistic alternative",
           "priority": 0.65,
-          "status": "pending"
-        },
-        {
-          "act": "challenge",
-          "option": null,
-          "reason": "object to the main rival option with a concrete concern",
-          "priority": 0.6,
           "status": "pending"
         }
       ]
     },
     {
       "id": "p2",
-      "name": "Vince",
+      "name": "Felix",
       "traits": {
-        "openness": 2,
-        "conscientiousness": 5,
-        "extraversion": 1,
-        "agreeableness": 5,
-        "neuroticism": 2
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 4
       },
       "sim_params": {
-        "engagement": 0.4,
-        "verbosity": 0.2625,
-        "initiative": 0.275,
-        "responsiveness": 1.0,
-        "stubbornness": 0.175,
-        "directness": 0.6,
-        "compromise_threshold": 0.1875
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.7625,
+        "stubbornness": 0.475,
+        "directness": 0.525,
+        "compromise_threshold": 0.32499999999999996
       },
-      "background": "Vince values a highly authentic and traditional centerpiece that reflects the grandeur of medieval feasts.",
-      "private_goal": "I want the Roast Whole Pig on Spit because it is the most authentic and impressive option, fitting the event's theme.",
+      "background": "I value fairness and predictability in shared resources to avoid conflicts and ensure equal access.",
+      "private_goal": "I want a strict rotation system that guarantees everyone equal and predictable laundry slots.",
       "preferred_options": [
         "A",
         "C"
@@ -174,7 +156,7 @@
           "option": "A",
           "reason": "state one grounded reason for the initial preference",
           "priority": 1.0,
-          "status": "pending"
+          "status": "done"
         },
         {
           "act": "ask",
@@ -201,25 +183,83 @@
     },
     {
       "id": "p3",
-      "name": "Marco",
+      "name": "Uri",
       "traits": {
-        "openness": 5,
+        "openness": 4,
         "conscientiousness": 4,
-        "extraversion": 1,
-        "agreeableness": 3,
+        "extraversion": 2,
+        "agreeableness": 4,
         "neuroticism": 2
       },
       "sim_params": {
-        "engagement": 0.3625,
-        "verbosity": 0.45,
-        "initiative": 0.5,
-        "responsiveness": 0.7125,
-        "stubbornness": 0.47500000000000003,
-        "directness": 0.5874999999999999,
-        "compromise_threshold": 0.36250000000000004
+        "engagement": 0.5125,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.825,
+        "stubbornness": 0.325,
+        "directness": 0.6124999999999999,
+        "compromise_threshold": 0.25
       },
-      "background": "Marco enjoys medieval flavors but prefers something easier to prepare and share that still fits the theme.",
-      "private_goal": "I want the Giant Honey-Glazed Mead Cake because it reflects medieval flavors with less preparation time.",
+      "background": "I prefer structured and fair systems that encourage responsibility and reduce last-minute issues.",
+      "private_goal": "I want a fixed schedule that enforces fairness and predictability for all residents.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Yara",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.9624999999999999,
+        "verbosity": 0.875,
+        "initiative": 0.85,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.875,
+        "compromise_threshold": 0.65
+      },
+      "background": "I like flexibility and spontaneity, and I prefer a casual system without strict scheduling.",
+      "private_goal": "I want a shared open schedule that allows me to do laundry whenever I want without hassle.",
       "preferred_options": [
         "D",
         "B"
@@ -232,123 +272,7 @@
           "option": "D",
           "reason": "state one grounded reason for the initial preference",
           "priority": 1.0,
-          "status": "pending"
-        },
-        {
-          "act": "ask",
-          "option": "D",
-          "reason": "ask about a practical constraint that could affect the choice",
-          "priority": 0.7,
-          "status": "pending"
-        },
-        {
-          "act": "compare",
-          "option": "D",
-          "reason": "compare the preferred option with a realistic alternative",
-          "priority": 0.65,
-          "status": "pending"
-        },
-        {
-          "act": "propose_compromise",
-          "option": "D",
-          "reason": "look for a workable compromise the group could accept",
-          "priority": 0.55,
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "id": "p4",
-      "name": "Olga",
-      "traits": {
-        "openness": 4,
-        "conscientiousness": 4,
-        "extraversion": 1,
-        "agreeableness": 5,
-        "neuroticism": 3
-      },
-      "sim_params": {
-        "engagement": 0.3625,
-        "verbosity": 0.3875,
-        "initiative": 0.425,
-        "responsiveness": 0.9375,
-        "stubbornness": 0.25,
-        "directness": 0.5125,
-        "compromise_threshold": 0.125
-      },
-      "background": "Olga appreciates an elegant and colorful centerpiece that is easy to assemble and serve for guests.",
-      "private_goal": "I want the Elaborate Fruit and Cheese Pyramid because it balances authenticity and ease of serving.",
-      "preferred_options": [
-        "B",
-        "D"
-      ],
-      "rejection": null,
-      "rejection_reason": "",
-      "agenda": [
-        {
-          "act": "build",
-          "option": "B",
-          "reason": "state one grounded reason for the initial preference",
-          "priority": 1.0,
-          "status": "pending"
-        },
-        {
-          "act": "ask",
-          "option": "B",
-          "reason": "ask about a practical constraint that could affect the choice",
-          "priority": 0.7,
-          "status": "pending"
-        },
-        {
-          "act": "compare",
-          "option": "B",
-          "reason": "compare the preferred option with a realistic alternative",
-          "priority": 0.65,
-          "status": "pending"
-        },
-        {
-          "act": "propose_compromise",
-          "option": "B",
-          "reason": "look for a workable compromise the group could accept",
-          "priority": 0.55,
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "id": "p5",
-      "name": "Zeke",
-      "traits": {
-        "openness": 4,
-        "conscientiousness": 5,
-        "extraversion": 2,
-        "agreeableness": 2,
-        "neuroticism": 2
-      },
-      "sim_params": {
-        "engagement": 0.55,
-        "verbosity": 0.525,
-        "initiative": 0.55,
-        "responsiveness": 0.6625,
-        "stubbornness": 0.6249999999999999,
-        "directness": 0.7749999999999999,
-        "compromise_threshold": 0.575
-      },
-      "background": "Zeke prefers a centerpiece that is authentic yet manageable in preparation and presentation.",
-      "private_goal": "I want the Giant Honey-Glazed Mead Cake because it is thematic and easy to share without heavy cooking.",
-      "preferred_options": [
-        "D",
-        "C"
-      ],
-      "rejection": null,
-      "rejection_reason": "",
-      "agenda": [
-        {
-          "act": "build",
-          "option": "D",
-          "reason": "state one grounded reason for the initial preference",
-          "priority": 1.0,
-          "status": "done"
+          "status": "obsolete"
         },
         {
           "act": "ask",
@@ -374,26 +298,26 @@
       ]
     },
     {
-      "id": "p6",
-      "name": "Goran",
+      "id": "p5",
+      "name": "Nico",
       "traits": {
-        "openness": 3,
-        "conscientiousness": 4,
+        "openness": 2,
+        "conscientiousness": 3,
         "extraversion": 2,
-        "agreeableness": 4,
-        "neuroticism": 3
+        "agreeableness": 3,
+        "neuroticism": 1
       },
       "sim_params": {
-        "engagement": 0.5125,
-        "verbosity": 0.4625,
-        "initiative": 0.475,
-        "responsiveness": 0.825,
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.4,
+        "initiative": 0.4,
+        "responsiveness": 0.65,
         "stubbornness": 0.4,
-        "directness": 0.6124999999999999,
-        "compromise_threshold": 0.3375
+        "directness": 0.5625,
+        "compromise_threshold": 0.475
       },
-      "background": "Goran values a colorful and varied centerpiece that is moderately authentic and guest-friendly.",
-      "private_goal": "I want the Elaborate Fruit and Cheese Pyramid because it offers variety and ease while fitting the medieval theme.",
+      "background": "I appreciate flexible systems that let me choose convenient times but dislike rigid schedules.",
+      "private_goal": "I want a first-come, first-served online sign-up that maximizes my flexibility.",
       "preferred_options": [
         "B",
         "D"
@@ -406,14 +330,14 @@
           "option": "B",
           "reason": "state one grounded reason for the initial preference",
           "priority": 1.0,
-          "status": "pending"
+          "status": "done"
         },
         {
           "act": "ask",
           "option": "B",
           "reason": "ask about a practical constraint that could affect the choice",
           "priority": 0.7,
-          "status": "pending"
+          "status": "obsolete"
         },
         {
           "act": "compare",
@@ -421,12 +345,63 @@
           "reason": "compare the preferred option with a realistic alternative",
           "priority": 0.65,
           "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Emeka",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7,
+        "directness": 0.6375,
+        "compromise_threshold": 0.65
+      },
+      "background": "I prefer a casual approach to laundry scheduling that avoids strict rules and allows spontaneity.",
+      "private_goal": "I want a self-monitored open schedule that lets me use machines without prior reservations.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
         },
         {
-          "act": "propose_compromise",
-          "option": "B",
-          "reason": "look for a workable compromise the group could accept",
-          "priority": 0.55,
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
           "status": "pending"
         }
       ]
@@ -437,11 +412,11 @@
       "index": 1,
       "speaker_id": "moderator",
       "speaker_name": "Moderator",
-      "text": "Today we're deciding: Plan the menu centerpiece for the medieval feast reenactment.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Roast Whole Pig on Spit — cost: $140; preparation time: 6 hours; authenticity level: high (+ Highly authentic and visually impressive with dramatic presentation; − Requires long preparation and constant attention during cooking)\nB) Elaborate Fruit and Cheese Pyramid — cost: $90; preparation time: 2 hours; authenticity level: medium (+ Elegant and colorful centerpiece that is easy to assemble…; − Less dramatic and less historically central than meat-based options)\nC) Stuffed Game Birds Platter — cost: $130; preparation time: 4 hours; authenticity level: high (+ Authentic medieval dish with rich flavors and elegant presentation; − Requires skillful preparation and careful timing to avoid dryness)\nD) Giant Honey-Glazed Mead Cake — cost: $70; preparation time: 3 hours; authenticity level: medium (+ Sweet centerpiece that reflects medieval flavors and is easy…; − Less visually dramatic and not a main course centerpiece)\nContext: The feast is scheduled for next Saturday evening; Budget for the centerpiece is capped at $150; Exactly 6 participants will attend the feast.\nWhat kind of centerpiece best balances authenticity, visual impact, and ease of preparation for our medieval feast?",
+      "text": "Today we're deciding: Decide on a shared laundry schedule system for our apartment building.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Fixed Weekly Time Slots Assigned by Rotation — time per slot: 2 hours; enforcement: strict adherence required; slots per week: 3 per resident (+ Ensures equal and predictable laundry times for everyone; − Less flexibility if plans change or emergencies arise)\nB) First-Come, First-Served Sign-Up Sheet Online — time per slot: 1.5 hours; access method: mobile app or website; slots per day: 8 total (+ Maximizes flexibility and allows residents to choose convenient times; − Risk of popular slots filling quickly, causing competition)\nC) Evening and Weekend Priority for Working Residents — slot length: 2 hours; non-priority hours: 7 AM to 6 PM weekdays; priority hours: 6 PM to 10 PM weekdays plus weekends (+ Accommodates residents with typical 9-5 jobs by reserving prime…; − Limits availability for non-working or flexible schedule residents during…)\nD) Shared Open Schedule with Maximum 2-Hour Use Limit — enforcement: self-monitoring and courtesy; max consecutive use: 2 hours; no reservations: true (+ Allows spontaneous laundry use without scheduling hassle; − Higher chance of conflicts and waiting during busy periods)\nContext: Apartment building has 6 residents sharing 2 washers and 2 dryers; Laundry hours allowed are from 7 AM to 10 PM daily; Goal is to create a schedule that minimizes conflicts and wait times.\nHow should we balance fairness, convenience, and flexibility in our laundry schedule?",
       "phase": "opening",
       "act": {
         "speaker_id": "moderator",
-        "text": "Today we're deciding: Plan the menu centerpiece for the medieval feast reenactment.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Roast Whole Pig on Spit — cost: $140; preparation time: 6 hours; authenticity level: high (+ Highly authentic and visually impressive with dramatic presentation; − Requires long preparation and constant attention during cooking)\nB) Elaborate Fruit and Cheese Pyramid — cost: $90; preparation time: 2 hours; authenticity level: medium (+ Elegant and colorful centerpiece that is easy to assemble…; − Less dramatic and less historically central than meat-based options)\nC) Stuffed Game Birds Platter — cost: $130; preparation time: 4 hours; authenticity level: high (+ Authentic medieval dish with rich flavors and elegant presentation; − Requires skillful preparation and careful timing to avoid dryness)\nD) Giant Honey-Glazed Mead Cake — cost: $70; preparation time: 3 hours; authenticity level: medium (+ Sweet centerpiece that reflects medieval flavors and is easy…; − Less visually dramatic and not a main course centerpiece)\nContext: The feast is scheduled for next Saturday evening; Budget for the centerpiece is capped at $150; Exactly 6 participants will attend the feast.\nWhat kind of centerpiece best balances authenticity, visual impact, and ease of preparation for our medieval feast?",
+        "text": "Today we're deciding: Decide on a shared laundry schedule system for our apartment building.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Fixed Weekly Time Slots Assigned by Rotation — time per slot: 2 hours; enforcement: strict adherence required; slots per week: 3 per resident (+ Ensures equal and predictable laundry times for everyone; − Less flexibility if plans change or emergencies arise)\nB) First-Come, First-Served Sign-Up Sheet Online — time per slot: 1.5 hours; access method: mobile app or website; slots per day: 8 total (+ Maximizes flexibility and allows residents to choose convenient times; − Risk of popular slots filling quickly, causing competition)\nC) Evening and Weekend Priority for Working Residents — slot length: 2 hours; non-priority hours: 7 AM to 6 PM weekdays; priority hours: 6 PM to 10 PM weekdays plus weekends (+ Accommodates residents with typical 9-5 jobs by reserving prime…; − Limits availability for non-working or flexible schedule residents during…)\nD) Shared Open Schedule with Maximum 2-Hour Use Limit — enforcement: self-monitoring and courtesy; max consecutive use: 2 hours; no reservations: true (+ Allows spontaneous laundry use without scheduling hassle; − Higher chance of conflicts and waiting during busy periods)\nContext: Apartment building has 6 residents sharing 2 washers and 2 dryers; Laundry hours allowed are from 7 AM to 10 PM daily; Goal is to create a schedule that minimizes conflicts and wait times.\nHow should we balance fairness, convenience, and flexibility in our laundry schedule?",
         "act_type": "react",
         "option_refs": [],
         "addressee_id": null,
@@ -466,18 +441,716 @@
     },
     {
       "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Evening Priority works best for those of us stuck at 9-5, locking down prime laundry times without the rush. Plus, weekends open up great flexibility for catch-up loads or emergencies!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Evening Priority works best for those of us stuck at 9-5, locking down prime laundry times without the rush. Plus, weekends open up great flexibility for catch-up loads or emergencies!",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 788,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "Cutting out the whole scheduling hassle is the only way to keep laundry feeling easy and spontaneous.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Cutting out the whole scheduling hassle is the only way to keep laundry feeling easy and spontaneous.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 911,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p6",
+      "speaker_name": "Emeka",
+      "text": "Letting everyone jump on the machines whenever they want keeps things flexible and chill, but we’ll need to trust each other not to hog them.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Letting everyone jump on the machines whenever they want keeps things flexible and chill, but we’ll need to trust each other not to hog them.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 908,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Giving everyone fixed slots guarantees we all know exactly when it’s our turn, which should cut down on guessing and conflicts.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Giving everyone fixed slots guarantees we all know exactly when it’s our turn, which should cut down on guessing and conflicts.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1562,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Let’s keep fairness upfront—fixed slots make it clear who’s next, but we need a backup plan if someone misses their time.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s keep fairness upfront—fixed slots make it clear who’s next, but we need a backup plan if someone misses their time.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 941,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
       "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "Sweet cake fits our budget and guests, but will it hold up without something savory alongside?",
+      "speaker_name": "Nico",
+      "text": "I like first-come since it’s flexible and easy to adjust if plans change last minute.",
       "phase": "opening",
       "act": {
         "speaker_id": "p5",
-        "text": "Sweet cake fits our budget and guests, but will it hold up without something savory alongside?",
+        "text": "I like first-come since it’s flexible and easy to adjust if plans change last minute.",
         "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 580,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Nico, I get the flexibility, but first-come risks popular slots filling fast and last-minute conflicts getting worse.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Nico, I get the flexibility, but first-come risks popular slots filling fast and last-minute conflicts getting worse.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on First-Come with one concrete concern — you currently favor Fixed Slots, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 736,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "We’re trusting each other anyway, so why not just set a 2-hour max use? It keeps things spontaneous but stops anyone from camping on machines all day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We’re trusting each other anyway, so why not just set a 2-hour max use? It keeps things spontaneous but stops anyone from camping on machines all day.",
+        "act_type": "compare",
         "option_refs": [
           "D"
         ],
         "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 645,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Emeka, trusting each other sounds good, but without strict slots, some will always get stuck waiting or lose out entirely.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Emeka, trusting each other sounds good, but without strict slots, some will always get stuck waiting or lose out entirely.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Fixed Slots fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 631,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Spontaneity sounds great, but without reserved evening slots, working folks could end up stuck waiting after 6 PM — that’s prime laundry time for most of us! Fixed slots are solid for predictability, but too rigid for emergencies.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Spontaneity sounds great, but without reserved evening slots, working folks could end up stuck waiting after 6 PM — that’s prime laundry time for most of us! Fixed slots are solid for predictability, but too rigid for emergencies.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Open Schedule, Evening Priority, Fixed Slots with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 864,
+      "tokens_out": 75,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "Strict slots mean wasted time if someone’s not there, but a 2-hour max means machines keep moving all day. If people actually stick to the limit, open schedule cuts down on dead air between uses and keeps things flowing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Strict slots mean wasted time if someone’s not there, but a 2-hour max means machines keep moving all day. If people actually stick to the limit, open schedule cuts down on dead air between uses and keeps things flowing.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Fixed Slots, Open Schedule that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 806,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p6",
+      "speaker_name": "Emeka",
+      "text": "We can handle evening rush by sticking to the 2-hour max—no one hogs machines, so wait times stay reasonable even when it’s busy.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "We can handle evening rush by sticking to the 2-hour max—no one hogs machines, so wait times stay reasonable even when it’s busy.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "add a new grounded reason about Open Schedule, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 742,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Felix nailed it—first-come sounds flexible, but those prime evening slots will fill up in seconds, leaving working folks stuck waiting late. Fixed slots are predictable but too locked down for life’s curveballs, so evening priority really balances fairness with real-life schedules!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Felix nailed it—first-come sounds flexible, but those prime evening slots will fill up in seconds, leaving working folks stuck waiting late. Fixed slots are predictable but too locked down for life’s curveballs, so evening priority really balances fairness with real-life schedules!",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about First-Come, Fixed Slots, Evening Priority, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 829,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p6",
+      "speaker_name": "Emeka",
+      "text": "Amir, fair point on evenings—how do we keep the open schedule fair if someone just jumps on machines first thing and blocks prime times for hours?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Amir, fair point on evenings—how do we keep the open schedule fair if someone just jumps on machines first thing and blocks prime times for hours?",
+        "act_type": "ask",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": "p1",
         "question_target_id": "p1",
         "explicit_vote": null,
         "accepts": [],
@@ -489,648 +1162,16 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p5",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "D"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1548,
-      "tokens_out": 28,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 3,
-      "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "Zeke, I get the savory concern, but this mead cake lets us keep things simple and still enjoy.",
-      "phase": "opening",
-      "act": {
-        "speaker_id": "p3",
-        "text": "Zeke, I get the savory concern, but this mead cake lets us keep things simple and still enjoy.",
-        "act_type": "opening",
-        "option_refs": [
-          "D"
-        ],
-        "addressee_id": "p5",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {
-          "D": "Zeke, I get the savory concern, but this mead cake lets us keep things simple and still enjoy."
-        },
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p3",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "D"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1544,
-      "tokens_out": 36,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 4,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "Colorful and easy to serve, the fruit pyramid keeps things simple but still impresses visually.",
-      "phase": "opening",
-      "act": {
         "speaker_id": "p6",
-        "text": "Colorful and easy to serve, the fruit pyramid keeps things simple but still impresses visually.",
-        "act_type": "opening",
-        "option_refs": [
-          "B"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "B"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": true,
-        "suppress_option_opening": false,
-        "suppress_i_opening": true,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1631,
-      "tokens_out": 29,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 5,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "Goran’s right—colorful and easy to serve, but do we risk underwhelming guests craving something hearty?",
-      "phase": "opening",
-      "act": {
-        "speaker_id": "p4",
-        "text": "Goran’s right—colorful and easy to serve, but do we risk underwhelming guests craving something hearty?",
-        "act_type": "opening",
-        "option_refs": [],
-        "addressee_id": "p6",
-        "question_target_id": "p6",
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p4",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "B"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1604,
-      "tokens_out": 34,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 6,
-      "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "Only the pig matches the spectacle we want; can you handle the prep and space?",
-      "phase": "opening",
-      "act": {
-        "speaker_id": "p1",
-        "text": "Only the pig matches the spectacle we want; can you handle the prep and space?",
-        "act_type": "opening",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": "p4",
-        "question_target_id": "p4",
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p1",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1688,
-      "tokens_out": 27,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 7,
-      "speaker_id": "p2",
-      "speaker_name": "Vince",
-      "text": "Roast pig nails authenticity and wow factor. Prep’s a pain, but worth it.",
-      "phase": "opening",
-      "act": {
-        "speaker_id": "p2",
-        "text": "Roast pig nails authenticity and wow factor. Prep’s a pain, but worth it.",
-        "act_type": "opening",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p2",
-        "act": "opening",
-        "reason": "state the current favorite and one grounded reason without making a final vote",
-        "addressee_id": null,
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1408,
-      "tokens_out": 36,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 8,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "I can’t handle six hours of prep or the space for that pig.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p4",
-        "text": "I can’t handle six hours of prep or the space for that pig.",
-        "act_type": "answer",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p4",
-        "act": "answer",
-        "reason": "answer the direct question you were just asked, then add one implication for the decision",
-        "addressee_id": "p1",
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 6,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1517,
-      "tokens_out": 33,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 9,
-      "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "Game birds take skill and timing but offer real medieval flavor; still, not everyone will eat game meat comfortably.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p5",
-        "text": "Game birds take skill and timing but offer real medieval flavor; still, not everyone will eat game meat comfortably.",
-        "act_type": "compare",
-        "option_refs": [
-          "C"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p5",
-        "act": "compare",
-        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
-        "addressee_id": null,
-        "option_focus": [
-          "C",
-          "D"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1524,
-      "tokens_out": 32,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 10,
-      "speaker_id": "p2",
-      "speaker_name": "Vince",
-      "text": "We’ll need help with prep and space if we do the pig, no shortcuts there.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p2",
-        "text": "We’ll need help with prep and space if we do the pig, no shortcuts there.",
-        "act_type": "answer",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p2",
-        "act": "answer",
-        "reason": "answer the recent question using only the option facts, then move the decision forward",
-        "addressee_id": "p4",
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 5,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1555,
-      "tokens_out": 28,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 11,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "I get the pig’s wow factor, Xena, but the fruit pyramid’s easier for us to manage and still looks great.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p6",
-        "text": "I get the pig’s wow factor, Xena, but the fruit pyramid’s easier for us to manage and still looks great.",
-        "act_type": "agree",
-        "option_refs": [
-          "B",
-          "A"
-        ],
-        "addressee_id": "p1",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "agree",
-        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Roast Pig, Fruit Pyramid",
-        "addressee_id": null,
-        "option_focus": [
-          "A",
-          "B"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 6,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1539,
-      "tokens_out": 39,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 12,
-      "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "Vince’s right about the pig’s wow, but the mead cake takes half the time and still brings that medieval vibe.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p3",
-        "text": "Vince’s right about the pig’s wow, but the mead cake takes half the time and still brings that medieval vibe.",
-        "act_type": "build",
-        "option_refs": [
-          "D",
-          "A"
-        ],
-        "addressee_id": "p2",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p3",
-        "act": "build",
-        "reason": "add a new grounded reason about Roast Pig, Mead Cake, connected to the current discussion",
-        "addressee_id": null,
-        "option_focus": [
-          "A",
-          "D"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 10,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": true,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1561,
-      "tokens_out": 36,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 13,
-      "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "Olga, if we split prep shifts, can you handle space and timing for the pig?",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p1",
-        "text": "Olga, if we split prep shifts, can you handle space and timing for the pig?",
-        "act_type": "ask",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": "p4",
-        "question_target_id": "p4",
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p1",
         "act": "ask",
-        "reason": "ask one concrete question that helps compare Roast Pig",
+        "reason": "ask one concrete question that helps compare Open Schedule",
         "addressee_id": null,
         "option_focus": [
-          "A"
+          "D"
         ],
         "length_hint": "medium",
-        "respond_to_turn": 8,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 868,
-      "tokens_out": 19,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 14,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "Xena, I can’t handle pig timing or space—it’s a lot. Fruit pyramid’s easier and less risky for us.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p4",
-        "text": "Xena, I can’t handle pig timing or space—it’s a lot. Fruit pyramid’s easier and less risky for us.",
-        "act_type": "answer",
-        "option_refs": [
-          "B",
-          "A"
-        ],
-        "addressee_id": "p1",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {
-          "B": "Xena, I can’t handle pig timing or space—it’s a lot. Fruit pyramid’s easier and less risky for us."
-        },
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p4",
-        "act": "answer",
-        "reason": "answer the direct question you were just asked, then add one implication for the decision",
-        "addressee_id": "p1",
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 13,
-        "agenda_index": null,
+        "respond_to_turn": 11,
+        "agenda_index": 1,
         "suppress_name_prefix": false,
         "suppress_option_opening": false,
         "suppress_i_opening": false,
@@ -1138,63 +1179,11 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1478,
-      "tokens_out": 36,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 15,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "If space’s tight and timing’s rough, the fruit pyramid keeps us safe—and still looks sharp on the table.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p6",
-        "text": "If space’s tight and timing’s rough, the fruit pyramid keeps us safe—and still looks sharp on the table.",
-        "act_type": "agree",
-        "option_refs": [
-          "B"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "agree",
-        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
-        "addressee_id": null,
-        "option_focus": [
-          "B",
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 14,
-        "agenda_index": null,
-        "suppress_name_prefix": true,
-        "suppress_option_opening": false,
-        "suppress_i_opening": true,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1559,
-      "tokens_out": 33,
+      "tokens_in": 717,
+      "tokens_out": 31,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1204,15 +1193,69 @@
     {
       "index": 16,
       "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "The pig serves six to eight guests and offers a dramatic, authentic centerpiece but needs careful preparation.",
+      "speaker_name": "Amir",
+      "text": "Emeka, that’s the tricky part with open schedules—without reservations, it’s on us to call out hogging early and keep machines moving.",
       "phase": "discussion",
       "act": {
         "speaker_id": "p1",
-        "text": "The pig serves six to eight guests and offers a dramatic, authentic centerpiece but needs careful preparation.",
+        "text": "Emeka, that’s the tricky part with open schedules—without reservations, it’s on us to call out hogging early and keep machines moving.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 841,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p5",
+      "speaker_name": "Nico",
+      "text": "An online sign-up with set 1.5-hour slots still stops people from hogging machines all day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "An online sign-up with set 1.5-hour slots still stops people from hogging machines all day.",
         "act_type": "build",
         "option_refs": [
-          "A"
+          "B",
+          "A",
+          "D"
         ],
         "addressee_id": null,
         "question_target_id": null,
@@ -1226,12 +1269,12 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p1",
+        "speaker_id": "p5",
         "act": "build",
-        "reason": "add a new grounded reason about Roast Pig, connected to the current discussion",
+        "reason": "add a new grounded reason about First-Come, connected to the current discussion",
         "addressee_id": null,
         "option_focus": [
-          "A"
+          "B"
         ],
         "length_hint": "medium",
         "respond_to_turn": 15,
@@ -1243,30 +1286,28 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 2673,
-      "tokens_out": 62,
+      "tokens_in": 709,
+      "tokens_out": 22,
       "validation_issues": [],
-      "repaired": true,
-      "repair_trigger_codes": [
-        "UNSUPPORTED_FACT"
-      ],
+      "repaired": false,
+      "repair_trigger_codes": [],
       "state_mutation_blocked": false,
       "used_fallback": false
     },
     {
-      "index": 17,
-      "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "The fruit pyramid costs less than the pig and requires less prep time and space, making it easier to manage.",
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "What matters most is fairness and no surprises—fixed slots guarantee everyone equal time, even if that means less wiggle room.",
       "phase": "discussion",
       "act": {
-        "speaker_id": "p5",
-        "text": "The fruit pyramid costs less than the pig and requires less prep time and space, making it easier to manage.",
+        "speaker_id": "p2",
+        "text": "What matters most is fairness and no surprises—fixed slots guarantee everyone equal time, even if that means less wiggle room.",
         "act_type": "build",
         "option_refs": [
-          "B",
           "A"
         ],
         "addressee_id": null,
@@ -1281,12 +1322,12 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p5",
+        "speaker_id": "p2",
         "act": "build",
-        "reason": "add a new grounded reason about Mead Cake, connected to the current discussion",
-        "addressee_id": "p1",
+        "reason": "say plainly what matters most to you personally in this choice and how Fixed Slots fits that",
+        "addressee_id": null,
         "option_focus": [
-          "D"
+          "A"
         ],
         "length_hint": "medium",
         "respond_to_turn": 16,
@@ -1298,68 +1339,11 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 2630,
-      "tokens_out": 69,
-      "validation_issues": [
-        "UNSUPPORTED_FACT"
-      ],
-      "repaired": true,
-      "repair_trigger_codes": [
-        "UNSUPPORTED_FACT"
-      ],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 18,
-      "speaker_id": "p2",
-      "speaker_name": "Vince",
-      "text": "Fruit pyramid’s safe, but can we handle pig prep with split shifts?",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p2",
-        "text": "Fruit pyramid’s safe, but can we handle pig prep with split shifts?",
-        "act_type": "propose_compromise",
-        "option_refs": [
-          "B",
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": "p5",
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p2",
-        "act": "propose_compromise",
-        "reason": "test whether Fruit Pyramid, Roast Pig could be common ground without claiming it is already decided",
-        "addressee_id": null,
-        "option_focus": [
-          "B",
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 15,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1583,
-      "tokens_out": 25,
+      "tokens_in": 1327,
+      "tokens_out": 35,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1368,17 +1352,18 @@
     },
     {
       "index": 19,
-      "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "Split shifts might work, but pig still needs constant attention and space we don’t have; mead cake skips all that hassle.",
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "Two-hour max doesn’t stop the real pain—fixed slots make sure everyone actually gets their fair shot instead of folks just jumping on machines first and leaving others stuck. Spontaneity’s great, but fairness beats chaos here!",
       "phase": "discussion",
       "act": {
-        "speaker_id": "p5",
-        "text": "Split shifts might work, but pig still needs constant attention and space we don’t have; mead cake skips all that hassle.",
-        "act_type": "answer",
+        "speaker_id": "p4",
+        "text": "Two-hour max doesn’t stop the real pain—fixed slots make sure everyone actually gets their fair shot instead of folks just jumping on machines first and leaving others stuck. Spontaneity’s great, but fairness beats chaos here!",
+        "act_type": "challenge",
         "option_refs": [
-          "D",
-          "A"
+          "A",
+          "B",
+          "D"
         ],
         "addressee_id": null,
         "question_target_id": null,
@@ -1392,28 +1377,29 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p5",
-        "act": "answer",
-        "reason": "answer the direct question you were just asked, then add one implication for the decision",
-        "addressee_id": "p2",
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on Fixed Slots with one concrete concern — you currently favor Open Schedule, so aim at the rival, not your own pick",
+        "addressee_id": "p6",
         "option_focus": [
-          "B",
+          "D",
           "A"
         ],
         "length_hint": "medium",
-        "respond_to_turn": 18,
+        "respond_to_turn": 13,
         "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1619,
-      "tokens_out": 36,
+      "tokens_in": 790,
+      "tokens_out": 46,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1422,171 +1408,13 @@
     },
     {
       "index": 20,
-      "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "We can’t sacrifice the centerpiece’s impact just for easier prep—who’s handling the spit roast?",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p1",
-        "text": "We can’t sacrifice the centerpiece’s impact just for easier prep—who’s handling the spit roast?",
-        "act_type": "ask",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": "p5",
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p1",
-        "act": "ask",
-        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
-        "addressee_id": null,
-        "option_focus": [
-          "D",
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 19,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 967,
-      "tokens_out": 20,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 21,
       "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "No one’s volunteered to handle the spit roast, and that six-hour prep plus space needs make it a headache we don’t need.",
+      "speaker_name": "Nico",
+      "text": "Fair shot’s key, but fixed slots kill the chance to grab last-minute free times.",
       "phase": "discussion",
       "act": {
         "speaker_id": "p5",
-        "text": "No one’s volunteered to handle the spit roast, and that six-hour prep plus space needs make it a headache we don’t need.",
-        "act_type": "answer",
-        "option_refs": [
-          "A"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p5",
-        "act": "answer",
-        "reason": "answer the direct question you were just asked, then add one implication for the decision",
-        "addressee_id": "p1",
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 20,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1552,
-      "tokens_out": 37,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 22,
-      "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "Zeke’s right, nobody wants to babysit a spit all evening—mead cake still nails the theme without that hassle.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p3",
-        "text": "Zeke’s right, nobody wants to babysit a spit all evening—mead cake still nails the theme without that hassle.",
-        "act_type": "challenge",
-        "option_refs": [
-          "D",
-          "A"
-        ],
-        "addressee_id": "p5",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p3",
-        "act": "challenge",
-        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
-        "addressee_id": null,
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 21,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1487,
-      "tokens_out": 36,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 23,
-      "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "It won’t wow like a roast, but it’s $70 and feeds us all—no extra cooking drama.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p5",
-        "text": "It won’t wow like a roast, but it’s $70 and feeds us all—no extra cooking drama.",
+        "text": "Fair shot’s key, but fixed slots kill the chance to grab last-minute free times.",
         "act_type": "build",
         "option_refs": [
           "A"
@@ -1605,10 +1433,167 @@
       "intent": {
         "speaker_id": "p5",
         "act": "build",
-        "reason": "the last point raised a concern about Mead Cake, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "reason": "the last point raised a concern about First-Come, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 651,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Nico, last-minute grabs sound nice, but fixed slots cut confusion and keep everyone accountable.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nico, last-minute grabs sound nice, but fixed slots cut confusion and keep everyone accountable.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Fixed Slots, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 620,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p6",
+      "speaker_name": "Emeka",
+      "text": "Calling out hogging sounds good in theory, but who wants to police laundry all day?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Calling out hogging sounds good in theory, but who wants to police laundry all day?",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "compare",
+        "reason": "compare Open Schedule with one clear trade-off",
         "addressee_id": null,
         "option_focus": [
           "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 689,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Emeka, exactly—fixed slots remove the need for policing since everyone knows when their time is, but we do need a clear way to handle missed slots fairly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Emeka, exactly—fixed slots remove the need for policing since everyone knows when their time is, but we do need a clear way to handle missed slots fairly.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "A"
         ],
         "length_hint": "medium",
         "respond_to_turn": 22,
@@ -1620,9 +1605,10 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1454,
+      "tokens_in": 647,
       "tokens_out": 33,
       "validation_issues": [],
       "repaired": false,
@@ -1632,20 +1618,17 @@
     },
     {
       "index": 24,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "Zeke’s right, pig’s a pain and game birds need skill we don’t have.",
+      "speaker_id": "p5",
+      "speaker_name": "Nico",
+      "text": "Fair, but what about emergencies? Missing a slot under strict rules could really mess someone up.",
       "phase": "discussion",
       "act": {
-        "speaker_id": "p4",
-        "text": "Zeke’s right, pig’s a pain and game birds need skill we don’t have.",
-        "act_type": "compare",
-        "option_refs": [
-          "C",
-          "A"
-        ],
-        "addressee_id": "p5",
-        "question_target_id": null,
+        "speaker_id": "p5",
+        "text": "Fair, but what about emergencies? Missing a slot under strict rules could really mess someone up.",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
         "explicit_vote": null,
         "accepts": [],
         "soft_rejects": {},
@@ -1656,29 +1639,28 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p4",
-        "act": "compare",
-        "reason": "compare Roast Pig, Fruit Pyramid, Game Birds with one clear trade-off",
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
         "addressee_id": null,
         "option_focus": [
-          "A",
-          "B",
-          "C"
+          "A"
         ],
         "length_hint": "medium",
-        "respond_to_turn": 21,
+        "respond_to_turn": 23,
         "agenda_index": null,
-        "suppress_name_prefix": false,
+        "suppress_name_prefix": true,
         "suppress_option_opening": false,
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1577,
-      "tokens_out": 38,
+      "tokens_in": 633,
+      "tokens_out": 19,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1687,69 +1669,17 @@
     },
     {
       "index": 25,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "Zeke, sure, less hassle, but the pig’s a beast to transport and might overwhelm the table’s look.",
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "Emergencies are tough, but a clear backup policy or swap system could handle missed slots without breaking the fairness we need.",
       "phase": "discussion",
       "act": {
-        "speaker_id": "p6",
-        "text": "Zeke, sure, less hassle, but the pig’s a beast to transport and might overwhelm the table’s look.",
-        "act_type": "challenge",
+        "speaker_id": "p3",
+        "text": "Emergencies are tough, but a clear backup policy or swap system could handle missed slots without breaking the fairness we need.",
+        "act_type": "answer",
         "option_refs": [
           "A"
         ],
-        "addressee_id": "p5",
-        "question_target_id": null,
-        "explicit_vote": null,
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "challenge",
-        "reason": "push back on Roast Pig with one concrete concern — you currently favor Fruit Pyramid, so aim at the rival, not your own pick",
-        "addressee_id": "p5",
-        "option_focus": [
-          "A",
-          "B",
-          "D"
-        ],
-        "length_hint": "medium",
-        "respond_to_turn": 23,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": false,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1589,
-      "tokens_out": 34,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 26,
-      "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "Transport’s a pain, sure, but it’s the only centerpiece worthy of the feast’s scale and vibe.",
-      "phase": "discussion",
-      "act": {
-        "speaker_id": "p1",
-        "text": "Transport’s a pain, sure, but it’s the only centerpiece worthy of the feast’s scale and vibe.",
-        "act_type": "build",
-        "option_refs": [],
         "addressee_id": null,
         "question_target_id": null,
         "explicit_vote": null,
@@ -1762,9 +1692,62 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p1",
-        "act": "build",
-        "reason": "the last point raised a concern about Roast Pig, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1301,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "Backup plans sound good, but strict slots still lock you in and kill flexibility. What if someone just wants to do laundry spontaneously without waiting for their slot?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Backup plans sound good, but strict slots still lock you in and kill flexibility. What if someone just wants to do laundry spontaneously without waiting for their slot?",
+        "act_type": "agree",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
         "addressee_id": null,
         "option_focus": [
           "A"
@@ -1777,12 +1760,13 @@
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
-        "avoid_pattern": null,
+        "avoid_pattern": "tradeoff_but",
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1504,
-      "tokens_out": 32,
+      "tokens_in": 684,
+      "tokens_out": 31,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1792,18 +1776,17 @@
     {
       "index": 27,
       "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "Game birds do sound fancy but with our skills, that dryness risk is real—cake keeps it tasty and chill.",
+      "speaker_name": "Uri",
+      "text": "Yara, spontaneous laundry will be limited, but predictable slots cut wait times and avoid conflicts across all six of us.",
       "phase": "discussion",
       "act": {
         "speaker_id": "p3",
-        "text": "Game birds do sound fancy but with our skills, that dryness risk is real—cake keeps it tasty and chill.",
-        "act_type": "build",
+        "text": "Yara, spontaneous laundry will be limited, but predictable slots cut wait times and avoid conflicts across all six of us.",
+        "act_type": "answer",
         "option_refs": [
-          "C",
-          "D"
+          "A"
         ],
-        "addressee_id": null,
+        "addressee_id": "p4",
         "question_target_id": null,
         "explicit_vote": null,
         "accepts": [],
@@ -1816,16 +1799,14 @@
       },
       "intent": {
         "speaker_id": "p3",
-        "act": "build",
-        "reason": "add a new grounded reason about Game Birds, Roast Pig, Mead Cake, connected to the current discussion",
-        "addressee_id": null,
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
         "option_focus": [
-          "C",
-          "A",
-          "D"
+          "A"
         ],
         "length_hint": "medium",
-        "respond_to_turn": 24,
+        "respond_to_turn": 26,
         "agenda_index": null,
         "suppress_name_prefix": false,
         "suppress_option_opening": false,
@@ -1834,10 +1815,11 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1557,
-      "tokens_out": 33,
+      "tokens_in": 653,
+      "tokens_out": 24,
       "validation_issues": [],
       "repaired": false,
       "repair_trigger_codes": [],
@@ -1848,11 +1830,11 @@
       "index": 28,
       "speaker_id": "moderator",
       "speaker_name": "Moderator",
-      "text": "Hey everyone, can each of you say which option you’re definitely going with so we know where we all stand?",
+      "text": "Alright everyone, let’s wrap this up—who’s picking what as their final choice?",
       "phase": "narrowing",
       "act": {
         "speaker_id": "moderator",
-        "text": "Hey everyone, can each of you say which option you’re definitely going with so we know where we all stand?",
+        "text": "Alright everyone, let’s wrap this up—who’s picking what as their final choice?",
         "act_type": "react",
         "option_refs": [],
         "addressee_id": null,
@@ -1878,12 +1860,12 @@
     {
       "index": 29,
       "speaker_id": "p2",
-      "speaker_name": "Vince",
-      "text": "Count me in for the roast whole pig on spit.",
+      "speaker_name": "Felix",
+      "text": "Count me in for fixed weekly time slots assigned by rotation.",
       "phase": "narrowing",
       "act": {
         "speaker_id": "p2",
-        "text": "Count me in for the roast whole pig on spit.",
+        "text": "Count me in for fixed weekly time slots assigned by rotation.",
         "act_type": "vote",
         "option_refs": [
           "A"
@@ -1911,16 +1893,17 @@
         "respond_to_turn": null,
         "agenda_index": null,
         "suppress_name_prefix": false,
-        "suppress_option_opening": true,
+        "suppress_option_opening": false,
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1423,
-      "tokens_out": 25,
+      "tokens_in": 918,
+      "tokens_out": 27,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -1931,13 +1914,13 @@
     },
     {
       "index": 30,
-      "speaker_id": "p1",
-      "speaker_name": "Xena",
-      "text": "My pick is the roast whole pig on spit for authenticity and impact.",
+      "speaker_id": "p3",
+      "speaker_name": "Uri",
+      "text": "My pick is fixed weekly time slots assigned by rotation.",
       "phase": "narrowing",
       "act": {
-        "speaker_id": "p1",
-        "text": "My pick is the roast whole pig on spit for authenticity and impact.",
+        "speaker_id": "p3",
+        "text": "My pick is fixed weekly time slots assigned by rotation.",
         "act_type": "vote",
         "option_refs": [
           "A"
@@ -1954,7 +1937,7 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p1",
+        "speaker_id": "p3",
         "act": "vote",
         "reason": "make a clear visible commitment to the option you have been backing",
         "addressee_id": null,
@@ -1965,7 +1948,7 @@
         "respond_to_turn": null,
         "agenda_index": null,
         "suppress_name_prefix": false,
-        "suppress_option_opening": true,
+        "suppress_option_opening": false,
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
@@ -1973,10 +1956,11 @@
         "avoid_phrases": [
           "count me in for"
         ],
+        "avoid_reasons": [],
         "allow_vote_change": false
       },
-      "tokens_in": 1471,
-      "tokens_out": 29,
+      "tokens_in": 944,
+      "tokens_out": 30,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -1987,23 +1971,22 @@
     },
     {
       "index": 31,
-      "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "The giant honey-glazed mead cake works for me.",
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Evening Priority gets my vote—working late means laundry happens after work or weekends, no excuses! Plus, it actually respects our time instead of forcing awkward morning slots.",
       "phase": "narrowing",
       "act": {
-        "speaker_id": "p3",
-        "text": "The giant honey-glazed mead cake works for me.",
-        "act_type": "accept",
+        "speaker_id": "p1",
+        "text": "Evening Priority gets my vote—working late means laundry happens after work or weekends, no excuses! Plus, it actually respects our time instead of forcing awkward morning slots.",
+        "act_type": "vote",
         "option_refs": [
-          "D"
+          "C",
+          "A"
         ],
         "addressee_id": null,
         "question_target_id": null,
-        "explicit_vote": "D",
-        "accepts": [
-          "D"
-        ],
+        "explicit_vote": "C",
+        "accepts": [],
         "soft_rejects": {},
         "hard_rejects": {},
         "proposes_option": null,
@@ -2012,125 +1995,12 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p3",
+        "speaker_id": "p1",
         "act": "vote",
         "reason": "cast a clear visible vote for the option they actually choose now",
         "addressee_id": null,
         "option_focus": [
-          "D"
-        ],
-        "length_hint": "short",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [
-          "count me in for",
-          "my pick is"
-        ],
-        "allow_vote_change": false
-      },
-      "tokens_in": 1392,
-      "tokens_out": 33,
-      "validation_issues": [],
-      "repaired": true,
-      "repair_trigger_codes": [
-        "UNCLEAR_VISIBLE_COMMITMENT"
-      ],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 32,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "Let’s go with the fruit pyramid since it’s colorful and won’t stress us out during setup.",
-      "phase": "narrowing",
-      "act": {
-        "speaker_id": "p4",
-        "text": "Let’s go with the fruit pyramid since it’s colorful and won’t stress us out during setup.",
-        "act_type": "vote",
-        "option_refs": [
-          "B"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": "B",
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p4",
-        "act": "accept",
-        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
-        "addressee_id": null,
-        "option_focus": [
-          "A"
-        ],
-        "length_hint": "short",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [
-          "count me in for",
-          "my pick is",
-          "works for me"
-        ],
-        "allow_vote_change": true
-      },
-      "tokens_in": 877,
-      "tokens_out": 20,
-      "validation_issues": [],
-      "repaired": false,
-      "repair_trigger_codes": [],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 33,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "I'd go with the elaborate fruit and cheese pyramid for its elegance and easy assembly.",
-      "phase": "narrowing",
-      "act": {
-        "speaker_id": "p6",
-        "text": "I'd go with the elaborate fruit and cheese pyramid for its elegance and easy assembly.",
-        "act_type": "vote",
-        "option_refs": [
-          "B"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": "B",
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "accept",
-        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
-        "addressee_id": null,
-        "option_focus": [
-          "A"
+          "C"
         ],
         "length_hint": "short",
         "respond_to_turn": null,
@@ -2143,13 +2013,132 @@
         "avoid_pattern": null,
         "avoid_phrases": [
           "count me in for",
-          "my pick is",
-          "works for me"
+          "my pick is"
         ],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 654,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p5",
+      "speaker_name": "Nico",
+      "text": "I'd go with First-Come.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I'd go with First-Come.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "gets my vote",
+          "my pick is"
+        ],
+        "avoid_reasons": [],
         "allow_vote_change": true
       },
-      "tokens_in": 1355,
-      "tokens_out": 37,
+      "tokens_in": 1027,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "OFF_TARGET_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 33,
+      "speaker_id": "p6",
+      "speaker_name": "Emeka",
+      "text": "Fixed weekly time slots assigned by rotation works for me—it keeps things fair and predictable for everyone’s laundry time.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Fixed weekly time slots assigned by rotation works for me—it keeps things fair and predictable for everyone’s laundry time.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "gets my vote",
+          "I'd go with",
+          "my pick is"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1062,
+      "tokens_out": 64,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -2160,13 +2149,13 @@
     },
     {
       "index": 34,
-      "speaker_id": "p5",
-      "speaker_name": "Zeke",
-      "text": "Roast whole pig on spit gets my vote for its authenticity and impressive presentation despite the prep time.",
+      "speaker_id": "p4",
+      "speaker_name": "Yara",
+      "text": "Fixed weekly time slots assigned by rotation is my pick; it keeps things fair and predictable for everyone’s laundry time.",
       "phase": "narrowing",
       "act": {
-        "speaker_id": "p5",
-        "text": "Roast whole pig on spit gets my vote for its authenticity and impressive presentation despite the prep time.",
+        "speaker_id": "p4",
+        "text": "Fixed weekly time slots assigned by rotation is my pick; it keeps things fair and predictable for everyone’s laundry time.",
         "act_type": "vote",
         "option_refs": [
           "A"
@@ -2183,7 +2172,7 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p5",
+        "speaker_id": "p4",
         "act": "accept",
         "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
         "addressee_id": null,
@@ -2194,21 +2183,23 @@
         "respond_to_turn": null,
         "agenda_index": null,
         "suppress_name_prefix": false,
-        "suppress_option_opening": false,
+        "suppress_option_opening": true,
         "suppress_i_opening": false,
         "suppress_we_opening": false,
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [
           "count me in for",
+          "gets my vote",
           "I'd go with",
           "my pick is",
           "works for me"
         ],
+        "avoid_reasons": [],
         "allow_vote_change": true
       },
-      "tokens_in": 1383,
-      "tokens_out": 47,
+      "tokens_in": 1103,
+      "tokens_out": 56,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -2221,11 +2212,11 @@
       "index": 35,
       "speaker_id": "moderator",
       "speaker_name": "Moderator",
-      "text": "Looks like we’re split three for Roast Pig, two for Fruit Pyramid, and one for Mead Cake—can everyone live with Roast Pig?",
+      "text": "Looks like fixed weekly slots by rotation have strong support—Amir and Nico, can you live with this, or what’s still holding you back?",
       "phase": "narrowing",
       "act": {
         "speaker_id": "moderator",
-        "text": "Looks like we’re split three for Roast Pig, two for Fruit Pyramid, and one for Mead Cake—can everyone live with Roast Pig?",
+        "text": "Looks like fixed weekly slots by rotation have strong support—Amir and Nico, can you live with this, or what’s still holding you back?",
         "act_type": "react",
         "option_refs": [],
         "addressee_id": null,
@@ -2250,20 +2241,20 @@
     },
     {
       "index": 36,
-      "speaker_id": "p3",
-      "speaker_name": "Marco",
-      "text": "Count me in for the giant honey-glazed mead cake since it’s sweet and reflects authentic medieval flavors.",
-      "phase": "closure",
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "I’d go with fixed weekly time slots assigned by rotation, as long as we agree on strict adherence to keep it fair and predictable for everyone.",
+      "phase": "narrowing",
       "act": {
-        "speaker_id": "p3",
-        "text": "Count me in for the giant honey-glazed mead cake since it’s sweet and reflects authentic medieval flavors.",
+        "speaker_id": "p1",
+        "text": "I’d go with fixed weekly time slots assigned by rotation, as long as we agree on strict adherence to keep it fair and predictable for everyone.",
         "act_type": "vote",
         "option_refs": [
-          "D"
+          "A"
         ],
         "addressee_id": null,
         "question_target_id": null,
-        "explicit_vote": "D",
+        "explicit_vote": "A",
         "accepts": [],
         "soft_rejects": {},
         "hard_rejects": {},
@@ -2273,13 +2264,13 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p3",
+        "speaker_id": "p1",
         "act": "vote",
-        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Mead Cake (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Evening Priority, or briefly state what still holds you back and restate your pick",
         "addressee_id": null,
         "option_focus": [
           "A",
-          "D"
+          "C"
         ],
         "length_hint": "short",
         "respond_to_turn": null,
@@ -2291,10 +2282,11 @@
         "vary_opening": false,
         "avoid_pattern": null,
         "avoid_phrases": [],
+        "avoid_reasons": [],
         "allow_vote_change": true
       },
-      "tokens_in": 1481,
-      "tokens_out": 45,
+      "tokens_in": 1210,
+      "tokens_out": 62,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -2305,20 +2297,20 @@
     },
     {
       "index": 37,
-      "speaker_id": "p4",
-      "speaker_name": "Olga",
-      "text": "I’d go with the fruit and cheese pyramid since it’s quick and looks impressive.",
-      "phase": "closure",
+      "speaker_id": "p5",
+      "speaker_name": "Nico",
+      "text": "Count me in for fixed weekly time slots assigned by rotation with strict adherence to keep it fair.",
+      "phase": "narrowing",
       "act": {
-        "speaker_id": "p4",
-        "text": "I’d go with the fruit and cheese pyramid since it’s quick and looks impressive.",
+        "speaker_id": "p5",
+        "text": "Count me in for fixed weekly time slots assigned by rotation with strict adherence to keep it fair.",
         "act_type": "vote",
         "option_refs": [
-          "B"
+          "A"
         ],
         "addressee_id": null,
         "question_target_id": null,
-        "explicit_vote": "B",
+        "explicit_vote": "A",
         "accepts": [],
         "soft_rejects": {},
         "hard_rejects": {},
@@ -2328,9 +2320,9 @@
         "offers_compromise": null
       },
       "intent": {
-        "speaker_id": "p4",
+        "speaker_id": "p5",
         "act": "vote",
-        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Fruit Pyramid (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring First-Come, or briefly state what still holds you back and restate your pick",
         "addressee_id": null,
         "option_focus": [
           "A",
@@ -2345,13 +2337,14 @@
         "suppress_we_opening": false,
         "vary_opening": false,
         "avoid_pattern": null,
-        "avoid_phrases": [
-          "count me in for"
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep it fair and predictable for everyone"
         ],
         "allow_vote_change": true
       },
-      "tokens_in": 1545,
-      "tokens_out": 35,
+      "tokens_in": 1216,
+      "tokens_out": 38,
       "validation_issues": [],
       "repaired": true,
       "repair_trigger_codes": [
@@ -2362,70 +2355,13 @@
     },
     {
       "index": 38,
-      "speaker_id": "p6",
-      "speaker_name": "Goran",
-      "text": "My pick is the fruit and cheese pyramid since it’s colorful, manageable, and offers good variety.",
-      "phase": "closure",
-      "act": {
-        "speaker_id": "p6",
-        "text": "My pick is the fruit and cheese pyramid since it’s colorful, manageable, and offers good variety.",
-        "act_type": "vote",
-        "option_refs": [
-          "B"
-        ],
-        "addressee_id": null,
-        "question_target_id": null,
-        "explicit_vote": "B",
-        "accepts": [],
-        "soft_rejects": {},
-        "hard_rejects": {},
-        "proposes_option": null,
-        "resolves_blocker": null,
-        "conditional_support": null,
-        "offers_compromise": null
-      },
-      "intent": {
-        "speaker_id": "p6",
-        "act": "vote",
-        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Fruit Pyramid (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
-        "addressee_id": null,
-        "option_focus": [
-          "A",
-          "B"
-        ],
-        "length_hint": "short",
-        "respond_to_turn": null,
-        "agenda_index": null,
-        "suppress_name_prefix": false,
-        "suppress_option_opening": true,
-        "suppress_i_opening": false,
-        "suppress_we_opening": false,
-        "vary_opening": false,
-        "avoid_pattern": null,
-        "avoid_phrases": [
-          "count me in for"
-        ],
-        "allow_vote_change": true
-      },
-      "tokens_in": 1547,
-      "tokens_out": 43,
-      "validation_issues": [],
-      "repaired": true,
-      "repair_trigger_codes": [
-        "UNCLEAR_VISIBLE_COMMITMENT"
-      ],
-      "state_mutation_blocked": false,
-      "used_fallback": false
-    },
-    {
-      "index": 39,
       "speaker_id": "moderator",
       "speaker_name": "Moderator",
-      "text": "Looks like we couldn’t settle on one option this time. Thanks for the input, everyone.",
+      "text": "Great — fixed weekly time slots assigned by rotation it is, then.",
       "phase": "closure",
       "act": {
         "speaker_id": "moderator",
-        "text": "Looks like we couldn’t settle on one option this time. Thanks for the input, everyone.",
+        "text": "Great — fixed weekly time slots assigned by rotation it is, then.",
         "act_type": "react",
         "option_refs": [],
         "addressee_id": null,
@@ -2450,33 +2386,32 @@
     }
   ],
   "outcome": {
-    "status": "unresolved",
-    "final_option": null,
-    "reason": "Visible commitments did not produce a unique majority.",
-    "turns": 35,
+    "status": "successful",
+    "final_option": "A",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 34,
     "metadata": {
       "visible_votes": {
         "p1": "A",
         "p2": "A",
-        "p3": "D",
-        "p4": "B",
+        "p3": "A",
+        "p4": "A",
         "p5": "A",
-        "p6": "B"
+        "p6": "A"
       },
       "latent_preferences": {
         "p1": "A",
         "p2": "A",
-        "p3": "D",
-        "p4": "B",
+        "p3": "A",
+        "p4": "A",
         "p5": "A",
-        "p6": "B"
+        "p6": "A"
       },
       "phase_history": [
-        "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.58",
+        "pacing: min=18, force=26, hard=38, distinct_initial_prefs=4, avg_compromise=0.53",
         "turn 7: discussion — all participants gave an opening view",
         "turn 27: narrowing — target discussion length reached",
-        "turn 34: closure — all participants already gave a clear vote",
-        "turn 38: closure — vote rounds exhausted without visible consensus"
+        "turn 37: closure — successful visible after vote round 1"
       ],
       "candidate_option": "A",
       "min_discussion_turns": 18,
@@ -2485,103 +2420,102 @@
     }
   },
   "metrics": {
-    "participant_turns": 35,
+    "participant_turns": 34,
     "moderator_turns": 4,
-    "moderator_ratio": 0.103,
+    "moderator_ratio": 0.105,
     "turn_counts": {
-      "Xena": 6,
-      "Vince": 4,
-      "Marco": 6,
-      "Olga": 6,
-      "Zeke": 7,
-      "Goran": 6
+      "Amir": 6,
+      "Felix": 4,
+      "Uri": 7,
+      "Yara": 6,
+      "Nico": 6,
+      "Emeka": 5
     },
-    "top_speaker_share": 0.2,
+    "top_speaker_share": 0.206,
     "avg_words_by_persona": {
-      "Xena": 15.0,
-      "Vince": 12.5,
-      "Marco": 16.7,
-      "Olga": 14.8,
-      "Zeke": 18.9,
-      "Goran": 16.8
+      "Amir": 30.5,
+      "Felix": 17.2,
+      "Uri": 19.0,
+      "Yara": 27.7,
+      "Nico": 13.7,
+      "Emeka": 21.6
     },
-    "question_density": 0.171,
-    "avg_words_per_turn": 16.1,
-    "repaired_turns": 10,
-    "repair_rate": 0.286,
-    "flagged_turns": 1,
-    "fallback_turns": 0,
+    "question_density": 0.147,
+    "avg_words_per_turn": 21.8,
+    "repaired_turns": 7,
+    "repair_rate": 0.206,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
     "invalid_printed_turn_count": 0,
     "visible_vote_count": 6,
     "visible_votes": {
-      "Xena": "A",
-      "Vince": "A",
-      "Marco": "D",
-      "Olga": "B",
-      "Zeke": "A",
-      "Goran": "B"
+      "Amir": "A",
+      "Felix": "A",
+      "Uri": "A",
+      "Yara": "A",
+      "Nico": "A",
+      "Emeka": "A"
     },
     "unanswered_direct_questions": 0,
-    "name_prefix_rate": 0.114,
-    "option_opening_rate": 0.171,
-    "i_opening_rate": 0.171,
-    "we_opening_rate": 0.057,
-    "name_or_option_opening_rate": 0.286,
-    "repeated_opening_patterns": 3,
-    "unsupported_fact_flags": 2,
-    "final_support_fraction": 0.0,
+    "name_prefix_rate": 0.206,
+    "option_opening_rate": 0.118,
+    "i_opening_rate": 0.118,
+    "we_opening_rate": 0.059,
+    "name_or_option_opening_rate": 0.324,
+    "repeated_opening_patterns": 7,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 1.0,
     "option_coverage": {
       "A": {
-        "mentions": 21,
-        "reasons": 9,
+        "mentions": 23,
+        "reasons": 11,
+        "objections": 2,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 7,
+        "reasons": 3,
         "objections": 2,
         "acceptances": 0
       },
-      "B": {
-        "mentions": 10,
-        "reasons": 5,
-        "objections": 1,
-        "acceptances": 0
-      },
       "C": {
-        "mentions": 3,
+        "mentions": 4,
         "reasons": 3,
         "objections": 0,
         "acceptances": 0
       },
       "D": {
-        "mentions": 8,
+        "mentions": 6,
         "reasons": 4,
-        "objections": 2,
-        "acceptances": 1
+        "objections": 1,
+        "acceptances": 0
       }
     },
     "expected_engagement": {
-      "Xena": 0.475,
-      "Vince": 0.4,
-      "Marco": 0.362,
-      "Olga": 0.362,
-      "Zeke": 0.55,
-      "Goran": 0.512
+      "Amir": 0.737,
+      "Felix": 0.475,
+      "Uri": 0.512,
+      "Yara": 0.962,
+      "Nico": 0.475,
+      "Emeka": 0.737
     },
     "agenda_status": {
-      "done": 2,
-      "pending": 22,
-      "obsolete": 1
+      "obsolete": 5,
+      "pending": 11,
+      "done": 6
     },
-    "outcome_status": "unresolved",
-    "final_option": null,
+    "outcome_status": "successful",
+    "final_option": "A",
     "corpus_preset": "",
     "min_discussion_turns": 18,
     "force_narrow_turns": 26,
     "hard_max_turns": 38,
     "phase_history": [
-      "pacing: min=18, force=26, hard=38, distinct_initial_prefs=3, avg_compromise=0.58",
+      "pacing: min=18, force=26, hard=38, distinct_initial_prefs=4, avg_compromise=0.53",
       "turn 7: discussion — all participants gave an opening view",
       "turn 27: narrowing — target discussion length reached",
-      "turn 34: closure — all participants already gave a clear vote",
-      "turn 38: closure — vote rounds exhausted without visible consensus",
-      "turn 39: closure — closed as unresolved"
+      "turn 37: closure — successful visible after vote round 1",
+      "turn 38: closure — closed as successful"
     ],
     "planned_metrics": {
       "participation_gini": null,
@@ -2591,19 +2525,19 @@
       "engagement_realization_error": null,
       "compromise_success_rate": null
     },
-    "setup_tokens_in": 2205,
-    "setup_tokens_out": 1307,
-    "dialogue_tokens_in": 54469,
-    "dialogue_tokens_out": 1288,
-    "total_tokens_in": 56674,
-    "total_tokens_out": 2595
+    "setup_tokens_in": 2218,
+    "setup_tokens_out": 1275,
+    "dialogue_tokens_in": 30221,
+    "dialogue_tokens_out": 1362,
+    "total_tokens_in": 32439,
+    "total_tokens_out": 2637
   },
   "tokens": {
-    "setup_tokens_in": 2205,
-    "setup_tokens_out": 1307,
-    "dialogue_tokens_in": 54469,
-    "dialogue_tokens_out": 1288,
-    "total_tokens_in": 56674,
-    "total_tokens_out": 2595
+    "setup_tokens_in": 2218,
+    "setup_tokens_out": 1275,
+    "dialogue_tokens_in": 30221,
+    "dialogue_tokens_out": 1362,
+    "total_tokens_in": 32439,
+    "total_tokens_out": 2637
   }
 }

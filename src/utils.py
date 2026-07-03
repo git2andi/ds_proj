@@ -134,9 +134,15 @@ _DANGLING_TRAIL = {
 }
 
 # Only used on chopped text (where the ending is known to be cut): a trailing
-# wh-word or "about" is a fragment there, even though it can end a full sentence.
+# wh-word, pronoun, modal, or "about" is a fragment there, even though some of
+# these can end a full sentence.
 _CHOP_TRAIL = _DANGLING_TRAIL | {
     "who", "whom", "whose", "which", "what", "when", "where", "why", "how", "about",
+    "should", "could", "would", "can", "will", "might", "must", "may",
+    "we", "you", "they", "he", "she", "it", "i", "our", "your", "their", "my",
+    "this", "these", "those", "there", "be", "been", "was", "were",
+    "has", "have", "had", "do", "does", "did", "just", "really", "very",
+    "though", "while", "unless", "until", "whether",
 }
 
 # A chopped stub that still reads as a question ("does the slower setup bother
@@ -155,6 +161,10 @@ _BROKEN_QUESTION_TAIL = re.compile(
     r"(?:the|a|an|those|these|that|this|them|it|us|anyone|everyone)?\s*(?:who|which|that)?\s*$",
     re.I,
 )
+
+# Terminal punctuation that ends a sentence (not a decimal point: "." inside
+# "$4.50" is followed by a digit, so the lookahead excludes it).
+_SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
 
 
 def compact_words(text: str, max_words: int) -> str:
@@ -178,27 +188,33 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
     text = _remove_generic_filler_tail(text)
     words = text.split()
-    if len(words) > max_words:
-        # If the line being cut was a question, the chopped stub keeps its
-        # interrogative intent; ending it with "." would hide it from
-        # question/obligation detection.
-        was_question = text.rstrip().endswith("?")
-        chopped = " ".join(words[:max_words]).rstrip(" ,;:")
-        sentence_end = max(chopped.rfind("."), chopped.rfind("!"), chopped.rfind("?"))
-        if sentence_end >= max(10, len(chopped) // 2):
-            text = chopped[: sentence_end + 1].strip()
-        else:
-            text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
-            text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
-            # A chop can still end on a bare function word ("... what and",
-            # "... more than the") or a cut wh-word; strip those.
-            tail = text.split()
-            while tail and tail[-1].lower().rstrip(".,;:") in _CHOP_TRAIL:
-                tail.pop()
-            if tail:
-                text = " ".join(tail).rstrip(" ,;:")
-            if text and text[-1] not in ".!?":
-                text += "?" if was_question and _INTERROGATIVE_STUB.search(text) else "."
+    if len(words) <= max_words:
+        return text
+    # The word budget is a style target, not a correctness bound: a complete
+    # sentence slightly over budget reads far better than a chopped stub (I14).
+    soft_cap = max_words + max(8, round(max_words * 0.4))
+    if len(words) <= soft_cap and text[-1] in ".!?":
+        return text
+    was_question = text.rstrip().endswith("?")
+    # Cut at the last full sentence inside the soft window if one exists.
+    window = " ".join(words[:soft_cap]).rstrip(" ,;:")
+    ends = [m.end() for m in _SENTENCE_END.finditer(window)]
+    if ends and ends[-1] >= 10:
+        return window[: ends[-1]].strip()
+    # Last resort: one unbroken over-long sentence. Chop at the budget and
+    # salvage; the stub must not end mid-thought.
+    chopped = " ".join(words[:max_words]).rstrip(" ,;:")
+    text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
+    text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
+    # A chop can still end on a bare function word ("... what and",
+    # "... more than the") or a cut wh-word; strip those.
+    tail = text.split()
+    while tail and tail[-1].lower().rstrip(".,;:") in _CHOP_TRAIL:
+        tail.pop()
+    if tail:
+        text = " ".join(tail).rstrip(" ,;:")
+    if text and text[-1] not in ".!?":
+        text += "?" if was_question and _INTERROGATIVE_STUB.search(text) else "."
     return text
 
 

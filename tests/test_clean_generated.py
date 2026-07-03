@@ -62,3 +62,49 @@ def test_anyone_stub_keeps_question_mark():
     text = "That tiki torch setup sounds a bit intense to manage on our own, anyone worried about the fire risk there?"
     out = clean_generated(text, "Diego", 14)
     assert out.endswith("?")
+
+
+# --- I14: complete sentences must survive; cuts happen at sentence bounds ---
+
+
+def test_complete_sentence_mildly_over_budget_kept_whole():
+    text = "Pavel's right that print clarity is key, especially with older machines, but Montserrat with Lora still looks fresh to me."
+    out = clean_generated(text, "Faye", 18)
+    assert out == text
+
+
+def test_complete_question_mildly_over_budget_kept_whole():
+    text = "Pavel, can you share what is still holding you back, or is there another option you would rather push for here?"
+    out = clean_generated(text, "Moderator", 20)
+    assert out == text
+
+
+def test_far_over_budget_cut_at_last_sentence_boundary():
+    two = (
+        "The fixed desk is cheaper and has no motor to break. "
+        "The electric one adjusts fast but needs a nearby outlet and costs more per unit overall, "
+        "which with five people sharing adds up quickly over a year of heavy daily use."
+    )
+    out = clean_generated(two, "Nadia", 12)
+    assert out == "The fixed desk is cheaper and has no motor to break."
+
+
+def test_single_runaway_sentence_never_ends_on_modal_or_pronoun():
+    text = (
+        "I think we should weigh the warranty and the noise level before anything else "
+        "because with five people sharing one desk every day the stability though we should"
+    )
+    out = clean_generated(text, "Priya", 20)
+    last = out.rstrip(".!?").split()[-1].lower()
+    assert last not in {"should", "we", "though", "you", "the"}
+    assert out[-1] in ".!?"
+
+
+def test_decimal_point_not_treated_as_sentence_end():
+    text = (
+        "The premium plan costs $4.50 per seat per month and includes the audit trail plus "
+        "priority support which the free tier does not offer at all to anyone"
+    )
+    out = clean_generated(text, "Elif", 14)
+    assert not out.rstrip(".").endswith("$4")
+    assert "4.50 per" in out or "4.50" not in out

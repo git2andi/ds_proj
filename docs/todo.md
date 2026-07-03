@@ -1,6 +1,6 @@
 # TODO: Natural Option-Grounded Multi-User Discussion Simulator
 
-Source of truth for open work. Restructured 2026-07-02 after a full repository + log review: issues were merged, newly observed failures added, and the list ordered by dependency (fix what later fixes must be verified against first). Log evidence referenced below lives in `logs/archive/` (archived 2026-07-02).
+Source of truth for open work. Restructured 2026-07-02 after a full repository + log review. Updated 2026-07-03 after reviewing the post-update logs in `log.zip` (`log/20260703_094030_633172` through `log/20260703_094959_231864`). Earlier issue groups I1-I13 are mostly verified as improved/resolved; the open work below reflects the new failure layer visible after the refactor.
 
 Standing decisions (agreed 2026-07-02):
 
@@ -64,19 +64,88 @@ Use paper insights only where they directly improve the simulator; never impleme
 
 ---
 
-## 3. Open issues
+## 3. Open issues after the 2026-07-03 post-update log review
 
-All issues from the 2026-07-02 restructure are resolved (see section 4) except:
+Current verdict from the new logs: the previous severe architecture failures are mostly gone. Across the ten reviewed runs, `invalid_printed_turn_count` is 0, visible votes generally match outcome metadata, hard blockers are not forced into accepting their rejected option, turn distribution is balanced enough, moderator ratio is no longer dominant, and n=3 token usage is back inside the rough target range (`20260703_094030_633172`: 19.0k input tokens). Do **not** reopen I1-I5 or I8-I12 globally unless a new regression reproduces the old failure.
 
-#### I7 (P1, deferred by user decision 2026-07-03). Implement the planned metrics and the new integrity counters
+However, the generated transcripts now show a new set of visible quality and integrity problems. These are ordered by priority.
 
-Do not consider evaluation now — we'll do that in depth once the discussion is working. When picked up: implement the `evaluation.py` stubs (`participation_gini`, `direct_response_rate`, `question_answer_completion`, `repetition_score`, `engagement_realization_error`, `compromise_success_rate`) from turn records + parsed acts, add `visible_switches_with_reason` vs `visible_switches_total`, `blocked_option_votes` (must be 0), and `vote_called_with_visible_cluster`; keep the flat CSV stable; no-LLM tests on synthetic states.
+#### I15 (P0). Setup hard-constraint validator still misses normalized time caps; invalid options can win
+
+**Evidence from new logs:**
+
+- `log/20260703_094851_794654`, movie night, n=6: shared context says "The movie must be under 2 hours". Option D `Knives Out` has `duration_minutes: 130` and the tradeoff explicitly says it exceeds the 2-hour limit by 10 minutes. The discussion still ends `successful` for D.
+
+**Why this matters:** this reopens the hard-constraint class in a narrower form. The setup validator fixed some numeric caps, but it did not normalize "under 2 hours" into `duration_minutes < 120`, and the consensus layer allowed an invalid final option.
+
+#### I16 (P0). Grounding still misses cross-option fact transfer and malformed comparisons
+
+**Evidence from new logs:**
+
+- `log/20260703_094959_231864`, standing desk, n=5: Amir votes for Option A and says it has "reliable backup power". Backup/manual outage support belongs to Option C, not A. Option A requires a nearby power outlet and has mechanical-failure concern.
+- `log/20260703_094615_562377`, whiteboard app, n=4: Elif says "1000 objects per board is a bigger limit than 50MB, so fewer splits needed." This compares object count and storage size as if they were the same unit.
+- `log/20260703_094800_722511`, garden name, n=2: Vera says "Pollinator’s Patch limits appeal to history lovers", although the option is about bees/butterflies and nature enthusiasts, not history.
+
+**Why this matters:** the tripwire grounding pass reduced cost, but factual leakage between option cards still damages decision quality. Votes are especially sensitive because a wrong final justification can make the outcome look unsupported.
+
+#### I17 (P1). Majority closure wording is dishonest / too consensus-like
+
+**Evidence from new logs:**
+
+- `log/20260703_094030_633172`, font pairing, n=3: Pavel repeats his vote for Georgia/Verdana, but the moderator closes with "Great — Montserrat Bold with Lora Regular it is, then." Outcome metadata is correctly `majority`, but the transcript wording sounds like full agreement.
+- `log/20260703_094406_706015`, scheduling tool, n=4: Elif stays with Calendly, but the moderator says "Great — Doodle Premium Subscription it is, then."
+- `log/20260703_094615_562377`, whiteboard app, n=4: Isla stays with Microsoft Whiteboard, but the moderator says "Great — Miro Collaborative Whiteboard it is, then."
+- `log/20260703_094959_231864`, standing desk, n=5: Cleo and Nadia stay with Fixed Desk, but the moderator says "Looks like the Fully Electric Height Adjustable Desk Model X3 is our pick!".
+- `log/20260703_094505_308949`, hiking trail, n=7: Olga stays with Pine Ridge, but the moderator closes as if Cedar Falls is cleanly settled.
+
+**Why this matters:** the outcome object may be correct, but the visible dialogue is socially dishonest. A human moderator would normally say "majority is X" or acknowledge holdouts, not imply consensus.
+
+#### I18 (P1). Compromise / holdout probes can still be leading or target a bad candidate
+
+**Evidence from new logs:**
+
+- `log/20260703_094307_629872`, mascot design, n=4: after a split vote (`D`, `D`, `A`, `C`) and a visible handler/dealbreaker concern around the Tiger, the moderator asks: "can everyone live with the Playful Orange Tiger Puppet Mascot without rehashing debate?" This is too leading and targets a visibly contested candidate.
+- `log/20260703_094133_016853`, caterer, n=7: after a 3-2-2 split, the moderator asks whether everyone is okay moving forward with Green Harvest. This is acceptable as a majority test only if framed as a majority/compromise probe, but current wording can feel like pressure.
+
+**Why this matters:** the moderator should test convergence, not push the controller's favorite option. This is especially bad when the candidate has an unresolved blocker.
+
+#### I19 (P1). Final-vote and fallback/repair phrasing is still too repetitive
+
+**Evidence from new logs:**
+
+- Many final vote turns are repaired from `UNCLEAR_VISIBLE_COMMITMENT`, producing repeated forms: "Count me in for...", "My pick is...", "X gets my vote", "I'd go with...".
+- `log/20260703_094959_231864`, standing desk, n=5: Cleo says the exact same fallback line twice: "Fixed Desk gets my vote."
+- `log/20260703_094133_016853`, caterer, n=7: seven vote turns in a row all become highly similar one-sentence formulas.
+
+**Why this matters:** this is less severe than factual/state errors, but it weakens naturalness. The vote round should be clear but not all participants should sound generated from the same slot template.
+
+#### I20 (P2). Local interaction improved, but some threads remain shallow or semantically distorted
+
+**Evidence from new logs:**
+
+- Good improvement: `log/20260703_094505_308949` hiking and `log/20260703_094307_629872` mascot show multi-turn threads around slippery falls / handler risk.
+- Remaining issue: `log/20260703_094800_722511` garden n=2 repeats the same local-history vs pollinator framing without much actual movement and even distorts "Pollinator’s Patch" as appealing to "history lovers".
+- Remaining issue: several runs still lean on card paraphrase + single tradeoff rather than lived social reasoning.
+
+**Why this matters:** this is not a blocker for a working version, but it is the next quality layer after integrity bugs.
+
+
+#### I7 (P2, deferred by user decision 2026-07-03). Implement the planned metrics and the new integrity counters
 
 New issues observed during future runs go here, with log path/date, topic, group size, and the smallest description of the failure.
 
----
-
 ## 4. Resolved / dropped since the last revision
+
+- **I14: Truncated/incomplete utterances** — done 2026-07-03. Root cause was `utils.clean_generated`: any line over the word budget was hard-chopped at `max_words` and patched with fragment heuristics, producing the "maybe we just tweak Lora's." / "or if you?" tails. Fix: the budget is now a style target, not a correctness bound — a complete sentence within a soft cap (budget + max(8, 40%)) is kept whole; when cutting is required, the cut lands on the last real sentence boundary inside the soft window (decimal points excluded via lookahead); the lossy fragment-salvage only remains as last resort for a single runaway sentence, with an extended trailing-word blacklist (modals, pronouns, subordinators). Verified: 5 new no-LLM tests (`tests/test_clean_generated.py`), runs `20260703_122431` (n=3 science fair, 18.6k tokens) and `20260703_122528` (n=6 laundry schedule) — zero non-terminal line endings in both transcripts (checked mechanically), moderator holdout probes complete.
+
+### Confirmed by the 2026-07-03 post-update logs
+
+- **Old invalid printed-turn class is mostly gone.** In the ten reviewed runs, `invalid_printed_turn_count` is 0. Fallbacks still occur, but they no longer leave blocked contradictions in the transcript.
+- **Visible vote/state consistency is much better.** Outcomes are generally based on visible vote maps, not hidden preference alone. Majority/unresolved statuses in metadata mostly match the visible votes.
+- **Turn-taking distribution improved.** No actual same-speaker consecutive turns were observed in the reviewed transcripts; n=4 runs were often exactly balanced, and n=7 runs did not collapse into one dominant speaker.
+- **Moderator dominance is reduced.** Moderator ratio is roughly 0.09-0.20 in the reviewed runs, which is acceptable for now. The remaining moderator problem is wording/candidate choice, not quantity.
+- **Token usage improved.** n=3 input tokens are around 19k in the reviewed run, matching the rough target. Larger groups scale upward but are no longer in the earlier 50k+ range for normal n=6/n=7 runs.
+- **Interaction is visibly better.** Several logs show real threads: mascot handler risk, hiking slippery falls, caterer portion/dietary tradeoffs, and standing-desk power/complexity concerns. The remaining issue is depth and correctness, not total absence of interaction.
 
 - **I13: Docs aligned with implemented behavior** — done 2026-07-03. README's "current problem" paragraph replaced with the implemented-state summary; `info/00/04/06/07/08` gained "Implementation status (2026-07-03)" sections mapping intent to the actual mechanisms (thread-scored targeting, reactive acts, option-neutral vote calls, sanctioned-switch parsing, blocker lifecycle, integrity counters); CLAUDE.md mechanisms kept current per issue throughout.
 - **I12: Length variation + anti-echo style control** — done 2026-07-03. `_word_bounds` gets ±10% per-turn jitter around the trait budget (verbosity ordering and switch headroom preserved, tested); decision turns pass `avoid_reasons` (justification snippets already used this round, extracted by `parsing.round_reason_snippets`) alongside the existing commitment-family avoid list, and the prompt demands a different reason in the voter's own words; BUILD move purposes rotate across three framings (grounded reason / practical consideration / personal priority). Verified: 4 no-LLM tests (`tests/test_style_variation.py`), runs `20260703_015624` (n=3 chant, 18.2k tokens: three distinct vote reasons, natural bridge switch) and `20260703_015733` (n=5 board game, 23.6k tokens: five distinct vote justifications, avg words per persona spread 18.0–23.4, switches concede the pressed point).
