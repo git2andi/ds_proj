@@ -11,14 +11,14 @@ from __future__ import annotations
 import math
 import random
 import re
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from typing import Any
 
 import prompts
 from aliases import validated_short_alias
-from config_loader import cfg, parse_preference_shape
+from config_loader import PROFILE_TRAIT_NAMES, cfg, parse_preference_shape
 from llm_client import get_llm_client
-from models import OptionCard, Persona, Scenario, TraitProfile
+from models import OptionCard, Persona, Scenario, SimulatorParameters, TraitProfile
 from simulator import build_initial_agenda, derive_simulator_parameters
 from utils import sample_int_range
 
@@ -195,8 +195,37 @@ _NAME_POOL = [
 ]
 
 
-def _sample_names(n: int) -> list[str]:
-    return random.sample(_NAME_POOL, min(n, len(_NAME_POOL)))
+def _sample_names(n: int, exclude: list[str] | None = None) -> list[str]:
+    excluded = {name.lower() for name in (exclude or [])}
+    pool = [name for name in _NAME_POOL if name.lower() not in excluded]
+    return random.sample(pool, min(n, len(pool)))
+
+
+def manual_participant_profiles() -> list[dict]:
+    """Normalized manual simulator profiles, or [] when participants.mode is auto.
+
+    Config validation (config_loader) has already checked field names, trait and
+    parameter bounds, and option labels; this only canonicalizes types/casing so
+    the builder can consume the rows uniformly. Profile order maps to p1..pn.
+    """
+    participants = cfg.get("participants", None) or {}
+    if str(participants.get("mode", "auto")) != "manual":
+        return []
+    profiles: list[dict] = []
+    for row in participants.get("profiles") or []:
+        preferred = str(row.get("preferred_option") or "").strip().upper() or None
+        rejection = str(row.get("rejection") or "").strip().upper() or None
+        profiles.append({
+            "name": str(row.get("name") or "").strip(),
+            "description": str(row.get("description") or "").strip(),
+            "private_goal": str(row.get("private_goal") or "").strip(),
+            "preferred_option": preferred,
+            "rejection": rejection,
+            "rejection_reason": str(row.get("rejection_reason") or "").strip(),
+            "traits": {key: int(value) for key, value in (row.get("traits") or {}).items()},
+            "parameters": {key: float(value) for key, value in (row.get("parameters") or {}).items()},
+        })
+    return profiles
 
 
 def repair_preferred_options(
@@ -245,11 +274,18 @@ class SetupBuilder:
         seed = cfg.simulation.get("random_seed", None)
         if seed is not None:
             random.seed(int(seed))
+        self._profiles = manual_participant_profiles()
         self._llm = get_llm_client()
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
+        if self._profiles and len(self._profiles) != n:
+            raise ValueError(
+                f"participants.profiles defines {len(self._profiles)} simulators but build() was asked for {n}"
+            )
         self._validate_topic_participant_count(self.topic, n)
-        preference_shape = self._preference_shape(n, len(cfg.scenario.option_labels))
+        # With any manually pinned preference the shape distribution is bypassed,
+        # so only precompute (and fail fast on) the shape when it will be used.
+        preference_shape = None if self._pinned_preferences() else self._preference_shape(n, len(cfg.scenario.option_labels))
         trait_rows = self._trait_rows(n)
         attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         scenario: Scenario | None = None
@@ -272,6 +308,12 @@ class SetupBuilder:
             )
 
         required_preferences = self._preference_assignments(n, scenario.option_ids, preference_shape)
+        if self._profiles_complete():
+            # Fully specified manual cast: no persona LLM call, no sampling noise.
+            personas = self._personas_from_profiles(trait_rows, required_preferences)
+            self._validate_preference_assignments(personas, required_preferences)
+            self._validate_world(scenario, personas)
+            return scenario, personas
         persona_errors: list[str] = []
         for _ in range(attempts):
             try:
@@ -323,20 +365,36 @@ class SetupBuilder:
         return self._parse_personas(data.get("participants", []), trait_rows, scenario, required_preferences)
 
     def _trait_rows(self, n: int) -> list[dict[str, Any]]:
+        # Random hard blockers only in auto mode; a manual cast gets a blocker
+        # solely through an explicit profile rejection.
         hard_id = None
-        if n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
+        if not self._profiles and n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
             hard_id = f"p{random.randint(1, n)}"
-        names = _sample_names(n)
+        given_names = [p["name"] for p in self._profiles if p["name"]]
+        fill_names = iter(_sample_names(n, exclude=given_names))
         rows: list[dict[str, Any]] = []
         for idx in range(n):
             pid = f"p{idx + 1}"
-            stubborn = pid == hard_id
-            traits = self._sample_traits(stubborn)
-            rows.append({
+            profile = self._profiles[idx] if self._profiles else {}
+            fixed_traits = profile.get("traits") or {}
+            stubborn = (
+                pid == hard_id
+                or bool(profile.get("rejection"))
+                or fixed_traits.get("agreeableness") == 1
+            )
+            traits = self._sample_traits(stubborn, fixed_traits)
+            row: dict[str, Any] = {
                 "id": pid,
-                "name": names[idx],
+                "name": profile.get("name") or next(fill_names),
                 "traits": asdict(traits),
-            })
+            }
+            # Fixed texts ride along in the row so the persona prompt keeps the
+            # LLM-filled fields consistent with them; parsing overrides them anyway.
+            if profile.get("description"):
+                row["background"] = profile["description"]
+            if profile.get("private_goal"):
+                row["private_goal"] = profile["private_goal"]
+            rows.append(row)
         return rows
 
     def _preference_shape(self, n: int, option_count: int) -> tuple[int, ...]:
@@ -363,6 +421,22 @@ class SetupBuilder:
             )
         return shape
 
+    def _pinned_preferences(self) -> dict[str, str]:
+        return {
+            f"p{idx + 1}": profile["preferred_option"]
+            for idx, profile in enumerate(self._profiles)
+            if profile.get("preferred_option")
+        }
+
+    def _profile_for(self, pid: str) -> dict:
+        if not self._profiles:
+            return {}
+        try:
+            idx = int(pid[1:]) - 1
+        except ValueError:
+            return {}
+        return self._profiles[idx] if 0 <= idx < len(self._profiles) else {}
+
     def _preference_assignments(
         self,
         n: int,
@@ -370,6 +444,19 @@ class SetupBuilder:
         shape: tuple[int, ...] | None = None,
     ) -> dict[str, str]:
         """Assign a concrete required primary option to every participant before prompting."""
+        pinned = self._pinned_preferences()
+        if pinned:
+            # Manual pins take precedence over the shape distribution; the
+            # unpinned rest get a uniformly random option (never their own
+            # rejection), documented in config.yaml.
+            assignments = dict(pinned)
+            for idx in range(n):
+                pid = f"p{idx + 1}"
+                if pid in assignments:
+                    continue
+                rejection = self._profile_for(pid).get("rejection")
+                assignments[pid] = random.choice([o for o in option_ids if o != rejection])
+            return assignments
         shape = shape or self._preference_shape(n, len(option_ids))
         ids = [f"p{i + 1}" for i in range(n)]
         chosen_options = random.sample(option_ids, len(shape))
@@ -380,17 +467,82 @@ class SetupBuilder:
             for pid in ids[cursor:cursor + group_size]:
                 assignments[pid] = option_id
             cursor += group_size
+        self._avoid_rejection_conflicts(assignments, option_ids)
         return assignments
 
-    def _sample_traits(self, stubborn: bool) -> TraitProfile:
+    def _avoid_rejection_conflicts(self, assignments: dict[str, str], option_ids: list[str]) -> None:
+        """Never require a manual profile's own rejected option as its primary preference.
+
+        Prefer swapping two assignments (shape preserved); fall back to a random
+        non-rejected option if no swap partner exists.
+        """
+        for pid, option in list(assignments.items()):
+            rejection = self._profile_for(pid).get("rejection")
+            if not rejection or rejection != option:
+                continue
+            for other, other_option in assignments.items():
+                if other == pid or other_option == option:
+                    continue
+                if self._profile_for(other).get("rejection") != option:
+                    assignments[pid], assignments[other] = other_option, option
+                    break
+            else:
+                assignments[pid] = random.choice([o for o in option_ids if o != rejection])
+
+    def _sample_traits(self, stubborn: bool, fixed: dict[str, int] | None = None) -> TraitProfile:
         ranges = cfg.personas.hard_blocker_trait_ranges if stubborn else cfg.personas.trait_ranges
-        return TraitProfile(
-            openness=sample_int_range(ranges.openness),
-            conscientiousness=sample_int_range(ranges.conscientiousness),
-            extraversion=sample_int_range(ranges.extraversion),
-            agreeableness=sample_int_range(ranges.agreeableness),
-            neuroticism=sample_int_range(ranges.neuroticism),
+        values = {name: sample_int_range(ranges[name]) for name in PROFILE_TRAIT_NAMES}
+        if fixed:
+            values.update(fixed)
+        if stubborn:
+            # Hard-blocker invariant: only agreeableness=1 personas may hold a
+            # hard rejection (config validation rejects contradicting profiles).
+            values["agreeableness"] = 1
+        return TraitProfile(**values)
+
+    def _profiles_complete(self) -> bool:
+        """True when every manual profile fully specifies the persona-level fields.
+
+        Traits/parameters never need the LLM, so completeness only requires the
+        text fields and the initial preference. A complete cast skips the persona
+        LLM call entirely.
+        """
+        return bool(self._profiles) and all(
+            profile["name"] and profile["description"] and profile["private_goal"] and profile["preferred_option"]
+            for profile in self._profiles
         )
+
+    def _personas_from_profiles(
+        self, trait_rows: list[dict[str, Any]], required_preferences: dict[str, str]
+    ) -> list[Persona]:
+        personas: list[Persona] = []
+        for row in trait_rows:
+            pid = row["id"]
+            profile = self._profile_for(pid)
+            traits = self._trait_from_row(row)
+            preferred_options = repair_preferred_options(
+                [], profile.get("rejection"), required_preferences.get(pid),
+                single_only=traits.agreeableness == 1,
+            )
+            persona = Persona(
+                id=pid,
+                name=row["name"],
+                traits=traits,
+                sim_params=self._sim_params_for(traits, profile),
+                background=profile["description"],
+                private_goal=profile["private_goal"],
+                preferred_options=preferred_options,
+                rejection=profile.get("rejection"),
+                rejection_reason=profile.get("rejection_reason", ""),
+            )
+            persona.agenda = build_initial_agenda(persona)
+            personas.append(persona)
+        return personas
+
+    def _sim_params_for(self, traits: TraitProfile, profile: dict) -> SimulatorParameters:
+        params = derive_simulator_parameters(traits)
+        overrides = profile.get("parameters") or {}
+        return replace(params, **overrides).clipped() if overrides else params
 
     def _parse_scenario(self, raw: Any, n: int) -> Scenario:
         if not isinstance(raw, dict):
@@ -520,22 +672,30 @@ class SetupBuilder:
         rej_raw = str(row.get("rejection") or "").strip().upper()
         rejection: str | None = rej_raw if rej_raw in labels and rej_raw not in preferred_options else None
         rejection_reason = str(row.get("rejection_reason") or "").strip() if rejection else ""
+        # Manual profile fields override whatever the LLM generated for them;
+        # everything the profile leaves open keeps the generated value.
+        profile = self._profile_for(pid)
+        if profile.get("rejection"):
+            rejection = profile["rejection"]
+            rejection_reason = profile["rejection_reason"]
+            preferred_options = [opt for opt in preferred_options if opt != rejection]
         preferred_options = repair_preferred_options(
             preferred_options, rejection, required, single_only=traits.agreeableness == 1
         )
         if not preferred_options:
             raise ValueError(f"participant {pid} has no valid preferred_options")
-        sim_params = derive_simulator_parameters(traits)
         persona = Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
             traits=traits,
-            sim_params=sim_params,
-            background=_require(
+            sim_params=self._sim_params_for(traits, profile),
+            background=profile.get("description") or _require(
                 row.get("background") or row.get("backstory"),
                 f"participant {pid} background",
             ),
-            private_goal=_require(row.get("private_goal"), f"participant {pid} private_goal"),
+            private_goal=profile.get("private_goal") or _require(
+                row.get("private_goal"), f"participant {pid} private_goal"
+            ),
             preferred_options=preferred_options,
             rejection=rejection,
             rejection_reason=rejection_reason,

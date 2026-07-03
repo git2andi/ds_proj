@@ -71,7 +71,7 @@ Work top to bottom; each item should land as its own commit once validated by li
 (section 5). Do not start an item before the previous one is validated, unless they are
 clearly independent.
 
-1. Explicit simulator-profile input mode (participants: auto | manual)
+1. ~~Explicit simulator-profile input mode (participants: auto | manual)~~ DONE 2026-07-03
 2. Explicit environment input mode (environment: auto | manual)
 3. Honest agenda documentation + framing (docs/model only, no behavior change forced)
 4. Complete the planned evaluation layer
@@ -88,27 +88,33 @@ fix the participants and environment and vary one thing at a time.
 
 ## 2. Open issues
 
-### Issue 1 (P0). Add explicit simulator-profile input mode
+### Issue 1 (P0). Add explicit simulator-profile input mode — DONE (2026-07-03)
 
-Right now, sims are generated randomly on every run. That's fine for demos but not
-enough for a simulator framework — there's no way to set up a controlled scenario like
-"one highly engaged sim, one passive sim, one stubborn sim, one mediator-like sim."
+Implemented as `participants: {mode: auto|manual, profiles: [...]}` in `config.yaml`
+(schema documented there). Group size in manual mode = number of profiles;
+`simulation.num_participants` is ignored. Profiles may be partial: missing names come
+from the pool, missing traits are sampled from the configured ranges, missing
+background/private_goal/preference are filled by the existing persona LLM call (which
+is told to copy fixed texts verbatim). Direct `parameters:` overrides land on top of
+the trait-derived values. A profile with `rejection` is a hard blocker (agreeableness
+pinned to 1, `rejection_reason` required, never assigned its rejected option as
+required primary). If every profile is complete, the persona LLM call is skipped and
+the cast is fully deterministic. Config validation fails fast on unknown fields,
+out-of-range traits/parameters, duplicate names, and blocker contradictions.
+`run.json` records `participants_mode`.
 
-Needed change: a config knob for participant generation mode.
+Validated 2026-07-03 by live runs (n=3, varied topics):
 
-```yaml
-participants:
-  mode: auto   # auto | manual
-```
-
-- `auto` keeps current behavior: sample/generate participants via the existing
-  LLM-based approach.
-- `manual` lets the user define participant profiles directly: name, description,
-  preferences, and behavioral parameters (engagement, verbosity, initiative,
-  responsiveness, stubbornness, directness, compromise threshold).
-- Manual profiles may be **partial**. Any field not manually provided is filled in by
-  the existing auto/LLM generation path. Manual mode must not force specifying every
-  field.
+- auto regression, coffee-subscription topic (`logs/20260703_212848_059078`):
+  behavior unchanged, majority(A), 0 fallbacks, 0 unanswered obligations.
+- manual partial, messaging-tool topic (`logs/20260703_213018_322145`): manual
+  name/description/traits/parameter overrides and the blocker rejection appear
+  verbatim in the trace; the empty third profile was auto-filled; majority(A).
+- manual complete, autumn-weekend topic (`logs/20260703_213154_201229`): persona
+  LLM call skipped (setup tokens 782-in vs ~1990-in), cast byte-identical to the
+  profiles, and configured verbosity visible in realized behavior (verbosity 0.2 →
+  12.5 avg words/turn vs 0.85 → 27.1); honest unresolved outcome for a stubborn
+  three-way split.
 
 ### Issue 2 (P0). Add explicit environment input mode
 
@@ -234,6 +240,12 @@ narrowing — all participants voted but no majority; trying split compromise
 ```
 
 Only record final closure once the outcome is actually resolved.
+
+Additional evidence (2026-07-03, issue-1 validation runs): `logs/20260703_212848_059078`
+(coffee subscription, n=3) logs `closure — all participants already gave a clear vote`
+before continuing into the split-vote compromise, and `logs/20260703_213154_201229`
+(autumn weekend, n=3) logs the same marker before ending `unresolved` — a "closure"
+phase entry on a run that never closed on that vote state.
 
 ### Issue 7 (P2). Reduce moderator dependency
 

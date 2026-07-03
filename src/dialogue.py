@@ -97,7 +97,7 @@ class DialogueRunner:
         self._last_intervention_turn = -999
 
     def run(self) -> DialogueRunResult:
-        n = int(cfg.simulation.num_participants)
+        n = cfg.participant_count()
         self._llm.reset_session()
         scenario, personas = SetupBuilder(self.topic).build(n)
         setup_tokens_in = self._llm.session_tokens_in

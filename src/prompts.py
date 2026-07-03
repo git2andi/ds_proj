@@ -90,6 +90,14 @@ def setup_personas(
     options_json: list[dict],
 ) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
+    # Manual participant profiles may fix background/private_goal; tell the LLM
+    # to keep them verbatim so its generated fields stay consistent with them.
+    fixed_field_rule = (
+        "\n- If a trait row already contains background or private_goal, copy that text exactly "
+        "and keep the other fields consistent with it."
+        if any(row.get("background") or row.get("private_goal") for row in trait_rows)
+        else ""
+    )
     preference_lines = "\n".join(
         f"- {pid} ({names_by_id.get(pid, pid)}): {option_id}"
         for pid, option_id in sorted(required_preferences.items(), key=lambda item: int(item[0][1:]))
@@ -127,7 +135,7 @@ Rules:
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
 - background and private_goal must be one sentence each, specific to this topic, and grounded in the option cards/shared context.
-- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.
+- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.{fixed_field_rule}
 
 Return JSON only:
 {_schema(schema)}"""

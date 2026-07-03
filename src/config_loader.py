@@ -12,6 +12,17 @@ from typing import Any, Iterable
 
 import yaml
 
+# Field names accepted in a manual participant profile (participants.profiles).
+PROFILE_TRAIT_NAMES = ("openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism")
+PROFILE_PARAMETER_NAMES = (
+    "engagement", "verbosity", "initiative", "responsiveness",
+    "stubbornness", "directness", "compromise_threshold",
+)
+_PROFILE_FIELDS = frozenset({
+    "name", "description", "private_goal", "preferred_option",
+    "rejection", "rejection_reason", "traits", "parameters",
+})
+
 
 def parse_preference_shape(value: Any) -> tuple[int, ...]:
     """Parse a preference partition from ``"2-1"`` or ``[2, 1]``."""
@@ -134,6 +145,13 @@ class Config(Section):
         self.corpus_active = corpus_active
         self._validate()
 
+    def participant_count(self) -> int:
+        """Active group size: profile count in manual participants mode, else simulation.num_participants."""
+        participants = self._raw.get("participants") or {}
+        if str(participants.get("mode", "auto")) == "manual":
+            return len(participants.get("profiles") or [])
+        return int(self.simulation.num_participants)
+
     def _require(self, dotted: str) -> Any:
         value: Any = self._raw
         for part in dotted.split("."):
@@ -181,6 +199,69 @@ class Config(Section):
             self._validate_range(f"personas.hard_blocker_trait_ranges.{name}", rng, int(self.personas.trait_min), int(self.personas.trait_max))
 
         self._validate_preference_distribution(min_n, max_n, len(labels), n)
+        self._validate_participants(min_n, max_n, labels)
+
+    def _validate_participants(self, min_n: int, max_n: int, option_labels: list) -> None:
+        participants = self._raw.get("participants") or {}
+        mode = str(participants.get("mode", "auto"))
+        if mode not in ("auto", "manual"):
+            raise ValueError("participants.mode must be 'auto' or 'manual'.")
+        if mode == "auto":
+            return
+        profiles = participants.get("profiles")
+        if not isinstance(profiles, list) or not profiles:
+            raise ValueError("participants.mode=manual requires a non-empty participants.profiles list.")
+        if not (min_n <= len(profiles) <= max_n):
+            raise ValueError(
+                f"participants.profiles must contain {min_n}..{max_n} profiles, got {len(profiles)}."
+            )
+        labels = {str(x).upper() for x in option_labels}
+        trait_lo, trait_hi = int(self.personas.trait_min), int(self.personas.trait_max)
+        names: list[str] = []
+        for idx, profile in enumerate(profiles):
+            where = f"participants.profiles[{idx}]"
+            if not isinstance(profile, dict):
+                raise ValueError(f"{where} must be a mapping.")
+            unknown = set(profile) - _PROFILE_FIELDS
+            if unknown:
+                raise ValueError(f"{where} has unknown fields: {sorted(unknown)}.")
+            name = str(profile.get("name") or "").strip()
+            if name:
+                names.append(name.lower())
+            preferred = str(profile.get("preferred_option") or "").strip().upper() or None
+            if preferred is not None and preferred not in labels:
+                raise ValueError(f"{where}.preferred_option must be one of {sorted(labels)}.")
+            rejection = str(profile.get("rejection") or "").strip().upper() or None
+            if rejection is not None:
+                if rejection not in labels:
+                    raise ValueError(f"{where}.rejection must be one of {sorted(labels)}.")
+                if rejection == preferred:
+                    raise ValueError(f"{where}: rejection must differ from preferred_option.")
+                if not str(profile.get("rejection_reason") or "").strip():
+                    raise ValueError(f"{where}: a rejection requires a rejection_reason.")
+            traits = profile.get("traits") or {}
+            if not isinstance(traits, dict):
+                raise ValueError(f"{where}.traits must be a mapping.")
+            for key, value in traits.items():
+                if key not in PROFILE_TRAIT_NAMES:
+                    raise ValueError(f"{where}.traits has unknown trait {key!r}.")
+                if not (trait_lo <= int(value) <= trait_hi):
+                    raise ValueError(f"{where}.traits.{key} must be in [{trait_lo}, {trait_hi}].")
+            if rejection is not None and int(traits.get("agreeableness", 1)) != 1:
+                raise ValueError(
+                    f"{where}: a profile with a rejection is a hard blocker; "
+                    "leave agreeableness unset or set it to 1."
+                )
+            parameters = profile.get("parameters") or {}
+            if not isinstance(parameters, dict):
+                raise ValueError(f"{where}.parameters must be a mapping.")
+            for key, value in parameters.items():
+                if key not in PROFILE_PARAMETER_NAMES:
+                    raise ValueError(f"{where}.parameters has unknown parameter {key!r}.")
+                if not (0.0 <= float(value) <= 1.0):
+                    raise ValueError(f"{where}.parameters.{key} must be in [0, 1].")
+        if len(set(names)) != len(names):
+            raise ValueError("participants.profiles names must be unique.")
 
     def _validate_preference_distribution(
         self,

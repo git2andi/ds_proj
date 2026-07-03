@@ -42,6 +42,34 @@ simulation:
   setup_generation_attempts: 3        # retries for scenario/persona generation before the run fails
   max_repairs_per_turn: 1             # re-asks for a flagged utterance before the deterministic fallback replaces it
 
+participants:
+  # How the simulated users are created.
+  #   auto   = sample everything (names, OCEAN traits, preferences, backgrounds) as before.
+  #   manual = define the cast in profiles: below; group size = number of profiles
+  #            (simulation.num_participants is ignored in manual mode).
+  # Manual profiles may be PARTIAL: any missing field is filled by the auto path
+  # (missing traits sampled from personas.trait_ranges, missing name from the pool,
+  # missing background/private_goal written by the setup LLM, missing preferred_option
+  # drawn at random). If every profile is complete (name, description, private_goal,
+  # preferred_option), the persona LLM call is skipped entirely and the cast is
+  # fully deterministic. Giving a profile a rejection makes it a hard blocker
+  # (agreeableness pinned to 1; rejection_reason required).
+  # If any profile pins preferred_option, the preference_distribution shapes are
+  # bypassed: unpinned profiles get a uniformly random option instead.
+  mode: auto   # auto | manual
+  profiles: []
+  # profiles:
+  #   - name: "Kira"
+  #     description: "junior developer who mainly cares about day-to-day tooling speed"
+  #     private_goal: "wants the choice that keeps her daily workflow fast"
+  #     preferred_option: "A"          # option id (A-D), initial private preference
+  #     traits: {extraversion: 5, agreeableness: 4}   # OCEAN 1-5, partial ok
+  #     parameters: {verbosity: 0.9, initiative: 0.8} # direct 0-1 overrides, partial ok
+  #   - name: "Sven"
+  #     description: "veteran sysadmin burned by flaky vendor tools before"
+  #     rejection: "B"                 # hard blocker on option B
+  #     rejection_reason: "refuses another vendor lock-in after the last migration"
+
 scenario:
   # Shape of the generated option board.
   option_labels: ["A", "B", "C", "D"] # option IDs -> four options per scenario

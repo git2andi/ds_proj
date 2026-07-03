@@ -42,6 +42,14 @@ Change participant count and provider settings in `config.yaml`. The default pro
 
 ## Key controller mechanisms (current as of 2026-07-03)
 
+- **Participant input modes.** `participants.mode` in `config.yaml`: `auto` samples
+  the cast as before; `manual` defines it via `participants.profiles` (group size =
+  profile count). Profiles may be partial — missing fields are filled by the auto
+  path; `parameters:` override trait-derived simulator values; a profile `rejection`
+  makes a hard blocker (agreeableness pinned to 1). A fully specified cast skips the
+  persona LLM call entirely (deterministic simulators for controlled experiments).
+  `run.json` records `participants_mode`.
+
 - **Transcript-safe fallbacks.** A turn that still carries blocking validation
   issues after the repair pass is never printed. `_safe_fallback_text` substitutes
   a deterministic, parser-clean line for the intent (a hard blocker commits to an
