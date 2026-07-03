@@ -72,7 +72,7 @@ Work top to bottom; each item should land as its own commit once validated by li
 clearly independent.
 
 1. ~~Explicit simulator-profile input mode (participants: auto | manual)~~ DONE 2026-07-03
-2. Explicit environment input mode (environment: auto | manual)
+2. ~~Explicit environment input mode (environment: auto | manual)~~ DONE 2026-07-03
 3. Honest agenda documentation + framing (docs/model only, no behavior change forced)
 4. Complete the planned evaluation layer
 5. Fix sudden unexplained preference switches (bridge-clause enforcement)
@@ -116,24 +116,33 @@ Validated 2026-07-03 by live runs (n=3, varied topics):
   12.5 avg words/turn vs 0.85 → 27.1); honest unresolved outcome for a stubborn
   three-way split.
 
-### Issue 2 (P0). Add explicit environment input mode
+### Issue 2 (P0). Add explicit environment input mode — DONE (2026-07-03)
 
-The environment should not only ever come from a one-line topic.
+Implemented as `environment: {mode: auto|manual, manual: {...}}` in `config.yaml`
+(schema documented there). Manual defines topic, decision_kind, opening_question,
+shared_context (constraints live here — hard numeric caps are parsed from it exactly
+as in auto mode), and exactly `len(scenario.option_labels)` option cards (name + ≥1
+factual attribute required; short_name/upside/tradeoff/concern/best_for optional).
+The scenario LLM call is skipped; the authored cards are the factual source of truth
+and are never rewritten — an option violating the manual caps is a startup config
+error. No CLI topic is needed (a provided one is ignored with a stderr note).
+Stopping/pacing intentionally stays under `conversation:`/`consensus:`. The auto
+path's group-size contradiction guards (topic count, shared-context count) are not
+applied to manual environments: they exist to catch the setup LLM disobeying the
+requested world, and a manual fact like "25 colleagues will attend" describes the
+scenario, not the deciding group (found live: the guard falsely rejected exactly
+that fact). `run.json` records `environment_mode`.
 
-```yaml
-environment:
-  mode: auto   # auto | manual
-```
+Validated 2026-07-03 by live runs:
 
-- `auto` keeps current behavior: a topic goes in, the system generates scenario
-  description, options, and shared context.
-- `manual` lets the user define the environment directly: topic, scenario description,
-  available options, shared context, constraints, and optionally a desired decision
-  goal or stopping condition.
-
-This is needed for controlled comparison — if the environment is always LLM-generated
-from a one-line topic, there's no way to hold the scenario fixed while varying
-participant configuration (or vice versa).
+- manual env + auto participants, winter-party venue (`logs/20260703_213924_858347`):
+  board rendered verbatim, discussion grounded in authored facts, no clamps,
+  0 invalid printed turns; honest unresolved outcome on a persistent 1-1-1 split.
+- manual env + complete manual cast (`logs/20260703_214050_076728`): **setup tokens
+  0/0** — fully deterministic world+cast, only dialogue LLM calls; CLI topic ignored
+  with note; majority(C) with the holdout named.
+- auto/auto regression, board-game topic (`logs/20260703_214253_923700`):
+  generation path unchanged, successful(D), 0 fallbacks.
 
 ### Issue 3 (P1). Be honest about the current agenda system
 
@@ -346,3 +355,19 @@ automated tests:
    sampled) against what the metrics in section 2, issue 4 actually report.
 5. Record observed failures back into this file (with log path/date, topic, group size,
    and the smallest description of the failure) and iterate.
+
+### Observations from validation runs (2026-07-03, issues 1-2)
+
+- **`switch_events` are not serialized.** `ParticipantRuntime.switch_events` is
+  collected but `run.json` never writes runtimes, so switch analysis is impossible
+  from the trace alone. Fix as part of issue 4 (the evaluation layer needs it) —
+  issue 5's explanation-rate metric depends on it too.
+- **Split probe claims "most support" on a pure tie.** Winter-party run
+  (`logs/20260703_213924_858347`, n=3): after a 1-1-1 vote the moderator said votes
+  were split "with Strike Lanes having the most support" — no option had more than
+  one vote. `_split_probe_candidate`/nudge wording should not assert a lead that
+  does not exist. Small, fold into issue 7's moderator work (or earlier if a run
+  shows it misleads participants into false convergence).
+- **More issue-5 evidence.** Board-game run (`logs/20260703_214253_923700`, n=3):
+  Diego argued Ticket to Ride throughout, then voted "My vote goes to Azul because
+  its simple rules..." with no bridge to his prior stance.

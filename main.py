@@ -41,7 +41,17 @@ def _topics_from_args(argv: list[str]) -> list[str]:
 
 
 def main() -> int:
-    topics = _topics_from_args(sys.argv)
+    environment = cfg.get("environment", None) or {}
+    if str(environment.get("mode", "auto")) == "manual":
+        # The configured environment carries its own topic; run once with it.
+        if len(sys.argv) >= 2:
+            print(
+                "environment.mode=manual: CLI topic ignored; using the configured environment.",
+                file=sys.stderr,
+            )
+        topics = [""]
+    else:
+        topics = _topics_from_args(sys.argv)
     if not topics:
         print("No topic provided.", file=sys.stderr)
         return 2

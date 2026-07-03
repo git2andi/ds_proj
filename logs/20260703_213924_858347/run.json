@@ -1,0 +1,1729 @@
+{
+  "run_id": "20260703_213924_858347",
+  "topic": "Choose the venue for the department winter party",
+  "participants_mode": "auto",
+  "environment_mode": "manual",
+  "scenario": {
+    "topic": "Choose the venue for the department winter party",
+    "decision_kind": "activity_choice",
+    "opening_question": "What makes or breaks a winter party venue for you?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Rented back room at the Old Mill brewpub",
+        "attrs": {
+          "cost": "$850 total with buffet",
+          "capacity": "30 seats",
+          "distance": "10 minutes from the office"
+        },
+        "upside": "food and drinks handled by the venue",
+        "tradeoff": "room must be vacated by 11pm",
+        "concern": "gets loud when the main bar fills up",
+        "best_for": "a low-effort evening with good food",
+        "short_name": "Old Mill"
+      },
+      {
+        "id": "B",
+        "name": "Office rooftop terrace with catering and heaters",
+        "attrs": {
+          "cost": "$600 catering plus $100 heater rental",
+          "capacity": "40 standing, 20 seated",
+          "distance": "in the building"
+        },
+        "upside": "cheapest per person and no travel",
+        "tradeoff": "cold if the heaters struggle in December",
+        "concern": "weather can force a last-minute move indoors",
+        "best_for": "keeping things cheap and flexible",
+        "short_name": "Rooftop"
+      },
+      {
+        "id": "C",
+        "name": "Bowling alley party package at Strike Lanes",
+        "attrs": {
+          "cost": "$880 for lanes, shoes and snacks",
+          "capacity": "28 players across 7 lanes",
+          "distance": "20 minutes by tram"
+        },
+        "upside": "built-in activity keeps everyone mingling",
+        "tradeoff": "hard to hold conversations over the noise",
+        "concern": "not everyone enjoys or can bowl",
+        "best_for": "an active evening with a competitive streak",
+        "short_name": "Strike Lanes"
+      },
+      {
+        "id": "D",
+        "name": "Private dining room at Trattoria Lucia",
+        "attrs": {
+          "cost": "$895 set menu for 25",
+          "capacity": "26 seats",
+          "distance": "15 minutes by bus"
+        },
+        "upside": "quiet room and a proper sit-down dinner",
+        "tradeoff": "fixed menu with limited vegan choices",
+        "concern": "little room to mingle once seated",
+        "best_for": "conversation and a classy dinner",
+        "short_name": "Trattoria Lucia"
+      }
+    ],
+    "shared_context": [
+      "Budget is capped at $900 total for the evening",
+      "About 25 colleagues are expected to attend",
+      "The party is on a Friday evening in mid-December"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nico",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.7749999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.875,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.6125,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "I enjoy active and social events where people can mingle and stay engaged throughout the evening.",
+      "private_goal": "I want a fun and interactive party with a built-in activity to keep everyone entertained.",
+      "preferred_options": [
+        "C",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Beatriz",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 1.0,
+        "verbosity": 1.0,
+        "initiative": 1.0,
+        "responsiveness": 1.0,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.85,
+        "compromise_threshold": 0.11249999999999993
+      },
+      "background": "I prefer a well-organized event with good food and minimal hassle so everyone can relax and enjoy themselves.",
+      "private_goal": "I want a low-effort evening where food and drinks are handled by the venue to reduce planning stress.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Isla",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.9375,
+        "initiative": 0.9249999999999999,
+        "responsiveness": 0.65,
+        "stubbornness": 0.55,
+        "directness": 0.75,
+        "compromise_threshold": 0.44999999999999996
+      },
+      "background": "I like lively and social settings close to the office where people can easily gather and chat.",
+      "private_goal": "I want a convenient venue with good food that encourages mingling without too much formality.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose the venue for the department winter party.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Rented back room at the Old Mill brewpub — cost: $850 total with buffet; distance: 10 minutes from the office; capacity: 30 seats (+ food and drinks handled by the venue; − room must be vacated by 11pm)\nB) Office rooftop terrace with catering and heaters — cost: $600 catering plus $100 heater rental; distance: in the building; capacity: 40 standing, 20 seated (+ cheapest per person and no travel; − cold if the heaters struggle in December)\nC) Bowling alley party package at Strike Lanes — cost: $880 for lanes, shoes and snacks; distance: 20 minutes by tram; capacity: 28 players across 7 lanes (+ built-in activity keeps everyone mingling; − hard to hold conversations over the noise)\nD) Private dining room at Trattoria Lucia — cost: $895 set menu for 25; distance: 15 minutes by bus; capacity: 26 seats (+ quiet room and a proper sit-down dinner; − fixed menu with limited vegan choices)\nContext: Budget is capped at $900 total for the evening; About 25 colleagues are expected to attend; The party is on a Friday evening in mid-December.\nWhat makes or breaks a winter party venue for you?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose the venue for the department winter party.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Rented back room at the Old Mill brewpub — cost: $850 total with buffet; distance: 10 minutes from the office; capacity: 30 seats (+ food and drinks handled by the venue; − room must be vacated by 11pm)\nB) Office rooftop terrace with catering and heaters — cost: $600 catering plus $100 heater rental; distance: in the building; capacity: 40 standing, 20 seated (+ cheapest per person and no travel; − cold if the heaters struggle in December)\nC) Bowling alley party package at Strike Lanes — cost: $880 for lanes, shoes and snacks; distance: 20 minutes by tram; capacity: 28 players across 7 lanes (+ built-in activity keeps everyone mingling; − hard to hold conversations over the noise)\nD) Private dining room at Trattoria Lucia — cost: $895 set menu for 25; distance: 15 minutes by bus; capacity: 26 seats (+ quiet room and a proper sit-down dinner; − fixed menu with limited vegan choices)\nContext: Budget is capped at $900 total for the evening; About 25 colleagues are expected to attend; The party is on a Friday evening in mid-December.\nWhat makes or breaks a winter party venue for you?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Old Mill nails the low-effort part—food and drinks are fully handled there, which means no extra stress for us. The 11pm cutoff stings a bit, but it keeps things focused and manageable.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Old Mill nails the low-effort part—food and drinks are fully handled there, which means no extra stress for us. The 11pm cutoff stings a bit, but it keeps things focused and manageable.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1514,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Food and drinks sorted without hassle matter most—Old Mill ticks that box and is just a quick trip from the office. It’s loud when busy, but that could actually keep energy up!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Food and drinks sorted without hassle matter most—Old Mill ticks that box and is just a quick trip from the office. It’s loud when busy, but that could actually keep energy up!",
+        "act_type": "opening",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 854,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Keep everyone moving and chatting sounds perfect, and Strike Lanes delivers that with its lanes and snacks.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Keep everyone moving and chatting sounds perfect, and Strike Lanes delivers that with its lanes and snacks.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 888,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "We can keep things simple and warm without the travel if we pick the Rooftop, but the risk of freezing or scrambling indoors worries me. Old Mill and Rooftop both work, so maybe we pick one based on a weather check closer to the date?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We can keep things simple and warm without the travel if we pick the Rooftop, but the risk of freezing or scrambling indoors worries me. Old Mill and Rooftop both work, so maybe we pick one based on a weather check closer to the date?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "B",
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Old Mill, Rooftop could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1054,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Consider the quiet sit-down vibe at Trattoria Lucia for a change—it’s a proper dinner but cramped for mingling and the vegan options suck. That’s a tradeoff compared to Old Mill’s lively space and buffet energy.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Consider the quiet sit-down vibe at Trattoria Lucia for a change—it’s a proper dinner but cramped for mingling and the vegan options suck. That’s a tradeoff compared to Old Mill’s lively space and buffet energy.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1801,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Isla, Old Mill’s vibe sounds solid, but that 11pm cutoff kills the after-party buzz.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Isla, Old Mill’s vibe sounds solid, but that 11pm cutoff kills the after-party buzz.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Old Mill, Rooftop, Strike Lanes with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 842,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "You want food and drinks handled with no hassle, so Trattoria Lucia’s fixed menu and cramped space kill the easy vibe. Old Mill’s cutoff and noise are a pain, but at least it’s all-in one spot with no weather risk like the Rooftop.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "You want food and drinks handled with no hassle, so Trattoria Lucia’s fixed menu and cramped space kill the easy vibe. Old Mill’s cutoff and noise are a pain, but at least it’s all-in one spot with no weather risk like the Rooftop.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Trattoria Lucia, Old Mill, Rooftop with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1670,
+      "tokens_out": 86,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Remember the 20-minute tram ride to Strike Lanes—do we want everyone dealing with that roundtrip on a Friday night? It could cut into our mingling time, even if the bowling keeps things lively.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Remember the 20-minute tram ride to Strike Lanes—do we want everyone dealing with that roundtrip on a Friday night? It could cut into our mingling time, even if the bowling keeps things lively.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Strike Lanes that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1566,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Nico’s right, that tram ride would eat into time and energy, especially on a Friday night. Strike Lanes sounds fun but the noise and travel kill the low-effort vibe I want.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Nico’s right, that tram ride would eat into time and energy, especially on a Friday night. Strike Lanes sounds fun but the noise and travel kill the low-effort vibe I want.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1609,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "We can’t lose the easy mingling just because of a tram ride or noise. Does anyone think Old Mill’s cutoff time is deal-breaker for the after-party?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We can’t lose the easy mingling just because of a tram ride or noise. Does anyone think Old Mill’s cutoff time is deal-breaker for the after-party?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 779,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Isla, 11pm cutoff sucks but it’s not a deal-breaker if we want low stress and food handled for us. After-party can happen elsewhere if folks want. We just need to be clear about the end time upfront.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Isla, 11pm cutoff sucks but it’s not a deal-breaker if we want low stress and food handled for us. After-party can happen elsewhere if folks want. We just need to be clear about the end time upfront.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1600,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Beatriz, after-party’s cool but not everyone wants to split the group or stay late. If we can’t keep the whole crew together, we lose that team vibe.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Beatriz, after-party’s cool but not everyone wants to split the group or stay late. If we can’t keep the whole crew together, we lose that team vibe.",
+        "act_type": "agree",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 730,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Noise at Strike Lanes kills real talk and the tram ride wastes prime social time. Old Mill keeps us close, with food handled and space to spread out—even if we bounce by 11pm.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Noise at Strike Lanes kills real talk and the tram ride wastes prime social time. Old Mill keeps us close, with food handled and space to spread out—even if we bounce by 11pm.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Strike Lanes, Old Mill fits that",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 810,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Old Mill locks us out by 11pm, but we get a full buffet and drinks handled—no stress on food or cleanup. Rooftop’s open later but we’d scramble on food and budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Old Mill locks us out by 11pm, but we get a full buffet and drinks handled—no stress on food or cleanup. Rooftop’s open later but we’d scramble on food and budget.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Old Mill with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 2,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 752,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Drop the after-party and get the full buffet at Old Mill. We lose the late night but gain guaranteed food and no fuss on cleanup. That’s worth locking in.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Drop the after-party and get the full buffet at Old Mill. We lose the late night but gain guaranteed food and no fuss on cleanup. That’s worth locking in.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1569,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Keep in mind the tram ride to Strike Lanes eats into social time, but the lanes hold 28—just enough for everyone to join the action, no splits needed!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Keep in mind the tram ride to Strike Lanes eats into social time, but the lanes hold 28—just enough for everyone to join the action, no splits needed!",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Old Mill, Strike Lanes that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 832,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Food and drinks handled by Old Mill means zero hassle for us—no chasing waiters or awkward splits. That’s a big win on a busy Friday!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Food and drinks handled by Old Mill means zero hassle for us—no chasing waiters or awkward splits. That’s a big win on a busy Friday!",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Old Mill, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 826,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you share your final pick now—just say the one option you’re going with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you share your final pick now—just say the one option you’re going with?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "My pick is Strike Lanes since the party package includes lanes, shoes, and snacks to keep everyone engaged.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "My pick is Strike Lanes since the party package includes lanes, shoes, and snacks to keep everyone engaged.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 2568,
+      "tokens_out": 82,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Rooftop gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Rooftop gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "since the party package includes lanes, shoes, and snacks to"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1873,
+      "tokens_out": 71,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Count me in for Old Mill. It’s close enough that no one has to rush off early, and good food keeps the vibe casual but solid.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Count me in for Old Mill. It’s close enough that no one has to rush off early, and good food keeps the vibe casual but solid.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "since the party package includes lanes, shoes, and snacks to"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1516,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like votes are split between Strike Lanes, Rooftop, and Old Mill, with Strike Lanes having the most support—those who chose differently?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like votes are split between Strike Lanes, Rooftop, and Old Mill, with Strike Lanes having the most support—those who chose differently?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Beatriz",
+      "text": "Count me in for the rooftop terrace since it’s the cheapest option and there’s no need to travel, which keeps things simple for everyone.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for the rooftop terrace since it’s the cheapest option and there’s no need to travel, which keeps things simple for everyone.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Rooftop (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 2805,
+      "tokens_out": 127,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Isla",
+      "text": "Old Mill gets my vote since the food and drinks are included, so we don’t have to worry about anything besides enjoying ourselves.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Old Mill gets my vote since the food and drinks are included, so we don’t have to worry about anything besides enjoying ourselves.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Old Mill (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [
+          "for the rooftop terrace since it’s the cheapest option and"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 2043,
+      "tokens_out": 75,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re leaving this undecided for now since no clear choice stood out.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re leaving this undecided for now since no clear choice stood out.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 22,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "B",
+        "p3": "A"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "B",
+        "p3": "A"
+      },
+      "phase_history": [
+        "pacing: min=12, force=17, hard=23, distinct_initial_prefs=2, avg_compromise=0.76",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 18: narrowing — target discussion length reached",
+        "turn 22: closure — all participants already gave a clear vote",
+        "turn 25: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 17,
+      "hard_max_turns": 23
+    }
+  },
+  "metrics": {
+    "participant_turns": 22,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.154,
+    "turn_counts": {
+      "Nico": 6,
+      "Beatriz": 8,
+      "Isla": 8
+    },
+    "top_speaker_share": 0.364,
+    "avg_words_by_persona": {
+      "Nico": 22.8,
+      "Beatriz": 30.9,
+      "Isla": 28.6
+    },
+    "question_density": 0.136,
+    "avg_words_per_turn": 27.9,
+    "repaired_turns": 4,
+    "repair_rate": 0.182,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Nico": "C",
+      "Beatriz": "B",
+      "Isla": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.136,
+    "option_opening_rate": 0.227,
+    "i_opening_rate": 0.0,
+    "we_opening_rate": 0.091,
+    "name_or_option_opening_rate": 0.364,
+    "repeated_opening_patterns": 6,
+    "unsupported_fact_flags": 2,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 13,
+        "reasons": 10,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 6,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 11,
+        "reasons": 7,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nico": 0.775,
+      "Beatriz": 1.0,
+      "Isla": 0.925
+    },
+    "agenda_status": {
+      "done": 3,
+      "pending": 6,
+      "obsolete": 3
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 17,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=12, force=17, hard=23, distinct_initial_prefs=2, avg_compromise=0.76",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 18: narrowing — target discussion length reached",
+      "turn 22: closure — all participants already gave a clear vote",
+      "turn 25: closure — vote rounds exhausted without visible consensus",
+      "turn 26: closure — closed as unresolved"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 1126,
+    "setup_tokens_out": 308,
+    "dialogue_tokens_in": 31464,
+    "dialogue_tokens_out": 1318,
+    "total_tokens_in": 32590,
+    "total_tokens_out": 1626
+  },
+  "tokens": {
+    "setup_tokens_in": 1126,
+    "setup_tokens_out": 308,
+    "dialogue_tokens_in": 31464,
+    "dialogue_tokens_out": 1318,
+    "total_tokens_in": 32590,
+    "total_tokens_out": 1626
+  }
+}

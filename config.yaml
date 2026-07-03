@@ -33,6 +33,35 @@ environment:
   # Descriptive labels written into logs; no behavioral effect.
   type: "option_grounded_group_decision"
   source_of_truth: "generated_option_board"
+  # How the decision environment is created.
+  #   auto   = a topic (CLI arg / stdin) is turned into a scenario by the setup LLM, as before.
+  #   manual = the scenario is built deterministically from manual: below; the scenario
+  #            LLM call is skipped and no CLI topic is needed (a given one is ignored).
+  # Manual environments must define exactly len(scenario.option_labels) options, each
+  # with a name and at least one factual attribute; upside/tradeoff/concern/best_for/
+  # short_name are optional. Constraints (budget/distance/duration caps) belong in
+  # shared_context — hard numeric caps are parsed from there and the options are
+  # checked against them at startup (a violation is a config error, never a silent
+  # rewrite). decision_kind and opening_question fall back to neutral defaults.
+  # Pacing/stopping conditions stay under conversation: and consensus:.
+  mode: auto   # auto | manual
+  manual: {}
+  # manual:
+  #   topic: "Choose a coffee machine for the office"
+  #   decision_kind: "purchase_choice"                 # optional
+  #   opening_question: "What matters most: price, speed, or taste?"  # optional
+  #   shared_context:
+  #     - "Budget is capped at $300"
+  #     - "The machine must fit the small kitchen counter"
+  #   options:
+  #     - name: "Moccamaster KBG Select"
+  #       short_name: "Moccamaster"                    # optional
+  #       attrs: {cost: "$290", brew time: "6 minutes", type: "filter"}
+  #       upside: "very durable and fast for full pots" # optional, like the rest
+  #       tradeoff: "no espresso or milk drinks"
+  #       concern: "highest price in the lineup"
+  #       best_for: "steady team-wide filter coffee"
+  #     - name: "..."   # exactly as many options as scenario.option_labels
 
 simulation:
   num_participants: 3                 # how many sims join the discussion

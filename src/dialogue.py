@@ -18,7 +18,7 @@ from datetime import datetime
 
 import prompts
 from aliases import short_alias_map
-from builders import SetupBuilder
+from builders import SetupBuilder, manual_environment
 from config_loader import cfg
 from consensus import ConsensusManager, participant_turn_count
 from logger import DialogueLogger, token_summary_for
@@ -85,7 +85,9 @@ class ValidationReport:
 
 class DialogueRunner:
     def __init__(self, topic: str) -> None:
-        self.topic = topic.strip()
+        # A manual environment carries its own topic; the CLI topic is unused then.
+        manual_env = manual_environment()
+        self.topic = str((manual_env or {}).get("topic") or topic).strip()
         if not self.topic:
             raise ValueError("topic must not be empty")
         seed = cfg.simulation.get("random_seed", None)

@@ -201,6 +201,18 @@ def _sample_names(n: int, exclude: list[str] | None = None) -> list[str]:
     return random.sample(pool, min(n, len(pool)))
 
 
+def manual_environment() -> dict | None:
+    """The manual environment mapping when environment.mode=manual, else None.
+
+    Config validation (config_loader) has already checked structure, option count,
+    and required fields; callers can consume the mapping directly.
+    """
+    environment = cfg.get("environment", None) or {}
+    if str(environment.get("mode", "auto")) != "manual":
+        return None
+    return environment.get("manual") or {}
+
+
 def manual_participant_profiles() -> list[dict]:
     """Normalized manual simulator profiles, or [] when participants.mode is auto.
 
@@ -275,6 +287,9 @@ class SetupBuilder:
         if seed is not None:
             random.seed(int(seed))
         self._profiles = manual_participant_profiles()
+        self._manual_env = manual_environment()
+        if self._manual_env:
+            self.topic = str(self._manual_env["topic"]).strip()
         self._llm = get_llm_client()
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
@@ -282,7 +297,8 @@ class SetupBuilder:
             raise ValueError(
                 f"participants.profiles defines {len(self._profiles)} simulators but build() was asked for {n}"
             )
-        self._validate_topic_participant_count(self.topic, n)
+        if self._manual_env is None:
+            self._validate_topic_participant_count(self.topic, n)
         # With any manually pinned preference the shape distribution is bypassed,
         # so only precompute (and fail fast on) the shape when it will be used.
         preference_shape = None if self._pinned_preferences() else self._preference_shape(n, len(cfg.scenario.option_labels))
@@ -291,15 +307,20 @@ class SetupBuilder:
         scenario: Scenario | None = None
         options_json: list[dict] = []
         scenario_errors: list[str] = []
-        for attempt in range(attempts):
-            try:
-                # Prefer a regenerated, genuinely valid board over clamping:
-                # rewriting a violating number can fabricate a false fact about
-                # a real-world named option (I15). Clamp only on the last try.
-                scenario, options_json = self._generate_scenario(n, allow_clamp=(attempt == attempts - 1))
-                break
-            except Exception as exc:
-                scenario_errors.append(f"{type(exc).__name__}: {exc}")
+        if self._manual_env is not None:
+            # Manual environment: deterministic, no scenario LLM call and no
+            # retry loop — any problem is a config error and should surface.
+            scenario, options_json = self._manual_scenario(n)
+        else:
+            for attempt in range(attempts):
+                try:
+                    # Prefer a regenerated, genuinely valid board over clamping:
+                    # rewriting a violating number can fabricate a false fact about
+                    # a real-world named option (I15). Clamp only on the last try.
+                    scenario, options_json = self._generate_scenario(n, allow_clamp=(attempt == attempts - 1))
+                    break
+                except Exception as exc:
+                    scenario_errors.append(f"{type(exc).__name__}: {exc}")
         if scenario is None:
             raise RuntimeError(
                 f"Scenario setup failed at scenario stage for topic {self.topic!r} "
@@ -330,6 +351,62 @@ class SetupBuilder:
             f"after {attempts} attempt(s): {' | '.join(persona_errors)}. "
             "The validated scenario was preserved across persona retries."
         )
+
+    def _manual_scenario(self, n: int) -> tuple[Scenario, list[dict]]:
+        """Build the Scenario deterministically from environment.manual.
+
+        The user-authored cards are the factual source of truth: numbers are never
+        rewritten. If an option violates a hard cap stated in the manual shared
+        context, that is a configuration contradiction and the run fails with the
+        violation list. The auto path's attribute-count band and its group-size
+        contradiction guards are deliberately not applied: those exist to catch
+        the setup LLM disobeying the requested world, while a manual environment
+        is author-owned (a shared fact like "25 colleagues will attend" describes
+        the scenario, not the deciding group).
+        """
+        env = self._manual_env or {}
+        labels = [str(x) for x in cfg.scenario.option_labels]
+        options: list[OptionCard] = []
+        for idx, row in enumerate(env.get("options") or []):
+            name = self._clean_name(_require(row.get("name"), f"environment.manual.options[{idx}].name"))
+            attrs = {
+                str(k).strip(): str(v).strip()
+                for k, v in (row.get("attrs") or {}).items()
+                if str(k).strip() and str(v).strip()
+            }
+            options.append(OptionCard(
+                id=labels[idx],
+                name=name,
+                short_name=validated_short_alias(name, str(row.get("short_name") or "")),
+                attrs=attrs,
+                upside=str(row.get("upside") or "").strip(),
+                tradeoff=str(row.get("tradeoff") or "").strip(),
+                concern=str(row.get("concern") or "").strip(),
+                best_for=str(row.get("best_for") or "").strip(),
+            ))
+        shared_context = [str(item).strip() for item in env.get("shared_context") or [] if str(item).strip()]
+        scenario = Scenario(
+            topic=self.topic,
+            decision_kind=str(env.get("decision_kind") or "generic_decision").strip(),
+            opening_question=str(env.get("opening_question") or "").strip() or prompts.DEFAULT_OPENING_QUESTION,
+            options=options,
+            shared_context=shared_context,
+        )
+        violations = enforce_shared_caps(scenario, mutate=False)
+        if violations:
+            raise ValueError(
+                "environment.manual options violate the manual shared-context caps: "
+                + " | ".join(violations)
+            )
+        options_json = [
+            {
+                "id": option.id, "name": option.name, "short_name": option.short_name,
+                "attrs": dict(option.attrs), "upside": option.upside,
+                "tradeoff": option.tradeoff, "concern": option.concern, "best_for": option.best_for,
+            }
+            for option in options
+        ]
+        return scenario, options_json
 
     def _generate_scenario(self, n: int, allow_clamp: bool = True) -> tuple[Scenario, list[dict]]:
         data = self._llm.generate_json(prompts.setup_scenario(self.topic, n), profile="setup")

@@ -23,6 +23,10 @@ _PROFILE_FIELDS = frozenset({
     "rejection", "rejection_reason", "traits", "parameters",
 })
 
+# Field names accepted in a manual environment (environment.manual).
+_MANUAL_ENV_FIELDS = frozenset({"topic", "decision_kind", "opening_question", "shared_context", "options"})
+_MANUAL_OPTION_FIELDS = frozenset({"id", "name", "short_name", "attrs", "upside", "tradeoff", "concern", "best_for"})
+
 
 def parse_preference_shape(value: Any) -> tuple[int, ...]:
     """Parse a preference partition from ``"2-1"`` or ``[2, 1]``."""
@@ -200,6 +204,50 @@ class Config(Section):
 
         self._validate_preference_distribution(min_n, max_n, len(labels), n)
         self._validate_participants(min_n, max_n, labels)
+        self._validate_environment(labels)
+
+    def _validate_environment(self, option_labels: list) -> None:
+        environment = self._raw.get("environment") or {}
+        mode = str(environment.get("mode", "auto"))
+        if mode not in ("auto", "manual"):
+            raise ValueError("environment.mode must be 'auto' or 'manual'.")
+        if mode == "auto":
+            return
+        manual = environment.get("manual")
+        if not isinstance(manual, dict) or not manual:
+            raise ValueError("environment.mode=manual requires a non-empty environment.manual mapping.")
+        unknown = set(manual) - _MANUAL_ENV_FIELDS
+        if unknown:
+            raise ValueError(f"environment.manual has unknown fields: {sorted(unknown)}.")
+        if not str(manual.get("topic") or "").strip():
+            raise ValueError("environment.manual.topic must be a non-empty string.")
+        context = manual.get("shared_context", [])
+        if not isinstance(context, list) or any(not str(item).strip() for item in context):
+            raise ValueError("environment.manual.shared_context must be a list of non-empty strings.")
+        options = manual.get("options")
+        labels = [str(x) for x in option_labels]
+        if not isinstance(options, list) or len(options) != len(labels):
+            raise ValueError(
+                f"environment.manual.options must define exactly {len(labels)} options "
+                f"(one per scenario.option_labels entry), got {len(options) if isinstance(options, list) else type(options).__name__}."
+            )
+        for idx, option in enumerate(options):
+            where = f"environment.manual.options[{idx}]"
+            if not isinstance(option, dict):
+                raise ValueError(f"{where} must be a mapping.")
+            unknown = set(option) - _MANUAL_OPTION_FIELDS
+            if unknown:
+                raise ValueError(f"{where} has unknown fields: {sorted(unknown)}.")
+            option_id = str(option.get("id") or "").strip().upper()
+            if option_id and option_id != labels[idx]:
+                raise ValueError(f"{where}.id must be {labels[idx]!r} (options are positional), got {option_id!r}.")
+            if not str(option.get("name") or "").strip():
+                raise ValueError(f"{where}.name must be a non-empty string.")
+            attrs = option.get("attrs")
+            if not isinstance(attrs, dict) or not any(
+                str(k).strip() and str(v).strip() for k, v in attrs.items()
+            ):
+                raise ValueError(f"{where}.attrs must be a mapping with at least one factual attribute.")
 
     def _validate_participants(self, min_n: int, max_n: int, option_labels: list) -> None:
         participants = self._raw.get("participants") or {}

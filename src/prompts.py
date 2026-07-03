@@ -17,6 +17,10 @@ from models import DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, S
 from utils import compact_words
 
 
+# Fallback opening question for manual environments that do not specify one.
+DEFAULT_OPENING_QUESTION = "What matters most to each of us in this decision?"
+
+
 def _schema(obj: object) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=2)
 

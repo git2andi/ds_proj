@@ -123,6 +123,7 @@ class DialogueLogger:
             "run_id": self.run_id,
             "topic": self.topic,
             "participants_mode": str((cfg.get("participants", None) or {}).get("mode", "auto")),
+            "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
             "scenario": _to_jsonable(state.scenario),
             "personas": [_to_jsonable(p) for p in state.personas],
             "turns": [_to_jsonable(t) for t in state.turns],

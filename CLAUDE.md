@@ -42,6 +42,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
 
 ## Key controller mechanisms (current as of 2026-07-03)
 
+- **Environment input modes.** `environment.mode` in `config.yaml`: `auto` turns a
+  CLI/stdin topic into a scenario via the setup LLM; `manual` builds the Scenario
+  deterministically from `environment.manual` (topic, opening question, shared
+  context incl. hard caps, exactly four option cards) with no scenario LLM call and
+  no CLI topic needed. Authored cards are never rewritten — a cap violation is a
+  startup config error. `run.json` records `environment_mode`. Combined with a
+  complete manual cast, setup runs with zero LLM calls.
 - **Participant input modes.** `participants.mode` in `config.yaml`: `auto` samples
   the cast as before; `manual` defines it via `participants.profiles` (group size =
   profile count). Profiles may be partial — missing fields are filled by the auto
