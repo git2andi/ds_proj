@@ -119,6 +119,51 @@ def test_no_reactive_intent_on_plain_flow():
     assert all(runner._reactive_intent(state) is None for _ in range(20))
 
 
+# --- I20: bounded stagnation rescue ---
+
+
+def _stagnating_state(question_in_window: bool = False):
+    """n=2 world where both sides keep restating with no movement signal."""
+    state, personas = _world(prefs=("A", "B"))
+    lines = [
+        ("p1", "Option A Name nails what the garden really stands for."),
+        ("p2", "Names tied to local history last longer, so Option B Name."),
+        ("p1", "Option A Name drives home the real local impact."),
+        ("p2", "Focus on lasting neighborhood ties, Option B Name has that."),
+        ("p1", "The message of Option A Name is what sticks with people."),
+        ("p2", "Option B Name is the name people will still use in ten years." + (" Right?" if question_in_window else "")),
+    ]
+    for pid, text in lines:
+        _turn(state, pid, text, option_refs=["A"] if pid == "p1" else ["B"])
+    return state
+
+
+def test_stagnating_thread_gets_one_rescue_beat():
+    random.seed(6)
+    state = _stagnating_state()
+    runner = _runner()
+    intent = runner._reactive_intent(state)
+    assert intent is not None
+    assert intent.act in {ActType.PROPOSE_COMPROMISE, ActType.ASK}
+    assert set(intent.option_focus) == {"A", "B"}
+    assert "circling" in intent.reason
+    assert state.stagnation_break_done
+    # once per run
+    assert all(
+        i is None or "circling" not in i.reason
+        for i in (runner._reactive_intent(state) for _ in range(30))
+    )
+
+
+def test_question_in_window_counts_as_movement():
+    random.seed(7)
+    state = _stagnating_state(question_in_window=True)
+    runner = _runner()
+    hits = [runner._reactive_intent(state) for _ in range(20)]
+    assert all(i is None or "circling" not in i.reason for i in hits)
+    assert not state.stagnation_break_done
+
+
 def test_challenge_reason_never_targets_own_pick():
     state, personas = _world()
     runner = _runner()

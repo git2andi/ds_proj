@@ -46,8 +46,14 @@ Change participant count and provider settings in `config.yaml`. The default pro
   issues after the repair pass is never printed. `_safe_fallback_text` substitutes
   a deterministic, parser-clean line for the intent (a hard blocker commits to an
   allowed alternative, an unclear vote becomes one clear commitment, a coverage
-  turn names the required option). Metrics: `fallback_turns`,
-  `invalid_printed_turn_count` (must stay 0).
+  turn names the required option) from a pool of 8 direct-vote templates rotated
+  via `avoid_phrases`. Metrics: `fallback_turns`, `invalid_printed_turn_count`
+  (must stay 0).
+- **Complete-sentence truncation.** Word budgets are style targets, not hard
+  bounds: `utils.clean_generated` keeps a complete sentence that lands within a
+  soft cap (budget + max(8, 40%)); a required cut falls on the last real sentence
+  boundary inside the soft window (decimal-point safe); fragment salvage is a
+  last resort for one runaway sentence. No printed line may end mid-thought.
 - **Response obligations.** A direct question (moderator→participant or
   participant→participant), detected from visible text, sets
   `DialogueState.response_obligation`. The router consumes it before normal
@@ -62,17 +68,21 @@ Change participant count and provider settings in `config.yaml`. The default pro
   prompt flags (suppress name/option opening, vary opening). Word budgets are
   trait-driven (`_word_bounds`) so verbosity/engagement produce a visible length
   spread with ±10% per-turn jitter; `sim_utterance` length/tone guidance is
-  concrete and parameter-driven. Decision turns avoid both commitment-phrase
-  families and justification snippets already used in the round
-  (`avoid_phrases` / `avoid_reasons`), and BUILD move purposes rotate.
+  concrete and parameter-driven. Decision turns avoid commitment-phrase families
+  used this round *or by the same speaker in any earlier turn* plus justification
+  snippets from the round (`avoid_phrases` / `avoid_reasons`); the vote repair
+  prompt builds its example menu dynamically from unused families; BUILD move
+  purposes rotate.
 - **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
   penalizes the second-to-last speaker to stop two participants ping-ponging.
 - **Reactive act selection.** `_reactive_intent` fires before the agenda:
   challenged options get defended by an advocate, answers get follow-ups,
-  an unresolved blocker on the leading option is probed once, and visible
-  splits trigger head-to-head comparisons. The per-persona agenda only fills
-  quiet moments. Challenge reasons are stance-aware (never argue against the
-  speaker's own pick).
+  an unresolved blocker on the leading option is probed once, visible
+  splits trigger head-to-head comparisons, and a circling thread (four turns
+  with no question or parsed movement signal while two camps persist) gets one
+  bounded criteria-level compromise/ask beat (`stagnation_break_done`). The
+  per-persona agenda only fills quiet moments. Challenge reasons are
+  stance-aware (never argue against the speaker's own pick).
 - **Thread-scored targeting.** `_choose_target_turn` scores the last few
   participant turns (open questions, objections/blockers, minority voices,
   leading/under-discussed options) instead of always answering the latest line;
@@ -121,7 +131,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Targeted moderation.** Stall nudges prefer concrete visible issues: probe an
   unresolved blocker on the candidate once, ask the group to weigh a visible
   split head-to-head, or address the single holdout — generic "strongest
-  remaining concern" only as last resort.
+  remaining concern" only as last resort. The split-vote compromise probe
+  (`_split_probe_candidate`) never targets an option with a visible unresolved
+  dealbreaker and requires at least one dissenter who can actually move; its
+  wording presents the front-runner as "currently has the most support" with
+  both answers explicitly fine. Closures are status-aware: a majority close
+  names the holdouts and never implies full agreement; unresolved closes
+  present nothing as chosen.
 - **Corpus presets (optional).** `corpus.preset` in `config.yaml` (default null)
   folds corpus statistics into runtime parameters at load time: typical turns per
   participant → turn caps, preferred group size → `num_participants`. Dominance
@@ -135,14 +151,23 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - **Tripwire grounding.** `validation.grounding_mode: tripwire` (default) calls
   the LLM fact-judge only when a regex tripwire finds a suspicious concrete
   claim (a number or policy/medical/weather-style term absent from the option
-  cards/shared context); `always` restores per-turn judging. Decision acts are
-  now grounded too. The per-turn prompt sends a voice capsule instead of raw
-  OCEAN/parameter dumps (n=3 runs ≈ 15-20k input tokens).
+  cards/shared context) or a cross-option fact transfer: a line that names
+  option X while using another card's distinctive tokens, or mixes two cards'
+  distinctive tokens inside an explicit comparison. The judge flags invented
+  facts, wrong-option attribution, and unlike-unit comparisons; `always`
+  restores per-turn judging. Decision acts are grounded too. The per-turn
+  prompt sends a voice capsule instead of raw OCEAN/parameter dumps (n=3 runs
+  ≈ 18-28k input tokens with the cross-option gates).
 - **Hard-cap enforcement.** Hard numeric caps in shared context (budget, distance,
   duration — soft "around $X" phrasings excluded) are extracted by
-  `builders.shared_context_caps` and violating option attributes are clamped in
-  place (`enforce_shared_caps`), respecting per-unit basis. Repairs are recorded
-  in `Scenario.setup_notes`. Persona goals must be consistent with the assigned
+  `builders.shared_context_caps` with unit normalization inside a family
+  (hours↔minutes, miles↔km), units read from the attribute key when the value
+  is bare ("duration_minutes: 130"), and activity scoping ("within 15 minutes
+  *walking*" never binds a wait time). Early setup attempts retry generation on
+  a violation; only the final attempt clamps in place (`enforce_shared_caps`,
+  floored, per-unit basis respected) — rewriting a number can fabricate a false
+  fact about a real-world named option. Repairs are recorded in
+  `Scenario.setup_notes`. Persona goals must be consistent with the assigned
   primary preference (setup prompt rule).
 
 ## Current direction

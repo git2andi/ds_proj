@@ -64,29 +64,19 @@ Use paper insights only where they directly improve the simulator; never impleme
 
 ---
 
-## 3. Open issues after the 2026-07-03 post-update log review
+## 3. Open issues
 
-Current verdict from the new logs: the previous severe architecture failures are mostly gone. Across the ten reviewed runs, `invalid_printed_turn_count` is 0, visible votes generally match outcome metadata, hard blockers are not forced into accepting their rejected option, turn distribution is balanced enough, moderator ratio is no longer dominant, and n=3 token usage is back inside the rough target range (`20260703_094030_633172`: 19.0k input tokens). Do **not** reopen I1-I5 or I8-I12 globally unless a new regression reproduces the old failure.
-
-However, the generated transcripts now show a new set of visible quality and integrity problems. These are ordered by priority.
-
-#### I20 (P2). Local interaction improved, but some threads remain shallow or semantically distorted
-
-**Evidence from new logs:**
-
-- Good improvement: `log/20260703_094505_308949` hiking and `log/20260703_094307_629872` mascot show multi-turn threads around slippery falls / handler risk.
-- Remaining issue: `log/20260703_094800_722511` garden n=2 repeats the same local-history vs pollinator framing without much actual movement and even distorts "Pollinator’s Patch" as appealing to "history lovers".
-- Remaining issue: several runs still lean on card paraphrase + single tradeoff rather than lived social reasoning.
-
-**Why this matters:** this is not a blocker for a working version, but it is the next quality layer after integrity bugs.
-
+All issues from the 2026-07-03 post-update log review (I14-I20) are resolved; see section 4. Do **not** reopen I1-I6 or I8-I20 globally unless a new regression reproduces the old failure.
 
 #### I7 (P2, deferred by user decision 2026-07-03). Implement the planned metrics and the new integrity counters
+
+Note (2026-07-03, I16): the cross-option grounding tripwire raised judge-call volume — n=3 runs now land around 18-28k input tokens instead of ~19k flat. If cost becomes a concern, revisit the tripwire's cross-option gates before touching anything else.
 
 New issues observed during future runs go here, with log path/date, topic, group size, and the smallest description of the failure.
 
 ## 4. Resolved / dropped since the last revision
 
+- **I20: Bounded stagnation rescue for circling threads** — done 2026-07-03. The semantic-distortion half was fixed by I16 (attribution grounding). For the movement half, `_reactive_intent` gained a fifth, once-per-run branch: when the last four participant turns contain no question and no parsed movement signal (acceptance/proposal/compromise/resolution) while ≥2 latent camps persist, the next speaker is routed to a criteria-level move — PROPOSE_COMPROMISE ("name what you would give up") for compromise-inclined sims, otherwise ASK ("what would make your pick workable for them"). Gated past the opening turns (`participant_turns ≥ n+4`), flagged by `DialogueState.stagnation_break_done`. Verified: 2 no-LLM tests (`tests/test_reactive_acts.py`), runs `20260703_131111` (n=2 shelf naming, the exact failing size: questions answered, mid-discussion "meet halfway" proposal, reasoned bridge switch — no circling) and `20260703_131210` (n=3 charity, honest majority with distinct vote phrasing, all counters clean).
 - **I19: De-repeated vote/fallback phrasing** — done 2026-07-03. Three levers. (1) `_apply_style_flags` decision-avoid now also covers the speaker's *own* commitment families from any earlier turn, so a re-asked voter never repeats their round-1 line verbatim (the Cleo/Diego identical-line class; reason snippets stay round-scoped — a persona restating their own justification is coherent). (2) The safe-fallback template pool doubled to 8 parser-verified direct-vote forms, labels aligned with `parsing._PHRASE_FAMILIES` so avoid rotation works across seven voters. (3) `repair_utterance`'s fixed 5-form example menu (the actual template source) is now built dynamically: used families are dropped, the rest shuffled, max 4 shown, plus "add one short reason in your own words". Verified: 3 new no-LLM tests (`tests/test_fallback.py`), runs `20260703_130454` (n=6 forced blocker: five distinct families across six round-1 votes, all three re-asked voters phrase differently than their first vote) and `20260703_130640` (n=3 default: three distinct families, fallbacks 0, clean counters).
 - **I18: Non-leading split probes; contested candidates never probed** — done 2026-07-03. `_split_probe_candidate` (extracted for testability) walks vote-getters by count and returns the first that (a) has no visible unresolved dealbreaker from anyone (`_candidate_blocked`) and (b) at least one dissenter can actually move to; if none qualifies the compromise pass is skipped and the run closes honestly as unresolved. The probe wording now presents the front-runner as "currently has the most support" and asks dissenters whether they could *genuinely* live with it or would rather stay with their own pick — "both answers are fine", no middle-ground framing. Verified: 3 no-LLM tests (`tests/test_moderator.py`, incl. the mascot blocked-leader case), runs `20260703_125737` (n=4 forced 4-way split + blocker: neutral probe, two switches with reasons, blocker holdout restates unpressured, honest majority close) and `20260703_125905` (n=3 default config: minority probe offers an out, honest majority close, zero truncated lines).
 - **I17: Honest, status-aware closure wording** — done 2026-07-03. `moderator_closure_prompt` is now branched by outcome: majority closes name the winning option *as the majority choice* and acknowledge the holdouts by name (computed from `explicit_vote`, matching the consensus criterion, +8 words budget); successful closes wrap up plainly; unresolved closes state the group leaves it undecided and present nothing as chosen. The copyable "Great — X it is, then." example was removed from the prompt (it was being echoed verbatim every run — R9 class). Verified: 3 no-LLM tests (`tests/test_moderator.py`), run `20260703_125215` (n=4 forced blocker, majority 3/4: closure "…even though Diego was leaning toward a different spot"), successful runs `20260703_124904/124957/125050` close naturally without the old template. New I19 evidence: Diego repeated an identical fallback vote line twice in `20260703_125215`.

@@ -339,6 +339,7 @@ class DialogueState:
     fallback_turn_count: int = 0
     invalid_printed_turn_count: int = 0
     blocker_probes: set[str] = field(default_factory=set)  # options whose blocker was already probed
+    stagnation_break_done: bool = False  # the one bounded circling-rescue beat was used (I20)
     phase_history: list[str] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0

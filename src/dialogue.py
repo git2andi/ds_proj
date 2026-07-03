@@ -508,6 +508,46 @@ class DialogueRunner:
                     ),
                     option_focus=pair,
                 )
+
+        # 5. Stagnation rescue (once per run): several turns in a row re-assert
+        #    positions with no question, acceptance, proposal, or compromise —
+        #    the thread is circling (worst at n=2, issue I20). Force one
+        #    criteria-level move that engages the other side's criterion
+        #    instead of another restatement.
+        window = participant_turns[-4:]
+        if (
+            not state.stagnation_break_done
+            and len(window) == 4
+            and len(participant_turns) >= len(state.personas) + 4
+        ):
+            moved = any(
+                t.act.accepts or t.act.proposes_option or t.act.offers_compromise
+                or t.act.resolves_blocker or "?" in t.text
+                for t in window
+            )
+            camps = {rt.current_preference for rt in state.runtimes.values() if rt.current_preference}
+            if not moved and len(camps) >= 2:
+                state.stagnation_break_done = True
+                speaker = self._choose_speaker(state)
+                own = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+                other = next((c for c in sorted(camps) if c != own), None)
+                pair = [o for o in (own, other) if o in state.scenario.option_ids]
+                act = (
+                    ActType.PROPOSE_COMPROMISE
+                    if speaker.sim_params.compromise_threshold <= 0.5
+                    else ActType.ASK
+                )
+                return MoveIntent(
+                    speaker_id=speaker.id,
+                    act=act,
+                    reason=(
+                        "the discussion is circling with both sides restating their pick; "
+                        + ("name what you would give up and propose concretely which option could work for everyone"
+                           if act == ActType.PROPOSE_COMPROMISE
+                           else "ask the other side directly what would make your pick workable for them, or what single thing their pick does better")
+                    ),
+                    option_focus=pair,
+                )
         return None
 
     def _choose_speaker(self, state: DialogueState) -> Persona:
