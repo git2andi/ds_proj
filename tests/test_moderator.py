@@ -111,3 +111,39 @@ def test_unresolved_closure_declares_no_winner():
     text = prompts.moderator_closure_prompt(_outcome("unresolved", None), state.scenario, state)
     assert "undecided" in text
     assert "do not present any option as chosen" in text
+
+
+# --- I18: split-compromise probe candidate selection ---
+
+
+def test_probe_skips_visibly_blocked_leader():
+    """The mascot failure: never ask 'can everyone live with X' while X has a dealbreaker."""
+    state, _ = _world(prefs=("A", "A", "C", "D"))
+    state.runtimes["p1"].explicit_vote = "A"
+    state.runtimes["p2"].explicit_vote = "A"
+    state.runtimes["p3"].explicit_vote = "C"
+    state.runtimes["p4"].explicit_vote = "D"
+    state.runtimes["p3"].hard_rejections["A"] = "handler risk is a dealbreaker"
+    probe = _runner()._split_probe_candidate(state, ["A", "A", "C", "D"])
+    assert probe is not None
+    candidate, _, movers = probe
+    assert candidate != "A"
+    assert movers
+
+
+def test_probe_skipped_when_every_candidate_is_blocked():
+    state, _ = _world(prefs=("A", "C"))
+    state.runtimes["p1"].explicit_vote = "A"
+    state.runtimes["p2"].explicit_vote = "C"
+    state.runtimes["p1"].hard_rejections["C"] = "no"
+    state.runtimes["p2"].hard_rejections["A"] = "no"
+    assert _runner()._split_probe_candidate(state, ["A", "C"]) is None
+
+
+def test_probe_prefers_top_unblocked_vote_getter():
+    state, _ = _world(prefs=("A", "A", "C"))
+    state.runtimes["p1"].explicit_vote = "A"
+    state.runtimes["p2"].explicit_vote = "A"
+    state.runtimes["p3"].explicit_vote = "C"
+    probe = _runner()._split_probe_candidate(state, ["A", "A", "C"])
+    assert probe is not None and probe[0] == "A"

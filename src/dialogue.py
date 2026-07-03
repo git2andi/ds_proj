@@ -269,11 +269,10 @@ class DialogueRunner:
         votes = [rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in state.scenario.option_ids]
         if len(set(votes)) < 2:
             return False
-        leader = Counter(votes).most_common(1)[0][0]
-        dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != leader]
-        movers = [p for p in dissenters if self._can_shift_to(state, p, leader)]
-        if not movers:
+        probe = self._split_probe_candidate(state, votes)
+        if probe is None:
             return False
+        leader, dissenters, movers = probe
         state.compromise_attempted = True
         state.candidate_option = leader
         leader_name = state.scenario.option(leader).name
@@ -283,9 +282,10 @@ class DialogueRunner:
                 "the votes are split with no majority",
                 leader_name,
                 requested_action=(
-                    f"summarize the split in one line and ask whether everyone could live with "
-                    f"{leader_name}, without restarting the debate; {leader_name} is one side's "
-                    "pick, so don't call it a middle ground"
+                    f"summarize the split in one line, note that {leader_name} currently has the "
+                    "most support, and ask those who chose differently whether they could genuinely "
+                    "live with it or would rather stay with their own pick — make clear both answers "
+                    f"are fine; don't push, and don't call {leader_name} a middle ground"
                 ),
                 focus_options=[leader],
             ),
@@ -318,6 +318,25 @@ class DialogueRunner:
             )
             self._emit(self._generate_and_append(state, intent))
         return True
+
+    def _split_probe_candidate(
+        self, state: DialogueState, votes: list[str]
+    ) -> tuple[str, list[Persona], list[Persona]] | None:
+        """(candidate, dissenters, movers) for the split-vote compromise probe.
+
+        The probe candidate must be genuinely acceptable to test: never an
+        option someone has a visible unresolved dealbreaker on, and at least
+        one dissenter must actually be able to move to it (I18). If no
+        vote-getter qualifies, the pass is skipped and the run closes honestly.
+        """
+        for candidate, _count in Counter(votes).most_common():
+            if self._candidate_blocked(state, candidate):
+                continue
+            dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != candidate]
+            movers = [p for p in dissenters if self._can_shift_to(state, p, candidate)]
+            if movers:
+                return candidate, dissenters, movers
+        return None
 
     # ------------------------------------------------------------------
     # Routing policy: who / what / whom
