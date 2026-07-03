@@ -40,7 +40,7 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `info/`: conceptual design notes for intended behavior.
 - `docs/todo.md`: open issues and the per-issue implementation protocol.
 
-## Key controller mechanisms (current as of 2026-07-02)
+## Key controller mechanisms (current as of 2026-07-03)
 
 - **Transcript-safe fallbacks.** A turn that still carries blocking validation
   issues after the repair pass is never printed. `_safe_fallback_text` substitutes

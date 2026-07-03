@@ -95,3 +95,14 @@ no required clarification is pending
 ```
 
 If votes split, the moderator may allow one bounded compromise attempt. After that, unresolved is acceptable.
+
+## Implementation status (2026-07-03)
+
+Implemented in `dialogue.py`: stall nudges pick a concrete visible issue in
+priority order (uncovered option → pending question → unresolved blocker on the
+candidate, probed once → visible split, weighed head-to-head → single holdout →
+generic concern). Vote calls are option-neutral — the candidate is never named
+inside the question. Moderator-addressed participants get a response obligation
+consumed before normal speaker selection. Voting requires visible support
+(cluster or visible compromise proposal); a split gets one bounded compromise
+pass and a majority gets one minority-check beat before closure.

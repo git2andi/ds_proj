@@ -64,41 +64,21 @@ Use paper insights only where they directly improve the simulator; never impleme
 
 ---
 
-## 3. Open issues, dependency-ordered
+## 3. Open issues
 
-Work top to bottom. Phase A restores transcript–state integrity (everything later is unverifiable without it). Phase B adds the metrics that measure Phases C/D. Phase C fixes interaction quality, Phase D cost and surface style, Phase E documentation.
+All issues from the 2026-07-02 restructure are resolved (see section 4) except:
 
-### Phase A — transcript–state integrity
+#### I7 (P1, deferred by user decision 2026-07-03). Implement the planned metrics and the new integrity counters
 
-All Phase A issues (I1–I6) are resolved; see section 4.
+Do not consider evaluation now — we'll do that in depth once the discussion is working. When picked up: implement the `evaluation.py` stubs (`participation_gini`, `direct_response_rate`, `question_answer_completion`, `repetition_score`, `engagement_realization_error`, `compromise_success_rate`) from turn records + parsed acts, add `visible_switches_with_reason` vs `visible_switches_total`, `blocked_option_votes` (must be 0), and `vote_called_with_visible_cluster`; keep the flat CSV stable; no-LLM tests on synthetic states.
 
-### Phase B — measurement
-
----
-
-#### I7 (P1). Implement the planned metrics and the new integrity counters
-Do not consider evaluation now - we'll do that in depth once the discussion is working, 
-
-### Phase C — interaction quality
-
----
-
-### Phase D — cost and surface quality
-
----
-
-### Phase E — documentation
-
----
-
-#### I13 (P2). Align docs with implemented behavior
-
-After Phases A-D: update `info/*.md`, the CLAUDE.md mechanisms section, and this file to match the code — never aspirational. `info/00_overview.md` pipeline, turn-taking, moderator, consensus, and evaluation docs must describe actual behavior; this todo keeps only open issues.
+New issues observed during future runs go here, with log path/date, topic, group size, and the smallest description of the failure.
 
 ---
 
 ## 4. Resolved / dropped since the last revision
 
+- **I13: Docs aligned with implemented behavior** — done 2026-07-03. README's "current problem" paragraph replaced with the implemented-state summary; `info/00/04/06/07/08` gained "Implementation status (2026-07-03)" sections mapping intent to the actual mechanisms (thread-scored targeting, reactive acts, option-neutral vote calls, sanctioned-switch parsing, blocker lifecycle, integrity counters); CLAUDE.md mechanisms kept current per issue throughout.
 - **I12: Length variation + anti-echo style control** — done 2026-07-03. `_word_bounds` gets ±10% per-turn jitter around the trait budget (verbosity ordering and switch headroom preserved, tested); decision turns pass `avoid_reasons` (justification snippets already used this round, extracted by `parsing.round_reason_snippets`) alongside the existing commitment-family avoid list, and the prompt demands a different reason in the voter's own words; BUILD move purposes rotate across three framings (grounded reason / practical consideration / personal priority). Verified: 4 no-LLM tests (`tests/test_style_variation.py`), runs `20260703_015624` (n=3 chant, 18.2k tokens: three distinct vote reasons, natural bridge switch) and `20260703_015733` (n=5 board game, 23.6k tokens: five distinct vote justifications, avg words per persona spread 18.0–23.4, switches concede the pressed point).
 - **I11: Slim per-turn prompt + selective grounding** — done 2026-07-03. `sim_utterance` drops the raw OCEAN and simulator-parameter dumps (voice guidance + server-side length/tone notes already encode them), condenses the style block, and removes the "ask only on ask/invite" restriction; repair prompts scope cards to the intent's focus options. Grounding runs in `grounding_mode: tripwire` (default): the LLM judge is only called when a regex tripwire finds a suspicious concrete claim (number or policy/medical/weather-style term absent from the cards/context, cached per run); `grounding_acts` now includes vote/accept/reject (fixes the LastPass-2FA vote-turn leak class). Verified: 6 no-LLM tests (`tests/test_grounding_tripwire.py`); tokens: n=3 `20260703_015156` **19.4k** (was 25-35k, target ≤20k ✓, one invented fact tripped and repaired), n=6 `20260703_015258` **30.7k** (was 50-56k); repair rate stable; the n=6 dessert transcript shows full negotiation around a visible dealbreaker that stays respected.
 

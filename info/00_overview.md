@@ -58,6 +58,14 @@ MUCA is useful because multi-user interaction requires explicit control over wha
 
 ConvLab-style user simulation is useful because it separates goals, dialogue acts, policy, state, and evaluation. This project does not need a full ConvLab implementation, but it should keep the same spirit: simulated users should have internal goals and controllable behavior, not only decorative persona text.
 
+## Implementation status (2026-07-03)
+
+The loop above is implemented as described: `src/dialogue.py` owns routing and
+state, `src/parsing.py` is the observer, `src/consensus.py` computes outcomes
+from visible votes only, and invalid generated turns are replaced by
+deterministic fallbacks rather than printed. See `docs/todo.md` section 4 for
+the per-issue record.
+
 ## Design principles
 
 1. Option facts are fictional when generated, but hard facts after generation.

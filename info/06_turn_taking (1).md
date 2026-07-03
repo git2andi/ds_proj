@@ -78,6 +78,16 @@ explicitly inviting a quiet participant
 
 Names should not be mechanically prefixed to every turn. Excessive `Name, ...` openings make the transcript sound templated.
 
+## Implementation status (2026-07-03)
+
+Speaker selection weights engagement/initiative with a quiet-speaker boost and
+no immediate self-repeat. Target selection is thread-scored over the last
+`routing.target_window` participant turns (open questions, objections/blockers,
+minority voices, leading/under-discussed options outrank plain recency). Act
+selection is reactive first (`_reactive_intent`: defense of a challenged pick,
+follow-up to an answer, one blocker probe, split comparison), with the private
+agenda only filling quiet moments.
+
 ## Style interaction with routing
 
 Turn-taking and style should work together. A highly responsive sim may answer more direct questions. A highly initiative-driven sim may introduce comparisons or compromise options. A low-engagement sim should not vanish entirely, but should speak less and often more briefly.

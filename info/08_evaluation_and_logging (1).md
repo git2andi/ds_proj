@@ -64,6 +64,15 @@ split-vote closure count
 
 These are more useful right now than abstract quality scores because they identify concrete bugs in the simulator loop.
 
+## Implementation status (2026-07-03)
+
+The stable metrics above are implemented, plus integrity counters:
+`fallback_turns` (deterministic replacements of invalid turns) and
+`invalid_printed_turn_count` (must stay 0). Per-sim `switch_events`
+(from→to, has_reason) land in run.json. The deeper evaluation metrics below
+are deliberately deferred until the discussion behavior is considered final
+(user decision, 2026-07-03).
+
 ## Later evaluation ideas
 
 Later, after behavior stabilizes, evaluation can include:

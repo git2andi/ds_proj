@@ -90,3 +90,18 @@ Good successful close:
 ```text
 All three participants now support C, so the group chooses C.
 ```
+
+## Implementation status (2026-07-03)
+
+All rules above are enforced in `parsing.py` / `dialogue.py` / `consensus.py`.
+Two refinements beyond the original notes:
+
+- On sanctioned switch turns only (minority check, split compromise —
+  `intent.allow_vote_change`), a commitment with a concessive bridge clause
+  ("X works for me even though …") counts; questions and genuine prerequisites
+  ("only if", "unless") still block. Everywhere else parsing stays strictly
+  conservative.
+- A visible active blocker ("X is a dealbreaker for me") binds like a setup
+  rejection: the sim cannot vote for X until a visible resolution line exists,
+  and a turn that would violate this is replaced by a deterministic fallback
+  instead of being printed.

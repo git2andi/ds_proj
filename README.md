@@ -31,4 +31,6 @@ The actual pipeline is:
 7. `src/logger.py` and `src/evaluation.py`
    Save transcripts, JSON logs, token stats, and basic dialogue metrics.
 
-The intended architecture in `info/00_overview.md`, `info/03_agentic_behavior (1).md`, and `info/07_consensus_and_outcomes (1).md` is mostly correct: the LLM should render individual utterances, while the controller manages turn-taking, state, and consensus. The problem is not the high-level idea. The problem is that several controller decisions still use hidden state too strongly, while invalid generated text can remain visible in the transcript.
+The intended architecture in `info/00_overview.md`, `info/03_agentic_behavior (1).md`, and `info/07_consensus_and_outcomes (1).md` is implemented: the LLM renders individual utterances, while the controller manages turn-taking, state, and consensus.
+
+As of 2026-07-03 the transcript–state integrity refactor is complete (see `docs/todo.md`, section 4): invalid generated turns are replaced by deterministic fallbacks instead of being printed, public stance and vote readiness come from visible parsed text only, hard shared-context caps are enforced at setup, targeting/act selection are thread- and adjacency-driven, moderator vote calls are option-neutral, and grounding runs behind a regex tripwire (n=3 runs ≈ 15–20k input tokens). Deeper evaluation metrics are deliberately deferred until the discussion behavior is considered final.
