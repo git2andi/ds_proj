@@ -22,7 +22,9 @@ def _scenario(shared_context, attrs_by_option):
 
 def test_fixed_budget_cap_extracted():
     caps = shared_context_caps(["The budget per child for the activity week is fixed at $300"])
-    assert caps == [{"kind": "money", "value": 300.0, "per": "child", "source": caps[0]["source"]}]
+    assert len(caps) == 1
+    assert caps[0]["kind"] == "money" and caps[0]["value"] == 300.0
+    assert caps[0]["canon"] == 300.0 and caps[0]["per"] == "child"
 
 
 def test_soft_budget_is_not_a_cap():
@@ -36,7 +38,13 @@ def test_thousands_separator_parsed():
 
 def test_distance_cap_extracted():
     caps = shared_context_caps(["The venue must be within 10 miles of the office."])
-    assert caps[0]["kind"] == "miles" and caps[0]["value"] == 10.0
+    assert caps[0]["kind"] == "distance" and caps[0]["value"] == 10.0
+    assert abs(caps[0]["canon"] - 16.09344) < 1e-6
+
+
+def test_hour_cap_normalized_to_minutes():
+    caps = shared_context_caps(["The movie must be under 2 hours."])
+    assert caps[0]["kind"] == "duration" and caps[0]["canon"] == 120.0
 
 
 # --- enforcement ---
@@ -88,3 +96,64 @@ def test_non_matching_kinds_untouched():
     )
     assert enforce_shared_caps(scenario) == []
     assert scenario.option("A").attrs["duration"] == "320 minutes"
+
+
+# --- I15: unit normalization + report-only mode ---
+
+
+def test_hour_cap_clamps_minutes_attr_with_unit_in_key():
+    """The movie-night failure: 'under 2 hours' vs 'duration_minutes: 130'."""
+    scenario = _scenario(
+        ["The movie must be under 2 hours"],
+        {"A": {"duration_minutes": "95"}, "D": {"duration_minutes": "130"}},
+    )
+    notes = enforce_shared_caps(scenario)
+    assert scenario.option("D").attrs["duration_minutes"] == "120"
+    assert scenario.option("A").attrs["duration_minutes"] == "95"
+    assert len(notes) == 1 and "D" in notes[0]
+
+
+def test_minute_cap_clamps_hours_attr():
+    scenario = _scenario(
+        ["Setup must take no more than 90 minutes"],
+        {"A": {"setup time": "2 hours"}},
+    )
+    enforce_shared_caps(scenario)
+    assert scenario.option("A").attrs["setup time"] == "1.5 hours"
+
+
+def test_mile_cap_clamps_km_attr_floored():
+    scenario = _scenario(
+        ["The venue must be within 10 miles of the office"],
+        {"A": {"distance": "20 km"}},
+    )
+    enforce_shared_caps(scenario)
+    # 10 miles = 16.09 km; floored to one decimal so the clamp never exceeds the cap.
+    assert scenario.option("A").attrs["distance"] == "16 km"
+
+
+def test_scoped_walking_cap_ignores_wait_time():
+    """Live false positive: a 15-minute *walking* cap must not clamp a wait time."""
+    scenario = _scenario(
+        ["We want a brunch spot within 15 minutes walking distance from the station"],
+        {"A": {"average_wait_time": "20 minutes", "distance_from_station": "18 minutes walk"}},
+    )
+    notes = enforce_shared_caps(scenario)
+    assert scenario.option("A").attrs["average_wait_time"] == "20 minutes"
+    assert scenario.option("A").attrs["distance_from_station"] == "15 minutes walk"
+    assert len(notes) == 1 and "distance_from_station" in notes[0]
+
+
+def test_unscoped_duration_cap_still_binds_broadly():
+    caps = shared_context_caps(["The movie must be under 2 hours"])
+    assert caps[0]["scope"] is None
+
+
+def test_report_only_mode_does_not_mutate():
+    scenario = _scenario(
+        ["The movie must be under 2 hours"],
+        {"D": {"duration_minutes": "130"}},
+    )
+    notes = enforce_shared_caps(scenario, mutate=False)
+    assert scenario.option("D").attrs["duration_minutes"] == "130"
+    assert len(notes) == 1 and "violates cap" in notes[0]

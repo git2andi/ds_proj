@@ -70,14 +70,6 @@ Current verdict from the new logs: the previous severe architecture failures are
 
 However, the generated transcripts now show a new set of visible quality and integrity problems. These are ordered by priority.
 
-#### I15 (P0). Setup hard-constraint validator still misses normalized time caps; invalid options can win
-
-**Evidence from new logs:**
-
-- `log/20260703_094851_794654`, movie night, n=6: shared context says "The movie must be under 2 hours". Option D `Knives Out` has `duration_minutes: 130` and the tradeoff explicitly says it exceeds the 2-hour limit by 10 minutes. The discussion still ends `successful` for D.
-
-**Why this matters:** this reopens the hard-constraint class in a narrower form. The setup validator fixed some numeric caps, but it did not normalize "under 2 hours" into `duration_minutes < 120`, and the consensus layer allowed an invalid final option.
-
 #### I16 (P0). Grounding still misses cross-option fact transfer and malformed comparisons
 
 **Evidence from new logs:**
@@ -136,6 +128,7 @@ New issues observed during future runs go here, with log path/date, topic, group
 
 ## 4. Resolved / dropped since the last revision
 
+- **I15: Normalized unit caps + retry-before-clamp** — done 2026-07-03. `builders` now normalizes units within a family (hours→minutes, miles→km via `_UNIT_INFO` factors), reads a unit from the attribute key when the value is a bare number (`duration_minutes: 130`), and scopes activity-qualified caps ("within 15 minutes *walking* distance") to matching attributes only — a live n=4 brunch run exposed the walking-cap-clamps-wait-time false positive, now regression-tested. `enforce_shared_caps` gained report-only mode; `build` retries scenario generation on a violation and clamps (floored, in the attr's own unit) only on the final attempt, because rewriting a number can fabricate a false fact about a real-world named option (the archived Knives Out board is caught by both paths, verified offline). Verified: 8 new no-LLM tests, runs `20260703_123142` (n=3 documentary, cap respected at source), `20260703_123338` (n=4 brunch, retry+clamp fired), `20260703_123650` (n=4 day trip, drive cap clean, no false clamps).
 - **I14: Truncated/incomplete utterances** — done 2026-07-03. Root cause was `utils.clean_generated`: any line over the word budget was hard-chopped at `max_words` and patched with fragment heuristics, producing the "maybe we just tweak Lora's." / "or if you?" tails. Fix: the budget is now a style target, not a correctness bound — a complete sentence within a soft cap (budget + max(8, 40%)) is kept whole; when cutting is required, the cut lands on the last real sentence boundary inside the soft window (decimal points excluded via lookahead); the lossy fragment-salvage only remains as last resort for a single runaway sentence, with an extended trailing-word blacklist (modals, pronouns, subordinators). Verified: 5 new no-LLM tests (`tests/test_clean_generated.py`), runs `20260703_122431` (n=3 science fair, 18.6k tokens) and `20260703_122528` (n=6 laundry schedule) — zero non-terminal line endings in both transcripts (checked mechanically), moderator holdout probes complete.
 
 ### Confirmed by the 2026-07-03 post-update logs

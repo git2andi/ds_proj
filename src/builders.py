@@ -8,6 +8,7 @@ If it cannot produce a valid world, build() raises rather than fabricating one.
 
 from __future__ import annotations
 
+import math
 import random
 import re
 from dataclasses import asdict
@@ -41,17 +42,29 @@ _UNIT_CAP = re.compile(
 )
 _PER_UNIT = re.compile(r"\bper\s+([a-z]+)\b", re.I)
 _MONEY_KEYS = ("cost", "price", "budget", "fee", "rate")
-_UNIT_FAMILY = {
-    "mile": "miles", "miles": "miles",
-    "km": "km", "kilometer": "km", "kilometers": "km",
-    "minute": "minutes", "minutes": "minutes", "min": "minutes", "mins": "minutes",
-    "hour": "hours", "hours": "hours", "hr": "hours", "hrs": "hours",
+# unit word -> (family, factor to the family's canonical unit).
+# Canonical units: distance = km, duration = minutes. Normalizing lets an
+# "under 2 hours" cap catch a "duration_minutes: 130" attribute (I15).
+_UNIT_INFO = {
+    "mile": ("distance", 1.609344), "miles": ("distance", 1.609344),
+    "km": ("distance", 1.0), "kilometer": ("distance", 1.0), "kilometers": ("distance", 1.0),
+    "minute": ("duration", 1.0), "minutes": ("duration", 1.0), "min": ("duration", 1.0), "mins": ("duration", 1.0),
+    "hour": ("duration", 60.0), "hours": ("duration", 60.0), "hr": ("duration", 60.0), "hrs": ("duration", 60.0),
 }
 _UNIT_KEYS = {
-    "miles": ("distance", "drive", "commute", "travel"),
-    "km": ("distance", "drive", "commute", "travel"),
-    "minutes": ("time", "duration", "travel", "wait", "setup", "commute"),
-    "hours": ("time", "duration", "travel", "wait", "setup", "commute"),
+    "distance": ("distance", "drive", "commute", "travel"),
+    "duration": ("time", "duration", "travel", "wait", "setup", "commute", "length", "runtime"),
+}
+# A cap sentence that names an activity ("within 15 minutes walking distance")
+# only binds attributes about that activity — never e.g. a wait time (I15).
+_CAP_SCOPE = re.compile(r"\b(walk(?:ing)?|wait(?:ing)?|driv(?:e|ing)|commut(?:e|ing)|travel(?:ing)?|set[- ]?up)\b", re.I)
+_SCOPE_TOKENS = {
+    "walk": ("walk", "distance"),
+    "wait": ("wait",),
+    "driv": ("drive", "driving", "distance", "commute"),
+    "commut": ("commute", "travel", "distance"),
+    "travel": ("travel", "commute", "distance"),
+    "set": ("setup", "set up", "set-up"),
 }
 
 
@@ -70,8 +83,9 @@ def _format_like(value: float, template: str) -> str:
 def shared_context_caps(shared_context: list[str]) -> list[dict]:
     """Hard numeric caps stated in shared context.
 
-    Each cap: {"kind": "money"|unit-family, "value": float, "per": str|None,
-    "source": fact}. Soft phrasings ("around $200") are ignored on purpose.
+    Each cap: {"kind": "money"|"distance"|"duration", "value": float (as
+    stated), "canon": float (canonical unit), "per": str|None, "source": fact}.
+    Soft phrasings ("around $200") are ignored on purpose.
     """
     caps: list[dict] = []
     for fact in shared_context:
@@ -81,28 +95,51 @@ def shared_context_caps(shared_context: list[str]) -> list[dict]:
         per_word = per.group(1).lower() if per else None
         money = _MONEY_CAP.search(fact)
         if money:
-            caps.append({"kind": "money", "value": _to_number(money.group(1)), "per": per_word, "source": fact})
+            value = _to_number(money.group(1))
+            caps.append({"kind": "money", "value": value, "canon": value, "per": per_word, "source": fact})
         unit = _UNIT_CAP.search(fact)
         if unit:
-            family = _UNIT_FAMILY[unit.group(2).lower()]
-            caps.append({"kind": family, "value": _to_number(unit.group(1)), "per": per_word, "source": fact})
+            family, factor = _UNIT_INFO[unit.group(2).lower()]
+            value = _to_number(unit.group(1))
+            scope_match = _CAP_SCOPE.search(fact)
+            scope = next(
+                (stem for stem in _SCOPE_TOKENS if scope_match and scope_match.group(1).lower().startswith(stem)),
+                None,
+            )
+            caps.append({
+                "kind": family, "value": value, "canon": value * factor,
+                "per": per_word, "scope": scope, "source": fact,
+            })
     return caps
 
 
-def _attr_number(kind: str, key: str, value: str) -> tuple[float, str] | None:
-    """(numeric value, matched substring) of an attr relevant to a cap kind."""
+def _attr_number(kind: str, key: str, value: str, assume_relevant: bool = False) -> tuple[float, str, float] | None:
+    """(canonical value, matched substring, attr unit factor) of an attr
+    relevant to a cap kind. The unit may sit in the value ("130 minutes") or in
+    the attribute key itself ("duration_minutes: 130"). ``assume_relevant``
+    skips the key-topic filter when the caller already scope-matched the attr."""
     key_l = key.lower().replace("_", " ")
     if kind == "money":
         if not any(k in key_l for k in _MONEY_KEYS):
             return None
         match = re.search(r"[$€£]?\s*([\d,]+(?:\.\d{1,2})?)", value)
-    else:
-        if not any(k in key_l for k in _UNIT_KEYS.get(kind, ())):
+        if not match:
             return None
-        match = re.search(rf"([\d,]+(?:\.\d+)?)\s*(?:{'|'.join(u for u, f in _UNIT_FAMILY.items() if f == kind)})\b", value, re.I)
-    if not match:
+        return _to_number(match.group(1)), match.group(1), 1.0
+    unit_words = [u for u, (family, _) in _UNIT_INFO.items() if family == kind]
+    key_unit = next((u for u in unit_words if re.search(rf"\b{u}\b", key_l)), None)
+    if not assume_relevant and not key_unit and not any(k in key_l for k in _UNIT_KEYS.get(kind, ())):
         return None
-    return _to_number(match.group(1)), match.group(1)
+    match = re.search(rf"([\d,]+(?:\.\d+)?)\s*({'|'.join(unit_words)})\b", value, re.I)
+    if match:
+        factor = _UNIT_INFO[match.group(2).lower()][1]
+        return _to_number(match.group(1)) * factor, match.group(1), factor
+    if key_unit:
+        match = re.search(r"([\d,]+(?:\.\d+)?)", value)
+        if match:
+            factor = _UNIT_INFO[key_unit][1]
+            return _to_number(match.group(1)) * factor, match.group(1), factor
+    return None
 
 
 def _per_basis(text: str) -> str | None:
@@ -110,12 +147,16 @@ def _per_basis(text: str) -> str | None:
     return match.group(1).lower() if match else None
 
 
-def enforce_shared_caps(scenario: Scenario) -> list[str]:
+def enforce_shared_caps(scenario: Scenario, mutate: bool = True) -> list[str]:
     """Clamp option attributes that violate a hard shared-context cap.
 
     A cap and an attribute are only compared when their per-unit basis matches
-    (a '$500 total' budget never clamps a 'cost per person' attribute). Returns
-    human-readable repair notes; mutates the offending attr values in place.
+    (a '$500 total' budget never clamps a 'cost per person' attribute); units
+    are normalized within a family, so an "under 2 hours" cap catches a
+    minutes attribute. Returns human-readable repair notes; with ``mutate``
+    the offending attr values are rewritten in place (in the attr's own unit,
+    floored so the result never exceeds the cap), otherwise the violations are
+    only reported so the caller can retry generation instead (I15).
     """
     notes: list[str] = []
     caps = shared_context_caps(scenario.shared_context)
@@ -125,14 +166,22 @@ def enforce_shared_caps(scenario: Scenario) -> list[str]:
                 basis = _per_basis(key) or _per_basis(value)
                 if basis != cap["per"]:
                     continue
-                parsed = _attr_number(cap["kind"], key, value)
-                if parsed is None or parsed[0] <= cap["value"]:
+                scope = cap.get("scope")
+                if scope:
+                    haystack = f"{key} {value}".lower().replace("_", " ").replace("-", " ")
+                    if not any(token in haystack for token in _SCOPE_TOKENS[scope]):
+                        continue
+                parsed = _attr_number(cap["kind"], key, value, assume_relevant=bool(scope))
+                if parsed is None or parsed[0] <= cap["canon"]:
                     continue
-                number, matched = parsed
-                option.attrs[key] = value.replace(matched, _format_like(cap["value"], matched), 1)
+                _, matched, factor = parsed
+                clamped = math.floor((cap["canon"] / factor) * 10) / 10
+                if mutate:
+                    option.attrs[key] = value.replace(matched, _format_like(clamped, matched), 1)
                 notes.append(
-                    f"option {option.id} attr '{key}' clamped from {matched} to cap "
+                    f"option {option.id} attr '{key}' value {matched} violates cap "
                     f"{cap['value']:g} (shared context: {cap['source']!r})"
+                    + (f"; clamped to {clamped:g}" if mutate else "")
                 )
     return notes
 
@@ -206,9 +255,12 @@ class SetupBuilder:
         scenario: Scenario | None = None
         options_json: list[dict] = []
         scenario_errors: list[str] = []
-        for _ in range(attempts):
+        for attempt in range(attempts):
             try:
-                scenario, options_json = self._generate_scenario(n)
+                # Prefer a regenerated, genuinely valid board over clamping:
+                # rewriting a violating number can fabricate a false fact about
+                # a real-world named option (I15). Clamp only on the last try.
+                scenario, options_json = self._generate_scenario(n, allow_clamp=(attempt == attempts - 1))
                 break
             except Exception as exc:
                 scenario_errors.append(f"{type(exc).__name__}: {exc}")
@@ -237,13 +289,18 @@ class SetupBuilder:
             "The validated scenario was preserved across persona retries."
         )
 
-    def _generate_scenario(self, n: int) -> tuple[Scenario, list[dict]]:
+    def _generate_scenario(self, n: int, allow_clamp: bool = True) -> tuple[Scenario, list[dict]]:
         data = self._llm.generate_json(prompts.setup_scenario(self.topic, n), profile="setup")
         raw_scenario = data.get("scenario", data)
         scenario = self._parse_scenario(raw_scenario, n)
-        # Hard numeric caps in shared context must hold for every option; a
-        # violating attribute is clamped deterministically instead of letting an
-        # invalid option win the discussion (issue I6).
+        # Hard numeric caps in shared context must hold for every option: an
+        # invalid option must never be able to win the discussion (I6/I15).
+        # Early attempts retry generation on violation; the final attempt
+        # clamps deterministically.
+        if not allow_clamp:
+            violations = enforce_shared_caps(scenario, mutate=False)
+            if violations:
+                raise ValueError("options violate hard shared-context caps: " + " | ".join(violations))
         scenario.setup_notes.extend(enforce_shared_caps(scenario))
         options_json = raw_scenario.get("options", [])
         if scenario.setup_notes:

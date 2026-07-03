@@ -1,0 +1,1898 @@
+{
+  "run_id": "20260703_123650_178940",
+  "topic": "Select a weekend day trip destination no more than 2 hours drive from Munich",
+  "scenario": {
+    "topic": "Select a weekend day trip destination no more than 2 hours drive from Munich",
+    "decision_kind": "travel_destination",
+    "opening_question": "What matters most for our day trip: scenery, activities, food, or relaxation?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Tegernsee Lakeside Village",
+        "attrs": {
+          "drive_time_minutes": "60",
+          "entry_cost_per_person_eur": "0",
+          "hiking_trails_km": "15",
+          "average_restaurant_price_per_person_eur": "25"
+        },
+        "upside": "Beautiful lakeside views with easy hiking and good local food options",
+        "tradeoff": "Popular spot can be crowded on weekends, reducing tranquility",
+        "concern": "Some group members may find the hiking too easy or too short",
+        "best_for": "scenery and casual outdoor activity",
+        "short_name": "Tegernsee"
+      },
+      {
+        "id": "B",
+        "name": "Andechs Monastery and Brewery",
+        "attrs": {
+          "drive_time_minutes": "50",
+          "entry_cost_per_person_eur": "5",
+          "brewery_tour_duration_minutes": "60",
+          "average_meal_price_per_person_eur": "30"
+        },
+        "upside": "Cultural experience with historic monastery and renowned beer tasting",
+        "tradeoff": "Less variety in activities beyond brewery and monastery visit",
+        "concern": "Not ideal for those uninterested in religious sites or beer",
+        "best_for": "culture and food enthusiasts",
+        "short_name": "Andechs"
+      },
+      {
+        "id": "C",
+        "name": "Ammersee Boat Rental and Village Walk",
+        "attrs": {
+          "drive_time_minutes": "55",
+          "boat_rental_cost_per_hour_eur": "40",
+          "walking_distance_km": "5",
+          "entry_cost_per_person_eur": "0"
+        },
+        "upside": "Active day with boating and charming lakeside village exploration",
+        "tradeoff": "Boat rental cost adds to overall expense and requires some effort",
+        "concern": "Weather dependent; rain would limit boating enjoyment",
+        "best_for": "active and water-based activities",
+        "short_name": "Ammersee"
+      },
+      {
+        "id": "D",
+        "name": "Dachau Concentration Camp Memorial Site",
+        "attrs": {
+          "drive_time_minutes": "30",
+          "entry_cost_per_person_eur": "0",
+          "guided_tour_duration_minutes": "90",
+          "walking_distance_km": "4"
+        },
+        "upside": "Educational visit with deep historical significance and guided tours",
+        "tradeoff": "Emotionally intense experience, less recreational or relaxing",
+        "concern": "Might not suit group members looking for lighthearted activities",
+        "best_for": "history and education priorities",
+        "short_name": "Dachau"
+      }
+    ],
+    "shared_context": [
+      "We are a group of exactly 4 people.",
+      "The destination must be within 2 hours driving distance from Munich.",
+      "We want to spend a full weekend day out, leaving in the morning and returning by evening."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Diego",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7000000000000001,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 1.0,
+        "stubbornness": 0.25,
+        "directness": 0.725,
+        "compromise_threshold": 0.17500000000000004
+      },
+      "background": "Diego enjoys active outdoor activities and appreciates scenic nature spots that offer some physical engagement without being too strenuous.",
+      "private_goal": "He wants a day trip with a balance of boating and walking to stay active and enjoy lakeside views.",
+      "preferred_options": [
+        "C",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Faye",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.7,
+        "directness": 0.7875000000000001,
+        "compromise_threshold": 0.65
+      },
+      "background": "Faye prefers relaxing scenic locations with casual outdoor activities and good local food, valuing social and lively atmospheres.",
+      "private_goal": "She wants a popular lakeside village with easy hiking and enjoyable restaurant options for a fun weekend.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Felix",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.6,
+        "compromise_threshold": 0.5375
+      },
+      "background": "Felix values cultural and historic experiences, especially those involving food and drink, and prefers less physically demanding activities.",
+      "private_goal": "He wants to visit a historic monastery with a brewery tour to enjoy cultural enrichment and renowned beer tasting.",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Vince",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.6249999999999999,
+        "directness": 0.5375,
+        "compromise_threshold": 0.5249999999999999
+      },
+      "background": "Vince is highly open to new experiences but prefers active, water-based activities and dislikes crowded or overly social settings.",
+      "private_goal": "He wants an active day involving boating and lakeside village exploration to engage with nature quietly.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "A",
+      "rejection_reason": "Dislikes crowded popular spots that reduce tranquility, conflicting with his preference for peaceful outdoor activities.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "A",
+          "reason": "raise the hard concern about A: Dislikes crowded popular spots that reduce tranquility, conflicting with his preference for peaceful outdoor activities.",
+          "priority": 0.95,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Select a weekend day trip destination no more than 2 hours drive from Munich.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Tegernsee Lakeside Village — entry cost per person eur: 0; average restaurant price per person eur: 25; drive time minutes: 60 (+ Beautiful lakeside views with easy hiking and good local…; − Popular spot can be crowded on weekends, reducing tranquility)\nB) Andechs Monastery and Brewery — entry cost per person eur: 5; average meal price per person eur: 30; brewery tour duration minutes: 60 (+ Cultural experience with historic monastery and renowned beer tasting; − Less variety in activities beyond brewery and monastery visit)\nC) Ammersee Boat Rental and Village Walk — boat rental cost per hour eur: 40; entry cost per person eur: 0; drive time minutes: 55 (+ Active day with boating and charming lakeside village exploration; − Boat rental cost adds to overall expense and requires…)\nD) Dachau Concentration Camp Memorial Site — entry cost per person eur: 0; guided tour duration minutes: 90; drive time minutes: 30 (+ Educational visit with deep historical significance and guided tours; − Emotionally intense experience, less recreational or relaxing)\nContext: We are a group of exactly 4 people.; The destination must be within 2 hours driving distance from Munich.; We want to spend a full weekend day out, leaving in the morning and returning by evening.\nWhat matters most for our day trip: scenery, activities, food, or relaxation?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Select a weekend day trip destination no more than 2 hours drive from Munich.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Tegernsee Lakeside Village — entry cost per person eur: 0; average restaurant price per person eur: 25; drive time minutes: 60 (+ Beautiful lakeside views with easy hiking and good local…; − Popular spot can be crowded on weekends, reducing tranquility)\nB) Andechs Monastery and Brewery — entry cost per person eur: 5; average meal price per person eur: 30; brewery tour duration minutes: 60 (+ Cultural experience with historic monastery and renowned beer tasting; − Less variety in activities beyond brewery and monastery visit)\nC) Ammersee Boat Rental and Village Walk — boat rental cost per hour eur: 40; entry cost per person eur: 0; drive time minutes: 55 (+ Active day with boating and charming lakeside village exploration; − Boat rental cost adds to overall expense and requires…)\nD) Dachau Concentration Camp Memorial Site — entry cost per person eur: 0; guided tour duration minutes: 90; drive time minutes: 30 (+ Educational visit with deep historical significance and guided tours; − Emotionally intense experience, less recreational or relaxing)\nContext: We are a group of exactly 4 people.; The destination must be within 2 hours driving distance from Munich.; We want to spend a full weekend day out, leaving in the morning and returning by evening.\nWhat matters most for our day trip: scenery, activities, food, or relaxation?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Tegernsee nails the vibe with lakeside views and easy hikes plus solid food spots. Crowds suck but it’s only an hour away, so we get more time to chill.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Tegernsee nails the vibe with lakeside views and easy hikes plus solid food spots. Crowds suck but it’s only an hour away, so we get more time to chill.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 816,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Diego",
+      "text": "Let’s grab a boat at Ammersee and walk around the village—perfect mix of action and chill without the crowd.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Let’s grab a boat at Ammersee and walk around the village—perfect mix of action and chill without the crowd.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 891,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "Checking out that monastery and brewery tour at Andechs sounds solid for a relaxed day with some quality food and drink.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Checking out that monastery and brewery tour at Andechs sounds solid for a relaxed day with some quality food and drink.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 883,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "Boating plus a quiet village walk at Ammersee fits best, even if the boat rental adds cost.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Boating plus a quiet village walk at Ammersee fits best, even if the boat rental adds cost.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 956,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "We want good food and chill hikes, not just activity for activity’s sake. Tegernsee gives both without the boat rental hassle, and an hour drive means more daylight to enjoy the lake and trails.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We want good food and chill hikes, not just activity for activity’s sake. Tegernsee gives both without the boat rental hassle, and an hour drive means more daylight to enjoy the lake and trails.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Tegernsee fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1050,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Diego",
+      "text": "Dachau’s quick drive and free entry make it tempting, but the heavy vibe might kill our weekend energy compared to Ammersee’s fun mix.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Dachau’s quick drive and free entry make it tempting, but the heavy vibe might kill our weekend energy compared to Ammersee’s fun mix.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1358,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "Crowds at Tegernsee kill the quiet vibes I want, even if the food’s better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Crowds at Tegernsee kill the quiet vibes I want, even if the food’s better.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Tegernsee, Ammersee fits that",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 812,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "We can spend a full hour at the brewery tour in Andechs, so it’s not just a quick stop but a proper cultural dive.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We can spend a full hour at the brewery tour in Andechs, so it’s not just a quick stop but a proper cultural dive.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Andechs, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 691,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "Boat rental at Ammersee adds about 40 euros an hour, so we should be clear on how long we want to spend on the water.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Boat rental at Ammersee adds about 40 euros an hour, so we should be clear on how long we want to spend on the water.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Ammersee that hasn't come up yet",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 784,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Paying 40 euros an hour just to boat sounds like a hassle that’ll eat into our chill time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Paying 40 euros an hour just to boat sounds like a hassle that’ll eat into our chill time.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on Ammersee with one concrete concern — you currently favor Tegernsee, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 904,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "Does anyone mind the 5 euro entry fee and 30 euro meal cost at Andechs for a full day out?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Does anyone mind the 5 euro entry fee and 30 euro meal cost at Andechs for a full day out?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Andechs",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 620,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Five euros entry and thirty for food is fine if you want a proper day with good beer and history, but the whole vibe is pretty narrow—just monastery and brewery.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Five euros entry and thirty for food is fine if you want a proper day with good beer and history, but the whole vibe is pretty narrow—just monastery and brewery.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 715,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "Sure, it’s a solid plan if we want just a brewery day, but what about actually getting outside and moving around?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Sure, it’s a solid plan if we want just a brewery day, but what about actually getting outside and moving around?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 665,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Vince, Andechs doesn’t give us much to do beyond the monastery and brewery tour, so it’s not great if we want to move around more.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Vince, Andechs doesn’t give us much to do beyond the monastery and brewery tour, so it’s not great if we want to move around more.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 725,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Diego",
+      "text": "We want a solid mix of moving and chilling, so Ammersee offers a better balance despite the boat cost.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We want a solid mix of moving and chilling, so Ammersee offers a better balance despite the boat cost.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Andechs, Ammersee, Dachau with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 848,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "We could split time between Ammersee for some fresh air and Andechs for a quick brewery visit—best of both worlds?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We could split time between Ammersee for some fresh air and Andechs for a quick brewery visit—best of both worlds?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "test whether Ammersee, Andechs could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 747,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "Crowds at Tegernsee kill any chance for peace, and we’d lose the quiet vibe for the lakeside.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Crowds at Tegernsee kill any chance for peace, and we’d lose the quiet vibe for the lakeside.",
+        "act_type": "challenge",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on Tegernsee with one concrete concern — you currently favor Ammersee, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 801,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Crowds hit Tegernsee, sure, but those 15 km of hiking trails keep us spread out enough to find quiet spots. Plus, the lakeside restaurants are solid—good food and enough variety to keep it lively without being a total madhouse.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Crowds hit Tegernsee, sure, but those 15 km of hiking trails keep us spread out enough to find quiet spots. Plus, the lakeside restaurants are solid—good food and enough variety to keep it lively without being a total madhouse.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "the last point raised a concern about Tegernsee, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 774,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright everyone, time to pick your final choice—just share the one option you’re definitely going with.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Alright everyone, time to pick your final choice—just share the one option you’re definitely going with.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Diego",
+      "text": "Count me in for Ammersee—boating and village walking make for an active, relaxed day.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Count me in for Ammersee—boating and village walking make for an active, relaxed day.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1032,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Vince",
+      "text": "My pick is Ammersee for boating and village walking.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "My pick is Ammersee for boating and village walking.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [
+          "for an active, relaxed day"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1105,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "I’d go with Andechs for the historic brewery tour and monastery visit.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’d go with Andechs for the historic brewery tour and monastery visit.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for an active, relaxed day"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1018,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Tegernsee works for me—more space and better restaurant variety keep the vibe lively without extra costs.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Tegernsee works for me—more space and better restaurant variety keep the vibe lively without extra costs.",
+        "act_type": "accept",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for the historic brewery tour and monastery visit",
+          "for an active, relaxed day"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1095,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like the group is split across Ammersee, Tegernsee, and Andechs—could everyone live with Ammersee Boat Rental and Village Walk without rehashing?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like the group is split across Ammersee, Tegernsee, and Andechs—could everyone live with Ammersee Boat Rental and Village Walk without rehashing?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p2",
+      "speaker_name": "Faye",
+      "text": "Count me in for Ammersee Boat Rental and Village Walk—it offers a fun lakeside village experience with boating despite the extra cost.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for Ammersee Boat Rental and Village Walk—it offers a fun lakeside village experience with boating despite the extra cost.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Tegernsee (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1254,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Felix",
+      "text": "I'd go with Ammersee Boat Rental and Village Walk for the active day and lakeside charm despite the boat rental cost.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'd go with Ammersee Boat Rental and Village Walk for the active day and lakeside charm despite the boat rental cost.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Andechs (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1242,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great — Ammersee Boat Rental and Village Walk it is, then.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great — Ammersee Boat Rental and Village Walk it is, then.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "C",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 24,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C",
+        "p4": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C",
+        "p4": "C"
+      },
+      "phase_history": [
+        "pacing: min=12, force=18, hard=26, distinct_initial_prefs=3, avg_compromise=0.53",
+        "turn 5: discussion — all participants gave an opening view",
+        "turn 19: narrowing — target discussion length reached",
+        "turn 24: closure — all participants already gave a clear vote",
+        "turn 27: closure — successful after split-vote compromise"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 18,
+      "hard_max_turns": 26
+    }
+  },
+  "metrics": {
+    "participant_turns": 24,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.143,
+    "turn_counts": {
+      "Diego": 4,
+      "Faye": 8,
+      "Felix": 6,
+      "Vince": 6
+    },
+    "top_speaker_share": 0.333,
+    "avg_words_by_persona": {
+      "Diego": 18.8,
+      "Faye": 26.6,
+      "Felix": 19.7,
+      "Vince": 17.2
+    },
+    "question_density": 0.125,
+    "avg_words_per_turn": 21.2,
+    "repaired_turns": 6,
+    "repair_rate": 0.25,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Diego": "C",
+      "Faye": "C",
+      "Felix": "C",
+      "Vince": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.042,
+    "option_opening_rate": 0.167,
+    "i_opening_rate": 0.083,
+    "we_opening_rate": 0.167,
+    "name_or_option_opening_rate": 0.208,
+    "repeated_opening_patterns": 0,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 8,
+        "reasons": 4,
+        "objections": 1,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 8,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 12,
+        "reasons": 7,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Diego": 0.7,
+      "Faye": 0.925,
+      "Felix": 0.475,
+      "Vince": 0.325
+    },
+    "agenda_status": {
+      "pending": 10,
+      "done": 5,
+      "obsolete": 1
+    },
+    "outcome_status": "successful",
+    "final_option": "C",
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 18,
+    "hard_max_turns": 26,
+    "phase_history": [
+      "pacing: min=12, force=18, hard=26, distinct_initial_prefs=3, avg_compromise=0.53",
+      "turn 5: discussion — all participants gave an opening view",
+      "turn 19: narrowing — target discussion length reached",
+      "turn 24: closure — all participants already gave a clear vote",
+      "turn 27: closure — successful after split-vote compromise",
+      "turn 28: closure — closed as successful"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 2082,
+    "setup_tokens_out": 1144,
+    "dialogue_tokens_in": 22694,
+    "dialogue_tokens_out": 954,
+    "total_tokens_in": 24776,
+    "total_tokens_out": 2098
+  },
+  "tokens": {
+    "setup_tokens_in": 2082,
+    "setup_tokens_out": 1144,
+    "dialogue_tokens_in": 22694,
+    "dialogue_tokens_out": 954,
+    "total_tokens_in": 24776,
+    "total_tokens_out": 2098
+  }
+}
