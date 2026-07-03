@@ -577,6 +577,7 @@ class DialogueRunner:
     _last_target_speaker: str | None = None
     _world_text: str | None = None
     _world_state_id: int | None = None
+    _option_tokens: dict[str, set[str]] = {}
 
     def _choose_target_turn(self, state: DialogueState, speaker: Persona, act: ActType) -> TurnRecord | None:
         """Score a pool of recent threads instead of always taking the last line.
@@ -970,7 +971,9 @@ class DialogueRunner:
     )
 
     def _grounding_tripwire(self, text: str, state: DialogueState) -> bool:
-        """True when the line makes a concrete claim not present in the world facts."""
+        """True when the line makes a concrete claim not present in the world facts,
+        or reuses one option's distinctive card facts while talking about another
+        option (cross-option fact transfer, I16)."""
         world = getattr(self, "_world_text", None)
         if world is None or self._world_state_id != id(state):
             world = " ".join(
@@ -978,13 +981,51 @@ class DialogueRunner:
             ).lower()
             self._world_text = world
             self._world_state_id = id(state)
+            self._option_tokens = self._distinctive_option_tokens(state)
         for number in re.findall(r"\d+(?:[.,:]\d+)?", text):
             if number not in world:
                 return True
         for match in self._SUSPECT_CLAIM.finditer(text):
             if match.group(0).lower() not in world:
                 return True
-        return False
+        # Cross-option transfer: tokens unique to one card showing up in a line
+        # that names a different option (or that compares several cards' facts)
+        # are judged — the claim exists in the world but may sit on the wrong
+        # option or compare unlike quantities.
+        text_tokens = set(re.findall(r"[a-z0-9]{4,}", text.lower()))
+        hits = {oid for oid, tokens in self._option_tokens.items() if tokens & text_tokens}
+        if len(hits) >= 2 and self._COMPARATIVE.search(text):
+            return True
+        resolver = getattr(self, "_resolver", None)
+        mentioned = set(resolver.ids_in_text(text)) if resolver else set()
+        return bool(hits and mentioned and hits - mentioned)
+
+    _COMPARATIVE = re.compile(
+        r"\b(?:than|versus|vs\.?|compared?|beats?|bigger|smaller|cheaper|pricier|faster|"
+        r"slower|closer|farther|higher|lower|longer|shorter|more|less|fewer)\b",
+        re.I,
+    )
+
+    @staticmethod
+    def _distinctive_option_tokens(state: DialogueState) -> dict[str, set[str]]:
+        """Per option: content tokens that appear on no other card and not in
+        shared context. Aliases/names are excluded — naming an option is a
+        mention, not a fact claim."""
+        raw = {
+            option.id: set(re.findall(r"[a-z0-9]{4,}", option.prompt_card().lower()))
+            for option in state.scenario.options
+        }
+        shared = set(re.findall(r"[a-z0-9]{4,}", " ".join(state.scenario.shared_context).lower()))
+        name_tokens = {
+            token
+            for option in state.scenario.options
+            for token in re.findall(r"[a-z0-9]{4,}", f"{option.name} {option.short_name}".lower())
+        }
+        distinctive: dict[str, set[str]] = {}
+        for oid, tokens in raw.items():
+            others = set().union(*(raw[o] for o in raw if o != oid)) if len(raw) > 1 else set()
+            distinctive[oid] = tokens - others - shared - name_tokens
+        return distinctive
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:

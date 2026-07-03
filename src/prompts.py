@@ -352,20 +352,24 @@ Shared context: {context}
 Message to check:
 "{utterance}"
 
-A message is UNSUPPORTED only if it states a NEW concrete fact that is not in, and
+A message is UNSUPPORTED if it states a NEW concrete fact that is not in, and
 not directly implied by, the cards/context: e.g. an invented service, included or
 excluded feature, fee, policy, location, exact time/number, or operational detail.
+A message is ALSO unsupported if it attributes a real card fact to the WRONG
+option (claiming option X has a feature that only option Y's card lists), if it
+misstates what an option is about, or if it compares values of different kinds as
+if they measured the same thing (e.g. an object count against a storage size).
 Opinions, priorities, trade-off reasoning, questions, and uncertainty are ALWAYS allowed.
 Reasoning that follows from a listed attribute is allowed.
-Paraphrasing or summarizing any card's wording is allowed, for ANY option, not just
-the one the message is mainly about. Comparing options through their listed
-attributes is allowed and grounded (e.g. "X costs more and takes longer than Y"
-when the cards list those costs/durations). Commonsense risk that follows from an
-attribute is allowed (an outdoor activity depending on weather; a long session
-being tiring), and statements of uncertainty are ALWAYS allowed ("we don't know
-the forecast", "it might get canceled"). If every concrete claim traces back to
-some card attribute, upside, tradeoff, or concern — or is such reasoning or
-uncertainty — reply false.
+Paraphrasing or summarizing a card's wording is allowed for any option, as long as
+each fact stays tied to the option whose card lists it. Comparing options through
+their listed attributes is allowed and grounded (e.g. "X costs more and takes
+longer than Y" when the cards list those costs/durations). Commonsense risk that
+follows from an attribute is allowed (an outdoor activity depending on weather; a
+long session being tiring), and statements of uncertainty are ALWAYS allowed ("we
+don't know the forecast", "it might get canceled"). If every concrete claim traces
+back to the right option's attribute, upside, tradeoff, or concern — or is such
+reasoning or uncertainty — reply false.
 
 Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
 

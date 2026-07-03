@@ -1,17 +1,18 @@
-"""I11: the LLM grounding judge only runs when a regex tripwire finds a
-suspicious concrete claim. No LLM calls."""
+"""I11/I16: the LLM grounding judge only runs when a regex tripwire finds a
+suspicious concrete claim or a cross-option fact transfer. No LLM calls."""
 
 from __future__ import annotations
 
 from dialogue import DialogueRunner, initialise_state
 from models import OptionCard, Persona, Scenario, SimulatorParameters, TraitProfile
+from parsing import OptionResolver
 
 
 def _world():
     options = [
         OptionCard(id="A", name="Sunny Side Cafe", attrs={"cost": "$20", "distance": "2 miles"},
                    upside="cozy", tradeoff="limited vegetarian options", concern="crowded", best_for="speed"),
-        OptionCard(id="B", name="Green Garden Bistro", attrs={"cost": "$25"},
+        OptionCard(id="B", name="Green Garden Bistro", attrs={"cost": "$25", "backup": "reliable backup power"},
                    upside="healthy", tradeoff="pricier", concern="far", best_for="diets"),
     ]
     scenario = Scenario(
@@ -25,6 +26,7 @@ def _world():
     )
     state = initialise_state(scenario, [persona])
     runner = DialogueRunner.__new__(DialogueRunner)
+    runner._resolver = OptionResolver(options)
     return runner, state
 
 
@@ -60,3 +62,29 @@ def test_world_cache_refreshes_per_state():
     state2.scenario.options[0].attrs["cost"] = "$99"
     runner2 = runner  # same runner, different state
     assert runner2._grounding_tripwire("It costs $99.", state2) is False
+
+
+# --- I16: cross-option fact transfer ---
+
+
+def test_other_options_fact_on_named_option_trips():
+    """The standing-desk failure: option A credited with B's distinctive feature."""
+    runner, state = _world()
+    assert runner._grounding_tripwire("Sunny Side has reliable backup power, that settles it.", state) is True
+
+
+def test_own_card_fact_does_not_trip():
+    runner, state = _world()
+    assert runner._grounding_tripwire("Sunny Side stays cozy but can get crowded.", state) is False
+
+
+def test_mixed_card_facts_in_one_line_trip():
+    """Facts distinctive to two different cards in one claim get judged."""
+    runner, state = _world()
+    assert runner._grounding_tripwire("Cozy beats healthy any day of the week.", state) is True
+
+
+def test_unmentioned_option_fact_alone_does_not_trip():
+    """One card's distinctive fact with no other option named stays cheap."""
+    runner, state = _world()
+    assert runner._grounding_tripwire("A cozy spot would suit the morning crowd.", state) is False
