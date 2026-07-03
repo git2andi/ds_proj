@@ -335,6 +335,7 @@ class DialogueState:
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
     open_questions: list[OpenQuestion] = field(default_factory=list)
     response_obligation: "ResponseObligation | None" = None
+    obligations_created: int = 0
     unanswered_obligations: int = 0
     candidate_option: str | None = None
     compromise_attempted: bool = False

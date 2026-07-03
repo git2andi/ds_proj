@@ -1726,6 +1726,7 @@ class DialogueRunner:
         if target_id not in state.runtimes or target_id == source_id:
             return
         window = max(1, int(cfg.conversation.get("response_obligation_turns", 2)))
+        state.obligations_created += 1
         state.response_obligation = ResponseObligation(
             target_id=target_id,
             source_id=source_id,

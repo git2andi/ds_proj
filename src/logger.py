@@ -126,6 +126,9 @@ class DialogueLogger:
             "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
             "scenario": _to_jsonable(state.scenario),
             "personas": [_to_jsonable(p) for p in state.personas],
+            # Visible runtime state per simulator — switch_events in particular
+            # are needed for preference-movement analysis (todo issues 4/5).
+            "runtimes": {pid: _to_jsonable(rt) for pid, rt in state.runtimes.items()},
             "turns": [_to_jsonable(t) for t in state.turns],
             "outcome": _to_jsonable(outcome),
             "metrics": metrics_for(state, outcome),

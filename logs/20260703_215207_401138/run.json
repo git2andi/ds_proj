@@ -1,0 +1,1833 @@
+{
+  "run_id": "20260703_215207_401138",
+  "topic": "Choose the guild's next raid night schedule in the fantasy online game",
+  "participants_mode": "manual",
+  "environment_mode": "auto",
+  "scenario": {
+    "topic": "Choose the guild's next raid night schedule in the fantasy online game",
+    "decision_kind": "schedule_choice",
+    "opening_question": "How should we balance raid timing to fit everyone's play style and availability?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Weekday Monday 8 PM Start",
+        "attrs": {
+          "start_time": "8 PM",
+          "day": "Monday",
+          "duration_hours": "3",
+          "expected_latency": "low"
+        },
+        "upside": "Early week start helps maintain momentum after weekend breaks",
+        "tradeoff": "Some members may be tired after work or school",
+        "concern": "Monday evenings can be stressful and reduce focus",
+        "best_for": "players who prefer starting the week strong",
+        "short_name": "Monday 8 PM"
+      },
+      {
+        "id": "B",
+        "name": "Wednesday Late Evening 10 PM Start",
+        "attrs": {
+          "start_time": "10 PM",
+          "day": "Wednesday",
+          "duration_hours": "3",
+          "expected_latency": "medium"
+        },
+        "upside": "Midweek timing allows members to settle into the week first",
+        "tradeoff": "Late start may cut into sleep time for some",
+        "concern": "Could cause fatigue for members with early next-day commitments",
+        "best_for": "players who prefer quieter, less rushed raid sessions",
+        "short_name": "Wednesday 10 PM"
+      },
+      {
+        "id": "C",
+        "name": "Friday Prime Time 9 PM Start",
+        "attrs": {
+          "start_time": "9 PM",
+          "day": "Friday",
+          "duration_hours": "3",
+          "expected_latency": "high"
+        },
+        "upside": "Weekend start maximizes relaxation and availability",
+        "tradeoff": "Higher server latency and possible queue times",
+        "concern": "Some members may have social plans conflicting",
+        "best_for": "players who want a relaxed, end-of-week raid",
+        "short_name": "Friday 9 PM"
+      },
+      {
+        "id": "D",
+        "name": "Sunday Early Evening 7 PM Start",
+        "attrs": {
+          "start_time": "7 PM",
+          "day": "Sunday",
+          "duration_hours": "3",
+          "expected_latency": "low"
+        },
+        "upside": "Early evening slot leaves room for rest before the workweek",
+        "tradeoff": "Sunday night may feel rushed or stressful for some",
+        "concern": "Potential conflicts with family or offline responsibilities",
+        "best_for": "players who want to finish the weekend productively",
+        "short_name": "Sunday 7 PM"
+      }
+    ],
+    "shared_context": [
+      "The guild has exactly 3 active raiders available for the next week",
+      "Raids must start between 7 PM and 11 PM server time",
+      "Each raid session lasts exactly 3 hours"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Rina",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.95,
+        "verbosity": 0.98,
+        "initiative": 0.85,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.7,
+        "compromise_threshold": 0.65
+      },
+      "background": "Rina values a raid schedule that allows her to unwind early on Sunday evenings before the workweek starts.",
+      "private_goal": "She wants a raid time that balances social interaction with enough time to rest before Monday.",
+      "preferred_options": [
+        "D",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Sami",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.2,
+        "verbosity": 0.05,
+        "initiative": 0.35,
+        "responsiveness": 0.825,
+        "stubbornness": 0.25,
+        "directness": 0.5499999999999999,
+        "compromise_threshold": 0.26249999999999996
+      },
+      "background": "Sami prefers a raid time that is predictable and allows a calm, focused midweek session.",
+      "private_goal": "He wants a raid schedule that minimizes stress and fits well with his conscientious routine.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Hana",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.6,
+        "verbosity": 0.5,
+        "initiative": 0.425,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.55,
+        "directness": 0.5874999999999999,
+        "compromise_threshold": 0.44999999999999996
+      },
+      "background": "Hana enjoys a relaxed, end-of-week raid that maximizes availability and social time after the workweek.",
+      "private_goal": "She wants the raid to start on Friday night to fully unwind and enjoy the weekend vibe.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 21,
+      "current_preference": "D",
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "A": "Queues are one thing, but does anyone else worry about Sunday feeling too rushed with work Monday morning? We need a sweet spot that actually lets us chill after the raid, not just avoid lag."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Let’s shoot for Sunday at 7 PM—getting the raid done early means we actually have time afterward to chill and not dread Monday right away.",
+        "Sami, exactly—starting at 7 lets us finish by 10, so we actually get Sunday night to decompress, not just jump straight into Monday stress. Plus, it’s low latency, so no annoying lag dragging us out late.",
+        "Keeping Wednesday as a backup sounds smart since it breaks up the week, but that 10 PM start might wreck some people’s sleep before a workday. Sunday at 7 still gives us the best chance to raid hard and actually relax after.",
+        "What’s the one thing Friday’s 9 PM slot does better that would make Sunday 7 PM less stressful for you? I get the family clash, but maybe we can find a way to keep Sunday and still avoid feeling rushed.",
+        "Queues are one thing, but does anyone else worry about Sunday feeling too rushed with work Monday morning? We need a sweet spot that actually lets us chill after the raid, not just avoid lag.",
+        "You think Monday at 8 PM would be too draining after work, or could it actually help us kick off the week stronger than Sunday? What’s the vibe on that?",
+        "My pick is Sunday at 7 PM because it gives us time to rest before the workweek starts."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 7,
+      "last_spoke_turn": 22,
+      "current_preference": "D",
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "D": "Sunday’s early start means less chance of stretching too late."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Sunday’s early start means less chance of stretching too late.",
+        "Sunday’s early slot cuts stress by leaving hours for real downtime.",
+        "Watch for Friday’s lag spikes—makes some fights wonky.",
+        "Friday’s 9 PM lets us wind down before raiding, but latency’s a real gamble.",
+        "Queues might kill time—Sunday’s 7 PM avoids that and keeps nights predictable.",
+        "Rina, we don’t know actual stress levels here, but Sunday ends early enough to prep Monday calmly.",
+        "I’m going with Sunday 7 PM for a calm prep."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 8,
+      "last_spoke_turn": 25,
+      "current_preference": "D",
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Rina, I get the Sunday vibe, but Friday at 9 lets us start the weekend right—even if the lag’s a pain.",
+        "Could we keep Sunday or Wednesday as options too? Wednesday’s late start might actually suit some midweek chill, balancing out Friday’s weekend vibe.",
+        "Sami, true, but Sunday evenings might clash with family time for some, while Friday’s late start lets us fully unwind even if latency’s higher.",
+        "Sami, sure, lag’s rough, but does anyone have ideas on how we could handle queues if we try Friday’s 9 PM slot?",
+        "True, Sami, but Sunday might still clash with family stuff, while Friday’s vibe feels way more relaxed even with the lag risk.",
+        "Rina, Monday could wear us out quick, but it might kill our weekend fun—Friday keeps that chill vibe alive.",
+        "Count me in for Friday 9 PM since it’s great for weekend relaxation.",
+        "I’m sold on Sunday 7 PM because it leaves time to rest before the workweek without feeling rushed."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "D",
+          "has_reason": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose the guild's next raid night schedule in the fantasy online game.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Weekday Monday 8 PM Start — duration hours: 3; start time: 8 PM; day: Monday (+ Early week start helps maintain momentum after weekend breaks; − Some members may be tired after work or school)\nB) Wednesday Late Evening 10 PM Start — duration hours: 3; start time: 10 PM; day: Wednesday (+ Midweek timing allows members to settle into the week…; − Late start may cut into sleep time for some)\nC) Friday Prime Time 9 PM Start — duration hours: 3; start time: 9 PM; day: Friday (+ Weekend start maximizes relaxation and availability; − Higher server latency and possible queue times)\nD) Sunday Early Evening 7 PM Start — duration hours: 3; start time: 7 PM; day: Sunday (+ Early evening slot leaves room for rest before the…; − Sunday night may feel rushed or stressful for some)\nContext: The guild has exactly 3 active raiders available for the next week; Raids must start between 7 PM and 11 PM server time; Each raid session lasts exactly 3 hours.\nHow should we balance raid timing to fit everyone's play style and availability?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose the guild's next raid night schedule in the fantasy online game.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Weekday Monday 8 PM Start — duration hours: 3; start time: 8 PM; day: Monday (+ Early week start helps maintain momentum after weekend breaks; − Some members may be tired after work or school)\nB) Wednesday Late Evening 10 PM Start — duration hours: 3; start time: 10 PM; day: Wednesday (+ Midweek timing allows members to settle into the week…; − Late start may cut into sleep time for some)\nC) Friday Prime Time 9 PM Start — duration hours: 3; start time: 9 PM; day: Friday (+ Weekend start maximizes relaxation and availability; − Higher server latency and possible queue times)\nD) Sunday Early Evening 7 PM Start — duration hours: 3; start time: 7 PM; day: Sunday (+ Early evening slot leaves room for rest before the…; − Sunday night may feel rushed or stressful for some)\nContext: The guild has exactly 3 active raiders available for the next week; Raids must start between 7 PM and 11 PM server time; Each raid session lasts exactly 3 hours.\nHow should we balance raid timing to fit everyone's play style and availability?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Let’s shoot for Sunday at 7 PM—getting the raid done early means we actually have time afterward to chill and not dread Monday right away.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Let’s shoot for Sunday at 7 PM—getting the raid done early means we actually have time afterward to chill and not dread Monday right away.",
+        "act_type": "opening",
+        "option_refs": [
+          "A",
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 754,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Rina, I get the Sunday vibe, but Friday at 9 lets us start the weekend right—even if the lag’s a pain.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Rina, I get the Sunday vibe, but Friday at 9 lets us start the weekend right—even if the lag’s a pain.",
+        "act_type": "opening",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 749,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Sunday’s early start means less chance of stretching too late.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Sunday’s early start means less chance of stretching too late.",
+        "act_type": "opening",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "Sunday’s early start means less chance of stretching too late."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 870,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Sami, exactly—starting at 7 lets us finish by 10, so we actually get Sunday night to decompress, not just jump straight into Monday stress. Plus, it’s low latency, so no annoying lag dragging us out late.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Sami, exactly—starting at 7 lets us finish by 10, so we actually get Sunday night to decompress, not just jump straight into Monday stress. Plus, it’s low latency, so no annoying lag dragging us out late.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "D",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "the last point raised a concern about Sunday 7 PM, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 940,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Could we keep Sunday or Wednesday as options too? Wednesday’s late start might actually suit some midweek chill, balancing out Friday’s weekend vibe.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Could we keep Sunday or Wednesday as options too? Wednesday’s late start might actually suit some midweek chill, balancing out Friday’s weekend vibe.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "test whether Sunday 7 PM, Wednesday 10 PM, Friday 9 PM could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1106,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Keeping Wednesday as a backup sounds smart since it breaks up the week, but that 10 PM start might wreck some people’s sleep before a workday. Sunday at 7 still gives us the best chance to raid hard and actually relax after.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Keeping Wednesday as a backup sounds smart since it breaks up the week, but that 10 PM start might wreck some people’s sleep before a workday. Sunday at 7 still gives us the best chance to raid hard and actually relax after.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1648,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Sunday’s early slot cuts stress by leaving hours for real downtime.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Sunday’s early slot cuts stress by leaving hours for real downtime.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Sunday 7 PM, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 769,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Sami, true, but Sunday evenings might clash with family time for some, while Friday’s late start lets us fully unwind even if latency’s higher.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sami, true, but Sunday evenings might clash with family time for some, while Friday’s late start lets us fully unwind even if latency’s higher.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Sunday 7 PM, Friday 9 PM that hasn't come up yet",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1513,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Watch for Friday’s lag spikes—makes some fights wonky.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Watch for Friday’s lag spikes—makes some fights wonky.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Wednesday 10 PM, Friday 9 PM, Sunday 7 PM that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 914,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "What’s the one thing Friday’s 9 PM slot does better that would make Sunday 7 PM less stressful for you? I get the family clash, but maybe we can find a way to keep Sunday and still avoid feeling rushed.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "What’s the one thing Friday’s 9 PM slot does better that would make Sunday 7 PM less stressful for you? I get the family clash, but maybe we can find a way to keep Sunday and still avoid feeling rushed.",
+        "act_type": "ask",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 779,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Friday’s 9 PM lets us wind down before raiding, but latency’s a real gamble.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Friday’s 9 PM lets us wind down before raiding, but latency’s a real gamble.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1608,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Sami, sure, lag’s rough, but does anyone have ideas on how we could handle queues if we try Friday’s 9 PM slot?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sami, sure, lag’s rough, but does anyone have ideas on how we could handle queues if we try Friday’s 9 PM slot?",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1414,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Queues might kill time—Sunday’s 7 PM avoids that and keeps nights predictable.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Queues might kill time—Sunday’s 7 PM avoids that and keeps nights predictable.",
+        "act_type": "answer",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 837,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Queues are one thing, but does anyone else worry about Sunday feeling too rushed with work Monday morning? We need a sweet spot that actually lets us chill after the raid, not just avoid lag.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Queues are one thing, but does anyone else worry about Sunday feeling too rushed with work Monday morning? We need a sweet spot that actually lets us chill after the raid, not just avoid lag.",
+        "act_type": "agree",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "Queues are one thing, but does anyone else worry about Sunday feeling too rushed with work Monday morning? We need a sweet spot that actually lets us chill after the raid, not just avoid lag."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 788,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "Rina, we don’t know actual stress levels here, but Sunday ends early enough to prep Monday calmly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Rina, we don’t know actual stress levels here, but Sunday ends early enough to prep Monday calmly.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 871,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "True, Sami, but Sunday might still clash with family stuff, while Friday’s vibe feels way more relaxed even with the lag risk.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "True, Sami, but Sunday might still clash with family stuff, while Friday’s vibe feels way more relaxed even with the lag risk.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Monday 8 PM, Sunday 7 PM, Friday 9 PM with one clear trade-off",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1527,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "You think Monday at 8 PM would be too draining after work, or could it actually help us kick off the week stronger than Sunday? What’s the vibe on that?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "You think Monday at 8 PM would be too draining after work, or could it actually help us kick off the week stronger than Sunday? What’s the vibe on that?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Monday 8 PM, Sunday 7 PM, Friday 9 PM",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 860,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Rina, Monday could wear us out quick, but it might kill our weekend fun—Friday keeps that chill vibe alive.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Rina, Monday could wear us out quick, but it might kill our weekend fun—Friday keeps that chill vibe alive.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1494,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, time to pick your final choice—what’s the one option you’re going with for the plan?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, time to pick your final choice—what’s the one option you’re going with for the plan?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "My pick is Sunday at 7 PM because it gives us time to rest before the workweek starts.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "My pick is Sunday at 7 PM because it gives us time to rest before the workweek starts.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1115,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Sami",
+      "text": "I’m going with Sunday 7 PM for a calm prep.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m going with Sunday 7 PM for a calm prep.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "because it gives us time to rest before the workweek"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1111,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "Count me in for Friday 9 PM since it’s great for weekend relaxation.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Count me in for Friday 9 PM since it’s great for weekend relaxation.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for a calm prep",
+          "because it gives us time to rest before the workweek"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1806,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like Sunday 7 PM has the nod—Hana, can you live with that, or what’s still pulling you toward Friday?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like Sunday 7 PM has the nod—Hana, can you live with that, or what’s still pulling you toward Friday?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Hana",
+      "text": "I’m sold on Sunday 7 PM because it leaves time to rest before the workweek without feeling rushed.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m sold on Sunday 7 PM because it leaves time to rest before the workweek without feeling rushed.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Friday 9 PM, or briefly state what still holds you back and restate your pick",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1924,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, Sunday at 7 PM it is—looking forward to it!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, Sunday at 7 PM it is—looking forward to it!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "D",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 22,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "D"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "D"
+      },
+      "phase_history": [
+        "pacing: min=12, force=17, hard=23, distinct_initial_prefs=2, avg_compromise=0.55",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 19: narrowing — target discussion length reached",
+        "turn 25: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 17,
+      "hard_max_turns": 23
+    }
+  },
+  "metrics": {
+    "participant_turns": 22,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.154,
+    "turn_counts": {
+      "Rina": 7,
+      "Sami": 7,
+      "Hana": 8
+    },
+    "top_speaker_share": 0.364,
+    "avg_words_by_persona": {
+      "Rina": 32.3,
+      "Sami": 11.7,
+      "Hana": 20.2
+    },
+    "question_density": 0.227,
+    "avg_words_per_turn": 21.4,
+    "repaired_turns": 4,
+    "repair_rate": 0.182,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Rina": "D",
+      "Sami": "D",
+      "Hana": "D"
+    },
+    "unanswered_direct_questions": 0,
+    "participation_gini": 0.03,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.4,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.126,
+    "compromise_success_rate": null,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 1.0,
+    "name_prefix_rate": 0.273,
+    "option_opening_rate": 0.182,
+    "i_opening_rate": 0.136,
+    "we_opening_rate": 0.045,
+    "name_or_option_opening_rate": 0.455,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 5,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 14,
+        "reasons": 6,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 17,
+        "reasons": 9,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Rina": 0.95,
+      "Sami": 0.2,
+      "Hana": 0.6
+    },
+    "agenda_status": {
+      "pending": 8,
+      "done": 1,
+      "obsolete": 3
+    },
+    "outcome_status": "successful",
+    "final_option": "D",
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 17,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=12, force=17, hard=23, distinct_initial_prefs=2, avg_compromise=0.55",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 19: narrowing — target discussion length reached",
+      "turn 25: closure — successful visible after vote round 1",
+      "turn 26: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.15,
+    "verbosity_realization_error": 0.052,
+    "engagement_error_by_persona": {
+      "Rina": 0.225,
+      "Sami": 0.204,
+      "Hana": 0.021
+    },
+    "verbosity_error_by_persona": {
+      "Rina": 0.052,
+      "Sami": 0.052,
+      "Hana": 0.052
+    },
+    "engagement_behavior_correlation": 0.038,
+    "verbosity_behavior_correlation": 0.997,
+    "setup_tokens_in": 1942,
+    "setup_tokens_out": 954,
+    "dialogue_tokens_in": 26290,
+    "dialogue_tokens_out": 861,
+    "total_tokens_in": 28232,
+    "total_tokens_out": 1815
+  },
+  "tokens": {
+    "setup_tokens_in": 1942,
+    "setup_tokens_out": 954,
+    "dialogue_tokens_in": 26290,
+    "dialogue_tokens_out": 861,
+    "total_tokens_in": 28232,
+    "total_tokens_out": 1815
+  }
+}

@@ -74,7 +74,7 @@ clearly independent.
 1. ~~Explicit simulator-profile input mode (participants: auto | manual)~~ DONE 2026-07-03
 2. ~~Explicit environment input mode (environment: auto | manual)~~ DONE 2026-07-03
 3. ~~Honest agenda documentation + framing (docs/model only, no behavior change forced)~~ DONE 2026-07-03
-4. Complete the planned evaluation layer
+4. ~~Complete the planned evaluation layer~~ DONE 2026-07-03
 5. Fix sudden unexplained preference switches (bridge-clause enforcement)
 6. Fix phase-history inconsistency (no false "closure" phase markers)
 7. Reduce moderator dependency (configurable moderator behavior)
@@ -176,7 +176,39 @@ Possible future direction (not yet planned in detail): give each simulator a cle
 goal stack, where each turn consumes, defers, or updates one agenda item. This is a
 future improvement, not something to implement opportunistically as part of this issue.
 
-### Issue 4 (P1). Complete the planned evaluation layer
+### Issue 4 (P1). Complete the planned evaluation layer — DONE (2026-07-03)
+
+Implemented in `src/evaluation.py` (the `_PLANNED_METRICS` stub is gone; everything
+is computed from existing state, no LLM calls). New per-run metrics, all also in the
+flat CSV where scalar: `participation_gini`, `direct_response_rate` (obligations
+answered / created — `DialogueState.obligations_created` counter added),
+`question_answer_completion` (directed questions answered by the addressee within
+the router's own obligation window), `open_questions_at_end`, `repetition_score`
+(max content-word Jaccard against the persona's own earlier turns, averaged),
+`compromise_success_rate` (None when no split-vote compromise ran; 1.0/0.0
+otherwise, so the CSV mean is the success share), `switch_event_count` +
+`switch_explanation_rate` (from `switch_events`, now also serialized: `run.json`
+gains a `runtimes` section), engagement/verbosity realization errors (mean +
+per-persona, measured against the controller's own `_word_bounds` length formula),
+and per-run trait→behavior coupling signals `engagement_behavior_correlation` /
+`verbosity_behavior_correlation` (None below n=3 or without variance).
+
+Validated 2026-07-03 by live runs:
+
+- auto cast, streaming-service topic (`logs/20260703_215001_546285`): all metrics
+  populated and plausible (gini 0.033, drr 1.0, qac 0.667, repetition 0.139,
+  verb_corr 1.0); Olga's unexplained D→B flip recorded as a switch_event —
+  `has_reason=true` because she stated a reason, yet the transcript shows no
+  bridge to her old stance, confirming issue 5 needs a *bridge* check, not just
+  a reason check.
+- extreme manual cast, raid-schedule topic (`logs/20260703_215207_401138`):
+  the metrics discriminate — configured verbosity 0.98/0.05/0.5 realized as
+  32.3/11.7/20.2 avg words (corr 0.997), while configured engagement
+  0.95/0.2/0.6 realized as turn counts 7/7/8 (corr 0.038): **engagement is
+  currently not realized in turn share because `_choose_speaker` equalizes turn
+  counts by design.** Recorded as an open observation below.
+
+Original issue text kept for context:
 
 `src/evaluation.py` already has a `_PLANNED_METRICS` stub tuple returning `None` for
 each name, plus a comment pointing at this exact gap. It needs real implementations,
@@ -379,4 +411,14 @@ automated tests:
   shows it misleads participants into false convergence).
 - **More issue-5 evidence.** Board-game run (`logs/20260703_214253_923700`, n=3):
   Diego argued Ticket to Ride throughout, then voted "My vote goes to Azul because
-  its simple rules..." with no bridge to his prior stance.
+  its simple rules..." with no bridge to his prior stance. Streaming run
+  (`logs/20260703_215001_546285`): Olga said Disney+ "won't cut it for me", then
+  voted for it two turns later with no concession of her HBO Max stance.
+- **Engagement is not realized in turn share (2026-07-03, raid-schedule run
+  `logs/20260703_215207_401138`).** Configured engagement 0.95/0.2/0.6 produced
+  turn counts 7/7/8 (`engagement_behavior_correlation` 0.038) because
+  `_choose_speaker` equalizes turn counts by design; verbosity, by contrast, is
+  strongly realized (corr 0.997). If engagement should shape participation, the
+  router needs an engagement-weighted mode — closest existing hook is the corpus
+  preset dominance weighting. Decide deliberately; do not change the router as a
+  side effect of another issue.

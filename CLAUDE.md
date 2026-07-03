@@ -35,7 +35,11 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `src/aliases.py`: the single option-alias contract (`short_alias_map`).
 - `src/style.py`: deterministic surface-style tracker (name/option openings, repeated templates).
 - `src/llm_client.py`: provider abstraction (uni | groq | gemini | gpt).
-- `src/evaluation.py`: lightweight metrics (separate from logging).
+- `src/evaluation.py`: per-run metrics incl. parameter-realization checks
+  (participation gini, engagement/verbosity realization errors and correlations,
+  response/question completion, repetition, compromise success, switch
+  explanation rate). `run.json` carries a `runtimes` section (visible state +
+  `switch_events` per sim).
 - `src/logger.py`: run logging (transcript, JSON, metrics CSV).
 - `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
 - `tests/`: deterministic, LLM-free tests.
