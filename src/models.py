@@ -176,6 +176,12 @@ def _clip01(value: float) -> float:
 
 @dataclass(slots=True)
 class AgendaItem:
+    """One pending private communicative goal.
+
+    Part of a weak hint list consulted only in quiet moments — not an
+    agenda-based simulation mechanism (see simulator.build_initial_agenda).
+    """
+
     act: ActType
     option: str | None = None
     reason: str = ""

@@ -1,9 +1,15 @@
 """Simulator-level behavior controls.
 
 This module translates broad OCEAN traits into explicit, tunable simulator
-parameters and creates a small agenda for each simulated user. The agenda is not
-a script; it is a set of pending communicative goals that the routing policy may
-consume when the dialogue context makes them useful.
+parameters and gives each simulated user a small private communicative-goal list
+(the ``agenda`` fields).
+
+Honest status of that list: it is a WEAK HINT SYSTEM, not agenda-based user
+simulation. The router consults it only in quiet moments (reactive rules and
+obligations always win), and observed runs leave most items pending at the end. Do not describe this project as an "agenda-based user simulator" in
+docs or write-ups. A real goal stack — where each turn consumes, defers, or
+updates an item — is a possible future direction, tracked in docs/todo.md
+(issue 3), and should not be implemented opportunistically.
 """
 
 from __future__ import annotations
@@ -30,10 +36,12 @@ def derive_simulator_parameters(traits: TraitProfile) -> SimulatorParameters:
 
 
 def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
-    """A small private agenda of pending communicative goals, tuned by parameters.
+    """A small private communicative-goal list, tuned by parameters.
 
-    This is not a script: the router consumes items when the dialogue context makes
-    them useful. Final voting is owned by the controller, so there is no VOTE item.
+    This is a weak hint system, not a script and not agenda-based simulation: the
+    router consumes an item only when nothing reactive is pending, and most items
+    are expected to stay pending. Final voting is owned by the controller, so
+    there is no VOTE item.
     """
     preferred = persona.preferred_option
     p = persona.sim_params

@@ -82,6 +82,8 @@ make final vote
 
 Agenda items help sims remain consistent across turns. They also make the system closer to user-simulation work: each sim has goals and a simple policy, not only a persona description.
 
+**Current implementation status (2026-07-03):** the above is the intended direction, not what exists. What is implemented is a weak private communicative-goal list: the router consults it only in quiet moments, and run logs show most items never resolve (e.g. `pending: 9, done: 1`). The system is **not yet** an agenda-based user simulator, and write-ups must not call it one. See docs/todo.md issue 3.
+
 ## Voice differentiation
 
 Sims should sound different because their parameters affect utterance style.

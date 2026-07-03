@@ -73,7 +73,7 @@ clearly independent.
 
 1. ~~Explicit simulator-profile input mode (participants: auto | manual)~~ DONE 2026-07-03
 2. ~~Explicit environment input mode (environment: auto | manual)~~ DONE 2026-07-03
-3. Honest agenda documentation + framing (docs/model only, no behavior change forced)
+3. ~~Honest agenda documentation + framing (docs/model only, no behavior change forced)~~ DONE 2026-07-03
 4. Complete the planned evaluation layer
 5. Fix sudden unexplained preference switches (bridge-clause enforcement)
 6. Fix phase-history inconsistency (no false "closure" phase markers)
@@ -144,7 +144,16 @@ Validated 2026-07-03 by live runs:
 - auto/auto regression, board-game topic (`logs/20260703_214253_923700`):
   generation path unchanged, successful(D), 0 fallbacks.
 
-### Issue 3 (P1). Be honest about the current agenda system
+### Issue 3 (P1). Be honest about the current agenda system — DONE (2026-07-03)
+
+Resolved as a docs/framing-only change (no behavior touched): `simulator.py` module
+and `build_initial_agenda` docstrings, `models.AgendaItem` docstring, `README.md`,
+`CLAUDE.md`, `info/00_overview.md`, and `info/02_sim_generation (1).md` now state
+plainly that the agenda fields are a **weak private communicative-goal list /
+hint system consulted only in quiet moments**, that most items stay pending in
+observed runs, and that the system is **not yet an agenda-based user simulator**
+(write-ups must not call it one). The goal-stack idea below stays a possible
+future direction, not scheduled work. Original issue text kept for context:
 
 `models.py` defines `AgendaItem` and `simulator.build_initial_agenda`, and
 `evaluation.py` already reports `agenda_status` counts. But recent run logs show most

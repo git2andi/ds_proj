@@ -14,7 +14,7 @@ The actual pipeline is:
    Generates the scenario, option board, shared context, personas, initial preference assignments, and hard blockers.
 
 2. `src/simulator.py`
-   Converts OCEAN/persona traits into operational parameters such as engagement, verbosity, stubbornness, initiative, responsiveness, and compromise threshold. It also builds a weak initial agenda.
+   Converts OCEAN/persona traits into operational parameters such as engagement, verbosity, stubbornness, initiative, responsiveness, and compromise threshold. It also builds a small private communicative-goal list per sim — a weak hint system consulted only in quiet moments, not agenda-based user simulation (most items stay pending; see docs/todo.md issue 3).
 
 3. `src/dialogue.py`
    Runs the whole conversation. It creates the opening, controls participant turns, selects speakers, selects speech acts, chooses addressees/target turns, handles moderator interventions, starts vote rounds, attempts compromise, and closes the run.

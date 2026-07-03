@@ -27,7 +27,9 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `src/dialogue.py`: compact discussion controller — routing, obligations, voting, moderator.
 - `src/consensus.py`: outcome logic (`ConsensusManager`, `participant_turn_count`), visible-vote only.
 - `src/builders.py`: setup generation and persona parsing.
-- `src/simulator.py`: OCEAN→parameter derivation and per-persona agenda.
+- `src/simulator.py`: OCEAN→parameter derivation and a per-persona private
+  communicative-goal list (a weak hint system consulted in quiet moments — this is
+  *not* agenda-based user simulation; never describe it as such).
 - `src/models.py`: typed state (scenario, personas, runtime, obligations, coverage).
 - `src/parsing.py`: option matching and visible-commitment/vote parsing.
 - `src/aliases.py`: the single option-alias contract (`short_alias_map`).

@@ -31,7 +31,7 @@ Option generation
   Creates the shared fact base of the simulated world.
 
 Sim generation
-  Creates user simulators with OCEAN traits, explicit behavioral parameters, private goals, preferences, and agenda items.
+  Creates user simulators with OCEAN traits, explicit behavioral parameters, private goals, preferences, and a small private communicative-goal list (a weak hint system, not agenda-based simulation — see 02 and docs/todo.md issue 3).
 
 Moderator / environment controller
   Handles state-aware facilitation, phase transitions, targeted questions, and bounded closure.
