@@ -189,16 +189,39 @@ No speaker prefix. One sentence only."""
 
 
 def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
+    """Status-aware closing line. A majority close must acknowledge holdouts —
+    a wrap-up that sounds like full agreement is socially dishonest (I17)."""
     final = scenario.option(outcome.final_option).name if outcome.final_option else "no option"
+    budget = int(cfg.utterances.word_budgets.closure)
+    if outcome.status == "majority":
+        holdouts = [
+            p.name for p in state.personas
+            if state.runtimes[p.id].explicit_vote != outcome.final_option
+        ]
+        names = ", ".join(holdouts) if holdouts else "some of the group"
+        instruction = (
+            f"The group did NOT fully agree: {names} did not back {final}. "
+            f"Say the group goes ahead with {final} as the majority choice and briefly "
+            f"acknowledge that {names} preferred something else. Never word it as if "
+            "everyone agreed."
+        )
+        budget += 8
+    elif outcome.status == "successful":
+        instruction = f"Everyone visibly agreed on {final}; wrap up warmly in plain words."
+    else:
+        instruction = (
+            "No agreement was reached. Say plainly that the group leaves this undecided "
+            "for now, and do not present any option as chosen."
+        )
     return f"""You are the neutral moderator closing a casual group decision chat.
 
 Outcome status: {outcome.status}
 Final option: {final}
 Reason: {outcome.reason}
 
-Write one short closing line under {cfg.utterances.word_budgets.closure} words.
-Sound conversational, like a person wrapping up a chat, not a formal announcement
-("Great — X it is, then." rather than "X has been chosen based on majority commitment").
+{instruction}
+Write one short closing line under {budget} words.
+Sound conversational, like a person wrapping up a chat, not a formal announcement.
 Do not add new reasons or facts. No farewell. No speaker prefix."""
 
 

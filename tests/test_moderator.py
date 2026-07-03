@@ -72,3 +72,42 @@ def test_visible_split_requests_head_to_head():
     assert target is None
     assert set(focus) == {"A", "C"}
     assert "weigh" in action
+
+
+# --- I17: honest closure prompts ---
+
+
+def _outcome(status, final, reason="r"):
+    from models import RunOutcome
+    return RunOutcome(status, final, reason, 10)
+
+
+def test_majority_closure_names_holdouts_and_forbids_consensus_wording():
+    import prompts
+    state, _ = _world()
+    state.runtimes["p1"].explicit_vote = "A"
+    state.runtimes["p2"].explicit_vote = "A"
+    state.runtimes["p3"].explicit_vote = "C"
+    text = prompts.moderator_closure_prompt(_outcome("majority", "A"), state.scenario, state)
+    assert "P3" in text
+    assert "majority" in text.lower()
+    assert "everyone agreed" in text  # the "never word it as if everyone agreed" rule
+    assert "it is, then" not in text  # copyable consensus template removed
+
+
+def test_successful_closure_has_no_holdout_framing():
+    import prompts
+    state, _ = _world()
+    for pid in ("p1", "p2", "p3"):
+        state.runtimes[pid].explicit_vote = "A"
+    text = prompts.moderator_closure_prompt(_outcome("successful", "A"), state.scenario, state)
+    assert "did not back" not in text
+    assert "agreed" in text
+
+
+def test_unresolved_closure_declares_no_winner():
+    import prompts
+    state, _ = _world()
+    text = prompts.moderator_closure_prompt(_outcome("unresolved", None), state.scenario, state)
+    assert "undecided" in text
+    assert "do not present any option as chosen" in text
