@@ -8,6 +8,7 @@ hidden metadata; public outcomes are parsed from visible text only.
 from __future__ import annotations
 
 import json
+import random
 from collections.abc import Iterable
 
 from aliases import short_alias_map
@@ -323,6 +324,21 @@ Style:
 - Add one new point, concern, answer, or stance shift; don't repeat reasons from the recent chat. Never invent facts beyond the option facts above.{style_notes}"""
 
 
+# Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a
+# family in intent.avoid_phrases can be dropped from the repair menu (I19).
+# Every form parses as a direct vote in parsing.py.
+_COMMIT_FORM_EXAMPLES = {
+    "I'd go with": "I'd go with X",
+    "gets my vote": "X gets my vote",
+    "my pick is": "my pick is X",
+    "works for me": "X works for me",
+    "count me in for": "count me in for X",
+    "my vote is": "my vote goes to X",
+    "I'm going with": "I'm going with X",
+    "I'm sold on": "I'm sold on X",
+}
+
+
 def repair_utterance(
     *,
     original_text: str,
@@ -338,10 +354,18 @@ def repair_utterance(
     recent = "\n".join(recent_lines[-3:]) if recent_lines else "(no recent turns)"
     clear_commit = ""
     if intent.act.value in {"vote", "accept"}:
-        clear_commit = " The line MUST contain an explicit commitment to exactly one option — use one of these forms: 'I'd go with X', 'X gets my vote', 'my pick is X', 'X works for me', 'count me in for X'. No hedging, no 'even if', no 'leaning', and no question after it."
-        if intent.avoid_phrases:
-            already = "; ".join(f"'{p}'" for p in intent.avoid_phrases)
-            clear_commit += f" Earlier speakers already used {already} — pick one of the OTHER forms from the list."
+        # Offer only commitment forms not yet used this round / by this speaker,
+        # in shuffled order, so repaired vote turns stop converging on one
+        # fixed menu (I19).
+        fresh = [ex for label, ex in _COMMIT_FORM_EXAMPLES.items() if label not in intent.avoid_phrases]
+        forms = fresh or list(_COMMIT_FORM_EXAMPLES.values())
+        random.shuffle(forms)
+        menu = ", ".join(f"'{f}'" for f in forms[:4])
+        clear_commit = (
+            f" The line MUST contain an explicit commitment to exactly one option — for example: {menu}. "
+            "Add one short reason in your own words. No hedging, no 'even if', no 'leaning', "
+            "and no question after it."
+        )
     required_focus = ""
     if intent.option_focus and "MISSING_REQUIRED_OPTION_FOCUS" in issue_codes:
         required_focus = f" Mention and discuss Option {intent.option_focus[0]} explicitly."

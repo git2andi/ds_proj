@@ -1,0 +1,1457 @@
+{
+  "run_id": "20260703_130640_530682",
+  "topic": "Pick the warm-up song for the volleyball team's home matches",
+  "scenario": {
+    "topic": "Pick the warm-up song for the volleyball team's home matches",
+    "decision_kind": "generic_decision",
+    "opening_question": "What kind of energy and vibe should our warm-up song create for the team and fans?",
+    "options": [
+      {
+        "id": "A",
+        "name": "High-Energy Pop Anthem by Popular Artist",
+        "attrs": {
+          "duration_seconds": "180",
+          "tempo_bpm": "130",
+          "lyric_theme": "empowerment",
+          "genre": "pop"
+        },
+        "upside": "Creates an upbeat, motivational atmosphere that energizes players and fans",
+        "tradeoff": "May feel overplayed or generic to some team members",
+        "concern": "Some players might find the style too mainstream or distracting",
+        "best_for": "boosting team energy and broad audience appeal",
+        "short_name": "Pop Anthem"
+      },
+      {
+        "id": "B",
+        "name": "Classic Rock Pump-Up Track from the 80s",
+        "attrs": {
+          "duration_seconds": "175",
+          "tempo_bpm": "120",
+          "lyric_theme": "competition",
+          "genre": "rock"
+        },
+        "upside": "Familiar and timeless sound that appeals to older fans and creates intensity",
+        "tradeoff": "Might not connect as well with younger players or fans",
+        "concern": "Lyrics could be perceived as dated or less relevant to current team culture",
+        "best_for": "invoking grit and competitive spirit",
+        "short_name": "Classic Rock"
+      },
+      {
+        "id": "C",
+        "name": "Upbeat Instrumental Electronic Beat Mix",
+        "attrs": {
+          "duration_seconds": "160",
+          "tempo_bpm": "140",
+          "lyric_theme": "instrumental",
+          "genre": "electronic"
+        },
+        "upside": "Keeps focus on rhythm and energy without distracting lyrics",
+        "tradeoff": "Lacks vocal hooks that some find motivating or memorable",
+        "concern": "Could feel impersonal or less emotionally engaging for some players",
+        "best_for": "maintaining high tempo and focus without lyrical distractions",
+        "short_name": "Electronic Beat"
+      },
+      {
+        "id": "D",
+        "name": "Local Indie Band’s Energetic Volleyball Theme",
+        "attrs": {
+          "duration_seconds": "150",
+          "tempo_bpm": "125",
+          "lyric_theme": "team spirit",
+          "genre": "indie rock"
+        },
+        "upside": "Supports local artists and provides a unique, team-specific identity",
+        "tradeoff": "Less recognizable, might not immediately hype the crowd",
+        "concern": "Sound quality or style might not suit all team members’ tastes",
+        "best_for": "building community pride and distinctiveness",
+        "short_name": "Indie Band"
+      }
+    ],
+    "shared_context": [
+      "The volleyball team has 3 core decision makers for this choice",
+      "The warm-up song must be under 3 minutes to fit pre-game timing",
+      "The song must be clean and appropriate for all ages in the audience"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nico",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 1,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.2625,
+        "initiative": 0.275,
+        "responsiveness": 0.55,
+        "stubbornness": 0.85,
+        "directness": 0.75,
+        "compromise_threshold": 0.875
+      },
+      "background": "As a highly conscientious but introverted player, Nico prefers a focused, rhythm-driven warm-up without distracting lyrics.",
+      "private_goal": "Nico wants a warm-up song that maintains high tempo and focus without lyrical distractions to help the team prepare mentally.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "A",
+      "rejection_reason": "Nico finds the mainstream pop anthem too distracting and overplayed, conflicting with their need for focus.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": "A",
+          "reason": "raise the hard concern about A: Nico finds the mainstream pop anthem too distracting and overplayed, conflicting with their need for focus.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Isla",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.775,
+        "stubbornness": 0.55,
+        "directness": 0.7374999999999999,
+        "compromise_threshold": 0.44999999999999996
+      },
+      "background": "Isla values community and team spirit, appreciating unique and local elements that build pride and identity.",
+      "private_goal": "She wants a warm-up song that supports local artists and fosters a distinct team identity.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Leo",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.3625,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.625,
+        "compromise_threshold": 0.6
+      },
+      "background": "Leo is open to energetic and motivational music that boosts team energy and appeals broadly to players and fans.",
+      "private_goal": "He wants a warm-up song that creates an upbeat, motivational atmosphere to energize everyone.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick the warm-up song for the volleyball team's home matches.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) High-Energy Pop Anthem by Popular Artist — duration seconds: 180; genre: pop; lyric theme: empowerment (+ Creates an upbeat, motivational atmosphere that energizes players and…; − May feel overplayed or generic to some team members)\nB) Classic Rock Pump-Up Track from the 80s — duration seconds: 175; genre: rock; lyric theme: competition (+ Familiar and timeless sound that appeals to older fans…; − Might not connect as well with younger players or…)\nC) Upbeat Instrumental Electronic Beat Mix — duration seconds: 160; genre: electronic; lyric theme: instrumental (+ Keeps focus on rhythm and energy without distracting lyrics; − Lacks vocal hooks that some find motivating or memorable)\nD) Local Indie Band’s Energetic Volleyball Theme — duration seconds: 150; genre: indie rock; lyric theme: team spirit (+ Supports local artists and provides a unique, team-specific identity; − Less recognizable, might not immediately hype the crowd)\nContext: The volleyball team has 3 core decision makers for this choice; The warm-up song must be under 3 minutes to fit pre-game timing; The song must be clean and appropriate for all ages in the audience.\nWhat kind of energy and vibe should our warm-up song create for the team and fans?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick the warm-up song for the volleyball team's home matches.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) High-Energy Pop Anthem by Popular Artist — duration seconds: 180; genre: pop; lyric theme: empowerment (+ Creates an upbeat, motivational atmosphere that energizes players and…; − May feel overplayed or generic to some team members)\nB) Classic Rock Pump-Up Track from the 80s — duration seconds: 175; genre: rock; lyric theme: competition (+ Familiar and timeless sound that appeals to older fans…; − Might not connect as well with younger players or…)\nC) Upbeat Instrumental Electronic Beat Mix — duration seconds: 160; genre: electronic; lyric theme: instrumental (+ Keeps focus on rhythm and energy without distracting lyrics; − Lacks vocal hooks that some find motivating or memorable)\nD) Local Indie Band’s Energetic Volleyball Theme — duration seconds: 150; genre: indie rock; lyric theme: team spirit (+ Supports local artists and provides a unique, team-specific identity; − Less recognizable, might not immediately hype the crowd)\nContext: The volleyball team has 3 core decision makers for this choice; The warm-up song must be under 3 minutes to fit pre-game timing; The song must be clean and appropriate for all ages in the audience.\nWhat kind of energy and vibe should our warm-up song create for the team and fans?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Choosing the local indie band helps us stand out and build pride, but we should check if everyone connects with their style first.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Choosing the local indie band helps us stand out and build pride, but we should check if everyone connects with their style first.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1481,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "We want something that fires everyone up fast—Pop Anthem nails that, but could it feel too generic?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We want something that fires everyone up fast—Pop Anthem nails that, but could it feel too generic?",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 755,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "No lyrics means no distractions. Keeps us locked in, even if it’s less catchy.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "No lyrics means no distractions. Keeps us locked in, even if it’s less catchy.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 924,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Leo, the Pop Anthem does hype quick, but it’s a bit overplayed—supporting the local band gives us something totally unique and homegrown.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leo, the Pop Anthem does hype quick, but it’s a bit overplayed—supporting the local band gives us something totally unique and homegrown.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 930,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Consider that Classic Rock hits hard with intensity and nostalgia, but might miss younger players’ vibe compared to the Pop Anthem.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Consider that Classic Rock hits hard with intensity and nostalgia, but might miss younger players’ vibe compared to the Pop Anthem.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 972,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Instrumental means no hype from vocals, but Electronic Beat keeps the tempo sharp and steady.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Instrumental means no hype from vocals, but Electronic Beat keeps the tempo sharp and steady.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1478,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "We need a song that feels like us and stands out, so the local indie band fits better than anything generic or played out.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We need a song that feels like us and stands out, so the local indie band fits better than anything generic or played out.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Pop Anthem, Indie Band fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1528,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Too generic means less impact. Electronic Beat’s faster tempo hits harder.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Too generic means less impact. Electronic Beat’s faster tempo hits harder.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "challenge",
+        "reason": "push back on Pop Anthem with one concrete concern — you currently favor Electronic Beat, so aim at the rival, not your own pick",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1590,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "No lyrics keep focus, sure, but the Pop Anthem’s empowerment message pumps real team energy we’ll all feed off.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "No lyrics keep focus, sure, but the Pop Anthem’s empowerment message pumps real team energy we’ll all feed off.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Pop Anthem fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1328,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Leo, I get the vibe, but supporting a local band builds our own identity and pumps real team spirit.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leo, I get the vibe, but supporting a local band builds our own identity and pumps real team spirit.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Indie Band fits that",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "We can’t ignore that Pop Anthem’s exact 3-minute length fits perfectly with our tight pre-game schedule.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We can’t ignore that Pop Anthem’s exact 3-minute length fits perfectly with our tight pre-game schedule.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Pop Anthem that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1333,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "160 seconds still fits. Better to keep focus than hit an exact time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "160 seconds still fits. Better to keep focus than hit an exact time.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Pop Anthem, Electronic Beat that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 770,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Leo, 30 seconds difference won’t kill us, but choosing local means we get something truly ours, not just another playlist filler.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leo, 30 seconds difference won’t kill us, but choosing local means we get something truly ours, not just another playlist filler.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Pop Anthem, Indie Band, Electronic Beat with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 729,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Can we confirm the Pop Anthem’s lyrics are clean enough for all ages, or does that risk any complaints?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Can we confirm the Pop Anthem’s lyrics are clean enough for all ages, or does that risk any complaints?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Pop Anthem",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 1,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 617,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Leo, we don’t know for sure about the lyrics here, but I’d rather avoid risking any complaints and keep the vibe unique.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Leo, we don’t know for sure about the lyrics here, but I’d rather avoid risking any complaints and keep the vibe unique.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 647,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Everyone, let’s wrap this up—what’s your final pick? Just name the one option you’re going with.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Everyone, let’s wrap this up—what’s your final pick? Just name the one option you’re going with.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Nico",
+      "text": "Instrumental keeps us sharp. Electronic Beat is the pick.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Instrumental keeps us sharp. Electronic Beat is the pick.",
+        "act_type": "accept",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "I’m going with Electronic Beat because its upbeat rhythm keeps the energy high without distracting lyrics.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m going with Electronic Beat because its upbeat rhythm keeps the energy high without distracting lyrics.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1700,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Isla",
+      "text": "Count me in for Electronic Beat because its energetic rhythm keeps us focused without distracting vocals.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for Electronic Beat because its energetic rhythm keeps us focused without distracting vocals.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "because its upbeat rhythm keeps the energy high without distracting"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 974,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great choice, everyone—looks like we’re all set with the Upbeat Instrumental Electronic Beat Mix!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great choice, everyone—looks like we’re all set with the Upbeat Instrumental Electronic Beat Mix!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "C",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 18,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C"
+      },
+      "phase_history": [
+        "pacing: min=9, force=15, hard=21, distinct_initial_prefs=3, avg_compromise=0.36",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 16: narrowing — target discussion length reached",
+        "turn 20: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 9,
+      "force_narrow_turns": 15,
+      "hard_max_turns": 21
+    }
+  },
+  "metrics": {
+    "participant_turns": 18,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.143,
+    "turn_counts": {
+      "Nico": 5,
+      "Isla": 7,
+      "Leo": 6
+    },
+    "top_speaker_share": 0.389,
+    "avg_words_by_persona": {
+      "Nico": 12.4,
+      "Isla": 21.0,
+      "Leo": 18.0
+    },
+    "question_density": 0.111,
+    "avg_words_per_turn": 17.6,
+    "repaired_turns": 2,
+    "repair_rate": 0.111,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Nico": "C",
+      "Isla": "C",
+      "Leo": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "name_prefix_rate": 0.222,
+    "option_opening_rate": 0.056,
+    "i_opening_rate": 0.111,
+    "we_opening_rate": 0.222,
+    "name_or_option_opening_rate": 0.278,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 0,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 5,
+        "reasons": 1,
+        "objections": 1,
+        "acceptances": 1
+      },
+      "D": {
+        "mentions": 5,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nico": 0.4,
+      "Isla": 0.55,
+      "Leo": 0.362
+    },
+    "agenda_status": {
+      "pending": 8,
+      "done": 3,
+      "obsolete": 2
+    },
+    "outcome_status": "successful",
+    "final_option": "C",
+    "corpus_preset": "",
+    "min_discussion_turns": 9,
+    "force_narrow_turns": 15,
+    "hard_max_turns": 21,
+    "phase_history": [
+      "pacing: min=9, force=15, hard=21, distinct_initial_prefs=3, avg_compromise=0.36",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 16: narrowing — target discussion length reached",
+      "turn 20: closure — successful visible after vote round 1",
+      "turn 21: closure — closed as successful"
+    ],
+    "planned_metrics": {
+      "participation_gini": null,
+      "direct_response_rate": null,
+      "question_answer_completion": null,
+      "repetition_score": null,
+      "engagement_realization_error": null,
+      "compromise_success_rate": null
+    },
+    "setup_tokens_in": 1968,
+    "setup_tokens_out": 1021,
+    "dialogue_tokens_in": 19603,
+    "dialogue_tokens_out": 543,
+    "total_tokens_in": 21571,
+    "total_tokens_out": 1564
+  },
+  "tokens": {
+    "setup_tokens_in": 1968,
+    "setup_tokens_out": 1021,
+    "dialogue_tokens_in": 19603,
+    "dialogue_tokens_out": 543,
+    "total_tokens_in": 21571,
+    "total_tokens_out": 1564
+  }
+}

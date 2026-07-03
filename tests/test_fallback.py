@@ -84,6 +84,54 @@ def test_fallback_rotates_commitment_family():
     assert visible_commitment(text, resolver) == ("vote", "B")
 
 
+def test_fallback_pool_survives_many_used_families():
+    """I19: with seven voters' families burned, the fallback still finds a fresh form."""
+    state, persona, resolver = _world()
+    used = ["gets my vote", "I'd go with", "my pick is", "I vote for", "my vote is", "I'm going with"]
+    intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="r", option_focus=["B"], avoid_phrases=used)
+    text = DialogueRunner._safe_fallback_text(state, persona, intent, report=ValidationReport(["UNCLEAR_VISIBLE_COMMITMENT"], True))
+    assert visible_commitment(text, resolver) == ("vote", "B")
+    lowered = text.lower()
+    assert not any(f in lowered for f in ("gets my vote", "go with", "my pick is", "i vote for", "vote goes to", "going with"))
+
+
+def test_own_previous_vote_family_avoided_across_rounds():
+    """I19: a re-asked voter must not repeat their own commitment phrasing from
+    an earlier vote round (Cleo/Diego identical-line class)."""
+    from models import DialogueAct, Phase, TurnRecord
+
+    state, persona, resolver = _world()
+    line = "Count me in for Green Garden Bistro."
+    state.turns.append(TurnRecord(index=0, speaker_id="p1", speaker_name="P1", text=line, phase=Phase.NARROWING,
+                                  act=DialogueAct(speaker_id="p1", text=line, act_type=ActType.VOTE)))
+    mod = "Could you live with it, or what holds you back?"
+    state.turns.append(TurnRecord(index=1, speaker_id="moderator", speaker_name="Moderator", text=mod, phase=Phase.NARROWING,
+                                  act=DialogueAct(speaker_id="moderator", text=mod, act_type=ActType.REACT)))
+    runner = DialogueRunner.__new__(DialogueRunner)
+    intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="r", option_focus=["B"])
+    runner._apply_style_flags(state, intent)
+    assert "count me in for" in intent.avoid_phrases
+    text = DialogueRunner._safe_fallback_text(state, persona, intent, ValidationReport(["UNCLEAR_VISIBLE_COMMITMENT"], True))
+    assert "count me in" not in text.lower()
+    assert visible_commitment(text, resolver) is not None
+
+
+def test_repair_menu_excludes_used_families():
+    """I19: the repair prompt only offers commitment forms not yet used."""
+    import prompts
+
+    state, persona, _ = _world()
+    intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="r", option_focus=["B"],
+                        avoid_phrases=["count me in for", "my pick is", "gets my vote"])
+    prompt = prompts.repair_utterance(
+        original_text="hmm", issue_codes=["UNCLEAR_VISIBLE_COMMITMENT"], persona=persona,
+        state=state, recent_lines=[], intent=intent, max_words=18,
+    )
+    assert "count me in" not in prompt.lower()
+    assert "my pick is" not in prompt.lower()
+    assert "commitment to exactly one option" in prompt
+
+
 def test_coverage_fallback_mentions_required_option():
     state, persona, resolver = _world()
     intent = MoveIntent(speaker_id="p1", act=ActType.COMPARE, reason="not yet been socially processed", option_focus=["D"])

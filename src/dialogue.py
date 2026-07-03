@@ -960,11 +960,18 @@ class DialogueRunner:
             next(o for o in state.scenario.option_ids if o != blocked),
         )
         if intent.act in _DECISION_ACTS:
+            # Labels match parsing._PHRASE_FAMILIES so avoid_phrases rotation
+            # works; every template parses as a direct vote (I19: a wide pool
+            # keeps seven fallback voters in one round from sounding identical).
             templates = [
                 ("gets my vote", "{o} gets my vote."),
                 ("I'd go with", "I'd go with {o}."),
                 ("my pick is", "My pick is {o}."),
                 ("I vote for", "I vote for {o}."),
+                ("my vote is", "My vote goes to {o}."),
+                ("I'm going with", "I'm going with {o}."),
+                ("I'm sold on", "I'm sold on {o}."),
+                ("count me in for", "Count me in for {o}."),
             ]
             label, template = next(
                 ((l, t) for l, t in templates if l not in intent.avoid_phrases),
@@ -1619,13 +1626,16 @@ class DialogueRunner:
             intent.avoid_pattern = repeated_pattern(
                 self._recent_participant_texts(state, pattern_window), pattern_window
             )
-        # Deterministic anti-chorus for decision beats: phrase families AND
-        # justification snippets already used in this round are off-limits for
-        # the next voter (issues #25 and I12).
+        # Deterministic anti-chorus for decision beats: phrase families already
+        # used in this round OR by this speaker in any earlier turn are
+        # off-limits, so a re-asked voter never repeats their own line verbatim
+        # across vote rounds (issues #25, I12, I19). Reason snippets stay
+        # round-scoped: a persona restating their own justification is coherent.
         if intent.act in _DECISION_ACTS:
             round_texts = self._current_round_texts(state)
+            own_texts = [t.text for t in state.turns if t.speaker_id == intent.speaker_id]
             if not intent.avoid_phrases:
-                intent.avoid_phrases = used_commitment_phrases(round_texts)
+                intent.avoid_phrases = used_commitment_phrases(round_texts + own_texts)
             if not intent.avoid_reasons:
                 intent.avoid_reasons = round_reason_snippets(round_texts)
 
