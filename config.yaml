@@ -2,18 +2,20 @@
 # Keep this file small: only parameters that are useful to tune live here.
 
 llm:
-  provider: "gpt"                     # uni | groq | gemini | gpt
-  models:
+  provider: "gpt"                     # which backend to call: uni | groq | gemini | gpt
+  models:                             # model name used per provider
     uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
     gpt: "gpt-4.1-mini"
   endpoints:
-    uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
+    uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"   # university Ollama server (uni provider only)
   timeouts:
-    request_seconds: 240
-  gemini_rpm_delay_seconds: 12
+    request_seconds: 240              # HTTP timeout per LLM call
+  gemini_rpm_delay_seconds: 12        # pause between Gemini calls (free-tier rate limit)
   sampling:
+    # Per call type: setup and repair run cold (deterministic, format-obedient),
+    # dialogue runs warm (varied phrasing).
     setup:
       temperature: 0.35
       top_k: 45
@@ -28,28 +30,30 @@ llm:
       top_p: 0.80
 
 environment:
+  # Descriptive labels written into logs; no behavioral effect.
   type: "option_grounded_group_decision"
   source_of_truth: "generated_option_board"
 
 simulation:
-  num_participants: 3
-  min_participants: 2
+  num_participants: 3                 # how many sims join the discussion
+  min_participants: 2                 # allowed range (validation + corpus-preset clamping)
   max_participants: 7
-  random_seed: null
-  setup_generation_attempts: 3
-  max_repairs_per_turn: 1
+  random_seed: null                   # int = reproducible controller decisions; null = random each run
+  setup_generation_attempts: 3        # retries for scenario/persona generation before the run fails
+  max_repairs_per_turn: 1             # re-asks for a flagged utterance before the deterministic fallback replaces it
 
 scenario:
-  option_labels: ["A", "B", "C", "D"]
-  public_attr_min: 3
+  # Shape of the generated option board.
+  option_labels: ["A", "B", "C", "D"] # option IDs -> four options per scenario
+  public_attr_min: 3                  # attributes per option card (min..max)
   public_attr_max: 5
-  option_prompt_max_words: 46
-  option_name_max_words: 12
-  option_board_attr_max: 3              # shown in transcript/moderator opening; full facts remain available to prompts
-  option_board_note_max_words: 9
-  shared_context_max_items: 3
+  option_prompt_max_words: 46         # word cap on card text as shown inside sim prompts
+  option_name_max_words: 12           # cap on generated option names
+  option_board_attr_max: 3            # attrs shown in transcript/moderator opening; full facts remain available to prompts
+  option_board_note_max_words: 9      # length of the +/- notes in the shown board
+  shared_context_max_items: 3         # shared facts like "budget is $500" (count / words each)
   shared_context_max_words: 18
-  short_alias_min_chars: 4
+  short_alias_min_chars: 4            # constraints for the short option nickname used in dialogue ("Snap Peas")
   short_alias_max_words: 3
 
 personas:
@@ -59,22 +63,26 @@ personas:
   # Chance that exactly one participant is sampled as a hard blocker.
   # A hard blocker gets agreeableness=1 and normally cannot accept their rejected option.
   hard_blocker_probability: 0.06
-  trait_min: 1
+  trait_min: 1                        # OCEAN scale bounds
   trait_max: 5
-  trait_ranges:
+  trait_ranges:                       # sampling range per trait for normal sims
     openness: [2, 5]
     conscientiousness: [2, 5]
     extraversion: [1, 5]
-    agreeableness: [2, 5]
+    agreeableness: [2, 5]             # never below 2, so nobody is accidentally blocker-like
     neuroticism: [1, 4]
-  hard_blocker_trait_ranges:
+  hard_blocker_trait_ranges:          # the blocker's ranges: agreeableness pinned to 1
     openness: [1, 2]
     conscientiousness: [3, 5]
     extraversion: [1, 5]
     agreeableness: [1, 1]
     neuroticism: [3, 5]
   preference_distribution:
+    # forced_shape forces a specific initial-preference split, e.g. "2-1" = two sims
+    # prefer one option, one prefers another. null = sample from shape_weights.
     forced_shape: null
+    # Per group size: probability of each starting split. Example n=3: 50% three-way
+    # split, 45% two-vs-one, 5% everyone already agrees.
     shape_weights:
       2: {"1-1": 0.80, "2": 0.20}
       3: {"1-1-1": 0.50, "2-1": 0.45, "3": 0.05}
@@ -84,22 +92,26 @@ personas:
       7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
 
 conversation:
-  # The controller derives actual turn caps from n and traits. These are per participant.
-  min_discussion_turns_per_participant: 3.0
-  target_discussion_turns_per_participant: 4.0
-  max_discussion_turns_per_participant: 6.0
-  contention_extra_turns: 2            # added when starting preferences are split
-  low_compromise_extra_turns: 1         # added when average compromise is low
-  early_vote_extra_turns: 2             # after min_turns, wait this many turns before visible support can trigger voting
-  response_obligation_turns: 2          # turns a directly-addressed participant has to answer before the obligation lapses
-  moderator_stall_window: 6             # no-progress turns before one moderator nudge
-  moderator_cooldown_turns: 5
-  moderator_max_interventions: 1
-  max_vote_rounds: 2
+  # Pacing. The controller derives actual turn caps from these per-participant
+  # values (x num_participants, plus the extras below). An active corpus preset
+  # overrides the three *_turns_per_participant values at load time.
+  min_discussion_turns_per_participant: 4.0     # x n = turns before any narrowing/voting may start
+  target_discussion_turns_per_participant: 5.0  # x n (+extras) = where the controller starts pushing toward a vote
+  max_discussion_turns_per_participant: 7.0     # x n (+extras) = hard cap; a visible vote is forced here
+  contention_extra_turns: 2            # bonus turns when starting preferences are split
+  low_compromise_extra_turns: 1        # bonus turns when the cast is stubborn on average
+  early_vote_extra_turns: 2            # after min_turns, wait this many turns before visible support can trigger voting
+  response_obligation_turns: 2         # turns a directly-addressed participant has to answer before the obligation lapses
+  moderator_stall_window: 6            # no-progress turns before one moderator nudge
+  moderator_cooldown_turns: 5          # minimum spacing between moderator interventions
+  moderator_max_interventions: 1       # cap on mid-discussion nudges (vote call and closure don't count)
+  max_vote_rounds: 2                   # vote -> one re-ask round for unclear voters -> finalize from visible votes
   require_option_coverage_before_vote: true  # each option should be mentioned/compared once before final voting when feasible
 
 routing:
-  # Lightweight conversational move mix. The engine samples from these, then applies local constraints.
+  # Who speaks next and what kind of move they make. The engine samples from these
+  # base weights; reactive rules (defend a challenged pick, answer a question,
+  # probe a blocker, ...) override the mix when triggered.
   move_weights:
     build: 0.23       # add a reason or extend common ground
     agree: 0.14       # agree with someone and add a small reason
@@ -109,15 +121,16 @@ routing:
     compare: 0.16     # compare two options
     invite: 0.05      # pull a quiet participant in
     propose_compromise: 0.06
-  direct_address_probability: 0.32
-  extraversion_turn_weight: 0.12
-  quiet_speaker_boost: 1.25
+  direct_address_probability: 0.32     # chance a turn is aimed at a named person rather than the group
+  extraversion_turn_weight: 0.12       # how strongly extraversion boosts a sim's chance to get the next turn
+  quiet_speaker_boost: 1.25            # weight multiplier for sims lagging behind in turn count
   target_window: 6                     # recent participant turns eligible as response targets
 
 style:
-  # Local surface-naturalness tracker over the last few participant turns.
+  # Local surface-naturalness tracker over the last few participant turns:
+  # when a surface pattern gets too dense, the next turn is told to vary.
   name_prefix_window: 4              # how many recent participant turns to scan
-  name_prefix_max_fraction: 0.4     # above this share of name-prefixed openings, suppress names on non-functional turns
+  name_prefix_max_fraction: 0.4     # above this share of name-prefixed openings ("Kira, ..."), suppress names on non-functional turns
   option_opening_max_fraction: 0.25 # above this share of option-name openings, tell the next turn to lead differently
   i_opening_max_fraction: 0.35      # above this share of first-person "I ..." openings, tell the next non-decision turn to lead differently
   we_opening_max_fraction: 0.30     # same mechanism for "We ..." openings
@@ -125,8 +138,11 @@ style:
   repeated_pattern_window: 3        # consecutive turns sharing one surface pattern before variation is forced
 
 utterances:
-  recent_turns_in_prompt: 5
-  response_target_max_words: 22
+  recent_turns_in_prompt: 5           # transcript lines each sim prompt sees
+  response_target_max_words: 22       # how much of the responded-to turn is quoted in the prompt
+  # Per-act length targets in words, scaled by each sim's verbosity (with per-turn
+  # jitter). Soft targets, not hard cuts: a complete sentence somewhat over budget
+  # is kept whole rather than chopped mid-thought.
   word_budgets:
     opening: 22
     discussion: 24
@@ -137,35 +153,43 @@ utterances:
     closure: 18
 
 corpus:
-  # Optional corpus-inspired presets. With preset null the simulator behaves as
-  # configured above. An active preset folds its fields into runtime parameters
-  # at load time (group size, turn pacing) and gives the speaker router a
-  # dominance target instead of strict equalization. No topic-specific logic.
+  # Optional corpus-inspired presets. With preset null everything under presets:
+  # is ignored and the simulator behaves exactly as configured above. Setting
+  # preset: delidata folds that preset in at load time: turns_per_participant
+  # OVERRIDES the three conversation *_turns_per_participant values
+  # (min=0.75x, target=1x, max=1.5x) and preferred_group_size OVERRIDES
+  # simulation.num_participants (clamped to min/max_participants). The dominance
+  # fields don't overwrite config; they switch the speaker router from strict
+  # equalization to a share-aware target ("one person talks ~40% of the time").
+  # No topic-specific logic.
   preset: null                        # null | delidata
   presets:
     delidata:
-      turns_per_participant: 4.5      # typical discussion length per participant
-      preferred_group_size: 5
+      turns_per_participant: 4.5      # typical discussion length per participant in the corpus
+      preferred_group_size: 3         # typical group size in the corpus
       top_speaker_share: 0.40         # expected turn share of the most active speaker
       dominance_range: [0.30, 0.50]   # acceptable band for the top speaker's share
       imbalance_tolerance: 0.15       # deviation from fair share before rebalancing kicks in
 
 validation:
-  enabled: true
+  enabled: true                # master switch for per-turn validation
   grounding_check: true        # LLM fact-checker: flag utterances that invent facts beyond the option board
-  grounding_mode: "tripwire"   # tripwire: judge only lines with suspicious concrete claims | always: judge every eligible turn
-  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "vote", "accept", "reject"]
+  # tripwire: judge only lines with suspicious concrete claims (unknown numbers,
+  # policy-style terms, cross-option fact use) | always: judge every eligible
+  # turn (more thorough, roughly doubles dialogue cost).
+  grounding_mode: "tripwire"
+  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "vote", "accept", "reject"]  # act types that are ever fact-checked
 
 limits:
-  warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this
+  warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this (nothing is stopped)
 
 consensus:
-  majority_fraction: 0.51
+  majority_fraction: 0.51          # share of visible votes needed for a "majority" outcome; unanimity = "successful"
 
 output:
-  log_dir: "logs"
-  write_prompts: false
+  log_dir: "logs"                  # where per-run log directories are created
+  write_prompts: false             # true additionally dumps every LLM prompt to prompt_file (useful for debugging, big files)
   prompt_file: "prompts.jsonl"
-  transcript_file: "transcript.md"
-  json_file: "run.json"
-  metrics_csv: "metrics.csv"
+  transcript_file: "transcript.md" # human-readable transcript + metrics
+  json_file: "run.json"            # full structured trace (scenario, personas, turns, metrics)
+  metrics_csv: "metrics.csv"       # one summary row per run, appended across runs
