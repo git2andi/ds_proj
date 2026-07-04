@@ -1,75 +1,111 @@
 # System overview
 
-These notes describe the intended final architecture of the project. They are meant as a compact mental model for development, not as a formal thesis chapter.
+These notes explain, in plain terms, what each part of the project does and how the
+pieces fit together. They are a mental model for reading the code, not a thesis
+chapter. They describe the system **as it is implemented today** (2026-07-04, after
+todo issues 1–8). The one-line map: `info/` file ⇄ source module.
 
-## Project scope
+## What the project is
 
-The project is an option-grounded multi-user dialogue simulator. Given a short topic, the system creates a small decision environment, generates several simulated users, lets them discuss the available options, and produces a transcript plus structured logs.
+An **option-grounded multi-user dialogue simulator**. You give it a short topic; it
 
-The project does not try to simulate arbitrary open-ended group chat. The chosen scope is small-group decision-making under a generated option board. This restriction is deliberate: it gives the simulated world a source of truth, reduces uncontrolled hallucination, and makes outcomes observable.
+1. builds a small decision **environment** (a topic → four factual option cards +
+   shared context),
+2. creates 2–7 **simulated users** (personas with traits, tunable behavior
+   parameters, private preferences and goals),
+3. runs a **controlled discussion** in which the personas compare the options,
+   answer each other, and move toward a decision,
+4. ends `successful`, `majority`, or `unresolved` **from visible votes only**, and
+5. writes a readable transcript plus a structured trace and metrics.
 
-## Core idea
+The scope is deliberately narrow — small-group decisions over a generated option
+board. That restriction gives the world a fixed source of truth, curbs
+hallucination, and makes the outcome observable.
 
-The simulator should not be understood as one prompt that asks an LLM to write a whole conversation. It should be understood as an environment/controller loop:
+## The core idea: environment + controller loop, not one big prompt
+
+The simulator is **not** one prompt that writes a whole conversation. It is a
+controller loop where the LLM only ever writes **one message at a time**:
 
 ```text
 one-line topic
-  -> option-grounded scenario
-  -> simulated users with private goals and parameters
-  -> routing policy chooses who speaks, when, to whom, and why
-  -> LLM realizes only the next visible utterance
-  -> observer parses public transcript evidence
-  -> state, agenda, coverage, and outcome are updated
+  -> option-grounded scenario (the fact base)
+  -> simulated users with private goals + behavior parameters
+  -> controller picks: who speaks, to whom, which dialogue act, which option focus
+  -> LLM realizes ONLY that next visible message
+  -> observer parses the public text (votes, questions, blockers, option refs)
+  -> visible state, coverage, obligations, outcome are updated
+  -> repeat until a visible decision (or a bounded unresolved close)
 ```
 
-The transcript is one output artifact. The real project object is the simulator framework behind that transcript.
+The transcript is one output artifact. The real object is the framework behind it:
+the controller decides *what should happen*; the LLM only decides *how to phrase it*.
 
-## Major components
+## Module map (where each concern lives)
+
+`DialogueRunner` in `src/dialogue.py` is the orchestration loop. It mixes in three
+concern-specific modules (issue 8 split — the methods share one `self`/`DialogueState`,
+so they read as one class but live in separate files):
 
 ```text
-Option generation
-  Creates the shared fact base of the simulated world.
+src/dialogue.py     orchestration: run(), phase loops, generation+repair pipeline,
+                    moderator turns, pacing, printing, logging       (this + 03/04/05)
+src/policy.py       PolicyMixin  — who speaks / which act / which target / which
+                    option focus, vote readiness, candidate selection, word budgets,
+                    surface-style intent flags                                  (03)
+src/observer.py     ObserverMixin — parse a generated line, apply semantics
+                    (votes, blockers, lean movement, switch events), response
+                    obligations, open questions                                 (06)
+src/validation.py   ValidationMixin — turn validation, grounding tripwire/judge,
+                    deterministic fallback text                             (05/06)
 
-Sim generation
-  Creates user simulators with OCEAN traits, explicit behavioral parameters, private goals, preferences, and a small private communicative-goal list (a weak hint system, not agenda-based simulation — see 02 and docs/todo.md issue 3).
-
-Moderator / environment controller
-  Handles state-aware facilitation, phase transitions, targeted questions, and bounded closure.
-
-Turn-taking / routing
-  Selects the next speaker, addressee, dialogue act, and option focus.
-
-LLM realization
-  Produces the next natural-language message only. It should not decide the whole conversation.
-
-Observer / parser
-  Extracts visible commitments, questions, option references, and public votes from transcript text.
-
-Consensus / outcome logic
-  Determines successful, majority, or unresolved from visible transcript evidence only.
-
-Logging / evaluation
-  Records transcript, structured state, metrics, and later evaluation signals.
+src/builders.py     scenario + persona construction (setup)                     (01/02)
+src/simulator.py    OCEAN -> behavior parameters, the weak private agenda        (02)
+src/consensus.py    outcome logic from visible votes only                       (07)
+src/parsing.py      the "observer's eyes": option refs + commitment/blocker parsing (06/07)
+src/aliases.py      the single option-nickname contract (short_alias_map)       (01)
+src/style.py        deterministic surface-style tracker (openings, repeats)     (03)
+src/prompts.py      ALL LLM-facing prose (setup, moderator, per-turn, repair, judge)
+src/models.py       typed state (Scenario, Persona, DialogueState, runtimes, …)
+src/evaluation.py   per-run metrics                                             (08)
+src/logger.py       transcript + run.json + metrics.csv                         (08)
+src/config_loader.py  loads/validates config.yaml, exposes `cfg`               (09)
+src/llm_client.py   provider abstraction (uni | groq | gemini | gpt)
 ```
 
-## Relationship to MUCA and ConvLab-style ideas
+The rest of these notes follow the flow of a run:
 
-MUCA is useful because multi-user interaction requires explicit control over what should be said, when a participant or assistant should speak, and who should be addressed. This project adapts that idea to simulated users: the controller must decide speaker, addressee, act, and timing.
+- `01` scenario/environment generation — the fact base
+- `02` sim generation — the participants
+- `03` routing & turn-taking — who speaks and why
+- `04` moderator — the (configurable) facilitator voice
+- `05` discussion & decision — phases, voting, compromise, bridged switches
+- `06` consensus & outcomes — how a public decision is read from the text
+- `07` evaluation & logging — what a run leaves behind
+- `08` configuration & running — how to drive and tune it
+- `09` topic examples — the same engine across domains
 
-ConvLab-style user simulation is useful because it separates goals, dialogue acts, policy, state, and evaluation. This project does not need a full ConvLab implementation, but it should keep the same spirit: simulated users should have internal goals and controllable behavior, not only decorative persona text.
+## Relationship to MUCA and ConvLab-style user simulation
 
-## Implementation status (2026-07-03)
+MUCA is useful because multi-user interaction needs explicit control over *what*
+should be said, *when* someone should speak, and *who* is addressed. This project
+adapts that to **simulated** users: the controller decides speaker, addressee, act,
+and timing, and the moderator (when enabled) intervenes state-awarely.
 
-The loop above is implemented as described: `src/dialogue.py` owns routing and
-state, `src/parsing.py` is the observer, `src/consensus.py` computes outcomes
-from visible votes only, and invalid generated turns are replaced by
-deterministic fallbacks rather than printed. See `docs/todo.md` section 4 for
-the per-issue record.
+ConvLab-style user simulation is useful for its separation of goals, dialogue acts,
+policy, state, and evaluation. We keep that spirit — sims have internal goals and
+controllable behavior, not just decorative persona text — without a full ConvLab
+implementation. (Honest caveat: the per-sim "agenda" is currently a weak hint list,
+not a real goal stack — see `02`.)
 
-## Design principles
+## Design principles (the non-negotiables)
 
-1. Option facts are fictional when generated, but hard facts after generation.
-2. Sims must not invent new concrete facts beyond the option board/context.
-3. Internal simulator state may guide behavior, but only visible transcript text can decide the public outcome.
-4. Prompt instructions should stay compact. Prefer controller/parser/state fixes over adding long prompt blocks.
-5. Fixes must generalize across topics, group sizes, and option domains.
+1. Option facts are fictional when generated, but **hard facts** afterward.
+2. Sims must not invent concrete facts beyond the option board / shared context.
+3. Internal state may *guide* behavior, but only **visible transcript text** decides
+   the public outcome — hidden preference is never counted as support.
+4. Never close before participants had a visible decision opportunity.
+5. A hard blocker never accepts its rejected option through state mutation.
+6. Keep prompts compact; prefer controller/parser/validator/state fixes over long
+   prompt blocks. All LLM-facing prose lives in `src/prompts.py`.
+7. Fixes must generalize across topics, group sizes, and option domains.

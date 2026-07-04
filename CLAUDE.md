@@ -52,7 +52,10 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `src/logger.py`: run logging (transcript, JSON, metrics CSV).
 - `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
 - `tests/`: deterministic, LLM-free tests.
-- `info/`: conceptual design notes for intended behavior.
+- `info/`: plain-language "how it works" notes, one per stage of a run
+  (`00_overview` is the map; `01`–`09` follow scenario → sims → routing → moderator →
+  discussion/decision → consensus → evaluation → config → topic examples). Kept in
+  sync with the code.
 - `docs/todo.md`: open issues and the per-issue implementation protocol.
 
 ## Key controller mechanisms (current as of 2026-07-03)

@@ -165,7 +165,7 @@ Validated 2026-07-03 by live runs:
 
 Resolved as a docs/framing-only change (no behavior touched): `simulator.py` module
 and `build_initial_agenda` docstrings, `models.AgendaItem` docstring, `README.md`,
-`CLAUDE.md`, `info/00_overview.md`, and `info/02_sim_generation (1).md` now state
+`CLAUDE.md`, `info/00_overview.md`, and `info/02_sim_generation.md` now state
 plainly that the agenda fields are a **weak private communicative-goal list /
 hint system consulted only in quiet moments**, that most items stay pending in
 observed runs, and that the system is **not yet an agenda-based user simulator**
