@@ -268,6 +268,14 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "visible_vote_count": len(visible_votes),
         "visible_votes": visible_votes,
         "unanswered_direct_questions": int(state.unanswered_obligations),
+        # Concern-thread completion (issue 2): how many visible objections opened
+        # a thread and what share got a visible reaction before aging out.
+        "concern_threads": int(state.concerns_raised_total),
+        "concern_response_rate": (
+            round(state.concerns_addressed_total / state.concerns_raised_total, 3)
+            if state.concerns_raised_total
+            else None
+        ),
         "participation_gini": _gini(list(turn_counts.values())),
         "direct_response_rate": _direct_response_rate(state),
         "question_answer_completion": _question_answer_completion(state),

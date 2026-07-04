@@ -96,19 +96,46 @@ becomes one (agreeableness pinned to 1, `rejection_reason` required). The blocke
 rejected option is never assigned as its own primary preference, and no state
 mutation can make it vote for that option (`06`).
 
+## Stateful stance tracking (the real continuity mechanism)
+
+Each sim's runtime carries lightweight persistent stance state (issue 2), updated
+from *visible* text only:
+
+```text
+current_preference    the latent favorite (moves on parsed signals, see 06)
+commitment_strength   how firmly the favorite is held; starts at
+                      0.45 + 0.40*stubbornness, eroded by challenges landed on
+                      the favorite and by visible support for rivals (both scaled
+                      down by stubbornness), rebuilt a little by defending it
+challenges_received   count of visible challenges against the sim's favorite
+concessions_made      visible switches / conceded leans
+hard/soft rejections  parsed vetoes and objections (see 06)
+```
+
+Commitment strength feeds real decisions: a shaken advocate routed to react to a
+concern is told to *concede honestly* instead of defending (`03`), latent-lean
+movement gets easier as commitment drops, and vote-time compromise probability
+rises for a sim whose favorite took unanswered pressure (`06`).
+
+Visible objections open **concern threads** (`DialogueState.open_concerns`): the
+router tries to get a reaction from an advocate of the challenged option within a
+turn or two before the discussion may jump away; unaddressed threads age out after
+~3 participant turns. Metrics: `concern_threads`, `concern_response_rate`.
+
 ## The agenda — an honest caveat
 
-Each sim gets a small private **communicative-goal list** (`build_initial_agenda`):
-state a grounded reason for the initial pick, ask about a constraint, compare with a
-rival, and (trait-dependent) raise a hard concern, look for compromise, or push back
-on a rival. `refresh_agenda` marks items obsolete/blocked as the sim's stance moves.
+Each sim also gets a small private **communicative-goal list**
+(`build_initial_agenda`): state a grounded reason for the initial pick, ask about a
+constraint, compare with a rival, and (trait-dependent) raise a hard concern, look
+for compromise, or push back on a rival. `refresh_agenda` marks items
+obsolete/blocked as the sim's stance moves.
 
 **Status:** this is a *weak hint system*, not agenda-based user simulation. The
 router consumes an item **only in quiet moments** — reactive rules and response
 obligations always win first (`03`) — and observed runs leave most items pending at
-the end. Do **not** describe the project as an "agenda-based user simulator". A real
-goal stack (each turn consumes/defers/updates one item) is a possible future
-direction, tracked in `docs/todo.md` issue 3.
+the end. Do **not** describe the project as an "agenda-based user simulator".
+Continuity across turns comes from the stance state above, not from agenda
+execution.
 
 ## Voice differentiation
 
@@ -128,13 +155,4 @@ The goal is not theatrical role-play — it is measurable variation in participa
 wording length, consistency, and compromise behavior (see the realization metrics in
 `08`).
 
-## Current mismatch / intended correction
-
-This file is honest that the agenda is currently only a weak private hint system. The next correction should not turn it into a rigid agenda checklist. That would make discussions shallow: each sim would execute one agenda point, another sim would answer once, and the discussion would jump away.
-
-The intended behavior is stateful simulator behavior: each sim keeps a current favorite, commitment strength, open concerns, possible fallback options, known concessions, willingness to switch, and memory of recent challenges. These state variables should influence local choices such as defending, asking, softening, challenging, accepting a condition, or switching. The sim does not need to complete every internal item; the state should create continuity and pressure across turns.
-
-(Trait realization in routing is fixed: engagement/initiative/responsiveness now
-drive turn share via the router's trait targets, responsiveness drives answer
-latency, and verbosity drives length — see `03` for the numbers.)
 

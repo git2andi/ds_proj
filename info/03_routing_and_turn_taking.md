@@ -37,7 +37,11 @@ drives the conversation and the private agenda only fills silence:
    nudge before voting (`_coverage_gap_option`; bounded by `coverage_attempts`).
 3. **Reactive intents** (`_reactive_intent`) — adjacency-pair moves driven by what
    just happened, each behind a probability gate so runs don't become a script:
-   - a **challenged** option gets **defended** by an advocate,
+   - an open **concern thread** (see `02`) gets a reaction from an advocate of the
+     challenged option within a turn or two — a *firm* advocate defends, a *shaken*
+     one (low `commitment_strength`) is told to concede honestly and may say its
+     view is shifting; the thread persists across a turn, so a concern isn't lost
+     the moment someone else speaks,
    - an **answer** gets a **follow-up**,
    - an unresolved **blocker** on the leading option gets **probed once**,
    - a visible **split** triggers a head-to-head **comparison**,
@@ -100,6 +104,11 @@ sim. The router consumes it **before** normal speaker selection in both the
 discussion and decision loops, so the addressed participant answers within the next
 turn or two. Obligations expire after a bounded window and are counted as
 `unanswered_direct_questions` (a metric, `08`).
+
+Two refinements (issue 1): a **group-directed** question (no name, no "you") is
+assigned a respondent weighted by responsiveness and turn-share deficit — the
+previous speaker is not the room's default interviewee — and a low-responsiveness
+sim may sit out one beat before the router forces its answer (see above).
 
 ```text
 Kenji -> Anton: "Anton, is the no-checked-bag issue a deal-breaker?"

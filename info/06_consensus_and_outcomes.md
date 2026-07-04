@@ -76,10 +76,13 @@ a reason. Recorded per sim as `switch_events` (`from`, `to`, `has_reason`,
 
 The parser detects option-tied active blockers ("dealbreaker", "doesn't work for me",
 with a negation guard), explicit resolutions ("that fixes my concern; I can live with
-X"), conditional support, and compromise offers (including question forms). A visible,
-unresolved blocker binds exactly like a setup rejection: the sim cannot commit to that
-option until a visible resolution line exists in the same or an earlier turn.
-Committing to an actively blocked option is a blocking validation issue
+X"), conditional support, and compromise offers (including question forms). Only a
+**personal, non-speculative** veto binds: "might be a dealbreaker for some teammates"
+raises a concern, it does not bind the speaker ("for me/us" overrides the speculation
+guard — false blockers are worse than missed ones because they hard-bind later
+votes). A visible, unresolved blocker binds exactly like a setup rejection: the sim
+cannot commit to that option until a visible resolution line exists in the same or an
+earlier turn. Committing to an actively blocked option is a blocking validation issue
 (`BLOCKED_OPTION_ACCEPTED`) — the line is replaced by a fallback, never printed.
 
 A hard blocker's **setup-level** rejection is never cleared by a casual line; only
@@ -90,8 +93,11 @@ parser-derived blockers can be resolved in-dialogue.
 The sim's internal `current_preference` moves only on a parsed signal in the visible
 text — a vote/acceptance, a compromise offer, a proposal, or explicit conditional
 support — gated by `_can_shift_to` (which respects rejections and stubbornness). It
-never moves from routing intent alone. This keeps the private state honest, but
-remember: the *outcome* still uses only `explicit_vote`, never the lean.
+never moves from routing intent alone. Movability scales with the tracked
+`commitment_strength` (issue 2, `02`): a favorite eroded by challenges and rival
+support moves more easily, one that has been defended resists — both in the lean
+gate and in the vote-time compromise probability. This keeps the private state
+honest, but remember: the *outcome* still uses only `explicit_vote`, never the lean.
 
 ## Split votes don't loop
 

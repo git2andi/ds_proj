@@ -182,7 +182,18 @@ class ValidationMixin:
             )
             line = template.format(o=aliases[target])
             if blocked and "HARD_BLOCKER_ACCEPTED_REJECTED_OPTION" in report.issues:
-                return f"I can't get behind {aliases[blocked]}, so {line[0].lower() + line[1:]}"
+                tail = line if line.startswith("I") else line[0].lower() + line[1:]
+                return f"I can't get behind {aliases[blocked]}, so {tail}"
+            current = rt.current_preference or persona.preferred_option
+            if current in state.scenario.option_ids and current != target:
+                # The restate target was disqualified (or the intent demands a
+                # switch), so the deterministic line is itself a switch — it must
+                # carry the bridge or it would fail the same UNBRIDGED_SWITCH
+                # check that sent us here.
+                body = line.rstrip(".")
+                if not body.startswith("I"):
+                    body = body[0].lower() + body[1:]
+                return f"I still like {aliases[current]}, but {body} — it works better for the group."
             return line
         if "MISSING_REQUIRED_OPTION_FOCUS" in report.issues and intent.option_focus:
             gap = intent.option_focus[0]

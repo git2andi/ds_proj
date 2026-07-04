@@ -46,36 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 2 (P0). Replace checklist-style agenda thinking with stateful stance and concern tracking
-
-**Problem.** The agenda concept is still too weak and also easy to misunderstand. A literal agenda stack would be dangerous: sims would execute item after item instead of developing a local conversational thread. The problem is not that every sim needs more agenda items. The problem is that concerns, concessions, pressure, and stance changes do not persist strongly enough across turns.
-
-**Where visible.**
-
-- The current `info/02_sim_generation.md` correctly describes the agenda as a weak private hint list, not a real agenda-based simulator.
-- Recent transcripts often move from one point to the next without giving other sims enough room to respond to a concern.
-- Discussion-stage preference movement is weak; most movement appears around final voting instead of during normal discussion.
-
-**Correct behavior.**
-
-Each sim should maintain lightweight persistent state, not a rigid checklist:
-
-```text
-current favorite
-commitment strength
-open concerns
-resolved concerns
-possible fallback options
-known concessions
-willingness to switch
-recent challenges received
-social pressure from group support
-```
-
-A sim should not be forced to complete all state items. The controller should use this state to decide the next local action: answer, defend, ask, soften, challenge, support, switch, or propose a condition.
-
-If a concern is raised, the system should keep that thread alive for one or two turns so another sim can react before the discussion jumps away. The intended behavior is local development, not agenda execution.
-
 ### Issue 3 (P0). Sims can change their current favorite during the discussion, not only during final voting
 
 **Problem.** Sims can technically switch preference, and switch events are bridged now, but visible behavior still often concentrates switching in the final vote or minority-check phase. That makes preference movement look procedural rather than socially caused by arguments in the discussion.

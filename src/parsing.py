@@ -117,6 +117,20 @@ _BLOCKER_NEGATION = re.compile(
     r"\s+(?:really\s+|quite\s+|exactly\s+|necessarily\s+)?(?:a\s+|the\s+)?$",
     re.I,
 )
+# A speculative or other-directed blocker mention is NOT the speaker's own veto:
+# "the fixed height might be a dealbreaker for some teammates" raises a concern,
+# it does not bind the speaker. Personal markers ("for me/us") override the
+# speculation guard; false blockers are far worse than missed ones because a
+# recorded blocker hard-binds later votes.
+_BLOCKER_SPECULATIVE = re.compile(
+    r"\b(?:might|may|could|would|whether|wonder(?:ing)?|worr(?:y|ied|ies))\b", re.I
+)
+_BLOCKER_OTHER_DIRECTED = re.compile(
+    r"\bfor\s+(?:some(?:one|body)?|others?|any(?:one|body)\s+else|taller|shorter|new(?:er)?\s+\w+|"
+    r"the\s+others|teammates?|the\s+team|the\s+group|folks|people|him|her|them)\b",
+    re.I,
+)
+_BLOCKER_PERSONAL = re.compile(r"\bfor\s+(?:me|us)\b|\bi'?m\s+out\b|\bi\s+(?:can'?t|cannot|won'?t)\b", re.I)
 # A blocker counts as resolved only when the same sim visibly says so, with no
 # hard-conditional residue ("if we…", "only if…") left in the line.
 # _RESOLUTION_HEAD phrases explicitly reference the resolved concern; when one is
@@ -177,6 +191,15 @@ def active_blocker_option(check_text: str, resolver: OptionResolver) -> str | No
         return None
     if _BLOCKER_NOUN.match(match.group(0)) and _BLOCKER_NEGATION.search(check_text[: match.start()]):
         return None
+    # Only a personal, non-speculative veto binds the speaker. Judge within the
+    # sentence containing the trigger so an unrelated hedge elsewhere is ignored.
+    sentence_start = check_text.rfind(".", 0, match.start())
+    sentence_end_match = re.search(r"[.;!?]", check_text[match.end():])
+    sentence_end = match.end() + (sentence_end_match.start() if sentence_end_match else len(check_text))
+    sentence = check_text[sentence_start + 1: sentence_end]
+    if not _BLOCKER_PERSONAL.search(sentence):
+        if _BLOCKER_SPECULATIVE.search(sentence) or _BLOCKER_OTHER_DIRECTED.search(sentence):
+            return None
     return _nearest_option(check_text, match.start(), match.end(), resolver)
 
 

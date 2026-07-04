@@ -64,7 +64,7 @@ environment:
   #     - name: "..."   # exactly as many options as scenario.option_labels
 
 simulation:
-  num_participants: 3                 # how many sims join the discussion
+  num_participants: 4                 # how many sims join the discussion
   min_participants: 2                 # allowed range (validation + corpus-preset clamping)
   max_participants: 7
   random_seed: null                   # int = reproducible controller decisions; null = random each run
@@ -85,14 +85,8 @@ participants:
   # (agreeableness pinned to 1; rejection_reason required).
   # If any profile pins preferred_option, the preference_distribution shapes are
   # bypassed: unpinned profiles get a uniformly random option instead.
-  mode: manual   # auto | manual
-  profiles:
-    - name: "Mara"
-      parameters: {engagement: 0.9, initiative: 0.85, verbosity: 0.85, responsiveness: 0.7}
-    - name: "Sten"
-      parameters: {engagement: 0.5, initiative: 0.5, verbosity: 0.5, responsiveness: 0.5}
-    - name: "Lea"
-      parameters: {engagement: 0.15, initiative: 0.1, verbosity: 0.25, responsiveness: 0.6}
+  mode: auto   # auto | manual
+  profiles: []
   # profiles:
   #   - name: "Kira"
   #     description: "junior developer who mainly cares about day-to-day tooling speed"

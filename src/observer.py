@@ -14,6 +14,7 @@ import re
 from config_loader import cfg
 from models import (
     ActType,
+    Concern,
     DialogueAct,
     DialogueState,
     MoveIntent,
@@ -24,7 +25,8 @@ from models import (
     TurnRecord,
 )
 from parsing import commitment_has_reason, parse_dialogue_act, switch_bridge_ok
-from simulator import refresh_agenda
+from simulator import expected_turn_share, refresh_agenda
+from utils import weighted_choice
 
 _VOTE_CHANGE = re.compile(
     r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
@@ -70,6 +72,32 @@ class ObserverMixin:
             if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
 
+        # Stateful concern threads (issue 2): first fold this turn into any open
+        # threads (a reply about the option addresses it; unanswered threads
+        # age out after a few turns), then open new threads for objections and
+        # challenges raised here, applying social pressure to the option's
+        # advocates.
+        self._update_concern_threads(state, record)
+        challenged = set(act.soft_rejects) | set(act.hard_rejects)
+        if record.intent and record.intent.act == ActType.CHALLENGE:
+            challenged.update(act.option_refs[:1])
+        for option_id in challenged:
+            self._register_concern(state, record, option_id)
+        # Visible support is social pressure too: a commitment/acceptance for one
+        # option slightly erodes other sims' hold on different favorites.
+        supported = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
+        for option_id in supported:
+            self._apply_support_pressure(state, record.speaker_id, option_id)
+        # Speaking in support of the own favorite rebuilds commitment a little.
+        own = rt.current_preference
+        if (
+            own
+            and own in act.option_refs
+            and act.act_type in {ActType.OPENING, ActType.BUILD, ActType.AGREE, ActType.COMPARE}
+            and own not in challenged
+        ):
+            rt.commitment_strength = min(0.95, rt.commitment_strength + 0.04)
+
         # A visible resolution clears a parsed blocker for THIS sim only, and it
         # must run before votes so "that fixes my concern; I can live with X"
         # counts. The persona-level setup rejection is never cleared by a casual
@@ -111,6 +139,7 @@ class ObserverMixin:
                     "has_reason": commitment_has_reason(act.text),
                     "has_bridge": bool(bridged),
                 })
+                rt.concessions_made += 1
 
         # Latent lean may move only on a visible signal in the parsed text:
         # a vote/acceptance (handled by _set_vote), a visible compromise offer
@@ -121,13 +150,69 @@ class ObserverMixin:
         else:
             signal = act.offers_compromise or act.proposes_option or act.conditional_support
             if signal and signal != rt.current_preference and self._can_shift_to(state, persona, signal):
-                if random.random() > persona.sim_params.compromise_threshold:
+                # Movability scales with the tracked commitment (issue 2): a sim
+                # whose favorite took unanswered challenges/pressure moves more
+                # easily than one that has been defending it.
+                effective = persona.sim_params.compromise_threshold * (0.4 + 0.9 * rt.commitment_strength)
+                if random.random() > effective:
                     rt.current_preference = signal
+                    rt.concessions_made += 1
+                    rt.commitment_strength = min(0.95, max(rt.commitment_strength, 0.35) + 0.10)
 
         refresh_agenda(persona, rt.current_preference)
 
         after = self._snapshot_progress(state)
         state.no_progress_count = 0 if after != before else state.no_progress_count + 1
+
+    # ------------------------------------------------------------------
+    # Concern threads and commitment dynamics (issue 2)
+    # ------------------------------------------------------------------
+
+    def _register_concern(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
+        """Open a concern thread and erode advocates' commitment (issue 2)."""
+        if option_id not in state.scenario.option_ids:
+            return
+        state.concerns_raised_total += 1
+        state.open_concerns.append(
+            Concern(turn_id=record.index, raised_by=record.speaker_id, option_id=option_id, text=record.text)
+        )
+        state.open_concerns = state.open_concerns[-3:]
+        for persona in state.personas:
+            rt = state.runtimes[persona.id]
+            if persona.id != record.speaker_id and rt.current_preference == option_id:
+                rt.challenges_received += 1
+                erosion = 0.12 * (1.0 - 0.7 * persona.sim_params.stubbornness)
+                rt.commitment_strength = max(0.05, rt.commitment_strength - erosion)
+
+    def _update_concern_threads(self, state: DialogueState, record: TurnRecord) -> None:
+        """Age open concerns; a reply about the option by someone else closes it."""
+        live: list[Concern] = []
+        for concern in state.open_concerns:
+            if concern.turn_id == record.index:
+                live.append(concern)
+                continue
+            if (
+                concern.addressed_by is None
+                and record.speaker_id != concern.raised_by
+                and concern.option_id in record.act.option_refs
+            ):
+                concern.addressed_by = record.speaker_id
+                state.concerns_addressed_total += 1
+                continue  # thread completed, drop it
+            concern.age += 1
+            if concern.addressed_by is None and concern.age < 3:
+                live.append(concern)
+        state.open_concerns = live
+
+    def _apply_support_pressure(self, state: DialogueState, supporter_id: str, option_id: str) -> None:
+        """Visible backing for one option erodes rival advocates' commitment."""
+        if option_id not in state.scenario.option_ids:
+            return
+        for persona in state.personas:
+            rt = state.runtimes[persona.id]
+            if persona.id != supporter_id and rt.current_preference and rt.current_preference != option_id:
+                erosion = 0.05 * (1.0 - 0.7 * persona.sim_params.stubbornness)
+                rt.commitment_strength = max(0.05, rt.commitment_strength - erosion)
 
     @staticmethod
     def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:
@@ -170,6 +255,14 @@ class ObserverMixin:
         target = record.act.question_target_id
         if not target or target == record.speaker_id or target not in state.runtimes:
             return
+        # A group-directed question (no name, no "you") should not always fall to
+        # the previous speaker — that chains one sim into an interview loop
+        # (issue 1). Re-target by responsiveness and turn-share deficit.
+        if not self._question_explicitly_addressed(state, record, target):
+            target = self._pick_group_respondent(state, record.speaker_id)
+            if target is None:
+                return
+            record.act.question_target_id = target
         state.open_questions.append(OpenQuestion(turn_id=record.index, asked_by=record.speaker_id, target_id=target, text=record.text, option_focus=record.act.option_refs[:2]))
         state.open_questions = state.open_questions[-4:]
         self._set_obligation(
@@ -180,6 +273,29 @@ class ObserverMixin:
             expected_act=ActType.ANSWER,
             option_focus=record.act.option_refs[:2],
         )
+
+    @staticmethod
+    def _question_explicitly_addressed(state: DialogueState, record: TurnRecord, target: str) -> bool:
+        """True when the question visibly addresses the target (name or 'you')."""
+        name = state.name_for(target)
+        if name and re.search(rf"\b{re.escape(name.lower())}\b", record.text.lower()):
+            return True
+        return bool(re.search(r"\byou(?:r|rs)?\b", record.text, re.I))
+
+    def _pick_group_respondent(self, state: DialogueState, asker_id: str) -> str | None:
+        """Respondent for a group-directed question: responsive sims behind on
+        their trait share answer first, so one sim never becomes the room's
+        default interviewee."""
+        others = [p for p in state.personas if p.id != asker_id]
+        if not others:
+            return None
+        expected = expected_turn_share(state.personas)
+        total = sum(rt.turn_count for rt in state.runtimes.values()) or 1
+        weights = []
+        for p in others:
+            deficit = expected[p.id] - state.runtimes[p.id].turn_count / total
+            weights.append(0.30 + p.sim_params.responsiveness + max(0.0, 3.0 * deficit))
+        return weighted_choice(others, weights).id
 
     def _set_obligation(
         self,

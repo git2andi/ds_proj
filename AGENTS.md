@@ -114,8 +114,20 @@ Change participant count and provider settings in `config.yaml`. The default pro
   gates how promptly an obligated sim answers (may defer one beat, never lapses
   from hesitation). Evaluation uses the same share targets
   (`expected_turn_share`/`realized_turn_share` in metrics).
+- **Stateful stance tracking.** Each runtime carries `commitment_strength`
+  (init `0.45 + 0.4*stubbornness`; eroded by challenges on the favorite and
+  visible rival support, rebuilt by defending it), `challenges_received`,
+  `concessions_made`. Visible objections open bounded **concern threads**
+  (`DialogueState.open_concerns`, expire after ~3 participant turns): the
+  router routes an advocate reaction within 1–2 turns — firm advocates defend,
+  a shaken one (commitment ≤ 0.35) is told to concede honestly. Commitment
+  feeds the latent-lean gate and vote-time compromise probability. Metrics:
+  `concern_threads`, `concern_response_rate`. Blocker parsing is personal-veto
+  only (speculative/other-directed "might be a dealbreaker for some" never
+  binds the speaker). Group-directed questions pick their respondent by
+  responsiveness + share deficit, not "previous speaker always".
 - **Reactive act selection.** `_reactive_intent` fires before the agenda:
-  challenged options get defended by an advocate, answers get follow-ups,
+  open concern threads get an advocate reaction, answers get follow-ups,
   an unresolved blocker on the leading option is probed once, visible
   splits trigger head-to-head comparisons, and a circling thread (four turns
   with no question or parsed movement signal while two camps persist) gets one

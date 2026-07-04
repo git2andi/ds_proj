@@ -147,29 +147,46 @@ class PolicyMixin:
         last = participant_turns[-1]
         aliases = short_alias_map(state.scenario.options)
 
-        # 1. Defense: the last turn challenged/objected to an option someone
-        #    else currently backs — that advocate responds.
-        challenged = list(last.act.soft_rejects) or (
-            last.act.option_refs if last.intent and last.intent.act == ActType.CHALLENGE else []
-        )
-        for option_id in challenged:
+        # 1. Concern thread: an open concern about an option someone else backs
+        #    gets a reaction from an advocate within a turn or two (issue 2) —
+        #    the thread persists across a turn, so a concern is not lost the
+        #    moment another sim speaks about something else. How the advocate
+        #    reacts depends on their tracked commitment: firm advocates defend,
+        #    a shaken advocate is told to concede honestly and may name what
+        #    still matters to them.
+        for concern in reversed(state.open_concerns):
+            if concern.addressed_by is not None:
+                continue
             advocates = [
                 p for p in state.personas
-                if p.id != last.speaker_id and state.runtimes[p.id].current_preference == option_id
+                if p.id not in {concern.raised_by, last.speaker_id}
+                and state.runtimes[p.id].current_preference == concern.option_id
             ]
-            if advocates and random.random() < 0.75:
-                speaker = max(advocates, key=lambda p: p.sim_params.engagement + 0.3 * p.sim_params.stubbornness)
-                return MoveIntent(
-                    speaker_id=speaker.id,
-                    act=ActType.BUILD,
-                    reason=(
-                        f"the last point raised a concern about {aliases[option_id]}, which you back — "
-                        "respond to it directly: defend it with a grounded reason or concede the point honestly"
-                    ),
-                    option_focus=[option_id],
-                    respond_to_turn=last.index,
-                    addressee_id=last.speaker_id if random.random() < 0.5 else None,
+            if not advocates or random.random() >= 0.80:
+                continue
+            speaker = max(advocates, key=lambda p: p.sim_params.engagement + 0.3 * p.sim_params.stubbornness)
+            concern.addressed_by = speaker.id
+            state.concerns_addressed_total += 1
+            rt = state.runtimes[speaker.id]
+            if rt.commitment_strength <= 0.35:
+                reason = (
+                    f"a concern was raised about {aliases[concern.option_id]}, which you back, and it lands — "
+                    "concede the point honestly, say what still matters to you in this choice, and if another "
+                    "option now genuinely looks stronger you may say your view is shifting (no final vote)"
                 )
+            else:
+                reason = (
+                    f"a concern was raised about {aliases[concern.option_id]}, which you back — "
+                    "respond to it directly: defend it with a grounded reason or concede the point honestly"
+                )
+            return MoveIntent(
+                speaker_id=speaker.id,
+                act=ActType.BUILD,
+                reason=reason,
+                option_focus=[concern.option_id],
+                respond_to_turn=concern.turn_id,
+                addressee_id=concern.raised_by if random.random() < 0.5 else None,
+            )
 
         # 2. Follow-up: an answer was just given; someone reacts to it instead
         #    of the topic silently jumping.
@@ -500,10 +517,23 @@ class PolicyMixin:
         return "respond naturally and move the decision forward"
 
     def _vote_intent(self, state: DialogueState, persona: Persona, candidate: str) -> MoveIntent:
-        blocked = persona.rejection == candidate or candidate in state.runtimes[persona.id].hard_rejections
-        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        rt = state.runtimes[persona.id]
+        blocked = persona.rejection == candidate or candidate in rt.hard_rejections
+        current = rt.current_preference or persona.preferred_option
         if blocked:
-            alternative = current if current != candidate and current in state.scenario.option_ids else persona.preferred_option
+            # The alternative must actually be acceptable: never the blocked
+            # candidate itself (even when the sim's lean is stuck on it) and
+            # never another option this sim has vetoed.
+            alternative = next(
+                (
+                    o for o in [current, *persona.preferred_options, *state.scenario.option_ids]
+                    if o in state.scenario.option_ids
+                    and o != candidate
+                    and o != persona.rejection
+                    and o not in rt.hard_rejections
+                ),
+                candidate,
+            )
             return MoveIntent(
                 speaker_id=persona.id,
                 act=ActType.VOTE,
@@ -644,6 +674,10 @@ class PolicyMixin:
             return False
         pressure = support / max(1, len(state.personas) - 1)
         probability = 0.10 + 0.65 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
+        # Tracked stance state (issue 2): a sim whose hold on its favorite was
+        # eroded by challenges/support pressure accepts the candidate more
+        # readily; one that spent the discussion defending it resists longer.
+        probability += 0.25 * (0.60 - rt.commitment_strength)
         if candidate in persona.preferred_options:
             probability += 0.15
         return random.random() < min(0.95, probability)

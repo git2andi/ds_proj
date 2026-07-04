@@ -687,7 +687,16 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
 
 def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
     state = DialogueState(scenario=scenario, personas=personas)
-    state.runtimes = {p.id: ParticipantRuntime(persona_id=p.id, current_preference=p.preferred_option) for p in personas}
+    # Initial commitment to the starting favorite scales with stubbornness, so a
+    # flexible sim starts movable and a stubborn one starts dug in (issue 2).
+    state.runtimes = {
+        p.id: ParticipantRuntime(
+            persona_id=p.id,
+            current_preference=p.preferred_option,
+            commitment_strength=0.45 + 0.40 * p.sim_params.stubbornness,
+        )
+        for p in personas
+    }
     state.coverage = {option.id: OptionCoverage() for option in scenario.options}
     for persona in personas:
         if persona.rejection:

@@ -262,6 +262,23 @@ class DialogueAct:
 
 
 @dataclass(slots=True)
+class Concern:
+    """A visible objection about an option, kept alive as a short thread (issue 2).
+
+    The router tries to get a reaction from an advocate of the option within a
+    turn or two, so the discussion does not jump away from a raised concern.
+    A thread expires unaddressed after a few participant turns.
+    """
+
+    turn_id: int
+    raised_by: str
+    option_id: str
+    text: str
+    addressed_by: str | None = None
+    age: int = 0                # participant turns since the concern was raised
+
+
+@dataclass(slots=True)
 class OpenQuestion:
     turn_id: int
     asked_by: str
@@ -304,6 +321,13 @@ class ParticipantRuntime:
     turn_count: int = 0
     last_spoke_turn: int | None = None
     current_preference: str | None = None  # latent simulator preference, not public evidence
+    # Stateful stance tracking (issue 2): how firmly the sim holds its current
+    # favorite. Eroded by challenges against it and by visible group support for
+    # rivals (scaled by stubbornness); rebuilt a little by defending it. Low
+    # commitment makes softening/switching easier, during discussion and at votes.
+    commitment_strength: float = 0.6
+    challenges_received: int = 0           # visible challenges landed on this sim's favorite
+    concessions_made: int = 0              # times this sim visibly conceded a point/switched
     explicit_vote: str | None = None       # observed public commitment from visible text
     vote_stance: str | None = None         # how the vote was stated: "vote" (direct) or "accept"
     accepted_options: set[str] = field(default_factory=set)
@@ -353,6 +377,9 @@ class DialogueState:
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
     open_questions: list[OpenQuestion] = field(default_factory=list)
+    open_concerns: list[Concern] = field(default_factory=list)
+    concerns_raised_total: int = 0
+    concerns_addressed_total: int = 0
     response_obligation: "ResponseObligation | None" = None
     obligations_created: int = 0
     unanswered_obligations: int = 0
