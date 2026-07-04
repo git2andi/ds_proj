@@ -89,7 +89,7 @@ clearly independent.
 5. ~~Fix sudden unexplained preference switches (bridge-clause enforcement)~~ DONE 2026-07-04
 6. ~~Fix phase-history inconsistency (no false "closure" phase markers)~~ DONE 2026-07-04
 7. ~~Reduce moderator dependency (configurable moderator behavior)~~ DONE 2026-07-04
-8. Split `dialogue.py` into policy / observer / validation modules
+8. ~~Split `dialogue.py` into policy / observer / validation modules~~ DONE 2026-07-04
 
 Items 1-2 come first because they are prerequisites for controlled experiments: most of
 the other items (evaluation, moderator dependency) are much easier to judge once you can
@@ -429,7 +429,39 @@ some of the moderator's current responsibilities (option board framing, vote cal
 into participant-level acts when the moderator is disabled — scope that out concretely
 before implementing.
 
-### Issue 8 (P2). Split `dialogue.py` carefully
+### Issue 8 (P2). Split `dialogue.py` carefully — DONE (2026-07-04)
+
+Done as a mixin split (the lowest-risk way to move ~75 interleaved methods without
+touching logic: they stay on `self`, so cross-calls and shared state resolve via
+MRO). `DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin)` now keeps only
+orchestration in `dialogue.py` (~696 lines, down from ~1900): the run/phase loops,
+the generation+repair pipeline, moderator turns, pacing, logging. The three concern
+modules:
+
+- `src/policy.py` `PolicyMixin` — choose speaker/act/target, vote readiness,
+  candidate selection, `_can_shift_to`, coverage gaps, word budgets, surface-style
+  intent flags.
+- `src/observer.py` `ObserverMixin` — parse the act, apply semantics (votes,
+  acceptances, blockers, latent-lean movement, switch events), response
+  obligations, open questions.
+- `src/validation.py` `ValidationMixin` + `ValidationReport` — turn-text validation,
+  grounding tripwire/judge, restate-first fallback.
+
+Shared act-set constants moved to `models.py` (`_DECISION_ACTS`/`_DISCUSSION_ACTS`)
+to avoid an import cycle; the concern modules import from models/parsing/… only,
+never from `dialogue`, so there is no cycle. The move was mechanical (a splitter
+verified the four buckets partition the class body losslessly, 1735/1735 nonblank
+lines), so behavior is unchanged by construction.
+
+Validated 2026-07-04: `py_compile` on all sources; `DialogueRunner` exposes every
+original method (MRO `DialogueRunner→Policy→Observer→Validation`); live runs at
+n=2/3/5 and a no-moderator run all exit cleanly with `invalid_printed_turn_count`
+0, populated metrics, bridged switches, correct phase history and `moderator_config`
+— i.e. issues 5/6/7 behavior intact through the new structure
+(`logs/20260704_025348_622280` coffee n=3 majority with a bridged D→B switch and the
+tie-wording line; `logs/20260704_0255*` n=2/n=5; no-moderator run 0 moderator turns).
+
+Original issue text kept for context:
 
 `src/dialogue.py` is ~1900 lines and mixes routing, validation, generation, grounding,
 phase control, moderator logic, semantics, pacing, and output behavior. This makes the

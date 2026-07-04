@@ -35,6 +35,21 @@ class ActType(str, Enum):
     REACT = "react"
 
 
+# Act groupings shared across the routing/observation/validation modules
+# (defined here to avoid a shared-constant import cycle between them, issue 8).
+_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}
+_DISCUSSION_ACTS = {
+    ActType.BUILD,
+    ActType.AGREE,
+    ActType.CHALLENGE,
+    ActType.ASK,
+    ActType.ANSWER,
+    ActType.COMPARE,
+    ActType.INVITE,
+    ActType.PROPOSE_COMPROMISE,
+}
+
+
 class AgendaStatus(str, Enum):
     PENDING = "pending"
     DONE = "done"

@@ -24,7 +24,15 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `config.yaml`: tunable parameters.
 - `src/config_loader.py`: loads and validates `config.yaml`; exposes `cfg`.
 - `src/prompts.py`: all LLM prompts and moderator templates.
-- `src/dialogue.py`: compact discussion controller — routing, obligations, voting, moderator.
+- `src/dialogue.py`: the orchestration loop — phase control, generation+repair
+  pipeline, moderator turns, pacing, logging. `DialogueRunner` mixes in the three
+  concern modules below (issue 8 split; methods share the same `self`/`DialogueState`).
+- `src/policy.py`: `PolicyMixin` — routing policy (choose speaker/act/target, vote
+  readiness, candidate selection, word budgets, surface-style intent flags).
+- `src/observer.py`: `ObserverMixin` — parse generated text, apply semantics
+  (votes/blockers/lean/switch events), manage response obligations and open questions.
+- `src/validation.py`: `ValidationMixin` + `ValidationReport` — turn-text validation,
+  grounding tripwire/judge, deterministic restate-first fallback.
 - `src/consensus.py`: outcome logic (`ConsensusManager`, `participant_turn_count`), visible-vote only.
 - `src/builders.py`: setup generation and persona parsing.
 - `src/simulator.py`: OCEAN→parameter derivation and a per-persona private

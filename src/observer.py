@@ -1,0 +1,257 @@
+"""Visible-state observation for the dialogue runner (issue 8 extraction).
+
+ObserverMixin turns a generated line into parsed structure and folds it into the
+visible state: it parses the dialogue act, applies semantics (votes, acceptances,
+blockers, latent-lean movement, switch events), and manages response obligations
+and open questions. Mixed into DialogueRunner; all state lives on ``self``.
+"""
+
+from __future__ import annotations
+
+import random
+import re
+
+from config_loader import cfg
+from models import (
+    ActType,
+    DialogueAct,
+    DialogueState,
+    MoveIntent,
+    OpenQuestion,
+    ParticipantRuntime,
+    Persona,
+    ResponseObligation,
+    TurnRecord,
+)
+from parsing import commitment_has_reason, parse_dialogue_act, switch_bridge_ok
+from simulator import refresh_agenda
+
+_VOTE_CHANGE = re.compile(
+    r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
+    r"actually\s+i\s+(?:vote|choose|support|pick|prefer)|on\s+second\s+thought|"
+    r"i'?ll\s+switch|then\s+i\s+switch|let'?s\s+switch)\b",
+    re.I,
+)
+
+
+class ObserverMixin:
+    def _parse_act(self, state: DialogueState, persona: Persona, text: str, intent: MoveIntent) -> DialogueAct:
+        assert self._resolver is not None
+        previous = self._last_participant_id(state)
+        names = {p.id: p.name for p in state.personas}
+        return parse_dialogue_act(
+            speaker_id=persona.id,
+            speaker_name=persona.name,
+            text=text,
+            resolver=self._resolver,
+            participant_names=names,
+            intent=intent,
+            previous_speaker_id=previous,
+        )
+
+    def _apply_semantics(self, state: DialogueState, record: TurnRecord) -> None:
+        rt = state.runtimes[record.speaker_id]
+        persona = state.persona_by_id(record.speaker_id)
+        act = record.act
+        before = self._snapshot_progress(state)
+        prior_vote = rt.explicit_vote
+        prior_pref = rt.current_preference or persona.preferred_option
+
+        if act.question_target_id:
+            self._register_question(state, record)
+        if record.intent and record.intent.act == ActType.ANSWER:
+            self._close_answered_questions(state, record.speaker_id)
+
+        for option_id in act.option_refs:
+            cov = state.coverage[option_id]
+            cov.mentions += 1
+            if act.act_type in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.PROPOSE_COMPROMISE, ActType.OPENING}:
+                cov.reasons += 1
+            if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
+                cov.objections += 1
+
+        # A visible resolution clears a parsed blocker for THIS sim only, and it
+        # must run before votes so "that fixes my concern; I can live with X"
+        # counts. The persona-level setup rejection is never cleared by a casual
+        # line; it needs the explicit compromise path.
+        if act.resolves_blocker and act.resolves_blocker != persona.rejection:
+            rt.hard_rejections.pop(act.resolves_blocker, None)
+
+        allow_change = bool(record.intent and record.intent.allow_vote_change)
+        if act.explicit_vote and act.explicit_vote not in rt.hard_rejections:
+            vote_stance = "accept" if act.explicit_vote in act.accepts else "vote"
+            self._set_vote(rt, act.explicit_vote, act.text, force=allow_change, stance=vote_stance)
+        for option_id in act.accepts:
+            if option_id in rt.hard_rejections:
+                continue  # an actively blocked option needs a visible resolution first
+            rt.accepted_options.add(option_id)
+            self._set_vote(rt, option_id, act.text, force=allow_change, stance="accept")
+            state.coverage[option_id].acceptances += 1
+        for option_id, reason in act.soft_rejects.items():
+            rt.soft_rejections[option_id] = reason
+        for option_id, reason in act.hard_rejects.items():
+            rt.hard_rejections[option_id] = reason
+
+        # Record visible vote movement (first vote away from the initial
+        # preference, or a change of an earlier vote). `has_reason` is the weak
+        # signal (any reason clause); `has_bridge` is the issue-5 signal — the
+        # switch visibly links the sim's pre-turn lean to the new pick with a
+        # reason, which is what the validator enforces on a switch away from lean.
+        if rt.explicit_vote and rt.explicit_vote != prior_vote:
+            baseline = prior_vote or persona.preferred_option
+            if rt.explicit_vote != baseline:
+                bridged = (
+                    prior_pref == rt.explicit_vote
+                    or (self._resolver is not None
+                        and switch_bridge_ok(act.text, prior_pref, self._resolver))
+                )
+                rt.switch_events.append({
+                    "from": baseline,
+                    "to": rt.explicit_vote,
+                    "has_reason": commitment_has_reason(act.text),
+                    "has_bridge": bool(bridged),
+                })
+
+        # Latent lean may move only on a visible signal in the parsed text:
+        # a vote/acceptance (handled by _set_vote), a visible compromise offer
+        # or proposal, or explicit conditional support. Never from routing
+        # intent alone (issue I4).
+        if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
+            rt.current_preference = record.intent.option_focus[0]
+        else:
+            signal = act.offers_compromise or act.proposes_option or act.conditional_support
+            if signal and signal != rt.current_preference and self._can_shift_to(state, persona, signal):
+                if random.random() > persona.sim_params.compromise_threshold:
+                    rt.current_preference = signal
+
+        refresh_agenda(persona, rt.current_preference)
+
+        after = self._snapshot_progress(state)
+        state.no_progress_count = 0 if after != before else state.no_progress_count + 1
+
+    @staticmethod
+    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:
+        """Record a clear vote, protecting an existing one from silent overwrite.
+
+        A participant who already cast a clear vote keeps it unless their visible
+        text explicitly signals a change (e.g. 'actually I vote for', 'switch to'),
+        or ``force`` is set (used in the explicit split-vote compromise step).
+        Exception (issue #23): a formal direct vote replaces a commitment that
+        was only an acceptance earlier in discussion — otherwise a casual
+        "X works for me" locks out the actual vote round and manufactures a
+        phantom split. A direct vote never silently replaces another direct
+        vote (issue #5).
+        """
+        if rt.explicit_vote and rt.explicit_vote != option_id and not force and not _VOTE_CHANGE.search(text or ""):
+            if not (stance == "vote" and rt.vote_stance == "accept"):
+                return
+        rt.explicit_vote = option_id
+        rt.vote_stance = stance
+        rt.current_preference = option_id
+
+    # ------------------------------------------------------------------
+    # Utilities
+    # ------------------------------------------------------------------
+
+    def _next_answerable_question(self, state: DialogueState) -> OpenQuestion | None:
+        live = []
+        for question in state.open_questions:
+            if any(t.speaker_id == question.target_id and t.index > question.turn_id for t in state.turns):
+                continue
+            if question.target_id in state.runtimes:
+                live.append(question)
+        state.open_questions = live[-4:]
+        return state.open_questions[0] if state.open_questions else None
+
+    def _register_question(self, state: DialogueState, record: TurnRecord) -> None:
+        # A direct question is detected from visible text (parser sets
+        # question_target_id), not from the routed act label: a question embedded
+        # in a challenge/compare turn still creates a response obligation.
+        target = record.act.question_target_id
+        if not target or target == record.speaker_id or target not in state.runtimes:
+            return
+        state.open_questions.append(OpenQuestion(turn_id=record.index, asked_by=record.speaker_id, target_id=target, text=record.text, option_focus=record.act.option_refs[:2]))
+        state.open_questions = state.open_questions[-4:]
+        self._set_obligation(
+            state,
+            target_id=target,
+            source_id=record.speaker_id,
+            text=record.text,
+            expected_act=ActType.ANSWER,
+            option_focus=record.act.option_refs[:2],
+        )
+
+    def _set_obligation(
+        self,
+        state: DialogueState,
+        *,
+        target_id: str,
+        source_id: str,
+        text: str,
+        expected_act: ActType,
+        option_focus: list[str],
+    ) -> None:
+        if target_id not in state.runtimes or target_id == source_id:
+            return
+        window = max(1, int(cfg.conversation.get("response_obligation_turns", 2)))
+        state.obligations_created += 1
+        state.response_obligation = ResponseObligation(
+            target_id=target_id,
+            source_id=source_id,
+            question_text=text,
+            expected_act=expected_act,
+            created_turn=state.turn_index,
+            expires_after=state.turn_index + 2 * window,  # turn_index counts moderator turns too
+            option_focus=[o for o in option_focus if o in state.scenario.option_ids][:2],
+        )
+
+    def _active_obligation(self, state: DialogueState) -> ResponseObligation | None:
+        ob = state.response_obligation
+        if ob is None:
+            return None
+        if ob.target_id not in state.runtimes:
+            state.response_obligation = None
+            return None
+        # Satisfied: the target has taken a turn since the obligation was created.
+        if any(t.speaker_id == ob.target_id and t.index > ob.created_turn for t in state.turns):
+            state.response_obligation = None
+            return None
+        # Lapsed: too many turns passed without the target answering.
+        if state.turn_index > ob.expires_after:
+            state.unanswered_obligations += 1
+            state.response_obligation = None
+            return None
+        return ob
+
+    def _obligation_intent(self, state: DialogueState, obligation: ResponseObligation) -> MoveIntent:
+        focus = obligation.option_focus or self._focus_from_recent(state)
+        if obligation.expected_act == ActType.VOTE:
+            return self._vote_intent(state, state.persona_by_id(obligation.target_id), state.candidate_option or (focus[0] if focus else state.personas[0].preferred_option))
+        return MoveIntent(
+            speaker_id=obligation.target_id,
+            act=ActType.ANSWER,
+            reason="answer the direct question you were just asked, then add one implication for the decision",
+            addressee_id=None if obligation.source_id == "moderator" else obligation.source_id,
+            option_focus=focus,
+            # Without this the prompt never shows WHICH question is owed, and
+            # group-directed questions get pivoted around instead of answered.
+            respond_to_turn=obligation.created_turn,
+        )
+
+    @staticmethod
+    def _close_answered_questions(state: DialogueState, speaker_id: str) -> None:
+        state.open_questions = [q for q in state.open_questions if q.target_id != speaker_id]
+
+    @staticmethod
+    def _focus_from_recent(state: DialogueState) -> list[str]:
+        for turn in reversed(state.turns):
+            if turn.act.option_refs:
+                return turn.act.option_refs[:2]
+        return []
+
+    @staticmethod
+    def _snapshot_progress(state: DialogueState) -> tuple:
+        leans = tuple(sorted((pid, rt.current_preference) for pid, rt in state.runtimes.items()))
+        votes = tuple(sorted((pid, rt.explicit_vote) for pid, rt in state.runtimes.items() if rt.explicit_vote))
+        questions = tuple((q.turn_id, q.target_id) for q in state.open_questions)
+        return leans, votes, questions
