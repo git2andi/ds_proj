@@ -342,10 +342,15 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
 def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     metrics = metrics_for(state, outcome)
     scalar = {k: v for k, v in metrics.items() if not isinstance(v, dict) and not isinstance(v, list)}
+    provider = str(cfg.llm.provider).lower()
     return {
         "run_id": run_id,
         "topic": state.scenario.topic,
         "environment_type": state.scenario.environment_type,
+        # Provider/model per row so runs from different backends can be
+        # compared in the CSV (issue 9).
+        "llm_provider": provider,
+        "llm_model": str(cfg.llm.models.get(provider, "unknown")),
         "num_participants": len(state.personas),
         "hard_blocker_present": any(p.rejection for p in state.personas),
         **scalar,

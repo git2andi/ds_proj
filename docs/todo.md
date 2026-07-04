@@ -46,48 +46,7 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 8 (P2). Keep the option-grounded scope explicit and rename descriptions accordingly
-
-**Problem.** Some descriptions can still sound like the system is a general multi-user chat simulator or a full agenda-based user simulator. That overstates the current project and creates confusion about whether open-ended group chat is expected.
-
-**Where visible.**
-
-- The project discussion around ConvLab3 and MUCA clarified that the real goal is simulator framework design, not simply nice transcripts.
-- Current system design is centered on fixed options, visible votes, and decision outcomes.
-
-**Correct behavior.**
-
-README, `info/`, and future write-ups should consistently call the system an **option-grounded multi-user decision simulator** or **multi-user dialogue simulation framework for option-grounded group decisions**.
-
-The wording should avoid claiming:
-
-```text
-general open-ended chat simulation
-full agenda-based user simulation
-human-realistic society simulation
-```
-
-unless those features are actually implemented.
-
-### Issue 9 (P2). Transcript and run outputs should state the active LLM provider
-
-**Problem.** Transcripts currently focus on the generated conversation and run metadata, but the human-readable transcript should also make clear which provider was used, for example `gpt`, `uni`, `groq`, or `gemini`. This matters because provider differences can change style, grounding, verbosity, and failure patterns.
-
-**Where visible.**
-
-- During manual review of generated transcripts, the provider is not immediately visible in the transcript header.
-- The project uses multiple providers, so comparing logs without provider metadata is error-prone.
-
-**Correct behavior.**
-
-Each transcript should include the active provider near the top, together with existing run metadata. Example:
-
-```text
-Provider: gpt
-Model: gpt-...
-```
-
-If the model identifier is already available, include it as well. The structured `run.json` should also keep provider/model metadata so failures can be compared across providers.
+All issues from this round are implemented and validated (one commit each; see git log). New issues should be added here as they are found.
 
 ## 3. Explicit non-goals for this round
 

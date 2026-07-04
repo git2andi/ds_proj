@@ -63,11 +63,16 @@ class DialogueLogger:
         return path
 
     def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
+        provider, model = _active_provider_model()
         lines = [
             f"# Dialogue run {self.run_id}",
             "",
             f"Topic: {state.scenario.topic}",
             f"Environment: {state.scenario.environment_type}",
+            # Provider differences change style, grounding, and failure patterns
+            # (issue 9) — a transcript must say which backend wrote it.
+            f"Provider: {provider}",
+            f"Model: {model}",
             "",
             "## Options",
             "",
@@ -119,9 +124,11 @@ class DialogueLogger:
         return lines
 
     def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
+        provider, model = _active_provider_model()
         return {
             "run_id": self.run_id,
             "topic": self.topic,
+            "llm": {"provider": provider, "model": model},
             "participants_mode": str((cfg.get("participants", None) or {}).get("mode", "auto")),
             "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
             "moderator_config": _resolved_moderator_config(),
@@ -140,6 +147,13 @@ class DialogueLogger:
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
         }
+
+
+def _active_provider_model() -> tuple[str, str]:
+    """The LLM backend this run used, read from config (issue 9)."""
+    provider = str(cfg.llm.provider).lower()
+    model = str(cfg.llm.models.get(provider, "unknown"))
+    return provider, model
 
 
 def _resolved_moderator_config() -> dict[str, bool]:

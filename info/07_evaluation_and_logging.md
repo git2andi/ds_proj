@@ -13,17 +13,23 @@ produce structured per-run signals.
 Every run creates a directory under `logs/<run_id>/` plus a shared CSV:
 
 ```text
-logs/<run_id>/transcript.md   human-readable: options, personas+parameters, turns,
-                              outcome, and the full metrics block
+logs/<run_id>/transcript.md   human-readable: Provider/Model header, options,
+                              personas+parameters, turns, outcome, metrics block
 logs/<run_id>/run.json        the structured trace (see below)
 logs/<run_id>/prompts.jsonl   optional per-turn prompts (output.write_prompts)
-logs/metrics.csv              one flat row per run (flat_metrics_for), appended
+logs/metrics.csv              one flat row per run (flat_metrics_for), appended —
+                              includes llm_provider/llm_model per row
 ```
+
+The transcript header names the **active LLM provider and model** (issue 9):
+provider differences change style, grounding, verbosity, and failure patterns, so
+logs from different backends must be distinguishable at a glance.
 
 `run.json` is the analyzable trace. Top-level keys:
 
 ```text
 run_id, topic
+llm                                                      (provider + model used)
 participants_mode, environment_mode, moderator_config   (which input modes were used)
 scenario, personas                                       (the generated world + cast)
 runtimes        per-sim visible state, incl. switch_events (from/to/has_reason/has_bridge)
