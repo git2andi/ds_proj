@@ -390,6 +390,8 @@ class DialogueState:
     compromise_attempted: bool = False
     minority_check_attempted: bool = False
     reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
+    procedural_move_count: int = 0           # participant-owned structure beats taken (issue 5)
+    peer_vote_call_done: bool = False        # a participant already called for final picks (issue 5)
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

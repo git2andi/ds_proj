@@ -217,7 +217,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
   `DialogueRunner._mod(part)`. The flags never touch controller policy: in
   lower-/no-moderator modes the run still decides because the decision loop keeps
   emitting participant vote turns and the participant-level narrowing acts carry
-  the discussion (peer-to-peer). When `opening` is off the option board is shown as
+  the discussion (peer-to-peer). Participant-owned procedure (issue 5): with
+  `final_vote_call` off, the highest-initiative sim casually calls for final
+  picks (option-neutral) and a supporter asks the holdout probe; with
+  `mid_discussion_nudges` off, a bounded stall beat (≤2/run) has a
+  high-initiative sim summarize the visible split / suggest setting aside an
+  unargued option / suggest deciding. Metrics: `participant_procedural_moves`,
+  `peer_vote_call`. When `opening` is off the option board is shown as
   plain scaffolding (header + transcript `## Options`), not a turn. Defaults are
   fully-moderated; `run.json` records the resolved `moderator_config`. The split-vote
   probe only claims "the most support" on a strict plurality — a pure tie is

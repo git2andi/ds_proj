@@ -142,6 +142,11 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             maybe_nudge = self._maybe_moderator_nudge(state)
             if maybe_nudge:
                 self._emit(maybe_nudge)
+            else:
+                procedural = self._maybe_participant_procedural(state)
+                if procedural is not None:
+                    self._emit(self._generate_and_append(state, procedural))
+                    continue
             intent = self._route_discussion_turn(state)
             self._emit(self._generate_and_append(state, intent))
 
@@ -175,6 +180,24 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 self._emit(nudge_record)
                 if target_id:
                     order.sort(key=lambda p: p.id != target_id)
+            elif round_index == 0 and not state.peer_vote_call_done:
+                # Participant-owned vote call (issue 5): with the moderator's
+                # vote-call voice off, the highest-initiative sim casually asks
+                # for final picks — option-neutral, then votes like everyone.
+                state.peer_vote_call_done = True
+                caller = max(state.personas, key=lambda p: p.sim_params.initiative + 0.3 * p.sim_params.engagement)
+                call_intent = MoveIntent(
+                    speaker_id=caller.id,
+                    act=ActType.ASK,
+                    reason=(
+                        "you feel the group has weighed enough — casually suggest everyone give their "
+                        "definite final pick now, in your own words; do not name or suggest any option "
+                        "in this line"
+                    ),
+                    length_hint="short",
+                )
+                self._emit(self._generate_and_append(state, call_intent))
+                order.sort(key=lambda p: p.id != caller.id)
             for persona in order:
                 self._emit(self._generate_and_append(state, self._vote_intent(state, persona, candidate)))
             provisional = ConsensusManager.finalize(state)
@@ -592,6 +615,59 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 option_focus=focus,
             )
         return record
+
+    def _maybe_participant_procedural(self, state: DialogueState) -> MoveIntent | None:
+        """Participant-owned structure beat (issue 5), active when the moderator's
+        mid-discussion voice is off: a high-initiative sim summarizes the visible
+        split and suggests narrowing, proposes dropping an untouched option, or
+        suggests moving toward a decision. Same stall conditions as the moderator
+        nudge, bounded to two per run."""
+        if self._mod("mid_discussion_nudges"):
+            return None
+        if state.procedural_move_count >= 2:
+            return None
+        if participant_turn_count(state) < max(state.min_discussion_turns + 2, state.force_narrow_turns - 1):
+            return None
+        if state.no_progress_count < int(cfg.conversation.moderator_stall_window):
+            return None
+        state.procedural_move_count += 1
+        state.no_progress_count = 0
+        last = self._last_participant_id(state)
+        candidates = [p for p in state.personas if p.id != last] or state.personas[:]
+        speaker = max(candidates, key=lambda p: p.sim_params.initiative + 0.5 * p.sim_params.engagement)
+        aliases = short_alias_map(state.scenario.options)
+        camps = sorted({
+            rt.current_preference for rt in state.runtimes.values()
+            if rt.current_preference in state.scenario.option_ids
+        })
+        untouched = [oid for oid, cov in state.coverage.items() if cov.mentions <= 1 and oid not in camps]
+        if len(camps) >= 2:
+            names = " and ".join(aliases[c] for c in camps[:2])
+            reason = (
+                f"you feel the group is circling — sum up in your own words that it comes down to {names}, "
+                "and suggest the group focus on that trade-off or start moving toward a pick; don't push "
+                "your own option in this line"
+            )
+            focus = camps[:2]
+        elif untouched:
+            reason = (
+                f"suggest the group set {aliases[untouched[0]]} aside since nobody has made a case for it, "
+                "so the discussion can focus on the real contenders"
+            )
+            focus = [untouched[0]]
+        else:
+            reason = (
+                "you feel the group has compared enough — suggest in your own casual words that it's time "
+                "to move toward a decision, and ask if anything important is still unresolved"
+            )
+            focus = []
+        return MoveIntent(
+            speaker_id=speaker.id,
+            act=ActType.BUILD,
+            reason=reason,
+            option_focus=focus,
+            length_hint="short",
+        )
 
     def _moderator_vote_nudge(self, state: DialogueState, candidate: str, reason: str) -> tuple[TurnRecord, str | None]:
         target_id, requested_action, focus = self._moderator_intervention_details(state, candidate, voting=True)

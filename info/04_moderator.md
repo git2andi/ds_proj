@@ -111,9 +111,27 @@ the holdouts** and never implies full agreement; a `successful` close wraps up w
 an `unresolved` close presents **nothing** as chosen. (When `closing: false`, the
 outcome is still computed and logged — only the moderator's summary line is skipped.)
 
-## Current mismatch / intended correction
+## Participant-owned procedure in low-/no-moderator modes (issue 5)
 
-The moderator configuration exists, but lower-moderator and no-moderator modes still need stronger participant-owned structure. The hidden controller can currently carry the discussion even when the moderator is visually disabled. That works mechanically, but it weakens the claim that simulated users are managing a group interaction.
+When a moderator voice is off, its structural job is *visibly taken over by
+participants* (always by a high-initiative sim), not just absorbed silently by the
+controller:
 
-The intended behavior is that high-initiative or high-engagement sims sometimes perform procedural moves themselves: summarize the split, ask a quiet participant, suggest dropping an option, call for final picks, ask a holdout what blocks agreement, or check whether a compromise is acceptable. These moves should become more likely when moderator support is disabled or when the group is stalled.
+- **Vote call** (`final_vote_call: false`): the highest-initiative sim opens the
+  first vote round by casually asking everyone for their definite final pick —
+  option-neutral, in its own words — then votes first itself.
+- **Holdout probe** (`final_vote_call: false`): a supporter of the majority/probe
+  candidate asks the holdout what still blocks agreement (`04` bounded closing
+  beats), followed by the reservation exchange.
+- **Stall beat** (`mid_discussion_nudges: false`): under the same stall conditions
+  as the moderator nudge (bounded to two per run), a high-initiative sim sums up the
+  visible split and suggests focusing/narrowing, proposes setting aside an option
+  nobody made a case for, or suggests moving toward a decision.
+
+Together with the participant-level acts that always exist (invite a quiet sim,
+propose a compromise, head-to-head comparisons), no-moderator runs reach decisions
+through visible peer facilitation. Metrics: `participant_procedural_moves`,
+`peer_vote_call`. Validated live: a `moderator.enabled: false` run reached a
+unanimous close with zero moderator turns — peer vote call, peer holdout probe,
+reservation exchange, bridged switch.
 

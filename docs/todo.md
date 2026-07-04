@@ -46,31 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 5 (P1). Add participant-owned procedural moves, especially in low- or no-moderator runs
-
-**Problem.** The moderator can now be disabled or reduced, but the hidden controller still carries most of the structure. Participants do not yet reliably perform enough group-management acts themselves.
-
-**Where visible.**
-
-- No-moderator and low-moderator modes can run, but participant-level narrowing is still weaker than the moderator-guided path.
-- Current transcripts still often rely on explicit vote calls, holdout probes, or closure structure from the system/moderator.
-
-**Correct behavior.**
-
-High-initiative or high-engagement sims should sometimes perform procedural moves such as:
-
-```text
-suggest narrowing
-summarize the current split
-ask a quiet participant for their view
-ask a holdout what blocks agreement
-propose dropping a weak option
-call for a final pick
-check whether a compromise is acceptable
-```
-
-This should be more likely when the moderator is disabled, when the discussion is stalled, or when the group has already compared enough options.
-
 ### Issue 6 (P1). Allow rare intentional same-speaker continuations, but prevent duplicate consecutive turns
 
 **Problem.** A hard ban on consecutive turns by the same sim would be too rigid. Real chats sometimes contain add-ons, repairs, afterthoughts, or self-corrections by the same person. However, accidental duplicate turns are still bad and make the routing look broken.

@@ -283,6 +283,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "repetition_score": _repetition_score(state),
         "compromise_success_rate": _compromise_success(state, outcome),
         "reservation_exchange": bool(state.reservation_exchange_done),
+        "participant_procedural_moves": int(state.procedural_move_count),
+        "peer_vote_call": bool(state.peer_vote_call_done),
         "switch_event_count": switch_count,
         "switch_explanation_rate": switch_explained,
         "switch_bridge_rate": switch_bridged,
