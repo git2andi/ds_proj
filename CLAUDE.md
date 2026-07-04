@@ -16,7 +16,7 @@ py .\main.py scenarios.txt
 "Choose a coffee machine for the office" | py .\main.py
 ```
 
-Change participant count and provider settings in `config.yaml`. The default provider is `gpt` (`gpt-4.1-mini`); keys are read from `.env`. Run the tests with `py -m pytest tests/ -q` (no LLM calls).
+Change participant count and provider settings in `config.yaml`. The default provider is `gpt` (`gpt-4.1-mini`); keys are read from `.env`. There is no automated test suite: validation is by live runs — inspect the transcript **and** `run.json`/metrics (see `docs/todo.md` section 5 and `info/07`). Sanity-compile with `py -m py_compile src/*.py main.py`.
 
 ## Current source layout
 
@@ -51,14 +51,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
   appear only on a resolved outcome).
 - `src/logger.py`: run logging (transcript, JSON, metrics CSV).
 - `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
-- `tests/`: deterministic, LLM-free tests.
 - `info/`: plain-language "how it works" notes, one per stage of a run
   (`00_overview` is the map; `01`–`09` follow scenario → sims → routing → moderator →
   discussion/decision → consensus → evaluation → config → topic examples). Kept in
   sync with the code.
 - `docs/todo.md`: open issues and the per-issue implementation protocol.
 
-## Key controller mechanisms (current as of 2026-07-03)
+## Key controller mechanisms (current as of 2026-07-04)
 
 - **Environment input modes.** `environment.mode` in `config.yaml`: `auto` turns a
   CLI/stdin topic into a scenario via the setup LLM; `manual` builds the Scenario
@@ -175,8 +174,9 @@ Change participant count and provider settings in `config.yaml`. The default pro
   remaining concern" only as last resort. The split-vote compromise probe
   (`_split_probe_candidate`) never targets an option with a visible unresolved
   dealbreaker and requires at least one dissenter who can actually move; its
-  wording presents the front-runner as "currently has the most support" with
-  both answers explicitly fine. Closures are status-aware: a majority close
+  wording presents the front-runner as "currently has the most support" only when
+  it is a strict plurality (a pure tie is announced as "evenly split with no option
+  ahead"), with both answers explicitly fine. Closures are status-aware: a majority close
   names the holdouts and never implies full agreement; unresolved closes
   present nothing as chosen.
 - **Configurable moderator.** `moderator:` in `config.yaml` gates the visible
