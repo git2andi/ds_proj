@@ -65,6 +65,17 @@ What is still weak or missing, and should not be overstated:
 
 ---
 
+## Implementation protocol for every update
+
+1. **Archive old logs first.** Move existing log files/directories from `logs/` into `logs/archive/` before changing behavior. Never delete logs. (Done for the 2026-07-02 baseline.)
+2. **Work on one issue at a time**, unless the issue explicitly bundles small changes.
+4. **Keep sim generation stable unless proven otherwise.** Persona generation mostly works; redesign only on concrete log evidence (see I6 for the one known setup defect).
+5. **Do not over-split the architecture.** One cohesive extraction (e.g. `src/policy.py`) only if it clearly simplifies `src/dialogue.py`.
+6. **Validate with example runs** on the `gpt` provider: one mandatory `n=3` run with a fresh random topic, then 3-4 more runs with a different group size in 2..7, more only if behavior is unstable or group-size-dependent.
+7. **Inspect transcript and metrics.** Read the transcript; check the intended behavior is visible. Successful execution is not successful dialogue quality.
+9. **Append newly observed issues** with log path/date, topic, group size, and the smallest description of the failure.
+10. **End only after verification**, then commit the issue as one commit on `master`.
+
 ## 1. Prioritized implementation plan
 
 Work top to bottom; each item should land as its own commit once validated by live runs
@@ -75,7 +86,7 @@ clearly independent.
 2. ~~Explicit environment input mode (environment: auto | manual)~~ DONE 2026-07-03
 3. ~~Honest agenda documentation + framing (docs/model only, no behavior change forced)~~ DONE 2026-07-03
 4. ~~Complete the planned evaluation layer~~ DONE 2026-07-03
-5. Fix sudden unexplained preference switches (bridge-clause enforcement)
+5. ~~Fix sudden unexplained preference switches (bridge-clause enforcement)~~ DONE 2026-07-04
 6. Fix phase-history inconsistency (no false "closure" phase markers)
 7. Reduce moderator dependency (configurable moderator behavior)
 8. Split `dialogue.py` into policy / observer / validation modules
@@ -240,7 +251,45 @@ Goal: the project should not rely on manual "this transcript sounds natural"
 impressions. It should produce structured per-run metrics that show whether simulators
 behave according to their configured parameters.
 
-### Issue 5 (P1). Fix sudden unexplained preference switches
+### Issue 5 (P1). Fix sudden unexplained preference switches — DONE (2026-07-04)
+
+Enforced as a blocking validator/repair rule, not a prompt-only request.
+`parsing.switch_bridge_ok(text, old_option_id, resolver)` requires a switch line
+to carry (a) a link to the old stance — the old option named or an explicit
+concession marker (`_CONCESSION`: "still", "even though", "despite", "I preferred",
+"I can live with", …) — and (b) a reason clause (`commitment_has_reason`); the new
+option is the committed vote and is always present. `DialogueRunner._validate_turn_text`
+raises the blocking issue `UNBRIDGED_SWITCH` whenever a parsed commitment lands on
+an option other than the sim's current internal lean without a bridge. Blocking
+means it flows through the standard repair pass (`prompts.repair_utterance` gets
+UNBRIDGED_SWITCH guidance naming the old pick) and, if repair still fails, the
+deterministic fallback restates the *current lean* (`_safe_fallback_text` is already
+restate-first), so an unexplained flip can never reach the transcript. First-pass
+generation is nudged too: `sim_utterance` adds an explicit bridge instruction on
+sanctioned-switch decision turns (`intent.allow_vote_change`). `switch_events` now
+also record `has_bridge` (checked against the sim's pre-turn lean, mirroring the
+validator), and `evaluation.py` reports a new `switch_bridge_rate` alongside the
+looser `switch_explanation_rate`.
+
+Validated 2026-07-04 by five live runs (gpt-4.1-mini, group sizes 3/5/4/2/6,
+varied domains), 7 switch events total, **all 7 bridged, `switch_bridge_rate` 1.0
+in every run, `invalid_printed_turn_count` 0 in every run**:
+
+- n=3 team offsite (`logs/20260704_021907_913560`): majority(A); holdout Leo kept
+  his pick throughout (no switch, no false trigger), 0 fallbacks.
+- n=5 backend language (`logs/20260704_022038_917635`): majority(A); Faye bridged
+  Node Express→Go Gin ("I still like Node Express, but Go Gin works for me since …").
+- n=4 family trip (`logs/20260704_022215_626732`): majority(A); two bridged switches
+  (Jasper Condo→Cabin, Vera City Hotel→Cabin), each naming the old pick + reason.
+- n=2 analytics DB (`logs/20260704_022323_939349`): successful(B); Marco bridged
+  Redshift→BigQuery.
+- n=6 conference theme (`logs/20260704_022406_468189`): majority(D); three bridged
+  switches. **The one UNBRIDGED_SWITCH the validator caught** (Hana's first-pass line)
+  was repaired — not fallen back — into a fully bridged line
+  ("I still like Market Trends, but I'm going with Sustainable Technologies because …"),
+  final validation clean. This is the enforcement path firing end-to-end.
+
+Original issue text kept for context:
 
 Observed in a charity-run log: Leo argued for the senior-support option throughout the
 discussion, then voted for Youth Arts with no visible bridge:

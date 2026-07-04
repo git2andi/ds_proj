@@ -217,6 +217,38 @@ def commitment_has_reason(text: str) -> bool:
     return bool(_REASON_MARKER.search(text.replace("’", "'")))
 
 
+# A concession/movement marker: the line explicitly signals moving off an earlier
+# stance ("I still like X, but…", "even though…", "coming around", "I can live
+# with…"). Used with commitment_has_reason to enforce a visible bridge clause on
+# preference switches (issue 5).
+_CONCESSION = re.compile(
+    r"\b(?:still|even\s+though|though|although|despite|"
+    r"prefer(?:red|ring|s)?|i'?d\s+rather|rather\s+than|"
+    r"used\s+to|originally|at\s+first|was\s+leaning|leaned|"
+    r"i\s+liked|i\s+wanted|coming\s+around|come\s+around|won\s+over|"
+    r"give\s+up|giving\s+up|gave\s+up|let\s+go\s+of|concede|conceding|"
+    r"i\s+can\s+live\s+with|change[ds]?\s+my\s+mind|for\s+the\s+group|"
+    r"easier\s+for\s+(?:the\s+group|everyone)|for\s+the\s+sake\s+of)\b",
+    re.I,
+)
+
+
+def switch_bridge_ok(text: str, old_option_id: str, resolver: OptionResolver) -> bool:
+    """True when a switch line visibly bridges the old stance to the new pick.
+
+    A socially honest preference switch (issue 5) must carry both (a) a link to
+    the old stance — the old option named, or an explicit concession marker —
+    and (b) a reason for the movement. The new option is already present (it is
+    the committed vote), so it is not re-checked here.
+    """
+    normalised = text.replace("’", "'").replace("‘", "'")
+    if not commitment_has_reason(normalised):
+        return False
+    if _CONCESSION.search(normalised):
+        return True
+    return old_option_id in resolver.ids_in_text(normalised)
+
+
 class OptionResolver:
     def __init__(self, options: list[OptionCard]) -> None:
         self.options = options

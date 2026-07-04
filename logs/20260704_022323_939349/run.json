@@ -1,0 +1,1337 @@
+{
+  "run_id": "20260704_022323_939349",
+  "topic": "Pick a database for our analytics platform",
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "scenario": {
+    "topic": "Pick a database for our analytics platform",
+    "decision_kind": "tool_choice",
+    "opening_question": "How should we balance query speed, cost, and ease of integration for our analytics database?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Amazon Redshift Data Warehouse",
+        "attrs": {
+          "annual_cost": "$40,000",
+          "query_latency": "5 seconds average",
+          "scalability": "up to 16PB",
+          "integration_effort": "medium"
+        },
+        "upside": "Highly scalable with strong AWS ecosystem integration",
+        "tradeoff": "Higher latency compared to some newer columnar stores",
+        "concern": "Costs can rise quickly with unpredictable query patterns",
+        "best_for": "scenarios prioritizing scalability and AWS compatibility",
+        "short_name": "Redshift"
+      },
+      {
+        "id": "B",
+        "name": "Google BigQuery Analytics Platform",
+        "attrs": {
+          "annual_cost": "$35,000",
+          "query_latency": "2 seconds average",
+          "scalability": "virtually unlimited",
+          "integration_effort": "low"
+        },
+        "upside": "Serverless with fast ad-hoc queries and minimal maintenance",
+        "tradeoff": "Cost model based on data scanned can be unpredictable",
+        "concern": "Less control over infrastructure and data locality",
+        "best_for": "teams wanting low maintenance and fast query speed",
+        "short_name": "BigQuery"
+      },
+      {
+        "id": "C",
+        "name": "Snowflake Cloud Data Platform",
+        "attrs": {
+          "annual_cost": "$45,000",
+          "query_latency": "3 seconds average",
+          "scalability": "up to multi-petabyte",
+          "integration_effort": "medium"
+        },
+        "upside": "Separation of storage and compute allows flexible scaling",
+        "tradeoff": "Slightly higher cost for compute-heavy workloads",
+        "concern": "Learning curve for optimizing warehouse sizes and credits",
+        "best_for": "flexible scaling with predictable performance",
+        "short_name": "Snowflake"
+      },
+      {
+        "id": "D",
+        "name": "ClickHouse Open Source Analytics DB",
+        "attrs": {
+          "annual_cost": "$10,000 (self-managed)",
+          "query_latency": "sub-second for many queries",
+          "scalability": "up to petabyte scale with cluster",
+          "integration_effort": "high"
+        },
+        "upside": "Extremely fast queries and low cost if self-managed",
+        "tradeoff": "Requires significant operational expertise and maintenance",
+        "concern": "Risk of downtime or misconfiguration without dedicated ops",
+        "best_for": "teams prioritizing performance and cost savings with ops capacity",
+        "short_name": "ClickHouse"
+      }
+    ],
+    "shared_context": [
+      "We have a $50,000 annual budget for the database",
+      "The analytics platform must handle up to 10TB of data",
+      "The decision group consists of exactly 2 participants"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Gemma",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.875,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.425,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "I focus on minimizing maintenance overhead and ensuring fast ad-hoc query performance for our analytics team.",
+      "private_goal": "I want a low-maintenance, serverless platform that delivers quick query results to support agile data exploration.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Marco",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7000000000000001,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.4,
+        "directness": 0.7625,
+        "compromise_threshold": 0.3375
+      },
+      "background": "I prioritize scalability and tight integration with our existing AWS infrastructure to handle large data volumes reliably.",
+      "private_goal": "I want a highly scalable data warehouse that fits well within the AWS ecosystem and can grow with our data needs.",
+      "preferred_options": [
+        "A",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 16,
+      "current_preference": "B",
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Low maintenance and speed weigh heavily, so BigQuery’s serverless design stands out.",
+        "Snowflake offers better scaling flexibility than BigQuery but costs more and needs more tuning.",
+        "We need predictable costs and minimal ops risk—BigQuery’s serverless setup fits that better than ClickHouse.",
+        "Cost stays well under budget at $35K, with near-zero ops effort on BigQuery.",
+        "Marco, Redshift’s 5-second latency might slow down ad-hoc queries more than we want.",
+        "Ops effort isn’t quantified here, but medium means ongoing tuning that might slow agile queries further.",
+        "I'd go with BigQuery."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 18,
+      "current_preference": "B",
+      "explicit_vote": "B",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "B"
+      ],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Redshift fits our budget and scales past 10TB easily, plus it won’t force us to change our AWS setup drastically.",
+        "Redshift offers strong AWS integration and scalability, but its higher latency might impact performance compared to other options.",
+        "Cutting costs with ClickHouse is tempting, but that high integration effort and ops risk won’t fly for our tight AWS setup.",
+        "We sacrifice a bit of latency for cost predictability and seamless AWS integration—Redshift fits 10TB and stays under budget, so let’s lock that in.",
+        "BigQuery’s near-zero ops effort is nice, Gemma, but we lose control over data locality and that’s a big deal for compliance.",
+        "How much ops effort can we realistically handle if Redshift’s medium integration means extra setup and ongoing tweaks?",
+        "We need solid AWS integration and headroom, so Redshift gets my vote.",
+        "I still like Redshift, but BigQuery works for me since it cuts costs and slashes maintenance without killing scalability."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a database for our analytics platform.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Amazon Redshift Data Warehouse — annual cost: $40,000; integration effort: medium; query latency: 5 seconds average (+ Highly scalable with strong AWS ecosystem integration; − Higher latency compared to some newer columnar stores)\nB) Google BigQuery Analytics Platform — annual cost: $35,000; integration effort: low; query latency: 2 seconds average (+ Serverless with fast ad-hoc queries and minimal maintenance; − Cost model based on data scanned can be unpredictable)\nC) Snowflake Cloud Data Platform — annual cost: $45,000; integration effort: medium; query latency: 3 seconds average (+ Separation of storage and compute allows flexible scaling; − Slightly higher cost for compute-heavy workloads)\nD) ClickHouse Open Source Analytics DB — annual cost: $10,000 (self-managed); integration effort: high; query latency: sub-second for many queries (+ Extremely fast queries and low cost if self-managed; − Requires significant operational expertise and maintenance)\nContext: We have a $50,000 annual budget for the database; The analytics platform must handle up to 10TB of data; The decision group consists of exactly 2 participants.\nHow should we balance query speed, cost, and ease of integration for our analytics database?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a database for our analytics platform.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Amazon Redshift Data Warehouse — annual cost: $40,000; integration effort: medium; query latency: 5 seconds average (+ Highly scalable with strong AWS ecosystem integration; − Higher latency compared to some newer columnar stores)\nB) Google BigQuery Analytics Platform — annual cost: $35,000; integration effort: low; query latency: 2 seconds average (+ Serverless with fast ad-hoc queries and minimal maintenance; − Cost model based on data scanned can be unpredictable)\nC) Snowflake Cloud Data Platform — annual cost: $45,000; integration effort: medium; query latency: 3 seconds average (+ Separation of storage and compute allows flexible scaling; − Slightly higher cost for compute-heavy workloads)\nD) ClickHouse Open Source Analytics DB — annual cost: $10,000 (self-managed); integration effort: high; query latency: sub-second for many queries (+ Extremely fast queries and low cost if self-managed; − Requires significant operational expertise and maintenance)\nContext: We have a $50,000 annual budget for the database; The analytics platform must handle up to 10TB of data; The decision group consists of exactly 2 participants.\nHow should we balance query speed, cost, and ease of integration for our analytics database?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Redshift fits our budget and scales past 10TB easily, plus it won’t force us to change our AWS setup drastically.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Redshift fits our budget and scales past 10TB easily, plus it won’t force us to change our AWS setup drastically.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 752,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "Low maintenance and speed weigh heavily, so BigQuery’s serverless design stands out.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Low maintenance and speed weigh heavily, so BigQuery’s serverless design stands out.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 819,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Redshift offers strong AWS integration and scalability, but its higher latency might impact performance compared to other options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Redshift offers strong AWS integration and scalability, but its higher latency might impact performance compared to other options.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Redshift fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 2237,
+      "tokens_out": 78,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "Snowflake offers better scaling flexibility than BigQuery but costs more and needs more tuning.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Snowflake offers better scaling flexibility than BigQuery but costs more and needs more tuning.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1694,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Cutting costs with ClickHouse is tempting, but that high integration effort and ops risk won’t fly for our tight AWS setup.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cutting costs with ClickHouse is tempting, but that high integration effort and ops risk won’t fly for our tight AWS setup.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1743,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "We need predictable costs and minimal ops risk—BigQuery’s serverless setup fits that better than ClickHouse.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We need predictable costs and minimal ops risk—BigQuery’s serverless setup fits that better than ClickHouse.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how ClickHouse, BigQuery fits that",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1545,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "We sacrifice a bit of latency for cost predictability and seamless AWS integration—Redshift fits 10TB and stays under budget, so let’s lock that in.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We sacrifice a bit of latency for cost predictability and seamless AWS integration—Redshift fits 10TB and stays under budget, so let’s lock that in.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 737,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "Cost stays well under budget at $35K, with near-zero ops effort on BigQuery.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cost stays well under budget at $35K, with near-zero ops effort on BigQuery.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about BigQuery, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 732,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "BigQuery’s near-zero ops effort is nice, Gemma, but we lose control over data locality and that’s a big deal for compliance.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "BigQuery’s near-zero ops effort is nice, Gemma, but we lose control over data locality and that’s a big deal for compliance.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how BigQuery, Redshift fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 741,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "Marco, Redshift’s 5-second latency might slow down ad-hoc queries more than we want.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Marco, Redshift’s 5-second latency might slow down ad-hoc queries more than we want.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Redshift, BigQuery that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1545,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "How much ops effort can we realistically handle if Redshift’s medium integration means extra setup and ongoing tweaks?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How much ops effort can we realistically handle if Redshift’s medium integration means extra setup and ongoing tweaks?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Redshift",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 704,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "Ops effort isn’t quantified here, but medium means ongoing tuning that might slow agile queries further.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Ops effort isn’t quantified here, but medium means ongoing tuning that might slow agile queries further.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 728,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can we each share the one option you’ve decided on so far?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can we each share the one option you’ve decided on so far?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "We need solid AWS integration and headroom, so Redshift gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We need solid AWS integration and headroom, so Redshift gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 716,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Gemma",
+      "text": "I'd go with BigQuery.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'd go with BigQuery.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1083,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 17,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "So far, BigQuery has the most support, but Marco prefers Redshift—those who chose differently, could you live with BigQuery or stick with your pick?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "So far, BigQuery has the most support, but Marco prefers Redshift—those who chose differently, could you live with BigQuery or stick with your pick?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "I still like Redshift, but BigQuery works for me since it cuts costs and slashes maintenance without killing scalability.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still like Redshift, but BigQuery works for me since it cuts costs and slashes maintenance without killing scalability.",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [
+          "B"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Redshift (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1602,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, looks like we’re all set on Google BigQuery—excited to see where this takes us!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, looks like we’re all set on Google BigQuery—excited to see where this takes us!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 15,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "B"
+      },
+      "phase_history": [
+        "pacing: min=8, force=12, hard=16, distinct_initial_prefs=2, avg_compromise=0.75",
+        "turn 3: discussion — all participants gave an opening view",
+        "turn 13: narrowing — target discussion length reached",
+        "turn 16: closure — all participants already gave a clear vote",
+        "turn 18: closure — successful after split-vote compromise"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 8,
+      "force_narrow_turns": 12,
+      "hard_max_turns": 16
+    }
+  },
+  "metrics": {
+    "participant_turns": 15,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.211,
+    "turn_counts": {
+      "Gemma": 7,
+      "Marco": 8
+    },
+    "top_speaker_share": 0.533,
+    "avg_words_by_persona": {
+      "Gemma": 12.4,
+      "Marco": 19.1
+    },
+    "question_density": 0.067,
+    "avg_words_per_turn": 16.0,
+    "repaired_turns": 2,
+    "repair_rate": 0.133,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 2,
+    "visible_votes": {
+      "Gemma": "B",
+      "Marco": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "participation_gini": 0.033,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 1.0,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.117,
+    "compromise_success_rate": 1.0,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "name_prefix_rate": 0.067,
+    "option_opening_rate": 0.333,
+    "i_opening_rate": 0.133,
+    "we_opening_rate": 0.2,
+    "name_or_option_opening_rate": 0.4,
+    "repeated_opening_patterns": 2,
+    "unsupported_fact_flags": 1,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 7,
+        "reasons": 5,
+        "objections": 0,
+        "acceptances": 1
+      },
+      "C": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Gemma": 0.325,
+      "Marco": 0.7
+    },
+    "agenda_status": {
+      "done": 3,
+      "pending": 4,
+      "obsolete": 1
+    },
+    "outcome_status": "successful",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 8,
+    "force_narrow_turns": 12,
+    "hard_max_turns": 16,
+    "phase_history": [
+      "pacing: min=8, force=12, hard=16, distinct_initial_prefs=2, avg_compromise=0.75",
+      "turn 3: discussion — all participants gave an opening view",
+      "turn 13: narrowing — target discussion length reached",
+      "turn 16: closure — all participants already gave a clear vote",
+      "turn 18: closure — successful after split-vote compromise",
+      "turn 19: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.15,
+    "verbosity_realization_error": 0.255,
+    "engagement_error_by_persona": {
+      "Gemma": 0.15,
+      "Marco": 0.15
+    },
+    "verbosity_error_by_persona": {
+      "Gemma": 0.327,
+      "Marco": 0.183
+    },
+    "engagement_behavior_correlation": null,
+    "verbosity_behavior_correlation": null,
+    "setup_tokens_in": 1872,
+    "setup_tokens_out": 890,
+    "dialogue_tokens_in": 18209,
+    "dialogue_tokens_out": 535,
+    "total_tokens_in": 20081,
+    "total_tokens_out": 1425
+  },
+  "tokens": {
+    "setup_tokens_in": 1872,
+    "setup_tokens_out": 890,
+    "dialogue_tokens_in": 18209,
+    "dialogue_tokens_out": 535,
+    "total_tokens_in": 20081,
+    "total_tokens_out": 1425
+  }
+}

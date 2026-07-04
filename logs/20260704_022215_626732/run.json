@@ -1,0 +1,2296 @@
+{
+  "run_id": "20260704_022215_626732",
+  "topic": "Decide where the family should go for a weekend trip",
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "scenario": {
+    "topic": "Decide where the family should go for a weekend trip",
+    "decision_kind": "travel_destination",
+    "opening_question": "What matters most for our weekend trip: relaxation, activities, cost, or travel time?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lakeside Cabin Rental at Pine Lake",
+        "attrs": {
+          "cost": "$550",
+          "travel_time": "1.5 hours drive",
+          "activity_level": "low",
+          "accommodation_type": "private cabin"
+        },
+        "upside": "Peaceful nature setting with private access to lake for fishing and kayaking",
+        "tradeoff": "Limited nearby dining and entertainment options",
+        "concern": "Cabin amenities might feel rustic and isolated for some",
+        "best_for": "relaxation and quiet family bonding",
+        "short_name": "Lakeside Cabin"
+      },
+      {
+        "id": "B",
+        "name": "Downtown City Hotel near Museum District",
+        "attrs": {
+          "cost": "$580",
+          "travel_time": "2 hours drive",
+          "activity_level": "high",
+          "accommodation_type": "hotel room"
+        },
+        "upside": "Close to museums, restaurants, and evening entertainment",
+        "tradeoff": "Less outdoor space and nature exposure",
+        "concern": "Potential noise and crowded areas could be tiring",
+        "best_for": "cultural activities and dining variety",
+        "short_name": "City Hotel"
+      },
+      {
+        "id": "C",
+        "name": "Mountain Lodge near Blue Ridge Trails",
+        "attrs": {
+          "cost": "$600",
+          "travel_time": "3 hours drive",
+          "activity_level": "medium",
+          "accommodation_type": "shared lodge room"
+        },
+        "upside": "Access to hiking trails and scenic views with cozy lodge atmosphere",
+        "tradeoff": "Longer travel time reduces actual trip time",
+        "concern": "Shared rooms may reduce privacy",
+        "best_for": "outdoor adventure with moderate comfort",
+        "short_name": "Mountain Lodge"
+      },
+      {
+        "id": "D",
+        "name": "Beachfront Condo at Seaside Bay",
+        "attrs": {
+          "cost": "$590",
+          "travel_time": "2.5 hours drive",
+          "activity_level": "medium",
+          "accommodation_type": "private condo"
+        },
+        "upside": "Beach access with opportunities for swimming and local seafood dining",
+        "tradeoff": "Potentially crowded beach area on weekends",
+        "concern": "Parking and beach noise might be inconvenient",
+        "best_for": "beach relaxation with some activities",
+        "short_name": "Beachfront Condo"
+      }
+    ],
+    "shared_context": [
+      "The trip is for exactly 4 family members",
+      "The weekend trip duration is 2 days, leaving Friday evening to Sunday evening",
+      "The total budget for the trip is capped at $600"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Lila",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.65,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.75,
+        "compromise_threshold": 0.5125
+      },
+      "background": "Lila enjoys lively social settings and values spending energetic, fun weekends with family in relaxed natural environments.",
+      "private_goal": "She wants a peaceful nature spot that still allows for engaging activities like kayaking and fishing to bond with family.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Jasper",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4,
+        "initiative": 0.4,
+        "responsiveness": 0.6,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.6875,
+        "compromise_threshold": 0.6375
+      },
+      "background": "Jasper prefers calm, moderately active trips with some privacy and values comfort and convenience over crowded or noisy places.",
+      "private_goal": "He wants a beachside getaway with private condo accommodations that offer a balance of relaxation and moderate activity.",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Yuki",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.65,
+        "stubbornness": 0.4,
+        "directness": 0.75,
+        "compromise_threshold": 0.475
+      },
+      "background": "Yuki loves outdoor adventures and scenic views but appreciates some comfort and a cozy atmosphere to unwind after activities.",
+      "private_goal": "She wants access to hiking trails and nature with moderate activity levels combined with a comfortable lodge stay.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Vera",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 4,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.6625000000000001,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 0.825,
+        "stubbornness": 0.475,
+        "directness": 0.6749999999999999,
+        "compromise_threshold": 0.375
+      },
+      "background": "Vera enjoys cultural experiences and dining variety, and prefers places with easy access to museums and evening entertainment.",
+      "private_goal": "She wants a vibrant city hotel stay that offers high activity levels and diverse cultural opportunities for the family.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 25,
+      "current_preference": "A",
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "A": "Isolation isn’t a dealbreaker when the lake’s right there for fishing and kayaking. The cabin’s rustic vibe actually forces us to unplug and bond without distractions."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "We need a spot that’s peaceful but still lets us do fun stuff together, like kayaking or fishing. Lakeside Cabin fits that perfectly, even if it means roughing it a bit with the rustic vibe.",
+        "Yuki’s right about the drive eating into our time, but we also have to think about privacy—Mountain Lodge means sharing a room, which could get cramped for all four of us.",
+        "What about the City Hotel’s noise and crowds? What one thing makes that better than having our own private cabin with lake access for fishing and kayaking at the Lakeside Cabin?",
+        "Isolation isn’t a dealbreaker when the lake’s right there for fishing and kayaking. The cabin’s rustic vibe actually forces us to unplug and bond without distractions.",
+        "Paying $580 for the City Hotel is too tight on budget, especially since we want meals and extras covered. The Lakeside Cabin gives us nature and activities without stressing the wallet—that’s more our pace!",
+        "Comfort matters, but the cabin’s peaceful setting and private lake access offer a unique experience, even if dining options nearby are limited.",
+        "I'm going with the Lakeside Cabin for the peaceful lake and short drive to start relaxing Friday night."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 30,
+      "current_preference": "A",
+      "explicit_vote": "A",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "A"
+      ],
+      "soft_rejections": {
+        "A": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity."
+      },
+      "hard_rejections": {
+        "B": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity."
+      },
+      "already_said": [
+        "Beach access with swimming and seafood sounds worth the drive, but parking might be a hassle.",
+        "We get a private condo with all the space we need, which beats sharing cramped rooms at Mountain Lodge.",
+        "City Hotel beats the cabin on dining and evening options, but that noise will wear us down fast.",
+        "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity.",
+        "We need more comfort than rustic; the Lakeside Cabin feels too isolated without easy dining or extras.",
+        "Does the potential beach noise and parking hassle at the condo outweigh the private space and swimming access?",
+        "Count me in for the Beachfront Condo for easy beach access and seafood dining.",
+        "I still prefer Beachfront Condo but can go with Lakeside Cabin since it’s quieter despite fewer dining options."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 31,
+      "current_preference": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "The Mountain Lodge offers the best mix of hiking and cozy comfort, which we need. The long drive cuts into our time, but the trails make up for it.",
+        "We have to remember the Mountain Lodge means a three-hour drive each way, so we lose half a day just getting there and back. That’s a big chunk gone from two days.",
+        "Privacy matters, but the Mountain Lodge’s trails make the trip worth the tradeoff. The Beachfront Condo might be quieter inside, but the crowded beach could mess with our downtime.",
+        "Noise and crowds drain energy fast, and two hours driving means we lose less time anyway. The City Hotel’s high activity level sounds exhausting, not relaxing.",
+        "Lila, the cabin’s peaceful, sure, but the longer drive to the Mountain Lodge gives us real hiking and way better views. Shared rooms suck for privacy, but it’s comfy enough to relax after hitting the trails hard.",
+        "Mountain Lodge gets my vote. We get solid hiking and killer views without feeling stuck in a cramped cabin, plus the lodge’s cozy vibe fits perfectly after a day outdoors.",
+        "I’m all in for Mountain Lodge because I want real hiking and a cozy spot to relax afterward despite the longer drive."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 7,
+      "last_spoke_turn": 32,
+      "current_preference": "A",
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Having easy access to museums and evening entertainment makes the City Hotel stand out, though the noise might wear us down.",
+        "The Beachfront Condo’s private space is nice, but the noise and parking hassle could make it less relaxing than the City Hotel’s convenience.",
+        "You have to consider the City Hotel’s travel time is only two hours, so we won’t waste much of our weekend getting there.",
+        "We might get tired from the noise and crowds at the City Hotel, but at least it’s close to museums and restaurants.",
+        "Are we okay with paying $580 for the City Hotel when that leaves little budget for meals or extras?",
+        "I’m all in for the City Hotel since it keeps us close to great dining and evening events, which the others don’t offer.",
+        "I’m going with Lakeside Cabin because it’s peaceful and fits our budget better than City Hotel."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Decide where the family should go for a weekend trip.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Lakeside Cabin Rental at Pine Lake — cost: $550; travel time: 1.5 hours drive; activity level: low (+ Peaceful nature setting with private access to lake for…; − Limited nearby dining and entertainment options)\nB) Downtown City Hotel near Museum District — cost: $580; travel time: 2 hours drive; activity level: high (+ Close to museums, restaurants, and evening entertainment; − Less outdoor space and nature exposure)\nC) Mountain Lodge near Blue Ridge Trails — cost: $600; travel time: 3 hours drive; activity level: medium (+ Access to hiking trails and scenic views with cozy…; − Longer travel time reduces actual trip time)\nD) Beachfront Condo at Seaside Bay — cost: $590; travel time: 2.5 hours drive; activity level: medium (+ Beach access with opportunities for swimming and local seafood…; − Potentially crowded beach area on weekends)\nContext: The trip is for exactly 4 family members; The weekend trip duration is 2 days, leaving Friday evening to Sunday evening; The total budget for the trip is capped at $600.\nWhat matters most for our weekend trip: relaxation, activities, cost, or travel time?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Decide where the family should go for a weekend trip.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Lakeside Cabin Rental at Pine Lake — cost: $550; travel time: 1.5 hours drive; activity level: low (+ Peaceful nature setting with private access to lake for…; − Limited nearby dining and entertainment options)\nB) Downtown City Hotel near Museum District — cost: $580; travel time: 2 hours drive; activity level: high (+ Close to museums, restaurants, and evening entertainment; − Less outdoor space and nature exposure)\nC) Mountain Lodge near Blue Ridge Trails — cost: $600; travel time: 3 hours drive; activity level: medium (+ Access to hiking trails and scenic views with cozy…; − Longer travel time reduces actual trip time)\nD) Beachfront Condo at Seaside Bay — cost: $590; travel time: 2.5 hours drive; activity level: medium (+ Beach access with opportunities for swimming and local seafood…; − Potentially crowded beach area on weekends)\nContext: The trip is for exactly 4 family members; The weekend trip duration is 2 days, leaving Friday evening to Sunday evening; The total budget for the trip is capped at $600.\nWhat matters most for our weekend trip: relaxation, activities, cost, or travel time?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "The Mountain Lodge offers the best mix of hiking and cozy comfort, which we need. The long drive cuts into our time, but the trails make up for it.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The Mountain Lodge offers the best mix of hiking and cozy comfort, which we need. The long drive cuts into our time, but the trails make up for it.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 746,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "We need a spot that’s peaceful but still lets us do fun stuff together, like kayaking or fishing. Lakeside Cabin fits that perfectly, even if it means roughing it a bit with the rustic vibe.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We need a spot that’s peaceful but still lets us do fun stuff together, like kayaking or fishing. Lakeside Cabin fits that perfectly, even if it means roughing it a bit with the rustic vibe.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 848,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "Having easy access to museums and evening entertainment makes the City Hotel stand out, though the noise might wear us down.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Having easy access to museums and evening entertainment makes the City Hotel stand out, though the noise might wear us down.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 893,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Beach access with swimming and seafood sounds worth the drive, but parking might be a hassle.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Beach access with swimming and seafood sounds worth the drive, but parking might be a hassle.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 926,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "We have to remember the Mountain Lodge means a three-hour drive each way, so we lose half a day just getting there and back. That’s a big chunk gone from two days.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We have to remember the Mountain Lodge means a three-hour drive each way, so we lose half a day just getting there and back. That’s a big chunk gone from two days.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about City Hotel, Mountain Lodge that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1094,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "The Beachfront Condo’s private space is nice, but the noise and parking hassle could make it less relaxing than the City Hotel’s convenience.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The Beachfront Condo’s private space is nice, but the noise and parking hassle could make it less relaxing than the City Hotel’s convenience.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1456,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "Yuki’s right about the drive eating into our time, but we also have to think about privacy—Mountain Lodge means sharing a room, which could get cramped for all four of us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Yuki’s right about the drive eating into our time, but we also have to think about privacy—Mountain Lodge means sharing a room, which could get cramped for all four of us.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Mountain Lodge, Lakeside Cabin that hasn't come up yet",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1558,
+      "tokens_out": 67,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "We get a private condo with all the space we need, which beats sharing cramped rooms at Mountain Lodge.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We get a private condo with all the space we need, which beats sharing cramped rooms at Mountain Lodge.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Beachfront Condo, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1445,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "What about the City Hotel’s noise and crowds? What one thing makes that better than having our own private cabin with lake access for fishing and kayaking at the Lakeside Cabin?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "What about the City Hotel’s noise and crowds? What one thing makes that better than having our own private cabin with lake access for fishing and kayaking at the Lakeside Cabin?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 813,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "City Hotel beats the cabin on dining and evening options, but that noise will wear us down fast.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "City Hotel beats the cabin on dining and evening options, but that noise will wear us down fast.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 839,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Privacy matters, but the Mountain Lodge’s trails make the trip worth the tradeoff. The Beachfront Condo might be quieter inside, but the crowded beach could mess with our downtime.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Privacy matters, but the Mountain Lodge’s trails make the trip worth the tradeoff. The Beachfront Condo might be quieter inside, but the crowded beach could mess with our downtime.",
+        "act_type": "agree",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Mountain Lodge, Beachfront Condo",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1544,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "You have to consider the City Hotel’s travel time is only two hours, so we won’t waste much of our weekend getting there.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "You have to consider the City Hotel’s travel time is only two hours, so we won’t waste much of our weekend getting there.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about City Hotel that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 713,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Noise and crowds drain energy fast, and two hours driving means we lose less time anyway. The City Hotel’s high activity level sounds exhausting, not relaxing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Noise and crowds drain energy fast, and two hours driving means we lose less time anyway. The City Hotel’s high activity level sounds exhausting, not relaxing.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on City Hotel with one concrete concern — you currently favor Mountain Lodge, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 863,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "We might get tired from the noise and crowds at the City Hotel, but at least it’s close to museums and restaurants.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We might get tired from the noise and crowds at the City Hotel, but at least it’s close to museums and restaurants.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "the last point raised a concern about City Hotel, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1781,
+      "tokens_out": 77,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity.",
+        "act_type": "agree",
+        "option_refs": [
+          "A",
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity."
+        },
+        "hard_rejects": {
+          "B": "City Hotel noise is a dealbreaker. Lakeside cabin’s too isolated, but the condo balances privacy and activity."
+        },
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Lakeside Cabin, City Hotel, Beachfront Condo",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1523,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "Isolation isn’t a dealbreaker when the lake’s right there for fishing and kayaking. The cabin’s rustic vibe actually forces us to unplug and bond without distractions.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Isolation isn’t a dealbreaker when the lake’s right there for fishing and kayaking. The cabin’s rustic vibe actually forces us to unplug and bond without distractions.",
+        "act_type": "reject",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "Isolation isn’t a dealbreaker when the lake’s right there for fishing and kayaking. The cabin’s rustic vibe actually forces us to unplug and bond without distractions."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "the last point raised a concern about Lakeside Cabin, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 740,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "Are we okay with paying $580 for the City Hotel when that leaves little budget for meals or extras?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Are we okay with paying $580 for the City Hotel when that leaves little budget for meals or extras?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "B",
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare City Hotel",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 690,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "Paying $580 for the City Hotel is too tight on budget, especially since we want meals and extras covered. The Lakeside Cabin gives us nature and activities without stressing the wallet—that’s more our pace!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Paying $580 for the City Hotel is too tight on budget, especially since we want meals and extras covered. The Lakeside Cabin gives us nature and activities without stressing the wallet—that’s more our pace!",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 764,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "We need more comfort than rustic; the Lakeside Cabin feels too isolated without easy dining or extras.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We need more comfort than rustic; the Lakeside Cabin feels too isolated without easy dining or extras.",
+        "act_type": "challenge",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1504,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "Comfort matters, but the cabin’s peaceful setting and private lake access offer a unique experience, even if dining options nearby are limited.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Comfort matters, but the cabin’s peaceful setting and private lake access offer a unique experience, even if dining options nearby are limited.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "the last point raised a concern about Lakeside Cabin, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 2485,
+      "tokens_out": 100,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Lila, the cabin’s peaceful, sure, but the longer drive to the Mountain Lodge gives us real hiking and way better views. Shared rooms suck for privacy, but it’s comfy enough to relax after hitting the trails hard.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Lila, the cabin’s peaceful, sure, but the longer drive to the Mountain Lodge gives us real hiking and way better views. Shared rooms suck for privacy, but it’s comfy enough to relax after hitting the trails hard.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Lakeside Cabin, Mountain Lodge, City Hotel with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1563,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Does the potential beach noise and parking hassle at the condo outweigh the private space and swimming access?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Does the potential beach noise and parking hassle at the condo outweigh the private space and swimming access?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Beachfront Condo",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 654,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can each of you share your final pick now—just the one option you’re going with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can each of you share your final pick now—just the one option you’re going with?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Lila",
+      "text": "I'm going with the Lakeside Cabin for the peaceful lake and short drive to start relaxing Friday night.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'm going with the Lakeside Cabin for the peaceful lake and short drive to start relaxing Friday night.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1026,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "Mountain Lodge gets my vote. We get solid hiking and killer views without feeling stuck in a cramped cabin, plus the lodge’s cozy vibe fits perfectly after a day outdoors.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Mountain Lodge gets my vote. We get solid hiking and killer views without feeling stuck in a cramped cabin, plus the lodge’s cozy vibe fits perfectly after a day outdoors.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for the peaceful lake and short drive to start relaxing"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 812,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "I’m all in for the City Hotel since it keeps us close to great dining and evening events, which the others don’t offer.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m all in for the City Hotel since it keeps us close to great dining and evening events, which the others don’t offer.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for the peaceful lake and short drive to start relaxing"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 855,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Count me in for the Beachfront Condo for easy beach access and seafood dining.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for the Beachfront Condo for easy beach access and seafood dining.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for the City Hotel since it keeps us close to",
+          "for the peaceful lake and short drive to start relaxing"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1890,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Lakeside Cabin has the most support so far—those who picked differently, could you genuinely live with that choice or prefer to stick with your own?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Lakeside Cabin has the most support so far—those who picked differently, could you genuinely live with that choice or prefer to stick with your own?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "I still prefer Beachfront Condo but can go with Lakeside Cabin since it’s quieter despite fewer dining options.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still prefer Beachfront Condo but can go with Lakeside Cabin since it’s quieter despite fewer dining options.",
+        "act_type": "accept",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Beachfront Condo (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 922,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p3",
+      "speaker_name": "Yuki",
+      "text": "I’m all in for Mountain Lodge because I want real hiking and a cozy spot to relax afterward despite the longer drive.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m all in for Mountain Lodge because I want real hiking and a cozy spot to relax afterward despite the longer drive.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Mountain Lodge (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "since it’s quieter despite fewer dining options"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1377,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p4",
+      "speaker_name": "Vera",
+      "text": "I’m going with Lakeside Cabin because it’s peaceful and fits our budget better than City Hotel.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m going with Lakeside Cabin because it’s peaceful and fits our budget better than City Hotel.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring City Hotel (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "because I want real hiking and a cozy spot to",
+          "since it’s quieter despite fewer dining options"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1266,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re going with the Lakeside Cabin Rental at Pine Lake, even though Yuki was hoping for something different.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re going with the Lakeside Cabin Rental at Pine Lake, even though Yuki was hoping for something different.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "reason": "3/4 participants visibly committed to the winning option.",
+    "turns": 29,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "C",
+        "p4": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "C",
+        "p4": "A"
+      },
+      "phase_history": [
+        "pacing: min=16, force=22, hard=30, distinct_initial_prefs=4, avg_compromise=0.50",
+        "turn 5: discussion — all participants gave an opening view",
+        "turn 23: narrowing — target discussion length reached",
+        "turn 28: closure — all participants already gave a clear vote",
+        "turn 32: closure — majority after split-vote compromise"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 16,
+      "force_narrow_turns": 22,
+      "hard_max_turns": 30
+    }
+  },
+  "metrics": {
+    "participant_turns": 29,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.121,
+    "turn_counts": {
+      "Lila": 7,
+      "Jasper": 8,
+      "Yuki": 7,
+      "Vera": 7
+    },
+    "top_speaker_share": 0.276,
+    "avg_words_by_persona": {
+      "Lila": 28.1,
+      "Jasper": 17.1,
+      "Yuki": 29.3,
+      "Vera": 21.0
+    },
+    "question_density": 0.103,
+    "avg_words_per_turn": 23.7,
+    "repaired_turns": 6,
+    "repair_rate": 0.207,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Lila": "A",
+      "Jasper": "A",
+      "Yuki": "C",
+      "Vera": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "participation_gini": 0.026,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.5,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.134,
+    "compromise_success_rate": 1.0,
+    "switch_event_count": 2,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "name_prefix_rate": 0.034,
+    "option_opening_rate": 0.172,
+    "i_opening_rate": 0.172,
+    "we_opening_rate": 0.172,
+    "name_or_option_opening_rate": 0.207,
+    "repeated_opening_patterns": 7,
+    "unsupported_fact_flags": 3,
+    "final_support_fraction": 0.75,
+    "option_coverage": {
+      "A": {
+        "mentions": 13,
+        "reasons": 4,
+        "objections": 3,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 12,
+        "reasons": 5,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 8,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Lila": 0.925,
+      "Jasper": 0.512,
+      "Yuki": 0.925,
+      "Vera": 0.663
+    },
+    "agenda_status": {
+      "pending": 8,
+      "done": 4,
+      "obsolete": 1
+    },
+    "outcome_status": "majority",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 16,
+    "force_narrow_turns": 22,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=16, force=22, hard=30, distinct_initial_prefs=4, avg_compromise=0.50",
+      "turn 5: discussion — all participants gave an opening view",
+      "turn 23: narrowing — target discussion length reached",
+      "turn 28: closure — all participants already gave a clear vote",
+      "turn 32: closure — majority after split-vote compromise",
+      "turn 33: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.064,
+    "verbosity_realization_error": 0.07,
+    "engagement_error_by_persona": {
+      "Lila": 0.064,
+      "Jasper": 0.106,
+      "Yuki": 0.064,
+      "Vera": 0.022
+    },
+    "verbosity_error_by_persona": {
+      "Lila": 0.013,
+      "Jasper": 0.116,
+      "Yuki": 0.054,
+      "Vera": 0.097
+    },
+    "engagement_behavior_correlation": -0.796,
+    "verbosity_behavior_correlation": 0.986,
+    "setup_tokens_in": 2016,
+    "setup_tokens_out": 1063,
+    "dialogue_tokens_in": 34572,
+    "dialogue_tokens_out": 1235,
+    "total_tokens_in": 36588,
+    "total_tokens_out": 2298
+  },
+  "tokens": {
+    "setup_tokens_in": 2016,
+    "setup_tokens_out": 1063,
+    "dialogue_tokens_in": 34572,
+    "dialogue_tokens_out": 1235,
+    "total_tokens_in": 36588,
+    "total_tokens_out": 2298
+  }
+}

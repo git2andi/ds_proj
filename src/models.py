@@ -294,7 +294,10 @@ class ParticipantRuntime:
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
     already_said: list[str] = field(default_factory=list)
-    # Visible vote movements: {"from": old-or-initial, "to": new, "has_reason": bool}.
+    # Visible vote movements:
+    # {"from": old-or-initial, "to": new, "has_reason": bool, "has_bridge": bool}.
+    # has_bridge is the issue-5 signal: the switch line links the old stance to
+    # the new pick with a reason, not just any loose reason clause.
     switch_events: list[dict] = field(default_factory=list)
 
 

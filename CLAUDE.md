@@ -133,7 +133,15 @@ Change participant count and provider settings in `config.yaml`. The default pro
   blocker; sanctioned switches may only land on offered/current/initial options
   (`OFF_TARGET_SWITCH`). Vote-time compromise (`_should_compromise_to_candidate`)
   requires visible support or a visible proposal, never latent concentration.
-  Vote movements are recorded as `switch_events` (from→to, has_reason).
+  Vote movements are recorded as `switch_events` (from→to, has_reason, has_bridge).
+- **Bridged switches.** A parsed commitment that lands on an option other than the
+  sim's current internal lean must bridge the move: `parsing.switch_bridge_ok`
+  requires the old option named or an explicit concession marker (`_CONCESSION`)
+  plus a reason clause. A missing bridge is the blocking issue `UNBRIDGED_SWITCH`
+  (repaired with the old pick named; if repair still fails, the restate-first
+  fallback keeps the current lean rather than printing an unexplained flip).
+  `switch_events` carry `has_bridge` (checked against the pre-turn lean) and
+  `evaluation.py` reports `switch_bridge_rate`.
 - **Blocker vocabulary.** The parser detects option-tied active blockers
   ("dealbreaker", "doesn't work for me", with negation guard), explicit blocker
   resolutions ("that fixes my concern; I can live with X"), conditional support,

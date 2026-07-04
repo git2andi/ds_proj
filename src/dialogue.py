@@ -42,6 +42,7 @@ from parsing import (
     commitment_has_reason,
     parse_dialogue_act,
     round_reason_snippets,
+    switch_bridge_ok,
     used_commitment_phrases,
 )
 from simulator import mark_agenda_done, next_agenda_item, refresh_agenda
@@ -931,6 +932,21 @@ class DialogueRunner:
             if act.explicit_vote not in allowed:
                 issues.append("OFF_TARGET_SWITCH")
                 block = True
+        # A visible commitment that lands on an option other than the sim's
+        # current internal lean is a preference switch; it must bridge the old
+        # stance to the new pick with a stated reason (issue 5), or the
+        # transcript shows a socially unexplained flip. Blocking: if the LLM
+        # cannot produce the bridge, the deterministic fallback restates the
+        # current lean rather than fabricating an unexplained switch.
+        current = rt.current_preference or persona.preferred_option
+        if (
+            act.explicit_vote
+            and current in state.scenario.option_ids
+            and act.explicit_vote != current
+            and not switch_bridge_ok(text, current, self._resolver)
+        ):
+            issues.append("UNBRIDGED_SWITCH")
+            block = True
         return ValidationReport(list(dict.fromkeys(issues)), block)
 
     def _collect_report(
@@ -1109,6 +1125,7 @@ class DialogueRunner:
         act = record.act
         before = self._snapshot_progress(state)
         prior_vote = rt.explicit_vote
+        prior_pref = rt.current_preference or persona.preferred_option
 
         if act.question_target_id:
             self._register_question(state, record)
@@ -1146,15 +1163,23 @@ class DialogueRunner:
             rt.hard_rejections[option_id] = reason
 
         # Record visible vote movement (first vote away from the initial
-        # preference, or a change of an earlier vote) with whether the line
-        # carried a reason clause — the I7 metric for "switches need reasons".
+        # preference, or a change of an earlier vote). `has_reason` is the weak
+        # signal (any reason clause); `has_bridge` is the issue-5 signal — the
+        # switch visibly links the sim's pre-turn lean to the new pick with a
+        # reason, which is what the validator enforces on a switch away from lean.
         if rt.explicit_vote and rt.explicit_vote != prior_vote:
             baseline = prior_vote or persona.preferred_option
             if rt.explicit_vote != baseline:
+                bridged = (
+                    prior_pref == rt.explicit_vote
+                    or (self._resolver is not None
+                        and switch_bridge_ok(act.text, prior_pref, self._resolver))
+                )
                 rt.switch_events.append({
                     "from": baseline,
                     "to": rt.explicit_vote,
                     "has_reason": commitment_has_reason(act.text),
+                    "has_bridge": bool(bridged),
                 })
 
         # Latent lean may move only on a visible signal in the parsed text:

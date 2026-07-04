@@ -273,6 +273,13 @@ def sim_utterance(
         if intent.avoid_reasons:
             used = "; ".join(f"'{r}'" for r in intent.avoid_reasons[:3])
             decision_instruction += f"\nEarlier voters already gave these justifications — give a DIFFERENT reason of your own, in your own words: {used}."
+        if intent.allow_vote_change:
+            decision_instruction += (
+                f"\nIf you move to a different option than {current_name}, you MUST bridge the switch: "
+                f"briefly name that you preferred {current_name} (or concede it, e.g. 'I still like…, but…') "
+                "and give one honest reason you can move now. A short concessive clause is fine here; a "
+                "fresh condition or question is not."
+            )
     elif intent.act.value == "reject":
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
@@ -384,6 +391,16 @@ def repair_utterance(
     grounding = ""
     if "UNSUPPORTED_FACT" in issue_codes:
         grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
+    bridge = ""
+    if "UNBRIDGED_SWITCH" in issue_codes:
+        aliases = short_alias_map(state.scenario.options)
+        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        old_name = aliases.get(current, current)
+        bridge = (
+            f" The line switches away from {old_name} (your earlier pick) with no explanation. "
+            f"Keep the new commitment, but bridge it: name that you preferred {old_name} or concede it "
+            "(e.g. 'I still like…, but…'), and give one honest reason you can move now."
+        )
     return f"""Repair this generated chat line.
 
 Speaker: {persona.name}
@@ -394,7 +411,7 @@ Allowed option facts:
 Recent chat:
 {recent}
 
-Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding} Do not append metadata, tags, JSON, or bracketed labels."""
+Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
 
 
 def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:

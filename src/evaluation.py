@@ -144,12 +144,16 @@ def _compromise_success(state: DialogueState, outcome: RunOutcome) -> float | No
     return 1.0 if outcome.status in ("successful", "majority") else 0.0
 
 
-def _switch_stats(state: DialogueState) -> tuple[int, float | None]:
+def _switch_stats(state: DialogueState) -> tuple[int, float | None, float | None]:
+    """(#switches, reason rate, bridge rate). `bridge` is the issue-5 signal:
+    the switch visibly links the old stance to the new pick, not just carries a
+    loose reason clause. None when no switch occurred."""
     events = [event for rt in state.runtimes.values() for event in rt.switch_events]
     if not events:
-        return 0, None
+        return 0, None, None
     explained = sum(1 for event in events if event.get("has_reason"))
-    return len(events), round(explained / len(events), 3)
+    bridged = sum(1 for event in events if event.get("has_bridge"))
+    return len(events), round(explained / len(events), 3), round(bridged / len(events), 3)
 
 
 def _expected_words(persona: Persona) -> float:
@@ -215,7 +219,7 @@ def token_summary_for(state: DialogueState) -> dict[str, int]:
 
 
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-    switch_count, switch_explained = _switch_stats(state)
+    switch_count, switch_explained, switch_bridged = _switch_stats(state)
     participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
     moderator_turns = [t for t in state.turns if t.speaker_id == "moderator"]
     n_turns = max(1, len(participant_turns))
@@ -270,6 +274,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "compromise_success_rate": _compromise_success(state, outcome),
         "switch_event_count": switch_count,
         "switch_explanation_rate": switch_explained,
+        "switch_bridge_rate": switch_bridged,
         "name_prefix_rate": round(name_prefixed / n_turns, 3),
         "option_opening_rate": round(option_opened / n_turns, 3),
         "i_opening_rate": round(sum(1 for t in participant_turns if leading_first_person(t.text)) / n_turns, 3),
