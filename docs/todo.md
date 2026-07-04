@@ -95,6 +95,12 @@ Items 1-2 come first because they are prerequisites for controlled experiments: 
 the other items (evaluation, moderator dependency) are much easier to judge once you can
 fix the participants and environment and vary one thing at a time.
 
+**All eight planned items are now implemented and validated (2026-07-03/04), one commit
+each on `master`.** The sections below keep each issue's original text plus a DONE note
+with its validation runs. Remaining ideas (a real agenda goal-stack from issue 3, an
+engagement-weighted router from the issue-4 observation) stay possible future directions,
+not scheduled work.
+
 ---
 
 ## 2. Open issues
