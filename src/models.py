@@ -241,6 +241,7 @@ class MoveIntent:
     avoid_phrases: list[str] = field(default_factory=list)
     avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
     allow_vote_change: bool = False
+    soften_toward: str | None = None  # routed softening beat's attractor (issue 3)
 
 
 @dataclass(slots=True)
@@ -259,6 +260,7 @@ class DialogueAct:
     resolves_blocker: str | None = None    # option whose earlier blocker this line resolves
     conditional_support: str | None = None  # option supported only conditionally
     offers_compromise: str | None = None    # option visibly proposed as common ground
+    softens_toward: str | None = None       # option the line visibly warms to without committing (issue 3)
 
 
 @dataclass(slots=True)
@@ -326,6 +328,7 @@ class ParticipantRuntime:
     # rivals (scaled by stubbornness); rebuilt a little by defending it. Low
     # commitment makes softening/switching easier, during discussion and at votes.
     commitment_strength: float = 0.6
+    commitment_min: float = 1.0            # lowest commitment reached during the run (tuning telemetry)
     challenges_received: int = 0           # visible challenges landed on this sim's favorite
     concessions_made: int = 0              # times this sim visibly conceded a point/switched
     explicit_vote: str | None = None       # observed public commitment from visible text
@@ -393,6 +396,8 @@ class DialogueState:
     invalid_printed_turn_count: int = 0
     blocker_probes: set[str] = field(default_factory=set)  # options whose blocker was already probed
     stagnation_break_done: bool = False  # the one bounded circling-rescue beat was used (I20)
+    softened_sims: set[str] = field(default_factory=set)  # sims already routed to a visible softening beat (issue 3)
+    discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)
     phase_history: list[str] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0

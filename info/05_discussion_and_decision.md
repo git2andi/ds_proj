@@ -127,11 +127,27 @@ fabricates consent. Metrics track `fallback_turns` and `invalid_printed_turn_cou
 preferences, one compromise attempt where appropriate, and no visible majority. It is
 never a silent give-up.
 
+## Mid-discussion stance movement (issue 3)
+
+Latent stance movement is distinct from final votes, in both directions:
+
+- A **softening line** — "the Conference Hall is starting to make more sense to me" —
+  updates the sim's current favorite (parsed `softens_toward`; the wording is hedged,
+  so it can never parse as a vote).
+- A **vote** requires an explicit unhedged commitment (`06`).
+
+Movement can arise two ways: *organically* (a sim's own compromise offer, proposal,
+conditional support, or softening phrase moves its lean, gated by commitment
+strength), and via the *routed softening beat* — a sim whose commitment eroded below
+0.45, or who is under sustained social pressure (favorite repeatedly challenged, no
+other visible backer, flexible persona), is routed once per run to say openly that
+the visibly-backed rival is winning it over, explicitly without committing. On these
+routed turns the lean also moves when the text engages the attractor even if the
+exact softening phrase differs. `discussion_lean_shifts` in the metrics counts
+lean movement during the discussion phase; the goal is gradual convergence instead
+of sims arguing A all discussion and suddenly voting B.
+
 ## Current mismatch / intended correction
 
-The current discussion flow can reach decisions, but preference movement is too concentrated around final voting and minority checks. Sims should sometimes soften or change their current favorite during the actual discussion when another participant makes a relevant point.
-
-The intended behavior needs a clear distinction between latent stance movement and final visible votes. A line like "B is starting to make more sense to me" should update the sim's current favorite or commitment strength, but it should not count as a final vote unless the text clearly commits. This lets the discussion show gradual convergence before the final vote.
-
-Voting also needs bounded reservation negotiation. When one sim is outside the majority, the system should not only ask whether they accept. It should sometimes let the holdout state a concrete condition or concern, route one response from a majority supporter, and then allow a final update before closing. This must stay bounded to avoid infinite discussion.
+Voting still needs bounded reservation negotiation (todo issue 4). When one sim is outside the majority, the system should not only ask whether they accept. It should sometimes let the holdout state a concrete condition or concern, route one response from a majority supporter, and then allow a final update before closing. This must stay bounded to avoid infinite discussion.
 

@@ -285,6 +285,9 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "switch_event_count": switch_count,
         "switch_explanation_rate": switch_explained,
         "switch_bridge_rate": switch_bridged,
+        # Latent-favorite movements during the discussion phase (issue 3) —
+        # visible softening or compromise signals, distinct from final votes.
+        "discussion_lean_shifts": int(state.discussion_lean_shifts),
         "name_prefix_rate": round(name_prefixed / n_turns, 3),
         "option_opening_rate": round(option_opened / n_turns, 3),
         "i_opening_rate": round(sum(1 for t in participant_turns if leading_first_person(t.text)) / n_turns, 3),

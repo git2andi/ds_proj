@@ -694,6 +694,7 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
             persona_id=p.id,
             current_preference=p.preferred_option,
             commitment_strength=0.45 + 0.40 * p.sim_params.stubbornness,
+            commitment_min=0.45 + 0.40 * p.sim_params.stubbornness,
         )
         for p in personas
     }

@@ -147,7 +147,54 @@ class PolicyMixin:
         last = participant_turns[-1]
         aliases = short_alias_map(state.scenario.options)
 
-        # 1. Concern thread: an open concern about an option someone else backs
+        # 1. Visible softening (issue 3): a sim whose hold on its favorite has
+        #    been eroded (low tracked commitment) says so in the discussion —
+        #    "X is starting to make more sense to me" — instead of silently
+        #    flipping at the final vote. Once per sim, needs a visibly backed
+        #    attractor the sim can actually move to, and never a final vote.
+        if participant_turn_count(state) > len(state.personas) and random.random() < 0.55:
+            movers: list[tuple[Persona, str]] = []
+            for p in state.personas:
+                rt = state.runtimes[p.id]
+                if p.id in state.softened_sims or p.id == last.speaker_id:
+                    continue
+                # Trigger: eroded commitment, OR sustained social pressure — the
+                # favorite keeps taking challenges, nobody else visibly backs
+                # it, and the sim is flexible enough to plausibly move.
+                own = rt.current_preference or p.preferred_option
+                pressured = (
+                    rt.challenges_received >= 2
+                    and self._visible_support_count(state, own, exclude=p.id) == 0
+                    and p.sim_params.compromise_threshold <= 0.50
+                )
+                if rt.commitment_strength > 0.45 and not pressured:
+                    continue
+                attractor = self._softening_attractor(state, p)
+                if attractor:
+                    movers.append((p, attractor))
+            if movers:
+                persona, attractor = min(movers, key=lambda pair: state.runtimes[pair[0].id].commitment_strength)
+                state.softened_sims.add(persona.id)
+                current = state.runtimes[persona.id].current_preference or persona.preferred_option
+                phrase = random.choice([
+                    "is starting to make more sense to me",
+                    "is starting to look better to me",
+                    "is growing on me",
+                ])
+                return MoveIntent(
+                    speaker_id=persona.id,
+                    act=ActType.BUILD,
+                    reason=(
+                        f"the case others made for {aliases[attractor]} genuinely lands with you — say "
+                        f"openly that it {phrase}, name the argument that moved you, and what you still "
+                        f"like about {aliases.get(current, current)}; this is a shift in view, NOT a final "
+                        "vote — do not fully commit"
+                    ),
+                    option_focus=[attractor] + ([current] if current in state.scenario.option_ids and current != attractor else []),
+                    soften_toward=attractor,
+                )
+
+        # 2. Concern thread: an open concern about an option someone else backs
         #    gets a reaction from an advocate within a turn or two (issue 2) —
         #    the thread persists across a turn, so a concern is not lost the
         #    moment another sim speaks about something else. How the advocate
@@ -188,7 +235,7 @@ class PolicyMixin:
                 addressee_id=concern.raised_by if random.random() < 0.5 else None,
             )
 
-        # 2. Follow-up: an answer was just given; someone reacts to it instead
+        # 3. Follow-up: an answer was just given; someone reacts to it instead
         #    of the topic silently jumping.
         if last.intent and last.intent.act == ActType.ANSWER and random.random() < 0.6:
             speaker = self._choose_speaker(state)
@@ -208,7 +255,7 @@ class PolicyMixin:
                     respond_to_turn=last.index,
                 )
 
-        # 3. Blocker probe: the leading option has an unresolved visible blocker;
+        # 4. Blocker probe: the leading option has an unresolved visible blocker;
         #    a supporter asks once what would make it workable.
         leading = self._visible_candidate(state) or self._latent_leading_option(state)
         if leading and leading not in state.blocker_probes:
@@ -232,7 +279,7 @@ class PolicyMixin:
                     option_focus=[leading],
                 )
 
-        # 4. Visible split: two options both have visible backing and nobody has
+        # 5. Visible split: two options both have visible backing and nobody has
         #    compared them head-to-head recently.
         supported = [oid for oid in state.scenario.option_ids if self._visible_support_count(state, oid) >= 1]
         if len(supported) >= 2 and random.random() < 0.5:
@@ -260,7 +307,7 @@ class PolicyMixin:
                     option_focus=pair,
                 )
 
-        # 5. Stagnation rescue (once per run): several turns in a row re-assert
+        # 6. Stagnation rescue (once per run): several turns in a row re-assert
         #    positions with no question, acceptance, proposal, or compromise —
         #    the thread is circling (worst at n=2, issue I20). Force one
         #    criteria-level move that engages the other side's criterion
@@ -312,6 +359,26 @@ class PolicyMixin:
                 break
             streak += 1
         return streak
+
+    def _softening_attractor(self, state: DialogueState, persona: Persona) -> str | None:
+        """The option a shaken sim would plausibly warm to (issue 3): visibly
+        backed or argued-for by others, shiftable, and not the sim's current pick."""
+        rt = state.runtimes[persona.id]
+        current = rt.current_preference or persona.preferred_option
+        best: tuple[float, str] | None = None
+        for option_id in state.scenario.option_ids:
+            if option_id == current or not self._can_shift_to(state, persona, option_id):
+                continue
+            score = 2.0 * self._visible_support_count(state, option_id, exclude=persona.id)
+            score += 0.5 * state.coverage[option_id].reasons
+            if option_id in persona.preferred_options:
+                score += 1.0
+            if self._visibly_proposed(state, option_id):
+                score += 1.0
+            if score > 0 and (best is None or score > best[0]):
+                best = (score, option_id)
+        # Require some momentum, not a single stray mention.
+        return best[1] if best and best[0] >= 1.5 else None
 
     def _choose_speaker(self, state: DialogueState) -> Persona:
         recent_speakers = self._recent_participant_ids(state, 2)

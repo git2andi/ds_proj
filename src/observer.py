@@ -21,6 +21,7 @@ from models import (
     OpenQuestion,
     ParticipantRuntime,
     Persona,
+    Phase,
     ResponseObligation,
     TurnRecord,
 )
@@ -96,7 +97,7 @@ class ObserverMixin:
             and act.act_type in {ActType.OPENING, ActType.BUILD, ActType.AGREE, ActType.COMPARE}
             and own not in challenged
         ):
-            rt.commitment_strength = min(0.95, rt.commitment_strength + 0.04)
+            self._set_commitment(rt, rt.commitment_strength + 0.04)
 
         # A visible resolution clears a parsed blocker for THIS sim only, and it
         # must run before votes so "that fixes my concern; I can live with X"
@@ -147,6 +148,15 @@ class ObserverMixin:
         # intent alone (issue I4).
         if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
             rt.current_preference = record.intent.option_focus[0]
+        elif (softened := self._softening_signal(state, record, rt)) and softened != rt.current_preference and self._can_shift_to(state, persona, softened):
+            # Explicit visible softening ("B is starting to make more sense to
+            # me", issue 3): the internal lean follows the sim's own words —
+            # withholding the shift would make the state dishonest.
+            rt.current_preference = softened
+            rt.concessions_made += 1
+            self._set_commitment(rt, max(rt.commitment_strength, 0.30) + 0.10)
+            if record.phase == Phase.DISCUSSION:
+                state.discussion_lean_shifts += 1
         else:
             signal = act.offers_compromise or act.proposes_option or act.conditional_support
             if signal and signal != rt.current_preference and self._can_shift_to(state, persona, signal):
@@ -157,7 +167,9 @@ class ObserverMixin:
                 if random.random() > effective:
                     rt.current_preference = signal
                     rt.concessions_made += 1
-                    rt.commitment_strength = min(0.95, max(rt.commitment_strength, 0.35) + 0.10)
+                    self._set_commitment(rt, max(rt.commitment_strength, 0.35) + 0.10)
+                    if record.phase == Phase.DISCUSSION:
+                        state.discussion_lean_shifts += 1
 
         refresh_agenda(persona, rt.current_preference)
 
@@ -167,6 +179,31 @@ class ObserverMixin:
     # ------------------------------------------------------------------
     # Concern threads and commitment dynamics (issue 2)
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _softening_signal(state: DialogueState, record: TurnRecord, rt: ParticipantRuntime) -> str | None:
+        """Option this turn visibly warms to: the parsed softening phrase, or —
+        on a routed softening beat — the attractor, provided the visible text
+        actually engages it (names it, doesn't reject it). Wordings the regex
+        misses ('genuinely clicks with me now') still move the lean then."""
+        if record.act.softens_toward:
+            return record.act.softens_toward
+        intent = record.intent
+        if intent is None or not intent.soften_toward:
+            return None
+        target = intent.soften_toward
+        if (
+            target in record.act.option_refs
+            and target not in record.act.soft_rejects
+            and target not in record.act.hard_rejects
+        ):
+            return target
+        return None
+
+    @staticmethod
+    def _set_commitment(rt: ParticipantRuntime, value: float) -> None:
+        rt.commitment_strength = max(0.05, min(0.95, value))
+        rt.commitment_min = min(rt.commitment_min, rt.commitment_strength)
 
     def _register_concern(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
         """Open a concern thread and erode advocates' commitment (issue 2)."""
@@ -182,7 +219,7 @@ class ObserverMixin:
             if persona.id != record.speaker_id and rt.current_preference == option_id:
                 rt.challenges_received += 1
                 erosion = 0.12 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                rt.commitment_strength = max(0.05, rt.commitment_strength - erosion)
+                self._set_commitment(rt, rt.commitment_strength - erosion)
 
     def _update_concern_threads(self, state: DialogueState, record: TurnRecord) -> None:
         """Age open concerns; a reply about the option by someone else closes it."""
@@ -202,6 +239,15 @@ class ObserverMixin:
             concern.age += 1
             if concern.addressed_by is None and concern.age < 3:
                 live.append(concern)
+            elif concern.addressed_by is None:
+                # The concern died unanswered: that weighs on the advocates more
+                # than a defended one (issue 2/3 — unrebutted points erode).
+                for persona in state.personas:
+                    rt = state.runtimes[persona.id]
+                    if persona.id != concern.raised_by and rt.current_preference == concern.option_id:
+                        self._set_commitment(
+                            rt, rt.commitment_strength - 0.10 * (1.0 - 0.7 * persona.sim_params.stubbornness)
+                        )
         state.open_concerns = live
 
     def _apply_support_pressure(self, state: DialogueState, supporter_id: str, option_id: str) -> None:
@@ -212,7 +258,7 @@ class ObserverMixin:
             rt = state.runtimes[persona.id]
             if persona.id != supporter_id and rt.current_preference and rt.current_preference != option_id:
                 erosion = 0.05 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                rt.commitment_strength = max(0.05, rt.commitment_strength - erosion)
+                self._set_commitment(rt, rt.commitment_strength - erosion)
 
     @staticmethod
     def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:

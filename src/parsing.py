@@ -156,6 +156,30 @@ _COMPROMISE_OFFER = re.compile(
     r"\bas\s+a\s+(?:compromise|middle\s+ground)\b",
     re.I,
 )
+# Visible softening: the speaker says another option is winning them over
+# without committing ("B is starting to make more sense to me"). Moves the
+# latent lean (issue 3) but is hedged wording — it never parses as a vote.
+_SOFTENING = re.compile(
+    r"\b(?:starting\s+to\s+(?:make\s+(?:more|a\s+lot\s+of)\s+sense|look\s+(?:better|safer|stronger|smarter|more\s+\w+)|win\s+me\s+over)|"
+    r"beginning\s+to\s+(?:make\s+sense|look\s+better)|"
+    r"(?:coming|come)\s+around\s+(?:to|on)|warming\s+(?:up\s+)?to|"
+    r"makes\s+more\s+sense\s+(?:to\s+me\s+)?(?:now|after)|"
+    r"growing\s+on\s+me|is\s+winning\s+me\s+over|(?:has|is)\s+won\s+me\s+over|"
+    r"clicks\s+with\s+me\s+now|speaks\s+to\s+me\s+now|sounds\s+better\s+(?:to\s+me\s+)?now|"
+    r"i\s+(?:see|get)\s+the\s+appeal\s+(?:of|now)|makes\s+a\s+strong(?:er)?\s+case|"
+    r"more\s+tempting\s+now|i'?m\s+starting\s+to\s+(?:see|like|favor|lean\s+toward))\b",
+    re.I,
+)
+
+
+def softening_option(check_text: str, resolver: OptionResolver) -> str | None:
+    """Option the line visibly softens toward, if any (issue 3)."""
+    match = _SOFTENING.search(check_text)
+    if not match:
+        return None
+    return _nearest_option(check_text, match.start(), match.end(), resolver)
+
+
 # Does a commitment carry a visible reason clause? (Consumed by I4: a switch
 # away from the initial preference needs a stated reason.)
 _REASON_MARKER = re.compile(
@@ -544,6 +568,7 @@ def parse_dialogue_act(
         resolves_blocker = None  # one line cannot both raise and resolve a blocker
     conditional_support = None if commitment else conditional_support_option(check_text, resolver)
     offers_compromise = compromise_offer_option(check_text, resolver)
+    softens_toward = None if commitment else softening_option(check_text, resolver)
 
     return DialogueAct(
         speaker_id=speaker_id,
@@ -560,6 +585,7 @@ def parse_dialogue_act(
         resolves_blocker=resolves_blocker,
         conditional_support=conditional_support,
         offers_compromise=offers_compromise,
+        softens_toward=softens_toward,
     )
 
 

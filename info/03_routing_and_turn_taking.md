@@ -37,6 +37,9 @@ drives the conversation and the private agenda only fills silence:
    nudge before voting (`_coverage_gap_option`; bounded by `coverage_attempts`).
 3. **Reactive intents** (`_reactive_intent`) — adjacency-pair moves driven by what
    just happened, each behind a probability gate so runs don't become a script:
+   - a **visible softening beat** (issue 3, once per sim): a sim whose commitment
+     eroded or who is under sustained pressure says openly mid-discussion that a
+     visibly-backed rival is winning it over — explicitly *not* a vote (`05`),
    - an open **concern thread** (see `02`) gets a reaction from an advocate of the
      challenged option within a turn or two — a *firm* advocate defends, a *shaken*
      one (low `commitment_strength`) is told to concede honestly and may say its

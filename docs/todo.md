@@ -46,37 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 3 (P0). Sims can change their current favorite during the discussion, not only during final voting
-
-**Problem.** Sims can technically switch preference, and switch events are bridged now, but visible behavior still often concentrates switching in the final vote or minority-check phase. That makes preference movement look procedural rather than socially caused by arguments in the discussion.
-
-**Where visible.**
-
-- `logs/20260704_211704_067828` (`Book a flight to Stockholm`): two switch events, but the run resolves only at the final vote.
-- `logs/20260704_212701_828451` (`Plan an office party...`): Jasper moves from Brewery to Conference Hall only after the majority check.
-- `logs/20260704_213827_552087` (`Which movie to watch tonight`): no switch events despite extensive discussion and multiple alternatives.
-
-**Correct behavior.**
-
-During discussion, a sim should sometimes visibly soften or change its current favorite when another participant makes a relevant point. This should not count as a final vote unless the text clearly commits. The system needs a distinction between:
-
-```text
-latent/current favorite movement   = "B is starting to make more sense to me."
-final visible vote                 = "My final pick is B."
-```
-
-Good behavior:
-
-```text
-"I still like the brewery for the atmosphere, but the conference hall is starting to look safer if we care about budget and seating."
-```
-
-Bad behavior:
-
-```text
-The sim argues for A for the whole discussion, then suddenly votes B at the end.
-```
-
 ### Issue 4 (P1). Add bounded compromise and reservation negotiation around voting
 
 **Problem.** Minority checks currently identify holdouts, which is good, but the follow-up is often too thin. A holdout usually either accepts the majority option immediately or repeats its own vote. There is not enough small-scale negotiation around what would make the majority option acceptable.

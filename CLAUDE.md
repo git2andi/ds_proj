@@ -157,8 +157,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
   vote.
 - **Visible-evidence stance movement.** Latent lean (`current_preference`) moves
   only on parsed signals (vote/acceptance, compromise offer, proposal,
-  conditional support) gated by `_can_shift_to`, which also respects parsed
-  runtime blockers. Committing to an actively blocked option is a blocking
+  conditional support, softening line) gated by `_can_shift_to`, which also
+  respects parsed runtime blockers. Mid-discussion movement (issue 3): a
+  parsed softening phrase ("starting to make more sense to me") moves the lean
+  without ever parsing as a vote, and a once-per-sim routed softening beat
+  (`soften_toward` on the intent; eroded commitment or sustained pressure +
+  visibly-backed attractor) makes a shaken sim say so during discussion
+  instead of silently flipping at the vote. Metric: `discussion_lean_shifts`. Committing to an actively blocked option is a blocking
   validation issue (`BLOCKED_OPTION_ACCEPTED`) unless the same line resolves the
   blocker; sanctioned switches may only land on offered/current/initial options
   (`OFF_TARGET_SWITCH`). Vote-time compromise (`_should_compromise_to_candidate`)

@@ -91,8 +91,10 @@ parser-derived blockers can be resolved in-dialogue.
 ## Latent lean moves only on visible signals
 
 The sim's internal `current_preference` moves only on a parsed signal in the visible
-text — a vote/acceptance, a compromise offer, a proposal, or explicit conditional
-support — gated by `_can_shift_to` (which respects rejections and stubbornness). It
+text — a vote/acceptance, a compromise offer, a proposal, explicit conditional
+support, or a **softening line** ("B is starting to make more sense to me",
+issue 3, `05`) — gated by `_can_shift_to` (which respects rejections and
+stubbornness). It
 never moves from routing intent alone. Movability scales with the tracked
 `commitment_strength` (issue 2, `02`): a favorite eroded by challenges and rival
 support moves more easily, one that has been defended resists — both in the lean
