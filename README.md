@@ -1,6 +1,11 @@
-# Info notes
+# Option-grounded multi-user decision simulator
 
-
+A multi-user dialogue simulation framework for **option-grounded group decisions**:
+2–7 configurable simulated users discuss four factual option cards and reach a
+visible decision (`successful` / `majority` / `unresolved`). The scope is
+deliberately narrow — this is **not** open-ended group-chat simulation, not
+agenda-based user simulation, and not a society simulation; the option board is the
+fixed source of truth that keeps the discussion grounded and the outcome observable.
 
 ## A. Current pipeline summary
 
@@ -46,3 +51,14 @@ preference switches, trustworthy phase history (no false "closure" markers,
 replaced by deterministic fallbacks instead of being printed, public stance and vote
 readiness come from visible parsed text only, hard shared-context caps are enforced at
 setup, and grounding runs behind a regex tripwire.
+
+The 2026-07-05 behavioral round made the simulator parameters visibly control the
+interaction: trait-weighted participation (turn share tracks
+engagement/initiative/responsiveness targets, with anti-monopoly and
+minimum-visibility guards), stateful stance/concern tracking (commitment strength,
+concern threads with guaranteed reactions), visible mid-discussion stance movement
+(softening lines distinct from votes), bounded reservation negotiation around
+votes, participant-owned procedure in low-/no-moderator runs, rare intentional
+same-speaker continuations, stronger grounding (extra grounding repair pass;
+printed unsupported lines ~0), and provider/model metadata in every transcript and
+`run.json`.

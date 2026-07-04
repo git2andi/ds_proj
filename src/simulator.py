@@ -6,10 +6,12 @@ parameters and gives each simulated user a small private communicative-goal list
 
 Honest status of that list: it is a WEAK HINT SYSTEM, not agenda-based user
 simulation. The router consults it only in quiet moments (reactive rules and
-obligations always win), and observed runs leave most items pending at the end. Do not describe this project as an "agenda-based user simulator" in
-docs or write-ups. A real goal stack — where each turn consumes, defers, or
-updates an item — is a possible future direction, tracked in docs/todo.md
-(issue 3), and should not be implemented opportunistically.
+obligations always win), and observed runs leave most items pending at the end.
+Do not describe this project as an "agenda-based user simulator" in docs or
+write-ups. Cross-turn continuity comes from the stance/concern state tracked on
+ParticipantRuntime (commitment strength, concern threads — see observer.py), not
+from agenda execution; a real goal stack remains a possible future direction and
+should not be implemented opportunistically.
 """
 
 from __future__ import annotations

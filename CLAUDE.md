@@ -4,7 +4,7 @@ Use this file as project context for Claude Code or similar coding agents.
 
 ## What this project does
 
-It generates small group-decision transcripts. A topic is turned into a controlled scenario with four factual options. Then 2-7 personas discuss the options and either reach a unanimous decision, a visible majority, or remain unresolved.
+An **option-grounded multi-user decision simulator** (not an open-ended group-chat or agenda-based user simulator). A topic is turned into a controlled scenario with four factual options. Then 2-7 configurable simulated users discuss the options and either reach a unanimous decision, a visible majority, or remain unresolved.
 
 The important design choice is separation of responsibilities: the controller decides who speaks, what kind of conversational move is needed, and when voting happens; the LLM writes exactly one natural message for that move.
 
@@ -49,7 +49,9 @@ Change participant count and provider settings in `config.yaml`. The default pro
   explanation/bridge rate). `run.json` carries a `runtimes` section (visible
   state + `switch_events` per sim) and a `phase_history` list (closure entries
   appear only on a resolved outcome).
-- `src/logger.py`: run logging (transcript, JSON, metrics CSV).
+- `src/logger.py`: run logging (transcript, JSON, metrics CSV). The transcript
+  header and `run.json` carry the active LLM `Provider`/`Model`; the metrics
+  CSV has `llm_provider`/`llm_model` columns (issue 9).
 - `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
 - `info/`: plain-language "how it works" notes, one per stage of a run
   (`00_overview` is the map; `01`–`09` follow scenario → sims → routing → moderator →

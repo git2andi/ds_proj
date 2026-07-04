@@ -2,12 +2,17 @@
 
 These notes explain, in plain terms, what each part of the project does and how the
 pieces fit together. They are a mental model for reading the code, not a thesis
-chapter. They describe the system **as it is implemented today** (2026-07-04, after
-todo issues 1–8). The one-line map: `info/` file ⇄ source module.
+chapter. They describe the system **as it is implemented today** (2026-07-05, after
+the behavioral round: trait-weighted participation, stance/concern state,
+mid-discussion movement, reservation negotiation, participant-owned procedure,
+continuations, grounding). The one-line map: `info/` file ⇄ source module.
 
 ## What the project is
 
-An **option-grounded multi-user dialogue simulator**. You give it a short topic; it
+An **option-grounded multi-user decision simulator** — a multi-user dialogue
+simulation framework for option-grounded group decisions. It is *not* an
+open-ended group-chat simulator, not an agenda-based user simulator, and not a
+human-realistic society simulation. You give it a short topic; it
 
 1. builds a small decision **environment** (a topic → four factual option cards +
    shared context),
@@ -110,9 +115,14 @@ not a real goal stack — see `02`.)
    prompt blocks. All LLM-facing prose lives in `src/prompts.py`.
 7. Fixes must generalize across topics, group sizes, and option domains.
 
-## Current mismatch / intended correction
+## What "tunable simulator" means here
 
-The overview is mostly correct for the current implementation, but it still needs to be read with one caveat: the project is not yet strong enough as a **tunable simulator**. It has personas and parameters, but recent logs show that engagement and initiative do not reliably shape turn share or initiative-taking. The overview should stay framed as an option-grounded multi-user decision simulator, not as a general group-chat system.
-
-After the next fixes, this file should describe parameter-weighted simulator behavior explicitly: engagement, initiative, responsiveness, stubbornness, compromise threshold, and current stance should affect who speaks, how they react, whether they soften, and when they switch. It should also describe the agenda as stateful stance/concern tracking rather than a weak hint list or a checklist of items to execute.
+The parameters visibly shape the interaction (validated per run by the
+realization metrics, `07`): engagement/initiative/responsiveness drive **turn
+share** and initiative-taking (`03`), responsiveness drives how promptly direct
+questions are answered, verbosity drives utterance length, stubbornness and
+compromise threshold drive how hard a sim is to move (`02`, `06`), and the tracked
+stance state (commitment strength, concerns, pressure) drives defending,
+conceding, softening, and switching (`02`, `05`). Continuity across turns comes
+from that stance/concern state — not from executing an agenda checklist.
 
