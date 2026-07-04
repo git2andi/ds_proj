@@ -486,6 +486,31 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             if not candidate_report.issues or len(candidate_report.issues) <= len(report.issues):
                 text, act, report = candidate_text, candidate_act, candidate_report
 
+        if "UNSUPPORTED_FACT" in report.issues:
+            # One extra grounding-only pass (issue 7): an invented fact is the
+            # one non-blocking issue worth a second ask before the line prints —
+            # the repair prompt names the offending kind of claim explicitly.
+            repaired = True
+            repair_prompt = prompts.repair_utterance(
+                original_text=text,
+                issue_codes=report.issues,
+                persona=persona,
+                state=state,
+                recent_lines=recent_lines,
+                intent=intent,
+                max_words=max_words,
+            )
+            self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{persona.id}_grounding_repair")
+            candidate_text, ti, to = self._call_participant(repair_prompt, persona.name, max_words)
+            tokens_in += ti
+            tokens_out += to
+            candidate_act = self._parse_act(state, persona, candidate_text, intent)
+            candidate_report, gti, gto = self._collect_report(candidate_text, state, persona, intent, candidate_act, focus_options)
+            tokens_in += gti
+            tokens_out += gto
+            if "UNSUPPORTED_FACT" not in candidate_report.issues and not candidate_report.block_state_mutation:
+                text, act, report = candidate_text, candidate_act, candidate_report
+
         block = report.block_state_mutation or self._semantic_block(persona, intent, act)
         used_fallback = False
         if block:

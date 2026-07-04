@@ -247,14 +247,18 @@ Change participant count and provider settings in `config.yaml`. The default pro
   rather than retried; a rejection of the required option still fails the attempt.
 - **Tripwire grounding.** `validation.grounding_mode: tripwire` (default) calls
   the LLM fact-judge only when a regex tripwire finds a suspicious concrete
-  claim (a number or policy/medical/weather-style term absent from the option
-  cards/shared context) or a cross-option fact transfer: a line that names
+  claim (a number, a policy/medical/weather-style term, or an experiential/
+  operational claim — parking, wifi, crowds, traffic, staffing — absent from
+  the option cards/shared context) or a cross-option fact transfer: a line that names
   option X while using another card's distinctive tokens, or mixes two cards'
   distinctive tokens inside an explicit comparison. The judge flags invented
   facts, wrong-option attribution, and unlike-unit comparisons; `always`
-  restores per-turn judging. Decision acts are grounded too. The per-turn
+  restores per-turn judging. Decision acts are grounded too. A flagged line
+  gets one extra grounding-only repair pass before printing (issue 7); metrics
+  split `unsupported_fact_flags` (caught anywhere) from
+  `unsupported_printed_turns` (must stay ~0). The per-turn
   prompt sends a voice capsule instead of raw OCEAN/parameter dumps (n=3 runs
-  ≈ 18-28k input tokens with the cross-option gates).
+  ≈ 25-35k input tokens with the cross-option gates and grounding repair).
 - **Hard-cap enforcement.** Hard numeric caps in shared context (budget, distance,
   duration — soft "around $X" phrasings excluded) are extracted by
   `builders.shared_context_caps` with unit normalization inside a family

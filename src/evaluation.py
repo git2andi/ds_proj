@@ -305,6 +305,12 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             1 for t in participant_turns
             if "UNSUPPORTED_FACT" in (list(t.validation_issues) + list(t.repair_trigger_codes))
         ),
+        # Lines that reached the transcript still carrying the flag (issue 7):
+        # the number that matters for grounding quality; flags caught and
+        # repaired away are the pipeline working as intended.
+        "unsupported_printed_turns": sum(
+            1 for t in participant_turns if "UNSUPPORTED_FACT" in t.validation_issues
+        ),
         "final_support_fraction": _final_support_fraction(state, outcome),
         "option_coverage": {
             opt: {

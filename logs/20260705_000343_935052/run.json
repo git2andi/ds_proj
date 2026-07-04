@@ -1,0 +1,3267 @@
+{
+  "run_id": "20260705_000343_935052",
+  "topic": "Pick a restaurant for a first date",
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Pick a restaurant for a first date",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most for a first date dinner: ambiance, price, food quality, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Cozy Italian Trattoria",
+        "attrs": {
+          "average_cost_per_person": "$35",
+          "distance_from_city_center": "3 miles",
+          "ambiance_rating": "high",
+          "wait_time_estimate": "20 minutes"
+        },
+        "upside": "Warm, intimate atmosphere perfect for conversation",
+        "tradeoff": "Slightly longer wait time on a weekday evening",
+        "concern": "Some may find the menu limited to Italian dishes",
+        "best_for": "prioritizing ambiance and a relaxed vibe",
+        "short_name": "Cozy Italian"
+      },
+      {
+        "id": "B",
+        "name": "Green Garden Vegan Bistro",
+        "attrs": {
+          "average_cost_per_person": "$30",
+          "distance_from_city_center": "1 mile",
+          "ambiance_rating": "medium",
+          "wait_time_estimate": "10 minutes"
+        },
+        "upside": "Healthy, plant-based menu with quick seating",
+        "tradeoff": "Less romantic ambiance compared to other options",
+        "concern": "Limited appeal if not everyone enjoys vegan food",
+        "best_for": "prioritizing health-conscious choices and convenience",
+        "short_name": "Green Garden"
+      },
+      {
+        "id": "C",
+        "name": "Downtown Sushi Bar",
+        "attrs": {
+          "average_cost_per_person": "$40",
+          "distance_from_city_center": "0.5 miles",
+          "ambiance_rating": "medium-high",
+          "wait_time_estimate": "15 minutes"
+        },
+        "upside": "Fresh sushi and trendy setting close to downtown",
+        "tradeoff": "Higher cost pushes the budget limit",
+        "concern": "Not ideal if someone dislikes raw fish or sushi",
+        "best_for": "prioritizing trendy food and location",
+        "short_name": "Sushi Bar"
+      },
+      {
+        "id": "D",
+        "name": "Classic American Diner",
+        "attrs": {
+          "average_cost_per_person": "$25",
+          "distance_from_city_center": "4 miles",
+          "ambiance_rating": "casual",
+          "wait_time_estimate": "5 minutes"
+        },
+        "upside": "Affordable, quick seating with familiar comfort food",
+        "tradeoff": "Less special or romantic atmosphere for a first date",
+        "concern": "Might feel too casual or noisy for some",
+        "best_for": "prioritizing budget and speed",
+        "short_name": "American Diner"
+      }
+    ],
+    "shared_context": [
+      "The group size is exactly 5 people deciding together",
+      "The budget per person is capped at $40",
+      "The date is planned for a weekday evening around 7 PM"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Pavel",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.25,
+        "directness": 0.4625,
+        "compromise_threshold": 0.07499999999999996
+      },
+      "background": "I enjoy trying trendy and fresh foods in convenient downtown locations.",
+      "private_goal": "I want a restaurant with a modern vibe and good sushi close to the city center.",
+      "preferred_options": [
+        "C",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Marco",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7,
+        "directness": 0.6375,
+        "compromise_threshold": 0.5625
+      },
+      "background": "I prefer budget-friendly, quick options that allow for casual conversation.",
+      "private_goal": "I want a place that is affordable and has minimal wait time for a relaxed first date.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Rina",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.7749999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.65,
+        "stubbornness": 0.625,
+        "directness": 0.6875,
+        "compromise_threshold": 0.48749999999999993
+      },
+      "background": "I like comfortable, casual spots that are easy to get to and not too expensive.",
+      "private_goal": "I want a low-cost, quick seating restaurant that feels casual but pleasant.",
+      "preferred_options": [
+        "D",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Callum",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.2875,
+        "verbosity": 0.2625,
+        "initiative": 0.275,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.45,
+        "compromise_threshold": 0.6375
+      },
+      "background": "I appreciate warm, intimate atmospheres that encourage meaningful conversation.",
+      "private_goal": "I want a restaurant with a high ambiance rating that suits a relaxed, romantic first date.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": "D",
+      "rejection_reason": "The casual and noisy atmosphere of the American Diner conflicts with my desire for a romantic setting.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "D",
+          "reason": "raise the hard concern about D: The casual and noisy atmosphere of the American Diner conflicts with my desire for a romantic setting.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Uri",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.6625000000000001,
+        "verbosity": 0.6625000000000001,
+        "initiative": 0.675,
+        "responsiveness": 0.825,
+        "stubbornness": 0.25,
+        "directness": 0.6749999999999999,
+        "compromise_threshold": 0.2124999999999999
+      },
+      "background": "I value trendy, fresh cuisine in convenient locations that balance quality and vibe.",
+      "private_goal": "I want a restaurant that offers fresh food and a modern ambiance near downtown.",
+      "preferred_options": [
+        "C",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 9,
+      "last_spoke_turn": 35,
+      "current_preference": "C",
+      "commitment_strength": 0.26575000000000015,
+      "commitment_min": 0.26575000000000015,
+      "challenges_received": 2,
+      "concessions_made": 0,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "C": "Good point, Uri. Also, the Sushi Bar’s 15-minute wait might add some stress on a weekday evening, so maybe we should check if that’s a dealbreaker for anyone."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "I like the downtown Sushi Bar for its modern vibe and proximity to the city center, though the $40 budget cap leaves little room for extras. Do we know if everyone’s okay with sushi?",
+        "Good point, Uri. Also, the Sushi Bar’s 15-minute wait might add some stress on a weekday evening, so maybe we should check if that’s a dealbreaker for anyone.",
+        "Rina, good call on parking — I wonder if the American Diner’s four miles out means extra commute time or traffic hassle on a weekday evening. That might offset the quick seating advantage.",
+        "Callum, besides location, Sushi Bar offers a more modern vibe that really fits a trendy downtown night. Though Cozy Italian feels warmer, the menu might feel a bit narrow if we want some variety.",
+        "Just to be clear, the $40 cap is per person, right?",
+        "Uri, the Diner’s quick seating is tempting, but does anyone know how late the Sushi Bar stays open? Weekday 7 PM plans mean timing matters.",
+        "Uri, you’re right about the travel—four miles does push the vibe away from downtown. Plus, the Sushi Bar’s close location means we can start relaxed, not rushed.",
+        "That quick seating and familiar comfort is really starting to land for me—it’s tough to beat a spot where we won’t be stuck waiting forever on a weeknight.",
+        "Sushi Bar gets my vote—it’s got that modern vibe we want, and being downtown means easy after-dinner plans too."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 43,
+      "current_preference": "C",
+      "commitment_strength": 0.7225000000000003,
+      "commitment_min": 0.7225000000000003,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "The American Diner works well for quick seating and keeps us way under budget, which means less stress about timing. Still, I’m wondering if the casual vibe might kill the “first date” feel we want.",
+        "Green Garden’s quick seating and healthy menu sound solid, but is the vibe too casual for a first date? The Diner’s fast and affordable but might feel a bit too noisy or plain.",
+        "Parking near the Downtown Sushi Bar is convenient since it’s close to downtown, but the $40 average cost per person might push the budget a bit.",
+        "Uri, I get the Sushi Bar’s vibe, but what if we meet halfway and pick between that and the American Diner?",
+        "Close to downtown is great, but that $40 cap means Sushi Bar’s pushing it tight—anyone on a budget might bail if drinks or extras add up.",
+        "Downtown’s cool, but I need us to keep it chill and affordable—waiting 15 minutes plus hitting the $40 limit feels tight for a first date vibe. The Diner’s quick and easy, and that low price means no stressing over extras!",
+        "I’m sold on the American Diner since it’s easy to get a table fast and keeps things low-key without stretching the budget. Let’s lock it in and keep the vibe casual!",
+        "My pick is Downtown Sushi Bar since it offers a trendy setting close to downtown, even though it stretches the budget a bit."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "C",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 44,
+      "current_preference": "D",
+      "commitment_strength": 0.6793750000000003,
+      "commitment_min": 0.6793750000000003,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Quick seating is a huge plus on a weeknight, and the American Diner nails that with only a 5-minute wait.",
+        "You can’t beat the quick seating when you’re on a tight weekday schedule, and it’s way under budget.",
+        "Anyone checked if parking’s easy around the American Diner? A quick seat’s great, but I don’t want a hassle getting there on a weeknight!",
+        "Yep, $40 each is the cap, so the American Diner’s $25 average is a solid win for staying under budget and getting seated fast. Sure, it’s less romantic, but we won’t waste time waiting around.",
+        "Uri, the casual vibe might not scream romance, but the Diner’s quick seating and $25 price make it smart for a weekday—plus, it’s just 4 miles out, so getting there won’t be a hassle!",
+        "I'm going with American Diner for quick seating and affordable, familiar comfort food.",
+        "Classic American Diner gets my vote for quick seating and staying well under budget, so we can focus on conversation without any rush."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 7,
+      "last_spoke_turn": 45,
+      "current_preference": "A",
+      "commitment_strength": 0.6054999999999997,
+      "commitment_min": 0.6054999999999997,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {
+        "D": "The casual and noisy atmosphere of the American Diner conflicts with my desire for a romantic setting."
+      },
+      "already_said": [
+        "Warmth and quiet matter more than wait times. Cozy Italian fits.",
+        "The Cozy Italian Trattoria has a 20-minute wait and a warm, intimate atmosphere nearby.",
+        "What’s one thing Sushi Bar has over Cozy Italian besides location?",
+        "Longer wait for Cozy Italian, but better vibe and under budget.",
+        "My pick is Cozy Italian for its warm, intimate atmosphere.",
+        "Wait times are short, but pushing the budget to the limit feels risky.",
+        "I'm going with Cozy Italian for its warm, intimate atmosphere despite the slightly longer wait."
+      ],
+      "switch_events": []
+    },
+    "p5": {
+      "persona_id": "p5",
+      "turn_count": 11,
+      "last_spoke_turn": 42,
+      "current_preference": "C",
+      "commitment_strength": 0.38575000000000026,
+      "commitment_min": 0.38575000000000026,
+      "challenges_received": 2,
+      "concessions_made": 0,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Downtown Sushi Bar fits the vibe and location perfectly, but do we know if everyone’s comfortable with sushi for a first date?",
+        "Pavel, 15 minutes isn’t ideal, but downtown Sushi Bar’s fresh food and vibe near city center make the wait worth it if everyone’s okay with it.",
+        "The wait’s a bit long but the Cozy Italian’s vibe works if someone isn’t into raw fish, and Sushi Bar’s freshness near downtown still wins for me.",
+        "The 15-minute wait at Sushi Bar is manageable if we get there right at 7, plus the fresh sushi and vibe near downtown make it worth the slight delay.",
+        "The Sushi Bar’s fresh sushi and trendy setting make it a solid choice.",
+        "Meeting halfway sounds fair, Marco, but remember the Diner’s casual vibe might not fit a first date as well, even if it’s easier on the budget.",
+        "We don’t have the Sushi Bar’s closing time here, but the 15-minute wait still beats risking a rushed meal if we start late.",
+        "Four miles out for the Diner means extra travel time—does that really fit a downtown vibe we want for a first date?",
+        "Marco, the $40 hits the limit but with a 15-minute wait and fresh sushi nearby, it’s still the best balance of quality and vibe downtown.",
+        "I’m going with Sushi Bar because it offers fresh food and a great downtown vibe.",
+        "Callum, the wait’s only about 15 minutes, but yeah, it maxes out the budget—no extra wiggle room for drinks or extras."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a restaurant for a first date.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Cozy Italian Trattoria — average cost per person: $35; wait time estimate: 20 minutes; ambiance rating: high (+ Warm, intimate atmosphere perfect for conversation; − Slightly longer wait time on a weekday evening)\nB) Green Garden Vegan Bistro — average cost per person: $30; wait time estimate: 10 minutes; ambiance rating: medium (+ Healthy, plant-based menu with quick seating; − Less romantic ambiance compared to other options)\nC) Downtown Sushi Bar — average cost per person: $40; wait time estimate: 15 minutes; ambiance rating: medium-high (+ Fresh sushi and trendy setting close to downtown; − Higher cost pushes the budget limit)\nD) Classic American Diner — average cost per person: $25; wait time estimate: 5 minutes; ambiance rating: casual (+ Affordable, quick seating with familiar comfort food; − Less special or romantic atmosphere for a first date)\nContext: The group size is exactly 5 people deciding together; The budget per person is capped at $40; The date is planned for a weekday evening around 7 PM.\nWhat matters most for a first date dinner: ambiance, price, food quality, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a restaurant for a first date.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Cozy Italian Trattoria — average cost per person: $35; wait time estimate: 20 minutes; ambiance rating: high (+ Warm, intimate atmosphere perfect for conversation; − Slightly longer wait time on a weekday evening)\nB) Green Garden Vegan Bistro — average cost per person: $30; wait time estimate: 10 minutes; ambiance rating: medium (+ Healthy, plant-based menu with quick seating; − Less romantic ambiance compared to other options)\nC) Downtown Sushi Bar — average cost per person: $40; wait time estimate: 15 minutes; ambiance rating: medium-high (+ Fresh sushi and trendy setting close to downtown; − Higher cost pushes the budget limit)\nD) Classic American Diner — average cost per person: $25; wait time estimate: 5 minutes; ambiance rating: casual (+ Affordable, quick seating with familiar comfort food; − Less special or romantic atmosphere for a first date)\nContext: The group size is exactly 5 people deciding together; The budget per person is capped at $40; The date is planned for a weekday evening around 7 PM.\nWhat matters most for a first date dinner: ambiance, price, food quality, or convenience?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "The American Diner works well for quick seating and keeps us way under budget, which means less stress about timing. Still, I’m wondering if the casual vibe might kill the “first date” feel we want.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The American Diner works well for quick seating and keeps us way under budget, which means less stress about timing. Still, I’m wondering if the casual vibe might kill the “first date” feel we want.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1484,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "Quick seating is a huge plus on a weeknight, and the American Diner nails that with only a 5-minute wait.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Quick seating is a huge plus on a weeknight, and the American Diner nails that with only a 5-minute wait.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 857,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "I like the downtown Sushi Bar for its modern vibe and proximity to the city center, though the $40 budget cap leaves little room for extras. Do we know if everyone’s okay with sushi?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I like the downtown Sushi Bar for its modern vibe and proximity to the city center, though the $40 budget cap leaves little room for extras. Do we know if everyone’s okay with sushi?",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "C",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1598,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Downtown Sushi Bar fits the vibe and location perfectly, but do we know if everyone’s comfortable with sushi for a first date?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Downtown Sushi Bar fits the vibe and location perfectly, but do we know if everyone’s comfortable with sushi for a first date?",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1633,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "Warmth and quiet matter more than wait times. Cozy Italian fits.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Warmth and quiet matter more than wait times. Cozy Italian fits.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 979,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "You can’t beat the quick seating when you’re on a tight weekday schedule, and it’s way under budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "You can’t beat the quick seating when you’re on a tight weekday schedule, and it’s way under budget.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about American Diner that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 690,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Green Garden’s quick seating and healthy menu sound solid, but is the vibe too casual for a first date? The Diner’s fast and affordable but might feel a bit too noisy or plain.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Garden’s quick seating and healthy menu sound solid, but is the vibe too casual for a first date? The Diner’s fast and affordable but might feel a bit too noisy or plain.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1427,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Good point, Uri. Also, the Sushi Bar’s 15-minute wait might add some stress on a weekday evening, so maybe we should check if that’s a dealbreaker for anyone.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Good point, Uri. Also, the Sushi Bar’s 15-minute wait might add some stress on a weekday evening, so maybe we should check if that’s a dealbreaker for anyone.",
+        "act_type": "reject",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Good point, Uri. Also, the Sushi Bar’s 15-minute wait might add some stress on a weekday evening, so maybe we should check if that’s a dealbreaker for anyone."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Sushi Bar that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1437,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "Anyone checked if parking’s easy around the American Diner? A quick seat’s great, but I don’t want a hassle getting there on a weeknight!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Anyone checked if parking’s easy around the American Diner? A quick seat’s great, but I don’t want a hassle getting there on a weeknight!",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare American Diner",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 744,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Pavel, 15 minutes isn’t ideal, but downtown Sushi Bar’s fresh food and vibe near city center make the wait worth it if everyone’s okay with it.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Pavel, 15 minutes isn’t ideal, but downtown Sushi Bar’s fresh food and vibe near city center make the wait worth it if everyone’s okay with it.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "C",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "a concern was raised about Sushi Bar, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1469,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Rina, good call on parking — I wonder if the American Diner’s four miles out means extra commute time or traffic hassle on a weekday evening. That might offset the quick seating advantage.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Rina, good call on parking — I wonder if the American Diner’s four miles out means extra commute time or traffic hassle on a weekday evening. That might offset the quick seating advantage.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about American Diner, Sushi Bar that hasn't come up yet",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1550,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "The Cozy Italian Trattoria has a 20-minute wait and a warm, intimate atmosphere nearby.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The Cozy Italian Trattoria has a 20-minute wait and a warm, intimate atmosphere nearby.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Cozy Italian that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1803,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "The wait’s a bit long but the Cozy Italian’s vibe works if someone isn’t into raw fish, and Sushi Bar’s freshness near downtown still wins for me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The wait’s a bit long but the Cozy Italian’s vibe works if someone isn’t into raw fish, and Sushi Bar’s freshness near downtown still wins for me.",
+        "act_type": "agree",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Cozy Italian, Sushi Bar",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 822,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "What’s one thing Sushi Bar has over Cozy Italian besides location?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "What’s one thing Sushi Bar has over Cozy Italian besides location?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 844,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Parking near the Downtown Sushi Bar is convenient since it’s close to downtown, but the $40 average cost per person might push the budget a bit.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Parking near the Downtown Sushi Bar is convenient since it’s close to downtown, but the $40 average cost per person might push the budget a bit.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare American Diner, Sushi Bar with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 3705,
+      "tokens_out": 166,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "The 15-minute wait at Sushi Bar is manageable if we get there right at 7, plus the fresh sushi and vibe near downtown make it worth the slight delay.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The 15-minute wait at Sushi Bar is manageable if we get there right at 7, plus the fresh sushi and vibe near downtown make it worth the slight delay.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Sushi Bar fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1439,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "The Sushi Bar’s fresh sushi and trendy setting make it a solid choice.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The Sushi Bar’s fresh sushi and trendy setting make it a solid choice.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 2111,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Callum, besides location, Sushi Bar offers a more modern vibe that really fits a trendy downtown night. Though Cozy Italian feels warmer, the menu might feel a bit narrow if we want some variety.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Callum, besides location, Sushi Bar offers a more modern vibe that really fits a trendy downtown night. Though Cozy Italian feels warmer, the menu might feel a bit narrow if we want some variety.",
+        "act_type": "agree",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Cozy Italian, Sushi Bar",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1501,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Just to be clear, the $40 cap is per person, right?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Just to be clear, the $40 cap is per person, right?",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 934,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "Yep, $40 each is the cap, so the American Diner’s $25 average is a solid win for staying under budget and getting seated fast. Sure, it’s less romantic, but we won’t waste time waiting around.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Yep, $40 each is the cap, so the American Diner’s $25 average is a solid win for staying under budget and getting seated fast. Sure, it’s less romantic, but we won’t waste time waiting around.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare American Diner with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 727,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Uri, I get the Sushi Bar’s vibe, but what if we meet halfway and pick between that and the American Diner?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Uri, I get the Sushi Bar’s vibe, but what if we meet halfway and pick between that and the American Diner?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "D",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Sushi Bar, American Diner could be common ground without claiming it is already decided",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1527,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Meeting halfway sounds fair, Marco, but remember the Diner’s casual vibe might not fit a first date as well, even if it’s easier on the budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Meeting halfway sounds fair, Marco, but remember the Diner’s casual vibe might not fit a first date as well, even if it’s easier on the budget.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1529,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Uri, the Diner’s quick seating is tempting, but does anyone know how late the Sushi Bar stays open? Weekday 7 PM plans mean timing matters.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Uri, the Diner’s quick seating is tempting, but does anyone know how late the Sushi Bar stays open? Weekday 7 PM plans mean timing matters.",
+        "act_type": "agree",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 720,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "We don’t have the Sushi Bar’s closing time here, but the 15-minute wait still beats risking a rushed meal if we start late.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "We don’t have the Sushi Bar’s closing time here, but the 15-minute wait still beats risking a rushed meal if we start late.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 859,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "Longer wait for Cozy Italian, but better vibe and under budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Longer wait for Cozy Italian, but better vibe and under budget.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "compare Sushi Bar, Cozy Italian, Green Garden with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 931,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "Uri, the casual vibe might not scream romance, but the Diner’s quick seating and $25 price make it smart for a weekday—plus, it’s just 4 miles out, so getting there won’t be a hassle!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Uri, the casual vibe might not scream romance, but the Diner’s quick seating and $25 price make it smart for a weekday—plus, it’s just 4 miles out, so getting there won’t be a hassle!",
+        "act_type": "agree",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about American Diner",
+        "addressee_id": "p5",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1474,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Four miles out for the Diner means extra travel time—does that really fit a downtown vibe we want for a first date?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Four miles out for the Diner means extra travel time—does that really fit a downtown vibe we want for a first date?",
+        "act_type": "challenge",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "challenge",
+        "reason": "push back on American Diner with one concrete concern — you currently favor Sushi Bar, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1614,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Uri, you’re right about the travel—four miles does push the vibe away from downtown. Plus, the Sushi Bar’s close location means we can start relaxed, not rushed.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Uri, you’re right about the travel—four miles does push the vibe away from downtown. Plus, the Sushi Bar’s close location means we can start relaxed, not rushed.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 28,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1513,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Close to downtown is great, but that $40 cap means Sushi Bar’s pushing it tight—anyone on a budget might bail if drinks or extras add up.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Close to downtown is great, but that $40 cap means Sushi Bar’s pushing it tight—anyone on a budget might bail if drinks or extras add up.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 29,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1434,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "That quick seating and familiar comfort is really starting to land for me—it’s tough to beat a spot where we won’t be stuck waiting forever on a weeknight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "That quick seating and familiar comfort is really starting to land for me—it’s tough to beat a spot where we won’t be stuck waiting forever on a weeknight.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "the case others made for American Diner genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Sushi Bar; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "D",
+        "continuation": false
+      },
+      "tokens_in": 750,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Marco, the $40 hits the limit but with a 15-minute wait and fresh sushi nearby, it’s still the best balance of quality and vibe downtown.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Marco, the $40 hits the limit but with a 15-minute wait and fresh sushi nearby, it’s still the best balance of quality and vibe downtown.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "a concern was raised about Sushi Bar, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 30,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1427,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "Downtown’s cool, but I need us to keep it chill and affordable—waiting 15 minutes plus hitting the $40 limit feels tight for a first date vibe. The Diner’s quick and easy, and that low price means no stressing over extras!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Downtown’s cool, but I need us to keep it chill and affordable—waiting 15 minutes plus hitting the $40 limit feels tight for a first date vibe. The Diner’s quick and easy, and that low price means no stressing over extras!",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Sushi Bar, American Diner fits that",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 28,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1531,
+      "tokens_out": 62,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, time to lock in your pick—who’s decided on one option to go with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, time to lock in your pick—who’s decided on one option to go with?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p1",
+      "speaker_name": "Pavel",
+      "text": "Sushi Bar gets my vote—it’s got that modern vibe we want, and being downtown means easy after-dinner plans too.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Sushi Bar gets my vote—it’s got that modern vibe we want, and being downtown means easy after-dinner plans too.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1427,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "I’m going with Sushi Bar because it offers fresh food and a great downtown vibe.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I’m going with Sushi Bar because it offers fresh food and a great downtown vibe.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1836,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "My pick is Cozy Italian for its warm, intimate atmosphere.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "My pick is Cozy Italian for its warm, intimate atmosphere.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "because it offers fresh food and a great downtown vibe"
+        ],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1137,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "I'm going with American Diner for quick seating and affordable, familiar comfort food.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'm going with American Diner for quick seating and affordable, familiar comfort food.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for its warm, intimate atmosphere",
+          "because it offers fresh food and a great downtown vibe"
+        ],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1117,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "I’m sold on the American Diner since it’s easy to get a table fast and keeps things low-key without stretching the budget. Let’s lock it in and keep the vibe casual!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m sold on the American Diner since it’s easy to get a table fast and keeps things low-key without stretching the budget. Let’s lock it in and keep the vibe casual!",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'm going with",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for its warm, intimate atmosphere",
+          "because it offers fresh food and a great downtown vibe"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1591,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 40,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The votes are evenly split between Sushi Bar, American Diner, and Cozy Italian—could those who chose differently live with Downtown Sushi Bar, or prefer to stick with their pick?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "The votes are evenly split between Sushi Bar, American Diner, and Cozy Italian—could those who chose differently live with Downtown Sushi Bar, or prefer to stick with their pick?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 41,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "Wait times are short, but pushing the budget to the limit feels risky.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Wait times are short, but pushing the budget to the limit feels risky.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Sushi Bar — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 736,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 42,
+      "speaker_id": "p5",
+      "speaker_name": "Uri",
+      "text": "Callum, the wait’s only about 15 minutes, but yeah, it maxes out the budget—no extra wiggle room for drinks or extras.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Callum, the wait’s only about 15 minutes, but yeah, it maxes out the budget—no extra wiggle room for drinks or extras.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "respond to Callum's reservation about Sushi Bar honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 41,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 723,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 43,
+      "speaker_id": "p2",
+      "speaker_name": "Marco",
+      "text": "My pick is Downtown Sushi Bar since it offers a trendy setting close to downtown, even though it stretches the budget a bit.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "My pick is Downtown Sushi Bar since it offers a trendy setting close to downtown, even though it stretches the budget a bit.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring American Diner (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2077,
+      "tokens_out": 80,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 44,
+      "speaker_id": "p3",
+      "speaker_name": "Rina",
+      "text": "Classic American Diner gets my vote for quick seating and staying well under budget, so we can focus on conversation without any rush.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Classic American Diner gets my vote for quick seating and staying well under budget, so we can focus on conversation without any rush.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring American Diner (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm going with",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "since it offers a trendy setting close to downtown, even"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2082,
+      "tokens_out": 72,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 45,
+      "speaker_id": "p4",
+      "speaker_name": "Callum",
+      "text": "I'm going with Cozy Italian for its warm, intimate atmosphere despite the slightly longer wait.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I'm going with Cozy Italian for its warm, intimate atmosphere despite the slightly longer wait.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Cozy Italian (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "since it offers a trendy setting close to downtown, even"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1361,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 46,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re going with Downtown Sushi Bar since most are in—Rina and Callum had other ideas, but we’ll roll with this.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re going with Downtown Sushi Bar since most are in—Rina and Callum had other ideas, but we’ll roll with this.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "reason": "3/5 participants visibly committed to the winning option.",
+    "turns": 42,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "D",
+        "p4": "A",
+        "p5": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "D",
+        "p4": "A",
+        "p5": "C"
+      },
+      "phase_history": [
+        "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.61",
+        "turn 6: discussion — all participants gave an opening view",
+        "turn 33: narrowing — target discussion length reached",
+        "turn 39: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 45: closure — majority after split-vote compromise"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 25,
+      "force_narrow_turns": 32,
+      "hard_max_turns": 37
+    }
+  },
+  "phase_history": [
+    "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.61",
+    "turn 6: discussion — all participants gave an opening view",
+    "turn 33: narrowing — target discussion length reached",
+    "turn 39: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 45: closure — majority after split-vote compromise",
+    "turn 46: closure — closed as majority"
+  ],
+  "metrics": {
+    "participant_turns": 42,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.087,
+    "turn_counts": {
+      "Pavel": 9,
+      "Marco": 8,
+      "Rina": 7,
+      "Callum": 7,
+      "Uri": 11
+    },
+    "top_speaker_share": 0.262,
+    "avg_words_by_persona": {
+      "Pavel": 26.6,
+      "Marco": 29.4,
+      "Rina": 23.9,
+      "Callum": 12.1,
+      "Uri": 22.6
+    },
+    "question_density": 0.214,
+    "avg_words_per_turn": 23.2,
+    "repaired_turns": 9,
+    "repair_rate": 0.214,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 5,
+    "visible_votes": {
+      "Pavel": "C",
+      "Marco": "C",
+      "Rina": "D",
+      "Callum": "A",
+      "Uri": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 1.0,
+    "participation_gini": 0.095,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.6,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.181,
+    "compromise_success_rate": 1.0,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "peer_vote_call": false,
+    "continuation_turns": 2,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 0,
+    "name_prefix_rate": 0.214,
+    "option_opening_rate": 0.119,
+    "i_opening_rate": 0.143,
+    "we_opening_rate": 0.024,
+    "name_or_option_opening_rate": 0.333,
+    "repeated_opening_patterns": 8,
+    "unsupported_fact_flags": 4,
+    "unsupported_printed_turns": 0,
+    "final_support_fraction": 0.6,
+    "option_coverage": {
+      "A": {
+        "mentions": 8,
+        "reasons": 5,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 21,
+        "reasons": 12,
+        "objections": 3,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 15,
+        "reasons": 9,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Pavel": 0.588,
+      "Marco": 0.737,
+      "Rina": 0.775,
+      "Callum": 0.287,
+      "Uri": 0.663
+    },
+    "expected_turn_share": {
+      "Pavel": 0.205,
+      "Marco": 0.228,
+      "Rina": 0.234,
+      "Callum": 0.12,
+      "Uri": 0.212
+    },
+    "realized_turn_share": {
+      "Pavel": 0.214,
+      "Marco": 0.19,
+      "Rina": 0.167,
+      "Callum": 0.167,
+      "Uri": 0.262
+    },
+    "agenda_status": {
+      "pending": 14,
+      "obsolete": 2,
+      "done": 4
+    },
+    "outcome_status": "majority",
+    "final_option": "C",
+    "corpus_preset": "",
+    "min_discussion_turns": 25,
+    "force_narrow_turns": 32,
+    "hard_max_turns": 37,
+    "phase_history": [
+      "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.61",
+      "turn 6: discussion — all participants gave an opening view",
+      "turn 33: narrowing — target discussion length reached",
+      "turn 39: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 45: closure — majority after split-vote compromise",
+      "turn 46: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.042,
+    "verbosity_realization_error": 0.11,
+    "engagement_error_by_persona": {
+      "Pavel": 0.009,
+      "Marco": 0.038,
+      "Rina": 0.067,
+      "Callum": 0.046,
+      "Uri": 0.05
+    },
+    "verbosity_error_by_persona": {
+      "Pavel": 0.058,
+      "Marco": 0.051,
+      "Rina": 0.117,
+      "Callum": 0.253,
+      "Uri": 0.069
+    },
+    "engagement_behavior_correlation": 0.225,
+    "verbosity_behavior_correlation": 0.962,
+    "setup_tokens_in": 2103,
+    "setup_tokens_out": 1146,
+    "dialogue_tokens_in": 58151,
+    "dialogue_tokens_out": 2049,
+    "total_tokens_in": 60254,
+    "total_tokens_out": 3195
+  },
+  "tokens": {
+    "setup_tokens_in": 2103,
+    "setup_tokens_out": 1146,
+    "dialogue_tokens_in": 58151,
+    "dialogue_tokens_out": 2049,
+    "total_tokens_in": 60254,
+    "total_tokens_out": 3195
+  }
+}

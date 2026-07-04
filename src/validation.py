@@ -228,7 +228,12 @@ class ValidationMixin:
     _SUSPECT_CLAIM = re.compile(
         r"\b(?:polic(?:y|ies)|includ(?:es|ed|ing)|refund\w*|warrant(?:y|ies)|reservation|discount\w*|"
         r"free\s+(?:of|shipping|entry|parking|wifi|drinks?)|allerg\w*|toxic\w*|poison\w*|"
-        r"forecast\w*|guarantee[ds]?|certified|award[- ]?winn\w*|complimentary|licens\w*)\b",
+        r"forecast\w*|guarantee[ds]?|certified|award[- ]?winn\w*|complimentary|licens\w*|"
+        # Experiential/operational domains that invented facts favor (issue 7):
+        # claims about parking, connectivity, weather, crowding, traffic, or
+        # staffing that no card states get judged.
+        r"parking|wi-?fi|weather|rain\w*|snow\w*|crowd\w*|queue\w*|traffic|"
+        r"staff\w*|waiter\w*|servic\w*|jet\s*lag|peak\s+(?:hours?|times?)|rush\s+hour)\b",
         re.I,
     )
 

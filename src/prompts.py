@@ -347,7 +347,7 @@ Style:
 - {length_note}{tone_note}
 - Follow the voice exactly — sentence shape, bluntness, and energy should make the speaker recognizable without the name. Contractions and casual interjections fit.
 - Vary sentence shape and opening; do not open with an option name, "I'm leaning", or "feels". Names, "you", "we", or no option name are all fine.
-- Add one new point, concern, answer, or stance shift; don't repeat reasons from the recent chat. Never invent facts beyond the option facts above.{style_notes}"""
+- Add one new point, concern, answer, or stance shift; don't repeat reasons from the recent chat. Never invent facts beyond the option facts above. If something isn't in the cards or context (parking, weather, crowds, policies, extra services), don't state it as fact — treat it as unknown or ask.{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a

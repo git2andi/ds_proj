@@ -46,39 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 7 (P1). Strengthen grounding: no invented concrete facts
-
-**Problem.** The option board is supposed to be the factual source of truth, but recent logs still contain or flag unsupported concrete facts. The validator catches some of this, but unsupported content still appears often enough that grounding remains a behavioral issue.
-
-**Where visible.**
-
-- `logs/20260704_211704_067828` (`Book a flight to Stockholm`): `unsupported_fact_flags = 2`.
-- `logs/20260704_211917_836818` (`Which Scifi tech should exist today`): `unsupported_fact_flags = 3`; the discussion adds claims such as privacy/safety/car-emission implications beyond the option facts.
-- `logs/20260704_212701_828451` (`Plan an office party...`): `unsupported_fact_flags = 3`.
-- `logs/20260704_213827_552087` (`Which movie to watch tonight`): `unsupported_fact_flags = 4`.
-- `logs/20260704_214009_899789` (`Pick a restaurant for a date`): the transcript mentions parking problems for the sushi bar although the option card does not provide that fact.
-
-**Correct behavior.**
-
-Sims may reason from listed facts and may express uncertainty. They must not add new concrete facts as if known.
-
-Allowed:
-
-```text
-"We do not know the parking situation, so I would not count that as a reason."
-"B is lively, but the board says it is noisy, so conversation could be harder."
-```
-
-Not allowed:
-
-```text
-"Parking near B is bad."
-"This venue has childcare."
-"The flight includes baggage."
-```
-
-Grounding fixes should prefer environment-state checks, prompt constraints, and repair/fallback behavior over broad generic warnings.
-
 ### Issue 8 (P2). Keep the option-grounded scope explicit and rename descriptions accordingly
 
 **Problem.** Some descriptions can still sound like the system is a general multi-user chat simulator or a full agenda-based user simulator. That overstates the current project and creates confusion about whether open-ended group chat is expected.

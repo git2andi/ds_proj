@@ -107,10 +107,19 @@ UNSUPPORTED_FACT                    grounding judge flagged an invented fact (no
 Grounding keeps sims inside the option board (`01`). To stay cheap it runs in
 **tripwire** mode (`validation.grounding_mode`, default): the LLM fact-judge
 (`prompts.grounding_check`) is called only when a regex tripwire finds a suspicious
-concrete claim — a number or policy/medical/weather-style term absent from the world,
-or a **cross-option fact transfer** (a line naming option X while using another card's
-distinctive tokens). The judge flags invented facts, wrong-option attribution, and
-unlike-unit comparisons. `always` mode judges every turn.
+concrete claim — a number, a policy/medical/weather-style term, or an
+experiential/operational claim (parking, wifi, crowds, traffic, staffing, jet lag)
+absent from the world — or a **cross-option fact transfer** (a line naming option X
+while using another card's distinctive tokens). The judge flags invented facts,
+wrong-option attribution, and unlike-unit comparisons. `always` mode judges every
+turn.
+
+A flagged line gets the normal repair pass plus **one extra grounding-only repair**
+(issue 7) before it may print; the per-turn prompt also tells sims to treat
+off-board specifics as unknowns rather than facts. Metrics separate
+`unsupported_fact_flags` (caught anywhere — the pipeline working) from
+`unsupported_printed_turns` (still flagged in the printed line — the number that
+matters, near zero in validation runs).
 
 ## Deterministic fallbacks
 
