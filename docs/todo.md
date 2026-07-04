@@ -88,7 +88,7 @@ clearly independent.
 4. ~~Complete the planned evaluation layer~~ DONE 2026-07-03
 5. ~~Fix sudden unexplained preference switches (bridge-clause enforcement)~~ DONE 2026-07-04
 6. ~~Fix phase-history inconsistency (no false "closure" phase markers)~~ DONE 2026-07-04
-7. Reduce moderator dependency (configurable moderator behavior)
+7. ~~Reduce moderator dependency (configurable moderator behavior)~~ DONE 2026-07-04
 8. Split `dialogue.py` into policy / observer / validation modules
 
 Items 1-2 come first because they are prerequisites for controlled experiments: most of
@@ -370,7 +370,42 @@ before continuing into the split-vote compromise, and `logs/20260703_213154_2012
 (autumn weekend, n=3) logs the same marker before ending `unresolved` — a "closure"
 phase entry on a run that never closed on that vote state.
 
-### Issue 7 (P2). Reduce moderator dependency
+### Issue 7 (P2). Reduce moderator dependency — DONE (2026-07-04)
+
+Implemented as a `moderator:` config section with independent boolean flags —
+`enabled` (master switch), `opening`, `mid_discussion_nudges`, `final_vote_call`,
+`closing` — validated in `config_loader` (unknown-field / non-boolean guards);
+defaults reproduce the fully-moderated behavior. The key design point: the flags
+gate only the moderator's *visible turns*, never the controller policy. A single
+`DialogueRunner._mod(part)` helper gates each emission site (opening board turn,
+mid-discussion `_maybe_moderator_nudge`, the vote-call nudge, the `_minority_check`
+and `_maybe_split_vote_compromise` summary lines, and the closing line). In lower-/
+no-moderator modes the run still reaches a decision because the decision loop keeps
+generating participant vote turns and the participant-level narrowing acts
+(defend / compare / propose-compromise / stagnation break) carry the discussion —
+so the system produces genuine peer-to-peer interaction, not a facilitator monologue.
+When `opening` is off the option board is still shown as plain setup scaffolding
+(console header + the transcript's `## Options` section), not a turn. `run.json`
+records the resolved `moderator_config`. Also folded in the todo §5 side-issue: the
+split-vote probe now only claims a candidate "has the most support" when it is a
+strict plurality; on a pure tie it says the vote is "evenly split with no option
+ahead" and merely floats one option to rally around.
+
+Validated 2026-07-04 by live runs (gpt-4.1-mini, n=3):
+
+- full moderator (default, `logs/20260704_023805_121689`): 4 moderator turns,
+  behavior unchanged, majority(A), holdout probe intact.
+- no moderator (`logs/20260704_023857_735899`, enabled=false): **0 moderator turns**;
+  participants self-narrowed (compromise proposals, clarifying questions) and voted
+  on their own; honest unresolved 1-1-1; `invalid_printed_turn_count` 0.
+- low-moderator partial (opening+closing only): exactly 2 moderator turns
+  (`phases: ['opening', 'closure']`), no mid-nudge, no vote-call; participants drove
+  the vote themselves.
+- tie-wording fix (brand-color run, majority via compromise): on a 1-1-1 split the
+  moderator said "split evenly between … no option ahead" instead of falsely
+  asserting a leader, then floated one option; compromise still resolved it.
+
+Original issue text kept for context:
 
 Currently the moderator carries most of the interaction structure: presents the option
 board, calls the vote, probes holdouts, closes the decision. Useful for demos, but works
@@ -476,12 +511,14 @@ automated tests:
   collected but `run.json` never writes runtimes, so switch analysis is impossible
   from the trace alone. Fix as part of issue 4 (the evaluation layer needs it) —
   issue 5's explanation-rate metric depends on it too.
-- **Split probe claims "most support" on a pure tie.** Winter-party run
-  (`logs/20260703_213924_858347`, n=3): after a 1-1-1 vote the moderator said votes
-  were split "with Strike Lanes having the most support" — no option had more than
-  one vote. `_split_probe_candidate`/nudge wording should not assert a lead that
-  does not exist. Small, fold into issue 7's moderator work (or earlier if a run
-  shows it misleads participants into false convergence).
+- **Split probe claims "most support" on a pure tie.** RESOLVED with issue 7
+  (2026-07-04). `_maybe_split_vote_compromise` now checks whether the candidate is
+  a strict plurality; on a tie the moderator says the vote is "evenly split with no
+  option ahead" and only floats one option to rally around. Verified live on a
+  1-1-1 brand-color run ("split evenly between … no option ahead"). Original note:
+  Winter-party run (`logs/20260703_213924_858347`, n=3): after a 1-1-1 vote the
+  moderator said votes were split "with Strike Lanes having the most support" — no
+  option had more than one vote.
 - **More issue-5 evidence.** Board-game run (`logs/20260703_214253_923700`, n=3):
   Diego argued Ticket to Ride throughout, then voted "My vote goes to Azul because
   its simple rules..." with no bridge to his prior stance. Streaming run

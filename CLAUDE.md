@@ -168,6 +168,17 @@ Change participant count and provider settings in `config.yaml`. The default pro
   both answers explicitly fine. Closures are status-aware: a majority close
   names the holdouts and never implies full agreement; unresolved closes
   present nothing as chosen.
+- **Configurable moderator.** `moderator:` in `config.yaml` gates the visible
+  moderator *voice* with independent booleans — `enabled` (master switch),
+  `opening`, `mid_discussion_nudges`, `final_vote_call`, `closing` — via
+  `DialogueRunner._mod(part)`. The flags never touch controller policy: in
+  lower-/no-moderator modes the run still decides because the decision loop keeps
+  emitting participant vote turns and the participant-level narrowing acts carry
+  the discussion (peer-to-peer). When `opening` is off the option board is shown as
+  plain scaffolding (header + transcript `## Options`), not a turn. Defaults are
+  fully-moderated; `run.json` records the resolved `moderator_config`. The split-vote
+  probe only claims "the most support" on a strict plurality — a pure tie is
+  announced as "evenly split with no option ahead".
 - **Corpus presets (optional).** `corpus.preset` in `config.yaml` (default null)
   folds corpus statistics into runtime parameters at load time: typical turns per
   participant → turn caps, preferred group size → `num_participants`. Dominance
@@ -212,6 +223,6 @@ The discussion should contain natural multi-party behavior: agreement, challenge
 - Never close before participants have a visible decision opportunity.
 - Never let a hard blocker accept their rejected option through state mutation.
 - Never add facts outside option cards/shared context.
-- Keep the moderator sparse and neutral.
+- Keep the moderator sparse and neutral (its voice is configurable via `moderator:`, but the default stays sparse).
 - Put all LLM-facing prose in `src/prompts.py`.
 - Prefer controller/parser/validator/state fixes over enlarging prompts.

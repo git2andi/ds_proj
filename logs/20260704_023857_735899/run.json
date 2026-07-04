@@ -1,0 +1,1778 @@
+{
+  "run_id": "20260704_023857_735899",
+  "topic": "Choose a fitness activity for the office wellness program",
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a fitness activity for the office wellness program",
+    "decision_kind": "activity_choice",
+    "opening_question": "What kind of fitness activity fits our 3-person team’s schedule and energy best?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Guided Office Yoga Sessions",
+        "attrs": {
+          "cost_per_month": "$120",
+          "session_duration_minutes": "45",
+          "intensity_level": "low"
+        },
+        "upside": "Improves flexibility and reduces stress in a calm setting",
+        "tradeoff": "Lower cardio benefit and may feel too gentle for some",
+        "concern": "Some participants might find yoga poses difficult or boring",
+        "best_for": "stress relief and gentle physical activity",
+        "short_name": "Office Yoga"
+      },
+      {
+        "id": "B",
+        "name": "Outdoor Group Running Club",
+        "attrs": {
+          "cost_per_month": "$0",
+          "session_duration_minutes": "30",
+          "intensity_level": "high"
+        },
+        "upside": "Boosts cardiovascular health and team motivation outdoors",
+        "tradeoff": "Weather dependent and may exclude less fit participants",
+        "concern": "Risk of injury or discomfort for those new to running",
+        "best_for": "high-intensity cardio and team bonding",
+        "short_name": "Running Club"
+      },
+      {
+        "id": "C",
+        "name": "Weekly Dance Fitness Classes",
+        "attrs": {
+          "cost_per_month": "$140",
+          "session_duration_minutes": "50",
+          "intensity_level": "medium"
+        },
+        "upside": "Fun, social, and improves coordination and endurance",
+        "tradeoff": "Requires learning choreography which may intimidate some",
+        "concern": "Noise and space requirements might disrupt office environment",
+        "best_for": "engagement through fun and moderate exercise",
+        "short_name": "Dance Fitness"
+      },
+      {
+        "id": "D",
+        "name": "Strength Training with Resistance Bands",
+        "attrs": {
+          "cost_per_month": "$80",
+          "session_duration_minutes": "40",
+          "intensity_level": "medium"
+        },
+        "upside": "Builds muscle and can be done indoors with minimal space",
+        "tradeoff": "Less cardio benefit and requires some technique guidance",
+        "concern": "Some may find it repetitive or less motivating",
+        "best_for": "muscle toning and convenience",
+        "short_name": "Resistance Bands"
+      }
+    ],
+    "shared_context": [
+      "The group has exactly 3 participants",
+      "The wellness program budget allows up to $150 per month",
+      "Each session should last no more than 1 hour"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Isla",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.7749999999999999,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.65,
+        "stubbornness": 0.4,
+        "directness": 0.6875,
+        "compromise_threshold": 0.42499999999999993
+      },
+      "background": "I enjoy high-energy activities that promote cardiovascular health and team motivation outdoors.",
+      "private_goal": "I want a fitness activity that boosts cardio fitness and encourages group bonding.",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Emeka",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.7,
+        "stubbornness": 0.325,
+        "directness": 0.5625,
+        "compromise_threshold": 0.19999999999999996
+      },
+      "background": "I prefer muscle toning exercises that are convenient and can be done indoors with minimal space.",
+      "private_goal": "I want a fitness activity that helps build strength with manageable time and cost.",
+      "preferred_options": [
+        "D",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Faye",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.8125,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.4,
+        "directness": 0.7749999999999999,
+        "compromise_threshold": 0.375
+      },
+      "background": "I like engaging and moderately intense activities that are fun and social to keep motivation high.",
+      "private_goal": "I want a fitness activity that combines moderate exercise with enjoyment and social interaction.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 19,
+      "current_preference": "B",
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Getting everyone moving outside and pushing their cardio makes the Running Club stand out—plus, it costs nothing and fits right into an hour.",
+        "Think about how Dance Fitness might disrupt work with noise or space needs—we could lose focus or annoy others, even if it’s fun! Running Club keeps us outside and energized without those issues.",
+        "Mixing Resistance Bands twice a month with Running Club sounds smart—it keeps variety and hits cardio hard. Just watch the total time; we can’t go over an hour each session.",
+        "Emeka, can we be sure everyone can handle the running twice a month without risking injury? Maybe we should ask if anyone needs a gentler intro before locking in the Running Club sessions.",
+        "Running outside means weather could totally tank our plans some days, and 30 minutes might feel rushed once warm-ups and cool-downs eat into the hour.",
+        "Yes, we’d definitely need a coach or at least a solid tutorial to keep form right and motivation up for Resistance Bands—it’s easy to lose focus without guidance.",
+        "I’m all in for the Running Club—it’s zero cost, high energy, and gets us outside to really bond as a team!"
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 22,
+      "current_preference": "D",
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "D": "Keeping us indoors with minimal space really matters—plus, $80 a month leaves room to grab some fun gear or apps for motivation. Faye, dance’s energy is great, but I worry we’d lose strength training focus, which Resistance Bands nail."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Resistance Bands hit the sweet spot—building muscle indoors in 40 minutes is perfect for us! Still, some might find it less fun without a mix-up or motivation boost.",
+        "Keeping us indoors with minimal space really matters—plus, $80 a month leaves room to grab some fun gear or apps for motivation. Faye, dance’s energy is great, but I worry we’d lose strength training focus, which Resistance Bands nail.",
+        "Isla, you’re right about dance’s noise, but what if we mix Resistance Bands with a Running Club twice a month?",
+        "We don’t know everyone’s fitness level here, so yeah, some might struggle with running twice a month without a warm-up plan or alternatives.",
+        "Isla, with the Resistance Bands sessions being only 40 minutes and indoors, do you think we’d need to schedule a coach or tutorial to keep everyone doing the moves right without losing motivation?",
+        "Could we mix in some light cardio after the Resistance Bands session to keep things lively? That way, we get strength without feeling stuck or bored!",
+        "I’m all for Resistance Bands here—it’s perfect for quick strength gains and fits our indoor space tight. Plus, we won’t need to worry about weather or gear!",
+        "My vote goes to Resistance Bands because it builds muscle indoors and fits our schedule without worrying about weather."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 8,
+      "last_spoke_turn": 23,
+      "current_preference": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Dance Fitness sounds right—fun and social keeps us coming back, plus it hits moderate intensity just right. Noise might bug some, but the energy boost beats boredom any day!",
+        "Yoga keeps things calm and fits the budget better than Dance Fitness, but it might feel too slow or boring for those wanting more action.",
+        "Isla, running plus bands sounds solid on paper, but 30 minutes of running isn’t much cardio for an hour session.",
+        "Dance Fitness is fun and social with moderate intensity, but the choreography might intimidate some and noise could disrupt the office environment.",
+        "You want something that keeps us moving without killing motivation or excluding people.",
+        "Emeka, adding cardio after Resistance Bands sounds like extra hassle and might push us past the hour limit. Dance Fitness gives us cardio and strength in one fun package—no extra planning needed!",
+        "Dance Fitness gets my vote.",
+        "My pick is Dance Fitness because it’s fun, social, and helps improve coordination and endurance."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "Resistance Bands hit the sweet spot—building muscle indoors in 40 minutes is perfect for us! Still, some might find it less fun without a mix-up or motivation boost.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Resistance Bands hit the sweet spot—building muscle indoors in 40 minutes is perfect for us! Still, some might find it less fun without a mix-up or motivation boost.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1157,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Dance Fitness sounds right—fun and social keeps us coming back, plus it hits moderate intensity just right. Noise might bug some, but the energy boost beats boredom any day!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Dance Fitness sounds right—fun and social keeps us coming back, plus it hits moderate intensity just right. Noise might bug some, but the energy boost beats boredom any day!",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 553,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Getting everyone moving outside and pushing their cardio makes the Running Club stand out—plus, it costs nothing and fits right into an hour.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Getting everyone moving outside and pushing their cardio makes the Running Club stand out—plus, it costs nothing and fits right into an hour.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 561,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "Keeping us indoors with minimal space really matters—plus, $80 a month leaves room to grab some fun gear or apps for motivation. Faye, dance’s energy is great, but I worry we’d lose strength training focus, which Resistance Bands nail.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Keeping us indoors with minimal space really matters—plus, $80 a month leaves room to grab some fun gear or apps for motivation. Faye, dance’s energy is great, but I worry we’d lose strength training focus, which Resistance Bands nail.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "Keeping us indoors with minimal space really matters—plus, $80 a month leaves room to grab some fun gear or apps for motivation. Faye, dance’s energy is great, but I worry we’d lose strength training focus, which Resistance Bands nail."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Resistance Bands fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1393,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Yoga keeps things calm and fits the budget better than Dance Fitness, but it might feel too slow or boring for those wanting more action.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Yoga keeps things calm and fits the budget better than Dance Fitness, but it might feel too slow or boring for those wanting more action.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1469,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Think about how Dance Fitness might disrupt work with noise or space needs—we could lose focus or annoy others, even if it’s fun! Running Club keeps us outside and energized without those issues.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Think about how Dance Fitness might disrupt work with noise or space needs—we could lose focus or annoy others, even if it’s fun! Running Club keeps us outside and energized without those issues.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Dance Fitness, Office Yoga, Running Club that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 857,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "Isla, you’re right about dance’s noise, but what if we mix Resistance Bands with a Running Club twice a month?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Isla, you’re right about dance’s noise, but what if we mix Resistance Bands with a Running Club twice a month?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "B",
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Dance Fitness, Running Club, Resistance Bands could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 806,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Mixing Resistance Bands twice a month with Running Club sounds smart—it keeps variety and hits cardio hard. Just watch the total time; we can’t go over an hour each session.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Mixing Resistance Bands twice a month with Running Club sounds smart—it keeps variety and hits cardio hard. Just watch the total time; we can’t go over an hour each session.",
+        "act_type": "answer",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 772,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Isla, running plus bands sounds solid on paper, but 30 minutes of running isn’t much cardio for an hour session.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Isla, running plus bands sounds solid on paper, but 30 minutes of running isn’t much cardio for an hour session.",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 758,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Emeka, can we be sure everyone can handle the running twice a month without risking injury? Maybe we should ask if anyone needs a gentler intro before locking in the Running Club sessions.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Emeka, can we be sure everyone can handle the running twice a month without risking injury? Maybe we should ask if anyone needs a gentler intro before locking in the Running Club sessions.",
+        "act_type": "invite",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "invite",
+        "reason": "bring Emeka into the discussion with a useful prompt",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 830,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "We don’t know everyone’s fitness level here, so yeah, some might struggle with running twice a month without a warm-up plan or alternatives.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We don’t know everyone’s fitness level here, so yeah, some might struggle with running twice a month without a warm-up plan or alternatives.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 849,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Dance Fitness is fun and social with moderate intensity, but the choreography might intimidate some and noise could disrupt the office environment.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Dance Fitness is fun and social with moderate intensity, but the choreography might intimidate some and noise could disrupt the office environment.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Dance Fitness, connected to the current discussion",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1829,
+      "tokens_out": 93,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Running outside means weather could totally tank our plans some days, and 30 minutes might feel rushed once warm-ups and cool-downs eat into the hour.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Running outside means weather could totally tank our plans some days, and 30 minutes might feel rushed once warm-ups and cool-downs eat into the hour.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Running Club that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1447,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "Isla, with the Resistance Bands sessions being only 40 minutes and indoors, do you think we’d need to schedule a coach or tutorial to keep everyone doing the moves right without losing motivation?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Isla, with the Resistance Bands sessions being only 40 minutes and indoors, do you think we’d need to schedule a coach or tutorial to keep everyone doing the moves right without losing motivation?",
+        "act_type": "ask",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Resistance Bands",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 708,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "Yes, we’d definitely need a coach or at least a solid tutorial to keep form right and motivation up for Resistance Bands—it’s easy to lose focus without guidance.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Yes, we’d definitely need a coach or at least a solid tutorial to keep form right and motivation up for Resistance Bands—it’s easy to lose focus without guidance.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1549,
+      "tokens_out": 65,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "You want something that keeps us moving without killing motivation or excluding people.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "You want something that keeps us moving without killing motivation or excluding people.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Running Club, Dance Fitness fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 800,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "Could we mix in some light cardio after the Resistance Bands session to keep things lively? That way, we get strength without feeling stuck or bored!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Could we mix in some light cardio after the Resistance Bands session to keep things lively? That way, we get strength without feeling stuck or bored!",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Resistance Bands with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 680,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Emeka, adding cardio after Resistance Bands sounds like extra hassle and might push us past the hour limit. Dance Fitness gives us cardio and strength in one fun package—no extra planning needed!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Emeka, adding cardio after Resistance Bands sounds like extra hassle and might push us past the hour limit. Dance Fitness gives us cardio and strength in one fun package—no extra planning needed!",
+        "act_type": "answer",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 707,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Isla",
+      "text": "I’m all in for the Running Club—it’s zero cost, high energy, and gets us outside to really bond as a team!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’m all in for the Running Club—it’s zero cost, high energy, and gets us outside to really bond as a team!",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep things lively? That way, we get strength without",
+          "to keep form right and motivation up for Resistance Bands—it’s",
+          "to keep everyone doing the moves right without losing motivation",
+          "for an hour session"
+        ],
+        "allow_vote_change": false
+      },
+      "tokens_in": 725,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "I’m all for Resistance Bands here—it’s perfect for quick strength gains and fits our indoor space tight. Plus, we won’t need to worry about weather or gear!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m all for Resistance Bands here—it’s perfect for quick strength gains and fits our indoor space tight. Plus, we won’t need to worry about weather or gear!",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for the Running Club—it’s zero cost, high energy, and gets",
+          "to keep things lively? That way, we get strength without",
+          "to keep form right and motivation up for Resistance Bands—it’s",
+          "to keep everyone doing the moves right without losing motivation",
+          "for an hour session"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1524,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "Dance Fitness gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Dance Fitness gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for the Running Club—it’s zero cost, high energy, and gets",
+          "to keep things lively? That way, we get strength without",
+          "to keep form right and motivation up for Resistance Bands—it’s",
+          "to keep everyone doing the moves right without losing motivation",
+          "for an hour session"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1954,
+      "tokens_out": 97,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Emeka",
+      "text": "My vote goes to Resistance Bands because it builds muscle indoors and fits our schedule without worrying about weather.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "My vote goes to Resistance Bands because it builds muscle indoors and fits our schedule without worrying about weather.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Resistance Bands (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "for the Running Club—it’s zero cost, high energy, and gets",
+          "to keep things lively? That way, we get strength without",
+          "to keep form right and motivation up for Resistance Bands—it’s",
+          "to keep everyone doing the moves right without losing motivation",
+          "for an hour session"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 2082,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Faye",
+      "text": "My pick is Dance Fitness because it’s fun, social, and helps improve coordination and endurance.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "My pick is Dance Fitness because it’s fun, social, and helps improve coordination and endurance.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring Dance Fitness (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "my vote is"
+        ],
+        "avoid_reasons": [
+          "because it builds muscle indoors and fits our schedule without",
+          "for the Running Club—it’s zero cost, high energy, and gets",
+          "to keep things lively? That way, we get strength without",
+          "to keep form right and motivation up for Resistance Bands—it’s",
+          "to keep everyone doing the moves right without losing motivation",
+          "for an hour session"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 2101,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 23,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "D",
+        "p3": "C"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "D",
+        "p3": "C"
+      },
+      "phase_history": [
+        "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.67",
+        "turn 3: discussion — all participants gave an opening view",
+        "turn 18: narrowing — target discussion length reached",
+        "turn 21: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 23: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 17,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.67",
+    "turn 3: discussion — all participants gave an opening view",
+    "turn 18: narrowing — target discussion length reached",
+    "turn 21: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 23: closure — vote rounds exhausted without visible consensus",
+    "turn 23: closure — closed as unresolved"
+  ],
+  "metrics": {
+    "participant_turns": 23,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Isla": 7,
+      "Emeka": 8,
+      "Faye": 8
+    },
+    "top_speaker_share": 0.348,
+    "avg_words_by_persona": {
+      "Isla": 27.6,
+      "Emeka": 26.9,
+      "Faye": 20.1
+    },
+    "question_density": 0.174,
+    "avg_words_per_turn": 24.7,
+    "repaired_turns": 4,
+    "repair_rate": 0.174,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Isla": "B",
+      "Emeka": "D",
+      "Faye": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "participation_gini": 0.029,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.75,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.13,
+    "compromise_success_rate": 0.0,
+    "switch_event_count": 0,
+    "switch_explanation_rate": null,
+    "switch_bridge_rate": null,
+    "name_prefix_rate": 0.217,
+    "option_opening_rate": 0.261,
+    "i_opening_rate": 0.087,
+    "we_opening_rate": 0.087,
+    "name_or_option_opening_rate": 0.478,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 2,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 4,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 9,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 10,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 11,
+        "reasons": 4,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Isla": 0.775,
+      "Emeka": 0.737,
+      "Faye": 0.812
+    },
+    "agenda_status": {
+      "done": 5,
+      "pending": 7
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 17,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.67",
+      "turn 3: discussion — all participants gave an opening view",
+      "turn 18: narrowing — target discussion length reached",
+      "turn 21: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 23: closure — vote rounds exhausted without visible consensus",
+      "turn 23: closure — closed as unresolved"
+    ],
+    "engagement_realization_error": 0.021,
+    "verbosity_realization_error": 0.119,
+    "engagement_error_by_persona": {
+      "Isla": 0.029,
+      "Emeka": 0.031,
+      "Faye": 0.002
+    },
+    "verbosity_error_by_persona": {
+      "Isla": 0.061,
+      "Emeka": 0.038,
+      "Faye": 0.259
+    },
+    "engagement_behavior_correlation": 0.0,
+    "verbosity_behavior_correlation": -0.085,
+    "setup_tokens_in": 1890,
+    "setup_tokens_out": 885,
+    "dialogue_tokens_in": 26111,
+    "dialogue_tokens_out": 1125,
+    "total_tokens_in": 28001,
+    "total_tokens_out": 2010
+  },
+  "tokens": {
+    "setup_tokens_in": 1890,
+    "setup_tokens_out": 885,
+    "dialogue_tokens_in": 26111,
+    "dialogue_tokens_out": 1125,
+    "total_tokens_in": 28001,
+    "total_tokens_out": 2010
+  }
+}

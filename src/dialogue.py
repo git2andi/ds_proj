@@ -99,6 +99,19 @@ class DialogueRunner:
         self._intervention_count = 0
         self._last_intervention_turn = -999
 
+    def _mod(self, part: str) -> bool:
+        """Whether the moderator voice performs a given structural job (issue 7).
+
+        The controller policy is independent of these flags; they only gate the
+        moderator's visible turns. An absent `moderator` config section keeps the
+        fully-moderated default (every part on)."""
+        mod = getattr(cfg, "moderator", None)
+        if mod is None:
+            return True
+        if not bool(mod.get("enabled", True)):
+            return False
+        return bool(mod.get(part, True))
+
     def run(self) -> DialogueRunResult:
         n = cfg.participant_count()
         self._llm.reset_session()
@@ -116,8 +129,12 @@ class DialogueRunner:
         run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         self.logger = DialogueLogger(run_id, self.topic)
 
-        self._print_header(state)
-        self._emit(self._append_moderator(state, prompts.moderator_opening(scenario), Phase.OPENING))
+        # When the moderator opening is off, the board is still shown to the
+        # reader as plain setup scaffolding (header + transcript "## Options"),
+        # just not as a moderator turn.
+        self._print_header(state, show_board=not self._mod("opening"))
+        if self._mod("opening"):
+            self._emit(self._append_moderator(state, prompts.moderator_opening(scenario), Phase.OPENING))
 
         self._opening_round(state)
         self._discussion_loop(state)
@@ -125,8 +142,9 @@ class DialogueRunner:
 
         outcome = ConsensusManager.finalize(state)
         state.outcome = outcome
-        closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
-        self._emit(self._append_moderator(state, closing, Phase.CLOSURE))
+        if self._mod("closing"):
+            closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
+            self._emit(self._append_moderator(state, closing, Phase.CLOSURE))
         self._mark_phase(state, Phase.CLOSURE, f"closed as {outcome.status}")
 
         state.dialogue_tokens_in = self._llm.session_tokens_in
@@ -188,10 +206,11 @@ class DialogueRunner:
                     )
                     break
             reason = "let's test where everyone stands" if round_index == 0 else "let's hear from whoever hasn't given a clear vote"
-            nudge_record, target_id = self._moderator_vote_nudge(state, candidate, reason)
-            self._emit(nudge_record)
-            if target_id:
-                order.sort(key=lambda p: p.id != target_id)
+            if self._mod("final_vote_call"):
+                nudge_record, target_id = self._moderator_vote_nudge(state, candidate, reason)
+                self._emit(nudge_record)
+                if target_id:
+                    order.sort(key=lambda p: p.id != target_id)
             for persona in order:
                 self._emit(self._generate_and_append(state, self._vote_intent(state, persona, candidate)))
             provisional = ConsensusManager.finalize(state)
@@ -233,21 +252,22 @@ class DialogueRunner:
         state.minority_check_attempted = True
         winner_name = state.scenario.option(winner).name
         aliases = short_alias_map(state.scenario.options)
-        text = self._moderator_say(
-            prompts.moderator_nudge_prompt(
-                state,
-                "a clear majority has formed but a few chose differently",
-                winner_name,
-                requested_action=(
-                    f"acknowledge the majority for {winner_name} in a friendly line and ask those who "
-                    "chose differently whether they can live with it or what still holds them back — "
-                    "do not reopen the full debate"
+        if self._mod("final_vote_call"):
+            text = self._moderator_say(
+                prompts.moderator_nudge_prompt(
+                    state,
+                    "a clear majority has formed but a few chose differently",
+                    winner_name,
+                    requested_action=(
+                        f"acknowledge the majority for {winner_name} in a friendly line and ask those who "
+                        "chose differently whether they can live with it or what still holds them back — "
+                        "do not reopen the full debate"
+                    ),
+                    focus_options=[winner],
                 ),
-                focus_options=[winner],
-            ),
-            state,
-        )
-        self._emit(self._append_moderator(state, text, Phase.NARROWING))
+                state,
+            )
+            self._emit(self._append_moderator(state, text, Phase.NARROWING))
         for persona in dissenters:
             can_move = self._can_shift_to(state, persona, winner)
             current = state.runtimes[persona.id].current_preference or persona.preferred_option
@@ -288,22 +308,34 @@ class DialogueRunner:
         state.compromise_attempted = True
         state.candidate_option = leader
         leader_name = state.scenario.option(leader).name
-        text = self._moderator_say(
-            prompts.moderator_nudge_prompt(
-                state,
-                "the votes are split with no majority",
-                leader_name,
-                requested_action=(
-                    f"summarize the split in one line, note that {leader_name} currently has the "
-                    "most support, and ask those who chose differently whether they could genuinely "
-                    "live with it or would rather stay with their own pick — make clear both answers "
-                    f"are fine; don't push, and don't call {leader_name} a middle ground"
+        if self._mod("final_vote_call"):
+            # Only claim a lead when the candidate is a strict plurality; on a
+            # pure tie (e.g. 1-1-1) it merely has as much support as the rest, so
+            # the moderator must not assert it "has the most support" (todo §5).
+            counts = Counter(votes)
+            top = counts[leader]
+            strict_leader = sum(1 for c in counts.values() if c == top) == 1
+            standing = (
+                f"note that {leader_name} currently has the most support"
+                if strict_leader
+                else f"note that the vote is evenly split with no option ahead, and float {leader_name} as one option to rally around"
+            )
+            text = self._moderator_say(
+                prompts.moderator_nudge_prompt(
+                    state,
+                    "the votes are split with no majority",
+                    leader_name,
+                    requested_action=(
+                        f"summarize the split in one line, {standing}, and ask those who chose "
+                        "differently whether they could genuinely live with it or would rather stay "
+                        "with their own pick — make clear both answers are fine; don't push, and "
+                        f"don't call {leader_name} a middle ground"
+                    ),
+                    focus_options=[leader],
                 ),
-                focus_options=[leader],
-            ),
-            state,
-        )
-        self._emit(self._append_moderator(state, text, Phase.NARROWING))
+                state,
+            )
+            self._emit(self._append_moderator(state, text, Phase.NARROWING))
         # Everyone who is not on the leader gets one closing beat: movers may
         # switch, the rest briefly restate — so a failed compromise does not
         # end the chat one turn after the split summary (issue #22).
@@ -1398,6 +1430,8 @@ class DialogueRunner:
     # ------------------------------------------------------------------
 
     def _maybe_moderator_nudge(self, state: DialogueState) -> TurnRecord | None:
+        if not self._mod("mid_discussion_nudges"):
+            return None
         if self._intervention_count >= int(cfg.conversation.moderator_max_interventions):
             return None
         if participant_turn_count(state) < max(state.min_discussion_turns + 2, state.force_narrow_turns - 1):
@@ -1894,10 +1928,14 @@ class DialogueRunner:
         return min_words, max_words
 
     @staticmethod
-    def _print_header(state: DialogueState) -> None:
+    def _print_header(state: DialogueState, show_board: bool = False) -> None:
         print("\n" + "=" * 72)
         print(f"Topic: {state.scenario.topic}")
         print("Participants: " + ", ".join(p.name for p in state.personas))
+        if show_board:
+            # No moderator opening turn: still show the reader the option board
+            # as plain setup scaffolding so the console isn't missing the world.
+            print(prompts.moderator_opening(state.scenario))
         print("=" * 72)
 
     @staticmethod

@@ -205,6 +205,21 @@ class Config(Section):
         self._validate_preference_distribution(min_n, max_n, len(labels), n)
         self._validate_participants(min_n, max_n, labels)
         self._validate_environment(labels)
+        self._validate_moderator()
+
+    def _validate_moderator(self) -> None:
+        moderator = self._raw.get("moderator")
+        if moderator is None:
+            return  # absent section = fully-moderated default behavior
+        if not isinstance(moderator, dict):
+            raise ValueError("moderator must be a mapping.")
+        allowed = {"enabled", "opening", "mid_discussion_nudges", "final_vote_call", "closing"}
+        unknown = set(moderator) - allowed
+        if unknown:
+            raise ValueError(f"moderator has unknown fields: {sorted(unknown)}.")
+        for key in allowed:
+            if key in moderator and not isinstance(moderator[key], bool):
+                raise ValueError(f"moderator.{key} must be a boolean.")
 
     def _validate_environment(self, option_labels: list) -> None:
         environment = self._raw.get("environment") or {}

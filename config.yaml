@@ -165,6 +165,27 @@ conversation:
   max_vote_rounds: 2                   # vote -> one re-ask round for unclear voters -> finalize from visible votes
   require_option_coverage_before_vote: true  # each option should be mentioned/compared once before final voting when feasible
 
+moderator:
+  # Which structural jobs the visible moderator voice performs. The controller
+  # policy (who speaks, what act, when a vote is ready) is unaffected by these
+  # flags — they only gate the moderator's *turns* in the transcript, so lower-
+  # or no-moderator modes still reach a decision through participant vote turns
+  # and the participant-level narrowing acts (defend/compare/compromise/
+  # stagnation break). Defaults reproduce the fully-moderated behavior.
+  #   enabled              = master switch; false suppresses every moderator turn.
+  #   opening              = moderator presents the option board at the start.
+  #                          When false the board is still shown as plain setup
+  #                          scaffolding (header + transcript "## Options"), not a turn.
+  #   mid_discussion_nudges = stall/circling nudges during discussion.
+  #   final_vote_call      = moderator vote calls, holdout probes, and the split-vote
+  #                          compromise summary line (participants still vote either way).
+  #   closing              = moderator closing summary line (outcome is logged regardless).
+  enabled: true
+  opening: true
+  mid_discussion_nudges: true
+  final_vote_call: true
+  closing: true
+
 routing:
   # Who speaks next and what kind of move they make. The engine samples from these
   # base weights; reactive rules (defend a challenged pick, answer a question,

@@ -124,6 +124,7 @@ class DialogueLogger:
             "topic": self.topic,
             "participants_mode": str((cfg.get("participants", None) or {}).get("mode", "auto")),
             "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
+            "moderator_config": _resolved_moderator_config(),
             "scenario": _to_jsonable(state.scenario),
             "personas": [_to_jsonable(p) for p in state.personas],
             # Visible runtime state per simulator — switch_events in particular
@@ -139,6 +140,21 @@ class DialogueLogger:
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
         }
+
+
+def _resolved_moderator_config() -> dict[str, bool]:
+    """The moderator flags actually in force this run (issue 7), so the trace
+    records whether a lower-/no-moderator mode was used. An absent section or a
+    disabled master switch resolves the sub-flags accordingly."""
+    mod = dict(cfg.get("moderator", None) or {})
+    enabled = bool(mod.get("enabled", True))
+    return {
+        "enabled": enabled,
+        "opening": enabled and bool(mod.get("opening", True)),
+        "mid_discussion_nudges": enabled and bool(mod.get("mid_discussion_nudges", True)),
+        "final_vote_call": enabled and bool(mod.get("final_vote_call", True)),
+        "closing": enabled and bool(mod.get("closing", True)),
+    }
 
 
 def _to_jsonable(obj: Any) -> Any:
