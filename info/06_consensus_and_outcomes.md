@@ -98,3 +98,10 @@ remember: the *outcome* still uses only `explicit_vote`, never the lean.
 If votes split with no majority, the controller does not re-poll endlessly. It makes
 **one** bounded compromise attempt (`04`) and otherwise closes `unresolved` with a
 clear reason. Hard turn caps guarantee termination.
+
+## Current mismatch / intended correction
+
+The visible-evidence outcome rule is correct and should stay. The mismatch is around the path toward that outcome. Current runs often update support only at final voting time, so consensus can look procedural rather than emergent from the discussion.
+
+The intended workflow should separate three layers: private preference, current public/latent favorite, and final visible vote. Discussion-stage softening may update the current favorite without becoming a vote. Final support should still require explicit visible commitment. Majority and holdout handling should include bounded reservation negotiation when useful: one holdout reason, one majority response, optional holdout update, then closure as successful/majority/unresolved.
+

@@ -17,6 +17,7 @@ from typing import Any
 from aliases import short_alias_map
 from config_loader import cfg
 from models import DialogueState, Persona, RunOutcome, TurnRecord
+from simulator import expected_turn_share
 from style import leading_first_person, leading_name, leading_option, leading_we, surface_pattern
 
 _WORD = re.compile(r"[a-z0-9'-]+")
@@ -170,7 +171,9 @@ def parameter_realization(state: DialogueState) -> dict[str, Any]:
     """Configured-parameter vs realized-behavior comparison for this run."""
     participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
     total_turns = max(1, len(participant_turns))
-    engagement_sum = sum(p.sim_params.engagement for p in state.personas) or 1.0
+    # The router's own trait-derived share targets (simulator.expected_turn_share),
+    # so realization error measures deviation from what the controller aimed for.
+    expected_shares = expected_turn_share(state.personas)
 
     engagement_errors: dict[str, float] = {}
     verbosity_errors: dict[str, float] = {}
@@ -180,8 +183,7 @@ def parameter_realization(state: DialogueState) -> dict[str, Any]:
     realized_words: list[float] = []
     for persona in state.personas:
         share = state.runtimes[persona.id].turn_count / total_turns
-        expected_share = persona.sim_params.engagement / engagement_sum
-        engagement_errors[persona.name] = round(abs(expected_share - share), 3)
+        engagement_errors[persona.name] = round(abs(expected_shares[persona.id] - share), 3)
         own = [t for t in participant_turns if t.speaker_id == persona.id]
         avg_words = sum(len(t.text.split()) for t in own) / max(1, len(own))
         expected = _expected_words(persona)
@@ -296,6 +298,12 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             for opt, c in state.coverage.items()
         },
         "expected_engagement": expected_engagement,
+        "expected_turn_share": {
+            p.name: round(expected_turn_share(state.personas)[p.id], 3) for p in state.personas
+        },
+        "realized_turn_share": {
+            p.name: round(state.runtimes[p.id].turn_count / n_turns, 3) for p in state.personas
+        },
         "agenda_status": _agenda_status_counts(state),
         "outcome_status": outcome.status,
         "final_option": outcome.final_option,

@@ -50,23 +50,35 @@ drives the conversation and the private agenda only fills silence:
 Challenge reasons are stance-aware: a sim is never routed to argue against its own
 current pick.
 
-## Choosing the speaker
+## Choosing the speaker — trait-weighted participation
 
-`_choose_speaker` weights each candidate by `engagement` and `initiative`, then:
+Each sim has a **target turn share** derived from its parameters
+(`simulator.expected_turn_share`: engagement dominates, initiative and
+responsiveness tilt it, plus a floor so nobody's target is zero). `_choose_speaker`
+weights each candidate by `engagement`/`initiative` and then pulls the *actual* turn
+share toward that target (`exp(trait_share_adaptation * (target − actual))`): a sim
+behind its target gets boosted, a sim ahead gets damped. Guard rails:
 
 - **no immediate self-repeat** (the last speaker is skipped when others exist),
-- a **quiet-speaker boost** for whoever has the fewest turns, and a penalty as a sim
-  gets ahead — turn counts stay balanced by default,
+- **anti-monopoly**: a share more than `max_share_overshoot` above target is damped
+  hard — high engagement may lead the room, never monologue,
+- **minimum visibility**: a sim silent for `max_silence_rounds` full rounds is
+  pushed back in regardless of traits — low engagement means quieter, not absent,
 - a penalty on the second-to-last speaker to stop two people ping-ponging.
 
-With a **corpus preset** active (`08`), this switches to share-aware weighting: one
-sim is allowed to dominate within configured bounds instead of strict equalization.
+Structural turns (the opening round and vote rounds give everyone exactly one turn)
+compress the realized spread toward equality, so trait differences show most in the
+free discussion turns. In a controlled n=3 run with engagement pinned to
+0.9/0.5/0.15, turn counts came out 9/8/7 with average words 29/19/14 and an
+engagement–behavior correlation of ≈ +1.0.
 
-> Note (from the issue-4 evaluation): because the default router equalizes turn
-> counts, configured **engagement** is realized in *who initiates*, not in turn
-> **share**. Verbosity, by contrast, shows up strongly in word counts. An
-> engagement-weighted router is a possible future change (todo §5), not current
-> behavior.
+**Responsiveness** shows up in answer latency: when a sim owes an answer to a direct
+question, it replies immediately with probability `0.45 + 0.55 * responsiveness`,
+and may otherwise sit out exactly one beat before the router forces the answer —
+hesitation never lets the question lapse.
+
+With a **corpus preset** active (`08`), this switches to share-aware weighting: one
+sim is allowed to dominate within configured bounds instead of the trait targets.
 
 ## Choosing the target — thread-scored, not just "the last line"
 
@@ -115,3 +127,5 @@ complete sentence within a soft cap so no printed line ends mid-thought.
 For decision turns it also builds `avoid_phrases` (commitment-phrase families already
 used this round or by this speaker earlier) and `avoid_reasons`, so re-asked voters
 don't repeat themselves verbatim across vote rounds.
+
+

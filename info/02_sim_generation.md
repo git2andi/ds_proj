@@ -39,8 +39,11 @@ directness     = 0.25 + 0.35*conscientiousness + 0.25*extraversion + 0.15*(1-agr
 compromise_threshold = 1 - compromise_willingness   (low threshold = compromises easily)
 ```
 
-These feed concrete behavior: verbosity/engagement set the per-turn word budget
-(`03`), stubbornness/agreeableness bias act selection and whether a sim will move,
+These feed concrete behavior: engagement/initiative/responsiveness set each sim's
+**target turn share** (`simulator.expected_turn_share`, consumed by the router and
+by the realization metrics), verbosity/engagement set the per-turn word budget
+(`03`), responsiveness sets how promptly a directly-asked sim answers (`03`),
+stubbornness/agreeableness bias act selection and whether a sim will move, and
 compromise_threshold gates stance shifts (`06`).
 
 ## Two ways to create the cast
@@ -124,3 +127,14 @@ low engagement:   dry and minimal; speaks less and more briefly
 The goal is not theatrical role-play — it is measurable variation in participation,
 wording length, consistency, and compromise behavior (see the realization metrics in
 `08`).
+
+## Current mismatch / intended correction
+
+This file is honest that the agenda is currently only a weak private hint system. The next correction should not turn it into a rigid agenda checklist. That would make discussions shallow: each sim would execute one agenda point, another sim would answer once, and the discussion would jump away.
+
+The intended behavior is stateful simulator behavior: each sim keeps a current favorite, commitment strength, open concerns, possible fallback options, known concessions, willingness to switch, and memory of recent challenges. These state variables should influence local choices such as defending, asking, softening, challenging, accepting a condition, or switching. The sim does not need to complete every internal item; the state should create continuity and pressure across turns.
+
+(Trait realization in routing is fixed: engagement/initiative/responsiveness now
+drive turn share via the router's trait targets, responsiveness drives answer
+latency, and verbosity drives length — see `03` for the numbers.)
+

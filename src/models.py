@@ -286,6 +286,7 @@ class ResponseObligation:
     created_turn: int
     expires_after: int        # turn_index after which the obligation lapses
     option_focus: list[str] = field(default_factory=list)
+    deferred: bool = False    # a low-responsiveness sim already sat out one beat
 
 
 @dataclass(slots=True)

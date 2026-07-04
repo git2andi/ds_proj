@@ -145,3 +145,10 @@ limits:     { warn_total_input_tokens: 30000 }   # warn only; nothing is stopped
 Set `random_seed` to an int to make the **controller's** decisions reproducible (LLM
 text still varies with provider sampling). `write_prompts: true` dumps every prompt to
 `prompts.jsonl` for debugging (large files).
+
+## Current mismatch / intended correction
+
+Manual environment and manual participant modes exist, but they should become the main development path for simulator behavior, not just convenience features. Auto/auto runs are useful for demos, but they change too many variables at once to debug whether parameters actually caused behavior changes.
+
+The intended workflow should include fixed manual configurations for controlled development: same environment with high/medium/low engagement casts, a stubborn holdout cast, a no-moderator negotiation cast, and different responsiveness settings. A future routing config should also make the participation model explicit, for example equalized versus parameter-weighted routing.
+

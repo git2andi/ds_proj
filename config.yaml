@@ -85,8 +85,14 @@ participants:
   # (agreeableness pinned to 1; rejection_reason required).
   # If any profile pins preferred_option, the preference_distribution shapes are
   # bypassed: unpinned profiles get a uniformly random option instead.
-  mode: auto   # auto | manual
-  profiles: []
+  mode: manual   # auto | manual
+  profiles:
+    - name: "Mara"
+      parameters: {engagement: 0.9, initiative: 0.85, verbosity: 0.85, responsiveness: 0.7}
+    - name: "Sten"
+      parameters: {engagement: 0.5, initiative: 0.5, verbosity: 0.5, responsiveness: 0.5}
+    - name: "Lea"
+      parameters: {engagement: 0.15, initiative: 0.1, verbosity: 0.25, responsiveness: 0.6}
   # profiles:
   #   - name: "Kira"
   #     description: "junior developer who mainly cares about day-to-day tooling speed"
@@ -152,8 +158,8 @@ conversation:
   # Pacing. The controller derives actual turn caps from these per-participant
   # values (x num_participants, plus the extras below). An active corpus preset
   # overrides the three *_turns_per_participant values at load time.
-  min_discussion_turns_per_participant: 4.0     # x n = turns before any narrowing/voting may start
-  target_discussion_turns_per_participant: 5.0  # x n (+extras) = where the controller starts pushing toward a vote
+  min_discussion_turns_per_participant: 5.0     # x n = turns before any narrowing/voting may start
+  target_discussion_turns_per_participant: 6.0  # x n (+extras) = where the controller starts pushing toward a vote
   max_discussion_turns_per_participant: 7.0     # x n (+extras) = hard cap; a visible vote is forced here
   contention_extra_turns: 2            # bonus turns when starting preferences are split
   low_compromise_extra_turns: 1        # bonus turns when the cast is stubborn on average
@@ -200,8 +206,13 @@ routing:
     invite: 0.05      # pull a quiet participant in
     propose_compromise: 0.06
   direct_address_probability: 0.32     # chance a turn is aimed at a named person rather than the group
-  extraversion_turn_weight: 0.12       # how strongly extraversion boosts a sim's chance to get the next turn
-  quiet_speaker_boost: 1.25            # weight multiplier for sims lagging behind in turn count
+  # Trait-weighted participation: each sim gets a target turn share derived from
+  # engagement/initiative/responsiveness; the router boosts sims behind their
+  # target and damps sims ahead of it (never strict turn equalization).
+  trait_share_adaptation: 3.5          # how strongly actual share is pulled toward the trait target (exp slope)
+  max_share_overshoot: 0.12            # actual share this far above target -> hard damp (anti-monopoly)
+  max_silence_rounds: 2                # a sim silent this many full rounds is pushed back in (min visibility)
+  quiet_speaker_boost: 1.25            # additive weight for the min-visibility push (and corpus-preset rebalancing)
   target_window: 6                     # recent participant turns eligible as response targets
 
 style:

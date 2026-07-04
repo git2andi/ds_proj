@@ -35,6 +35,24 @@ def derive_simulator_parameters(traits: TraitProfile) -> SimulatorParameters:
     ).clipped()
 
 
+def expected_turn_share(personas: list[Persona]) -> dict[str, float]:
+    """Trait-derived target participation share per sim (issue 1).
+
+    Engagement dominates, initiative and responsiveness tilt it. The constant
+    floor keeps even a fully disengaged sim at a visible minimum share. This is
+    the single contract used by both the speaker router and the evaluation's
+    engagement-realization metrics.
+    """
+    raw = {
+        p.id: 0.30 + 1.00 * p.sim_params.engagement
+        + 0.40 * p.sim_params.initiative
+        + 0.15 * p.sim_params.responsiveness
+        for p in personas
+    }
+    total = sum(raw.values()) or 1.0
+    return {pid: value / total for pid, value in raw.items()}
+
+
 def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
     """A small private communicative-goal list, tuned by parameters.
 

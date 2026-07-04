@@ -125,3 +125,10 @@ For this simulated decision, I'll treat the following setup as the shared facts.
 
 When the opening is disabled, the same board is still shown as plain setup
 scaffolding (and always appears in the transcript's `## Options` section).
+
+## Current mismatch / intended correction
+
+The scenario description is conceptually right: the option board should be the factual source of truth. The current problem is enforcement. Recent logs still contain unsupported concrete claims, such as invented parking issues or extra implications not stated by the option cards/shared context.
+
+The correct workflow should be stricter: sims may reason from option facts and may explicitly mark unknowns as unknown, but they must not introduce new concrete facts. Future documentation should make this distinction central. Compromises should usually be framed as conditional acceptance or prioritization of known attributes, not as invented add-ons unless the environment explicitly allows them.
+

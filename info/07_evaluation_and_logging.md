@@ -63,13 +63,19 @@ moderator_turns, moderator_ratio
 ```text
 engagement_realization_error / _by_persona / engagement_behavior_correlation
 verbosity_realization_error   / _by_persona / verbosity_behavior_correlation
+expected_turn_share / realized_turn_share    (per persona, router targets vs actual)
 ```
 
-These compare each sim's configured engagement/verbosity against realized behavior
-(measured against the controller's own `_word_bounds` target). Correlations need n≥3
-and some variance. Known result: **verbosity is strongly realized** (words track the
-parameter); **engagement is realized in who initiates, not in turn share**, because
-the default router equalizes turn counts (`03`).
+These compare each sim's configured parameters against realized behavior.
+`expected_turn_share` is the router's own trait target
+(`simulator.expected_turn_share` — engagement-dominant, shared by router and
+metric), so `engagement_realization_error` measures deviation from what the
+controller aimed for; verbosity is measured against the `_word_bounds` target.
+Correlations need n≥3 and some variance. Since the trait-weighted router (issue 1),
+**both are realized**: in a controlled n=3 run with engagement 0.9/0.5/0.15 the
+engagement–behavior correlation was ≈ +1.0 (turns 9/8/7, avg words 29/19/14).
+Structural turns (opening + vote rounds) compress the turn spread toward equality
+by design — every sim must vote.
 
 **Interaction quality**
 
@@ -127,3 +133,10 @@ setup/dialogue/total tokens (in/out)
 A run is not successful just because the program finished. For each change, inspect at
 least one `n=3` run and one other group size, reading both the transcript **and**
 `run.json`/metrics. Successful execution ≠ successful dialogue quality.
+
+## Current mismatch / intended correction
+
+This file describes metrics that are useful, but evaluation should not be the next main implementation focus. The immediate priority is to fix visible discussion behavior: parameter-driven turn-taking, stateful concerns, in-discussion stance movement, grounded facts, and bounded compromise.
+
+For now, logs should be used as diagnostic evidence rather than as a full evaluation framework. The most important metrics to keep watching during behavioral fixes are engagement-behavior correlation, turn counts, switch timing, unsupported fact flags, fallback turns, visible votes, and whether minority negotiation actually occurs in the transcript.
+

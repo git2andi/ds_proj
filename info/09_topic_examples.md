@@ -74,3 +74,10 @@ What is the meaning of life?     Explain quantum mechanics.     Who will win the
 For a fully controlled experiment (fixed world + fixed cast), skip topic generation
 entirely and author both sides via `environment: manual` and `participants: manual`
 (`08`).
+
+## Current mismatch / intended correction
+
+The topic guidance is mostly correct. The important clarification is that topics are only entry points into an option-grounded environment. The simulator should not try to answer open factual questions or generate arbitrary group chat unless those topics are first converted into concrete options and shared context.
+
+Future examples should show not only random auto topics, but also controlled manual scenarios that are useful for testing simulator behavior: one fixed restaurant decision for engagement differences, one fixed family trip for holdout/compromise behavior, one fixed technical-tool decision for directness and stubbornness, and one no-moderator scenario for participant-owned procedural moves.
+

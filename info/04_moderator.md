@@ -101,3 +101,10 @@ Two special facilitation passes, each at most once per run, keep closes honest:
 the holdouts** and never implies full agreement; a `successful` close wraps up warmly;
 an `unresolved` close presents **nothing** as chosen. (When `closing: false`, the
 outcome is still computed and logged — only the moderator's summary line is skipped.)
+
+## Current mismatch / intended correction
+
+The moderator configuration exists, but lower-moderator and no-moderator modes still need stronger participant-owned structure. The hidden controller can currently carry the discussion even when the moderator is visually disabled. That works mechanically, but it weakens the claim that simulated users are managing a group interaction.
+
+The intended behavior is that high-initiative or high-engagement sims sometimes perform procedural moves themselves: summarize the split, ask a quiet participant, suggest dropping an option, call for final picks, ask a holdout what blocks agreement, or check whether a compromise is acceptable. These moves should become more likely when moderator support is disabled or when the group is stalled.
+

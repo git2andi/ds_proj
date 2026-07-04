@@ -109,3 +109,10 @@ not a real goal stack — see `02`.)
 6. Keep prompts compact; prefer controller/parser/validator/state fixes over long
    prompt blocks. All LLM-facing prose lives in `src/prompts.py`.
 7. Fixes must generalize across topics, group sizes, and option domains.
+
+## Current mismatch / intended correction
+
+The overview is mostly correct for the current implementation, but it still needs to be read with one caveat: the project is not yet strong enough as a **tunable simulator**. It has personas and parameters, but recent logs show that engagement and initiative do not reliably shape turn share or initiative-taking. The overview should stay framed as an option-grounded multi-user decision simulator, not as a general group-chat system.
+
+After the next fixes, this file should describe parameter-weighted simulator behavior explicitly: engagement, initiative, responsiveness, stubbornness, compromise threshold, and current stance should affect who speaks, how they react, whether they soften, and when they switch. It should also describe the agenda as stateful stance/concern tracking rather than a weak hint list or a checklist of items to execute.
+

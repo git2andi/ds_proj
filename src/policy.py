@@ -27,7 +27,7 @@ from models import (
     _DISCUSSION_ACTS,
 )
 from parsing import round_reason_snippets, used_commitment_phrases
-from simulator import next_agenda_item
+from simulator import expected_turn_share, next_agenda_item
 from style import (
     first_person_opening_fraction,
     name_prefix_fraction,
@@ -67,7 +67,19 @@ class PolicyMixin:
     def _route_discussion_turn(self, state: DialogueState) -> MoveIntent:
         obligation = self._active_obligation(state)
         if obligation is not None:
-            return self._obligation_intent(state, obligation)
+            # Responsiveness controls how promptly a directly-addressed sim
+            # answers (issue 1): a low-responsiveness sim may sit out one beat
+            # before replying, but only when the obligation window still has
+            # room — hesitation alone never lets a direct question lapse.
+            target = state.persona_by_id(obligation.target_id)
+            answer_now = 0.45 + 0.55 * target.sim_params.responsiveness
+            if (
+                obligation.deferred
+                or state.turn_index + 1 >= obligation.expires_after
+                or random.random() < answer_now
+            ):
+                return self._obligation_intent(state, obligation)
+            obligation.deferred = True
 
         coverage_gap = self._coverage_gap_option(state)
         if coverage_gap is not None:
@@ -272,13 +284,28 @@ class PolicyMixin:
                 )
         return None
 
+    @staticmethod
+    def _silence_streak(state: DialogueState, persona_id: str) -> int:
+        """Participant turns since this sim last spoke (all of them if never)."""
+        streak = 0
+        for turn in reversed(state.turns):
+            if turn.speaker_id == "moderator":
+                continue
+            if turn.speaker_id == persona_id:
+                break
+            streak += 1
+        return streak
+
     def _choose_speaker(self, state: DialogueState) -> Persona:
         recent_speakers = self._recent_participant_ids(state, 2)
         last_speaker = recent_speakers[0] if recent_speakers else None
         prior_speaker = recent_speakers[1] if len(recent_speakers) > 1 else None
-        min_turns = min(rt.turn_count for rt in state.runtimes.values())
         preset = getattr(cfg, "corpus_active", None)
         total_turns = sum(rt.turn_count for rt in state.runtimes.values())
+        expected = expected_turn_share(state.personas)
+        adaptation = float(cfg.routing.get("trait_share_adaptation", 3.5))
+        overshoot = float(cfg.routing.get("max_share_overshoot", 0.12))
+        silence_cap = int(cfg.routing.get("max_silence_rounds", 2)) * len(state.personas)
         dominant_id = None
         if preset:
             dominant_id = max(
@@ -299,10 +326,21 @@ class PolicyMixin:
                     total_turns, len(state.personas), preset,
                     float(cfg.routing.quiet_speaker_boost),
                 )
-            elif rt.turn_count == min_turns:
-                base += float(cfg.routing.quiet_speaker_boost)
-            elif rt.turn_count > min_turns:
-                base *= max(0.20, 1.0 - 0.30 * (rt.turn_count - min_turns))
+            else:
+                # Trait-weighted participation (issue 1): pull each sim's actual
+                # turn share toward its trait-derived target instead of strict
+                # turn-count equalization. Behind target -> boosted, ahead ->
+                # damped, so engagement visibly shapes who talks how much.
+                share = rt.turn_count / total_turns if total_turns > 0 else expected[persona.id]
+                base *= math.exp(adaptation * (expected[persona.id] - share))
+                # Anti-monopoly: clearly past the target share means a hard damp,
+                # not a soft one — high engagement may lead, never monologue.
+                if total_turns >= len(state.personas) and share - expected[persona.id] > overshoot:
+                    base *= 0.20
+                # Minimum visibility: nobody disappears. A sim silent for two
+                # full rounds gets pushed back in regardless of traits.
+                if self._silence_streak(state, persona.id) >= silence_cap:
+                    base += 2.0 * float(cfg.routing.quiet_speaker_boost)
             # Discourage two speakers from ping-ponging when others are available.
             if persona.id == prior_speaker and len(state.personas) > 2:
                 base *= 0.5

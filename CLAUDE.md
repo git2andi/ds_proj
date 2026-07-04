@@ -105,8 +105,15 @@ Change participant count and provider settings in `config.yaml`. The default pro
   snippets from the round (`avoid_phrases` / `avoid_reasons`); the vote repair
   prompt builds its example menu dynamically from unused families; BUILD move
   purposes rotate.
-- **Speaker balance.** `_choose_speaker` weights by turn-count deficit and
-  penalizes the second-to-last speaker to stop two participants ping-ponging.
+- **Trait-weighted participation.** Each sim has a target turn share from
+  `simulator.expected_turn_share` (engagement-dominant, plus initiative/
+  responsiveness and a floor). `_choose_speaker` pulls actual share toward that
+  target (`exp(routing.trait_share_adaptation * gap)`), with an anti-monopoly
+  damp past `max_share_overshoot`, a minimum-visibility push after
+  `max_silence_rounds` silent rounds, and the ping-pong penalty. Responsiveness
+  gates how promptly an obligated sim answers (may defer one beat, never lapses
+  from hesitation). Evaluation uses the same share targets
+  (`expected_turn_share`/`realized_turn_share` in metrics).
 - **Reactive act selection.** `_reactive_intent` fires before the agenda:
   challenged options get defended by an advocate, answers get follow-ups,
   an unresolved blocker on the leading option is probed once, visible
