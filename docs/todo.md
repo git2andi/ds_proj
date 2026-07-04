@@ -46,40 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 4 (P1). Add bounded compromise and reservation negotiation around voting
-
-**Problem.** Minority checks currently identify holdouts, which is good, but the follow-up is often too thin. A holdout usually either accepts the majority option immediately or repeats its own vote. There is not enough small-scale negotiation around what would make the majority option acceptable.
-
-**Where visible.**
-
-- `logs/20260704_212701_828451` (`Plan an office party...`): Jasper is asked about the majority option and accepts it in one turn. This is valid but shallow.
-- `logs/20260704_211917_836818` (`Which Scifi tech should exist today`): split-vote compromise fails with repeated final votes rather than a meaningful reservation exchange.
-- `logs/20260704_213235_315077` (`Plan a summer vacation with your families`): a three-way split remains unresolved without much visible negotiation of conditions.
-
-**Correct behavior.**
-
-When a majority exists but a minority sim has a meaningful reservation, the system should allow a bounded micro-negotiation:
-
-```text
-1. Majority or split is detected.
-2. Holdout is asked what blocks agreement.
-3. Holdout states a concrete reservation or condition.
-4. One majority supporter responds to that reservation.
-5. Optionally the holdout updates stance.
-6. The system closes as successful, majority, or unresolved.
-```
-
-This should not run indefinitely. Usually one response and one optional update are enough. Compromise should also happen before voting sometimes, not only after final votes.
-
-Example target behavior:
-
-```text
-Moderator or participant: Most are on B. What still makes you hesitate?
-Holdout: I can live with B, but it does not really cover child-friendliness.
-Supporter: Fair. The board does not prove that, but B's flexible timing at least helps families leave earlier.
-Holdout: That is enough for me to accept B, with that caveat.
-```
-
 ### Issue 5 (P1). Add participant-owned procedural moves, especially in low- or no-moderator runs
 
 **Problem.** The moderator can now be disabled or reduced, but the hidden controller still carries most of the structure. Participants do not yet reliably perform enough group-management acts themselves.

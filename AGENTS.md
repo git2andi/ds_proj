@@ -192,6 +192,14 @@ Change participant count and provider settings in `config.yaml`. The default pro
   commit in their own words, and the parser's commitment patterns cover the
   natural forms ("I'd go with", "my vote's on", "I'm all in for") while
   hedges/conditionals still block.
+- **Reservation negotiation (issue 4).** The minority check and split-vote
+  compromise both embed one two-turn reservation exchange
+  (`_reservation_exchange`, once per run): the most movable holdout states a
+  concrete reservation (no vote), one supporter responds honestly, then the
+  normal closing beats run. With `final_vote_call` off, a high-initiative
+  supporter asks the holdout probe (`_emit_peer_holdout_probe`) instead of the
+  moderator. The hard turn cap forces the vote but no longer starves these
+  bounded passes. Metric: `reservation_exchange`.
 - **Targeted moderation.** Stall nudges prefer concrete visible issues: probe an
   unresolved blocker on the candidate once, ask the group to weigh a visible
   split head-to-head, or address the single holdout — generic "strongest

@@ -104,8 +104,10 @@ honest, but remember: the *outcome* still uses only `explicit_vote`, never the l
 ## Split votes don't loop
 
 If votes split with no majority, the controller does not re-poll endlessly. It makes
-**one** bounded compromise attempt (`04`) and otherwise closes `unresolved` with a
-clear reason. Hard turn caps guarantee termination.
+**one** bounded compromise attempt with an embedded two-turn reservation exchange
+(`04`, issue 4) and otherwise closes `unresolved` with a clear reason. Hard turn
+caps force the vote (they never starve the bounded closing passes); the passes'
+own once-per-run bounds guarantee termination.
 
 ## Current mismatch / intended correction
 

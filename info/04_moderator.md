@@ -95,6 +95,15 @@ Two special facilitation passes, each at most once per run, keep closes honest:
   support" when it is a **strict plurality** — a pure tie is announced as "evenly
   split with no option ahead".
 
+Both passes embed a **reservation exchange** (issue 4, once per run, exactly two
+turns): the most movable holdout states one concrete reservation about the
+candidate (explicitly *not* a vote), and one supporter responds honestly — using
+only card facts and conceding what the board can't prove. Only then come the
+closing beats where the holdout may accept (bridged) or stay. With
+`final_vote_call: false`, the holdout probe is asked by a high-initiative
+*supporter* instead of the moderator — participant-owned procedure. The hard turn
+cap forces the vote but never starves these bounded passes.
+
 ## Closures are status-aware
 
 `moderator_closure_prompt` matches the real outcome (`06`): a `majority` close **names

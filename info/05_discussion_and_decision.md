@@ -147,7 +147,12 @@ exact softening phrase differs. `discussion_lean_shifts` in the metrics counts
 lean movement during the discussion phase; the goal is gradual convergence instead
 of sims arguing A all discussion and suddenly voting B.
 
-## Current mismatch / intended correction
+## Reservation negotiation around votes (issue 4)
 
-Voting still needs bounded reservation negotiation (todo issue 4). When one sim is outside the majority, the system should not only ask whether they accept. It should sometimes let the holdout state a concrete condition or concern, route one response from a majority supporter, and then allow a final update before closing. This must stay bounded to avoid infinite discussion.
+When a majority or split leaves holdouts, the closing passes are no longer a bare
+"accept or restate": the most movable holdout first states one **concrete
+reservation** (no vote), one supporter **responds** to it honestly, and only then
+does the holdout's closing beat run — accept with a bridge, or stay. Exactly two
+extra turns, once per run, in both the minority check and the split-compromise
+pass (`04`). Metric: `reservation_exchange`.
 

@@ -389,6 +389,7 @@ class DialogueState:
     candidate_option: str | None = None
     compromise_attempted: bool = False
     minority_check_attempted: bool = False
+    reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

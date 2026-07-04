@@ -198,17 +198,17 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         self._mark_phase(state, Phase.CLOSURE, "vote rounds exhausted without visible consensus")
 
     def _minority_check(self, state: DialogueState, winner: str | None) -> None:
-        """One bounded beat after a majority forms: the moderator acknowledges it
-        and the holdouts each get one visible turn — accept the majority option
-        (with a bridge clause) if they can move, or briefly restate what holds
-        them back. May upgrade the outcome to unanimity; runs at most once and
-        is skipped after the split-compromise pass (those dissenters were just
-        asked)."""
+        """One bounded beat after a majority forms: the holdouts are acknowledged
+        and each gets one visible turn — accept the majority option (with a
+        bridge clause) if they can move, or briefly restate what holds them
+        back. The most movable holdout first gets a two-turn reservation
+        exchange (issue 4): state the concrete reservation, hear one supporter
+        respond, then decide. May upgrade the outcome to unanimity; runs at
+        most once and is skipped after the split-compromise pass (those
+        dissenters were just asked)."""
         if state.minority_check_attempted or state.compromise_attempted:
             return
         if winner not in state.scenario.option_ids:
-            return
-        if participant_turn_count(state) >= state.hard_max_turns:
             return
         dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != winner]
         if not dissenters:
@@ -216,6 +216,10 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         state.minority_check_attempted = True
         winner_name = state.scenario.option(winner).name
         aliases = short_alias_map(state.scenario.options)
+        movers = [p for p in dissenters if self._can_shift_to(state, p, winner)]
+        negotiator = (
+            min(movers, key=lambda p: state.runtimes[p.id].commitment_strength) if movers else None
+        )
         if self._mod("final_vote_call"):
             text = self._moderator_say(
                 prompts.moderator_nudge_prompt(
@@ -232,6 +236,11 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 state,
             )
             self._emit(self._append_moderator(state, text, Phase.NARROWING))
+        elif negotiator is not None:
+            # No moderator voice: a majority supporter owns the probe instead.
+            self._emit_peer_holdout_probe(state, negotiator, winner)
+        if negotiator is not None:
+            self._reservation_exchange(state, negotiator, winner)
         for persona in dissenters:
             can_move = self._can_shift_to(state, persona, winner)
             current = state.runtimes[persona.id].current_preference or persona.preferred_option
@@ -253,6 +262,75 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             )
             self._emit(self._generate_and_append(state, intent))
 
+    def _reservation_exchange(self, state: DialogueState, holdout: Persona, candidate: str) -> None:
+        """Bounded reservation micro-negotiation (issue 4), exactly two turns:
+        the holdout states one concrete reservation about the candidate (no vote
+        yet), and one supporter of the candidate responds to it honestly. The
+        holdout's actual decision comes in its regular closing beat afterwards.
+        Runs at most once per run."""
+        if state.reservation_exchange_done:
+            return
+        state.reservation_exchange_done = True
+        aliases = short_alias_map(state.scenario.options)
+        reservation = MoveIntent(
+            speaker_id=holdout.id,
+            act=ActType.ANSWER,
+            reason=(
+                f"say concretely what still makes you hesitate about {aliases[candidate]} — one specific "
+                "reservation or condition, grounded in the option facts or what they leave unknown; "
+                "do not cast a vote yet"
+            ),
+            option_focus=[candidate],
+            length_hint="short",
+        )
+        record = self._generate_and_append(state, reservation)
+        self._emit(record)
+        supporters = [
+            p for p in state.personas
+            if p.id != holdout.id and state.runtimes[p.id].explicit_vote == candidate
+        ]
+        if not supporters:
+            return
+        responder = max(supporters, key=lambda p: p.sim_params.responsiveness + 0.3 * p.sim_params.engagement)
+        response = MoveIntent(
+            speaker_id=responder.id,
+            act=ActType.ANSWER,
+            reason=(
+                f"respond to {holdout.name}'s reservation about {aliases[candidate]} honestly: use only "
+                "the option facts, concede what the board cannot prove, and point to what still helps "
+                "their concern — no pressure to switch"
+            ),
+            addressee_id=holdout.id,
+            option_focus=[candidate],
+            respond_to_turn=record.index,
+            length_hint="short",
+        )
+        self._emit(self._generate_and_append(state, response))
+
+    def _emit_peer_holdout_probe(self, state: DialogueState, holdout: Persona, candidate: str) -> None:
+        """With the moderator voice off, a supporter of the candidate asks the
+        holdout what still blocks agreement (participant-owned procedure)."""
+        supporters = [
+            p for p in state.personas
+            if p.id != holdout.id and state.runtimes[p.id].explicit_vote == candidate
+        ]
+        if not supporters:
+            return
+        aliases = short_alias_map(state.scenario.options)
+        asker = max(supporters, key=lambda p: p.sim_params.initiative + 0.3 * p.sim_params.engagement)
+        intent = MoveIntent(
+            speaker_id=asker.id,
+            act=ActType.ASK,
+            reason=(
+                f"most of the group has landed on {aliases[candidate]}; ask {holdout.name} in a friendly, "
+                "genuine way what still holds them back or what they would need — no pressure"
+            ),
+            addressee_id=holdout.id,
+            option_focus=[candidate],
+            length_hint="short",
+        )
+        self._emit(self._generate_and_append(state, intent))
+
     def _maybe_split_vote_compromise(self, state: DialogueState) -> bool:
         """One bounded compromise pass when votes are split with no majority.
 
@@ -260,7 +338,9 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         who can move are invited to switch to it or restate their vote. Runs at
         most once per run and only if some participant could plausibly move.
         """
-        if state.compromise_attempted or participant_turn_count(state) >= state.hard_max_turns:
+        # The hard turn cap forces the *vote*; it does not forbid this bounded
+        # closing pass — starving it just manufactures unresolved runs (issue 4).
+        if state.compromise_attempted:
             return False
         votes = [rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in state.scenario.option_ids]
         if len(set(votes)) < 2:
@@ -300,6 +380,11 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 state,
             )
             self._emit(self._append_moderator(state, text, Phase.NARROWING))
+        # Reservation micro-negotiation (issue 4): before the closing beats, the
+        # most movable dissenter states what blocks agreement and one supporter
+        # responds — two bounded turns, once per run.
+        negotiator = min(movers, key=lambda p: state.runtimes[p.id].commitment_strength)
+        self._reservation_exchange(state, negotiator, leader)
         # Everyone who is not on the leader gets one closing beat: movers may
         # switch, the rest briefly restate — so a failed compromise does not
         # end the chat one turn after the split summary (issue #22).
