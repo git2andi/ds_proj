@@ -1,156 +1,49 @@
-# Routing and turn-taking (the controller)
+# 03 — Routing and turn-taking
 
-**Code:** `src/policy.py` (`PolicyMixin`), `src/dialogue.py` (the loops that call it),
-`src/style.py`, `src/simulator.py` (agenda), `src/models.py` (`MoveIntent`).
+The router decides who speaks next, what act they perform, who they address, and which option or thread they focus on. This is the central simulator control layer.
 
-This is the heart of the simulator. Every participant turn is produced by a small
-control step — the LLM never chooses *who* speaks or *what move* to make, only how to
-phrase the move it is handed.
+## Speaker choice
 
-## The per-turn loop
+Speaker choice should combine:
 
 ```text
-read the visible state
-choose speaker            (who talks next)
-choose dialogue act       (build / agree / challenge / ask / answer / compare /
-                           invite / propose_compromise / vote / …)
-choose target + addressee (which earlier turn / person this responds to)
-choose option focus       (which options the move is about)
-build a MoveIntent        (a compact instruction object)
--> LLM realizes ONLY that one message   (see 05 for the generation+repair pipeline)
--> observer parses the result           (see 06)
--> visible state is updated
+trait-derived turn target
++ local conversation obligations
++ unresolved questions/concerns
++ minority/holdout relevance
++ anti-monopoly damping
++ minimum visibility
 ```
 
-The `MoveIntent` is the contract between controller and LLM: it carries the speaker,
-act, a plain-language `reason`, option focus, optional addressee, and style flags. It
-never contains hidden metadata that could leak into the text.
+It should not equalize everyone mechanically. It should also not rely only on traits.
 
-## Choosing the act — reactive first, agenda last
+## Response obligations
 
-`_route_discussion_turn` decides the move in a fixed priority order, so local context
-drives the conversation and the private agenda only fills silence:
+Direct questions should create bounded response obligations. The addressed sim should usually answer soon, but the system should avoid turning one sim into an interview loop.
 
-1. **Response obligation** — if someone was directly asked a question, the addressed
-   sim answers next (see "Direct questions" below).
-2. **Option coverage** — each option gets at most one light "has this been discussed?"
-   nudge before voting (`_coverage_gap_option`; bounded by `coverage_attempts`).
-3. **Reactive intents** (`_reactive_intent`) — adjacency-pair moves driven by what
-   just happened, each behind a probability gate so runs don't become a script:
-   - a **visible softening beat** (issue 3, once per sim): a sim whose commitment
-     eroded or who is under sustained pressure says openly mid-discussion that a
-     visibly-backed rival is winning it over — explicitly *not* a vote (`05`),
-   - an open **concern thread** (see `02`) gets a reaction from an advocate of the
-     challenged option within a turn or two — a *firm* advocate defends, a *shaken*
-     one (low `commitment_strength`) is told to concede honestly and may say its
-     view is shifting; the thread persists across a turn, so a concern isn't lost
-     the moment someone else speaks,
-   - an **answer** gets a **follow-up**,
-   - an unresolved **blocker** on the leading option gets **probed once**,
-   - a visible **split** triggers a head-to-head **comparison**,
-   - a **circling** thread (several turns, no question/movement, two camps) gets one
-     bounded compromise/ask beat (`stagnation_break_done`).
-4. **Agenda / free choice** — only now does the speaker maybe consume a private
-   agenda item (probability rises with initiative), otherwise a trait-weighted act is
-   picked (`_choose_discussion_act`).
+## Same-speaker continuations
 
-Challenge reasons are stance-aware: a sim is never routed to argue against its own
-current pick.
+Rare same-speaker continuations are allowed by design, including chains up to three messages. They are valid only when they are addendums, corrections, clarifications, afterthoughts, or self-resolutions.
 
-## Choosing the speaker — trait-weighted participation
+Invalid consecutive turns include:
 
-Each sim has a **target turn share** derived from its parameters
-(`simulator.expected_turn_share`: engagement dominates, initiative and
-responsiveness tilt it, plus a floor so nobody's target is zero). `_choose_speaker`
-weights each candidate by `engagement`/`initiative` and then pulls the *actual* turn
-share toward that target (`exp(trait_share_adaptation * (target − actual))`): a sim
-behind its target gets boosted, a sim ahead gets damped. Guard rails:
+- re-asking the same addressee the same question;
+- repeating the same proposal;
+- paraphrasing the previous line without new content;
+- accidental monologues caused by routing.
 
-- **no immediate self-repeat** (the last speaker is skipped when others exist),
-- **anti-monopoly**: a share more than `max_share_overshoot` above target is damped
-  hard — high engagement may lead the room, never monologue,
-- **minimum visibility**: a sim silent for `max_silence_rounds` full rounds is
-  pushed back in regardless of traits — low engagement means quieter, not absent,
-- a penalty on the second-to-last speaker to stop two people ping-ponging.
+## Participant-owned procedure
 
-Structural turns (the opening round and vote rounds give everyone exactly one turn)
-compress the realized spread toward equality, so trait differences show most in the
-free discussion turns. In a controlled n=3 run with engagement pinned to
-0.9/0.5/0.15, turn counts came out 9/8/7 with average words 29/19/14 and an
-engagement–behavior correlation of ≈ +1.0.
+Participants can perform procedural acts, especially when the moderator is reduced or disabled:
 
-**Responsiveness** shows up in answer latency: when a sim owes an answer to a direct
-question, it replies immediately with probability `0.45 + 0.55 * responsiveness`,
-and may otherwise sit out exactly one beat before the router forces the answer —
-hesitation never lets the question lapse.
+- call for final picks;
+- summarize a split;
+- probe a holdout;
+- suggest narrowing;
+- test a compromise candidate.
 
-With a **corpus preset** active (`08`), this switches to share-aware weighting: one
-sim is allowed to dominate within configured bounds instead of the trait targets.
+These should be explicit enough to count in metrics.
 
-## Rare same-speaker continuations (issue 6)
+## Current open issues
 
-Normal turns hard-exclude the last speaker, but real chats contain the occasional
-add-on. After the reactive checks, the previous speaker may take **one short
-follow-up turn** with a small initiative-scaled probability (~3–10%):
-an afterthought ("Oh, and…"), a clarification ("Just to be clear…"), or a small
-self-correction ("Actually, …"). Bounds: no same-speaker run longer than 3 turns
-(a second continuation is half as likely), a reduced word budget, and a blocking
-`CONTINUATION_REPEATS` validation issue when the follow-up overlaps the sim's own
-previous line too much or re-asks the same person a question — the accidental
-duplicate ("Anna: Tim, what do you think? / Anna: How is it for you, Tim?") is
-exactly what must never print. Metric: `continuation_turns`.
-
-## Choosing the target — thread-scored, not just "the last line"
-
-`_choose_target_turn` scores the last few participant turns instead of always
-replying to the most recent one. Open questions, objections/blockers, minority
-voices, and turns about the leading or under-discussed options outrank plain
-recency — so earlier unresolved points get revisited instead of dying after one
-reply. An `answer` act deterministically targets the pending question.
-
-Not every turn names an addressee. Names are used when they are functional
-(answering, challenging a specific person, inviting a quiet participant), and
-suppressed otherwise so the transcript doesn't read as "Name, … / Name, …".
-
-## Direct questions create response obligations
-
-When a turn visibly asks a direct question (detected from text by the parser, not
-from the act label), the observer records a `ResponseObligation` on the addressed
-sim. The router consumes it **before** normal speaker selection in both the
-discussion and decision loops, so the addressed participant answers within the next
-turn or two. Obligations expire after a bounded window and are counted as
-`unanswered_direct_questions` (a metric, `08`).
-
-Two refinements (issue 1): a **group-directed** question (no name, no "you") is
-assigned a respondent weighted by responsiveness and turn-share deficit — the
-previous speaker is not the room's default interviewee — and a low-responsiveness
-sim may sit out one beat before the router forces its answer (see above).
-
-```text
-Kenji -> Anton: "Anton, is the no-checked-bag issue a deal-breaker?"
-next relevant turn: Anton answers   (not: someone else casts an unrelated vote)
-```
-
-## Word budgets are trait-driven
-
-`_word_bounds` sets each turn's soft length target from the speaker's parameters
-(`0.45 + 0.70*verbosity + 0.15*engagement`, plus per-turn jitter), so terse sims stay
-short and chatty ones run longer. Decision/switch turns get extra room for a bridge
-clause. Budgets are style targets, not hard cuts — `utils.clean_generated` keeps a
-complete sentence within a soft cap so no printed line ends mid-thought.
-
-## Surface-style control (deterministic, no LLM call)
-
-`src/style.py` tracks recent participant turns and sets compact prompt flags on the
-`MoveIntent` to keep dialogue varied:
-
-- suppress a leading name prefix when name density is high,
-- suppress opening on an option name / "I …" / "We …" when those openings cluster,
-- vary the opening word when recent turns all start the same way,
-- steer act selection away from a repeated concession/worry/trade-off template.
-
-For decision turns it also builds `avoid_phrases` (commitment-phrase families already
-used this round or by this speaker earlier) and `avoid_reasons`, so re-asked voters
-don't repeat themselves verbatim across vote rounds.
-
-
+Participant-owned procedure is visible, but still crude. It can call votes and summarize splits, but post-split negotiation remains too shallow. Split-vote candidate selection and post-reservation decision routing are the current priorities.

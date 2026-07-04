@@ -64,6 +64,10 @@ class DialogueLogger:
 
     def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
         provider, model = _active_provider_model()
+        env_mode = str((cfg.get("environment", None) or {}).get("mode", "auto"))
+        participants_mode = str((cfg.get("participants", None) or {}).get("mode", "auto"))
+        seed = cfg.simulation.get("random_seed", None)
+        moderator = _resolved_moderator_config()
         lines = [
             f"# Dialogue run {self.run_id}",
             "",
@@ -73,6 +77,11 @@ class DialogueLogger:
             # (issue 9) — a transcript must say which backend wrote it.
             f"Provider: {provider}",
             f"Model: {model}",
+            f"Environment mode: {env_mode}",
+            f"Participants mode: {participants_mode}",
+            f"Moderator: enabled={moderator['enabled']} opening={moderator['opening']} mid_nudges={moderator['mid_discussion_nudges']} final_vote_call={moderator['final_vote_call']} closing={moderator['closing']}",
+            f"Random seed: {seed if seed is not None else 'null'}",
+            f"Pacing: min={state.min_discussion_turns} force={state.force_narrow_turns} hard={state.hard_max_turns}",
             "",
             "## Options",
             "",
@@ -146,6 +155,7 @@ class DialogueLogger:
             "phase_history": list(state.phase_history),
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
+            "token_usage_by_call_type": _to_jsonable(state.token_usage_by_call_type),
         }
 
 

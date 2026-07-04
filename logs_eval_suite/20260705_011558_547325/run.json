@@ -1,0 +1,2188 @@
+{
+  "run_id": "20260705_011558_547325",
+  "topic": "Choose a weekend activity for three friends with different energy levels",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "manual",
+  "environment_mode": "manual",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a weekend activity for three friends with different energy levels",
+    "decision_kind": "activity_choice",
+    "opening_question": "Which activity balances cost, effort, travel, and enough flexibility for everyone?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Museum and Cafe Day",
+        "attrs": {
+          "cost": "24 euros",
+          "travel": "15 minutes by subway",
+          "duration": "4 hours"
+        },
+        "upside": "low effort and easy to adjust",
+        "tradeoff": "less exciting for active participants",
+        "concern": "may feel too quiet",
+        "best_for": "a relaxed low-risk day",
+        "short_name": "Museum"
+      },
+      {
+        "id": "B",
+        "name": "Lake Bike Ride",
+        "attrs": {
+          "cost": "12 euros",
+          "travel": "25 minutes by train",
+          "duration": "6 hours"
+        },
+        "upside": "active and inexpensive",
+        "tradeoff": "physically demanding",
+        "concern": "bad fit for someone tired",
+        "best_for": "a cheap outdoor activity",
+        "short_name": "Bike Ride"
+      },
+      {
+        "id": "C",
+        "name": "Escape Room",
+        "attrs": {
+          "cost": "32 euros",
+          "travel": "20 minutes by tram",
+          "duration": "2 hours"
+        },
+        "upside": "interactive and memorable",
+        "tradeoff": "shorter than a full-day plan",
+        "concern": "less flexible once booked",
+        "best_for": "a focused group activity",
+        "short_name": "Escape Room"
+      },
+      {
+        "id": "D",
+        "name": "Home Cooking Night",
+        "attrs": {
+          "cost": "18 euros",
+          "travel": "none",
+          "duration": "5 hours"
+        },
+        "upside": "cheapest and most flexible",
+        "tradeoff": "requires planning and cleanup",
+        "concern": "may feel too ordinary",
+        "best_for": "a flexible low-cost option",
+        "short_name": "Cooking"
+      }
+    ],
+    "shared_context": [
+      "The group only has Saturday available.",
+      "Nobody wants to spend more than 60 euros.",
+      "The plan should leave time to rest in the evening."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Mira",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "initiative": 0.55,
+        "responsiveness": 0.75,
+        "stubbornness": 0.45,
+        "directness": 0.5,
+        "compromise_threshold": 0.45
+      },
+      "background": "organized planner who cares about broad fit and avoiding awkward logistics",
+      "private_goal": "wants the option that works for most people without needing extra coordination",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Jonas",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.35,
+        "verbosity": 0.35,
+        "initiative": 0.3,
+        "responsiveness": 0.8,
+        "stubbornness": 0.35,
+        "directness": 0.45,
+        "compromise_threshold": 0.35
+      },
+      "background": "practical budget-watcher who changes his mind when a concrete tradeoff is convincing",
+      "private_goal": "wants the group to avoid overspending but can accept a better compromise",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Lea",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.9,
+        "verbosity": 0.8,
+        "initiative": 0.9,
+        "responsiveness": 0.6,
+        "stubbornness": 0.55,
+        "directness": 0.7,
+        "compromise_threshold": 0.55
+      },
+      "background": "high-energy participant who likes memorable choices and often drives the conversation forward",
+      "private_goal": "wants the group to choose something that feels worth the effort",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 28,
+      "current_preference": "A",
+      "commitment_strength": 0.6757500000000001,
+      "commitment_min": 0.63,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "C": "Lea, I get that the Escape Room’s buzz is cool, but I worry locking in a fixed time and tram ride might stress us out more than chill us."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Since the travel is pretty short and it’s low effort, the Museum day feels easiest to fit everyone’s pace without extra coordination.",
+        "Booking the Escape Room feels risky since it’s less flexible and we might end up with awkward timing if someone’s tired or delayed.",
+        "Jonas, since the bike ride is 6 hours plus travel, do we really want to spend that much time just getting there and back on a tight Saturday?",
+        "Lea, I get that the Escape Room’s buzz is cool, but I worry locking in a fixed time and tram ride might stress us out more than chill us.",
+        "Jonas, not sure about the cafe’s snacks, but the short subway trip keeps us from needing extra rides or timing hassles.",
+        "Lea, four hours indoors isn’t ideal, but the museum’s pace means we can bounce early if needed and still keep costs low.",
+        "Counting on something low-key that won’t drain us before dinner, Museum gets my vote.",
+        "Lea, we don’t know what exhibits they’ll have, but the low effort means we can always bail early if it feels dull."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 24,
+      "current_preference": "A",
+      "commitment_strength": 0.60165,
+      "commitment_min": 0.5394,
+      "challenges_received": 1,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Cuts the budget in half but might wear out Mira before evening.",
+        "Lake Bike Ride is inexpensive and active but might be too tiring after the museum day for some of us.",
+        "True, six hours plus travel is a lot; no downtime after. Cooking’s less time but cleanup might eat into rest.",
+        "Lea, we lose the rush but gain easy timing and less stress. Museum day?",
+        "Four hours might drag, but leaves plenty of evening to rest. Does anyone know if the museum cafe has good snacks?",
+        "Lea, moving sounds good, but bike ride costs and timing? Don’t know exact, could push budget.",
+        "Low effort and short travel is growing on me, the museum cafe angle helps. Still like the bike ride’s cost and outdoor time, though.",
+        "I’m going with the Museum for low effort and easy adjustments."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 10,
+      "last_spoke_turn": 29,
+      "current_preference": "A",
+      "commitment_strength": 0.5809000000000002,
+      "commitment_min": 0.5809000000000002,
+      "challenges_received": 2,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "A"
+      ],
+      "soft_rejections": {
+        "B": "The bike ride is only 12 euros, so costs won’t be an issue, but six hours plus travel might leave us wiped out before evening."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "The Escape Room really stands out—two hours of real teamwork and a story to remember. It’s quick enough to still chill afterward but locks us in once booked, so that’s the catch.",
+        "Cooking at home saves a ton of cash and zero travel, which means more downtime later. But we’d have to prep and clean up—so it might drag or feel low-key compared to the Escape Room buzz.",
+        "We want something that actually feels worth showing up for, not just a chill hangout. The Escape Room nails that with a sharp, interactive rush that’s quick but memorable—plus it fits the budget and leaves plenty of evening to crash hard.",
+        "The tram’s only 20 minutes, so it’s not a big time sink compared to other plans.",
+        "The museum’s only 24 euros and quick to get to, so it definitely keeps costs and stress down. But does anyone think four hours of quiet might feel like a nap for some of us?",
+        "Good point on the subway, but does anyone else think four hours indoors might be too slow for the day? I still want something that gets us moving and keeps the energy up before we rest.",
+        "The bike ride is only 12 euros, so costs won’t be an issue, but six hours plus travel might leave us wiped out before evening.",
+        "I’m sold on the Escape Room for its quick, fun, and interactive experience.",
+        "The 15-minute subway ride to the museum sounds easy enough, but we don’t know if the exhibits will feel fresh or just kind of standard—could get a bit meh for those of us wanting something to really latch onto.",
+        "I still liked the Escape Room for the buzz and challenge, but the Museum works for me since it’s cheaper and leaves us plenty of evening downtime to chill without feeling rushed."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a weekend activity for three friends with different energy levels.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Museum and Cafe Day — cost: 24 euros; duration: 4 hours; travel: 15 minutes by subway (+ low effort and easy to adjust; − less exciting for active participants)\nB) Lake Bike Ride — cost: 12 euros; duration: 6 hours; travel: 25 minutes by train (+ active and inexpensive; − physically demanding)\nC) Escape Room — cost: 32 euros; duration: 2 hours; travel: 20 minutes by tram (+ interactive and memorable; − shorter than a full-day plan)\nD) Home Cooking Night — cost: 18 euros; duration: 5 hours; travel: none (+ cheapest and most flexible; − requires planning and cleanup)\nContext: The group only has Saturday available.; Nobody wants to spend more than 60 euros.; The plan should leave time to rest in the evening.\nWhich activity balances cost, effort, travel, and enough flexibility for everyone?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a weekend activity for three friends with different energy levels.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Museum and Cafe Day — cost: 24 euros; duration: 4 hours; travel: 15 minutes by subway (+ low effort and easy to adjust; − less exciting for active participants)\nB) Lake Bike Ride — cost: 12 euros; duration: 6 hours; travel: 25 minutes by train (+ active and inexpensive; − physically demanding)\nC) Escape Room — cost: 32 euros; duration: 2 hours; travel: 20 minutes by tram (+ interactive and memorable; − shorter than a full-day plan)\nD) Home Cooking Night — cost: 18 euros; duration: 5 hours; travel: none (+ cheapest and most flexible; − requires planning and cleanup)\nContext: The group only has Saturday available.; Nobody wants to spend more than 60 euros.; The plan should leave time to rest in the evening.\nWhich activity balances cost, effort, travel, and enough flexibility for everyone?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The Escape Room really stands out—two hours of real teamwork and a story to remember. It’s quick enough to still chill afterward but locks us in once booked, so that’s the catch.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The Escape Room really stands out—two hours of real teamwork and a story to remember. It’s quick enough to still chill afterward but locks us in once booked, so that’s the catch.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 663,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Since the travel is pretty short and it’s low effort, the Museum day feels easiest to fit everyone’s pace without extra coordination.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Since the travel is pretty short and it’s low effort, the Museum day feels easiest to fit everyone’s pace without extra coordination.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 735,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Cuts the budget in half but might wear out Mira before evening.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cuts the budget in half but might wear out Mira before evening.",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 811,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Booking the Escape Room feels risky since it’s less flexible and we might end up with awkward timing if someone’s tired or delayed.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Booking the Escape Room feels risky since it’s less flexible and we might end up with awkward timing if someone’s tired or delayed.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Booking the Escape Room feels risky since it’s less flexible and we might end up with awkward timing if someone’s tired or delayed."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "challenge",
+        "reason": "push back on Escape Room with one concrete concern — you currently favor Museum, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1519,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Lake Bike Ride is inexpensive and active but might be too tiring after the museum day for some of us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Lake Bike Ride is inexpensive and active but might be too tiring after the museum day for some of us.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1723,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "Cooking at home saves a ton of cash and zero travel, which means more downtime later. But we’d have to prep and clean up—so it might drag or feel low-key compared to the Escape Room buzz.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Cooking at home saves a ton of cash and zero travel, which means more downtime later. But we’d have to prep and clean up—so it might drag or feel low-key compared to the Escape Room buzz.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 638,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Jonas, since the bike ride is 6 hours plus travel, do we really want to spend that much time just getting there and back on a tight Saturday?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Jonas, since the bike ride is 6 hours plus travel, do we really want to spend that much time just getting there and back on a tight Saturday?",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Bike Ride, Museum that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 698,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "True, six hours plus travel is a lot; no downtime after. Cooking’s less time but cleanup might eat into rest.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, six hours plus travel is a lot; no downtime after. Cooking’s less time but cleanup might eat into rest.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "We want something that actually feels worth showing up for, not just a chill hangout. The Escape Room nails that with a sharp, interactive rush that’s quick but memorable—plus it fits the budget and leaves plenty of evening to crash hard.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We want something that actually feels worth showing up for, not just a chill hangout. The Escape Room nails that with a sharp, interactive rush that’s quick but memorable—plus it fits the budget and leaves plenty of evening to crash hard.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Escape Room fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 716,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Lea, I get that the Escape Room’s buzz is cool, but I worry locking in a fixed time and tram ride might stress us out more than chill us.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lea, I get that the Escape Room’s buzz is cool, but I worry locking in a fixed time and tram ride might stress us out more than chill us.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Lea, I get that the Escape Room’s buzz is cool, but I worry locking in a fixed time and tram ride might stress us out more than chill us."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Escape Room, Museum fits that",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 752,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The tram’s only 20 minutes, so it’s not a big time sink compared to other plans.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The tram’s only 20 minutes, so it’s not a big time sink compared to other plans.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "a concern was raised about Escape Room, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Lea, we lose the rush but gain easy timing and less stress. Museum day?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Lea, we lose the rush but gain easy timing and less stress. Museum day?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 707,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The museum’s only 24 euros and quick to get to, so it definitely keeps costs and stress down. But does anyone think four hours of quiet might feel like a nap for some of us?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The museum’s only 24 euros and quick to get to, so it definitely keeps costs and stress down. But does anyone think four hours of quiet might feel like a nap for some of us?",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 741,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Four hours might drag, but leaves plenty of evening to rest. Does anyone know if the museum cafe has good snacks?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Four hours might drag, but leaves plenty of evening to rest. Does anyone know if the museum cafe has good snacks?",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 811,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Jonas, not sure about the cafe’s snacks, but the short subway trip keeps us from needing extra rides or timing hassles.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Jonas, not sure about the cafe’s snacks, but the short subway trip keeps us from needing extra rides or timing hassles.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 710,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "Good point on the subway, but does anyone else think four hours indoors might be too slow for the day? I still want something that gets us moving and keeps the energy up before we rest.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Good point on the subway, but does anyone else think four hours indoors might be too slow for the day? I still want something that gets us moving and keeps the energy up before we rest.",
+        "act_type": "agree",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 709,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Lea, moving sounds good, but bike ride costs and timing? Don’t know exact, could push budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Lea, moving sounds good, but bike ride costs and timing? Don’t know exact, could push budget.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 775,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The bike ride is only 12 euros, so costs won’t be an issue, but six hours plus travel might leave us wiped out before evening.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The bike ride is only 12 euros, so costs won’t be an issue, but six hours plus travel might leave us wiped out before evening.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "The bike ride is only 12 euros, so costs won’t be an issue, but six hours plus travel might leave us wiped out before evening."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "worry_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 760,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Low effort and short travel is growing on me, the museum cafe angle helps. Still like the bike ride’s cost and outdoor time, though.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Low effort and short travel is growing on me, the museum cafe angle helps. Still like the bike ride’s cost and outdoor time, though.",
+        "act_type": "soften",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "A"
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "soften",
+        "reason": "the case others made for Museum genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Bike Ride; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 876,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Lea, four hours indoors isn’t ideal, but the museum’s pace means we can bounce early if needed and still keep costs low.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lea, four hours indoors isn’t ideal, but the museum’s pace means we can bounce early if needed and still keep costs low.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Museum fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 731,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you each share your final pick now—just the one option you’re definitely going with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you each share your final pick now—just the one option you’re definitely going with?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Counting on something low-key that won’t drain us before dinner, Museum gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Counting on something low-key that won’t drain us before dinner, Museum gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 702,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "I’m going with the Museum for low effort and easy adjustments.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m going with the Museum for low effort and easy adjustments.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1044,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "I’m sold on the Escape Room for its quick, fun, and interactive experience.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m sold on the Escape Room for its quick, fun, and interactive experience.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 933,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like Museum and Cafe Day is winning—Lea, can you live with that, or is there something still holding you back?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like Museum and Cafe Day is winning—Lea, can you live with that, or is there something still holding you back?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The 15-minute subway ride to the museum sounds easy enough, but we don’t know if the exhibits will feel fresh or just kind of standard—could get a bit meh for those of us wanting something to really latch onto.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The 15-minute subway ride to the museum sounds easy enough, but we don’t know if the exhibits will feel fresh or just kind of standard—could get a bit meh for those of us wanting something to really latch onto.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Museum — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 657,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Lea, we don’t know what exhibits they’ll have, but the low effort means we can always bail early if it feels dull.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lea, we don’t know what exhibits they’ll have, but the low effort means we can always bail early if it feels dull.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "respond to Lea's reservation about Museum honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 27,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 689,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "I still liked the Escape Room for the buzz and challenge, but the Museum works for me since it’s cheaper and leaves us plenty of evening downtime to chill without feeling rushed.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I still liked the Escape Room for the buzz and challenge, but the Museum works for me since it’s cheaper and leaves us plenty of evening downtime to chill without feeling rushed.",
+        "act_type": "accept",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Escape Room, or briefly state what still holds you back and restate your pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 814,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, looks like Museum and Cafe Day it is—can’t wait to enjoy it together!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, looks like Museum and Cafe Day it is—can’t wait to enjoy it together!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 26,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A"
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.55",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 21: narrowing — target discussion length reached",
+        "turn 29: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.55",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 21: narrowing — target discussion length reached",
+    "turn 29: closure — successful visible after vote round 1",
+    "turn 30: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 26,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.133,
+    "turn_counts": {
+      "Mira": 8,
+      "Jonas": 8,
+      "Lea": 10
+    },
+    "top_speaker_share": 0.385,
+    "avg_words_by_persona": {
+      "Mira": 22.6,
+      "Jonas": 17.2,
+      "Lea": 30.5
+    },
+    "question_density": 0.231,
+    "avg_words_per_turn": 24.0,
+    "repaired_turns": 3,
+    "repair_rate": 0.115,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Mira": "A",
+      "Jonas": "A",
+      "Lea": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 1.0,
+    "participation_gini": 0.051,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.5,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.098,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "peer_vote_call": false,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 0,
+    "switch_event_count": 2,
+    "switch_explanation_rate": 0.5,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 1,
+    "name_prefix_rate": 0.269,
+    "option_opening_rate": 0.154,
+    "i_opening_rate": 0.154,
+    "we_opening_rate": 0.115,
+    "name_or_option_opening_rate": 0.423,
+    "repeated_opening_patterns": 6,
+    "unsupported_fact_flags": 0,
+    "unsupported_printed_turns": 0,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 13,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 2,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Mira": 0.55,
+      "Jonas": 0.35,
+      "Lea": 0.9
+    },
+    "expected_turn_share": {
+      "Mira": 0.318,
+      "Jonas": 0.239,
+      "Lea": 0.443
+    },
+    "realized_turn_share": {
+      "Mira": 0.308,
+      "Jonas": 0.308,
+      "Lea": 0.385
+    },
+    "agenda_status": {
+      "done": 2,
+      "pending": 5,
+      "obsolete": 4
+    },
+    "outcome_status": "successful",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 20,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.55",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 21: narrowing — target discussion length reached",
+      "turn 29: closure — successful visible after vote round 1",
+      "turn 30: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.046,
+    "verbosity_realization_error": 0.058,
+    "engagement_error_by_persona": {
+      "Mira": 0.01,
+      "Jonas": 0.069,
+      "Lea": 0.059
+    },
+    "verbosity_error_by_persona": {
+      "Mira": 0.027,
+      "Jonas": 0.038,
+      "Lea": 0.11
+    },
+    "engagement_behavior_correlation": 0.933,
+    "verbosity_behavior_correlation": 0.999,
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 22298,
+    "dialogue_tokens_out": 935,
+    "total_tokens_in": 22298,
+    "total_tokens_out": 935,
+    "tokens_setup_in": 0,
+    "tokens_setup_out": 0,
+    "calls_setup": 0,
+    "tokens_utterance_in": 19347,
+    "tokens_utterance_out": 796,
+    "calls_utterance": 26,
+    "tokens_grounding_in": 1288,
+    "tokens_grounding_out": 20,
+    "calls_grounding": 2,
+    "tokens_repair_in": 797,
+    "tokens_repair_out": 51,
+    "calls_repair": 3,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 866,
+    "tokens_moderator_out": 68,
+    "calls_moderator": 3,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 22298,
+    "dialogue_tokens_out": 935,
+    "total_tokens_in": 22298,
+    "total_tokens_out": 935
+  },
+  "token_usage_by_call_type": {
+    "utterance": {
+      "in": 19347,
+      "out": 796,
+      "calls": 26
+    },
+    "grounding": {
+      "in": 1288,
+      "out": 20,
+      "calls": 2
+    },
+    "repair": {
+      "in": 797,
+      "out": 51,
+      "calls": 3
+    },
+    "moderator": {
+      "in": 866,
+      "out": 68,
+      "calls": 3
+    }
+  }
+}

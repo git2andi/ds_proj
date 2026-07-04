@@ -726,6 +726,8 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "discussion_lean_shifts": metrics.get("discussion_lean_shifts"),
         "participant_procedural_moves": metrics.get("participant_procedural_moves"),
         "peer_vote_call": metrics.get("peer_vote_call"),
+        "split_reservation_exchanges": metrics.get("split_reservation_exchanges"),
+        "two_person_deadlock_attempted": metrics.get("two_person_deadlock_attempted"),
         "unsupported_printed_turns": metrics.get("unsupported_printed_turns"),
         "total_tokens_in": metrics.get("total_tokens_in"),
         "total_tokens_out": metrics.get("total_tokens_out"),
@@ -796,6 +798,8 @@ def main() -> int:
             f"outcome={row.get('outcome')}, final={row.get('final_option')}, "
             f"lean_shifts={row.get('discussion_lean_shifts')}, "
             f"peer_proc={row.get('participant_procedural_moves')}, "
+            f"split_pairs={row.get('split_reservation_exchanges')}, "
+            f"n2_deadlock={row.get('two_person_deadlock_attempted')}, "
             f"unsupported={row.get('unsupported_printed_turns')}, "
             f"tokens_in={row.get('total_tokens_in')}"
         )

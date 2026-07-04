@@ -51,13 +51,23 @@ class PolicyMixin:
         one dissenter must actually be able to move to it (I18). If no
         vote-getter qualifies, the pass is skipped and the run closes honestly.
         """
-        for candidate, _count in Counter(votes).most_common():
+        counts = Counter(votes)
+        ranked: list[tuple[float, str, list[Persona], list[Persona]]] = []
+        for candidate, count in counts.items():
             if self._candidate_blocked(state, candidate):
                 continue
             dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != candidate]
             movers = [p for p in dissenters if self._can_shift_to(state, p, candidate)]
             if movers:
-                return candidate, dissenters, movers
+                mover_flex = sum(1.0 - p.sim_params.compromise_threshold for p in movers) / max(1, len(movers))
+                mover_commit = sum(state.runtimes[p.id].commitment_strength for p in movers) / max(1, len(movers))
+                score = 10.0 * count + 4.0 * len(movers) + 2.0 * mover_flex - mover_commit
+                score += 0.5 * state.coverage[candidate].reasons + 0.25 * state.coverage[candidate].mentions
+                ranked.append((score, candidate, dissenters, movers))
+        if ranked:
+            ranked.sort(key=lambda item: (-item[0], item[1]))
+            _score, candidate, dissenters, movers = ranked[0]
+            return candidate, dissenters, movers
         return None
 
     # ------------------------------------------------------------------
@@ -159,7 +169,7 @@ class PolicyMixin:
         #    "X is starting to make more sense to me" — instead of silently
         #    flipping at the final vote. Once per sim, needs a visibly backed
         #    attractor the sim can actually move to, and never a final vote.
-        if participant_turn_count(state) > len(state.personas) and random.random() < 0.55:
+        if participant_turn_count(state) > len(state.personas) and random.random() < (0.75 if state.discussion_lean_shifts == 0 else 0.55):
             movers: list[tuple[Persona, str]] = []
             for p in state.personas:
                 rt = state.runtimes[p.id]
@@ -174,7 +184,7 @@ class PolicyMixin:
                     and self._visible_support_count(state, own, exclude=p.id) == 0
                     and p.sim_params.compromise_threshold <= 0.50
                 )
-                if rt.commitment_strength > 0.45 and not pressured:
+                if rt.commitment_strength > 0.58 and not pressured:
                     continue
                 attractor = self._softening_attractor(state, p)
                 if attractor:
@@ -190,7 +200,7 @@ class PolicyMixin:
                 ])
                 return MoveIntent(
                     speaker_id=persona.id,
-                    act=ActType.BUILD,
+                    act=ActType.SOFTEN,
                     reason=(
                         f"the case others made for {aliases[attractor]} genuinely lands with you — say "
                         f"openly that it {phrase}, name the argument that moved you, and what you still "
@@ -417,11 +427,17 @@ class PolicyMixin:
         rt = state.runtimes[persona.id]
         current = rt.current_preference or persona.preferred_option
         best: tuple[float, str] | None = None
+        latent_counts = Counter(
+            rt.current_preference for pid, rt in state.runtimes.items()
+            if pid != persona.id and rt.current_preference in state.scenario.option_ids
+        )
         for option_id in state.scenario.option_ids:
             if option_id == current or not self._can_shift_to(state, persona, option_id):
                 continue
             score = 2.0 * self._visible_support_count(state, option_id, exclude=persona.id)
-            score += 0.5 * state.coverage[option_id].reasons
+            score += 0.75 * state.coverage[option_id].reasons
+            score += 0.35 * state.coverage[option_id].mentions
+            score += 0.80 * latent_counts[option_id]
             if option_id in persona.preferred_options:
                 score += 1.0
             if self._visibly_proposed(state, option_id):
@@ -500,6 +516,7 @@ class PolicyMixin:
             raw["invite"] *= 0.5
         if self._latent_leading_count(state) >= max(2, math.ceil(0.5 * len(state.personas))):
             raw["propose_compromise"] = raw.get("propose_compromise", 0.0) + 0.10
+            raw["soften"] = raw.get("soften", 0.0) + 0.08
         # When recent turns are stuck in a concession/worry/trade-off-plus-objection
         # shape, bias act selection toward moves that break the template.
         recent_texts = self._recent_participant_texts(state, int(cfg.style.repeated_pattern_window))
@@ -521,6 +538,7 @@ class PolicyMixin:
             "compare": ActType.COMPARE,
             "invite": ActType.INVITE,
             "propose_compromise": ActType.PROPOSE_COMPROMISE,
+            "soften": ActType.SOFTEN,
         }
         names = [k for k in raw if k in mapping]
         act = mapping[weighted_choice(names, [float(raw[k]) for k in names])]
@@ -587,7 +605,7 @@ class PolicyMixin:
         current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
         if current and current not in ids:
             ids.append(current)
-        if act in {ActType.COMPARE, ActType.CHALLENGE, ActType.ASK}:
+        if act in {ActType.COMPARE, ActType.CHALLENGE, ActType.ASK, ActType.SOFTEN}:
             rival = self._rival_option(state, speaker, exclude=set(ids))
             if rival:
                 ids.append(rival)
@@ -632,6 +650,16 @@ class PolicyMixin:
             return f"bring {quiet.name if quiet else 'someone quieter'} into the discussion with a useful prompt"
         if act == ActType.PROPOSE_COMPROMISE:
             return f"test whether {focus_names} could be common ground without claiming it is already decided"
+        if act == ActType.SOFTEN:
+            return f"non-finally acknowledge that {focus_names} is becoming more convincing, while still naming what you give up"
+        if act == ActType.CALL_VOTE:
+            return "casually ask everyone for a definite final pick now; do not suggest any option yourself"
+        if act == ActType.SUMMARIZE_SPLIT:
+            return f"summarize the visible split around {focus_names} and suggest a concrete narrowing step"
+        if act == ActType.PROBE_HOLDOUT:
+            return f"ask the holdout what still blocks {focus_names}, without pressuring them"
+        if act == ActType.SUGGEST_NARROWING:
+            return f"suggest narrowing the discussion to {focus_names} or the main trade-off"
         return "respond naturally and move the decision forward"
 
     def _vote_intent(self, state: DialogueState, persona: Persona, candidate: str) -> MoveIntent:

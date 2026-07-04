@@ -1,64 +1,129 @@
 # Option-grounded multi-user decision simulator
 
-A multi-user dialogue simulation framework for **option-grounded group decisions**:
-2–7 configurable simulated users discuss four factual option cards and reach a
-visible decision (`successful` / `majority` / `unresolved`). The scope is
-deliberately narrow — this is **not** open-ended group-chat simulation, not
-agenda-based user simulation, and not a society simulation; the option board is the
-fixed source of truth that keeps the discussion grounded and the outcome observable.
+This repository is a university project for generating configurable **multi-user decision discussions** with LLM-driven simulated participants.
 
-## A. Current pipeline summary
+The intended scope is deliberately narrow:
 
-The current project is already built around a reasonable high-level architecture:
+```text
+fixed option board + simulated group participants + visible discussion/voting outcome
+```
 
-`main.py` calls `DialogueRunner(topic).run()`.
+It is **not** a generic chatbot, open-ended group-chat bot, agenda-based user simulator, or society simulation. The option board is the factual source of truth. Simulated users may compare options, raise concerns, soften their stance, propose bounded compromises, and vote, but they should not invent concrete facts outside the environment.
 
-The actual pipeline is:
+## Current project goal
 
-1. `src/builders.py`
-   Generates the scenario, option board, shared context, personas, initial preference assignments, and hard blockers.
+Given either a one-line topic or a manual environment, the system should create a small group of 2-7 simulated users who discuss a set of option cards and reach one of three outcomes:
 
-2. `src/simulator.py`
-   Converts OCEAN/persona traits into operational parameters such as engagement, verbosity, stubbornness, initiative, responsiveness, and compromise threshold. It also builds a small private communicative-goal list per sim — a weak hint system consulted only in quiet moments, not agenda-based user simulation (most items stay pending; see docs/todo.md issue 3).
+- `successful`: all visible final stances support the same option.
+- `majority`: a majority visibly supports the winning option.
+- `unresolved`: no sufficient agreement remains after bounded narrowing.
 
-3. `src/dialogue.py` (+ `src/policy.py`, `src/observer.py`, `src/validation.py`)
-   Runs the whole conversation. `DialogueRunner` is the orchestration loop (opening, vote rounds, compromise, moderator turns, closing); it mixes in three concern modules that share the same state — `PolicyMixin` (who speaks / which act / which target, vote readiness, word budgets, style flags), `ObserverMixin` (parse a line, apply visible-state semantics, response obligations), and `ValidationMixin` (turn validation, grounding, deterministic fallback). The moderator voice is configurable via `moderator:` in `config.yaml`.
+The important claim is not merely that transcripts sound natural. The project should behave like a **configurable simulator**: participant parameters such as engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should visibly affect turn-taking, answer behavior, stance movement, and willingness to compromise.
 
-4. `src/prompts.py`
-   Builds prompts for setup, moderator turns, participant turns, repair prompts, grounding checks, and closure.
+## Pipeline
 
-5. `src/parsing.py`
-   Extracts visible option references, addressees, questions, rejections, proposals, and commitments from generated text.
+A run follows this high-level pipeline:
 
-6. `src/consensus.py`
-   Computes final outcome from explicit visible votes/acceptances.
+```text
+CLI topic or manual environment
+  -> option-grounded scenario / option board
+  -> automatic or manual simulated participants
+  -> controller selects speaker, target, act, and option focus
+  -> LLM renders one visible utterance
+  -> observer parses visible text and updates state
+  -> controller routes follow-ups, concerns, softening, votes, and narrowing
+  -> outcome is computed from visible votes/acceptances only
+  -> transcript, run.json, and metrics.csv are written
+```
 
-7. `src/logger.py` and `src/evaluation.py`
-   Save transcripts, JSON logs, token stats, and basic dialogue metrics.
+The main modules are:
 
-The architecture is described in the `info/` notes (`00_overview.md` is the map; the
-rest follow a run: `01` scenario → `02` sims → `03` routing → `04` moderator →
-`05` discussion/decision → `06` consensus → `07` evaluation/logging → `08` config →
-`09` topic examples). The LLM renders individual utterances; the controller manages
-turn-taking, state, and consensus.
+- `main.py`: CLI entrypoint. Accepts a topic, a topic file, piped topics, or a manual environment from `config.yaml`.
+- `src/config_loader.py`: validates the configuration and manual environment/participant modes.
+- `src/builders.py`: builds scenarios, option boards, shared context, and personas.
+- `src/simulator.py`: converts persona traits into operational simulator parameters.
+- `src/dialogue.py`: orchestrates opening, discussion, vote rounds, narrowing, compromise, and closure.
+- `src/policy.py`: speaker selection, act selection, routing, vote readiness, and procedural moves.
+- `src/observer.py`: parses visible utterances into public state changes.
+- `src/validation.py`: validates turns, repairs invalid output, and runs grounding checks.
+- `src/prompts.py`: setup, participant, moderator, repair, and grounding prompts.
+- `src/consensus.py`: computes `successful`, `majority`, or `unresolved` from visible evidence.
+- `src/logger.py`: writes transcript, JSON trace, metrics, provider/model/mode metadata, and token diagnostics.
+- `src/evaluation.py`: computes dialogue and simulator-realization metrics.
+- `run_eval_suite.py`: sequential evaluation suite covering auto/manual environments, auto/manual participants, multiple group sizes, moderator modes, split votes, and grounding cases.
 
-As of 2026-07-04 all eight planned `docs/todo.md` items are implemented (one commit
-each): explicit `participants:` and `environment:` input modes (auto | manual), an
-honest agenda framing, a real evaluation layer, bridge-clause enforcement on
-preference switches, trustworthy phase history (no false "closure" markers,
-`phase_history` in `run.json`), a configurable moderator, and the split of
-`dialogue.py` into policy/observer/validation modules. Invalid generated turns are
-replaced by deterministic fallbacks instead of being printed, public stance and vote
-readiness come from visible parsed text only, hard shared-context caps are enforced at
-setup, and grounding runs behind a regex tripwire.
+## Running
 
-The 2026-07-05 behavioral round made the simulator parameters visibly control the
-interaction: trait-weighted participation (turn share tracks
-engagement/initiative/responsiveness targets, with anti-monopoly and
-minimum-visibility guards), stateful stance/concern tracking (commitment strength,
-concern threads with guaranteed reactions), visible mid-discussion stance movement
-(softening lines distinct from votes), bounded reservation negotiation around
-votes, participant-owned procedure in low-/no-moderator runs, rare intentional
-same-speaker continuations, stronger grounding (extra grounding repair pass;
-printed unsupported lines ~0), and provider/model metadata in every transcript and
-`run.json`.
+Activate the existing virtual environment for the project, then run:
+
+```powershell
+py .\main.py
+```
+
+For a single topic:
+
+```powershell
+py .\main.py "Choose a restaurant for a group dinner"
+```
+
+For a topic file:
+
+```powershell
+py .\main.py scenarios.txt
+```
+
+For the evaluation suite:
+
+```powershell
+py .\run_eval_suite.py --quick
+py .\run_eval_suite.py --full
+```
+
+The suite temporarily overwrites `config.yaml`, runs cases sequentially, writes logs under `logs_eval_suite/`, writes `logs_eval_suite/eval_suite_runs.csv`, and restores the original config at the end.
+
+## Configuration modes
+
+Two independent mode switches matter:
+
+```yaml
+environment:
+  mode: auto | manual
+
+participants:
+  mode: auto | manual
+```
+
+This creates four important test combinations:
+
+```text
+auto environment + auto participants
+manual environment + auto participants
+auto environment + manual participants
+manual environment + manual participants
+```
+
+Manual environments define the option board and shared context deterministically. Manual participants define profiles, initial preferences, and optionally full parameter overrides. Fully manual environments plus complete manual profiles can skip setup LLM calls, but dialogue turns still use the LLM.
+
+## Current status after latest full evaluation
+
+The latest full evaluation run after the split/narrowing implementation showed clear improvement over the previous full suite:
+
+```text
+unresolved outcomes:        7/12 -> 4/12
+mid-discussion lean shifts: 3 total -> 16 total
+participant procedure:      now visible in no/light-moderator cases
+split reservation exchanges: now present
+transcript metadata:        provider/model/modes/seed/pacing visible
+```
+
+However, the system is not final. The remaining open issues are listed in `docs/todo.md`. The most important ones are:
+
+1. split-vote candidate selection is still sometimes socially implausible;
+2. post-reservation narrowing needs a clearer switch/stay/alternative step;
+3. the `n=2` deadlock protocol still needs a forced validation case;
+4. compromise prompts can still mix option-specific concerns;
+5. token cost remains very high;
+6. grounding still leaks occasional unsupported logistical claims;
+7. trait routing is improved but should keep being monitored.
+
+Do not add more broad features until these are addressed.

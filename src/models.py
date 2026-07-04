@@ -29,6 +29,11 @@ class ActType(str, Enum):
     COMPARE = "compare"
     INVITE = "invite"
     PROPOSE_COMPROMISE = "propose_compromise"
+    SOFTEN = "soften"
+    CALL_VOTE = "call_vote"
+    SUMMARIZE_SPLIT = "summarize_split"
+    PROBE_HOLDOUT = "probe_holdout"
+    SUGGEST_NARROWING = "suggest_narrowing"
     VOTE = "vote"
     ACCEPT = "accept"
     REJECT = "reject"
@@ -47,6 +52,11 @@ _DISCUSSION_ACTS = {
     ActType.COMPARE,
     ActType.INVITE,
     ActType.PROPOSE_COMPROMISE,
+    ActType.SOFTEN,
+    ActType.CALL_VOTE,
+    ActType.SUMMARIZE_SPLIT,
+    ActType.PROBE_HOLDOUT,
+    ActType.SUGGEST_NARROWING,
 }
 
 
@@ -389,8 +399,10 @@ class DialogueState:
     unanswered_obligations: int = 0
     candidate_option: str | None = None
     compromise_attempted: bool = False
+    two_person_deadlock_attempted: bool = False
     minority_check_attempted: bool = False
     reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
+    split_reservation_exchanges: int = 0     # reservation/supporter pairs during split/tie narrowing
     procedural_move_count: int = 0           # participant-owned structure beats taken (issue 5)
     peer_vote_call_done: bool = False        # a participant already called for final picks (issue 5)
     outcome: RunOutcome | None = None
@@ -410,6 +422,7 @@ class DialogueState:
     setup_tokens_out: int = 0
     dialogue_tokens_in: int = 0
     dialogue_tokens_out: int = 0
+    token_usage_by_call_type: dict[str, dict[str, int]] = field(default_factory=dict)
 
     def participant_ids(self) -> list[str]:
         return [p.id for p in self.personas]

@@ -284,6 +284,10 @@ def sim_utterance(
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
         decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
+    elif intent.act.value == "soften":
+        decision_instruction = "\nThis is not a final vote. Say that another option is becoming more convincing, name what moved you, and also mention what you still give up from your earlier lean."
+    elif intent.act.value in {"call_vote", "summarize_split", "probe_holdout", "suggest_narrowing"}:
+        decision_instruction = "\nThis is a procedural group-management move. Keep it concrete, short, and socially natural. Do not cast your own final vote in this line unless explicitly asked."
     continuation_note = ""
     if intent.continuation:
         continuation_note = (
@@ -423,7 +427,7 @@ Write one natural chat line under {max_words} words. No speaker prefix. Do not i
 
 def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:
     """Prompt a strict fact-checker: does the line invent facts beyond the board?"""
-    cards = _option_cards(focus_options or state.scenario.options)
+    cards = _grounding_cards(focus_options or state.scenario.options)
     context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) or "none"
     return f"""You are a strict fact-checker for a simulated group decision.
 The ONLY facts that exist in this world are in the option cards and shared context.
@@ -454,7 +458,29 @@ don't know the forecast", "it might get canceled"). If every concrete claim trac
 back to the right option's attribute, upside, tradeoff, or concern — or is such
 reasoning or uncertainty — reply false.
 
-Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
+    Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
+
+
+def _grounding_cards(options: Iterable[OptionCard]) -> str:
+    """Compact fact base for the grounding judge.
+
+    The participant prompt needs rich cards for fluent generation, but the judge
+    only needs stable facts. Keeping this compact reduces validation-token cost
+    without weakening the source-of-truth boundary.
+    """
+    rows: list[str] = []
+    for option in options:
+        facts = [f"{k.replace('_', ' ')}={v}" for k, v in option.attrs.items()]
+        if option.upside:
+            facts.append(f"upside={option.upside}")
+        if option.tradeoff:
+            facts.append(f"tradeoff={option.tradeoff}")
+        if option.concern:
+            facts.append(f"concern={option.concern}")
+        if option.best_for:
+            facts.append(f"best_for={option.best_for}")
+        rows.append(f"- {option.id}) {option.name}: " + compact_words("; ".join(facts), 46))
+    return "\n".join(rows)
 
 
 def _option_names(state: DialogueState, ids: list[str]) -> str:

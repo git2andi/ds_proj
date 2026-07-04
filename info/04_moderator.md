@@ -1,137 +1,48 @@
-# Moderator (the facilitator voice)
+# 04 — Moderator behavior
 
-**Code:** `src/dialogue.py` (`_mod`, `_maybe_moderator_nudge`, `_moderator_vote_nudge`,
-`_moderator_intervention_details`, `_minority_check`, `_maybe_split_vote_compromise`,
-`_moderator_say`), `src/prompts.py` (`moderator_opening`, `moderator_nudge_prompt`,
-`moderator_closure_prompt`).
+The moderator is a configurable visible voice, not the whole controller. The hidden controller still manages state and routing whether or not the moderator appears in the transcript.
 
-The moderator is the environment's facilitator. It exists to prevent common
-multi-user failures — ignored questions, premature voting, silent options, unclear
-commitments, endless split votes — while staying sparse and neutral. Crucially, the
-**controller policy is separate from the moderator voice**: the controller decides
-who speaks and when a vote is ready regardless of the moderator; the moderator only
-adds facilitation *turns*.
+## Config flags
 
-## Configurable moderator (issue 7)
-
-The moderator's visible turns are gated by `moderator:` in `config.yaml`, checked via
-`DialogueRunner._mod(part)`:
+`moderator:` in `config.yaml` controls visible moderator turns:
 
 ```yaml
 moderator:
-  enabled: true               # master switch; false = no moderator turns at all
-  opening: true               # present the option board at the start
-  mid_discussion_nudges: true # stall/circling nudges during discussion
-  final_vote_call: true       # vote calls, holdout probes, split-compromise summary
-  closing: true               # closing summary line
+  enabled: true | false
+  opening: true | false
+  mid_discussion_nudges: true | false
+  final_vote_call: true | false
+  closing: true | false
 ```
 
-Because the flags touch only the moderator's turns, **lower- and no-moderator modes
-still reach a decision**: the decision loop keeps emitting participant vote turns and
-the participant-level narrowing acts (defend / compare / propose-compromise /
-stagnation break in `03`) carry the discussion. This is how the system produces
-genuine **peer-to-peer** interaction, not just facilitator-guided discussion.
+## Fully moderated mode
 
-- With `opening: false`, the board is still shown as plain setup scaffolding (console
-  header + the transcript `## Options` section), just not as a moderator turn.
-- Defaults reproduce the fully-moderated behavior. `run.json` records the resolved
-  `moderator_config`.
+The moderator can:
 
-## MUCA-style what / when / who
+- present the option board;
+- nudge stalled discussion;
+- call for final votes;
+- ask holdout/split-vote questions;
+- close the discussion.
 
-When it does act, the moderator decides three things
-(`_moderator_intervention_details`):
+## Light/no-moderator modes
+
+When moderator functions are reduced, participants should perform more procedural work. High-initiative participants may call for picks, ask holdouts, or summarize split positions.
+
+## Deterministic summaries
+
+Split-vote and no-majority summaries should be deterministic or tightly controlled. They must be complete and concrete. Avoid vague prompts such as:
 
 ```text
-what   which intervention is needed?
-when   is this the right moment (stalled / scattered / one-sided / ready to narrow)?
-who    who should answer or be addressed?
+Could those who prefer B or C live?
 ```
 
-A mid-discussion nudge (`_maybe_moderator_nudge`) only fires when the discussion has
-stalled (`no_progress` window), respects a cooldown and a cap
-(`moderator_max_interventions`), and picks the most concrete visible issue in
-priority order:
+Correct style:
 
 ```text
-uncovered option  -> pending direct question  -> unresolved blocker on the candidate
-(probed once)     -> visible split (weighed head-to-head)  -> single holdout
-                  -> generic "strongest remaining concern" (last resort)
+We are split: A has two votes, B and C have one each. Let's test A first because it currently has the most support. Ben and Clara, what would still block A for you?
 ```
 
-## What good vs bad moderation looks like
+## Current open issue
 
-```text
-Good (state-aware, targeted, one line):
-  "Anton, Kenji asked about the no-checked-bag issue — is that a deal-breaker for you?"
-  "Before we narrow, D hasn't come up — one reason to keep or drop it?"
-
-Bad (generic, ignores state):
-  "Can everyone share what feels best?"
-```
-
-The moderator never dictates a quoted vote formula, never repeats the option board,
-and varies its phrasing. When it addresses a participant by name, that participant
-owes the next answer (the response obligation in `03`).
-
-## Vote calls are option-neutral
-
-At finalization the moderator invites picks **without naming any option**, so the
-current front-runner can't leak into the question and nudge a false consensus
-("which Space Station option are you going with?" is exactly what it must avoid).
-Later rounds re-prompt only the unclear/non-voters.
-
-## Bounded closing beats
-
-Two special facilitation passes, each at most once per run, keep closes honest:
-
-- **Minority check** (`_minority_check`) — once a majority forms, the holdouts get
-  one visible beat: accept the majority option *with a bridge clause* if they can
-  move, or briefly restate what holds them back. May upgrade the outcome to unanimity.
-- **Split-vote compromise** (`_maybe_split_vote_compromise`) — if votes split with no
-  majority, the moderator summarizes the split and floats one candidate; movers may
-  switch (with a bridge), the rest restate. The probe never targets an option with a
-  visible unresolved dealbreaker, and it only claims a candidate "has the most
-  support" when it is a **strict plurality** — a pure tie is announced as "evenly
-  split with no option ahead".
-
-Both passes embed a **reservation exchange** (issue 4, once per run, exactly two
-turns): the most movable holdout states one concrete reservation about the
-candidate (explicitly *not* a vote), and one supporter responds honestly — using
-only card facts and conceding what the board can't prove. Only then come the
-closing beats where the holdout may accept (bridged) or stay. With
-`final_vote_call: false`, the holdout probe is asked by a high-initiative
-*supporter* instead of the moderator — participant-owned procedure. The hard turn
-cap forces the vote but never starves these bounded passes.
-
-## Closures are status-aware
-
-`moderator_closure_prompt` matches the real outcome (`06`): a `majority` close **names
-the holdouts** and never implies full agreement; a `successful` close wraps up warmly;
-an `unresolved` close presents **nothing** as chosen. (When `closing: false`, the
-outcome is still computed and logged — only the moderator's summary line is skipped.)
-
-## Participant-owned procedure in low-/no-moderator modes (issue 5)
-
-When a moderator voice is off, its structural job is *visibly taken over by
-participants* (always by a high-initiative sim), not just absorbed silently by the
-controller:
-
-- **Vote call** (`final_vote_call: false`): the highest-initiative sim opens the
-  first vote round by casually asking everyone for their definite final pick —
-  option-neutral, in its own words — then votes first itself.
-- **Holdout probe** (`final_vote_call: false`): a supporter of the majority/probe
-  candidate asks the holdout what still blocks agreement (`04` bounded closing
-  beats), followed by the reservation exchange.
-- **Stall beat** (`mid_discussion_nudges: false`): under the same stall conditions
-  as the moderator nudge (bounded to two per run), a high-initiative sim sums up the
-  visible split and suggests focusing/narrowing, proposes setting aside an option
-  nobody made a case for, or suggests moving toward a decision.
-
-Together with the participant-level acts that always exist (invite a quiet sim,
-propose a compromise, head-to-head comparisons), no-moderator runs reach decisions
-through visible peer facilitation. Metrics: `participant_procedural_moves`,
-`peer_vote_call`. Validated live: a `moderator.enabled: false` run reached a
-unanimous close with zero moderator turns — peer vote call, peer holdout probe,
-reservation exchange, bridged switch.
-
+Moderator/peer narrowing now happens, but candidate selection and follow-up logic still need improvement. The moderator must not test arbitrary candidates when a visible leading option exists.

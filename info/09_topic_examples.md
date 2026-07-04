@@ -1,83 +1,59 @@
-# Topic examples and generalization
+# 09 — Topic examples
 
-The same simulator engine runs for any topic. What changes per topic is the generated
-**environment** (`01`); the controller loop, routing, validation, and consensus logic
-are topic-independent. This note shows a couple of examples and states what must
-generalize.
+Good topics for this simulator are small-group option-grounded decisions. They should invite tradeoffs but not require external facts.
 
-## Same engine, different environment
-
-You enter a short topic. The system builds an option-grounded world for it, then runs
-the identical loop: create sims, assign preferences, route turns, observe commitments,
-compute an outcome.
-
-### Example: "Book a flight to Stockholm"
+## Good examples
 
 ```text
-Possible generated options:
-  A direct morning flight
-  B cheaper evening layover
-  C balanced midday economy flight
-  D cheapest red-eye low-cost flight
-
-Likely discussion dimensions: cost, duration, layover risk, comfort,
-baggage/arrival time (only if the cards list them).
+Choose a restaurant for a group dinner with mixed dietary preferences.
+Choose a weekend activity for friends with different energy levels.
+Pick a birthday gift for someone who already owns many things.
+Choose a coffee machine for a shared office kitchen.
+Decide where to hold a student project celebration.
+Pick a team-building activity for a small software team.
+Choose whether roommates should buy a robot vacuum or a better dishwasher.
+Pick a movie for Friday night when people want different genres.
+Choose a day trip plan with different budgets and travel tolerance.
+Decide what app feature to build first in a small prototype.
 ```
 
-### Example: "Pick a project management tool for the team"
+## Less suitable examples
+
+Avoid topics that require current external facts, open-ended politics, medical/legal advice, or unrestricted brainstorming without options.
+
+Bad fit:
 
 ```text
-Possible generated options:
-  A Asana Premium         B Trello Standard
-  C Monday.com Basic      D Jira Software
-
-Likely discussion dimensions: price, integrations, onboarding effort,
-performance, ecosystem/plugins (only as the cards state).
+Discuss the future of democracy.
+Solve climate change.
+What should Germany do next year?
+Debate whether AI is good or bad.
 ```
 
-In both, sims may compare and reason from the card facts and voice uncertainty, but
-must not invent real product/airline facts (the grounding rule, `05`/`06`).
+Those can be made suitable by turning them into bounded option decisions.
 
-## What must generalize (never topic-specific)
+## Useful stress-test topics
 
-Fixes and mechanics operate on abstract simulator concepts, never on "Stockholm",
-"flights", or a specific option name:
+For split-vote narrowing:
 
 ```text
-option reference        commitment / vote          question obligation
-speaker + target        option coverage            unsupported-fact detection
-latent lean vs vote     bridged switch             phase / outcome
-hard blocker            visible-evidence narrowing
+Choose a weekend activity where each participant values a different tradeoff.
 ```
 
-If a fix only works for one domain, it is wrong.
-
-## Good topic inputs
-
-Topics that describe a small decision with real trade-offs work best:
+For grounding:
 
 ```text
-Choose a movie for tonight.          Plan a birthday party.
-Pick a book for next week's club.    Decide where to hold the team lunch.
-Choose a database for analytics.     Pick a fitness activity for the office.
+Choose between activities with sparse option facts and no external logistics.
 ```
 
-## Less suitable inputs
-
-Pure open-ended debate or factual-research questions do not fit the option-grounded
-group-decision frame unless first turned into concrete options:
+For trait behavior:
 
 ```text
-What is the meaning of life?     Explain quantum mechanics.     Who will win the election?
+Choose a shared office purchase with one dominant organizer and one quiet participant.
 ```
 
-For a fully controlled experiment (fixed world + fixed cast), skip topic generation
-entirely and author both sides via `environment: manual` and `participants: manual`
-(`08`).
+For n=2 deadlock:
 
-## Current mismatch / intended correction
-
-The topic guidance is mostly correct. The important clarification is that topics are only entry points into an option-grounded environment. The simulator should not try to answer open factual questions or generate arbitrary group chat unless those topics are first converted into concrete options and shared context.
-
-Future examples should show not only random auto topics, but also controlled manual scenarios that are useful for testing simulator behavior: one fixed restaurant decision for engagement differences, one fixed family trip for holdout/compromise behavior, one fixed technical-tool decision for directness and stubbornness, and one no-moderator scenario for participant-owned procedural moves.
-
+```text
+Choose between two household purchases where both roommates are stubborn and prefer opposite options.
+```

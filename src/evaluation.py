@@ -220,6 +220,26 @@ def token_summary_for(state: DialogueState) -> dict[str, int]:
     }
 
 
+def _token_usage_flat(state: DialogueState) -> dict[str, int]:
+    """Token/call diagnostics by call type for cost regression checks."""
+    out: dict[str, int] = {}
+    kinds = [
+        "setup",
+        "utterance",
+        "grounding",
+        "repair",
+        "grounding_repair",
+        "moderator",
+        "moderator_repair",
+    ]
+    for kind in kinds:
+        usage = state.token_usage_by_call_type.get(kind, {})
+        out[f"tokens_{kind}_in"] = int(usage.get("in", 0))
+        out[f"tokens_{kind}_out"] = int(usage.get("out", 0))
+        out[f"calls_{kind}"] = int(usage.get("calls", 0))
+    return out
+
+
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     switch_count, switch_explained, switch_bridged = _switch_stats(state)
     participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
@@ -285,6 +305,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "reservation_exchange": bool(state.reservation_exchange_done),
         "participant_procedural_moves": int(state.procedural_move_count),
         "peer_vote_call": bool(state.peer_vote_call_done),
+        "two_person_deadlock_attempted": bool(state.two_person_deadlock_attempted),
+        "split_reservation_exchanges": int(state.split_reservation_exchanges),
         # Same-speaker follow-up turns (issue 6) — rare by design.
         "continuation_turns": sum(
             1 for t in participant_turns if t.intent is not None and t.intent.continuation
@@ -336,7 +358,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "force_narrow_turns": state.force_narrow_turns,
         "hard_max_turns": state.hard_max_turns,
         "phase_history": list(state.phase_history),
-    } | parameter_realization(state) | token_summary_for(state)
+    } | parameter_realization(state) | token_summary_for(state) | _token_usage_flat(state)
 
 
 def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:

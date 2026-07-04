@@ -68,7 +68,7 @@ class ObserverMixin:
         for option_id in act.option_refs:
             cov = state.coverage[option_id]
             cov.mentions += 1
-            if act.act_type in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.PROPOSE_COMPROMISE, ActType.OPENING}:
+            if act.act_type in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.PROPOSE_COMPROMISE, ActType.SOFTEN, ActType.OPENING}:
                 cov.reasons += 1
             if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1

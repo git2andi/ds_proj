@@ -1,0 +1,2900 @@
+{
+  "run_id": "20260705_012602_320581",
+  "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "manual",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+    "decision_kind": "travel_destination",
+    "opening_question": "How should we balance relaxation and activity for our weekend trip?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Cabin Retreat by Lake Serenity",
+        "attrs": {
+          "cost": "$550 total",
+          "distance": "2 hours drive",
+          "activity_level": "low",
+          "noise_level": "very quiet"
+        },
+        "upside": "Peaceful lakeside setting ideal for unwinding and reading",
+        "tradeoff": "Limited active options, mostly hiking and fishing",
+        "concern": "May feel too slow or boring for the active friend",
+        "best_for": "quiet and relaxation priority",
+        "short_name": "Cabin Retreat"
+      },
+      {
+        "id": "B",
+        "name": "Mountain Biking at Redwood Trails",
+        "attrs": {
+          "cost": "$580 total",
+          "distance": "3 hours drive",
+          "activity_level": "high",
+          "noise_level": "moderate"
+        },
+        "upside": "Exciting mountain biking with scenic views",
+        "tradeoff": "Less downtime and quiet moments, more physical exertion",
+        "concern": "Could be too intense or tiring for less active friends",
+        "best_for": "active and adventurous priority",
+        "short_name": "Redwood Trails"
+      },
+      {
+        "id": "C",
+        "name": "Historic Small Town Stay with Art Walk",
+        "attrs": {
+          "cost": "$520 total",
+          "distance": "2.5 hours drive",
+          "activity_level": "moderate",
+          "noise_level": "low to moderate"
+        },
+        "upside": "Casual strolls through galleries and cafes with some light activity",
+        "tradeoff": "Not fully quiet nor fully active, may not fully satisfy extremes",
+        "concern": "Might feel bland or indecisive to those wanting clear quiet or action",
+        "best_for": "balanced mix of quiet and light activity",
+        "short_name": "Small Town"
+      },
+      {
+        "id": "D",
+        "name": "Beachside Resort with Kayaking and Spa",
+        "attrs": {
+          "cost": "$600 total",
+          "distance": "3 hours drive",
+          "activity_level": "moderate to high",
+          "noise_level": "moderate"
+        },
+        "upside": "Combination of active kayaking and relaxing spa treatments",
+        "tradeoff": "More expensive and some noise from resort crowds",
+        "concern": "Might feel crowded or busy for those wanting complete quiet",
+        "best_for": "mix of active and relaxation options",
+        "short_name": "Beachside Resort"
+      }
+    ],
+    "shared_context": [
+      "4 friends planning a 2-night weekend trip",
+      "Budget capped at $600 total for accommodations and activities",
+      "One friend prefers quiet and low-key, another wants active and adventurous"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.95,
+        "verbosity": 0.85,
+        "initiative": 0.95,
+        "responsiveness": 0.7,
+        "stubbornness": 0.35,
+        "directness": 0.75,
+        "compromise_threshold": 0.4
+      },
+      "background": "very engaged organizer who notices process problems and proposes next steps",
+      "private_goal": "wants a clear decision and tends to keep the group moving",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Tarek",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.15,
+        "verbosity": 0.25,
+        "initiative": 0.1,
+        "responsiveness": 0.65,
+        "stubbornness": 0.3,
+        "directness": 0.35,
+        "compromise_threshold": 0.3
+      },
+      "background": "quiet participant who answers when asked but rarely pushes himself into the discussion",
+      "private_goal": "wants the simplest acceptable choice and avoids long arguments",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Eva",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "initiative": 0.45,
+        "responsiveness": 0.75,
+        "stubbornness": 0.5,
+        "directness": 0.55,
+        "compromise_threshold": 0.45
+      },
+      "background": "balanced participant who weighs concrete constraints before moving position",
+      "private_goal": "wants the option with the fewest hidden tradeoffs",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Sam",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5,
+        "verbosity": 0.5,
+        "initiative": 0.5,
+        "responsiveness": 0.85,
+        "stubbornness": 0.2,
+        "directness": 0.4,
+        "compromise_threshold": 0.25
+      },
+      "background": "socially flexible participant who often bridges between opposing preferences",
+      "private_goal": "wants the final choice to feel acceptable to everyone",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 12,
+      "last_spoke_turn": 37,
+      "current_preference": "B",
+      "commitment_strength": 0.5590000000000002,
+      "commitment_min": 0.5590000000000002,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [
+        "B"
+      ],
+      "soft_rejections": {
+        "D": "Tarek, the noise at the Beachside Resort is real and could be a dealbreaker for quiet time.",
+        "A": "The two-hour drive for Cabin Retreat feels like a low barrier, but the limited active options still make me worry it won’t satisfy the adventurous friend at all."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Redwood Trails is the frontrunner with the biking and views hitting the adventure mark, but it’s tight on quiet time and might drain energy fast.",
+        "Tarek, the noise at the Beachside Resort is real and could be a dealbreaker for quiet time.",
+        "Cut the noise and the grind by splitting time: start at the Cabin Retreat for quiet and recharge, then hit Redwood Trails for a half-day burst of activity. It hits both needs without blowing the budget.",
+        "Sam, Small Town sounds like a decent compromise but it’s not fully quiet or active—could leave both ends feeling unsatisfied. Redwood Trails nails the active side hard and keeps us within budget even with some downtime.",
+        "Eva, Redwood Trails’ cost is $580 total, so it fits tight but won’t bust the budget. We get the active adventure and some quiet downtime without juggling two places or long drives.",
+        "Cutting drive time’s key, so Small Town’s 2.5 hours is a drag but still closer than Redwood Trails. What if we pick Cabin, Small Town, or Redwood Trails as a compromise? All fit budget and balance quiet with some activity.",
+        "Eva, mixing the two sounds like doubling costs or splitting the group, which we can’t do.",
+        "Enough back and forth—let’s just pick our final choice now so we can lock this down. If we drag it out more, the $600 budget might start looking tight with last-minute changes.",
+        "Redwood Trails is the pick. It’s the only choice that actually challenges us and makes the trip memorable instead of just okay.",
+        "We’re split: Cabin Retreat has two votes, Redwood Trails and Small Town one each. Let’s test Cabin Retreat as the compromise—Sam, Eva, what would still block that for you?",
+        "The two-hour drive for Cabin Retreat feels like a low barrier, but the limited active options still make me worry it won’t satisfy the adventurous friend at all.",
+        "I'm going with Redwood Trails because the active friend needs real adventure, and the biking there offers the excitement we can’t get at Cabin Retreat."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 7,
+      "last_spoke_turn": 30,
+      "current_preference": "A",
+      "commitment_strength": 0.2834000000000001,
+      "commitment_min": 0.2834000000000001,
+      "challenges_received": 2,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Could work if the noise from the resort crowds isn’t too much for the quiet one.",
+        "Cabin Retreat’s quiet and low-key angle is starting to click more. Still like Beachside for the mix of activity and chill, though.",
+        "Maybe too tight on budget and time with the long drives. Could get tiring.",
+        "Could work if we accept some noise and tight budget with Beachside.",
+        "Maybe split time between Cabin for quiet and Beachside for some action, if budget allows?",
+        "Maybe Small Town works but might drag if we want full quiet or full action.",
+        "I'd go with Cabin Retreat."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 11,
+      "last_spoke_turn": 36,
+      "current_preference": "A",
+      "commitment_strength": 0.5370000000000004,
+      "commitment_min": 0.5370000000000004,
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "The quiet vibe at Cabin Retreat could really help balance things, though I wonder if the limited activities will keep the active friend entertained enough.",
+        "We’d save some cash with Cabin Retreat too, which means less stress about stretching the budget for food or extras.",
+        "Tarek, do you think fitting in Redwood Trails’ activity half-day after the Cabin would stretch us too tight on time or budget?",
+        "I get that Beachside offers more energy, but the noise and cost could sneakily wear us down—Cabin’s simplicity feels safer.",
+        "Agree that Redwood Trails fits the budget, but the long drive and noise might wear on us more than the Cabin.",
+        "Tarek, do we know if the Cabin’s limited active options like hiking are enough to keep the adventurous friend interested?",
+        "Nora, picking between those three makes sense—just remember Small Town might leave us stuck in the middle, neither fully quiet nor fully active.",
+        "I get the appeal, but if we want fewer surprises, mixing Cabin’s quiet with Small Town’s light buzz might give us a clearer middle ground.",
+        "Choosing the spot with the clearest budget and activity limits sounds smart, so my pick is Cabin Retreat.",
+        "Sam, we don’t know exactly how much variety everyone wants, but it’s still the only option with a clear $550 total cost and a super quiet spot.",
+        "Nora, we don’t know exactly how much active variety feels enough here, but fishing and hiking might still offer some decent options without extra cost."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 8,
+      "last_spoke_turn": 38,
+      "current_preference": "C",
+      "commitment_strength": 0.43800000000000006,
+      "commitment_min": 0.43800000000000006,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "We could try Small Town since it’s got that chill vibe but with some light activity—though it might not fully satisfy either extreme.",
+        "Eva, the peaceful lakeside vibe you mentioned is really starting to win me over, though I still like the Small Town’s mix of strolls and art for keeping things lively enough.",
+        "We should also keep in mind that Small Town’s 2.5-hour drive might cut into our chill or activity time more than we expect.",
+        "Eva, do you think the light activity at Small Town might strike a better balance than the Cabin’s slow pace? Tarek, you good with that tradeoff?",
+        "True, but if we pace the art walks right, it could feel more refreshing than dragging—any ideas on timing?",
+        "Small Town gets my vote.",
+        "What we don’t know here is how much everyone values a bit of variety—Cabin Retreat might be too one-note for some.",
+        "I vote for Small Town."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Redwood Trails is the frontrunner with the biking and views hitting the adventure mark, but it’s tight on quiet time and might drain energy fast.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Redwood Trails is the frontrunner with the biking and views hitting the adventure mark, but it’s tight on quiet time and might drain energy fast.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 501,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "We could try Small Town since it’s got that chill vibe but with some light activity—though it might not fully satisfy either extreme.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We could try Small Town since it’s got that chill vibe but with some light activity—though it might not fully satisfy either extreme.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1305,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "The quiet vibe at Cabin Retreat could really help balance things, though I wonder if the limited activities will keep the active friend entertained enough.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The quiet vibe at Cabin Retreat could really help balance things, though I wonder if the limited activities will keep the active friend entertained enough.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1364,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Could work if the noise from the resort crowds isn’t too much for the quiet one.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Could work if the noise from the resort crowds isn’t too much for the quiet one.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1450,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Tarek, the noise at the Beachside Resort is real and could be a dealbreaker for quiet time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Tarek, the noise at the Beachside Resort is real and could be a dealbreaker for quiet time.",
+        "act_type": "reject",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "D": "Tarek, the noise at the Beachside Resort is real and could be a dealbreaker for quiet time."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Beachside Resort, Redwood Trails, Cabin Retreat with one clear trade-off",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1621,
+      "tokens_out": 62,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Cabin Retreat’s quiet and low-key angle is starting to click more. Still like Beachside for the mix of activity and chill, though.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cabin Retreat’s quiet and low-key angle is starting to click more. Still like Beachside for the mix of activity and chill, though.",
+        "act_type": "soften",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "soften",
+        "reason": "the case others made for Cabin Retreat genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Beachside Resort; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 791,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "We’d save some cash with Cabin Retreat too, which means less stress about stretching the budget for food or extras.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We’d save some cash with Cabin Retreat too, which means less stress about stretching the budget for food or extras.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Cabin Retreat, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1455,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Eva, the peaceful lakeside vibe you mentioned is really starting to win me over, though I still like the Small Town’s mix of strolls and art for keeping things lively enough.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Eva, the peaceful lakeside vibe you mentioned is really starting to win me over, though I still like the Small Town’s mix of strolls and art for keeping things lively enough.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "soften",
+        "reason": "the case others made for Cabin Retreat genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Small Town; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 1566,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Cut the noise and the grind by splitting time: start at the Cabin Retreat for quiet and recharge, then hit Redwood Trails for a half-day burst of activity. It hits both needs without blowing the budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cut the noise and the grind by splitting time: start at the Cabin Retreat for quiet and recharge, then hit Redwood Trails for a half-day burst of activity. It hits both needs without blowing the budget.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 811,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Tarek, do you think fitting in Redwood Trails’ activity half-day after the Cabin would stretch us too tight on time or budget?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tarek, do you think fitting in Redwood Trails’ activity half-day after the Cabin would stretch us too tight on time or budget?",
+        "act_type": "invite",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "invite",
+        "reason": "bring Tarek into the discussion with a useful prompt",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 774,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Maybe too tight on budget and time with the long drives. Could get tiring.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Maybe too tight on budget and time with the long drives. Could get tiring.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 861,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "I get that Beachside offers more energy, but the noise and cost could sneakily wear us down—Cabin’s simplicity feels safer.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I get that Beachside offers more energy, but the noise and cost could sneakily wear us down—Cabin’s simplicity feels safer.",
+        "act_type": "build",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Cabin Retreat, Beachside Resort fits that",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1509,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Sam, Small Town sounds like a decent compromise but it’s not fully quiet or active—could leave both ends feeling unsatisfied. Redwood Trails nails the active side hard and keeps us within budget even with some downtime.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Sam, Small Town sounds like a decent compromise but it’s not fully quiet or active—could leave both ends feeling unsatisfied. Redwood Trails nails the active side hard and keeps us within budget even with some downtime.",
+        "act_type": "build",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Small Town, Redwood Trails, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 771,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "We should also keep in mind that Small Town’s 2.5-hour drive might cut into our chill or activity time more than we expect.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We should also keep in mind that Small Town’s 2.5-hour drive might cut into our chill or activity time more than we expect.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Small Town that hasn't come up yet",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 750,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Could work if we accept some noise and tight budget with Beachside.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Could work if we accept some noise and tight budget with Beachside.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Beachside Resort with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1524,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Eva, Redwood Trails’ cost is $580 total, so it fits tight but won’t bust the budget. We get the active adventure and some quiet downtime without juggling two places or long drives.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Eva, Redwood Trails’ cost is $580 total, so it fits tight but won’t bust the budget. We get the active adventure and some quiet downtime without juggling two places or long drives.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Redwood Trails, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 762,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Agree that Redwood Trails fits the budget, but the long drive and noise might wear on us more than the Cabin.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Agree that Redwood Trails fits the budget, but the long drive and noise might wear on us more than the Cabin.",
+        "act_type": "agree",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Redwood Trails, Cabin Retreat",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 805,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Maybe split time between Cabin for quiet and Beachside for some action, if budget allows?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Maybe split time between Cabin for quiet and Beachside for some action, if budget allows?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Beachside Resort, Cabin Retreat could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1603,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Tarek, do we know if the Cabin’s limited active options like hiking are enough to keep the adventurous friend interested?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tarek, do we know if the Cabin’s limited active options like hiking are enough to keep the adventurous friend interested?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Cabin Retreat",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 676,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Cutting drive time’s key, so Small Town’s 2.5 hours is a drag but still closer than Redwood Trails. What if we pick Cabin, Small Town, or Redwood Trails as a compromise? All fit budget and balance quiet with some activity.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cutting drive time’s key, so Small Town’s 2.5 hours is a drag but still closer than Redwood Trails. What if we pick Cabin, Small Town, or Redwood Trails as a compromise? All fit budget and balance quiet with some activity.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "A",
+        "offers_compromise": "B",
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "propose_compromise",
+        "reason": "test whether Cabin Retreat, Small Town, Redwood Trails could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 902,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Nora, picking between those three makes sense—just remember Small Town might leave us stuck in the middle, neither fully quiet nor fully active.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nora, picking between those three makes sense—just remember Small Town might leave us stuck in the middle, neither fully quiet nor fully active.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 778,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Eva, do you think the light activity at Small Town might strike a better balance than the Cabin’s slow pace? Tarek, you good with that tradeoff?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Eva, do you think the light activity at Small Town might strike a better balance than the Cabin’s slow pace? Tarek, you good with that tradeoff?",
+        "act_type": "invite",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "invite",
+        "reason": "bring Tarek into the discussion with a useful prompt",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 707,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Maybe Small Town works but might drag if we want full quiet or full action.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Maybe Small Town works but might drag if we want full quiet or full action.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 858,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "True, but if we pace the art walks right, it could feel more refreshing than dragging—any ideas on timing?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "True, but if we pace the art walks right, it could feel more refreshing than dragging—any ideas on timing?",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1429,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "I get the appeal, but if we want fewer surprises, mixing Cabin’s quiet with Small Town’s light buzz might give us a clearer middle ground.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I get the appeal, but if we want fewer surprises, mixing Cabin’s quiet with Small Town’s light buzz might give us a clearer middle ground.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "test whether Small Town, Cabin Retreat could be common ground without claiming it is already decided",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 742,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Eva, mixing the two sounds like doubling costs or splitting the group, which we can’t do.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Eva, mixing the two sounds like doubling costs or splitting the group, which we can’t do.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Small Town, Cabin Retreat, Redwood Trails with one clear trade-off",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 880,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Enough back and forth—let’s just pick our final choice now so we can lock this down. If we drag it out more, the $600 budget might start looking tight with last-minute changes.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Enough back and forth—let’s just pick our final choice now so we can lock this down. If we drag it out more, the $600 budget might start looking tight with last-minute changes.",
+        "act_type": "call_vote",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "call_vote",
+        "reason": "you feel the group has weighed enough — casually suggest everyone give their definite final pick now, in your own words; do not name or suggest any option in this line",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 907,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Redwood Trails is the pick. It’s the only choice that actually challenges us and makes the trip memorable instead of just okay.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Redwood Trails is the pick. It’s the only choice that actually challenges us and makes the trip memorable instead of just okay.",
+        "act_type": "accept",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [
+          "B"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 767,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Small Town gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Small Town gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1196,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "I'd go with Cabin Retreat.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'd go with Cabin Retreat.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1240,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 31,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Choosing the spot with the clearest budget and activity limits sounds smart, so my pick is Cabin Retreat.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Choosing the spot with the clearest budget and activity limits sounds smart, so my pick is Cabin Retreat.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the option they actually choose now",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with"
+        ],
+        "avoid_reasons": [
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 759,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "We’re split: Cabin Retreat has two votes, Redwood Trails and Small Town one each. Let’s test Cabin Retreat as the compromise—Sam, Eva, what would still block that for you?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We’re split: Cabin Retreat has two votes, Redwood Trails and Small Town one each. Let’s test Cabin Retreat as the compromise—Sam, Eva, what would still block that for you?",
+        "act_type": "summarize_split",
+        "option_refs": [
+          "B",
+          "A",
+          "C"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "summarize_split",
+        "reason": "summarize the vote split clearly and propose a concrete narrowing step; the intended content is: We are split: Cabin Retreat (2), Redwood Trails (1), Small Town (1). Let's test Cabin Retreat as the compromise; Nora, Sam, what would still block that for you?",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 743,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "What we don’t know here is how much everyone values a bit of variety—Cabin Retreat might be too one-note for some.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "What we don’t know here is how much everyone values a bit of variety—Cabin Retreat might be too one-note for some.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes Cabin Retreat hard for you; do not vote yet, and do not invent facts",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 755,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Sam, we don’t know exactly how much variety everyone wants, but it’s still the only option with a clear $550 total cost and a super quiet spot.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sam, we don’t know exactly how much variety everyone wants, but it’s still the only option with a clear $550 total cost and a super quiet spot.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "respond directly to Sam's reservation about Cabin Retreat; concede what the option board cannot prove, then point to the listed fact or trade-off that still makes it workable — no pressure",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 33,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 662,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The two-hour drive for Cabin Retreat feels like a low barrier, but the limited active options still make me worry it won’t satisfy the adventurous friend at all.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The two-hour drive for Cabin Retreat feels like a low barrier, but the limited active options still make me worry it won’t satisfy the adventurous friend at all.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "The two-hour drive for Cabin Retreat feels like a low barrier, but the limited active options still make me worry it won’t satisfy the adventurous friend at all."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes Cabin Retreat hard for you; do not vote yet, and do not invent facts",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1589,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Nora, we don’t know exactly how much active variety feels enough here, but fishing and hiking might still offer some decent options without extra cost.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nora, we don’t know exactly how much active variety feels enough here, but fishing and hiking might still offer some decent options without extra cost.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "respond directly to Nora's reservation about Cabin Retreat; concede what the option board cannot prove, then point to the listed fact or trade-off that still makes it workable — no pressure",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 35,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 748,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I'm going with Redwood Trails because the active friend needs real adventure, and the biking there offers the excitement we can’t get at Cabin Retreat.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'm going with Redwood Trails because the active friend needs real adventure, and the biking there offers the excitement we can’t get at Cabin Retreat.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "after the split discussion, decide whether you can move to Cabin Retreat or stay with Redwood Trails; if you switch, commit clearly and bridge from your earlier pick with the reason that changed; if you stay, give one concrete blocker or reservation — no new option facts",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1457,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I vote for Small Town.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I vote for Small Town.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "after the split discussion, decide whether you can move to Cabin Retreat or stay with Small Town; if you switch, commit clearly and bridge from your earlier pick with the reason that changed; if you stay, give one concrete blocker or reservation — no new option facts",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with",
+          "I'm going with",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "because the active friend needs real adventure, and the biking",
+          "to keep the adventurous friend interested",
+          "for a half-day burst of activity. It hits both needs",
+          "for the mix of activity and chill, though",
+          "for the quiet one",
+          "since it’s got that chill vibe but with some light"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2144,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 38,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "A",
+        "p4": "C"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "A",
+        "p4": "C"
+      },
+      "phase_history": [
+        "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 26: narrowing — target discussion length reached",
+        "turn 31: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 38: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 20,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 30
+    }
+  },
+  "phase_history": [
+    "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 26: narrowing — target discussion length reached",
+    "turn 31: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 38: closure — vote rounds exhausted without visible consensus",
+    "turn 38: closure — closed as unresolved"
+  ],
+  "metrics": {
+    "participant_turns": 38,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Nora": 12,
+      "Tarek": 7,
+      "Eva": 11,
+      "Sam": 8
+    },
+    "top_speaker_share": 0.316,
+    "avg_words_by_persona": {
+      "Nora": 28.2,
+      "Tarek": 14.1,
+      "Eva": 22.4,
+      "Sam": 19.1
+    },
+    "question_density": 0.184,
+    "avg_words_per_turn": 22.0,
+    "repaired_turns": 4,
+    "repair_rate": 0.105,
+    "flagged_turns": 0,
+    "fallback_turns": 3,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Nora": "B",
+      "Tarek": "A",
+      "Eva": "A",
+      "Sam": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 0.667,
+    "participation_gini": 0.118,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.4,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.145,
+    "compromise_success_rate": 0.0,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 2,
+    "peer_vote_call": true,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 2,
+    "continuation_turns": 0,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 0.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 1,
+    "name_prefix_rate": 0.289,
+    "option_opening_rate": 0.158,
+    "i_opening_rate": 0.132,
+    "we_opening_rate": 0.158,
+    "name_or_option_opening_rate": 0.447,
+    "repeated_opening_patterns": 4,
+    "unsupported_fact_flags": 0,
+    "unsupported_printed_turns": 0,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 18,
+        "reasons": 9,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 10,
+        "reasons": 6,
+        "objections": 0,
+        "acceptances": 1
+      },
+      "C": {
+        "mentions": 13,
+        "reasons": 6,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 6,
+        "reasons": 5,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nora": 0.95,
+      "Tarek": 0.15,
+      "Eva": 0.55,
+      "Sam": 0.5
+    },
+    "expected_turn_share": {
+      "Nora": 0.378,
+      "Tarek": 0.128,
+      "Eva": 0.249,
+      "Sam": 0.246
+    },
+    "realized_turn_share": {
+      "Nora": 0.316,
+      "Tarek": 0.184,
+      "Eva": 0.289,
+      "Sam": 0.211
+    },
+    "agenda_status": {
+      "done": 5,
+      "pending": 8,
+      "obsolete": 3
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "corpus_preset": "",
+    "min_discussion_turns": 20,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 26: narrowing — target discussion length reached",
+      "turn 31: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 38: closure — vote rounds exhausted without visible consensus",
+      "turn 38: closure — closed as unresolved"
+    ],
+    "engagement_realization_error": 0.049,
+    "verbosity_realization_error": 0.052,
+    "engagement_error_by_persona": {
+      "Nora": 0.062,
+      "Tarek": 0.056,
+      "Eva": 0.041,
+      "Sam": 0.035
+    },
+    "verbosity_error_by_persona": {
+      "Nora": 0.012,
+      "Tarek": 0.09,
+      "Eva": 0.016,
+      "Sam": 0.089
+    },
+    "engagement_behavior_correlation": 0.887,
+    "verbosity_behavior_correlation": 0.99,
+    "setup_tokens_in": 788,
+    "setup_tokens_out": 656,
+    "dialogue_tokens_in": 40162,
+    "dialogue_tokens_out": 1377,
+    "total_tokens_in": 40950,
+    "total_tokens_out": 2033,
+    "tokens_setup_in": 788,
+    "tokens_setup_out": 656,
+    "calls_setup": 1,
+    "tokens_utterance_in": 29437,
+    "tokens_utterance_out": 1170,
+    "calls_utterance": 38,
+    "tokens_grounding_in": 9224,
+    "tokens_grounding_out": 120,
+    "calls_grounding": 12,
+    "tokens_repair_in": 1501,
+    "tokens_repair_out": 87,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 788,
+    "setup_tokens_out": 656,
+    "dialogue_tokens_in": 40162,
+    "dialogue_tokens_out": 1377,
+    "total_tokens_in": 40950,
+    "total_tokens_out": 2033
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 788,
+      "out": 656,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 29437,
+      "out": 1170,
+      "calls": 38
+    },
+    "grounding": {
+      "in": 9224,
+      "out": 120,
+      "calls": 12
+    },
+    "repair": {
+      "in": 1501,
+      "out": 87,
+      "calls": 4
+    }
+  }
+}

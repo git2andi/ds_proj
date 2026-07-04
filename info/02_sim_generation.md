@@ -1,158 +1,41 @@
-# Sim generation (the participants)
+# 02 — Sim generation and participant parameters
 
-**Code:** `src/builders.py` (`SetupBuilder`, persona path),
-`src/simulator.py` (`derive_simulator_parameters`, `build_initial_agenda`),
-`src/prompts.py` (`setup_personas`), `src/models.py` (`Persona`, `TraitProfile`,
-`SimulatorParameters`, `AgendaItem`).
+A sim is a configurable participant in the group decision. Sims are not just names in a prompt; their traits and parameters should influence observable behavior.
 
-A participant is not just a name and a persona sentence. It is a small **user
-simulator**: OCEAN traits → explicit behavior parameters, a private preference and
-goal, optional hard rejection, and a weak private communicative-goal list.
+## Modes
 
-## Three layers of a simulated user
+`participants.mode = auto`:
 
-```text
-identity        name, one-sentence background, private goal
-personality     OCEAN traits (openness, conscientiousness, extraversion,
-                agreeableness, neuroticism), 1–5
-operational     behavior parameters that actually drive routing and style:
-                engagement, verbosity, initiative, responsiveness,
-                stubbornness, directness, compromise_threshold  (each 0–1)
-```
+- participants are sampled/generated automatically;
+- traits, private goals, and initial preferences are assigned;
+- useful for demos and varied runs.
 
-OCEAN traits produce plausible individual differences, but they are too abstract to
-be the control interface. The **behavior parameters** are what the controller reads.
+`participants.mode = manual`:
 
-## OCEAN → behavior parameters
+- profiles are provided in `config.yaml`;
+- complete profiles can skip the persona setup LLM call;
+- this is the main mode for controlled behavior tests.
 
-`simulator.derive_simulator_parameters` maps traits (each normalized to 0–1) into
-parameters. The formulas are pragmatic, not psychometric — the goal is a stable,
-*observable* spread across generated dialogue:
+## Operational parameters
 
-```text
-engagement     = 0.25 + 0.60*extraversion + 0.15*conscientiousness
-verbosity      = 0.20 + 0.55*extraversion + 0.25*openness
-initiative     = 0.20 + 0.50*extraversion + 0.30*openness
-responsiveness = 0.30 + 0.45*agreeableness + 0.25*conscientiousness
-stubbornness   = 0.10 + 0.60*(1-agreeableness) + 0.30*neuroticism
-directness     = 0.25 + 0.35*conscientiousness + 0.25*extraversion + 0.15*(1-agreeableness)
-compromise_threshold = 1 - compromise_willingness   (low threshold = compromises easily)
-```
+OCEAN/persona information is converted into operational parameters such as:
 
-These feed concrete behavior: engagement/initiative/responsiveness set each sim's
-**target turn share** (`simulator.expected_turn_share`, consumed by the router and
-by the realization metrics), verbosity/engagement set the per-turn word budget
-(`03`), responsiveness sets how promptly a directly-asked sim answers (`03`),
-stubbornness/agreeableness bias act selection and whether a sim will move, and
-compromise_threshold gates stance shifts (`06`).
+- engagement: how often the sim enters the discussion;
+- verbosity: expected utterance length;
+- initiative: tendency to propose, summarize, call votes, or drive procedure;
+- responsiveness: tendency to answer direct questions and react to others;
+- stubbornness: resistance to switching;
+- directness: explicitness of disagreement or preference;
+- compromise threshold: how much evidence/social pressure is needed before moving.
 
-## Two ways to create the cast
+## Current behavior
 
-Set `participants.mode` in `config.yaml`:
+Trait-weighted participation is now much better than earlier versions. Manual trait-spread runs show visible turn/length differences. Low-engagement sims should be quieter but not invisible. High-engagement sims should be more active but not accidentally dominant.
 
-- **`auto` (default)** — sample everything: names from a pool, traits from
-  `personas.trait_ranges`, initial preferences from a configured split distribution,
-  and backgrounds/goals from the persona LLM call.
-- **`manual`** — define the cast under `participants.profiles`; the group size equals
-  the number of profiles (`simulation.num_participants` is ignored). Profiles may be
-  **partial** — any missing field is filled by the auto path. A profile can pin a
-  `name`, `description`, `private_goal`, `preferred_option`, `traits`, direct
-  `parameters:` overrides, and a `rejection` (hard blocker).
+## Important design point
 
-If **every** profile is complete (name + description + private_goal +
-preferred_option), the **persona LLM call is skipped entirely** — a fully
-deterministic cast for controlled experiments. `run.json` records
-`participants_mode`.
+Do not implement a rigid agenda checklist. A sim may have goals, concerns, and commitments, but it should not mechanically execute an agenda item every turn. Persistent state should create pressure and continuity, while local dialogue decides the next act.
 
-## Initial preferences are assigned by the controller
+## Current open issue
 
-The controller decides each sim's initial primary preference *before* prompting
-(`_preference_assignments`), so the group starts from a chosen split (e.g. `2-1` =
-two sims prefer one option, one prefers another). In auto mode the split is sampled
-from `personas.preference_distribution.shape_weights[n]`; a manually pinned
-preference bypasses the distribution (unpinned profiles then get a uniformly random
-option, never their own rejection). A persona row that drops or reorders the required
-primary is *repaired* deterministically (`repair_preferred_options`), not retried.
-
-## Private vs public state
-
-The distinction is central to the whole project (see `06`, `07`):
-
-```text
-private / internal (guides behavior, never counts as agreement)
-  initial preference, current lean, hard rejections, soft concerns,
-  private goal, behavior parameters, agenda items
-
-public / visible (the only thing the outcome may use)
-  visible option mentions, objections, questions, answers, commitments/votes
-```
-
-## Hard blockers
-
-A hard blocker is a sim with `agreeableness = 1` who **cannot accept** a specific
-rejected option. In auto mode one may appear at random
-(`personas.hard_blocker_probability`); in manual mode a profile with a `rejection`
-becomes one (agreeableness pinned to 1, `rejection_reason` required). The blocker's
-rejected option is never assigned as its own primary preference, and no state
-mutation can make it vote for that option (`06`).
-
-## Stateful stance tracking (the real continuity mechanism)
-
-Each sim's runtime carries lightweight persistent stance state (issue 2), updated
-from *visible* text only:
-
-```text
-current_preference    the latent favorite (moves on parsed signals, see 06)
-commitment_strength   how firmly the favorite is held; starts at
-                      0.45 + 0.40*stubbornness, eroded by challenges landed on
-                      the favorite and by visible support for rivals (both scaled
-                      down by stubbornness), rebuilt a little by defending it
-challenges_received   count of visible challenges against the sim's favorite
-concessions_made      visible switches / conceded leans
-hard/soft rejections  parsed vetoes and objections (see 06)
-```
-
-Commitment strength feeds real decisions: a shaken advocate routed to react to a
-concern is told to *concede honestly* instead of defending (`03`), latent-lean
-movement gets easier as commitment drops, and vote-time compromise probability
-rises for a sim whose favorite took unanswered pressure (`06`).
-
-Visible objections open **concern threads** (`DialogueState.open_concerns`): the
-router tries to get a reaction from an advocate of the challenged option within a
-turn or two before the discussion may jump away; unaddressed threads age out after
-~3 participant turns. Metrics: `concern_threads`, `concern_response_rate`.
-
-## The agenda — an honest caveat
-
-Each sim also gets a small private **communicative-goal list**
-(`build_initial_agenda`): state a grounded reason for the initial pick, ask about a
-constraint, compare with a rival, and (trait-dependent) raise a hard concern, look
-for compromise, or push back on a rival. `refresh_agenda` marks items
-obsolete/blocked as the sim's stance moves.
-
-**Status:** this is a *weak hint system*, not agenda-based user simulation. The
-router consumes an item **only in quiet moments** — reactive rules and response
-obligations always win first (`03`) — and observed runs leave most items pending at
-the end. Do **not** describe the project as an "agenda-based user simulator".
-Continuity across turns comes from the stance state above, not from agenda
-execution.
-
-## Voice differentiation
-
-Sims should sound different because their parameters shape utterance style. The
-per-turn prompt sends a compact "voice capsule" derived from the parameters
-(`prompts._voice_guidance`), not a raw trait dump:
-
-```text
-high directness:  "Too pricey. Not worth it."
-low directness:   "I see why D is attractive, but I'm a bit worried about the timing."
-high stubbornness: keeps returning to its own priority, concedes little
-high verbosity:   happily adds a second clause or a small aside
-low engagement:   dry and minimal; speaks less and more briefly
-```
-
-The goal is not theatrical role-play — it is measurable variation in participation,
-wording length, consistency, and compromise behavior (see the realization metrics in
-`08`).
-
-
+Trait routing should be monitored but is not the top priority. Some auto/auto runs still show weak engagement correlation, partly because opening and voting phases force everyone to speak. Do not overfit this until split-vote narrowing and token cost are improved.
