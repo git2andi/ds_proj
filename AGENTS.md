@@ -134,6 +134,13 @@ Change participant count and provider settings in `config.yaml`. The default pro
   bounded criteria-level compromise/ask beat (`stagnation_break_done`). The
   per-persona agenda only fills quiet moments. Challenge reasons are
   stance-aware (never argue against the speaker's own pick).
+- **Same-speaker continuations (issue 6).** After reactive checks, the previous
+  speaker may take one short follow-up (afterthought/clarification/self-
+  correction) with probability `0.03 + 0.07*initiative`; chain capped at 3
+  (second continuation half as likely), reduced budget, and a blocking
+  `CONTINUATION_REPEATS` check (Jaccard overlap with own previous line, or
+  re-asking the same addressee) with a parser-neutral fallback. Normal turns
+  still hard-exclude the last speaker. Metric: `continuation_turns`.
 - **Thread-scored targeting.** `_choose_target_turn` scores the last few
   participant turns (open questions, objections/blockers, minority voices,
   leading/under-discussed options) instead of always answering the latest line;

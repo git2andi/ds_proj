@@ -242,6 +242,7 @@ class MoveIntent:
     avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
     allow_vote_change: bool = False
     soften_toward: str | None = None  # routed softening beat's attractor (issue 3)
+    continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
 
 
 @dataclass(slots=True)

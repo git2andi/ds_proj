@@ -105,6 +105,13 @@ class PolicyMixin:
         if reactive is not None:
             return reactive
 
+        # Rare same-speaker continuation (issue 6): a short, genuinely additive
+        # follow-up to the speaker's own last message. Normal turns still hard-
+        # exclude the last speaker in _choose_speaker.
+        continuation = self._maybe_continuation_intent(state)
+        if continuation is not None:
+            return continuation
+
         speaker = self._choose_speaker(state)
         agenda_pair = next_agenda_item(speaker)
         if agenda_pair and random.random() < (0.25 + 0.25 * speaker.sim_params.initiative):
@@ -359,6 +366,50 @@ class PolicyMixin:
                 break
             streak += 1
         return streak
+
+    def _maybe_continuation_intent(self, state: DialogueState) -> MoveIntent | None:
+        """Rare same-speaker follow-up (issue 6): an afterthought, clarification,
+        or small self-correction right after the sim's own turn. Only when it is
+        a real continuation-type move — never a repeat of the same question or
+        point (validated as CONTINUATION_REPEATS) — short, and chain-capped:
+        no same-speaker run longer than 3 turns."""
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        if len(participant_turns) < 2:
+            return None
+        last = participant_turns[-1]
+        # Chain length of the last speaker's current run of consecutive turns.
+        chain = 0
+        for turn in reversed(participant_turns):
+            if turn.speaker_id != last.speaker_id:
+                break
+            chain += 1
+        if chain >= 3 or len(state.personas) < 2:
+            return None
+        persona = state.persona_by_id(last.speaker_id)
+        probability = 0.03 + 0.07 * persona.sim_params.initiative
+        if chain == 2:
+            probability *= 0.5
+        if random.random() >= probability:
+            return None
+        asked_question = "?" in last.text
+        if asked_question:
+            purpose = (
+                "add a quick separate afterthought on a DIFFERENT aspect than your question — a practical "
+                "point or a small aside; do not repeat or rephrase the question you just asked"
+            )
+        else:
+            purpose = random.choice([
+                "add one quick afterthought that occurred to you — a small practical point you forgot ('Oh, and…')",
+                "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+                "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+            ])
+        return MoveIntent(
+            speaker_id=persona.id,
+            act=ActType.BUILD,
+            reason=purpose,
+            length_hint="short",
+            continuation=True,
+        )
 
     def _softening_attractor(self, state: DialogueState, persona: Persona) -> str | None:
         """The option a shaken sim would plausibly warm to (issue 3): visibly
@@ -939,6 +990,10 @@ class PolicyMixin:
                 base += 8
         else:
             base = int(budgets.discussion)
+        # A continuation is a quick add-on, not a second full turn (issue 6).
+        # Keep enough headroom that a one-clause afterthought is not chopped.
+        if intent.continuation:
+            base = max(12, round(base * 0.6))
         p = persona.sim_params
         # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
         factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30

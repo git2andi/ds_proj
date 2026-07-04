@@ -23,6 +23,7 @@ from models import (
     _DECISION_ACTS,
 )
 from parsing import switch_bridge_ok
+from utils import jaccard_text
 
 
 @dataclass(slots=True)
@@ -69,6 +70,23 @@ class ValidationMixin:
         for option_id in committed:
             if option_id in rt.hard_rejections and act.resolves_blocker != option_id:
                 issues.append("BLOCKED_OPTION_ACCEPTED")
+                block = True
+        # A continuation must genuinely add something (issue 6): a near-repeat of
+        # the sim's own previous line, or re-asking the same person a question,
+        # is exactly the accidental-duplicate failure this feature must prevent.
+        if intent.continuation:
+            previous = state.runtimes[persona.id].already_said
+            prev_text = previous[-1] if previous else ""
+            if prev_text and jaccard_text(text, prev_text) >= 0.5:
+                issues.append("CONTINUATION_REPEATS")
+                block = True
+            last_turns = [t for t in state.turns if t.speaker_id == persona.id]
+            if (
+                last_turns
+                and act.question_target_id
+                and act.question_target_id == last_turns[-1].act.question_target_id
+            ):
+                issues.append("CONTINUATION_REPEATS")
                 block = True
         # A sanctioned switch may only land on the offered option or the sim's
         # own current/initial preference (restate); never a third option.
@@ -153,6 +171,10 @@ class ValidationMixin:
         """
         aliases = short_alias_map(state.scenario.options)
         rt = state.runtimes[persona.id]
+        if intent.continuation:
+            # A failed continuation add-on gets a neutral closer: no option
+            # reference, no commitment vocabulary, nothing the parser reads.
+            return "Anyway, that's my two cents for now."
         blocked = persona.rejection
         # Restate-first: never fabricate consent. The sim's own current/initial
         # preference wins over the intent's offered options; runtime blockers

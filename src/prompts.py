@@ -284,6 +284,13 @@ def sim_utterance(
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
         decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
+    continuation_note = ""
+    if intent.continuation:
+        continuation_note = (
+            "\nThis is a quick follow-up to YOUR OWN previous message (you spoke last): one short "
+            "add-on thought. Do not repeat or rephrase anything you just said, do not re-ask the same "
+            "question, and do not address the same person with the same request again."
+        )
     agenda = ""
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
@@ -327,7 +334,7 @@ Speaker:
 - initial preference: {initial_name}; current internal lean: {current_name}{blocked}
 
 Move to render: {intent.act.value}
-Purpose: {intent.reason}{agenda}{target_block}{address}{decision_instruction}
+Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
 
 Use only these option facts:
 {cards}

@@ -87,6 +87,19 @@ hesitation never lets the question lapse.
 With a **corpus preset** active (`08`), this switches to share-aware weighting: one
 sim is allowed to dominate within configured bounds instead of the trait targets.
 
+## Rare same-speaker continuations (issue 6)
+
+Normal turns hard-exclude the last speaker, but real chats contain the occasional
+add-on. After the reactive checks, the previous speaker may take **one short
+follow-up turn** with a small initiative-scaled probability (~3–10%):
+an afterthought ("Oh, and…"), a clarification ("Just to be clear…"), or a small
+self-correction ("Actually, …"). Bounds: no same-speaker run longer than 3 turns
+(a second continuation is half as likely), a reduced word budget, and a blocking
+`CONTINUATION_REPEATS` validation issue when the follow-up overlaps the sim's own
+previous line too much or re-asks the same person a question — the accidental
+duplicate ("Anna: Tim, what do you think? / Anna: How is it for you, Tim?") is
+exactly what must never print. Metric: `continuation_turns`.
+
 ## Choosing the target — thread-scored, not just "the last line"
 
 `_choose_target_turn` scores the last few participant turns instead of always

@@ -46,58 +46,6 @@ For tests always use the "gpt" endpoint
 
 ## 2. Open issues
 
-### Issue 6 (P1). Allow rare intentional same-speaker continuations, but prevent duplicate consecutive turns
-
-**Problem.** A hard ban on consecutive turns by the same sim would be too rigid. Real chats sometimes contain add-ons, repairs, afterthoughts, or self-corrections by the same person. However, accidental duplicate turns are still bad and make the routing look broken.
-
-**Where visible.**
-
-This issue comes from turn-taking design review rather than one specific log. It clarifies the earlier idea that sims should not simply repeat the same move after themselves.
-
-Bad behavior to prevent:
-
-```text
-Anna: Tim, what do you think about Movie X?
-Anna: How is Movie X for you, Tim?
-```
-
-Natural behavior to allow sometimes:
-
-```text
-Anna: Tim, what do you think about Movie X?
-Anna: Oh, and do you guys think we should grab food before we go?
-```
-
-```text
-Anna: Can someone help me figure out question 3?
-Anna: Oh never mind, I just got it.
-```
-
-**Correct behavior.**
-
-Consecutive same-speaker turns should be allowed only when the second turn is explicitly a continuation-type move:
-
-```text
-addendum
-afterthought
-self-repair
-self-correction
-clarification
-self-resolution
-short topic extension
-```
-
-Rules:
-
-```text
-no same-speaker chain longer than 3
-additional turn must be short
-additional turn must add, correct, clarify, or resolve something
-additional turn must not repeat the same dialogue act, same question, same addressee, and same option framing
-```
-
-So the router should strongly penalize the previous speaker for normal turns, but allow a controlled continuation act when it is locally justified.
-
 ### Issue 7 (P1). Strengthen grounding: no invented concrete facts
 
 **Problem.** The option board is supposed to be the factual source of truth, but recent logs still contain or flag unsupported concrete facts. The validator catches some of this, but unsupported content still appears often enough that grounding remains a behavioral issue.

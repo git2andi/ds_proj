@@ -285,6 +285,10 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "reservation_exchange": bool(state.reservation_exchange_done),
         "participant_procedural_moves": int(state.procedural_move_count),
         "peer_vote_call": bool(state.peer_vote_call_done),
+        # Same-speaker follow-up turns (issue 6) — rare by design.
+        "continuation_turns": sum(
+            1 for t in participant_turns if t.intent is not None and t.intent.continuation
+        ),
         "switch_event_count": switch_count,
         "switch_explanation_rate": switch_explained,
         "switch_bridge_rate": switch_bridged,
