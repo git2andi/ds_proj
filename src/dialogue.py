@@ -176,7 +176,16 @@ class DialogueRunner:
             if round_index > 0:
                 order = [p for p in order if not self._has_clear_vote(state, p.id)]
                 if not order:
-                    self._mark_phase(state, Phase.CLOSURE, "all participants already gave a clear vote")
+                    # Everyone has a clear vote but the round-end check above did
+                    # not reach a majority/consensus, so the run has NOT closed:
+                    # it falls through to the split-vote compromise pass. Record
+                    # an intermediate narrowing marker, never a final closure
+                    # (issue 6) — only a resolved outcome marks closure.
+                    self._mark_phase(
+                        state,
+                        Phase.NARROWING,
+                        "all participants voted but no majority; attempting split-vote compromise",
+                    )
                     break
             reason = "let's test where everyone stands" if round_index == 0 else "let's hear from whoever hasn't given a clear vote"
             nudge_record, target_id = self._moderator_vote_nudge(state, candidate, reason)

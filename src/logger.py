@@ -131,6 +131,11 @@ class DialogueLogger:
             "runtimes": {pid: _to_jsonable(rt) for pid, rt in state.runtimes.items()},
             "turns": [_to_jsonable(t) for t in state.turns],
             "outcome": _to_jsonable(outcome),
+            # Ordered phase trace (pacing / discussion / narrowing / closure).
+            # Part of the analyzable structured trace, and the surface where
+            # issue 6 is checkable: closure entries appear only once the outcome
+            # is actually resolved, never on a run still heading into compromise.
+            "phase_history": list(state.phase_history),
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
         }

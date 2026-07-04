@@ -1,0 +1,1849 @@
+{
+  "run_id": "20260704_023144_859407",
+  "topic": "Pick a snack subscription for the office",
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "scenario": {
+    "topic": "Pick a snack subscription for the office",
+    "decision_kind": "purchase_choice",
+    "opening_question": "What matters most to us in choosing a snack subscription for the office: cost, variety, healthiness, or delivery convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "NatureBox Monthly Snack Variety Pack",
+        "attrs": {
+          "monthly_cost": "$55",
+          "snack_count_per_month": "20",
+          "health_rating": "high",
+          "delivery_frequency": "monthly"
+        },
+        "upside": "Offers a wide selection of healthy, non-GMO snacks",
+        "tradeoff": "Limited to one delivery per month, so snacks may run low before next shipment",
+        "concern": "Some employees might find the snacks too healthy or unfamiliar",
+        "best_for": "prioritizing health and variety within budget",
+        "short_name": "NatureBox Variety"
+      },
+      {
+        "id": "B",
+        "name": "SnackNation Classic Office Box",
+        "attrs": {
+          "monthly_cost": "$60",
+          "snack_count_per_month": "25",
+          "health_rating": "medium",
+          "delivery_frequency": "biweekly"
+        },
+        "upside": "Balanced mix of indulgent and healthy snacks with frequent deliveries",
+        "tradeoff": "Costs the full budget and includes some less healthy options",
+        "concern": "May not satisfy those wanting strictly healthy or strictly indulgent snacks",
+        "best_for": "balancing variety and delivery frequency",
+        "short_name": "SnackNation Classic"
+      },
+      {
+        "id": "C",
+        "name": "Graze Healthy Snack Subscription",
+        "attrs": {
+          "monthly_cost": "$50",
+          "snack_count_per_month": "15",
+          "health_rating": "very high",
+          "delivery_frequency": "weekly"
+        },
+        "upside": "Very healthy snacks delivered weekly to keep fresh options available",
+        "tradeoff": "Lower total snack count and fewer indulgent treats",
+        "concern": "Might not appeal to employees who prefer traditional snack flavors",
+        "best_for": "maximizing healthiness and freshness",
+        "short_name": "Graze Healthy"
+      },
+      {
+        "id": "D",
+        "name": "Universal Yums International Snack Box",
+        "attrs": {
+          "monthly_cost": "$58",
+          "snack_count_per_month": "22",
+          "health_rating": "medium",
+          "delivery_frequency": "monthly"
+        },
+        "upside": "Unique international snacks that encourage team conversation and fun",
+        "tradeoff": "Some snacks may be unfamiliar or less liked by all employees",
+        "concern": "Potential for food allergies or dislikes due to exotic ingredients",
+        "best_for": "prioritizing novelty and team engagement",
+        "short_name": "Universal Yums"
+      }
+    ],
+    "shared_context": [
+      "The office has exactly 3 regular snack consumers",
+      "Monthly budget cap for snacks is $60",
+      "Goal is to keep snacks available during work hours with minimal hassle"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Marco",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 1,
+        "neuroticism": 5
+      },
+      "sim_params": {
+        "engagement": 0.8125,
+        "verbosity": 0.675,
+        "initiative": 0.6499999999999999,
+        "responsiveness": 0.4875,
+        "stubbornness": 1.0,
+        "directness": 0.85,
+        "compromise_threshold": 0.95
+      },
+      "background": "Marco is cautious about snack choices and prefers very healthy options to support his high neuroticism and conscientiousness.",
+      "private_goal": "He wants the healthiest and freshest snacks available, even if that means fewer total snacks.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "B",
+      "rejection_reason": "Includes some less healthy options which conflict with Marco's preference for very healthy snacks.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": "B",
+          "reason": "raise the hard concern about B: Includes some less healthy options which conflict with Marco's preference for very healthy snacks.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Uri",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.9624999999999999,
+        "verbosity": 0.9375,
+        "initiative": 0.9249999999999999,
+        "responsiveness": 0.825,
+        "stubbornness": 0.25,
+        "directness": 0.7999999999999999,
+        "compromise_threshold": 0.2124999999999999
+      },
+      "background": "Uri enjoys variety and health in snacks and values a balanced approach that fits the office budget.",
+      "private_goal": "He wants a wide selection of healthy, non-GMO snacks delivered monthly to maintain variety and health focus.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Kira",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 5,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.875,
+        "stubbornness": 0.1,
+        "directness": 0.675,
+        "compromise_threshold": 0.1499999999999999
+      },
+      "background": "Kira is outgoing and agreeable, looking for a balanced snack option that keeps the office energized with frequent deliveries.",
+      "private_goal": "She wants a mix of indulgent and healthy snacks with frequent delivery to keep the office well stocked and happy.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 20,
+      "current_preference": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {
+        "B": "Includes some less healthy options which conflict with Marco's preference for very healthy snacks."
+      },
+      "already_said": [
+        "Weekly delivery matters more than total snack count to keep options fresh and healthy, so Graze Healthy fits that best.",
+        "Getting more snacks doesn’t help if half go stale—Graze’s weekly delivery keeps snacks fresh and avoids waste, which matters more than variety here.",
+        "Don’t forget NatureBox’s monthly delivery means snacks could get stale fast, and no chance to swap out options mid-month like with Graze.",
+        "We don’t know exact weekly snack use, but 20 monthly snacks risk running out mid-month—weekly delivery with fewer snacks keeps quality and supply steady.",
+        "No, SnackNation includes junk we don’t want—25 snacks biweekly sounds good, but I want Graze’s weekly freshness and pure health.",
+        "We can’t trust monthly delivery to keep snacks fresh and stocked—15 weekly from Graze beats 20 monthly from NatureBox every time.",
+        "We can’t stretch SnackNation’s variety without junk—20 snacks monthly from NatureBox keeps it clean but risks running out before next delivery.",
+        "Freshness and health matter most—Graze Healthy gets my vote, no doubt about it."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 7,
+      "last_spoke_turn": 24,
+      "current_preference": "C",
+      "explicit_vote": "C",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "C"
+      ],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "NatureBox hits the budget and delivers a solid variety of healthy, non-GMO snacks once a month. The one-time delivery might mean running low before the next box—could be a hassle if demand spikes.",
+        "Weekly delivery is great, Marco, but 15 snacks a month means fewer options overall and no indulgent treats. NatureBox gives more snacks for just $5 extra, keeping variety and health solid even if delivery is monthly.",
+        "You can get 20 healthy, non-GMO snacks with NatureBox for $55 monthly, but since delivery is only once a month, snacks might run low before the next shipment arrives.",
+        "Marco’s right about freshness—how many snacks do you think we realistically go through each week? That’ll tell us if 20 snacks monthly actually cover our needs without running dry too soon.",
+        "Graze nails freshness and health but 15 snacks a month might leave us short mid-month. NatureBox has more snacks and stays within budget—can we handle monthly delivery if we swap out options each cycle?",
+        "I'd go with NatureBox Variety.",
+        "I liked NatureBox Variety best but Graze Healthy works for me since it keeps snacks fresh with weekly deliveries and stays well under budget. Freshness beats a big monthly pile here!"
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "C",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 25,
+      "current_preference": "C",
+      "explicit_vote": "C",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "C"
+      ],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Getting snacks delivered biweekly keeps the office stocked without gaps—that’s why SnackNation Classic stands out. It’s the only option that balances indulgence with healthy choices while matching our full budget.",
+        "Universal Yums brings a fun twist with international snacks that could spark some team chat, but monthly delivery might leave us scrambling if we run out.",
+        "We could pick SnackNation Classic for its balanced mix and biweekly delivery to keep variety without running low between shipments.",
+        "Biweekly deliveries with 25 snacks actually sound perfect to keep us stocked and fresh without busting the budget. Marco, do you think the mix of indulgent and healthy in SnackNation will keep everyone happy?",
+        "Weekly delivery definitely beats monthly for freshness, but can we stretch to 20 snacks a month with SnackNation’s variety? That extra indulgence keeps morale up during long days!",
+        "My pick is SnackNation Classic.",
+        "I still like SnackNation Classic, but Graze Healthy’s weekly delivery and budget fit make it doable—I can live with fewer indulgent snacks if we stay fresh and flexible."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "C",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a snack subscription for the office.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) NatureBox Monthly Snack Variety Pack — monthly cost: $55; health rating: high; delivery frequency: monthly (+ Offers a wide selection of healthy, non-GMO snacks; − Limited to one delivery per month, so snacks may…)\nB) SnackNation Classic Office Box — monthly cost: $60; health rating: medium; delivery frequency: biweekly (+ Balanced mix of indulgent and healthy snacks with frequent…; − Costs the full budget and includes some less healthy…)\nC) Graze Healthy Snack Subscription — monthly cost: $50; health rating: very high; delivery frequency: weekly (+ Very healthy snacks delivered weekly to keep fresh options…; − Lower total snack count and fewer indulgent treats)\nD) Universal Yums International Snack Box — monthly cost: $58; health rating: medium; delivery frequency: monthly (+ Unique international snacks that encourage team conversation and fun; − Some snacks may be unfamiliar or less liked by…)\nContext: The office has exactly 3 regular snack consumers; Monthly budget cap for snacks is $60; Goal is to keep snacks available during work hours with minimal hassle.\nWhat matters most to us in choosing a snack subscription for the office: cost, variety, healthiness, or delivery convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a snack subscription for the office.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) NatureBox Monthly Snack Variety Pack — monthly cost: $55; health rating: high; delivery frequency: monthly (+ Offers a wide selection of healthy, non-GMO snacks; − Limited to one delivery per month, so snacks may…)\nB) SnackNation Classic Office Box — monthly cost: $60; health rating: medium; delivery frequency: biweekly (+ Balanced mix of indulgent and healthy snacks with frequent…; − Costs the full budget and includes some less healthy…)\nC) Graze Healthy Snack Subscription — monthly cost: $50; health rating: very high; delivery frequency: weekly (+ Very healthy snacks delivered weekly to keep fresh options…; − Lower total snack count and fewer indulgent treats)\nD) Universal Yums International Snack Box — monthly cost: $58; health rating: medium; delivery frequency: monthly (+ Unique international snacks that encourage team conversation and fun; − Some snacks may be unfamiliar or less liked by…)\nContext: The office has exactly 3 regular snack consumers; Monthly budget cap for snacks is $60; Goal is to keep snacks available during work hours with minimal hassle.\nWhat matters most to us in choosing a snack subscription for the office: cost, variety, healthiness, or delivery convenience?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "NatureBox hits the budget and delivers a solid variety of healthy, non-GMO snacks once a month. The one-time delivery might mean running low before the next box—could be a hassle if demand spikes.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "NatureBox hits the budget and delivers a solid variety of healthy, non-GMO snacks once a month. The one-time delivery might mean running low before the next box—could be a hassle if demand spikes.",
+        "act_type": "opening",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 757,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "Getting snacks delivered biweekly keeps the office stocked without gaps—that’s why SnackNation Classic stands out. It’s the only option that balances indulgence with healthy choices while matching our full budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Getting snacks delivered biweekly keeps the office stocked without gaps—that’s why SnackNation Classic stands out. It’s the only option that balances indulgence with healthy choices while matching our full budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1588,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Weekly delivery matters more than total snack count to keep options fresh and healthy, so Graze Healthy fits that best.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Weekly delivery matters more than total snack count to keep options fresh and healthy, so Graze Healthy fits that best.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1651,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Weekly delivery is great, Marco, but 15 snacks a month means fewer options overall and no indulgent treats. NatureBox gives more snacks for just $5 extra, keeping variety and health solid even if delivery is monthly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Weekly delivery is great, Marco, but 15 snacks a month means fewer options overall and no indulgent treats. NatureBox gives more snacks for just $5 extra, keeping variety and health solid even if delivery is monthly.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Graze Healthy, NatureBox Variety, Universal Yums with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1847,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "Universal Yums brings a fun twist with international snacks that could spark some team chat, but monthly delivery might leave us scrambling if we run out.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Universal Yums brings a fun twist with international snacks that could spark some team chat, but monthly delivery might leave us scrambling if we run out.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1042,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Getting more snacks doesn’t help if half go stale—Graze’s weekly delivery keeps snacks fresh and avoids waste, which matters more than variety here.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Getting more snacks doesn’t help if half go stale—Graze’s weekly delivery keeps snacks fresh and avoids waste, which matters more than variety here.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about NatureBox Variety, Graze Healthy, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 867,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "You can get 20 healthy, non-GMO snacks with NatureBox for $55 monthly, but since delivery is only once a month, snacks might run low before the next shipment arrives.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "You can get 20 healthy, non-GMO snacks with NatureBox for $55 monthly, but since delivery is only once a month, snacks might run low before the next shipment arrives.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how NatureBox Variety fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1869,
+      "tokens_out": 103,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "We could pick SnackNation Classic for its balanced mix and biweekly delivery to keep variety without running low between shipments.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We could pick SnackNation Classic for its balanced mix and biweekly delivery to keep variety without running low between shipments.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "B",
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1948,
+      "tokens_out": 87,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Don’t forget NatureBox’s monthly delivery means snacks could get stale fast, and no chance to swap out options mid-month like with Graze.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Don’t forget NatureBox’s monthly delivery means snacks could get stale fast, and no chance to swap out options mid-month like with Graze.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about NatureBox Variety, Graze Healthy, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 857,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Marco’s right about freshness—how many snacks do you think we realistically go through each week? That’ll tell us if 20 snacks monthly actually cover our needs without running dry too soon.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Marco’s right about freshness—how many snacks do you think we realistically go through each week? That’ll tell us if 20 snacks monthly actually cover our needs without running dry too soon.",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare NatureBox Variety",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 688,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "We don’t know exact weekly snack use, but 20 monthly snacks risk running out mid-month—weekly delivery with fewer snacks keeps quality and supply steady.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We don’t know exact weekly snack use, but 20 monthly snacks risk running out mid-month—weekly delivery with fewer snacks keeps quality and supply steady.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 841,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "Biweekly deliveries with 25 snacks actually sound perfect to keep us stocked and fresh without busting the budget. Marco, do you think the mix of indulgent and healthy in SnackNation will keep everyone happy?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Biweekly deliveries with 25 snacks actually sound perfect to keep us stocked and fresh without busting the budget. Marco, do you think the mix of indulgent and healthy in SnackNation will keep everyone happy?",
+        "act_type": "challenge",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 930,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "No, SnackNation includes junk we don’t want—25 snacks biweekly sounds good, but I want Graze’s weekly freshness and pure health.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "No, SnackNation includes junk we don’t want—25 snacks biweekly sounds good, but I want Graze’s weekly freshness and pure health.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 846,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "Graze nails freshness and health but 15 snacks a month might leave us short mid-month. NatureBox has more snacks and stays within budget—can we handle monthly delivery if we swap out options each cycle?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Graze nails freshness and health but 15 snacks a month might leave us short mid-month. NatureBox has more snacks and stays within budget—can we handle monthly delivery if we swap out options each cycle?",
+        "act_type": "agree",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "agree",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 1574,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "We can’t trust monthly delivery to keep snacks fresh and stocked—15 weekly from Graze beats 20 monthly from NatureBox every time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We can’t trust monthly delivery to keep snacks fresh and stocked—15 weekly from Graze beats 20 monthly from NatureBox every time.",
+        "act_type": "answer",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 926,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "Weekly delivery definitely beats monthly for freshness, but can we stretch to 20 snacks a month with SnackNation’s variety? That extra indulgence keeps morale up during long days!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Weekly delivery definitely beats monthly for freshness, but can we stretch to 20 snacks a month with SnackNation’s variety? That extra indulgence keeps morale up during long days!",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 829,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "We can’t stretch SnackNation’s variety without junk—20 snacks monthly from NatureBox keeps it clean but risks running out before next delivery.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We can’t stretch SnackNation’s variety without junk—20 snacks monthly from NatureBox keeps it clean but risks running out before next delivery.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 925,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright everyone, let’s wrap this up—who’s picking what as their final choice? Just name the one option you’re going with.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Alright everyone, let’s wrap this up—who’s picking what as their final choice? Just name the one option you’re going with.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Freshness and health matter most—Graze Healthy gets my vote, no doubt about it.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Freshness and health matter most—Graze Healthy gets my vote, no doubt about it.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false
+      },
+      "tokens_in": 806,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "I'd go with NatureBox Variety.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'd go with NatureBox Variety.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1123,
+      "tokens_out": 61,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "My pick is SnackNation Classic.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "My pick is SnackNation Classic.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1852,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 23,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "So far, Marco’s for Graze Healthy, Uri’s with NatureBox, and Kira’s on SnackNation—if you’re not on Graze Healthy, could you live with that choice or prefer sticking to yours?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "So far, Marco’s for Graze Healthy, Uri’s with NatureBox, and Kira’s on SnackNation—if you’re not on Graze Healthy, could you live with that choice or prefer sticking to yours?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Uri",
+      "text": "I liked NatureBox Variety best but Graze Healthy works for me since it keeps snacks fresh with weekly deliveries and stays well under budget. Freshness beats a big monthly pile here!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I liked NatureBox Variety best but Graze Healthy works for me since it keeps snacks fresh with weekly deliveries and stays well under budget. Freshness beats a big monthly pile here!",
+        "act_type": "accept",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring NatureBox Variety (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'd go with"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true
+      },
+      "tokens_in": 1602,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Kira",
+      "text": "I still like SnackNation Classic, but Graze Healthy’s weekly delivery and budget fit make it doable—I can live with fewer indulgent snacks if we stay fresh and flexible.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I still like SnackNation Classic, but Graze Healthy’s weekly delivery and budget fit make it doable—I can live with fewer indulgent snacks if we stay fresh and flexible.",
+        "act_type": "accept",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [
+          "C"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "the group is split; if you can accept the proposed compromise, switch to it with a direct commitment AND say in one clause what makes it acceptable to you despite preferring SnackNation Classic (what you give up or what it still delivers); otherwise clearly restate the option you still choose and why",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my pick is",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "since it keeps snacks fresh with weekly deliveries and stays"
+        ],
+        "allow_vote_change": true
+      },
+      "tokens_in": 905,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, looks like Graze Healthy Snack Subscription it is—thanks everyone for deciding together!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, looks like Graze Healthy Snack Subscription it is—thanks everyone for deciding together!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "C",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 22,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C"
+      },
+      "phase_history": [
+        "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.56",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 18: narrowing — target discussion length reached",
+        "turn 22: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 25: closure — successful after split-vote compromise"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 12,
+      "force_narrow_turns": 17,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.56",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 18: narrowing — target discussion length reached",
+    "turn 22: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 25: closure — successful after split-vote compromise",
+    "turn 26: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 22,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.154,
+    "turn_counts": {
+      "Marco": 8,
+      "Uri": 7,
+      "Kira": 7
+    },
+    "top_speaker_share": 0.364,
+    "avg_words_by_persona": {
+      "Marco": 20.5,
+      "Uri": 28.4,
+      "Kira": 24.4
+    },
+    "question_density": 0.182,
+    "avg_words_per_turn": 24.3,
+    "repaired_turns": 4,
+    "repair_rate": 0.182,
+    "flagged_turns": 0,
+    "fallback_turns": 2,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Marco": "C",
+      "Uri": "C",
+      "Kira": "C"
+    },
+    "unanswered_direct_questions": 0,
+    "participation_gini": 0.03,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 1.0,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.168,
+    "compromise_success_rate": 1.0,
+    "switch_event_count": 2,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "name_prefix_rate": 0.0,
+    "option_opening_rate": 0.182,
+    "i_opening_rate": 0.136,
+    "we_opening_rate": 0.182,
+    "name_or_option_opening_rate": 0.182,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 3,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 12,
+        "reasons": 7,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 8,
+        "reasons": 2,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 13,
+        "reasons": 7,
+        "objections": 1,
+        "acceptances": 2
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Marco": 0.812,
+      "Uri": 0.962,
+      "Kira": 0.925
+    },
+    "agenda_status": {
+      "pending": 7,
+      "done": 2,
+      "obsolete": 4
+    },
+    "outcome_status": "successful",
+    "final_option": "C",
+    "corpus_preset": "",
+    "min_discussion_turns": 12,
+    "force_narrow_turns": 17,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=12, force=17, hard=23, distinct_initial_prefs=3, avg_compromise=0.56",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 18: narrowing — target discussion length reached",
+      "turn 22: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 25: closure — successful after split-vote compromise",
+      "turn 26: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.042,
+    "verbosity_realization_error": 0.119,
+    "engagement_error_by_persona": {
+      "Marco": 0.063,
+      "Uri": 0.038,
+      "Kira": 0.024
+    },
+    "verbosity_error_by_persona": {
+      "Marco": 0.182,
+      "Uri": 0.053,
+      "Kira": 0.121
+    },
+    "engagement_behavior_correlation": -0.971,
+    "verbosity_behavior_correlation": 0.999,
+    "setup_tokens_in": 1948,
+    "setup_tokens_out": 1004,
+    "dialogue_tokens_in": 27175,
+    "dialogue_tokens_out": 1081,
+    "total_tokens_in": 29123,
+    "total_tokens_out": 2085
+  },
+  "tokens": {
+    "setup_tokens_in": 1948,
+    "setup_tokens_out": 1004,
+    "dialogue_tokens_in": 27175,
+    "dialogue_tokens_out": 1081,
+    "total_tokens_in": 29123,
+    "total_tokens_out": 2085
+  }
+}

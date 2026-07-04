@@ -87,7 +87,7 @@ clearly independent.
 3. ~~Honest agenda documentation + framing (docs/model only, no behavior change forced)~~ DONE 2026-07-03
 4. ~~Complete the planned evaluation layer~~ DONE 2026-07-03
 5. ~~Fix sudden unexplained preference switches (bridge-clause enforcement)~~ DONE 2026-07-04
-6. Fix phase-history inconsistency (no false "closure" phase markers)
+6. ~~Fix phase-history inconsistency (no false "closure" phase markers)~~ DONE 2026-07-04
 7. Reduce moderator dependency (configurable moderator behavior)
 8. Split `dialogue.py` into policy / observer / validation modules
 
@@ -317,7 +317,31 @@ option, and (c) a reason for the movement. Example of what's wanted:
 enforced the same way other blocking issues are — as a validator/repair rule, not a
 prompt-only request.
 
-### Issue 6 (P1). Fix phase-history inconsistency
+### Issue 6 (P1). Fix phase-history inconsistency — DONE (2026-07-04)
+
+Root cause: `_decision_loop` marked `Phase.CLOSURE` ("all participants already
+gave a clear vote") on a later vote round where everyone had voted but no
+majority/consensus had formed — then execution fell through into the split-vote
+compromise pass and marked closure *again*, so the trace showed a "closure" on a
+run that had not closed. Fix: that intermediate marker is now `Phase.NARROWING`
+("all participants voted but no majority; attempting split-vote compromise").
+Every remaining `Phase.CLOSURE` marker is a genuine resolved outcome (round
+majority/consensus, resolved split compromise, exhausted rounds, or the final
+`closed as <status>` line). Also closed the analyzability gap the todo's own §5.3
+assumes: `run.json` now serializes `phase_history` (it was only in
+`transcript.md`), so the corrected trace is inspectable in the structured log.
+
+Validated 2026-07-04 by live n=3 runs (varied topics):
+
+- snack-subscription run (`logs/20260704_023144_859407`, successful): went through
+  the split path and logged `narrowing — all participants voted but no majority;
+  attempting split-vote compromise` → `closure — successful after split-vote
+  compromise` → `closure — closed as successful`. No false closure marker.
+- charity run (unresolved) and retro-format run (majority): closure entries only
+  on the genuine final outcome; zero "already gave a clear vote" closure markers
+  across all validation runs; `phase_history` present in every `run.json`.
+
+Original issue text kept for context:
 
 Observed in a book-swap run, the phase history read:
 

@@ -38,8 +38,9 @@ Change participant count and provider settings in `config.yaml`. The default pro
 - `src/evaluation.py`: per-run metrics incl. parameter-realization checks
   (participation gini, engagement/verbosity realization errors and correlations,
   response/question completion, repetition, compromise success, switch
-  explanation rate). `run.json` carries a `runtimes` section (visible state +
-  `switch_events` per sim).
+  explanation/bridge rate). `run.json` carries a `runtimes` section (visible
+  state + `switch_events` per sim) and a `phase_history` list (closure entries
+  appear only on a resolved outcome).
 - `src/logger.py`: run logging (transcript, JSON, metrics CSV).
 - `src/utils.py`: deterministic helpers (normalisation, weighted choice, JSON, `clean_generated`).
 - `tests/`: deterministic, LLM-free tests.
