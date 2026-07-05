@@ -32,23 +32,22 @@ topic or manual environment
 
 ## Current strengths
 
-The latest implementation improved major behavioral issues:
+The architecture is mostly in the right shape. The system is already closer to the relevant literature than to a generic chatbot: it has an environment, option board, participant simulators, routing policy, visible-state observer, validation, and evaluation.
 
-- split-vote reservation exchanges happen;
-- mid-discussion stance movement is more visible;
-- peer procedure appears in no-/light-moderator runs;
-- transcripts include better metadata;
-- unresolved outcomes are less frequent than before.
+Current logs show that sims compare fixed options, react to others, raise tradeoffs, vote visibly, and can produce `successful`, `majority`, or `unresolved` outcomes.
 
 ## Current weaknesses
 
-The latest full evaluation still showed open problems:
+The current problem is not missing architecture. It is quality and control:
 
-- split-vote candidate selection can be socially implausible;
-- post-reservation follow-up is still too shallow;
-- `n=2` deadlock handling is not validated;
-- compromise turns can confuse which option is being tested;
-- token cost remains very high;
-- grounding still leaks occasional unsupported logistical claims.
+- utterances are too long and summary-like;
+- questions open too many new topics before old points develop;
+- names/direct addresses are overused;
+- speaking distribution is still partly pulled toward balance instead of trait-shaped dominance;
+- stance switches are sometimes too cheap;
+- strict constraints or blockers can be overridden too easily;
+- unresolved logistics such as parking/reservations can repeat;
+- repair/grounding can become expensive and visible in the transcript;
+- code paths have accumulated many local fixes and need cautious simplification.
 
 Use `docs/todo.md` as the authoritative current issue list.

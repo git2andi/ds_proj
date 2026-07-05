@@ -12,22 +12,47 @@ During discussion, participants may:
 - ask or answer a concrete question;
 - compare two options;
 - invite a quiet participant;
-- propose a compromise;
+- propose a bounded compromise;
 - soften toward another option.
+
+The next quality target is local rhythm. The discussion should often spend several turns on one point before opening a new issue. Direct Q→A adjacency is good, but repeated Q→A→new question chains are not.
+
+## Utterance length
+
+Turns should be shorter than the current logs. Verbosity should affect average length, not force every high-verbosity sim to write long turns.
+
+A plausible target for the next round:
+
+```text
+low verbosity:       many turns around 5-10 words
+medium verbosity:    many turns around 9-15 words
+high verbosity:      many turns around 14-22 words
+vote turns:          often under 12 words
+continuations:       around 4-10 words
+```
+
+Short acknowledgements, direct disagreements, and quick answers are allowed and useful.
 
 ## Mid-discussion stance movement
 
 A sim can move its internal lean before final voting if visible discussion supports that movement. Softening should not count as a final vote. It should prepare later votes.
 
-Examples:
+A switch should have a visible reason. Examples of valid triggers:
 
-```text
-I still like the bike ride, but the museum is starting to make more sense if we care about leaving time in the evening.
-```
+- a concern was answered;
+- the current favorite was challenged;
+- another option gained visible support;
+- a higher-priority group constraint became clearer;
+- the sim explicitly accepts a tradeoff;
+- visible majority pressure affects a high-compromise sim.
 
-```text
-I am not fully sold, but I could see Piazza working better for the whole group than my first pick.
-```
+A bridge phrase alone is not enough if the actual blocker remains unresolved.
+
+## Compromise and option combinations
+
+Sims may propose bounded combinations, such as “A works if we borrow B's simpler setup.” This is allowed, but it must not always happen and it must not create a hidden fifth option.
+
+The final winner should still be one concrete option from the option board, optionally with a visible condition.
 
 ## Final voting
 
@@ -51,8 +76,6 @@ Current intended sequence:
 9. close as successful, majority, or unresolved.
 ```
 
-The split summary in no-moderator mode is deterministic participant-owned procedure. This avoids one extra LLM call and prevents the candidate/counts from drifting in a paraphrase.
-
 ## Current validation focus
 
-Run the full eval suite and inspect `q01`, `q02`, `q04`, `f03`, `f04`, and `f06`. The tested candidate should follow visible support, and unresolved outcomes should feel earned after explicit holdout decisions.
+Inspect whether the transcript shows earned movement. A reader should be able to explain why each participant stays, switches, or refuses.

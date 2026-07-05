@@ -310,11 +310,10 @@ class Config(Section):
                     raise ValueError(f"{where}.traits has unknown trait {key!r}.")
                 if not (trait_lo <= int(value) <= trait_hi):
                     raise ValueError(f"{where}.traits.{key} must be in [{trait_lo}, {trait_hi}].")
-            if rejection is not None and int(traits.get("agreeableness", 1)) != 1:
-                raise ValueError(
-                    f"{where}: a profile with a rejection is a hard blocker; "
-                    "leave agreeableness unset or set it to 1."
-                )
+            # A rejection is a hard constraint, not a personality: an explicitly
+            # agreeable profile may hold one (P5: "an agreeable vegan can reject
+            # a steakhouse politely"). Leaving agreeableness unset keeps the
+            # classic blocker persona (pinned to 1 in the builder).
             parameters = profile.get("parameters") or {}
             if not isinstance(parameters, dict):
                 raise ValueError(f"{where}.parameters must be a mapping.")

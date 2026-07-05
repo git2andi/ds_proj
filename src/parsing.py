@@ -21,6 +21,8 @@ _ALIAS_STOPWORDS = _STOPWORDS | _GENERIC | {
     "cloud", "online", "based", "free", "premium", "basic", "pro",
     "analytics", "warehouse", "database", "serverless", "managed", "hosted",
     "platform", "solution", "single", "plan", "suite", "tool", "tools", "package",
+    "original", "plus", "select", "basic", "classic", "standard", "premium",
+    "table", "room", "house", "place", "option", "choice", "pick",
     "neighborhood", "community", "local", "event", "center", "food", "project",
     "class", "course", "workshop", "session", "activity", "group", "program",
     "assistance", "weekly", "monthly", "morning", "evening", "weekend",
@@ -311,7 +313,10 @@ class OptionResolver:
             aliases = {name}
             clean = re.sub(r"[^\wäöüÄÖÜß\s'-]", " ", name)
             words = [w for w in clean.split() if len(w) >= 4 and w not in _ALIAS_STOPWORDS]
-            aliases.update(words)
+            # Full names, safe short names, and multi-word heads are reliable.
+            # Single lowercase words from option names are often ordinary dialogue
+            # vocabulary (e.g. "original pick" falsely matching "Senseo Original
+            # Plus"), so we rely on distinctive capitalized tokens below instead.
             if len(words) >= 2:
                 aliases.add(" ".join(words[:2]))
             # Distinctive proper nouns/brands are how people actually refer to an

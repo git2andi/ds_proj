@@ -8,6 +8,8 @@ Outcomes are computed from visible text, not hidden preferences.
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no option reaches the required majority/unanimity after bounded discussion and narrowing.
 
+There should be no fourth outcome label. Invalid unanimity should be prevented before closure: a participant with an unresolved blocker should visibly reject, stay elsewhere, or mark the option unacceptable, which naturally produces `majority` or `unresolved`.
+
 ## Visible evidence only
 
 A sim counts as supporting an option only if the transcript contains a clear vote, acceptance, or sanctioned switch. Hidden `current_preference` is used for routing and simulation state, but it should not decide the final outcome directly.
@@ -16,9 +18,15 @@ A sim counts as supporting an option only if the transcript contains a clear vot
 
 A clear vote should remain stable unless the sim explicitly switches. Ambiguous text should be repaired or re-asked rather than silently interpreted.
 
+## Hard blockers and false unanimity
+
+A hard blocker or explicit hard constraint should not be overridden by agreeableness. Agreeableness changes how politely the participant rejects or negotiates; it does not make an impossible option acceptable.
+
+Normal auto-generated participants should usually have movable preferences, not categorical constraints. Manual profiles may define blockers explicitly.
+
 ## Split-vote narrowing
 
-No-majority votes should not close prematurely. The controller now ranks split candidates deterministically from visible votes and can test at most two candidates:
+No-majority votes should not close prematurely. The controller ranks split candidates deterministically from visible votes and can test at most two candidates:
 
 ```text
 first attempt: visible plurality, or best tied candidate by blockers/resistance/compromise fit;
@@ -26,12 +34,12 @@ second attempt: best remaining candidate if the first attempt fails;
 then close unresolved if no majority/unanimity is visible.
 ```
 
-Post-reservation decision turns should visibly do one of these:
+Post-reservation decision turns use the `post_reservation_decision` act. The controller should ensure the visible line does one of these:
 
 ```text
 switch to the tested candidate;
-stay with the original option and name the blocker;
-name one concrete alternative candidate;
+stay with the original/current option and name the blocker;
+switch to one concrete alternative candidate;
 state that no acceptable compromise remains.
 ```
 
@@ -46,8 +54,6 @@ A 1-1 split requires special handling. The intended protocol is:
 4. unresolved is valid if neither moves.
 ```
 
-The full evaluation suite now includes `f01_manual_manual_n2_stubborn_deadlock`, a forced manual/manual case with two stubborn opposing participants. It should set `two_person_deadlock_attempted = true` when live validation is run.
-
 ## Current validation focus
 
-Run `py run_eval_suite.py --full`, inspect `f01_manual_manual_n2_stubborn_deadlock`, and compare `visible_votes`, `outcome_status`, and `two_person_deadlock_attempted` in `run.json`.
+Inspect final outcomes for plausibility, not just parseability. `successful` is valid only when all participants visibly and plausibly accept the same option. If one participant should not accept, the transcript should show a refusal and the result should become `majority` or `unresolved`.

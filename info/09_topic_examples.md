@@ -40,13 +40,13 @@ For split-vote narrowing:
 Choose a weekend activity where each participant values a different tradeoff.
 ```
 
-For grounding:
+For grounding and repeated unknowns:
 
 ```text
 Choose between activities with sparse option facts and no external logistics.
 ```
 
-For trait behavior:
+For trait behavior and dominance:
 
 ```text
 Choose a shared office purchase with one dominant organizer and one quiet participant.
@@ -57,3 +57,19 @@ For n=2 deadlock:
 ```text
 Choose between two household purchases where both roommates are stubborn and prefer opposite options.
 ```
+
+For short turns and direct addressing:
+
+```text
+Choose a Friday dinner plan between two friends with different budgets.
+```
+
+For hard-blocker/manual constraint testing:
+
+```text
+Choose a restaurant where one manual participant has an explicit dietary constraint.
+```
+
+## Topic design notes
+
+Do not use topics that force every participant to reject one option from the start unless the goal is a blocker test. In normal runs, participants should start with preferences that can move through discussion.

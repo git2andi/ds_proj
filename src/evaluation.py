@@ -16,7 +16,8 @@ from typing import Any
 
 from aliases import short_alias_map
 from config_loader import cfg
-from models import DialogueState, Persona, RunOutcome, TurnRecord
+from consensus import visible_votes_from_transcript
+from models import DialogueState, Persona, RunOutcome, TurnRecord, _DISCUSSION_ACTS
 from simulator import expected_turn_share
 from style import leading_first_person, leading_name, leading_option, leading_we, surface_pattern
 
@@ -164,7 +165,11 @@ def _expected_words(persona: Persona) -> float:
     band, not an exact target."""
     base = int(cfg.utterances.word_budgets.discussion)
     p = persona.sim_params
-    return base * (0.45 + 0.70 * p.verbosity + 0.15 * p.engagement)
+    expected = base * (0.45 + 0.70 * p.verbosity + 0.15 * p.engagement)
+    # policy._word_bounds mixes in occasional short beats (factor ~0.6, more
+    # often for terse sims); fold that expectation into the average target.
+    short_beat_prob = 0.18 + 0.22 * (1.0 - p.verbosity)
+    return expected * (1.0 - 0.4 * short_beat_prob)
 
 
 def parameter_realization(state: DialogueState) -> dict[str, Any]:
@@ -196,6 +201,21 @@ def parameter_realization(state: DialogueState) -> dict[str, Any]:
     def _mean(values: dict[str, float]) -> float:
         return round(sum(values.values()) / max(1, len(values)), 3)
 
+    # Trait-shaped dominance should be judged on free discussion turns only
+    # (P4): opening and vote rounds are intentionally near-uniform, so they
+    # dilute the trait signal the router is actually allowed to express.
+    free_turns = [
+        t for t in participant_turns
+        if t.intent is not None and t.intent.act in _DISCUSSION_ACTS
+    ]
+    free_total = max(1, len(free_turns))
+    free_share_by_persona = {
+        p.name: round(sum(1 for t in free_turns if t.speaker_id == p.id) / free_total, 3)
+        for p in state.personas
+    }
+    free_shares = [free_share_by_persona[p.name] for p in state.personas]
+    top_free_share = round(max(free_shares, default=0.0), 3)
+
     return {
         "engagement_realization_error": _mean(engagement_errors),
         "verbosity_realization_error": _mean(verbosity_errors),
@@ -206,6 +226,9 @@ def parameter_realization(state: DialogueState) -> dict[str, Any]:
         # or no variance to judge).
         "engagement_behavior_correlation": _pearson(engagement_cfg, turn_shares),
         "verbosity_behavior_correlation": _pearson(verbosity_cfg, realized_words),
+        "free_discussion_share": free_share_by_persona,
+        "top_free_discussion_share": top_free_share,
+        "free_discussion_engagement_correlation": _pearson(engagement_cfg, free_shares),
     }
 
 
@@ -254,10 +277,28 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         )
         for p in state.personas
     }
+    words_by_act: dict[str, list[int]] = {}
+    for t in participant_turns:
+        act_name = t.intent.act.value if t.intent else "unknown"
+        words_by_act.setdefault(act_name, []).append(len(t.text.split()))
+    avg_words_by_act = {
+        act_name: round(sum(counts) / len(counts), 1)
+        for act_name, counts in sorted(words_by_act.items())
+    }
+    short_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 10)
+    # P2 diagnostic: questions appearing on statement-type turns (the chaining
+    # pattern), as opposed to intentional ask/invite acts.
+    question_acts = {"ask", "invite", "probe_holdout", "call_vote"}
+    statement_turns = [
+        t for t in participant_turns
+        if t.intent and t.intent.act.value not in question_acts
+    ]
+    tail_question_count = sum(1 for t in statement_turns if t.text.rstrip().endswith("?"))
+    visible_vote_ids = visible_votes_from_transcript(state)
     visible_votes = {
-        p.name: state.runtimes[p.id].explicit_vote
+        p.name: visible_vote_ids[p.id]
         for p in state.personas
-        if state.runtimes[p.id].explicit_vote
+        if p.id in visible_vote_ids
     }
     top_turn_share = round(max(turn_counts.values(), default=0) / max(1, len(participant_turns)), 3)
     expected_engagement = {p.name: round(p.sim_params.engagement, 3) for p in state.personas}
@@ -278,7 +319,10 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "turn_counts": turn_counts,
         "top_speaker_share": top_turn_share,
         "avg_words_by_persona": avg_words_by_persona,
+        "avg_words_by_act": avg_words_by_act,
+        "short_turn_rate": round(short_turn_count / n_turns, 3),
         "question_density": round(sum(1 for t in participant_turns if "?" in t.text) / n_turns, 3),
+        "tail_question_rate": round(tail_question_count / max(1, len(statement_turns)), 3),
         "avg_words_per_turn": round(sum(len(t.text.split()) for t in participant_turns) / n_turns, 1),
         "repaired_turns": sum(1 for t in participant_turns if t.repaired),
         "repair_rate": round(sum(1 for t in participant_turns if t.repaired) / n_turns, 3),
@@ -300,6 +344,12 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "direct_response_rate": _direct_response_rate(state),
         "question_answer_completion": _question_answer_completion(state),
         "open_questions_at_end": _open_questions_at_end(state),
+        # P7: mentions of a practical unknown beyond its allowed raise+answer
+        # pair — the "we still don't know about parking" loop signal.
+        "repeated_unknown_mentions": sum(
+            max(0, int(v.get("mentions", 0)) - 2) for v in state.issue_ledger.values()
+        ),
+        "issue_ledger": {k: dict(v) for k, v in sorted(state.issue_ledger.items())},
         "repetition_score": _repetition_score(state),
         "compromise_success_rate": _compromise_success(state, outcome),
         "reservation_exchange": bool(state.reservation_exchange_done),
@@ -332,6 +382,13 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         # repaired away are the pipeline working as intended.
         "unsupported_printed_turns": sum(
             1 for t in participant_turns if "UNSUPPORTED_FACT" in t.validation_issues
+        ),
+        # P11: a hard blocker visibly counted as supporting their rejected
+        # option in the final tally — must always be 0.
+        "final_blocker_violations": sum(
+            1 for p in state.personas
+            if p.rejection and outcome.final_option == p.rejection
+            and visible_vote_ids.get(p.id) == p.rejection
         ),
         "final_support_fraction": _final_support_fraction(state, outcome),
         "option_coverage": {

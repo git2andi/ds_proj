@@ -28,6 +28,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+# Child transcripts contain unicode (e.g. the "−" minus sign in option boards).
+# When stdout is a cp1252 console or a pipe, re-printing them would crash.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+    except (AttributeError, ValueError):
+        pass
+
 try:
     import yaml
 except ImportError as exc:
@@ -821,7 +829,7 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "final_vote_call": cfg.get("moderator", {}).get("final_vote_call"),
         "n": cfg.get("simulation", {}).get("num_participants"),
         "forced_shape": cfg.get("personas", {}).get("preference_distribution", {}).get("forced_shape"),
-        "outcome": metrics.get("outcome"),
+        "outcome": metrics.get("outcome_status") or metrics.get("outcome"),
         "final_option": metrics.get("final_option"),
         "engagement_behavior_correlation": metrics.get("engagement_behavior_correlation"),
         "discussion_lean_shifts": metrics.get("discussion_lean_shifts"),

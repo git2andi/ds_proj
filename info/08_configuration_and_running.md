@@ -13,9 +13,21 @@
 - `conversation`: pacing and vote turn caps.
 - `moderator`: visible moderator behavior.
 - `routing`: move weights and trait-weighted participation.
+- `style`: name/option/I/we opening suppression.
 - `utterances`: recent context and word budgets.
 - `validation`: turn validation and grounding checks.
 - `output`: log paths and prompt dumping.
+
+## LLM provider
+
+For the next quality baseline, use:
+
+```yaml
+llm:
+  provider: "gpt"
+```
+
+Do not compare quality across providers unless provider comparison is the explicit task. Provider differences affect style, grounding, repair behavior, and option parsing.
 
 ## Cost-related defaults
 
@@ -24,11 +36,21 @@ The current defaults intentionally keep participant prompts compact:
 ```yaml
 scenario.option_prompt_max_words: 34
 utterances.recent_turns_in_prompt: 4
-utterances.response_target_max_words: 18
 validation.grounding_mode: tripwire
 ```
 
-Do not raise these casually. Larger context usually increases cost faster than it improves dialogue quality.
+Do not raise these casually. Larger context usually increases cost faster than it improves dialogue quality. The next quality round should mostly reduce turn length and improve deterministic state/routing.
+
+## Current tuning focus
+
+Likely config/code areas for the next round:
+
+- `utterances.word_budgets`: turns are still too long;
+- `routing.move_weights.ask`: question chaining is too frequent;
+- `routing.direct_address_probability`: direct names are overused, especially in n=2;
+- `routing.trait_share_adaptation`, `max_share_overshoot`, and visibility logic: participation should be trait-shaped, not balanced;
+- `personas.hard_blocker_probability` and manual blockers: hard blockers should remain rare and meaningful;
+- `validation.grounding_mode`: keep tripwire and avoid unnecessary LLM grounding calls.
 
 ## Running normal simulations
 
@@ -67,14 +89,14 @@ manual environment + manual participants
 
 Also test:
 
-- n=2 stubborn tie/deadlock;
+- n=2 direct-address and deadlock behavior;
 - n=3 three-way split;
 - n=4 trait spread;
-- n=5 scaling;
+- n=5+ scaling and dominance;
 - full moderator;
 - no moderator;
 - light moderator.
 
 ## Current validation focus
 
-`f01_manual_manual_n2_stubborn_deadlock` should now exercise the two-person deadlock protocol. Run the full suite and inspect that case manually before removing the deadlock item from `docs/todo.md`.
+Inspect whether `gpt` runs produce shorter, less template-like, more trait-shaped discussions without increasing repair/grounding cost.

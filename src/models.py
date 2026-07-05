@@ -34,6 +34,7 @@ class ActType(str, Enum):
     SUMMARIZE_SPLIT = "summarize_split"
     PROBE_HOLDOUT = "probe_holdout"
     SUGGEST_NARROWING = "suggest_narrowing"
+    POST_RESERVATION_DECISION = "post_reservation_decision"
     VOTE = "vote"
     ACCEPT = "accept"
     REJECT = "reject"
@@ -42,7 +43,7 @@ class ActType(str, Enum):
 
 # Act groupings shared across the routing/observation/validation modules
 # (defined here to avoid a shared-constant import cycle between them, issue 8).
-_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}
+_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT, ActType.POST_RESERVATION_DECISION}
 _DISCUSSION_ACTS = {
     ActType.BUILD,
     ActType.AGREE,
@@ -246,6 +247,7 @@ class MoveIntent:
     suppress_option_opening: bool = False
     suppress_i_opening: bool = False
     suppress_we_opening: bool = False
+    suppress_tail_question: bool = False  # enough questions are open; end on a statement (P2)
     vary_opening: bool = False
     avoid_pattern: str | None = None
     avoid_phrases: list[str] = field(default_factory=list)
@@ -411,6 +413,10 @@ class DialogueState:
     fallback_turn_count: int = 0
     invalid_printed_turn_count: int = 0
     blocker_probes: set[str] = field(default_factory=set)  # options whose blocker was already probed
+    # Lightweight issue ledger (P7): practical unknowns (parking, booking, …)
+    # that were already raised as not-decidable-from-the-board, so the
+    # discussion stops reopening them. issue -> {"mentions": int, "options": [ids]}
+    issue_ledger: dict[str, dict] = field(default_factory=dict)
     stagnation_break_done: bool = False  # the one bounded circling-rescue beat was used (I20)
     softened_sims: set[str] = field(default_factory=set)  # sims already routed to a visible softening beat (issue 3)
     discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)

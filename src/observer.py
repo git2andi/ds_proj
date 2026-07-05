@@ -36,6 +36,19 @@ _VOTE_CHANGE = re.compile(
     re.I,
 )
 
+# Practical-logistics issue lexicon for the issue ledger (P7). An issue is
+# recorded only when the turn treats it as unknown or asks about it — a fact
+# actually stated on the option board never trips the uncertainty gate.
+_LEDGER_ISSUES: dict[str, re.Pattern] = {
+    "parking": re.compile(r"\bparking\b", re.I),
+    "booking/reservations": re.compile(r"\breserv\w+\b|\bbook(?:ing|ed|s)?\b", re.I),
+    "weather": re.compile(r"\bweather\b|\brain\w*\b|\bforecast\w*\b", re.I),
+    "seating/space": re.compile(r"\bseating\b|\bseats?\b|\benough\s+(?:space|room)\b|\bfit\s+(?:all|everyone)\b", re.I),
+    "availability/scheduling": re.compile(r"\bavailab\w+\b|\bfree\s+that\s+(?:day|evening|afternoon|night)\b|\bopen\s+(?:on|that|late)\b", re.I),
+    "prep/setup time": re.compile(r"\bprep\s+time\b|\bset-?up\s+time\b", re.I),
+    "crowds/queues": re.compile(r"\bcrowd\w*\b|\bqueue\w*\b|\bhow\s+busy\b", re.I),
+}
+
 
 class ObserverMixin:
     def _parse_act(self, state: DialogueState, persona: Persona, text: str, intent: MoveIntent) -> DialogueAct:
@@ -51,6 +64,26 @@ class ObserverMixin:
             intent=intent,
             previous_speaker_id=previous,
         )
+
+    def _update_issue_ledger(self, state: DialogueState, record: TurnRecord) -> None:
+        """Track practical unknowns so the discussion stops reopening them (P7).
+
+        A ledger entry opens when a turn raises a logistics issue as unknown or
+        as a question. ``_UNCERTAINTY`` comes from ValidationMixin — both mixins
+        are composed into the same DialogueRunner.
+        """
+        text = record.text
+        uncertain = bool(self._UNCERTAINTY.search(text)) or "?" in text
+        if not uncertain:
+            return
+        for issue, pattern in _LEDGER_ISSUES.items():
+            if not pattern.search(text):
+                continue
+            entry = state.issue_ledger.setdefault(issue, {"mentions": 0, "options": []})
+            entry["mentions"] += 1
+            for option_id in record.act.option_refs:
+                if option_id not in entry["options"]:
+                    entry["options"].append(option_id)
 
     def _apply_semantics(self, state: DialogueState, record: TurnRecord) -> None:
         rt = state.runtimes[record.speaker_id]
@@ -72,6 +105,8 @@ class ObserverMixin:
                 cov.reasons += 1
             if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
+
+        self._update_issue_ledger(state, record)
 
         # Stateful concern threads (issue 2): first fold this turn into any open
         # threads (a reply about the option addresses it; unanswered threads

@@ -143,6 +143,11 @@ _CHOP_TRAIL = _DANGLING_TRAIL | {
     "this", "these", "those", "there", "be", "been", "was", "were",
     "has", "have", "had", "do", "does", "did", "just", "really", "very",
     "though", "while", "unless", "until", "whether",
+    # Transitive/linking verbs that obviously hang without their complement
+    # ("…the family-style menu means.", "…and I wonder.").
+    "means", "wonder", "wonders", "makes", "gets", "keeps", "feels", "sounds",
+    "seems", "brings", "gives", "helps", "lets", "needs", "wants", "suits",
+    "offers", "offer", "make", "get", "keep", "feel", "sound", "seem",
 }
 
 # A chopped stub that still reads as a question ("does the slower setup bother
@@ -159,6 +164,14 @@ _INTERROGATIVE_STUB = re.compile(
 _BROKEN_QUESTION_TAIL = re.compile(
     r"[,;]?\s*(?:and|but|or|so)?\s*(?:what|how)\s+about\s+"
     r"(?:the|a|an|those|these|that|this|them|it|us|anyone|everyone)?\s*(?:who|which|that)?\s*$",
+    re.I,
+)
+
+# A chopped subordinate/coordinated clause opener left with at most a few
+# words ("…as our base since the clean") — drop the whole stub.
+_TRAILING_SUBCLAUSE_STUB = re.compile(
+    r"[,;]?\s*\b(?:since|because|although|though|while|unless|if|when|as|but|and|or|so)\b"
+    r"(?:\s+\S+){0,3}$",
     re.I,
 )
 
@@ -201,11 +214,28 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     ends = [m.end() for m in _SENTENCE_END.finditer(window)]
     if ends and ends[-1] >= 10:
         return window[: ends[-1]].strip()
-    # Last resort: one unbroken over-long sentence. Chop at the budget and
-    # salvage; the stub must not end mid-thought.
-    chopped = " ".join(words[:max_words]).rstrip(" ,;:")
+    # Next best: the last clause boundary inside the window. Ending a long
+    # sentence at "…solid vegetarian choices" reads complete; a mid-clause word
+    # chop ("…and the Rustic") never does.
+    clause_cut = None
+    min_keep = max(4, round(max_words * 0.5))
+    for m in re.finditer(r"[,;]|\s[—–-]\s|\s--\s", window):
+        prefix = window[: m.start()].rstrip(" ,;:")
+        if len(prefix.split()) >= min_keep:
+            clause_cut = prefix
+    if clause_cut:
+        chopped = clause_cut
+    elif len(words) <= soft_cap + max_words and text[-1] in ".!?":
+        # One unbroken clause, moderately over budget: a complete sentence over
+        # target reads far better than any chopped stub.
+        return text
+    else:
+        # Last resort: a runaway unbroken clause. Chop at the budget and
+        # salvage; the stub must not end mid-thought.
+        chopped = " ".join(words[:max_words]).rstrip(" ,;:")
     text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
     text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
+    text = _TRAILING_SUBCLAUSE_STUB.sub("", text).rstrip(" ,;:")
     # A chop can still end on a bare function word ("... what and",
     # "... more than the") or a cut wh-word; strip those.
     tail = text.split()

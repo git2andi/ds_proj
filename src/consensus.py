@@ -18,14 +18,36 @@ def participant_turn_count(state: DialogueState) -> int:
     return sum(1 for turn in state.turns if turn.speaker_id != "moderator")
 
 
+def visible_votes_from_transcript(state: DialogueState) -> dict[str, str]:
+    """Last visible public commitment per participant, read from transcript turns.
+
+    Runtime votes are useful for routing, but final outcomes must be grounded in
+    what the transcript visibly says. Earlier discussion commitments can become
+    stale when a participant changes their formal final vote without saying the
+    word "switch". Scanning committed turns in order keeps outcome metadata and
+    transcript evidence synchronized.
+    """
+    option_ids = set(state.scenario.option_ids)
+    votes: dict[str, str] = {}
+    for turn in state.turns:
+        if turn.speaker_id == "moderator" or turn.state_mutation_blocked:
+            continue
+        if turn.speaker_id not in state.runtimes:
+            continue
+        vote = turn.act.explicit_vote
+        if vote not in option_ids and turn.act.accepts:
+            accepted = [oid for oid in turn.act.accepts if oid in option_ids]
+            if len(accepted) == 1:
+                vote = accepted[0]
+        if vote in option_ids:
+            votes[turn.speaker_id] = vote
+    return votes
+
+
 class ConsensusManager:
     @staticmethod
     def finalize(state: DialogueState) -> RunOutcome:
-        votes = {
-            persona.id: state.runtimes[persona.id].explicit_vote
-            for persona in state.personas
-            if state.runtimes[persona.id].explicit_vote in state.scenario.option_ids
-        }
+        votes = visible_votes_from_transcript(state)
         counts = Counter(votes.values())
         turns = participant_turn_count(state)
         metadata = {

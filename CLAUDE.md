@@ -14,51 +14,62 @@ The outcome must be based on visible text only:
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no sufficient agreement after bounded narrowing.
 
+Do not add a fourth outcome label. If a participant cannot accept an option because of a blocker or unresolved decisive concern, make the transcript show that refusal; the existing outcome logic should then produce `majority` or `unresolved`.
+
+Use `gpt` as the dialogue provider for the next quality-improvement baseline unless the task is explicitly provider comparison.
+
 ## Before editing
 
 Read these files first:
 
 1. `docs/todo.md` — authoritative current open issues. It is not a changelog.
 2. `README.md` — current project framing and run instructions.
-3. `info/00_overview.md` through `info/08_configuration_and_running.md` — workflow notes.
-4. `config.yaml` — active behavior settings.
-5. Latest `logs_eval_suite/` output if available — especially `eval_suite_runs.csv`, `run.json`, and transcripts from split-vote/no-moderator cases.
+3. `info/00_overview.md` through `info/09_topic_examples.md` — workflow notes.
+4. `config.yaml` — active behavior settings. Confirm `llm.provider: "gpt"` for dialogue quality runs.
+5. Latest `logs_eval_suite/` output if available — especially `eval_suite_runs.csv`, `run.json`, and transcripts.
 
-Do not assume old issues are still open if `docs/todo.md` says otherwise. Do not claim something is fixed unless code structure or fresh logs support it.
+Do not assume old issues are still open if `docs/todo.md` says otherwise. Do not claim something is fixed unless deterministic code or fresh logs support it.
 
 ## Current highest priorities
 
-The latest code round changed the controller, prompts, validation, and eval suite, but live LLM validation is still required. Current priorities are:
+The current quality target is not more architecture. The project already has option grounding, controller routing, visible-state observation, repair, and evaluation. The next round should tighten and simplify behavior without increasing token usage.
 
-1. Verify deterministic split-vote ranking: a strict visible plurality should be tested before weaker one-vote candidates; tied leaders should be ranked by blockers/resistance/compromise fit.
-2. Verify post-reservation decision beats: each holdout should visibly switch, stay, or name an alternative before closure.
-3. Run the forced `f01_manual_manual_n2_stubborn_deadlock` case and inspect whether `two_person_deadlock_attempted = true` and the transcript shows the blocker/concession exchange.
-4. Check that candidate-specific reservations no longer import tradeoffs from unrelated options.
-5. Compare token diagnostics: compact utterance prompts, deterministic peer split summaries, and deterministic grounding tripwires should reduce `tokens_utterance_in` and `tokens_grounding_in`.
-6. Ensure unsupported logistical workaround claims are repaired or phrased as uncertainty.
-7. Monitor trait-weighted participation for regressions, but do not overfit it before narrowing/cost are validated.
+Work in this order unless fresh logs prove a different blocker:
 
-Work on these one at a time.
+1. Shorten participant utterances while preserving average verbosity differences.
+2. Reduce question chaining; preserve direct Q→A adjacency, then let the same point develop before opening a new one.
+3. Reduce direct-name frequency while keeping functional addressing.
+4. Make participation trait-shaped rather than mechanically balanced; evaluate dominance on free discussion turns, not opening/vote rounds.
+5. Clarify hard blockers, hard constraints, and normal preferences. Normal auto sims should not get categorical hard constraints unless the hard-blocker path is active, but explicit/manual constraints must be respected.
+6. Make stance movement earned by visible triggers, not only by bridge phrasing.
+7. Track repeated unknown logistics through a lightweight issue ledger.
+8. Keep option-combination compromises bounded; one concrete option must remain the winner.
+9. Reduce repair/grounding cost while preserving factual discipline.
+10. Simplify accumulated controller/validation paths only after behavior is protected by tests.
+11. Improve metrics for word length, question rate, name rate, trait-shaped dominance, repeated unknowns, switch causality, and constraint violations.
 
 ## Implementation principles
 
-- Prefer deterministic controller logic over adding more LLM calls.
-- Keep prompts smaller and more act-specific; do not solve every issue with longer prompts.
+- Prefer deterministic controller/state logic over adding more LLM calls.
+- Keep prompts smaller and more act-specific. Do not add broad social instructions as the first fix.
 - Do not turn the simulator into a rigid agenda checklist.
 - Keep the option-grounded decision scope.
 - Sims may propose uncertain mitigations, but must not state invented concrete facts as known.
-- Low-engagement sims should be quieter, not invisible.
-- High-engagement sims should be more active, not accidentally dominant.
-- Same-speaker continuations are allowed as a design choice, including rare chains up to three messages, but only if they are genuine addendums, corrections, clarifications, afterthoughts, or self-resolutions. Prevent duplicate consecutive turns.
-- Mid-discussion stance movement should be possible before final voting.
+- Speaking should not be balanced by default. Dominant/high-engagement/high-initiative sims may speak more. Quiet sims should not disappear.
+- Direct questions create response obligations. The addressed sim should usually answer soon.
+- Avoid question churn: after a question is answered, prefer build/agree/challenge/compare on the same issue before opening a new issue.
+- Same-speaker continuations are allowed when they are genuine addendums, corrections, clarifications, afterthoughts, or self-resolutions. Prevent duplicate consecutive turns and repeated questions.
+- Direct addressing is useful, but leading names should be less frequent, especially in n=2 runs.
+- Verbosity is an average behavior, not a per-turn template. Every sim may have short and longer turns.
+- Hard blockers should not sabotage the chat. They should resist only according to configured traits/constraints and still participate in discussion.
 - Unresolved outcomes are allowed, but they should feel earned after real narrowing attempts.
 
 ## Development workflow
 
 1. Update `docs/todo.md` first if the open issue list is stale.
-2. Pick one issue.
-3. Inspect the relevant code and logs.
-4. Make the smallest coherent code change.
+2. Pick one issue only.
+3. Inspect the relevant code and latest logs.
+4. Make the smallest coherent change.
 5. Run static checks:
 
 ```powershell
@@ -70,40 +81,40 @@ On shells that do not expand `src\*.py`, run the equivalent Python compile comma
 6. Run targeted eval cases if LLM access is available. Use `py run_eval_suite.py --quick` for a quick pass and `py run_eval_suite.py --full` before claiming behavioral completion.
 7. Inspect transcripts manually, not only metrics.
 8. Update the relevant `info/*.md`, `README.md`, and this file only when behavior or workflow changed.
-9. Do not remove an issue from `docs/todo.md` unless logs or deterministic code prove it is fixed.
+9. Remove or narrow an item in `docs/todo.md` only after logs/code prove it is fixed.
 
 ## What to inspect in logs
 
-For split/narrowing behavior, inspect:
+Always inspect both text and structured state:
 
-- `q01_manual_manual_three_way_split`
-- `q03_manual_manual_trait_spread`
-- `q05_auto_env_manual_participants`
-- `q06_auto_auto_baseline_n3`
-- no-/light-moderator cases
-- future forced `n=2` stubborn-deadlock case
+- `transcript.md`: Does the conversation feel like a real option-grounded group decision?
+- `run.json`: Do visible commitments, switches, blockers, obligations, and option references match the transcript?
+- `eval_suite_runs.csv`: Do outcomes and high-level metrics agree with manual inspection?
 
-Metrics to watch:
+Priority checks:
 
-- `outcome_status`
-- `visible_votes`
-- `discussion_lean_shifts`
-- `split_reservation_exchanges`
-- `two_person_deadlock_attempted`
-- `participant_procedural_moves`
-- `unsupported_printed_turns`
-- `engagement_behavior_correlation`
-- token usage by call type
+- average words per participant and by act;
+- whether short turns exist;
+- question rate versus answer adjacency;
+- direct-name/name-prefix frequency, especially in n=2;
+- free-discussion turn share versus trait-derived expected share;
+- whether same-speaker continuations add new content;
+- whether stance switches have visible triggers;
+- whether repeated unknowns such as parking/reservations loop;
+- whether explicit blockers prevent false unanimity;
+- repair/grounding token cost and unsupported printed turns.
 
 ## Non-goals for the next round
 
 Do not prioritize:
 
 - adding more personality traits,
-- integrating more papers,
+- integrating more papers directly,
+- full Generative Agents-style memory/reflection,
+- a full agenda simulator,
 - broad open-domain chat,
-- cosmetic transcript polish,
+- cosmetic transcript polish before behavioral fixes,
 - large architectural rewrites unrelated to the open issues,
 - more LLM calls for negotiation.
 
-The next round should make disagreement handling smarter and reduce cost.
+The next round should make the simulator shorter, more causally coherent, more trait-shaped, and cheaper to run.

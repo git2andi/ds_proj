@@ -54,4 +54,4 @@ They have a quieter table available.
 
 ## Current open issue
 
-Grounding still occasionally leaks logistical claims such as shelters, parking, quieter corners, or weather assumptions. The next improvement should distinguish hypothetical proposals from unsupported facts more strictly.
+Sparse option facts are useful for testing grounding, but they create repeated unknown-logistics talk. The next round should track practical issues such as parking, reservations, weather, space, and availability so that an unknown is raised once and not repeated unless it is decisive.

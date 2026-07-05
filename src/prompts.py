@@ -139,6 +139,7 @@ Rules:
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
 - background and private_goal must be one sentence each, specific to this topic, and grounded in the option cards/shared context.
+- For participants with agreeableness above 1, phrase needs as preferences ("prefers", "values", "cares most about"), never as absolute constraints ("cannot", "must", "refuses", "allergic", "strictly").
 - background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.{fixed_field_rule}
 
 Return JSON only:
@@ -280,12 +281,16 @@ def sim_utterance(
                 "and give one honest reason you can move now. A short concessive clause is fine here; a "
                 "fresh condition or question is not."
             )
+    elif intent.act.value == "post_reservation_decision":
+        decision_instruction = "\nThis is a post-reservation decision. Choose exactly one visible outcome: switch to the tested option, stay with your current pick, or switch to one concrete alternative. Use an explicit form such as 'I switch to X because…' or 'My vote stays with Y because…'. No maybe/leaning/unsure wording and no new facts."
     elif intent.act.value == "reject":
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
         decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
     elif intent.act.value == "soften":
         decision_instruction = "\nThis is not a final vote. Say that another option is becoming more convincing, name what moved you, and also mention what you still give up from your earlier lean."
+    elif intent.act.value == "propose_compromise":
+        decision_instruction = "\nPropose exactly ONE of the existing options as the possible common ground; a visible condition on it is fine. Do not invent blends, split plans, or two-venue combinations."
     elif intent.act.value in {"call_vote", "summarize_split", "probe_holdout", "suggest_narrowing"}:
         decision_instruction = "\nThis is a procedural group-management move. Keep it concrete, short, and socially natural. Do not cast your own final vote in this line unless explicitly asked."
     continuation_note = ""
@@ -299,6 +304,15 @@ def sim_utterance(
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
         agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
+    settled_unknowns = ""
+    # An issue earns suppression after its raise->"we don't know" pair played
+    # out (mentions >= 2); the first raise is useful and gets answered normally.
+    settled_issues = sorted(k for k, v in state.issue_ledger.items() if v.get("mentions", 0) >= 2)
+    if settled_issues:
+        settled_unknowns = (
+            f"\nAlready settled as unknown here (nobody can answer them): {', '.join(settled_issues[:5])}. "
+            "Do not ask about or re-raise these; argue from the listed facts instead."
+        )
     if params.verbosity <= 0.4:
         length_note = f"Keep it very short ({min_words}-{max_words} words), blunt and to the point; a sentence fragment is fine."
     elif params.verbosity >= 0.7:
@@ -312,6 +326,8 @@ def sim_utterance(
     else:
         tone_note = ""
     style_notes = ""
+    if intent.suppress_tail_question:
+        style_notes += "\n- Enough questions are already open; end with a statement, not a question."
     if intent.suppress_name_prefix:
         style_notes += "\n- Recent turns over-used names; do NOT open with another participant's name, just reply."
     if intent.suppress_option_opening:
@@ -338,7 +354,7 @@ Allowed facts:
 Recent:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts. If a practical detail is not stated (parking, weather, crowds, policies, booking fixes, extra services), mark it unknown or ask; never state it as fact.{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a

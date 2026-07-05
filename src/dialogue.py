@@ -422,7 +422,16 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                     can_move=can_move,
                     alternative=alternative if attempt_index == 0 else None,
                 )
-                self._emit(self._generate_and_append(state, intent))
+                self._emit(
+                    self._append_post_reservation_decision(
+                        state,
+                        persona,
+                        intent,
+                        candidate=leader,
+                        can_move=can_move,
+                        alternative=alternative if attempt_index == 0 else None,
+                    )
+                )
 
             provisional = ConsensusManager.finalize(state)
             if provisional.status in {"successful", "majority"}:
@@ -473,12 +482,156 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             )
         return MoveIntent(
             speaker_id=persona.id,
-            act=ActType.VOTE,
+            act=ActType.POST_RESERVATION_DECISION,
             reason=reason,
             option_focus=focus,
             length_hint="short",
             allow_vote_change=can_move or bool(alternative),
         )
+
+    def _append_post_reservation_decision(
+        self,
+        state: DialogueState,
+        persona: Persona,
+        intent: MoveIntent,
+        *,
+        candidate: str,
+        can_move: bool,
+        alternative: str | None = None,
+    ) -> TurnRecord:
+        """Append an explicit switch/stay/alternative decision after a reservation exchange.
+
+        This beat is controller-shaped on purpose: previous logs showed that a
+        generic LLM vote prompt often produced another vague re-vote. The text is
+        still grounded in the participant's visible stance and traits because the
+        controller decides whether a switch is plausible from commitment,
+        stubbornness, compromise tendency, and current vote pressure. Keeping the
+        wording deterministic also removes one utterance/grounding call per
+        holdout in the split-narrowing phase.
+        """
+        aliases = short_alias_map(state.scenario.options)
+        rt = state.runtimes[persona.id]
+        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        if current not in state.scenario.option_ids:
+            current = persona.preferred_option
+
+        target = current
+        outcome = "stay"
+        if can_move and self._should_switch_after_reservation(state, persona, candidate):
+            target = candidate
+            outcome = "switch_candidate"
+        elif (
+            alternative
+            and alternative in state.scenario.option_ids
+            and alternative != candidate
+            and alternative != current
+            and self._can_shift_to(state, persona, alternative)
+            and self._should_offer_alternative_after_reservation(state, persona, candidate, alternative)
+        ):
+            target = alternative
+            outcome = "switch_alternative"
+
+        current_name = aliases.get(current, current)
+        candidate_name = aliases.get(candidate, candidate)
+        target_name = aliases.get(target, target)
+        # Rotate phrasings so several holdouts deciding in a row don't print the
+        # same template line (R9). Every variant keeps a parser-safe commitment
+        # family aimed at the intended option.
+        beat_index = sum(
+            1 for t in state.turns
+            if t.intent is not None and t.intent.act == ActType.POST_RESERVATION_DECISION
+        )
+        if outcome == "switch_candidate":
+            variants = [
+                f"I still like {current_name}, but I'll switch to {candidate_name} — it's the clearest common ground now.",
+                f"Okay, {candidate_name} works for me; {current_name} clearly isn't getting the group there.",
+                f"Count me in for {candidate_name} then — I'm letting {current_name} go.",
+                f"I'll go with {candidate_name} because I'd rather land this than keep circling; I can live with it over {current_name}.",
+            ]
+        elif outcome == "switch_alternative":
+            variants = [
+                f"I still prefer {current_name}, but I'd go with {target_name} as the concrete compromise — {candidate_name} doesn't solve my concern.",
+                f"{target_name} works for me as the middle ground; {candidate_name} still leaves my concern open.",
+            ]
+        else:
+            variants = [
+                f"My vote goes to {current_name} — {candidate_name} still does not solve my concern.",
+                f"I'm sticking with {current_name}; {candidate_name} still doesn't address what bothers me.",
+                f"{current_name} still gets my vote — {candidate_name} hasn't fixed my main concern.",
+                f"My vote goes to {current_name}; {candidate_name} still leaves my main concern open.",
+            ]
+        text = variants[beat_index % len(variants)]
+
+        act = self._parse_act(state, persona, text, intent)
+        report = self._validate_turn_text(text, state, persona, intent, act)
+        if report.block_state_mutation:
+            text = self._safe_fallback_text(state, persona, intent, report)
+            act = self._parse_act(state, persona, text, intent)
+            report = self._validate_turn_text(text, state, persona, intent, act)
+        record = self._append_participant(
+            state,
+            persona,
+            text,
+            act,
+            intent,
+            0,
+            0,
+            report.issues,
+            False,
+            list(report.issues),
+            report.block_state_mutation,
+        )
+        if not report.block_state_mutation:
+            self._apply_semantics(state, record)
+        else:
+            state.no_progress_count += 1
+        return record
+
+    def _should_switch_after_reservation(self, state: DialogueState, persona: Persona, candidate: str) -> bool:
+        if not self._can_shift_to(state, persona, candidate):
+            return False
+        votes = [state.runtimes[p.id].explicit_vote for p in state.personas]
+        candidate_votes = sum(1 for vote in votes if vote == candidate)
+        rt = state.runtimes[persona.id]
+        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        own_votes = sum(1 for vote in votes if vote == current)
+        # Visible majority pressure is the candidate's *net* advantage over the
+        # sim's own camp (P6): a 1-1 deadlock or a 2-2 split is symmetric and
+        # exerts none — there a switch must come from traits and eroded
+        # commitment, not from a phantom majority.
+        advantage = max(0, candidate_votes - own_votes) / max(1, len(state.personas))
+        resistance = self._candidate_resistance(state, persona, candidate)
+        pressure = (
+            0.18
+            + 0.55 * advantage
+            + 0.20 * (1.0 - persona.sim_params.compromise_threshold)
+            + 0.12 * (1.0 - persona.sim_params.stubbornness)
+            + 0.08 * persona.sim_params.responsiveness
+            - 0.16 * rt.commitment_strength
+            - 0.12 * min(resistance, 1.5)
+        )
+        # Only a strict visible plurality earns the extra push; ties don't.
+        counts = Counter(v for v in votes if v in state.scenario.option_ids)
+        max_votes = max(counts.values(), default=0)
+        strict_plurality = candidate_votes == max_votes and sum(1 for c in counts.values() if c == max_votes) == 1
+        plurality_bonus = 0.08 if strict_plurality else 0.0
+        return pressure + plurality_bonus >= 0.32
+
+    def _should_offer_alternative_after_reservation(
+        self,
+        state: DialogueState,
+        persona: Persona,
+        candidate: str,
+        alternative: str,
+    ) -> bool:
+        # Alternatives are useful only when they are less resistant than the
+        # tested candidate. This prevents cycling through arbitrary one-vote
+        # options while still making a concrete counter-proposal visible.
+        if alternative == candidate or alternative not in state.scenario.option_ids:
+            return False
+        cand_res = self._candidate_resistance(state, persona, candidate)
+        alt_res = self._candidate_resistance(state, persona, alternative)
+        return alt_res + 0.10 < cand_res
 
     def _holdout_alternative_candidate(
         self,
@@ -529,7 +682,14 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             dissenter_text = ", ".join(dissenters) or "the others"
             meta_text = ""
             if meta and meta.get("votes", 0) > 1:
-                meta_text = " It has the visible lead, so we test it first."
+                max_votes = max(counts.values(), default=0)
+                tied_for_lead = sum(1 for count in counts.values() if count == max_votes) > 1
+                if meta.get("votes") == max_votes and not tied_for_lead:
+                    meta_text = " It has the visible lead, so we test it first."
+                elif meta.get("votes") == max_votes and tied_for_lead:
+                    meta_text = " It is tied for the lead, so we test the least-blocked candidate first."
+                else:
+                    meta_text = " It is the next concrete alternative, so we test it once."
             text = (
                 f"{prefix}We are split: {split}. Let's test {candidate_name} as the compromise; "
                 f"{dissenter_text}, what would still block that for you?"
@@ -627,8 +787,9 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 speaker_id=speaker.id,
                 act=ActType.ANSWER,
                 reason=(
-                    f"state your strongest reservation or concession condition about switching from {aliases[own_vote]} "
-                    f"to {aliases[other_vote]}; do not vote yet"
+                    f"deadlock blocker/concession step: use exactly two short clauses. First, name your strongest "
+                    f"blocker to switching from {aliases[own_vote]} to {aliases[other_vote]}. Second, name the "
+                    "one condition or concession that would have to be true before you could move. Do not vote yet."
                 ),
                 addressee_id=other.id,
                 option_focus=[other_vote, own_vote],
@@ -636,22 +797,29 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             )
             self._emit(self._generate_and_append(state, intent))
         for speaker, other_vote in ((p1, v2), (p2, v1)):
-            own = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+            own = state.runtimes[speaker.id].explicit_vote or state.runtimes[speaker.id].current_preference or speaker.preferred_option
             can_move = self._can_shift_to(state, speaker, other_vote)
             intent = MoveIntent(
                 speaker_id=speaker.id,
-                act=ActType.VOTE,
+                act=ActType.POST_RESERVATION_DECISION,
                 reason=(
-                    f"after hearing the blocker exchange, either switch to {aliases[other_vote]} with a clear bridge from {aliases.get(own, own)}, "
-                    f"or clearly stay with {aliases.get(own, own)} and name the one blocker that remains"
-                    if can_move
-                    else f"clearly stay with {aliases.get(own, own)} and name the one blocker that remains; do not switch"
+                    f"deadlock final decision: choose exactly one visible outcome — switch to {aliases[other_vote]} "
+                    f"or stay with {aliases.get(own, own)} and name the remaining blocker. No vague re-vote."
                 ),
                 option_focus=[other_vote, own] if own != other_vote else [other_vote],
                 length_hint="short",
                 allow_vote_change=can_move,
             )
-            self._emit(self._generate_and_append(state, intent))
+            self._emit(
+                self._append_post_reservation_decision(
+                    state,
+                    speaker,
+                    intent,
+                    candidate=other_vote,
+                    can_move=can_move,
+                    alternative=None,
+                )
+            )
         return True
 
     def _procedural_speaker(self, state: DialogueState) -> Persona:
@@ -712,33 +880,6 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             tokens_in += gti
             tokens_out += gto
             if not candidate_report.issues or len(candidate_report.issues) <= len(report.issues):
-                text, act, report = candidate_text, candidate_act, candidate_report
-
-        if "UNSUPPORTED_FACT" in report.issues:
-            # One extra grounding-only pass (issue 7): an invented fact is the
-            # one non-blocking issue worth a second ask before the line prints —
-            # the repair prompt names the offending kind of claim explicitly.
-            repaired = True
-            repair_prompt = prompts.repair_utterance(
-                original_text=text,
-                issue_codes=report.issues,
-                persona=persona,
-                state=state,
-                recent_lines=recent_lines,
-                intent=intent,
-                max_words=max_words,
-            )
-            self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{persona.id}_grounding_repair")
-            candidate_text, ti, to = self._call_participant(repair_prompt, persona.name, max_words)
-            self._record_token_usage(state, "grounding_repair", ti, to)
-            tokens_in += ti
-            tokens_out += to
-            candidate_act = self._parse_act(state, persona, candidate_text, intent)
-            candidate_report, gti, gto = self._collect_report(candidate_text, state, persona, intent, candidate_act, focus_options)
-            self._record_token_usage(state, "grounding", gti, gto)
-            tokens_in += gti
-            tokens_out += gto
-            if "UNSUPPORTED_FACT" not in candidate_report.issues and not candidate_report.block_state_mutation:
                 text, act, report = candidate_text, candidate_act, candidate_report
 
         block = report.block_state_mutation or self._semantic_block(persona, intent, act)

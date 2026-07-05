@@ -24,7 +24,7 @@ Transcripts should show enough metadata to inspect a run without opening JSON:
 - outcome;
 - token summary.
 
-## Important metrics
+## Important existing metrics
 
 Inspect these after changes:
 
@@ -40,38 +40,32 @@ Inspect these after changes:
 - `unsupported_printed_turns`;
 - token usage by call type.
 
-## Latest known baseline
+## Needed diagnostic metrics
 
-The uploaded latest full evaluation before this code round showed:
+The next round should add or inspect metrics for the actual quality problems:
 
-```text
-unresolved outcomes:        7/12 -> 4/12
-mid-discussion lean shifts: 3 total -> 16 total
-participant procedure:      visible
-split reservation exchanges: present
-input tokens:               roughly 460k across 12 runs
-utterance calls:            about 65% of input tokens
-grounding calls:            about 27% of input tokens
-```
+- average words per participant and per act;
+- verbosity-to-average-length correlation;
+- free-discussion turn share vs trait-derived expected share;
+- top speaker share excluding opening/final votes;
+- question rate and answer adjacency rate;
+- repeated unknown issue mentions;
+- name-prefix rate and direct-address rate by group size;
+- same-speaker continuation count plus repeat/novelty check;
+- stance switches with/without visible trigger;
+- final hard-blocker/constraint violations;
+- repair/grounding token cost.
 
-## Current suite coverage
+## Metrics interpretation
 
-The full suite now includes a forced two-person stubborn deadlock case:
+Balanced participation is not automatically good. A low inequality score can mean the controller flattened trait behavior. Dominance is acceptable when it follows engagement/initiative and does not become repetitive.
 
-```text
-f01_manual_manual_n2_stubborn_deadlock
-```
+Opening and final vote rounds should usually be excluded from trait-realization analysis because they intentionally give everyone a visible stance.
 
-This replaces the previous auto/auto n=2 edge case because that run converged before exercising the deadlock protocol.
+## Suite CSV caution
+
+If metric schema changes, do not mix old and new `metrics.csv` rows without a clear header/version. Historical append-only CSVs can contain stale columns or repeated headers.
 
 ## Current validation focus
 
-After running `py run_eval_suite.py --full`, compare the new logs against the uploaded baseline. In particular:
-
-```text
-candidate choice in split sections;
-post-reservation switch/stay/alternative lines;
-two_person_deadlock_attempted in f01;
-tokens_utterance_in and tokens_grounding_in;
-unsupported_printed_turns and repair/fallback rates.
-```
+After running `py run_eval_suite.py --full`, compare transcripts manually against metrics. Do not claim a fix based only on an improved number.

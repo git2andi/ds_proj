@@ -1,10 +1,10 @@
 # TODO: active implementation plan
 
-This file is the live work queue for the option-grounded multi-user decision simulator. It should contain current open work only. Remove an item only when deterministic code or fresh evaluation logs prove it is fixed.
+This file is the authoritative work queue for the option-grounded multi-user decision simulator. It is not a changelog. Keep only open work here. Remove an item only after code inspection plus fresh evaluation logs show the issue is solved.
 
 ## 0. Project framing
 
-The project is an **option-grounded multi-user decision simulator**, not a generic chatbot or open-ended society simulator.
+The project is an **option-grounded multi-user decision simulator**, not a generic chatbot and not an open-ended society simulator.
 
 A run should follow this pipeline:
 
@@ -13,213 +13,79 @@ one-line topic or manual environment
   -> fixed option-grounded decision environment
   -> 2-7 configurable simulated users
   -> controller selects speaker / addressee / dialogue act / option focus
-  -> LLM renders one visible utterance
+  -> LLM renders one visible utterance unless the controller owns a procedural/decision line
   -> observer updates public state from visible text
   -> discussion narrows through reactions, concerns, stance movement, reservations, and votes
-  -> outcome = successful / majority / unresolved from visible votes only
+  -> outcome = successful / majority / unresolved from visible transcript commitments only
 ```
+
+Final states remain exactly:
+
+- `successful`: all sims visibly agree on the same winning option.
+- `majority`: a majority visibly supports the winning option.
+- `unresolved`: no sufficient agreement is reached after bounded discussion and narrowing.
+
+Do **not** add a fourth outcome such as `successful_but_faulty`. If an option violates a participant's blocker or still lacks enough acceptance, the transcript should show that participant refusing or staying elsewhere, which naturally yields `majority` or `unresolved`.
 
 Participant parameters must remain behaviorally visible: engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should affect turn-taking, response timing, stance movement, and willingness to compromise.
 
+Speaking should **not** be mechanically balanced. Dominant/high-engagement/high-initiative sims may speak more. Quiet sims should not disappear. Opening and vote rounds are intentionally more uniform and should be excluded from most trait-realization judgments.
+
+Use `gpt` as the LLM provider for dialogue generation unless explicitly testing provider differences.
+
 ## 1. Implementation protocol
 
-1. Work one issue at a time, in priority order.
-2. Prefer deterministic controller logic over additional LLM calls.
-3. Keep prompts smaller and act-specific; do not solve negotiation quality by adding broad prompt text.
-4. Validate behavior with transcripts and `run.json`, not execution success alone.
-5. Test the four mode combinations across a full round:
-
-```text
-auto environment + auto participants
-manual environment + auto participants
-auto environment + manual participants
-manual environment + manual participants
-```
-
-6. Include `n=2`, `n=3`, `n=4`, and at least one `n=5` run before claiming completion.
-7. Update `README.md`, `CLAUDE.md`, and relevant `info/*.md` when behavior or workflow changes.
-8. Run static checks before every handoff:
+1. Work one issue at a time, in the priority order below.
+2. Before editing an issue, inspect the relevant code.
+3. Prefer deterministic controller/state logic over additional LLM calls.
+4. Do not solve quality problems by broadly adding prompt text. Prompt changes should be local, act-specific, and shorter where possible.
+5. Validate with transcript behavior and `run.json`, not execution success alone.
+6. After each fix, run static checks:
 
 ```powershell
 py -m py_compile main.py run_eval_suite.py src\*.py
 ```
 
-9. Before claiming behavioral completion, run and inspect:
+7. Run targeted evaluation for the touched behavior. Before removing any issue from this file, run and inspect:
 
 ```powershell
 py run_eval_suite.py --full
 ```
 
-## 2. Priority 1 — Improve split-vote and tie narrowing
+8. Inspect at least these artifacts manually: `logs_eval_suite/eval_suite_runs.csv`, `run.json`, `transcript.md`.
+9. After a verified fix, update `README.md`, `CLAUDE.md`, and the relevant `info/*.md` files. Then remove or narrow the completed item here.
 
-### Problem
+## 2. Open work
 
-The system detects split votes and starts a narrowing pass, but the latest full logs still show weak social negotiation. In a visible `2-1-1` restaurant split, the controller tested a one-vote option instead of the two-vote leader. In tied `1-1-1` or `2-2` structures, the candidate can still feel arbitrary.
+The 2026-07-06 behavioral round closed the previous P1-P9 and P11 items (shorter trait-shaped utterances, question-chain reduction, group-size-aware naming, free-discussion dominance, agreeable manual blockers, earned switches, the issue ledger, bounded compromise wording, cheaper grounding, and the new diagnostics). Validation: full 12-case suite on 2026-07-06 (`logs_eval_suite/eval_suite_runs.csv`) — avg words/turn 12.4-16.4, repeated_unknown_mentions 0 everywhere, final_blocker_violations 0 everywhere, n=2 name-prefix rate 0.0, top free-discussion share 0.26-0.53, unsupported printed turns 0 in 10/12 cases.
 
-### Correct behavior
+### O1 — Simplify code paths where fixes accumulated (was P10)
 
-After final votes produce no majority:
+The controller has many local patches: split-vote handling, post-reservation decisions, continuation guards, grounding repair, option alias parsing, surface style suppression, deadlock protocol, trait-share routing, and now the issue ledger. Behavior is good but harder to reason about.
 
-```text
-1. detect the vote structure, e.g. 1-1, 1-1-1, 2-1-1, 2-2;
-2. choose a concrete candidate or top-two pair from visible votes;
-3. if one option has a strict plurality, test that leader first unless it is visibly blocked by all relevant dissenters;
-4. if the lead is tied, choose the candidate with fewer blockers and lower resistance / better compromise fit;
-5. ask relevant non-candidate voters for targeted reservations;
-6. let a supporter answer at least one concrete reservation honestly;
-7. route dissenters into visible switch / stay / alternative / no-compromise decisions;
-8. run at most one alternative candidate attempt if the first candidate fails and the turn budget allows;
-9. close unresolved only after relevant dissenters had a chance to move or explain why they cannot.
-```
+Direction: do not rewrite the architecture. Isolate or simplify persona constraints/preferences, thread state, turn routing priority, stance eligibility, surface flags, and validation fallback — one area at a time, each protected by a fresh `--full` suite run before and after. Static compile is not enough.
 
-### Validation
+### O2 — Grounding judge false positives on short grounded lines (narrowed from P9)
 
-Inspect split cases around the first final vote. The tested candidate must be explainable from visible vote counts and reservations. For `2-1-1`, the two-vote option should normally be tested first.
+Two lines in the f05 suite case were flagged UNSUPPORTED_FACT although fully card-grounded ("Good filter speed, no espresso option."). Non-blocking flags print anyway, so this only pollutes `unsupported_fact_flags` / `unsupported_printed_turns`. Direction: check the grounding-judge prompt on terse fragment lines before touching thresholds; do not weaken the deterministic asserted-workaround path.
 
-## 3. Priority 2 — Fix compromise candidate scoring
+### O3 — Bounded option combinations: keep monitoring (narrowed from P8)
 
-### Problem
+`propose_compromise` turns now carry an explicit one-option instruction, and split/deadlock cases in the suite ended on single-option winners everywhere. Blend proposals ("A for food, B for parking") appeared before the instruction landed and have not been re-observed since. Keep an eye on split runs; if blends reappear, add a deterministic observer check instead of more prompt text.
 
-Candidate scoring currently lets flexibility and mover estimates overpower visible vote structure. It can also call stochastic shift logic while ranking candidates, which makes selection less stable than it should be.
+### O4 — switch_explanation_rate misses em-dash reasons (metric artifact)
 
-### Correct behavior
+The `has_reason` detector keys on because/since/for-style markers; deterministic decision lines like "Okay, X works for me; Y clearly isn't getting the group there." carry a visible reason but are not counted. `switch_bridge_rate` (the P6 signal) is unaffected and stayed 1.0 across the suite. Fix the detector, not the phrasing menus.
 
-Candidate ranking should be deterministic and roughly follow:
+## 3. Literature usage guidance
 
-```text
-strict plurality -> test the leading option first;
-tied leaders -> fewer hard blockers, lower average resistance, higher compromise fit;
-all tied -> least objectionable / most compromise-compatible option, not arbitrary order;
-failed first candidate -> optionally test one alternative, then stop.
-```
+Use the literature selectively. Do not implement papers 1:1.
 
-Resistance should use visible blockers, participant compromise threshold, stubbornness, current commitment, and whether the candidate appears in the participant's preferred options.
+- ConvLab3: component idea only (environment, policy/controller, simulator, evaluation) — already followed.
+- MUCA: multi-user routing (what to say, when, to whom) — improve controller state, never add a parallel system.
+- Generative Agents: lightweight persistent state only. No full reflection/memory loops.
+- SOTOPIA: judge social plausibility, not just fluent text.
 
-## 4. Priority 3 — Add explicit post-reservation decision steps
+## 4. Non-goals
 
-### Problem
-
-After a holdout states a reservation and a supporter responds, the follow-up sometimes reads like another vague re-vote rather than a decision step.
-
-### Correct behavior
-
-Every relevant holdout after a reservation response should visibly do exactly one of these:
-
-```text
-switch to the tested candidate;
-stay with the original option and name the blocker;
-propose one concrete alternative candidate;
-state that no acceptable compromise exists.
-```
-
-The observer must update visible vote state from that line. Avoid hidden state updates and avoid generic “I’m still thinking” phrasing in decision beats.
-
-### Validation
-
-In `q01`, `q02`, `q04`, `f03`, `f04`, and `f06`, the split-resolution section should show explicit switch/stay/alternative decisions before closure.
-
-## 5. Priority 4 — Validate and improve `n=2` deadlock handling
-
-### Problem
-
-The latest full suite did not trigger the two-person deadlock protocol because the two-person case converged before deadlock. The protocol therefore remains unvalidated.
-
-### Correct behavior
-
-Add or adjust a deterministic eval case with two stubborn manual participants and opposing fixed preferences. A `1-1` vote should trigger:
-
-```text
-1. each person states their strongest blocker;
-2. each person proposes one condition or concession;
-3. each person makes a final switch/stay decision;
-4. unresolved is valid if neither moves.
-```
-
-### Validation
-
-The relevant run should set `two_person_deadlock_attempted = true` and its transcript should include the blocker/concession exchange before unresolved closure or a justified switch.
-
-## 6. Priority 5 — Fix option-target confusion in compromise prompts
-
-### Problem
-
-Some reservations attach a tradeoff to the wrong option. Example pattern from the latest logs: a concern like “less flexible once booked” can appear while testing a Museum compromise, although that tradeoff belongs to Escape Room.
-
-### Correct behavior
-
-When testing candidate `X`:
-
-- reservation prompts should bind strongly to `X`;
-- supporter responses should use only `X`'s actual facts and clearly mark unknowns;
-- comparisons to the holdout's original favorite are allowed, but unrelated attributes must not be transferred to `X`;
-- grounding should flag wrong-option fact transfer when it appears.
-
-## 7. Priority 6 — Reduce token cost
-
-### Problem
-
-The latest full suite still used roughly 460k input tokens across 12 runs. Approximate distribution:
-
-```text
-utterance calls: ~65% of input tokens
-grounding calls: ~27%
-repair calls:    ~5%
-setup/moderator: small share
-```
-
-### Correct behavior
-
-Reduce cost without removing behavioral controls:
-
-```text
-smaller participant prompts;
-fewer grounding calls;
-compact option facts;
-deterministic pre-checks before LLM grounding;
-skip LLM grounding for short vote lines unless suspicious;
-avoid full option-board repetition when only one candidate is being discussed;
-reduce repair rate by making prompts simpler and more act-specific;
-avoid extra LLM calls for deterministic split summaries.
-```
-
-### Validation
-
-`run.json` should show lower `tokens_utterance_in` and `tokens_grounding_in` by call type. Grounding should not remain near one quarter of total input tokens in ordinary runs.
-
-## 8. Priority 7 — Tighten grounding for invented logistical workarounds
-
-### Problem
-
-Sims still sometimes state unsupported logistical details or fixes as if known, for example shelters, quiet corners, parking, route conditions, booking workarounds, or weather reliability.
-
-### Correct behavior
-
-Allowed:
-
-```text
-Maybe we could pick a quieter corner, but we do not know if that is possible.
-```
-
-Not allowed:
-
-```text
-We can pick a quieter corner.
-```
-
-Concrete unsupported workarounds should trigger repair or fallback. Hypothetical mitigations are allowed only when uncertainty is explicit.
-
-## 9. Priority 8 — Monitor trait-weighted participation
-
-Trait-weighted participation is much better than before, especially in manual trait-spread cases. Do not prioritize it above narrowing and cost unless a clear bug appears.
-
-Correct behavior remains:
-
-```text
-low-engagement sims are quieter but visible;
-high-engagement sims are more active but not dominant by accident;
-opening and voting phases naturally compress turn-share differences, so discussion phase behavior matters most.
-```
-
-## 10. Non-goals for the next round
-
-Do not prioritize broad new features, new traits, new paper integrations, open-domain chat, cosmetic transcript polish, or large architecture rewrites unrelated to the above. The next round should make disagreement handling more socially plausible and reduce cost.
+Do not prioritize: a full agenda simulator; Generative Agents-style memory/reflection; open-ended society simulation; new outcome labels; broad prompt expansion; more personality traits; provider comparisons before the `gpt` baseline is revalidated; large rewrites unrelated to the open items above.

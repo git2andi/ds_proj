@@ -57,7 +57,7 @@ class ValidationMixin:
         ):
             issues.append("MISSING_REQUIRED_OPTION_FOCUS")
             block = True
-        if intent.act in {ActType.VOTE, ActType.ACCEPT} and not (act.explicit_vote or act.accepts):
+        if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             issues.append("UNCLEAR_VISIBLE_COMMITMENT")
             block = True
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
@@ -126,8 +126,13 @@ class ValidationMixin:
         deterministic_issue = self._deterministic_grounding_issue(text, state)
         if deterministic_issue and deterministic_issue not in report.issues:
             report.issues.append(deterministic_issue)
+            # Asserted logistical workarounds are not just telemetry: if repair
+            # cannot remove them, the fallback must replace the line before it
+            # reaches the transcript. Explicitly uncertain mitigations are
+            # allowed by _deterministic_grounding_issue and never get here.
+            report.block_state_mutation = True
             return report, 0, 0
-        issue, gti, gto = self._grounding_issue(text, state, intent, focus_options)
+        issue, gti, gto = self._grounding_issue(text, state, intent, act, focus_options)
         if issue and issue not in report.issues:
             report.issues.append(issue)  # non-blocking; drives one repair toward grounded text
         return report, gti, gto
@@ -137,6 +142,7 @@ class ValidationMixin:
         text: str,
         state: DialogueState,
         intent: MoveIntent,
+        act: DialogueAct,
         focus_options: list,
     ) -> tuple[str | None, int, int]:
         if not bool(cfg.validation.get("enabled", True)) or not bool(cfg.validation.get("grounding_check", False)):
@@ -152,10 +158,20 @@ class ValidationMixin:
         # context (issue I11).
         if str(cfg.validation.get("grounding_mode", "tripwire")) == "tripwire" and not self._grounding_tripwire(text, state):
             return None, 0, 0
-        # Candidate-specific turns get a smaller fact base. This lowers token
-        # cost and prevents wrong-option tradeoffs from slipping through while
-        # still allowing two-option comparisons when the controller routed them.
-        judge_options = focus_options if 0 < len(focus_options) <= 2 else list(state.scenario.options)
+        # Candidate-specific turns get a smaller fact base, but it must include
+        # the options actually mentioned in the generated text. Otherwise a
+        # legitimate comparison can be judged against only the routed candidate
+        # and create false unsupported-fact repairs.
+        option_by_id = {option.id: option for option in state.scenario.options}
+        judge_ids: list[str] = []
+        for option in list(focus_options):
+            option_id = getattr(option, "id", None)
+            if option_id in option_by_id and option_id not in judge_ids:
+                judge_ids.append(option_id)
+        for option_id in act.option_refs:
+            if option_id in option_by_id and option_id not in judge_ids:
+                judge_ids.append(option_id)
+        judge_options = [option_by_id[oid] for oid in judge_ids] if 0 < len(judge_ids) <= 3 else list(state.scenario.options)
         prompt = prompts.grounding_check(utterance=text, state=state, focus_options=judge_options)
         try:
             data = self._llm.generate_json(prompt, profile="repair")
@@ -232,7 +248,7 @@ class ValidationMixin:
         return f"I'm sticking with {aliases[target]} on this one."
 
     _SUSPECT_CLAIM = re.compile(
-        r"\b(?:polic(?:y|ies)|includ(?:es|ed|ing)|refund\w*|warrant(?:y|ies)|reservation|discount\w*|"
+        r"\b(?:polic(?:y|ies)|includ(?:es|ed|ing)|refund\w*|warrant(?:y|ies)|discount\w*|"
         r"free\s+(?:of|shipping|entry|parking|wifi|drinks?)|allerg\w*|toxic\w*|poison\w*|"
         r"forecast\w*|guarantee[ds]?|certified|award[- ]?winn\w*|complimentary|licens\w*|"
         # Experiential/operational domains that invented facts favor (issue 7):
@@ -241,21 +257,23 @@ class ValidationMixin:
         r"parking|wi-?fi|weather|rain\w*|snow\w*|crowd\w*|queue\w*|traffic|"
         r"staff\w*|waiter\w*|servic\w*|jet\s*lag|peak\s+(?:hours?|times?)|rush\s+hour|"
         r"shelter\w*|shade|corner|quiet(?:er)?\s+(?:spot|corner|table|area)|"
-        r"book(?:ing|ed)?|reserve[sd]?|route|indoor|outdoor|seating|host)\b",
+        r"route|indoor|outdoor|seating|host)\b",
         re.I,
     )
 
     _UNCERTAINTY = re.compile(
-        r"\b(?:maybe|might|could|if|whether|check|ask|see\s+if|not\s+sure|don't\s+know|do\s+not\s+know|"
-        r"unknown|no\s+guarantee|can't\s+assume|cannot\s+assume|we\s+don't\s+know|we\s+do\s+not\s+know)\b",
+        r"\b(?:not\s+clear|isn'?t\s+clear|unclear|unknown|not\s+listed|not\s+stated|"
+        r"not\s+on\s+the\s+board|the\s+board\s+(?:doesn'?t|does\s+not)\s+say|"
+        r"check|ask|see\s+if|not\s+sure|don't\s+know|do\s+not\s+know|"
+        r"no\s+guarantee|can't\s+assume|cannot\s+assume|we\s+don't\s+know|we\s+do\s+not\s+know)\b",
         re.I,
     )
 
     _ASSERTED_WORKAROUND = re.compile(
-        r"\b(?:we|you|they|i)\s+(?:can|will|should|just)\s+"
-        r"(?:pick|get|find|book|reserve|hold|request|ask\s+for|choose|use|take)\b[^.!?]{0,60}"
+        r"\b(?:we|you|they|i)\s+(?:can|will|should|just|could|might)\s+"
+        r"(?:pick|get|find|book|reserve|hold|request|ask\s+for|choose|use|take|plan|add|combine)\b[^.!?]{0,80}"
         r"\b(?:quiet(?:er)?|corner|spot|table|shelter\w*|shade|parking|route|booking|reservation|"
-        r"indoor|outdoor|seating|discount|weather|forecast|host)\b",
+        r"indoor|outdoor|seating|discount|weather|forecast|host|hike|kayak|activity|trail)\b",
         re.I,
     )
 
@@ -278,6 +296,9 @@ class ValidationMixin:
             self._world_state_id = id(state)
             self._option_tokens = self._distinctive_option_tokens(state)
         phrase = match.group(0).lower()
+        # A workaround is allowed only when the text explicitly marks the
+        # mitigation as unknown/check-needed. A bare "we could just..." is still
+        # an unsupported asserted fix in this simulator.
         if phrase in world or self._UNCERTAINTY.search(text):
             return None
         return "UNSUPPORTED_FACT"
@@ -297,8 +318,17 @@ class ValidationMixin:
         for number in re.findall(r"\d+(?:[.,:]\d+)?", text):
             if number not in world:
                 return True
+        uncertain = bool(self._UNCERTAINTY.search(text))
+        asserted_workaround = bool(self._ASSERTED_WORKAROUND.search(text))
+        question_like = "?" in text and not asserted_workaround
         for match in self._SUSPECT_CLAIM.finditer(text):
             if match.group(0).lower() not in world:
+                # "Parking details are unclear" / genuine questions about
+                # unknown logistics are valid uncertainty statements, not
+                # unsupported assertions. Asserted fixes remain caught by the
+                # deterministic pass before the LLM judge is called.
+                if (uncertain or question_like) and not asserted_workaround:
+                    continue
                 return True
         # Cross-option transfer: tokens unique to one card showing up in a line
         # that names a different option (or that compares several cards' facts)
@@ -328,6 +358,13 @@ class ValidationMixin:
             for option in state.scenario.options
         }
         shared = set(re.findall(r"[a-z0-9]{4,}", " ".join(state.scenario.shared_context).lower()))
+        generic_fact_tokens = {
+            "cost", "price", "minutes", "minute", "hours", "hour", "people", "person",
+            "group", "option", "upside", "tradeoff", "concern", "best", "short",
+            "works", "work", "better", "flexible", "flexibility", "quality", "simple",
+            "standard", "original", "select", "classic", "premium", "basic", "plus",
+            "route", "parking", "booking", "reservation", "weather", "indoor", "outdoor",
+        }
         name_tokens = {
             token
             for option in state.scenario.options
@@ -336,13 +373,13 @@ class ValidationMixin:
         distinctive: dict[str, set[str]] = {}
         for oid, tokens in raw.items():
             others = set().union(*(raw[o] for o in raw if o != oid)) if len(raw) > 1 else set()
-            distinctive[oid] = tokens - others - shared - name_tokens
+            distinctive[oid] = tokens - others - shared - name_tokens - generic_fact_tokens
         return distinctive
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
             return True
-        if intent.act in {ActType.VOTE, ActType.ACCEPT} and not (act.explicit_vote or act.accepts):
+        if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             return True
         return False

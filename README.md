@@ -18,6 +18,8 @@ Given either a one-line topic or a manual environment, the system should create 
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no sufficient agreement remains after bounded narrowing.
 
+Do not introduce a fourth outcome for invalid consensus. If a participant cannot accept an option because of a hard blocker, hard constraint, or unresolved decisive concern, that should be visible in the transcript and the existing outcome logic should produce `majority` or `unresolved`.
+
 The important claim is not merely that transcripts sound natural. The project should behave like a **configurable simulator**: participant parameters such as engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should visibly affect turn-taking, answer behavior, stance movement, and willingness to compromise.
 
 ## Pipeline
@@ -81,6 +83,17 @@ py .\run_eval_suite.py --full
 
 The suite temporarily overwrites `config.yaml`, runs cases sequentially, writes logs under `logs_eval_suite/`, writes `logs_eval_suite/eval_suite_runs.csv`, and restores the original config at the end.
 
+## LLM provider
+
+Use the `gpt` provider for the next dialogue-quality baseline unless explicitly testing provider differences.
+
+```yaml
+llm:
+  provider: "gpt"
+```
+
+The project also contains other provider paths for compatibility, but quality evaluation should not mix providers casually because provider differences affect style, grounding, and parsing behavior.
+
 ## Configuration modes
 
 Two independent mode switches matter:
@@ -102,29 +115,57 @@ auto environment + manual participants
 manual environment + manual participants
 ```
 
-Manual environments define the option board and shared context deterministically. Manual participants define profiles, initial preferences, and optionally full parameter overrides. Fully manual environments plus complete manual profiles can skip setup LLM calls, but dialogue turns still use the LLM.
+Manual environments define the option board and shared context deterministically. Manual participants define profiles, initial preferences, optional blockers, and optionally full parameter overrides. Fully manual environments plus complete manual profiles can skip setup LLM calls, but dialogue turns still use the LLM.
 
-## Current status after latest full evaluation
+## Current quality focus
 
-The latest full evaluation run after the split/narrowing implementation showed clear improvement over the previous full suite:
+The project already has the main literature-shaped architecture: environment setup, simulated participants, controller routing, addressee targeting, visible-state observation, validation/repair, and evaluation. The next improvements should therefore not add a large new subsystem.
 
-```text
-unresolved outcomes:        7/12 -> 4/12
-mid-discussion lean shifts: 3 total -> 16 total
-participant procedure:      now visible in no/light-moderator cases
-split reservation exchanges: now present
-transcript metadata:        provider/model/modes/seed/pacing visible
+The 2026-07-06 behavioral round made discussions shorter, more causally coherent, more trait-shaped, and cheaper to run. The mechanisms now in place:
+
+1. trait-scaled word budgets with a deterministic short-beat mixture (avg ~13-16 words/turn, short turns for every sim) and clause-boundary salvage instead of mid-sentence chops;
+2. answer follow-ups develop the same thread instead of asking the next question; statement acts get a tail-question suppression flag;
+3. direct addressing scales with group size (rare name prefixes in n=2);
+4. dominance is judged on free discussion turns with softened anti-monopoly damping;
+5. manual profiles may combine an explicit hard constraint with any agreeableness; normal auto personas get preference wording, never absolutes;
+6. stance switches need net visible vote advantage or trait-level flexibility; a sim's own unanswered concerns add switch resistance;
+7. an issue ledger stops repeated "we still don't know about parking" loops after one raise + one answer;
+8. compromise proposals are pinned to one concrete option;
+9. grounding runs on a narrowed tripwire with option-scoped judging.
+
+Open work is maintained in `docs/todo.md` (currently: code-path simplification, grounding-judge false positives, combo monitoring, one metric artifact).
+
+## Dialogue behavior principles
+
+- Direct questions should usually be answered promptly by the addressed sim.
+- A response should not routinely open a fresh unrelated topic.
+- Speaking balance is not the target. Dominant sims may speak more if their traits support it.
+- Quiet sims should still appear enough for their stance to be visible.
+- Same-speaker continuations are allowed when they add new content rather than repeat.
+- Direct names are useful but should be less frequent, especially in n=2 runs.
+- Verbosity is an average tendency. All sims may have both short and longer turns.
+- Sims may propose conditional compromises, but one concrete option should remain the final winner.
+- Normal auto-generated sims should not receive categorical hard constraints unless the hard-blocker path is active.
+- Explicit/manual constraints such as allergies, strict dietary needs, accessibility needs, or budget ceilings should be respected even if the participant is agreeable.
+
+## Validation
+
+Before claiming a behavioral fix, run:
+
+```powershell
+py -m py_compile main.py run_eval_suite.py src\*.py
+py run_eval_suite.py --full
 ```
 
-However, the system is not final. The current code now makes the split-vote candidate ranking deterministic, tests a visible plurality before weaker one-vote candidates, permits at most one alternative narrowing candidate, binds split reservations to the tested option, adds a forced stubborn `n=2` deadlock evaluation case, and reduces prompt/grounding cost through more compact utterance prompts plus cheaper deterministic grounding tripwires.
+Inspect transcripts manually. Key questions:
 
-The remaining open issues are listed in `docs/todo.md`. The most important validation work is now to run `py run_eval_suite.py --full` and inspect whether:
+- Are turns shorter and less summary-like?
+- Does Q→A adjacency work without creating question churn?
+- Is direct naming lower but still available when useful?
+- Does speaking dominance follow traits on free discussion turns?
+- Do stance switches have visible reasons?
+- Do hard blockers prevent false unanimity?
+- Do repeated unknown logistics disappear?
+- Do repair/grounding token costs stay controlled?
 
-1. `2-1-1` and tied splits test socially plausible candidates;
-2. post-reservation turns visibly switch, stay, or name an alternative;
-3. `f01_manual_manual_n2_stubborn_deadlock` sets `two_person_deadlock_attempted = true`;
-4. candidate-specific reservations no longer borrow tradeoffs from unrelated options;
-5. `tokens_utterance_in` and `tokens_grounding_in` drop without increasing unsupported printed turns;
-6. trait routing remains stable.
-
-Do not add more broad features until these are validated.
+Execution success alone is not enough. The transcript must read like a plausible option-grounded group decision.

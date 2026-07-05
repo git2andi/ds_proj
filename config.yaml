@@ -82,7 +82,9 @@ participants:
   # drawn at random). If every profile is complete (name, description, private_goal,
   # preferred_option), the persona LLM call is skipped entirely and the cast is
   # fully deterministic. Giving a profile a rejection makes it a hard blocker
-  # (agreeableness pinned to 1; rejection_reason required).
+  # (rejection_reason required). If the profile leaves agreeableness unset it is
+  # pinned to 1 (classic blocker persona); an explicit agreeableness is kept, so
+  # an agreeable participant can still hold a hard constraint politely.
   # If any profile pins preferred_option, the preference_distribution shapes are
   # bypassed: unpinned profiles get a uniformly random option instead.
   mode: auto   # auto | manual
@@ -205,7 +207,7 @@ routing:
   # engagement/initiative/responsiveness; the router boosts sims behind their
   # target and damps sims ahead of it (never strict turn equalization).
   trait_share_adaptation: 3.5          # how strongly actual share is pulled toward the trait target (exp slope)
-  max_share_overshoot: 0.12            # actual share this far above target -> hard damp (anti-monopoly)
+  max_share_overshoot: 0.16            # actual share this far above target -> hard damp (anti-monopoly)
   max_silence_rounds: 2                # a sim silent this many full rounds is pushed back in (min visibility)
   quiet_speaker_boost: 1.25            # additive weight for the min-visibility push (and corpus-preset rebalancing)
   target_window: 6                     # recent participant turns eligible as response targets
@@ -214,7 +216,7 @@ style:
   # Local surface-naturalness tracker over the last few participant turns:
   # when a surface pattern gets too dense, the next turn is told to vary.
   name_prefix_window: 4              # how many recent participant turns to scan
-  name_prefix_max_fraction: 0.4     # above this share of name-prefixed openings ("Kira, ..."), suppress names on non-functional turns
+  name_prefix_max_fraction: 0.3     # above this share of name-prefixed openings ("Kira, ..."), suppress names on non-functional turns
   option_opening_max_fraction: 0.25 # above this share of option-name openings, tell the next turn to lead differently
   i_opening_max_fraction: 0.35      # above this share of first-person "I ..." openings, tell the next non-decision turn to lead differently
   we_opening_max_fraction: 0.30     # same mechanism for "We ..." openings
@@ -228,13 +230,13 @@ utterances:
   # jitter). Soft targets, not hard cuts: a complete sentence somewhat over budget
   # is kept whole rather than chopped mid-thought.
   word_budgets:
-    opening: 22
-    discussion: 24
-    ask: 22
-    answer: 24
-    vote: 18
-    moderator: 22
-    closure: 18
+    opening: 18
+    discussion: 15
+    ask: 13
+    answer: 13
+    vote: 11
+    moderator: 20
+    closure: 14
 
 corpus:
   # Optional corpus-inspired presets. With preset null everything under presets:
@@ -262,7 +264,7 @@ validation:
   # policy-style terms, cross-option fact use) | always: judge every eligible
   # turn (more thorough, roughly doubles dialogue cost).
   grounding_mode: "tripwire"
-  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "soften", "call_vote", "summarize_split", "probe_holdout", "suggest_narrowing", "vote", "accept", "reject"]  # act types that are ever fact-checked
+  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "soften", "call_vote", "summarize_split", "probe_holdout", "suggest_narrowing", "post_reservation_decision", "vote", "accept", "reject"]  # act types that are ever fact-checked
 
 limits:
   warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this (nothing is stopped)

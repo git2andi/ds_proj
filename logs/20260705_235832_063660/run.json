@@ -1,0 +1,4537 @@
+{
+  "run_id": "20260705_235832_063660",
+  "topic": "Choose a restaurant for a small team dinner",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a restaurant for a small team dinner",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most for our team dinner: budget, atmosphere, or food variety?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Rustic Italian Trattoria",
+        "attrs": {
+          "average_cost_per_person": "$35",
+          "distance_from_office": "2 miles",
+          "ambiance": "cozy, casual",
+          "menu_variety": "Italian classics with vegetarian options"
+        },
+        "upside": "Warm, inviting atmosphere with hearty meals",
+        "tradeoff": "Limited vegan options and moderate noise levels",
+        "concern": "Some may find the menu too traditional or heavy",
+        "best_for": "teams prioritizing comfort food and casual vibe",
+        "short_name": "Rustic Italian"
+      },
+      {
+        "id": "B",
+        "name": "Sakura Sushi Bar Downtown",
+        "attrs": {
+          "average_cost_per_person": "$40",
+          "distance_from_office": "3.5 miles",
+          "ambiance": "modern, sleek",
+          "menu_variety": "fresh sushi, sashimi, and small plates"
+        },
+        "upside": "High-quality sushi with a stylish setting",
+        "tradeoff": "Higher cost at budget limit and limited cooked options",
+        "concern": "Not ideal for those who dislike raw fish or have allergies",
+        "best_for": "teams valuing upscale dining and seafood",
+        "short_name": "Sakura Sushi"
+      },
+      {
+        "id": "C",
+        "name": "Green Garden Vegan Bistro",
+        "attrs": {
+          "average_cost_per_person": "$30",
+          "distance_from_office": "1.8 miles",
+          "ambiance": "bright, eco-friendly",
+          "menu_variety": "100% plant-based with gluten-free choices"
+        },
+        "upside": "Healthy, sustainable meals with diverse flavors",
+        "tradeoff": "May not satisfy meat-eaters and some find portions small",
+        "concern": "Limited alcohol selection and less traditional dinner feel",
+        "best_for": "teams focused on health and sustainability",
+        "short_name": "Green Garden"
+      },
+      {
+        "id": "D",
+        "name": "The Classic American Grill",
+        "attrs": {
+          "average_cost_per_person": "$28",
+          "distance_from_office": "2.2 miles",
+          "ambiance": "lively, family-style",
+          "menu_variety": "burgers, steaks, salads, and comfort sides"
+        },
+        "upside": "Affordable with generous portions and familiar dishes",
+        "tradeoff": "Casual setting might feel noisy and less intimate",
+        "concern": "Limited vegetarian options and less adventurous cuisine",
+        "best_for": "teams wanting value and traditional American fare",
+        "short_name": "Classic Grill"
+      }
+    ],
+    "shared_context": [
+      "The team has exactly 7 members.",
+      "The budget per person is capped at $40.",
+      "Dinner should start around 7 PM on a weekday."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Sven",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.4,
+        "directness": 0.6,
+        "compromise_threshold": 0.375
+      },
+      "background": "I enjoy lively, familiar American food that offers generous portions in a casual setting.",
+      "private_goal": "I want an affordable, hearty meal with a fun, family-style atmosphere.",
+      "preferred_options": [
+        "D",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Rina",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4625,
+        "initiative": 0.475,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7,
+        "directness": 0.6875,
+        "compromise_threshold": 0.65
+      },
+      "background": "I appreciate cozy, casual places with comforting traditional dishes that feel inviting.",
+      "private_goal": "I want a warm atmosphere with hearty Italian classics that include some vegetarian options.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Hugo",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.4625,
+        "compromise_threshold": 0.11249999999999993
+      },
+      "background": "I like familiar, affordable American food that feels lively and satisfying.",
+      "private_goal": "I want a casual, value-oriented dinner with generous portions and traditional dishes.",
+      "preferred_options": [
+        "D",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Ivan",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.625,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 0.65,
+        "stubbornness": 0.4,
+        "directness": 0.625,
+        "compromise_threshold": 0.42499999999999993
+      },
+      "background": "I prefer healthy, sustainable dining options that feel bright and eco-friendly.",
+      "private_goal": "I want a plant-based menu with gluten-free choices that support health and sustainability.",
+      "preferred_options": [
+        "C",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Amir",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.4625,
+        "initiative": 0.475,
+        "responsiveness": 0.775,
+        "stubbornness": 0.55,
+        "directness": 0.7374999999999999,
+        "compromise_threshold": 0.5
+      },
+      "background": "I enjoy upscale dining with high-quality seafood in a modern, stylish setting.",
+      "private_goal": "I want fresh sushi and sashimi with a sophisticated atmosphere.",
+      "preferred_options": [
+        "B",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Jasper",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.7,
+        "stubbornness": 0.325,
+        "directness": 0.5625,
+        "compromise_threshold": 0.25
+      },
+      "background": "I like modern, sleek places offering fresh seafood and small plates in an upscale setting.",
+      "private_goal": "I want a stylish dining experience with high-quality sushi options.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "name": "Xena",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.2875,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.4,
+        "directness": 0.41250000000000003,
+        "compromise_threshold": 0.375
+      },
+      "background": "I prefer bright, eco-friendly restaurants with 100% plant-based menus and gluten-free choices.",
+      "private_goal": "I want healthy, sustainable meals with diverse flavors in a relaxed setting.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": "B",
+      "rejection_reason": "I reject Sakura Sushi because it conflicts with my preference for plant-based, sustainable dining.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "challenge",
+          "option": "B",
+          "reason": "raise the hard concern about B: I reject Sakura Sushi because it conflicts with my preference for plant-based, sustainable dining.",
+          "priority": 0.95,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 47,
+      "current_preference": "D",
+      "commitment_strength": 0.4268000000000001,
+      "commitment_min": 0.4268000000000001,
+      "challenges_received": 3,
+      "concessions_made": 1,
+      "explicit_vote": "D",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "D"
+      ],
+      "soft_rejections": {
+        "C": "I get the concern, Rina, but Green Garden’s variety."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Classic American Grill stands out with lively, family-style vibes and hearty portions—just right for seven of us!",
+        "Parking might be tight near Classic Grill on a weekday evening, so we should check that before booking.",
+        "Parking’s unknown for both spots, but Classic Grill’s hearty portions and $28 average cost keep it tough to beat.",
+        "The eco-friendly vibe and diverse menu at Green Garden are really growing on me, especially for those wanting lighter, healthy meals.",
+        "Just to be clear, we’re aiming for a 7 PM start on a weekday, right?",
+        "I get the concern, Rina, but Green Garden’s variety.",
+        "I still like Green Garden’s vibe, but Classic Grill works better for hearty, familiar meals and generous portions—my pick!"
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 59,
+      "current_preference": "D",
+      "commitment_strength": 0.6970000000000003,
+      "commitment_min": 0.6970000000000003,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "We need a place with a warm vibe and solid vegetarian choices, and the Rustic Italian.",
+        "Rustic Italian is closer and cozier, but Classic Grill feels more casual and family-friendly.",
+        "Cozy and warm with hearty Italian classics fits our vibe better.",
+        "Green Garden sounds good, but will the mostly plant-based menu satisfy everyone?",
+        "I want a warm, cozy spot with hearty Italian classics and good.",
+        "Rustic Italian gets my vote.",
+        "The casual, lively vibe at Classic Grill.",
+        "I still like Rustic Italian, but I'll switch to Classic Grill because it is the clearest common ground now."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 11,
+      "last_spoke_turn": 58,
+      "current_preference": "D",
+      "commitment_strength": 0.353325,
+      "commitment_min": 0.353325,
+      "challenges_received": 4,
+      "concessions_made": 1,
+      "explicit_vote": "D",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "D"
+      ],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Considering our budget and timing, Classic American Grill offers the lively atmosphere and familiar, hearty dishes we want.",
+        "Sakura Sushi sounds great, Jasper, but with seven.",
+        "Green Garden fits the budget and is pretty close, Jasper, which is great.",
+        "That lively, family-style vibe really suits us, and Classic Grill’s.",
+        "I like that Classic Grill hits our budget with hearty portions, and I wonder.",
+        "Adding to that, Classic Grill’s family-style menu means.",
+        "True, Amir, Sakura Sushi offers high-quality sushi and a sleek ambiance.",
+        "The eco-friendly vibe and variety at Green Garden are really starting to win me over, especially for those wanting something lighter.",
+        "I liked Green Garden too, but Classic Grill offers that classic American comfort and big plates—Classic Grill works best for me.",
+        "Jasper, I get that the family-style vibe isn't sleek.",
+        "Rina, the lively vibe does match what we want, and at $28 per person it stays well under budget."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 9,
+      "last_spoke_turn": 60,
+      "current_preference": "D",
+      "commitment_strength": 0.5011999999999999,
+      "commitment_min": 0.5011999999999999,
+      "challenges_received": 2,
+      "concessions_made": 3,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Healthy, sustainable meals matter most, so Green Garden’s plant-based menu fits well, but does it have enough gluten-free choices for everyone?",
+        "Does Green Garden have enough seating for all of us on a weekday evening?",
+        "Green Garden fits our budget and offers a bright, eco-friendly space for seven.",
+        "Classic Grill’s vibe is lively, but do we know if parking’s easier than Green Garden?",
+        "The lively, family-style vibe at The Classic American Grill.",
+        "What if we split the difference and try Green Garden’s bright, plant-based menu?",
+        "Sushi isn’t plant-based, so Green Garden fits.",
+        "I'm going with Green Garden for its eco-friendly vibe and $30 budget.",
+        "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p5": {
+      "persona_id": "p5",
+      "turn_count": 8,
+      "last_spoke_turn": 61,
+      "current_preference": "D",
+      "commitment_strength": 0.5271499999999998,
+      "commitment_min": 0.5271499999999998,
+      "challenges_received": 2,
+      "concessions_made": 3,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Fresh sushi and a sleek vibe fit us, but is Sakura Sushi too pricey for dinner?",
+        "Seven fits the $40 cap at Sakura Sushi, and the sleek setting suits our style.",
+        "Parking at Sakura Sushi Downtown might be limited since it’s 3.5 miles away.",
+        "Classic Grill’s casual vibe won’t match the sophisticated tone we want.",
+        "The variety and cost at Green Garden.",
+        "Ivan, Green Garden suits us, but what about sushi options?",
+        "My vote goes to Green Garden for its healthy, sustainable, plant-based menu.",
+        "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "C",
+          "has_reason": true,
+          "has_bridge": true
+        },
+        {
+          "from": "C",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p6": {
+      "persona_id": "p6",
+      "turn_count": 9,
+      "last_spoke_turn": 62,
+      "current_preference": "D",
+      "commitment_strength": 0.12020000000000003,
+      "commitment_min": 0.12020000000000003,
+      "challenges_received": 4,
+      "concessions_made": 2,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "How about Sakura Sushi Bar Downtown? It offers high-quality sushi in a sleek setting, though it’s at our budget limit.",
+        "Actually, the healthy, sustainable vibe of Green Garden is starting to make more sense—Rina’s point about solid vegetarian choices really stuck with me.",
+        "How about we prioritize budget and distance by choosing Green Garden?",
+        "Good question, Ivan!",
+        "Sven, I love that Green Garden’s eco-friendly vibe fits our healthy meal goal, and with $30 per person, it’s within budget too!",
+        "Sven makes a solid point about Green Garden’s variety, and with its $30 average cost, it keeps us well under budget!",
+        "I still like Green Garden, but I’m going with Sakura Sushi for its fresh seafood and upscale vibe.",
+        "The casual, family-style vibe at Classic Grill feels off for a sleek, upscale night out.",
+        "I still like Sakura Sushi, but I'll switch to Classic Grill because it is the clearest common ground now."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p7": {
+      "persona_id": "p7",
+      "turn_count": 7,
+      "last_spoke_turn": 53,
+      "current_preference": "D",
+      "commitment_strength": 0.27480000000000016,
+      "commitment_min": 0.27480000000000016,
+      "challenges_received": 3,
+      "concessions_made": 2,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {
+        "B": "I reject Sakura Sushi because it conflicts with my preference for plant-based, sustainable dining."
+      },
+      "already_said": [
+        "Bright, eco-friendly Green Garden fits budget and plant-based needs; parking situation unknown.",
+        "Agree on warm vibe and veg options.",
+        "The lively, generous portions at Classic Grill are growing on me.",
+        "Agree, Green Garden offers better sustainability and brighter space; is parking easier there?",
+        "Unknown parking situation for both; Green Garden’s plant-based menu suits our goals better.",
+        "Sakura Sushi Bar has high-quality sushi but comes at a higher cost.",
+        "I'd go with Classic Grill."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "D",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a restaurant for a small team dinner.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Rustic Italian Trattoria — average cost per person: $35; distance from office: 2 miles; ambiance: cozy, casual (+ Warm, inviting atmosphere with hearty meals; − Limited vegan options and moderate noise levels)\nB) Sakura Sushi Bar Downtown — average cost per person: $40; distance from office: 3.5 miles; ambiance: modern, sleek (+ High-quality sushi with a stylish setting; − Higher cost at budget limit and limited cooked options)\nC) Green Garden Vegan Bistro — average cost per person: $30; distance from office: 1.8 miles; ambiance: bright, eco-friendly (+ Healthy, sustainable meals with diverse flavors; − May not satisfy meat-eaters and some find portions small)\nD) The Classic American Grill — average cost per person: $28; distance from office: 2.2 miles; ambiance: lively, family-style (+ Affordable with generous portions and familiar dishes; − Casual setting might feel noisy and less intimate)\nContext: The team has exactly 7 members.; The budget per person is capped at $40.; Dinner should start around 7 PM on a weekday.\nWhat matters most for our team dinner: budget, atmosphere, or food variety?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a restaurant for a small team dinner.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) The Rustic Italian Trattoria — average cost per person: $35; distance from office: 2 miles; ambiance: cozy, casual (+ Warm, inviting atmosphere with hearty meals; − Limited vegan options and moderate noise levels)\nB) Sakura Sushi Bar Downtown — average cost per person: $40; distance from office: 3.5 miles; ambiance: modern, sleek (+ High-quality sushi with a stylish setting; − Higher cost at budget limit and limited cooked options)\nC) Green Garden Vegan Bistro — average cost per person: $30; distance from office: 1.8 miles; ambiance: bright, eco-friendly (+ Healthy, sustainable meals with diverse flavors; − May not satisfy meat-eaters and some find portions small)\nD) The Classic American Grill — average cost per person: $28; distance from office: 2.2 miles; ambiance: lively, family-style (+ Affordable with generous portions and familiar dishes; − Casual setting might feel noisy and less intimate)\nContext: The team has exactly 7 members.; The budget per person is capped at $40.; Dinner should start around 7 PM on a weekday.\nWhat matters most for our team dinner: budget, atmosphere, or food variety?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "How about Sakura Sushi Bar Downtown? It offers high-quality sushi in a sleek setting, though it’s at our budget limit.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p6",
+        "text": "How about Sakura Sushi Bar Downtown? It offers high-quality sushi in a sleek setting, though it’s at our budget limit.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1654,
+      "tokens_out": 82,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Classic American Grill stands out with lively, family-style vibes and hearty portions—just right for seven of us!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Classic American Grill stands out with lively, family-style vibes and hearty portions—just right for seven of us!",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1163,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Considering our budget and timing, Classic American Grill offers the lively atmosphere and familiar, hearty dishes we want.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Considering our budget and timing, Classic American Grill offers the lively atmosphere and familiar, hearty dishes we want.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1240,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "Healthy, sustainable meals matter most, so Green Garden’s plant-based menu fits well, but does it have enough gluten-free choices for everyone?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Healthy, sustainable meals matter most, so Green Garden’s plant-based menu fits well, but does it have enough gluten-free choices for everyone?",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p7",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1254,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "We need a place with a warm vibe and solid vegetarian choices, and the Rustic Italian.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We need a place with a warm vibe and solid vegetarian choices, and the Rustic Italian.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1002,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "Fresh sushi and a sleek vibe fit us, but is Sakura Sushi too pricey for dinner?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Fresh sushi and a sleek vibe fit us, but is Sakura Sushi too pricey for dinner?",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1792,
+      "tokens_out": 66,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "Bright, eco-friendly Green Garden fits budget and plant-based needs; parking situation unknown.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Bright, eco-friendly Green Garden fits budget and plant-based needs; parking situation unknown.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 457,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Sakura Sushi sounds great, Jasper, but with seven.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sakura Sushi sounds great, Jasper, but with seven.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on Sakura Sushi with one concrete concern — you currently favor Classic Grill, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 582,
+      "tokens_out": 66,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "Actually, the healthy, sustainable vibe of Green Garden is starting to make more sense—Rina’s point about solid vegetarian choices really stuck with me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Actually, the healthy, sustainable vibe of Green Garden is starting to make more sense—Rina’s point about solid vegetarian choices really stuck with me.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "soften",
+        "reason": "the case others made for Green Garden genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Sakura Sushi; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 1234,
+      "tokens_out": 64,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "Seven fits the $40 cap at Sakura Sushi, and the sleek setting suits our style.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Seven fits the $40 cap at Sakura Sushi, and the sleek setting suits our style.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "a concern was raised about Sakura Sushi, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1026,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "Agree on warm vibe and veg options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Agree on warm vibe and veg options.",
+        "act_type": "agree",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Rustic Italian, Green Garden",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 607,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "How about we prioritize budget and distance by choosing Green Garden?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "How about we prioritize budget and distance by choosing Green Garden?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 559,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Green Garden fits the budget and is pretty close, Jasper, which is great.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Green Garden fits the budget and is pretty close, Jasper, which is great.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p6",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 489,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "Does Green Garden have enough seating for all of us on a weekday evening?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Does Green Garden have enough seating for all of us on a weekday evening?",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1751,
+      "tokens_out": 88,
+      "validation_issues": [
+        "UNSUPPORTED_FACT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "The lively, generous portions at Classic Grill are growing on me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "The lively, generous portions at Classic Grill are growing on me.",
+        "act_type": "soften",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "D"
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "soften",
+        "reason": "the case others made for Classic Grill genuinely lands with you — say openly that it is growing on me, name the argument that moved you, and what you still like about Green Garden; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "D",
+        "continuation": false
+      },
+      "tokens_in": 621,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "Good question, Ivan!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Good question, Ivan!",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "a concern was raised about Green Garden, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 515,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "That lively, family-style vibe really suits us, and Classic Grill’s.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "That lively, family-style vibe really suits us, and Classic Grill’s.",
+        "act_type": "agree",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Classic Grill",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 981,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "Green Garden fits our budget and offers a bright, eco-friendly space for seven.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Green Garden fits our budget and offers a bright, eco-friendly space for seven.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Green Garden, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 410,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Parking might be tight near Classic Grill on a weekday evening, so we should check that before booking.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Parking might be tight near Classic Grill on a weekday evening, so we should check that before booking.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Classic Grill that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 488,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "Rustic Italian is closer and cozier, but Classic Grill feels more casual and family-friendly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Rustic Italian is closer and cozier, but Classic Grill feels more casual and family-friendly.",
+        "act_type": "challenge",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on Classic Grill with one concrete concern — you currently favor Rustic Italian, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2371,
+      "tokens_out": 66,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "Agree, Green Garden offers better sustainability and brighter space; is parking easier there?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Agree, Green Garden offers better sustainability and brighter space; is parking easier there?",
+        "act_type": "agree",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Green Garden, Classic Grill",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 600,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "I like that Classic Grill hits our budget with hearty portions, and I wonder.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I like that Classic Grill hits our budget with hearty portions, and I wonder.",
+        "act_type": "agree",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Classic Grill",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1002,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "Classic Grill’s vibe is lively, but do we know if parking’s easier than Green Garden?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Classic Grill’s vibe is lively, but do we know if parking’s easier than Green Garden?",
+        "act_type": "challenge",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p7",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "challenge",
+        "reason": "push back on Classic Grill with one concrete concern — you currently favor Green Garden, so aim at the rival, not your own pick",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2396,
+      "tokens_out": 78,
+      "validation_issues": [
+        "UNSUPPORTED_FACT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "Unknown parking situation for both; Green Garden’s plant-based menu suits our goals better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Unknown parking situation for both; Green Garden’s plant-based menu suits our goals better.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 653,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Parking’s unknown for both spots, but Classic Grill’s hearty portions and $28 average cost keep it tough to beat.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Parking’s unknown for both spots, but Classic Grill’s hearty portions and $28 average cost keep it tough to beat.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "a concern was raised about Classic Grill, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1038,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "Cozy and warm with hearty Italian classics fits our vibe better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cozy and warm with hearty Italian classics fits our vibe better.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Classic Grill, Rustic Italian, Green Garden with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 624,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Adding to that, Classic Grill’s family-style menu means.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Adding to that, Classic Grill’s family-style menu means.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Classic Grill, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 519,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "Parking at Sakura Sushi Downtown might be limited since it’s 3.5 miles away.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Parking at Sakura Sushi Downtown might be limited since it’s 3.5 miles away.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Classic Grill, Green Garden, Sakura Sushi that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2333,
+      "tokens_out": 76,
+      "validation_issues": [
+        "UNSUPPORTED_FACT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "True, Amir, Sakura Sushi offers high-quality sushi and a sleek ambiance.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "True, Amir, Sakura Sushi offers high-quality sushi and a sleek ambiance.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about Sakura Sushi, Classic Grill, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 29,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1400,
+      "tokens_out": 79,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "Classic Grill’s casual vibe won’t match the sophisticated tone we want.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Classic Grill’s casual vibe won’t match the sophisticated tone we want.",
+        "act_type": "challenge",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "challenge",
+        "reason": "push back on Classic Grill with one concrete concern — you currently favor Sakura Sushi, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 30,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1089,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "The eco-friendly vibe and variety at Green Garden are really starting to win me over, especially for those wanting something lighter.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The eco-friendly vibe and variety at Green Garden are really starting to win me over, especially for those wanting something lighter.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "soften",
+        "reason": "the case others made for Green Garden genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Classic Grill; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 1210,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "The eco-friendly vibe and diverse menu at Green Garden are really growing on me, especially for those wanting lighter, healthy meals.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The eco-friendly vibe and diverse menu at Green Garden are really growing on me, especially for those wanting lighter, healthy meals.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "soften",
+        "reason": "the case others made for Green Garden genuinely lands with you — say openly that it is growing on me, name the argument that moved you, and what you still like about Classic Grill; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 1228,
+      "tokens_out": 73,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "Just to be clear, we’re aiming for a 7 PM start on a weekday, right?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Just to be clear, we’re aiming for a 7 PM start on a weekday, right?",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 734,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "Sven, I love that Green Garden’s eco-friendly vibe fits our healthy meal goal, and with $30 per person, it’s within budget too!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Sven, I love that Green Garden’s eco-friendly vibe fits our healthy meal goal, and with $30 per person, it’s within budget too!",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Green Garden fits that",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 33,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1066,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "Green Garden sounds good, but will the mostly plant-based menu satisfy everyone?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Garden sounds good, but will the mostly plant-based menu satisfy everyone?",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on Green Garden with one concrete concern — you currently favor Rustic Italian, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 35,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 605,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "I get the concern, Rina, but Green Garden’s variety.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get the concern, Rina, but Green Garden’s variety.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "I get the concern, Rina, but Green Garden’s variety."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "a concern was raised about Green Garden, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 36,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 546,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "The lively, family-style vibe at The Classic American Grill.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The lively, family-style vibe at The Classic American Grill.",
+        "act_type": "soften",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "soften",
+        "reason": "the case others made for Classic Grill genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Green Garden; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "D",
+        "continuation": false
+      },
+      "tokens_in": 2158,
+      "tokens_out": 70,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "Sven makes a solid point about Green Garden’s variety, and with its $30 average cost, it keeps us well under budget!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p6",
+        "text": "Sven makes a solid point about Green Garden’s variety, and with its $30 average cost, it keeps us well under budget!",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "build",
+        "reason": "a concern was raised about Green Garden, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 37,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 562,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 40,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "Sakura Sushi Bar has high-quality sushi but comes at a higher cost.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p7",
+        "text": "Sakura Sushi Bar has high-quality sushi but comes at a higher cost.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "challenge",
+        "reason": "push back on Sakura Sushi with one concrete concern — you currently favor Classic Grill, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 34,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1432,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 41,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "The variety and cost at Green Garden.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The variety and cost at Green Garden.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "soften",
+        "reason": "the case others made for Green Garden genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Sakura Sushi; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 602,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 42,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "I want a warm, cozy spot with hearty Italian classics and good.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I want a warm, cozy spot with hearty Italian classics and good.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Green Garden, Rustic Italian fits that",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 37,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 556,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 43,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "What if we split the difference and try Green Garden’s bright, plant-based menu?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "What if we split the difference and try Green Garden’s bright, plant-based menu?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p5",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "propose_compromise",
+        "reason": "test whether Green Garden, Classic Grill could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 36,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 537,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 44,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "Ivan, Green Garden suits us, but what about sushi options?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Ivan, Green Garden suits us, but what about sushi options?",
+        "act_type": "answer",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 43,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1392,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 45,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "Sushi isn’t plant-based, so Green Garden fits.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Sushi isn’t plant-based, so Green Garden fits.",
+        "act_type": "answer",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p5",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 44,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 576,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 46,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you each share the one spot you’re definitely choosing for tonight?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you each share the one spot you’re definitely choosing for tonight?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 47,
+      "speaker_id": "p1",
+      "speaker_name": "Sven",
+      "text": "I still like Green Garden’s vibe, but Classic Grill works better for hearty, familiar meals and generous portions—my pick!",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I still like Green Garden’s vibe, but Classic Grill works better for hearty, familiar meals and generous portions—my pick!",
+        "act_type": "accept",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [
+          "D"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1214,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 48,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "My vote goes to Green Garden for its healthy, sustainable, plant-based menu.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "My vote goes to Green Garden for its healthy, sustainable, plant-based menu.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1490,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 49,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "I still like Green Garden, but I’m going with Sakura Sushi for its fresh seafood and upscale vibe.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I still like Green Garden, but I’m going with Sakura Sushi for its fresh seafood and upscale vibe.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my vote is"
+        ],
+        "avoid_reasons": [
+          "for its healthy, sustainable, plant-based menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2261,
+      "tokens_out": 76,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 50,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "I'm going with Green Garden for its eco-friendly vibe and $30 budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I'm going with Green Garden for its eco-friendly vibe and $30 budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my vote is"
+        ],
+        "avoid_reasons": [
+          "for its fresh seafood and upscale vibe",
+          "for its healthy, sustainable, plant-based menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1405,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 51,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "I liked Green Garden too, but Classic Grill offers that classic American comfort and big plates—Classic Grill works best for me.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I liked Green Garden too, but Classic Grill offers that classic American comfort and big plates—Classic Grill works best for me.",
+        "act_type": "accept",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [
+          "D"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my vote is",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for its eco-friendly vibe and $30 budget",
+          "for its fresh seafood and upscale vibe",
+          "for its healthy, sustainable, plant-based menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1243,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 52,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "Rustic Italian gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Rustic Italian gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "my vote is",
+          "I'm going with",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "for its eco-friendly vibe and $30 budget",
+          "for its fresh seafood and upscale vibe",
+          "for its healthy, sustainable, plant-based menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1590,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 53,
+      "speaker_id": "p7",
+      "speaker_name": "Xena",
+      "text": "I'd go with Classic Grill.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p7",
+        "text": "I'd go with Classic Grill.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p7",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "my vote is",
+          "I'm going with",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "for its eco-friendly vibe and $30 budget",
+          "for its fresh seafood and upscale vibe",
+          "for its healthy, sustainable, plant-based menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1021,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 54,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We are split: Classic Grill (3), Green Garden (2), Rustic Italian (1), Sakura Sushi (1). Let's test Classic Grill as the compromise; Rina, Ivan, Amir, Jasper, what would still block that for you? It has the visible lead, so we test it first.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "We are split: Classic Grill (3), Green Garden (2), Rustic Italian (1), Sakura Sushi (1). Let's test Classic Grill as the compromise; Rina, Ivan, Amir, Jasper, what would still block that for you? It has the visible lead, so we test it first.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 55,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "The casual, family-style vibe at Classic Grill feels off for a sleek, upscale night out.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "The casual, family-style vibe at Classic Grill feels off for a sleek, upscale night out.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes Classic Grill hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, do not borrow tradeoffs from another option, and do not invent facts",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1151,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 56,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Jasper, I get that the family-style vibe isn't sleek.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Jasper, I get that the family-style vibe isn't sleek.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p6",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "respond directly to Jasper's reservation about Classic Grill; concede what the option board cannot prove, then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, and do not import facts from any other option",
+        "addressee_id": "p6",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 55,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 642,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 57,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "The casual, lively vibe at Classic Grill.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The casual, lively vibe at Classic Grill.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes Classic Grill hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, do not borrow tradeoffs from another option, and do not invent facts",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1128,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 58,
+      "speaker_id": "p3",
+      "speaker_name": "Hugo",
+      "text": "Rina, the lively vibe does match what we want, and at $28 per person it stays well under budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Rina, the lively vibe does match what we want, and at $28 per person it stays well under budget.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "respond directly to Rina's reservation about Classic Grill; concede what the option board cannot prove, then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, and do not import facts from any other option",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 57,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 583,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 59,
+      "speaker_id": "p2",
+      "speaker_name": "Rina",
+      "text": "I still like Rustic Italian, but I'll switch to Classic Grill because it is the clearest common ground now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still like Rustic Italian, but I'll switch to Classic Grill because it is the clearest common ground now.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "post_reservation_decision",
+        "reason": "post-reservation decision step: choose exactly one visible outcome — switch to Classic Grill, stay with Rustic Italian. If you switch, commit clearly and bridge from your earlier pick; if you stay or propose the alternative, name the one blocker that remains. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 60,
+      "speaker_id": "p4",
+      "speaker_name": "Ivan",
+      "text": "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "post_reservation_decision",
+        "reason": "post-reservation decision step: choose exactly one visible outcome — switch to Classic Grill, stay with Green Garden. If you switch, commit clearly and bridge from your earlier pick; if you stay or propose the alternative, name the one blocker that remains. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 61,
+      "speaker_id": "p5",
+      "speaker_name": "Amir",
+      "text": "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I still like Green Garden, but I'll switch to Classic Grill because it is the clearest common ground now.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "post_reservation_decision",
+        "reason": "post-reservation decision step: choose exactly one visible outcome — switch to Classic Grill, stay with Green Garden. If you switch, commit clearly and bridge from your earlier pick; if you stay or propose the alternative, name the one blocker that remains. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 62,
+      "speaker_id": "p6",
+      "speaker_name": "Jasper",
+      "text": "I still like Sakura Sushi, but I'll switch to Classic Grill because it is the clearest common ground now.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p6",
+        "text": "I still like Sakura Sushi, but I'll switch to Classic Grill because it is the clearest common ground now.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p6",
+        "act": "post_reservation_decision",
+        "reason": "post-reservation decision step: choose exactly one visible outcome — switch to Classic Grill, stay with Sakura Sushi. If you switch, commit clearly and bridge from your earlier pick; if you stay or propose the alternative, name the one blocker that remains. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 63,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like The Classic American Grill it is—can’t wait to enjoy it together!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like The Classic American Grill it is—can’t wait to enjoy it together!",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "D",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 59,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p5": "D",
+        "p6": "D",
+        "p4": "D",
+        "p3": "D",
+        "p2": "D",
+        "p7": "D"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "D",
+        "p4": "D",
+        "p5": "D",
+        "p6": "D",
+        "p7": "D"
+      },
+      "phase_history": [
+        "pacing: min=35, force=44, hard=51, distinct_initial_prefs=4, avg_compromise=0.62",
+        "turn 8: discussion — all participants gave an opening view",
+        "turn 45: narrowing — target discussion length reached",
+        "turn 53: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 62: closure — successful after split-vote compromise"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 35,
+      "force_narrow_turns": 44,
+      "hard_max_turns": 51
+    }
+  },
+  "phase_history": [
+    "pacing: min=35, force=44, hard=51, distinct_initial_prefs=4, avg_compromise=0.62",
+    "turn 8: discussion — all participants gave an opening view",
+    "turn 45: narrowing — target discussion length reached",
+    "turn 53: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 62: closure — successful after split-vote compromise",
+    "turn 63: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 59,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.063,
+    "turn_counts": {
+      "Sven": 7,
+      "Rina": 8,
+      "Hugo": 11,
+      "Ivan": 9,
+      "Amir": 8,
+      "Jasper": 9,
+      "Xena": 7
+    },
+    "top_speaker_share": 0.186,
+    "avg_words_by_persona": {
+      "Sven": 16.9,
+      "Rina": 12.0,
+      "Hugo": 13.8,
+      "Ivan": 13.7,
+      "Amir": 12.9,
+      "Jasper": 16.9,
+      "Xena": 10.4
+    },
+    "question_density": 0.186,
+    "avg_words_per_turn": 13.8,
+    "repaired_turns": 15,
+    "repair_rate": 0.254,
+    "flagged_turns": 3,
+    "fallback_turns": 2,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 7,
+    "visible_votes": {
+      "Sven": "D",
+      "Rina": "D",
+      "Hugo": "D",
+      "Ivan": "D",
+      "Amir": "D",
+      "Jasper": "D",
+      "Xena": "D"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 8,
+    "concern_response_rate": 0.625,
+    "participation_gini": 0.082,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.167,
+    "open_questions_at_end": 0,
+    "repetition_score": 0.161,
+    "compromise_success_rate": 1.0,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "peer_vote_call": false,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 2,
+    "continuation_turns": 1,
+    "switch_event_count": 6,
+    "switch_explanation_rate": 0.833,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 7,
+    "name_prefix_rate": 0.068,
+    "option_opening_rate": 0.203,
+    "i_opening_rate": 0.237,
+    "we_opening_rate": 0.017,
+    "name_or_option_opening_rate": 0.271,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 11,
+    "unsupported_printed_turns": 3,
+    "final_support_fraction": 1.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 11,
+        "reasons": 5,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 27,
+        "reasons": 13,
+        "objections": 4,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 21,
+        "reasons": 9,
+        "objections": 3,
+        "acceptances": 2
+      }
+    },
+    "expected_engagement": {
+      "Sven": 0.737,
+      "Rina": 0.512,
+      "Hugo": 0.588,
+      "Ivan": 0.625,
+      "Amir": 0.55,
+      "Jasper": 0.737,
+      "Xena": 0.287
+    },
+    "expected_turn_share": {
+      "Sven": 0.169,
+      "Rina": 0.127,
+      "Hugo": 0.153,
+      "Ivan": 0.147,
+      "Amir": 0.135,
+      "Jasper": 0.171,
+      "Xena": 0.099
+    },
+    "realized_turn_share": {
+      "Sven": 0.119,
+      "Rina": 0.136,
+      "Hugo": 0.186,
+      "Ivan": 0.153,
+      "Amir": 0.136,
+      "Jasper": 0.153,
+      "Xena": 0.119
+    },
+    "agenda_status": {
+      "done": 4,
+      "obsolete": 15,
+      "pending": 8
+    },
+    "outcome_status": "successful",
+    "final_option": "D",
+    "corpus_preset": "",
+    "min_discussion_turns": 35,
+    "force_narrow_turns": 44,
+    "hard_max_turns": 51,
+    "phase_history": [
+      "pacing: min=35, force=44, hard=51, distinct_initial_prefs=4, avg_compromise=0.62",
+      "turn 8: discussion — all participants gave an opening view",
+      "turn 45: narrowing — target discussion length reached",
+      "turn 53: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 62: closure — successful after split-vote compromise",
+      "turn 63: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.019,
+    "verbosity_realization_error": 0.077,
+    "engagement_error_by_persona": {
+      "Sven": 0.05,
+      "Rina": 0.008,
+      "Hugo": 0.034,
+      "Ivan": 0.005,
+      "Amir": 0.001,
+      "Jasper": 0.018,
+      "Xena": 0.02
+    },
+    "verbosity_error_by_persona": {
+      "Sven": 0.102,
+      "Rina": 0.068,
+      "Hugo": 0.025,
+      "Ivan": 0.059,
+      "Amir": 0.138,
+      "Jasper": 0.104,
+      "Xena": 0.041
+    },
+    "engagement_behavior_correlation": 0.286,
+    "verbosity_behavior_correlation": 0.938,
+    "setup_tokens_in": 2301,
+    "setup_tokens_out": 1344,
+    "dialogue_tokens_in": 59198,
+    "dialogue_tokens_out": 2595,
+    "total_tokens_in": 61499,
+    "total_tokens_out": 3939,
+    "tokens_setup_in": 2301,
+    "tokens_setup_out": 1344,
+    "calls_setup": 1,
+    "tokens_utterance_in": 31844,
+    "tokens_utterance_out": 1793,
+    "calls_utterance": 55,
+    "tokens_grounding_in": 22042,
+    "tokens_grounding_out": 517,
+    "calls_grounding": 38,
+    "tokens_repair_in": 4896,
+    "tokens_repair_out": 251,
+    "calls_repair": 15,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 416,
+    "tokens_moderator_out": 34,
+    "calls_moderator": 2,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2301,
+    "setup_tokens_out": 1344,
+    "dialogue_tokens_in": 59198,
+    "dialogue_tokens_out": 2595,
+    "total_tokens_in": 61499,
+    "total_tokens_out": 3939
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2301,
+      "out": 1344,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 31844,
+      "out": 1793,
+      "calls": 55
+    },
+    "grounding": {
+      "in": 22042,
+      "out": 517,
+      "calls": 38
+    },
+    "repair": {
+      "in": 4896,
+      "out": 251,
+      "calls": 15
+    },
+    "moderator": {
+      "in": 416,
+      "out": 34,
+      "calls": 2
+    }
+  }
+}

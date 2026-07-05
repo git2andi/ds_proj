@@ -454,10 +454,14 @@ class SetupBuilder:
             pid = f"p{idx + 1}"
             profile = self._profiles[idx] if self._profiles else {}
             fixed_traits = profile.get("traits") or {}
+            # A manual rejection with explicitly configured agreeableness keeps
+            # that agreeableness: the constraint holds regardless of personality
+            # (P5). Only an unset agreeableness falls back to the classic
+            # low-agreeableness blocker persona.
             stubborn = (
                 pid == hard_id
-                or bool(profile.get("rejection"))
                 or fixed_traits.get("agreeableness") == 1
+                or (bool(profile.get("rejection")) and fixed_traits.get("agreeableness") is None)
             )
             traits = self._sample_traits(stubborn, fixed_traits)
             row: dict[str, Any] = {

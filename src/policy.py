@@ -127,6 +127,15 @@ class PolicyMixin:
         resistance = 0.45 * rt.commitment_strength
         resistance += 0.35 * persona.sim_params.compromise_threshold
         resistance += 0.20 * persona.sim_params.stubbornness
+        # A switch must be earned (P6): the sim's own visible, still-unanswered
+        # objections against the candidate are resistance, not noise. A bridge
+        # phrase alone doesn't resolve a concern the transcript left open.
+        if candidate in rt.soft_rejections:
+            resistance += 0.25
+        resistance += 0.30 * sum(
+            1 for c in state.open_concerns
+            if c.raised_by == persona.id and c.option_id == candidate and c.addressed_by is None
+        )
         if candidate in persona.preferred_options:
             resistance -= 0.25
         if candidate in rt.accepted_options:
@@ -200,7 +209,15 @@ class PolicyMixin:
 
         target_turn = self._choose_target_turn(state, speaker, act)
         target_speaker = target_turn.speaker_id if target_turn and target_turn.speaker_id != "moderator" else None
-        addressee = target_speaker if target_speaker and random.random() < float(cfg.routing.direct_address_probability) else None
+        # Direct addressing scales with group size (P3): with two people the
+        # addressee is always obvious, with three usually; names stay for the
+        # functional cases (questions, invites, obligations set elsewhere).
+        address_probability = float(cfg.routing.direct_address_probability)
+        if len(state.personas) == 2:
+            address_probability *= 0.15
+        elif len(state.personas) == 3:
+            address_probability *= 0.6
+        addressee = target_speaker if target_speaker and random.random() < address_probability else None
         if not focus:
             focus = self._focus_options(state, speaker, act, target_turn)
         reason = self._reason_for_act(state, speaker, act, focus, target_turn)
@@ -322,17 +339,23 @@ class PolicyMixin:
         if last.intent and last.intent.act == ActType.ANSWER and random.random() < 0.6:
             speaker = self._choose_speaker(state)
             if speaker.id != last.speaker_id:
+                # Develop the answered point instead of opening the next issue:
+                # a fresh ask here is exactly the question-chaining pattern (P2).
                 act = weighted_choice(
-                    [ActType.AGREE, ActType.CHALLENGE, ActType.ASK],
+                    [ActType.AGREE, ActType.CHALLENGE, ActType.BUILD],
                     [0.4 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
                      0.3 + speaker.sim_params.stubbornness * 0.4,
-                     0.25 + speaker.sim_params.initiative * 0.2],
+                     0.30 + speaker.sim_params.initiative * 0.2],
                 )
                 focus = last.act.option_refs[:2]
                 return MoveIntent(
                     speaker_id=speaker.id,
                     act=act,
-                    reason="react to the answer just given: acknowledge what it settles, push back on what it doesn't, or ask the natural follow-up",
+                    reason=(
+                        "react to the answer just given, staying on the same point: say what it settles for "
+                        "you, push back on what it doesn't, or add one consequence — do not open a new topic "
+                        "or ask a new question"
+                    ),
                     option_focus=focus,
                     respond_to_turn=last.index,
                 )
@@ -499,6 +522,10 @@ class PolicyMixin:
         for option_id in state.scenario.option_ids:
             if option_id == current or not self._can_shift_to(state, persona, option_id):
                 continue
+            # Don't warm to an option this sim itself visibly objected to (P6)
+            # unless it was on their own acceptable list from the start.
+            if option_id in rt.soft_rejections and option_id not in persona.preferred_options:
+                continue
             score = 2.0 * self._visible_support_count(state, option_id, exclude=persona.id)
             score += 0.75 * state.coverage[option_id].reasons
             score += 0.35 * state.coverage[option_id].mentions
@@ -551,8 +578,10 @@ class PolicyMixin:
                 base *= math.exp(adaptation * (expected[persona.id] - share))
                 # Anti-monopoly: clearly past the target share means a hard damp,
                 # not a soft one — high engagement may lead, never monologue.
+                # 0.30 (not 0.20) so legitimate trait-derived dominance is bent,
+                # not erased (P4); the exp() adaptation above already pulls back.
                 if total_turns >= len(state.personas) and share - expected[persona.id] > overshoot:
-                    base *= 0.20
+                    base *= 0.30
                 # Minimum visibility: nobody disappears. A sim silent for two
                 # full rounds gets pushed back in regardless of traits.
                 if self._silence_streak(state, persona.id) >= silence_cap:
@@ -751,6 +780,7 @@ class PolicyMixin:
                 reason="cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
                 option_focus=[alternative, candidate] if alternative != candidate else [alternative],
                 length_hint="short",
+                allow_vote_change=True,
             )
         if self._should_compromise_to_candidate(state, persona, candidate):
             switching = current != candidate
@@ -765,14 +795,18 @@ class PolicyMixin:
                 ),
                 option_focus=[candidate],
                 length_hint="short",
-                allow_vote_change=switching,
+                allow_vote_change=True,
             )
         return MoveIntent(
             speaker_id=persona.id,
             act=ActType.VOTE,
-            reason="cast a clear visible vote for the option they actually choose now",
+            reason=(
+                "cast a clear visible final vote for the option you actually choose now; "
+                "this formal vote may replace an earlier discussion commitment"
+            ),
             option_focus=[current if current in state.scenario.option_ids else candidate],
             length_hint="short",
+            allow_vote_change=True,
         )
 
     # ------------------------------------------------------------------
@@ -988,9 +1022,23 @@ class PolicyMixin:
         if not functional_naming and recent:
             if name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
                 intent.suppress_name_prefix = True
+        # In a two-person chat the other person is always "you"; opening on
+        # their name every few turns reads artificial (P3). Questions still
+        # work without a leading name, so only invites keep it.
+        if len(state.personas) == 2 and not functional_naming:
+            intent.suppress_name_prefix = True
         alias_values = list(short_alias_map(state.scenario.options).values())
         if recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
             intent.suppress_option_opening = True
+        # Tail-question churn (P2): when the last few turns already put two or
+        # more questions on the table, statement-type acts should not tack on
+        # yet another one. Real question acts (ask/invite/probe) are exempt.
+        if (
+            intent.act in {ActType.BUILD, ActType.AGREE, ActType.ANSWER, ActType.COMPARE,
+                           ActType.SOFTEN, ActType.PROPOSE_COMPROMISE, ActType.CHALLENGE}
+            and sum(1 for t in recent if "?" in t) >= 2
+        ):
+            intent.suppress_tail_question = True
         # Decision turns are exempt: "I vote/I'd go with" is natural and parser-relevant there.
         if recent and intent.act not in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
             if first_person_opening_fraction(recent) >= float(cfg.style.i_opening_max_fraction):
@@ -1080,19 +1128,30 @@ class PolicyMixin:
             # A compromise switch needs room for the bridge clause ("water
             # matters to me, but ...") on top of the direct commitment.
             if intent.allow_vote_change:
-                base += 8
+                base += 6
         else:
             base = int(budgets.discussion)
         # A continuation is a quick add-on, not a second full turn (issue 6).
-        # Keep enough headroom that a one-clause afterthought is not chopped.
         if intent.continuation:
-            base = max(12, round(base * 0.6))
+            base = max(8, round(base * 0.55))
         p = persona.sim_params
         # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
         factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30
-        # Per-turn jitter around the persona's average so consecutive turns by
-        # the same sim vary naturally instead of hitting one fixed length (I12).
-        factor *= random.uniform(0.90, 1.10)
+        # Verbosity is an average, not a per-turn template: every sim sometimes
+        # drops a genuinely short beat (quick agreement, one-line answer), with
+        # terse sims doing it more often. Openings, split summaries, and
+        # bridge-eligible decisions keep full room for their required content.
+        short_beat_ok = (
+            intent.act not in {ActType.OPENING, ActType.SUMMARIZE_SPLIT}
+            and not (intent.act in _DECISION_ACTS and intent.allow_vote_change)
+            and not intent.continuation
+        )
+        if short_beat_ok and random.random() < 0.18 + 0.22 * (1.0 - p.verbosity):
+            factor *= random.uniform(0.50, 0.70)
+        else:
+            # Per-turn jitter around the persona's average so consecutive turns
+            # by the same sim vary naturally instead of one fixed length (I12).
+            factor *= random.uniform(0.90, 1.10)
         max_words = max(6, round(base * factor))
         min_words = max(3, round(max_words * (0.30 + 0.25 * p.verbosity)))
         return min_words, max_words

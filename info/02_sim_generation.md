@@ -21,16 +21,24 @@ A sim is a configurable participant in the group decision. Sims are not just nam
 OCEAN/persona information is converted into operational parameters such as:
 
 - engagement: how often the sim enters the discussion;
-- verbosity: expected utterance length;
+- verbosity: expected average utterance length;
 - initiative: tendency to propose, summarize, call votes, or drive procedure;
 - responsiveness: tendency to answer direct questions and react to others;
 - stubbornness: resistance to switching;
 - directness: explicitness of disagreement or preference;
 - compromise threshold: how much evidence/social pressure is needed before moving.
 
+## Hard blockers and constraints
+
+`personas.hard_blocker_probability` controls the rare case where a sim is blocker-like by sampled traits. A hard blocker should resist compromise strongly, but should not sabotage the chat or refuse to interact.
+
+Normal auto-generated sims should not routinely receive categorical hard constraints. They may start with preferences and goals, but those should usually be movable.
+
+Manual profiles may explicitly define blockers. If a profile or generated description contains a genuinely absolute constraint such as strict dietary need, allergy, accessibility need, hard budget ceiling, or schedule impossibility, agreeableness should not erase the constraint. An agreeable participant can reject an option politely.
+
 ## Current behavior
 
-Trait-weighted participation is now much better than earlier versions. Manual trait-spread runs show visible turn/length differences. Low-engagement sims should be quieter but not invisible. High-engagement sims should be more active but not accidentally dominant.
+Verbosity is visible in the logs, but the whole turn-length distribution is too high. Engagement and dominance are less consistently visible because opening/vote rounds and fairness safeguards partially flatten turn share.
 
 ## Important design point
 
@@ -38,4 +46,4 @@ Do not implement a rigid agenda checklist. A sim may have goals, concerns, and c
 
 ## Current open issue
 
-Trait routing should be monitored but is not the top priority. Some auto/auto runs still show weak engagement correlation, partly because opening and voting phases force everyone to speak. Do not overfit this until split-vote narrowing and token cost are improved.
+Trait realization should be evaluated on free discussion turns, not on opening and final vote rounds. The next round should allow plausible dominance by high-engagement/high-initiative sims while preventing repetitive monologues and total disappearance of quieter sims.

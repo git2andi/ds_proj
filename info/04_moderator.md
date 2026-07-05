@@ -29,20 +29,26 @@ The moderator can:
 
 When moderator functions are reduced, participants should perform more procedural work. High-initiative participants may call for picks, ask holdouts, or summarize split positions.
 
-## Deterministic summaries
+## Procedural style
 
-Split-vote and no-majority summaries should be deterministic or tightly controlled. They must be complete and concrete. Avoid vague prompts such as:
+Moderator and participant-owned procedure should be short and concrete. It should not add unnecessary conversational bulk.
+
+Good procedural lines:
 
 ```text
-Could those who prefer B or C live?
+We are split: A has two votes, B and C have one each. Let's test A first.
 ```
 
-Correct style:
+```text
+Can the two B voters live with A, or is that still blocked?
+```
+
+Bad procedural lines:
 
 ```text
-We are split: A has two votes, B and C have one each. Let's test A first because it currently has the most support. Ben and Clara, what would still block A for you?
+Maybe we should all reflect again on the broader implications of the decision and consider whether there is some integrated solution.
 ```
 
 ## Current open issue
 
-Moderator/peer narrowing now happens, but candidate selection and follow-up logic still need improvement. The moderator must not test arbitrary candidates when a visible leading option exists.
+Procedure exists, but it can still contribute to long, summary-like dialogue. Keep it deterministic where possible, but make it shorter. Candidate selection should follow visible support and blocker state.

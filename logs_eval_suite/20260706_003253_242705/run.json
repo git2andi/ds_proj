@@ -1,0 +1,2783 @@
+{
+  "run_id": "20260706_003253_242705",
+  "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "manual",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+    "decision_kind": "travel_destination",
+    "opening_question": "How should we balance relaxation and activity for our weekend trip?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Cabin Retreat at Lake Serenity",
+        "attrs": {
+          "cost_per_person": "$250",
+          "travel_time_one_way": "2 hours",
+          "activity_level": "low",
+          "lodging_type": "private cabin"
+        },
+        "upside": "Peaceful lakeside setting ideal for quiet and relaxation",
+        "tradeoff": "Limited active options, mostly light hiking and fishing",
+        "concern": "May feel too slow or boring for those wanting vigorous activity",
+        "best_for": "quiet and restful weekend",
+        "short_name": "Lake Serenity"
+      },
+      {
+        "id": "B",
+        "name": "Mountain Biking at Pine Ridge Trails",
+        "attrs": {
+          "cost_per_person": "$280",
+          "travel_time_one_way": "3 hours",
+          "activity_level": "high",
+          "lodging_type": "shared cabin"
+        },
+        "upside": "Extensive biking trails provide a strong active experience",
+        "tradeoff": "Noisy and less private lodging, limited quiet downtime",
+        "concern": "Not suitable for those wanting calm or minimal physical exertion",
+        "best_for": "active, outdoor adventure",
+        "short_name": "Pine Ridge"
+      },
+      {
+        "id": "C",
+        "name": "Historic Town Stay in Willow Creek",
+        "attrs": {
+          "cost_per_person": "$220",
+          "travel_time_one_way": "1.5 hours",
+          "activity_level": "moderate",
+          "lodging_type": "bed and breakfast"
+        },
+        "upside": "Charming town with museums, cafes, and light walking tours",
+        "tradeoff": "Less intense physical activity, some noise from town center",
+        "concern": "May not satisfy those wanting vigorous outdoor exercise or full quiet",
+        "best_for": "balanced mix of quiet and light activity",
+        "short_name": "Willow Creek"
+      },
+      {
+        "id": "D",
+        "name": "Beachside Yoga and Surf Camp",
+        "attrs": {
+          "cost_per_person": "$300",
+          "travel_time_one_way": "4 hours",
+          "activity_level": "moderate to high",
+          "lodging_type": "shared beachfront bungalow"
+        },
+        "upside": "Combines relaxing yoga sessions with active surfing lessons",
+        "tradeoff": "Longer travel time and shared lodging reduce privacy",
+        "concern": "May be too physically demanding or social for some",
+        "best_for": "mix of active and mindful relaxation",
+        "short_name": ""
+      }
+    ],
+    "shared_context": [
+      "The group consists of exactly 4 friends",
+      "The trip is for one weekend (Friday evening to Sunday evening)",
+      "The budget per person is capped at $300 including travel and lodging"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.95,
+        "verbosity": 0.85,
+        "initiative": 0.95,
+        "responsiveness": 0.7,
+        "stubbornness": 0.35,
+        "directness": 0.75,
+        "compromise_threshold": 0.4
+      },
+      "background": "very engaged organizer who notices process problems and proposes next steps",
+      "private_goal": "wants a clear decision and tends to keep the group moving",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Tarek",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.15,
+        "verbosity": 0.25,
+        "initiative": 0.1,
+        "responsiveness": 0.65,
+        "stubbornness": 0.3,
+        "directness": 0.35,
+        "compromise_threshold": 0.3
+      },
+      "background": "quiet participant who answers when asked but rarely pushes himself into the discussion",
+      "private_goal": "wants the simplest acceptable choice and avoids long arguments",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Eva",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "initiative": 0.45,
+        "responsiveness": 0.75,
+        "stubbornness": 0.5,
+        "directness": 0.55,
+        "compromise_threshold": 0.45
+      },
+      "background": "balanced participant who weighs concrete constraints before moving position",
+      "private_goal": "wants the option with the fewest hidden tradeoffs",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Sam",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5,
+        "verbosity": 0.5,
+        "initiative": 0.5,
+        "responsiveness": 0.85,
+        "stubbornness": 0.2,
+        "directness": 0.4,
+        "compromise_threshold": 0.25
+      },
+      "background": "socially flexible participant who often bridges between opposing preferences",
+      "private_goal": "wants the final choice to feel acceptable to everyone",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 12,
+      "last_spoke_turn": 35,
+      "current_preference": "B",
+      "commitment_strength": 0.5967500000000001,
+      "commitment_min": 0.59,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "A": "The limited active options at Lake Serenity worry me."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Pine Ridge biking fits the active side perfectly and stays under budget, but it won’t satisfy the quiet-seeker at all. We need to settle this fast or pick something else.",
+        "Quiet with some activity means Lake Serenity fits best, Tarek. It’s under budget and peaceful, but we accept limited active options and move on.",
+        "Lake Serenity fits the quiet side perfectly but leaves the active friend hanging.",
+        "Pine Ridge offers the active side with biking but sacrifices quiet and privacy; Beachside Yoga splits the difference but costs more and adds travel time.",
+        "Just to be clear, the budget leaves no room for extras like gear rental or meals out.",
+        "Sam, Lake Serenity sounds chill but Pine Ridge fits the budget better.",
+        "We don’t know if Lake Serenity’s cabin has a kitchen. That matters because without cooking, meals add up fast and bust our $300 budget.",
+        "Willow Creek’s shorter travel time wins for me, no question.",
+        "Let’s lock in our top choice now so we can book something fast.",
+        "I'm going with Pine Ridge because its extensive trails offer the best active experience within our budget.",
+        "The limited active options at Lake Serenity worry me.",
+        "I'd go with Pine Ridge."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 6,
+      "last_spoke_turn": 29,
+      "current_preference": "A",
+      "commitment_strength": 0.48140000000000016,
+      "commitment_min": 0.48140000000000016,
+      "challenges_received": 2,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Maybe we try something that’s quiet but with some activity?",
+        "Beachside Yoga adds some action, but travel’s longer. Lake Serenity simpler, quieter.",
+        "True, travel’s long, but yoga helps unwind after.",
+        "Starting to see the appeal of Lake Serenity’s peace.",
+        "Maybe Lake Serenity works if the cabin has a kitchen.",
+        "Count me in for Lake Serenity for its peaceful lakeside setting."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 30,
+      "current_preference": "A",
+      "commitment_strength": 0.6270000000000002,
+      "commitment_min": 0.6270000000000002,
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Considering the quiet need, Lake Serenity’s cabin is perfect, though activity options are really limited.",
+        "Tarek, four hours travel eats up too much weekend time for Beachside Yoga.",
+        "Considering travel time and cost, Pine Ridge edges out if we want active vibes.",
+        "Nora, do we know if the cabin at Lake Serenity includes kitchen access to save on meals?",
+        "Considering travel time, Willow Creek saves hours but trades off on activities compared to Lake Serenity or Pine Ridge.",
+        "Sharing a cabin at Pine Ridge sounds fun, Sam, but the noise might not suit everyone’s quiet needs.",
+        "My vote goes to Lake Serenity for its peaceful lakeside setting and quiet atmosphere."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 10,
+      "last_spoke_turn": 34,
+      "current_preference": "A",
+      "commitment_strength": 0.5208,
+      "commitment_min": 0.5208,
+      "challenges_received": 1,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "How about Willow Creek? It’s relaxed but still offers some light walking to keep things active enough.",
+        "I’m starting to see the appeal of Lake Serenity’s peace, though I still like Willow Creek’s vibe and shorter travel.",
+        "How about we go with Lake Serenity?",
+        "Willow Creek offers charming museums and light walking but less adventure.",
+        "Since Willow Creek has cozy cafes, maybe meals won’t break the budget either.",
+        "How do we feel about sharing a cabin at Pine Ridge for the active days and maybe chilling at Willow Creek’s cafes in the evenings?",
+        "Thinking about it, Lake Serenity’s quiet vibe might help balance out Willow Creek’s livelier pace.",
+        "Lake Serenity gets my vote.",
+        "Nora, is there anything at Lake Serenity that could make it work for you too?",
+        "I get your concern, Nora—though active options are limited."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "A",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Pine Ridge biking fits the active side perfectly and stays under budget, but it won’t satisfy the quiet-seeker at all. We need to settle this fast or pick something else.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Pine Ridge biking fits the active side perfectly and stays under budget, but it won’t satisfy the quiet-seeker at all. We need to settle this fast or pick something else.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": "B",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 890,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "How about Willow Creek? It’s relaxed but still offers some light walking to keep things active enough.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "How about Willow Creek? It’s relaxed but still offers some light walking to keep things active enough.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 400,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Considering the quiet need, Lake Serenity’s cabin is perfect, though activity options are really limited.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Considering the quiet need, Lake Serenity’s cabin is perfect, though activity options are really limited.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 413,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Maybe we try something that’s quiet but with some activity?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Maybe we try something that’s quiet but with some activity?",
+        "act_type": "opening",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 502,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Quiet with some activity means Lake Serenity fits best, Tarek. It’s under budget and peaceful, but we accept limited active options and move on.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Quiet with some activity means Lake Serenity fits best, Tarek. It’s under budget and peaceful, but we accept limited active options and move on.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 608,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Beachside Yoga adds some action, but travel’s longer. Lake Serenity simpler, quieter.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Beachside Yoga adds some action, but travel’s longer. Lake Serenity simpler, quieter.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 473,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I’m starting to see the appeal of Lake Serenity’s peace, though I still like Willow Creek’s vibe and shorter travel.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m starting to see the appeal of Lake Serenity’s peace, though I still like Willow Creek’s vibe and shorter travel.",
+        "act_type": "soften",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "A"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "soften",
+        "reason": "the case others made for Lake Serenity genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Willow Creek; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 587,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Tarek, four hours travel eats up too much weekend time for Beachside Yoga.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Tarek, four hours travel eats up too much weekend time for Beachside Yoga.",
+        "act_type": "challenge",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on Beachside Yoga with one concrete concern — you currently favor Lake Serenity, so aim at the rival, not your own pick",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 662,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "True, travel’s long, but yoga helps unwind after.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, travel’s long, but yoga helps unwind after.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "a concern was raised about Beachside Yoga, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 568,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "How about we go with Lake Serenity?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "How about we go with Lake Serenity?",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A",
+        "resolves_blocker": null,
+        "conditional_support": "A",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 551,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Lake Serenity fits the quiet side perfectly but leaves the active friend hanging.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Lake Serenity fits the quiet side perfectly but leaves the active friend hanging.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 499,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Starting to see the appeal of Lake Serenity’s peace.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Starting to see the appeal of Lake Serenity’s peace.",
+        "act_type": "soften",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "soften",
+        "reason": "the case others made for Lake Serenity genuinely lands with you — say openly that it is growing on me, name the argument that moved you, and what you still like about Beachside Yoga; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 614,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Pine Ridge offers the active side with biking but sacrifices quiet and privacy; Beachside Yoga splits the difference but costs more and adds travel time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Pine Ridge offers the active side with biking but sacrifices quiet and privacy; Beachside Yoga splits the difference but costs more and adds travel time.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Lake Serenity, Pine Ridge, Beachside Yoga with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 601,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Just to be clear, the budget leaves no room for extras like gear rental or meals out.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Just to be clear, the budget leaves no room for extras like gear rental or meals out.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 723,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Considering travel time and cost, Pine Ridge edges out if we want active vibes.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Considering travel time and cost, Pine Ridge edges out if we want active vibes.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Lake Serenity, Pine Ridge with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 513,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Willow Creek offers charming museums and light walking but less adventure.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Willow Creek offers charming museums and light walking but less adventure.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "compare Willow Creek with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1874,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Sam, Lake Serenity sounds chill but Pine Ridge fits the budget better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Sam, Lake Serenity sounds chill but Pine Ridge fits the budget better.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Pine Ridge, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 538,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Nora, do we know if the cabin at Lake Serenity includes kitchen access to save on meals?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Nora, do we know if the cabin at Lake Serenity includes kitchen access to save on meals?",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Lake Serenity that hasn't come up yet",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 454,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "We don’t know if Lake Serenity’s cabin has a kitchen. That matters because without cooking, meals add up fast and bust our $300 budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We don’t know if Lake Serenity’s cabin has a kitchen. That matters because without cooking, meals add up fast and bust our $300 budget.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 589,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Considering travel time, Willow Creek saves hours but trades off on activities compared to Lake Serenity or Pine Ridge.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Considering travel time, Willow Creek saves hours but trades off on activities compared to Lake Serenity or Pine Ridge.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Lake Serenity, Pine Ridge, Willow Creek with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 596,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Maybe Lake Serenity works if the cabin has a kitchen.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Maybe Lake Serenity works if the cabin has a kitchen.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "A",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "test whether Lake Serenity could be common ground without claiming it is already decided",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 605,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Since Willow Creek has cozy cafes, maybe meals won’t break the budget either.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Since Willow Creek has cozy cafes, maybe meals won’t break the budget either.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Lake Serenity, Willow Creek, Pine Ridge, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 540,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Willow Creek’s shorter travel time wins for me, no question.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Willow Creek’s shorter travel time wins for me, no question.",
+        "act_type": "agree",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Lake Serenity, Willow Creek, Pine Ridge",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 598,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "How do we feel about sharing a cabin at Pine Ridge for the active days and maybe chilling at Willow Creek’s cafes in the evenings?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "How do we feel about sharing a cabin at Pine Ridge for the active days and maybe chilling at Willow Creek’s cafes in the evenings?",
+        "act_type": "ask",
+        "option_refs": [
+          "C",
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Lake Serenity, Pine Ridge, Willow Creek",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 570,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Sharing a cabin at Pine Ridge sounds fun, Sam, but the noise might not suit everyone’s quiet needs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sharing a cabin at Pine Ridge sounds fun, Sam, but the noise might not suit everyone’s quiet needs.",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1268,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Thinking about it, Lake Serenity’s quiet vibe might help balance out Willow Creek’s livelier pace.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Thinking about it, Lake Serenity’s quiet vibe might help balance out Willow Creek’s livelier pace.",
+        "act_type": "build",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "add a new grounded reason about Willow Creek, Lake Serenity, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 530,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Let’s lock in our top choice now so we can book something fast.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Let’s lock in our top choice now so we can book something fast.",
+        "act_type": "call_vote",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "call_vote",
+        "reason": "you feel the group has weighed enough — casually suggest everyone give their definite final pick now, in your own words; do not name or suggest any option in this line",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 731,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I'm going with Pine Ridge because its extensive trails offer the best active experience within our budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'm going with Pine Ridge because its extensive trails offer the best active experience within our budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for the active days and maybe chilling at Willow Creek’s",
+          "Since Willow Creek has cozy cafes, maybe meals won’t break",
+          "because without cooking, meals add up fast and bust our",
+          "to keep things active enough"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 938,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Count me in for Lake Serenity for its peaceful lakeside setting.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Count me in for Lake Serenity for its peaceful lakeside setting.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "because its extensive trails offer the best active experience within",
+          "for the active days and maybe chilling at Willow Creek’s",
+          "Since Willow Creek has cozy cafes, maybe meals won’t break",
+          "because without cooking, meals add up fast and bust our",
+          "to keep things active enough"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 942,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "My vote goes to Lake Serenity for its peaceful lakeside setting and quiet atmosphere.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "My vote goes to Lake Serenity for its peaceful lakeside setting and quiet atmosphere.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for its peaceful lakeside setting",
+          "because its extensive trails offer the best active experience within",
+          "for the active days and maybe chilling at Willow Creek’s",
+          "Since Willow Creek has cozy cafes, maybe meals won’t break",
+          "because without cooking, meals add up fast and bust our",
+          "to keep things active enough"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1509,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Lake Serenity gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Lake Serenity gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "my vote is",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for its peaceful lakeside setting and quiet atmosphere",
+          "for its peaceful lakeside setting",
+          "because its extensive trails offer the best active experience within",
+          "for the active days and maybe chilling at Willow Creek’s",
+          "Since Willow Creek has cozy cafes, maybe meals won’t break",
+          "because without cooking, meals add up fast and bust our",
+          "to keep things active enough"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2106,
+      "tokens_out": 59,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 32,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Nora, is there anything at Lake Serenity that could make it work for you too?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Nora, is there anything at Lake Serenity that could make it work for you too?",
+        "act_type": "probe_holdout",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "probe_holdout",
+        "reason": "most of the group has landed on Lake Serenity; ask Nora in a friendly, genuine way what still holds them back or what they would need — no pressure",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 480,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The limited active options at Lake Serenity worry me.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The limited active options at Lake Serenity worry me.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "The limited active options at Lake Serenity worry me."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Lake Serenity — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 546,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I get your concern, Nora—though active options are limited.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I get your concern, Nora—though active options are limited.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "respond to Nora's reservation about Lake Serenity honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 33,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 515,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I'd go with Pine Ridge.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'd go with Pine Ridge.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Pine Ridge, or briefly state what still holds you back and restate your pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "gets my vote",
+          "my vote is",
+          "I'm going with"
+        ],
+        "avoid_reasons": [
+          "for its peaceful lakeside setting and quiet atmosphere",
+          "for its peaceful lakeside setting",
+          "because its extensive trails offer the best active experience within",
+          "for the active days and maybe chilling at Willow Creek’s",
+          "Since Willow Creek has cozy cafes, maybe meals won’t break",
+          "because without cooking, meals add up fast and bust our",
+          "to keep things active enough"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1116,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "reason": "3/4 participants visibly committed to the winning option.",
+    "turns": 35,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "A",
+        "p4": "A"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "A",
+        "p4": "A"
+      },
+      "phase_history": [
+        "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 26: narrowing — target discussion length reached",
+        "turn 35: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 20,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 30
+    }
+  },
+  "phase_history": [
+    "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 26: narrowing — target discussion length reached",
+    "turn 35: closure — majority visible after vote round 1",
+    "turn 35: closure — closed as majority"
+  ],
+  "metrics": {
+    "participant_turns": 35,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Nora": 12,
+      "Tarek": 6,
+      "Eva": 7,
+      "Sam": 10
+    },
+    "top_speaker_share": 0.343,
+    "avg_words_by_persona": {
+      "Nora": 16.6,
+      "Tarek": 10.0,
+      "Eva": 15.7,
+      "Sam": 13.7
+    },
+    "avg_words_by_act": {
+      "agree": 10.0,
+      "answer": 16.2,
+      "ask": 25.0,
+      "build": 13.7,
+      "call_vote": 13.0,
+      "challenge": 13.0,
+      "compare": 16.2,
+      "opening": 18.0,
+      "probe_holdout": 15.0,
+      "propose_compromise": 8.5,
+      "soften": 14.5,
+      "vote": 10.4
+    },
+    "short_turn_rate": 0.286,
+    "question_density": 0.171,
+    "tail_question_rate": 0.094,
+    "avg_words_per_turn": 14.5,
+    "repaired_turns": 6,
+    "repair_rate": 0.171,
+    "flagged_turns": 0,
+    "fallback_turns": 2,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Nora": "B",
+      "Tarek": "A",
+      "Eva": "A",
+      "Sam": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 2,
+    "concern_response_rate": 0.5,
+    "participation_gini": 0.15,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.333,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {},
+    "repetition_score": 0.154,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 2,
+    "peer_vote_call": true,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 1,
+    "switch_event_count": 2,
+    "switch_explanation_rate": 0.5,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 2,
+    "name_prefix_rate": 0.114,
+    "option_opening_rate": 0.229,
+    "i_opening_rate": 0.114,
+    "we_opening_rate": 0.029,
+    "name_or_option_opening_rate": 0.343,
+    "repeated_opening_patterns": 5,
+    "unsupported_fact_flags": 3,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.75,
+    "option_coverage": {
+      "A": {
+        "mentions": 20,
+        "reasons": 10,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 9,
+        "reasons": 5,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 8,
+        "reasons": 7,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 4,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nora": 0.95,
+      "Tarek": 0.15,
+      "Eva": 0.55,
+      "Sam": 0.5
+    },
+    "expected_turn_share": {
+      "Nora": 0.378,
+      "Tarek": 0.128,
+      "Eva": 0.249,
+      "Sam": 0.246
+    },
+    "realized_turn_share": {
+      "Nora": 0.343,
+      "Tarek": 0.171,
+      "Eva": 0.2,
+      "Sam": 0.286
+    },
+    "agenda_status": {
+      "done": 2,
+      "pending": 8,
+      "obsolete": 6
+    },
+    "outcome_status": "majority",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 20,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_compromise=0.65",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 26: narrowing — target discussion length reached",
+      "turn 35: closure — majority visible after vote round 1",
+      "turn 35: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.042,
+    "verbosity_realization_error": 0.169,
+    "engagement_error_by_persona": {
+      "Nora": 0.035,
+      "Tarek": 0.044,
+      "Eva": 0.049,
+      "Sam": 0.04
+    },
+    "verbosity_error_by_persona": {
+      "Nora": 0.018,
+      "Tarek": 0.194,
+      "Eva": 0.285,
+      "Sam": 0.181
+    },
+    "engagement_behavior_correlation": 0.864,
+    "verbosity_behavior_correlation": 0.92,
+    "free_discussion_share": {
+      "Nora": 0.346,
+      "Tarek": 0.154,
+      "Eva": 0.192,
+      "Sam": 0.308
+    },
+    "top_free_discussion_share": 0.346,
+    "free_discussion_engagement_correlation": 0.821,
+    "setup_tokens_in": 788,
+    "setup_tokens_out": 669,
+    "dialogue_tokens_in": 25649,
+    "dialogue_tokens_out": 1039,
+    "total_tokens_in": 26437,
+    "total_tokens_out": 1708,
+    "tokens_setup_in": 788,
+    "tokens_setup_out": 669,
+    "calls_setup": 1,
+    "tokens_utterance_in": 19696,
+    "tokens_utterance_out": 853,
+    "calls_utterance": 35,
+    "tokens_grounding_in": 4139,
+    "tokens_grounding_out": 93,
+    "calls_grounding": 7,
+    "tokens_repair_in": 1814,
+    "tokens_repair_out": 93,
+    "calls_repair": 6,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 788,
+    "setup_tokens_out": 669,
+    "dialogue_tokens_in": 25649,
+    "dialogue_tokens_out": 1039,
+    "total_tokens_in": 26437,
+    "total_tokens_out": 1708
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 788,
+      "out": 669,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 19696,
+      "out": 853,
+      "calls": 35
+    },
+    "grounding": {
+      "in": 4139,
+      "out": 93,
+      "calls": 7
+    },
+    "repair": {
+      "in": 1814,
+      "out": 93,
+      "calls": 6
+    }
+  }
+}

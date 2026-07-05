@@ -11,19 +11,28 @@ trait-derived turn target
 + local conversation obligations
 + unresolved questions/concerns
 + minority/holdout relevance
-+ anti-monopoly damping
++ anti-monologue damping
 + minimum visibility
 ```
 
-It should not equalize everyone mechanically. It should also not rely only on traits.
+It should not equalize everyone mechanically. Dominant/high-engagement/high-initiative sims may speak more. Quiet sims should not disappear.
 
 ## Response obligations
 
-Direct questions should create bounded response obligations. The addressed sim should usually answer soon, but the system should avoid turning one sim into an interview loop.
+Direct questions should create bounded response obligations. If Sim A asks Sim B a concrete question, Sim B should usually answer soon. This Q→A adjacency is desired and should be preserved.
+
+The problem to avoid is question churn: an answer to topic A should not routinely open topic B before topic A has been developed through agreement, challenge, comparison, or elaboration.
 
 ## Same-speaker continuations
 
-Rare same-speaker continuations are allowed by design, including chains up to three messages. They are valid only when they are addendums, corrections, clarifications, afterthoughts, or self-resolutions.
+Same-speaker continuations are allowed by design. They are valid when they are addendums, corrections, clarifications, afterthoughts, or self-resolutions.
+
+Example acceptable shape:
+
+```text
+A: Ben, what do you think about the cooking class?
+A: Also, I like it because prep and cleanup are shared.
+```
 
 Invalid consecutive turns include:
 
@@ -31,6 +40,12 @@ Invalid consecutive turns include:
 - repeating the same proposal;
 - paraphrasing the previous line without new content;
 - accidental monologues caused by routing.
+
+## Direct addressing
+
+Direct addressing is useful but should be sparse. Names should appear when they do real interactional work: asking someone, inviting someone, answering a specific person in a multi-party context, or challenging a prior speaker.
+
+In n=2 discussions, repeatedly opening turns with the other person's name is especially unnatural and should be rare.
 
 ## Participant-owned procedure
 
@@ -42,10 +57,8 @@ Participants can perform procedural acts, especially when the moderator is reduc
 - suggest narrowing;
 - test a compromise candidate.
 
-Split summaries in no-moderator mode are now deterministic participant-owned procedure: the controller appends a visible participant line with the exact vote counts and candidate. This prevents LLM paraphrases from changing the candidate and saves one utterance/grounding call. Other participant procedure still uses normal routed utterances.
-
-These moves should be explicit enough to count in metrics.
+These moves should be explicit enough to count in metrics, but still short.
 
 ## Current validation focus
 
-Participant-owned procedure is visible, but post-split negotiation still needs live validation. Check that no-/light-moderator cases test the visible leader or best tied candidate and that holdouts produce explicit switch/stay/alternative decisions.
+Check question rate, answer adjacency, direct-name frequency, same-speaker novelty, and trait-shaped dominance on free discussion turns.
