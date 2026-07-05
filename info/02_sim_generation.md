@@ -36,9 +36,11 @@ Normal auto-generated sims should not routinely receive categorical hard constra
 
 Manual profiles may explicitly define blockers. If a profile or generated description contains a genuinely absolute constraint such as strict dietary need, allergy, accessibility need, hard budget ceiling, or schedule impossibility, agreeableness should not erase the constraint. An agreeable participant can reject an option politely.
 
+Since 2026-07-06 this is decoupled in the builder: a manual profile with a `rejection` keeps its explicitly configured agreeableness (the constraint binds regardless of personality); only a profile that leaves agreeableness unset falls back to the classic pinned-to-1 blocker persona. Normal auto personas are additionally instructed to phrase needs as preferences, never absolutes.
+
 ## Current behavior
 
-Verbosity is visible in the logs, but the whole turn-length distribution is too high. Engagement and dominance are less consistently visible because opening/vote rounds and fairness safeguards partially flatten turn share.
+Verbosity orders average turn length (~8 words for terse sims, ~16-18 for chatty ones) while every sim also produces genuinely short beats. Engagement shapes free-discussion turn share (correlation mostly 0.7-1.0 in the 2026-07-06 suite); opening/vote rounds stay intentionally uniform and are excluded from dominance judgments.
 
 ## Important design point
 

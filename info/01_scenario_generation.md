@@ -52,6 +52,6 @@ Not allowed:
 They have a quieter table available.
 ```
 
-## Current open issue
+## Repeated unknown logistics
 
-Sparse option facts are useful for testing grounding, but they create repeated unknown-logistics talk. The next round should track practical issues such as parking, reservations, weather, space, and availability so that an unknown is raised once and not repeated unless it is decisive.
+Sparse option facts are useful for testing grounding, but they used to create repeated unknown-logistics talk. Since the 2026-07-06 round the observer keeps an issue ledger (parking, booking, weather, seating, availability, prep time, crowds): an unknown may be raised once and answered once; after that the sim prompts list it as settled-unknown and it must not be re-raised. `repeated_unknown_mentions` in the metrics tracks violations.

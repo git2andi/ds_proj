@@ -15,13 +15,11 @@ During discussion, participants may:
 - propose a bounded compromise;
 - soften toward another option.
 
-The next quality target is local rhythm. The discussion should often spend several turns on one point before opening a new issue. Direct Q→A adjacency is good, but repeated Q→A→new question chains are not.
+Local rhythm is enforced since 2026-07-06: a follow-up to an answer stays on the same point (agree/challenge/build, never a fresh ask), and once two questions are open in the recent window, statement-type acts are told to end on a statement. Direct Q→A adjacency stays strong; Q→A→new-question chains are the exception now.
 
 ## Utterance length
 
-Turns should be shorter than the current logs. Verbosity should affect average length, not force every high-verbosity sim to write long turns.
-
-A plausible target for the next round:
+Verbosity affects average length, not every turn: the word-budget logic mixes in deterministic short beats for all sims. Realized target bands (validated in the 2026-07-06 suite, avg 12.4-16.4 words/turn overall):
 
 ```text
 low verbosity:       many turns around 5-10 words

@@ -36,18 +36,17 @@ The architecture is mostly in the right shape. The system is already closer to t
 
 Current logs show that sims compare fixed options, react to others, raise tradeoffs, vote visibly, and can produce `successful`, `majority`, or `unresolved` outcomes.
 
-## Current weaknesses
+## Current state (after the 2026-07-06 behavioral round)
 
-The current problem is not missing architecture. It is quality and control:
+The former quality weaknesses were addressed and verified with the full 12-case suite:
 
-- utterances are too long and summary-like;
-- questions open too many new topics before old points develop;
-- names/direct addresses are overused;
-- speaking distribution is still partly pulled toward balance instead of trait-shaped dominance;
-- stance switches are sometimes too cheap;
-- strict constraints or blockers can be overridden too easily;
-- unresolved logistics such as parking/reservations can repeat;
-- repair/grounding can become expensive and visible in the transcript;
-- code paths have accumulated many local fixes and need cautious simplification.
+- turns average ~13-16 words with genuine short beats for every sim, while verbosity still orders the averages;
+- answers develop the same thread; question density and tail questions dropped sharply;
+- direct addressing scales with group size (no name prefixes in n=2 runs);
+- dominance is trait-shaped and judged on free discussion turns (top share ~0.26-0.53 across the suite);
+- stance switches need net visible support or trait-level flexibility; a sim's own open concerns resist switching;
+- explicit constraints hold regardless of agreeableness, and no final tally contains a blocker violation;
+- an issue ledger prevents repeated unknown-logistics loops (repeated_unknown_mentions 0 across the suite);
+- grounding runs on a narrowed tripwire with option-scoped judging.
 
-Use `docs/todo.md` as the authoritative current issue list.
+Remaining open work is the accumulated-code-path simplification plus small residuals. Use `docs/todo.md` as the authoritative current issue list.

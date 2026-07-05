@@ -40,21 +40,15 @@ Inspect these after changes:
 - `unsupported_printed_turns`;
 - token usage by call type.
 
-## Needed diagnostic metrics
+## Diagnostic metrics added in the 2026-07-06 round
 
-The next round should add or inspect metrics for the actual quality problems:
+- `avg_words_by_act` and `short_turn_rate` (share of turns <= 10 words);
+- `tail_question_rate`: questions tacked onto statement-type acts — the chaining signal (ask/invite/probe acts are exempt);
+- `free_discussion_share`, `top_free_discussion_share`, `free_discussion_engagement_correlation`: dominance judged on free discussion turns only;
+- `repeated_unknown_mentions` and `issue_ledger`: mentions of a practical unknown beyond its allowed raise+answer pair;
+- `final_blocker_violations`: a hard blocker counted as supporting their rejected option in the final tally — must always be 0.
 
-- average words per participant and per act;
-- verbosity-to-average-length correlation;
-- free-discussion turn share vs trait-derived expected share;
-- top speaker share excluding opening/final votes;
-- question rate and answer adjacency rate;
-- repeated unknown issue mentions;
-- name-prefix rate and direct-address rate by group size;
-- same-speaker continuation count plus repeat/novelty check;
-- stance switches with/without visible trigger;
-- final hard-blocker/constraint violations;
-- repair/grounding token cost.
+Long-standing metrics (`avg_words_by_persona`, `verbosity_behavior_correlation`, `question_answer_completion`, `switch_explanation_rate`/`switch_bridge_rate`, `name_prefix_rate`, `unsupported_fact_flags`/`unsupported_printed_turns`, per-call-type token counts) remain the regression baseline. Known artifact: `switch_explanation_rate` under-counts em-dash reason clauses (todo O4).
 
 ## Metrics interpretation
 

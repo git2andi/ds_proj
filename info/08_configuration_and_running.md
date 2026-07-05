@@ -41,16 +41,16 @@ validation.grounding_mode: tripwire
 
 Do not raise these casually. Larger context usually increases cost faster than it improves dialogue quality. The next quality round should mostly reduce turn length and improve deterministic state/routing.
 
-## Current tuning focus
+## Current tuning knobs
 
-Likely config/code areas for the next round:
+Settled in the 2026-07-06 round (change only with fresh evidence):
 
-- `utterances.word_budgets`: turns are still too long;
-- `routing.move_weights.ask`: question chaining is too frequent;
-- `routing.direct_address_probability`: direct names are overused, especially in n=2;
-- `routing.trait_share_adaptation`, `max_share_overshoot`, and visibility logic: participation should be trait-shaped, not balanced;
-- `personas.hard_blocker_probability` and manual blockers: hard blockers should remain rare and meaningful;
-- `validation.grounding_mode`: keep tripwire and avoid unnecessary LLM grounding calls.
+- `utterances.word_budgets`: opening 18, discussion 15, ask/answer 13, vote 11 — the controller scales these by verbosity/engagement and mixes in deterministic short beats (`policy._word_bounds`);
+- `routing.direct_address_probability` (0.32) is additionally scaled down by group size in the policy (x0.15 at n=2, x0.6 at n=3);
+- `style.name_prefix_max_fraction`: 0.3; n=2 suppresses non-functional name prefixes outright;
+- `routing.trait_share_adaptation` 3.5, `max_share_overshoot` 0.16, softened anti-monopoly damp: trait-shaped dominance, never monologue;
+- `personas.hard_blocker_probability`: hard blockers stay rare; manual profiles may pair a rejection with any explicit agreeableness;
+- `validation.grounding_mode`: keep tripwire; the judge is scoped to the options a line actually mentions.
 
 ## Running normal simulations
 

@@ -32,21 +32,14 @@ Do not assume old issues are still open if `docs/todo.md` says otherwise. Do not
 
 ## Current highest priorities
 
-The current quality target is not more architecture. The project already has option grounding, controller routing, visible-state observation, repair, and evaluation. The next round should tighten and simplify behavior without increasing token usage.
+The current quality target is not more architecture. The project already has option grounding, controller routing, visible-state observation, repair, evaluation, trait-scaled word budgets, thread-aware routing, group-size-aware addressing, earned stance movement, an issue ledger for repeated unknowns, and free-discussion dominance metrics (behavioral round completed 2026-07-06, validated with the full 12-case suite).
 
-Work in this order unless fresh logs prove a different blocker:
+`docs/todo.md` is the authoritative open list. Currently open:
 
-1. Shorten participant utterances while preserving average verbosity differences.
-2. Reduce question chaining; preserve direct Q→A adjacency, then let the same point develop before opening a new one.
-3. Reduce direct-name frequency while keeping functional addressing.
-4. Make participation trait-shaped rather than mechanically balanced; evaluate dominance on free discussion turns, not opening/vote rounds.
-5. Clarify hard blockers, hard constraints, and normal preferences. Normal auto sims should not get categorical hard constraints unless the hard-blocker path is active, but explicit/manual constraints must be respected.
-6. Make stance movement earned by visible triggers, not only by bridge phrasing.
-7. Track repeated unknown logistics through a lightweight issue ledger.
-8. Keep option-combination compromises bounded; one concrete option must remain the winner.
-9. Reduce repair/grounding cost while preserving factual discipline.
-10. Simplify accumulated controller/validation paths only after behavior is protected by tests.
-11. Improve metrics for word length, question rate, name rate, trait-shaped dominance, repeated unknowns, switch causality, and constraint violations.
+1. Simplify accumulated controller/validation paths, one area at a time, protected by `--full` suite runs before and after (O1).
+2. Grounding-judge false positives on short fully-grounded lines pollute the unsupported metrics (O2).
+3. Keep monitoring split runs for unbounded option blends; escalate to a deterministic observer check only if they reappear (O3).
+4. `switch_explanation_rate` under-counts em-dash reason clauses; fix the detector, not the phrasing menus (O4).
 
 ## Implementation principles
 
