@@ -379,84 +379,178 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         state.compromise_attempted = True
         if len(state.personas) == 2 and len(votes_by_id) == 2 and len(set(votes)) == 2:
             return self._two_person_deadlock_protocol(state, votes_by_id)
+        tested: set[str] = set()
+        for attempt_index in range(2):
+            votes_by_id = {
+                p.id: state.runtimes[p.id].explicit_vote
+                for p in state.personas
+                if state.runtimes[p.id].explicit_vote in state.scenario.option_ids
+            }
+            votes = list(votes_by_id.values())
+            ranked = self._rank_split_candidates(state, votes, exclude=tested)
+            if not ranked:
+                # No plausible mover: still emit one honest split summary so the
+                # unresolved outcome is socially explained, not an abrupt stop.
+                if attempt_index == 0:
+                    self._emit_split_summary(state, None, votes_by_id)
+                return True
+            leader, dissenters, movers, meta = ranked[0]
+            tested.add(leader)
+            state.candidate_option = leader
+            self._emit_split_summary(state, leader, votes_by_id, attempt_index=attempt_index, meta=meta)
 
-        probe = self._split_probe_candidate(state, votes)
-        if probe is None:
-            # No plausible mover: still emit one honest split summary so the
-            # unresolved outcome is socially explained, not an abrupt stop.
-            self._emit_split_summary(state, None, votes_by_id)
-            return True
-        leader, dissenters, movers = probe
-        state.candidate_option = leader
-        self._emit_split_summary(state, leader, votes_by_id)
-
-        # Ask concrete reservations before final switch/stay beats. Bound the
-        # cost: at most two reservation/supporter pairs, preferring movable
-        # dissenters with low commitment. Everyone still gets a closing beat below.
-        ordered_movers = sorted(
-            movers,
-            key=lambda p: (state.runtimes[p.id].commitment_strength, p.sim_params.compromise_threshold),
-        )
-        for holdout in ordered_movers[:2]:
-            self._split_reservation_exchange(state, holdout, leader)
-
-        aliases = short_alias_map(state.scenario.options)
-        for persona in dissenters:
-            can_move = persona in movers
-            current = state.runtimes[persona.id].current_preference or persona.preferred_option
-            current_name = aliases.get(current, current)
-            leader_name = aliases.get(leader, leader)
-            intent = MoveIntent(
-                speaker_id=persona.id,
-                act=ActType.VOTE,
-                reason=(
-                    f"after the split discussion, decide whether you can move to {leader_name} or stay with {current_name}; "
-                    "if you switch, commit clearly and bridge from your earlier pick with the reason that changed; "
-                    "if you stay, give one concrete blocker or reservation — no new option facts"
-                    if can_move
-                    else f"after the split discussion, clearly stay with {current_name} and name the concrete reservation "
-                    f"that keeps you from accepting {leader_name}; do not switch"
-                ),
-                option_focus=[leader, current] if current != leader else [leader],
-                length_hint="short",
-                allow_vote_change=can_move,
+            # Ask concrete reservations before final switch/stay beats. Bound the
+            # cost: first candidate may get two reservation/supporter pairs; the
+            # optional second candidate gets one. Include hard but relevant
+            # dissenters only for the final decision beat, not for a fake
+            # reservation exchange they cannot move from.
+            reservation_limit = 2 if attempt_index == 0 else 1
+            ordered_holdouts = sorted(
+                [p for p in dissenters if not self._hard_blocks_candidate(state, p, leader)],
+                key=lambda p: self._candidate_resistance(state, p, leader),
             )
-            self._emit(self._generate_and_append(state, intent))
+            for holdout in ordered_holdouts[:reservation_limit]:
+                self._split_reservation_exchange(state, holdout, leader)
+
+            for persona in dissenters:
+                can_move = persona in movers
+                alternative = self._holdout_alternative_candidate(state, persona, leader, tested=tested)
+                intent = self._post_reservation_decision_intent(
+                    state,
+                    persona,
+                    leader,
+                    can_move=can_move,
+                    alternative=alternative if attempt_index == 0 else None,
+                )
+                self._emit(self._generate_and_append(state, intent))
+
+            provisional = ConsensusManager.finalize(state)
+            if provisional.status in {"successful", "majority"}:
+                return True
+            # A second candidate is only useful if there is still a split. If all
+            # visible votes collapsed to one option, finalization above would have
+            # returned; otherwise the next loop tests the best remaining candidate.
         return True
 
-    def _emit_split_summary(self, state: DialogueState, candidate: str | None, votes_by_id: dict[str, str]) -> None:
+    def _post_reservation_decision_intent(
+        self,
+        state: DialogueState,
+        persona: Persona,
+        candidate: str,
+        *,
+        can_move: bool,
+        alternative: str | None = None,
+    ) -> MoveIntent:
+        aliases = short_alias_map(state.scenario.options)
+        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        current_name = aliases.get(current, current)
+        candidate_name = aliases.get(candidate, candidate)
+        focus = [candidate]
+        if current in state.scenario.option_ids and current != candidate:
+            focus.append(current)
+        if alternative and alternative in state.scenario.option_ids and alternative not in focus:
+            focus.append(alternative)
+        if can_move:
+            alt_clause = (
+                f", or name {aliases[alternative]} as the concrete alternative compromise"
+                if alternative and alternative != current
+                else ""
+            )
+            reason = (
+                f"post-reservation decision step: choose exactly one visible outcome — switch to {candidate_name}, "
+                f"stay with {current_name}{alt_clause}. If you switch, commit clearly and bridge from your earlier pick; "
+                "if you stay or propose the alternative, name the one blocker that remains. No vague re-vote."
+            )
+        else:
+            alt_clause = (
+                f" or, only if it is genuinely acceptable, name {aliases[alternative]} as the alternative compromise"
+                if alternative and alternative != current
+                else ""
+            )
+            reason = (
+                f"post-reservation decision step: do not accept {candidate_name}; clearly stay with {current_name}"
+                f"{alt_clause}, and state the concrete blocker that remains. No new option facts."
+            )
+        return MoveIntent(
+            speaker_id=persona.id,
+            act=ActType.VOTE,
+            reason=reason,
+            option_focus=focus,
+            length_hint="short",
+            allow_vote_change=can_move or bool(alternative),
+        )
+
+    def _holdout_alternative_candidate(
+        self,
+        state: DialogueState,
+        persona: Persona,
+        candidate: str,
+        *,
+        tested: set[str],
+    ) -> str | None:
+        """Best concrete alternative a holdout may name without opening a loop."""
+        counts = Counter(
+            rt.explicit_vote
+            for rt in state.runtimes.values()
+            if rt.explicit_vote in state.scenario.option_ids
+        )
+        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        ordered = [oid for oid, _count in counts.most_common()]
+        ordered.extend(persona.preferred_options)
+        ordered.extend(state.scenario.option_ids)
+        for option_id in ordered:
+            if option_id == candidate or option_id in tested:
+                continue
+            if option_id not in state.scenario.option_ids:
+                continue
+            if self._hard_blocks_candidate(state, persona, option_id):
+                continue
+            if option_id == current or self._candidate_resistance(state, persona, option_id) <= 0.65:
+                return option_id
+        return current if current in state.scenario.option_ids and current != candidate else None
+
+    def _emit_split_summary(
+        self,
+        state: DialogueState,
+        candidate: str | None,
+        votes_by_id: dict[str, str],
+        *,
+        attempt_index: int = 0,
+        meta: dict | None = None,
+    ) -> None:
         """Visible, non-malformed split summary for moderator or peer modes."""
         aliases = short_alias_map(state.scenario.options)
         counts = Counter(votes_by_id.values())
         split = ", ".join(f"{aliases[oid]} ({count})" for oid, count in counts.most_common())
+        prefix = "Second narrowing attempt. " if attempt_index else ""
         if candidate:
             candidate_name = aliases[candidate]
             dissenters = [p.name for p in state.personas if votes_by_id.get(p.id) != candidate]
             dissenter_text = ", ".join(dissenters) or "the others"
+            meta_text = ""
+            if meta and meta.get("votes", 0) > 1:
+                meta_text = " It has the visible lead, so we test it first."
             text = (
-                f"We are split: {split}. Let's test {candidate_name} as the compromise; "
+                f"{prefix}We are split: {split}. Let's test {candidate_name} as the compromise; "
                 f"{dissenter_text}, what would still block that for you?"
+                f"{meta_text}"
             )
         else:
             text = (
-                f"We are split: {split}. No option has a workable path yet, so let's name the blockers plainly."
+                f"{prefix}We are split: {split}. No option has a workable path yet, so let's name the blockers plainly."
             )
         if self._mod("final_vote_call"):
             self._emit(self._append_moderator(state, text, Phase.NARROWING))
             return
         caller = self._procedural_speaker(state)
         state.procedural_move_count += 1
-        intent = MoveIntent(
-            speaker_id=caller.id,
-            act=ActType.SUMMARIZE_SPLIT,
-            reason=(
-                "summarize the vote split clearly and propose a concrete narrowing step; "
-                f"the intended content is: {text}"
-            ),
-            option_focus=[candidate] if candidate else list(counts.keys())[:2],
-            length_hint="short",
-        )
-        self._emit(self._generate_and_append(state, intent))
+        self._emit(self._append_peer_procedure(
+            state,
+            caller,
+            text,
+            ActType.SUMMARIZE_SPLIT,
+            [candidate] if candidate else list(counts.keys())[:2],
+        ))
 
     def _split_reservation_exchange(self, state: DialogueState, holdout: Persona, candidate: str) -> None:
         """One targeted reservation + one supporter answer inside split narrowing."""
@@ -469,9 +563,10 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             act=ActType.ANSWER,
             reason=(
                 f"answer the split prompt: name the single strongest reservation or condition that still makes {candidate_name} "
-                "hard for you; do not vote yet, and do not invent facts"
+                "hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, "
+                "do not borrow tradeoffs from another option, and do not invent facts"
             ),
-            option_focus=[candidate, state.runtimes[holdout.id].current_preference or holdout.preferred_option],
+            option_focus=[candidate],
             length_hint="short",
         )
         record = self._generate_and_append(state, reservation)
@@ -488,7 +583,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             act=ActType.ANSWER,
             reason=(
                 f"respond directly to {holdout.name}'s reservation about {candidate_name}; concede what the option board cannot prove, "
-                "then point to the listed fact or trade-off that still makes it workable — no pressure"
+                "then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, "
+                "and do not import facts from any other option"
             ),
             addressee_id=holdout.id,
             option_focus=[candidate],
@@ -737,6 +833,45 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         text = normalise_lines(text)
         act = DialogueAct(speaker_id="moderator", text=text, act_type=ActType.REACT)
         record = TurnRecord(index=state.turn_index, speaker_id="moderator", speaker_name="Moderator", text=text, phase=phase, act=act)
+        state.turns.append(record)
+        return record
+
+    def _append_peer_procedure(
+        self,
+        state: DialogueState,
+        persona: Persona,
+        text: str,
+        act_type: ActType,
+        option_focus: list[str],
+    ) -> TurnRecord:
+        """Append deterministic participant-owned procedure text.
+
+        Split summaries are controller facts: vote counts and the candidate being
+        tested must not drift in an LLM paraphrase. Keeping this line
+        deterministic also removes one utterance+grounding call in no-moderator
+        split cases while still making the procedural move visibly owned by a
+        participant.
+        """
+        state.turn_index += 1
+        text = normalise_lines(text)
+        rt = state.runtimes[persona.id]
+        rt.turn_count += 1
+        rt.last_spoke_turn = state.turn_index
+        rt.already_said.append(text)
+        act = DialogueAct(
+            speaker_id=persona.id,
+            text=text,
+            act_type=act_type,
+            option_refs=[oid for oid in option_focus if oid in state.scenario.option_ids],
+        )
+        record = TurnRecord(
+            index=state.turn_index,
+            speaker_id=persona.id,
+            speaker_name=persona.name,
+            text=text,
+            phase=Phase.NARROWING,
+            act=act,
+        )
         state.turns.append(record)
         return record
 

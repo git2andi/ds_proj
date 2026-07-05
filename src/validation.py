@@ -123,7 +123,11 @@ class ValidationMixin:
     ) -> tuple[ValidationReport, int, int]:
         """Regex validation plus an optional LLM grounding check; returns extra tokens."""
         report = self._validate_turn_text(text, state, persona, intent, act)
-        issue, gti, gto = self._grounding_issue(text, state, intent)
+        deterministic_issue = self._deterministic_grounding_issue(text, state)
+        if deterministic_issue and deterministic_issue not in report.issues:
+            report.issues.append(deterministic_issue)
+            return report, 0, 0
+        issue, gti, gto = self._grounding_issue(text, state, intent, focus_options)
         if issue and issue not in report.issues:
             report.issues.append(issue)  # non-blocking; drives one repair toward grounded text
         return report, gti, gto
@@ -133,6 +137,7 @@ class ValidationMixin:
         text: str,
         state: DialogueState,
         intent: MoveIntent,
+        focus_options: list,
     ) -> tuple[str | None, int, int]:
         if not bool(cfg.validation.get("enabled", True)) or not bool(cfg.validation.get("grounding_check", False)):
             return None, 0, 0
@@ -147,10 +152,11 @@ class ValidationMixin:
         # context (issue I11).
         if str(cfg.validation.get("grounding_mode", "tripwire")) == "tripwire" and not self._grounding_tripwire(text, state):
             return None, 0, 0
-        # Always judge against the full option board: comparisons legitimately
-        # restate other options' card facts, so a focus-scoped fact base
-        # produces false UNSUPPORTED_FACT flags (issue #18).
-        prompt = prompts.grounding_check(utterance=text, state=state, focus_options=list(state.scenario.options))
+        # Candidate-specific turns get a smaller fact base. This lowers token
+        # cost and prevents wrong-option tradeoffs from slipping through while
+        # still allowing two-option comparisons when the controller routed them.
+        judge_options = focus_options if 0 < len(focus_options) <= 2 else list(state.scenario.options)
+        prompt = prompts.grounding_check(utterance=text, state=state, focus_options=judge_options)
         try:
             data = self._llm.generate_json(prompt, profile="repair")
         except Exception:
@@ -233,9 +239,48 @@ class ValidationMixin:
         # claims about parking, connectivity, weather, crowding, traffic, or
         # staffing that no card states get judged.
         r"parking|wi-?fi|weather|rain\w*|snow\w*|crowd\w*|queue\w*|traffic|"
-        r"staff\w*|waiter\w*|servic\w*|jet\s*lag|peak\s+(?:hours?|times?)|rush\s+hour)\b",
+        r"staff\w*|waiter\w*|servic\w*|jet\s*lag|peak\s+(?:hours?|times?)|rush\s+hour|"
+        r"shelter\w*|shade|corner|quiet(?:er)?\s+(?:spot|corner|table|area)|"
+        r"book(?:ing|ed)?|reserve[sd]?|route|indoor|outdoor|seating|host)\b",
         re.I,
     )
+
+    _UNCERTAINTY = re.compile(
+        r"\b(?:maybe|might|could|if|whether|check|ask|see\s+if|not\s+sure|don't\s+know|do\s+not\s+know|"
+        r"unknown|no\s+guarantee|can't\s+assume|cannot\s+assume|we\s+don't\s+know|we\s+do\s+not\s+know)\b",
+        re.I,
+    )
+
+    _ASSERTED_WORKAROUND = re.compile(
+        r"\b(?:we|you|they|i)\s+(?:can|will|should|just)\s+"
+        r"(?:pick|get|find|book|reserve|hold|request|ask\s+for|choose|use|take)\b[^.!?]{0,60}"
+        r"\b(?:quiet(?:er)?|corner|spot|table|shelter\w*|shade|parking|route|booking|reservation|"
+        r"indoor|outdoor|seating|discount|weather|forecast|host)\b",
+        re.I,
+    )
+
+    def _deterministic_grounding_issue(self, text: str, state: DialogueState) -> str | None:
+        """Cheaply catch unsupported logistical fixes before paying a judge call.
+
+        The pattern only catches asserted workarounds ("we can pick a quieter
+        corner"). Uncertain formulations ("maybe", "check if", "we don't know")
+        remain allowed and may still be judged by the LLM tripwire if concrete.
+        """
+        match = self._ASSERTED_WORKAROUND.search(text)
+        if not match:
+            return None
+        world = getattr(self, "_world_text", None)
+        if world is None or self._world_state_id != id(state):
+            world = " ".join(
+                [option.prompt_card() for option in state.scenario.options] + list(state.scenario.shared_context)
+            ).lower()
+            self._world_text = world
+            self._world_state_id = id(state)
+            self._option_tokens = self._distinctive_option_tokens(state)
+        phrase = match.group(0).lower()
+        if phrase in world or self._UNCERTAINTY.search(text):
+            return None
+        return "UNSUPPORTED_FACT"
 
     def _grounding_tripwire(self, text: str, state: DialogueState) -> bool:
         """True when the line makes a concrete claim not present in the world facts,

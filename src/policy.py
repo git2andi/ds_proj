@@ -41,6 +41,62 @@ from utils import preset_dominance_weight, weighted_choice
 
 
 class PolicyMixin:
+    def _rank_split_candidates(
+        self,
+        state: DialogueState,
+        votes: list[str],
+        *,
+        exclude: set[str] | None = None,
+    ) -> list[tuple[str, list[Persona], list[Persona], dict]]:
+        """Rank concrete split-vote candidates from visible votes.
+
+        Candidate choice is intentionally deterministic. The previous scorer mixed
+        visible vote count with stochastic shift checks, which allowed a one-vote
+        option to beat a visible plurality in some ``2-1-1`` splits. This ranking
+        treats the vote structure as the first-order social signal: a strict
+        plurality is tested first unless every relevant dissenter has a hard
+        blocker. Ties are then broken by objection load and compromise fit.
+        """
+        exclude = exclude or set()
+        counts = Counter(v for v in votes if v in state.scenario.option_ids)
+        if not counts:
+            return []
+
+        ranked: list[tuple[tuple[float, float, float, float, str], str, list[Persona], list[Persona], dict]] = []
+        for candidate, count in counts.items():
+            if candidate in exclude:
+                continue
+            dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != candidate]
+            hard_blockers = [p for p in dissenters if self._hard_blocks_candidate(state, p, candidate)]
+            if dissenters and len(hard_blockers) == len(dissenters):
+                # Nobody outside the candidate camp can even conditionally move.
+                # Testing this first would be a performative dead end.
+                continue
+            movable = [p for p in dissenters if p not in hard_blockers]
+            resistance = [self._candidate_resistance(state, p, candidate) for p in movable]
+            avg_resistance = sum(resistance) / max(1, len(resistance))
+            compromise_fit = sum(1.0 - p.sim_params.compromise_threshold for p in movable) / max(1, len(movable))
+            support_quality = 0.25 * state.coverage[candidate].reasons + 0.10 * state.coverage[candidate].mentions
+            meta = {
+                "votes": count,
+                "hard_blockers": len(hard_blockers),
+                "avg_resistance": round(avg_resistance, 3),
+                "compromise_fit": round(compromise_fit, 3),
+            }
+            # Sort key is inverted later. Vote count dominates; blockers and
+            # resistance only break ties / select among equal leaders.
+            key = (
+                float(count),
+                -float(len(hard_blockers)),
+                -avg_resistance,
+                compromise_fit + support_quality,
+                candidate,
+            )
+            ranked.append((key, candidate, dissenters, movable, meta))
+
+        ranked.sort(key=lambda item: (-item[0][0], -item[0][1], -item[0][2], -item[0][3], item[1]))
+        return [(candidate, dissenters, movers, meta) for _key, candidate, dissenters, movers, meta in ranked]
+
     def _split_probe_candidate(
         self, state: DialogueState, votes: list[str]
     ) -> tuple[str, list[Persona], list[Persona]] | None:
@@ -51,24 +107,33 @@ class PolicyMixin:
         one dissenter must actually be able to move to it (I18). If no
         vote-getter qualifies, the pass is skipped and the run closes honestly.
         """
-        counts = Counter(votes)
-        ranked: list[tuple[float, str, list[Persona], list[Persona]]] = []
-        for candidate, count in counts.items():
-            if self._candidate_blocked(state, candidate):
-                continue
-            dissenters = [p for p in state.personas if state.runtimes[p.id].explicit_vote != candidate]
-            movers = [p for p in dissenters if self._can_shift_to(state, p, candidate)]
-            if movers:
-                mover_flex = sum(1.0 - p.sim_params.compromise_threshold for p in movers) / max(1, len(movers))
-                mover_commit = sum(state.runtimes[p.id].commitment_strength for p in movers) / max(1, len(movers))
-                score = 10.0 * count + 4.0 * len(movers) + 2.0 * mover_flex - mover_commit
-                score += 0.5 * state.coverage[candidate].reasons + 0.25 * state.coverage[candidate].mentions
-                ranked.append((score, candidate, dissenters, movers))
+        ranked = self._rank_split_candidates(state, votes)
         if ranked:
-            ranked.sort(key=lambda item: (-item[0], item[1]))
-            _score, candidate, dissenters, movers = ranked[0]
+            candidate, dissenters, movers, _meta = ranked[0]
             return candidate, dissenters, movers
         return None
+
+    @staticmethod
+    def _hard_blocks_candidate(state: DialogueState, persona: Persona, candidate: str) -> bool:
+        rt = state.runtimes[persona.id]
+        return persona.rejection == candidate or candidate in rt.hard_rejections
+
+    @staticmethod
+    def _candidate_resistance(state: DialogueState, persona: Persona, candidate: str) -> float:
+        """Lower means the dissenter is a better candidate for a switch/stay beat."""
+        rt = state.runtimes[persona.id]
+        if persona.rejection == candidate or candidate in rt.hard_rejections:
+            return 99.0
+        resistance = 0.45 * rt.commitment_strength
+        resistance += 0.35 * persona.sim_params.compromise_threshold
+        resistance += 0.20 * persona.sim_params.stubbornness
+        if candidate in persona.preferred_options:
+            resistance -= 0.25
+        if candidate in rt.accepted_options:
+            resistance -= 0.20
+        if rt.current_preference == candidate:
+            resistance -= 0.35
+        return max(0.0, resistance)
 
     # ------------------------------------------------------------------
     # Routing policy: who / what / whom

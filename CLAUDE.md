@@ -28,15 +28,15 @@ Do not assume old issues are still open if `docs/todo.md` says otherwise. Do not
 
 ## Current highest priorities
 
-The latest evaluation showed that the simulator improved, but these issues remain open:
+The latest code round changed the controller, prompts, validation, and eval suite, but live LLM validation is still required. Current priorities are:
 
-1. Split-vote candidate selection is sometimes poor. If one option leads, it should usually be tested first. If all are tied, choose a candidate by compromise potential, not arbitrary order.
-2. After a reservation response, holdouts need an explicit switch/stay/alternative step.
-3. The `n=2` deadlock protocol needs a forced stubborn 1-1 validation case and may need adjustment.
-4. Compromise prompts and reservations sometimes mix attributes from the wrong option.
-5. Token cost is still too high. Utterance calls and grounding calls dominate.
-6. Grounding still leaks occasional unsupported logistical facts or mitigation claims.
-7. Trait-weighted participation is improved but must not regress.
+1. Verify deterministic split-vote ranking: a strict visible plurality should be tested before weaker one-vote candidates; tied leaders should be ranked by blockers/resistance/compromise fit.
+2. Verify post-reservation decision beats: each holdout should visibly switch, stay, or name an alternative before closure.
+3. Run the forced `f01_manual_manual_n2_stubborn_deadlock` case and inspect whether `two_person_deadlock_attempted = true` and the transcript shows the blocker/concession exchange.
+4. Check that candidate-specific reservations no longer import tradeoffs from unrelated options.
+5. Compare token diagnostics: compact utterance prompts, deterministic peer split summaries, and deterministic grounding tripwires should reduce `tokens_utterance_in` and `tokens_grounding_in`.
+6. Ensure unsupported logistical workaround claims are repaired or phrased as uncertainty.
+7. Monitor trait-weighted participation for regressions, but do not overfit it before narrowing/cost are validated.
 
 Work on these one at a time.
 

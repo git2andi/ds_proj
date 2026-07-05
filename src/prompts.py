@@ -325,33 +325,20 @@ def sim_utterance(
     if intent.avoid_pattern in {"concede_but", "worry_but", "tradeoff_but"}:
         style_notes += "\n- Avoid the 'fair point, but…' / 'X is good but I worry…' concession-objection shape used just now; make a different move (a plain claim, a direct question, a concrete comparison, or a firm stance)."
 
-    return f"""Write {persona.name}'s next message in a natural group decision chat.
+    return f"""Write one natural chat message for {persona.name}.
 
 Topic: {state.scenario.topic}
-Shared context: {context}
-Options: {', '.join(f'{o.id}={aliases[o.id]}' for o in state.scenario.options)}
+Context: {context}
+Speaker: background={compact_words(persona.background, 16)}; goal={compact_words(persona.private_goal, 16)}; voice={voice}; initial={initial_name}; current={current_name}{blocked}
+Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
 
-Speaker:
-- background: {persona.background}
-- private goal: {persona.private_goal}
-- voice: {voice}
-- initial preference: {initial_name}; current internal lean: {current_name}{blocked}
-
-Move to render: {intent.act.value}
-Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
-
-Use only these option facts:
+Allowed facts:
 {cards}
 
-Recent chat:
+Recent:
 {recent}
 
-Style:
-- One message only; no name prefix, quotes, bullets, metadata, or bracketed labels.
-- {length_note}{tone_note}
-- Follow the voice exactly — sentence shape, bluntness, and energy should make the speaker recognizable without the name. Contractions and casual interjections fit.
-- Vary sentence shape and opening; do not open with an option name, "I'm leaning", or "feels". Names, "you", "we", or no option name are all fine.
-- Add one new point, concern, answer, or stance shift; don't repeat reasons from the recent chat. Never invent facts beyond the option facts above. If something isn't in the cards or context (parking, weather, crowds, policies, extra services), don't state it as fact — treat it as unknown or ask.{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts. If a practical detail is not stated (parking, weather, crowds, policies, booking fixes, extra services), mark it unknown or ask; never state it as fact.{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a

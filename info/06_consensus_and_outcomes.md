@@ -18,7 +18,22 @@ A clear vote should remain stable unless the sim explicitly switches. Ambiguous 
 
 ## Split-vote narrowing
 
-No-majority votes should not close prematurely. The system should run a bounded compromise/reservation sequence. Unresolved is valid only after relevant dissenters had a chance to switch, stay, or propose an alternative.
+No-majority votes should not close prematurely. The controller now ranks split candidates deterministically from visible votes and can test at most two candidates:
+
+```text
+first attempt: visible plurality, or best tied candidate by blockers/resistance/compromise fit;
+second attempt: best remaining candidate if the first attempt fails;
+then close unresolved if no majority/unanimity is visible.
+```
+
+Post-reservation decision turns should visibly do one of these:
+
+```text
+switch to the tested candidate;
+stay with the original option and name the blocker;
+name one concrete alternative candidate;
+state that no acceptable compromise remains.
+```
 
 ## n=2 deadlock
 
@@ -27,9 +42,12 @@ A 1-1 split requires special handling. The intended protocol is:
 ```text
 1. each participant states the strongest blocker;
 2. each proposes one condition or concession;
-3. if neither moves, unresolved is valid.
+3. each makes a final switch/stay decision;
+4. unresolved is valid if neither moves.
 ```
 
-## Current open issues
+The full evaluation suite now includes `f01_manual_manual_n2_stubborn_deadlock`, a forced manual/manual case with two stubborn opposing participants. It should set `two_person_deadlock_attempted = true` when live validation is run.
 
-The latest full suite did not trigger the n=2 deadlock protocol, so this path is not validated. Add a forced stubborn 1-1 evaluation case and inspect whether `two_person_deadlock_attempted` becomes true and the transcript shows symmetric negotiation.
+## Current validation focus
+
+Run `py run_eval_suite.py --full`, inspect `f01_manual_manual_n2_stubborn_deadlock`, and compare `visible_votes`, `outcome_status`, and `two_person_deadlock_attempted` in `run.json`.

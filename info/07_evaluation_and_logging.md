@@ -40,26 +40,38 @@ Inspect these after changes:
 - `unsupported_printed_turns`;
 - token usage by call type.
 
-## Latest evaluation summary
+## Latest known baseline
 
-The latest full evaluation after the split/narrowing implementation improved behavior:
+The uploaded latest full evaluation before this code round showed:
 
 ```text
 unresolved outcomes:        7/12 -> 4/12
 mid-discussion lean shifts: 3 total -> 16 total
-participant procedure:      now visible
-split reservation exchanges: now present
+participant procedure:      visible
+split reservation exchanges: present
+input tokens:               roughly 460k across 12 runs
+utterance calls:            about 65% of input tokens
+grounding calls:            about 27% of input tokens
 ```
 
-But token cost stayed high:
+## Current suite coverage
+
+The full suite now includes a forced two-person stubborn deadlock case:
 
 ```text
-approx. 460k input tokens across 12 runs
-utterance calls: ~65% of input tokens
-grounding calls: ~27%
-repair calls: ~5%
+f01_manual_manual_n2_stubborn_deadlock
 ```
 
-## Current open issue
+This replaces the previous auto/auto n=2 edge case because that run converged before exercising the deadlock protocol.
 
-Evaluation is now informative enough to diagnose cost. The next implementation should reduce token cost without removing behavioral controls. In particular, reduce repeated utterance prompt context and unnecessary grounding calls.
+## Current validation focus
+
+After running `py run_eval_suite.py --full`, compare the new logs against the uploaded baseline. In particular:
+
+```text
+candidate choice in split sections;
+post-reservation switch/stay/alternative lines;
+two_person_deadlock_attempted in f01;
+tokens_utterance_in and tokens_grounding_in;
+unsupported_printed_turns and repair/fallback rates.
+```

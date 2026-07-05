@@ -35,20 +35,24 @@ Every sim should produce a visible final stance. Final votes are not trait-weigh
 
 ## No-majority handling
 
-If final votes produce no majority, the controller should run bounded narrowing rather than close immediately.
+If final votes produce no majority, the controller runs bounded narrowing rather than closing immediately.
 
-Correct sequence:
+Current intended sequence:
 
 ```text
-1. detect the vote split;
-2. choose a candidate or top-two pair;
-3. ask non-candidate voters concrete reservations;
-4. let a supporter respond;
-5. ask each relevant holdout to switch, stay, or propose an alternative;
-6. optionally test one alternative candidate;
-7. close as successful, majority, or unresolved.
+1. detect the vote split and visible vote counts;
+2. rank concrete candidates deterministically from visible votes;
+3. if one option has a strict plurality, test it first unless every relevant dissenter hard-blocks it;
+4. if leaders are tied, choose by fewer blockers, lower resistance, and higher compromise fit;
+5. ask relevant non-candidate voters for concrete reservations about the tested candidate;
+6. let a supporter respond using only the candidate's known facts and explicit uncertainty for unknowns;
+7. route each relevant holdout into a visible switch / stay / alternative decision;
+8. if the first candidate fails, optionally test one alternative candidate;
+9. close as successful, majority, or unresolved.
 ```
 
-## Current open issues
+The split summary in no-moderator mode is deterministic participant-owned procedure. This avoids one extra LLM call and prevents the candidate/counts from drifting in a paraphrase.
 
-The latest full suite showed better split handling, but still not enough. Candidate selection can be wrong, post-reservation decisions are too vague, and some compromise turns attach concerns to the wrong option.
+## Current validation focus
+
+Run the full eval suite and inspect `q01`, `q02`, `q04`, `f03`, `f04`, and `f06`. The tested candidate should follow visible support, and unresolved outcomes should feel earned after explicit holdout decisions.

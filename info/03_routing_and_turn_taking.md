@@ -42,8 +42,10 @@ Participants can perform procedural acts, especially when the moderator is reduc
 - suggest narrowing;
 - test a compromise candidate.
 
-These should be explicit enough to count in metrics.
+Split summaries in no-moderator mode are now deterministic participant-owned procedure: the controller appends a visible participant line with the exact vote counts and candidate. This prevents LLM paraphrases from changing the candidate and saves one utterance/grounding call. Other participant procedure still uses normal routed utterances.
 
-## Current open issues
+These moves should be explicit enough to count in metrics.
 
-Participant-owned procedure is visible, but still crude. It can call votes and summarize splits, but post-split negotiation remains too shallow. Split-vote candidate selection and post-reservation decision routing are the current priorities.
+## Current validation focus
+
+Participant-owned procedure is visible, but post-split negotiation still needs live validation. Check that no-/light-moderator cases test the visible leader or best tied candidate and that holdouts produce explicit switch/stay/alternative decisions.

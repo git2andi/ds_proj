@@ -17,6 +17,19 @@
 - `validation`: turn validation and grounding checks.
 - `output`: log paths and prompt dumping.
 
+## Cost-related defaults
+
+The current defaults intentionally keep participant prompts compact:
+
+```yaml
+scenario.option_prompt_max_words: 34
+utterances.recent_turns_in_prompt: 4
+utterances.response_target_max_words: 18
+validation.grounding_mode: tripwire
+```
+
+Do not raise these casually. Larger context usually increases cost faster than it improves dialogue quality.
+
 ## Running normal simulations
 
 ```powershell
@@ -36,6 +49,7 @@ Manual environment mode ignores CLI topics and uses `environment.manual`.
 ```powershell
 py .\run_eval_suite.py --quick
 py .\run_eval_suite.py --full
+py .\run_eval_suite.py --list
 ```
 
 Use `--full` before claiming a behavioral issue is fixed.
@@ -61,6 +75,6 @@ Also test:
 - no moderator;
 - light moderator.
 
-## Current open issue
+## Current validation focus
 
-The current eval suite needs a stronger forced `n=2` stubborn-deadlock case. The existing n=2 full-suite case converged before testing the deadlock protocol.
+`f01_manual_manual_n2_stubborn_deadlock` should now exercise the two-person deadlock protocol. Run the full suite and inspect that case manually before removing the deadlock item from `docs/todo.md`.

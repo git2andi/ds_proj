@@ -116,14 +116,15 @@ split reservation exchanges: now present
 transcript metadata:        provider/model/modes/seed/pacing visible
 ```
 
-However, the system is not final. The remaining open issues are listed in `docs/todo.md`. The most important ones are:
+However, the system is not final. The current code now makes the split-vote candidate ranking deterministic, tests a visible plurality before weaker one-vote candidates, permits at most one alternative narrowing candidate, binds split reservations to the tested option, adds a forced stubborn `n=2` deadlock evaluation case, and reduces prompt/grounding cost through more compact utterance prompts plus cheaper deterministic grounding tripwires.
 
-1. split-vote candidate selection is still sometimes socially implausible;
-2. post-reservation narrowing needs a clearer switch/stay/alternative step;
-3. the `n=2` deadlock protocol still needs a forced validation case;
-4. compromise prompts can still mix option-specific concerns;
-5. token cost remains very high;
-6. grounding still leaks occasional unsupported logistical claims;
-7. trait routing is improved but should keep being monitored.
+The remaining open issues are listed in `docs/todo.md`. The most important validation work is now to run `py run_eval_suite.py --full` and inspect whether:
 
-Do not add more broad features until these are addressed.
+1. `2-1-1` and tied splits test socially plausible candidates;
+2. post-reservation turns visibly switch, stay, or name an alternative;
+3. `f01_manual_manual_n2_stubborn_deadlock` sets `two_person_deadlock_attempted = true`;
+4. candidate-specific reservations no longer borrow tradeoffs from unrelated options;
+5. `tokens_utterance_in` and `tokens_grounding_in` drop without increasing unsupported printed turns;
+6. trait routing remains stable.
+
+Do not add more broad features until these are validated.

@@ -301,6 +301,59 @@ COFFEE_ENV = {
     ],
 }
 
+ROOMMATE_ENV = {
+    "topic": "Choose whether two roommates should upgrade cleaning at home",
+    "decision_kind": "purchase_choice",
+    "opening_question": "Which purchase best addresses the shared cleaning problem without creating a new burden?",
+    "shared_context": [
+        "Two roommates share the apartment costs equally.",
+        "The maximum budget is 450 euros.",
+        "Both want less weekly cleaning friction.",
+    ],
+    "options": [
+        option(
+            "A",
+            "Eufy Robot Vacuum",
+            {"cost": "260 euros", "task": "daily floor cleaning", "space": "needs clear floor paths"},
+            "reduces visible dust without manual effort",
+            "does not help with dishes or kitchen cleanup",
+            "can get stuck if the floor is cluttered",
+            "someone who mainly worries about floors",
+            "Robot Vacuum",
+        ),
+        option(
+            "B",
+            "Bosch Compact Dishwasher",
+            {"cost": "430 euros", "task": "daily dishes", "space": "uses counter space"},
+            "removes the most common kitchen chore",
+            "near the top of the budget and takes space",
+            "does not help with dust or floors",
+            "someone who mainly worries about dishes",
+            "Dishwasher",
+        ),
+        option(
+            "C",
+            "Monthly Cleaning Service Trial",
+            {"cost": "80 euros per month", "task": "general cleaning", "duration": "three-month trial"},
+            "covers several chores without buying equipment",
+            "recurring cost instead of a one-time purchase",
+            "depends on scheduling someone to come in",
+            "testing whether outside help reduces conflict",
+            "Cleaning Trial",
+        ),
+        option(
+            "D",
+            "Shared Cleaning Supplies Kit",
+            {"cost": "70 euros", "task": "manual cleaning", "storage": "small closet box"},
+            "cheap and easy to start immediately",
+            "still requires both roommates to do the work",
+            "may not change habits enough",
+            "a low-cost reset before buying a device",
+            "Supplies Kit",
+        ),
+    ],
+}
+
 
 def profiles_three_way() -> list[dict[str, Any]]:
     """Three distinct initial favorites; designed to catch premature split-vote closure."""
@@ -496,6 +549,48 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
     ]
 
 
+def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
+    """Two stubborn opposing participants; designed to force the 1-1 protocol."""
+    return [
+        {
+            "name": "Maja",
+            "description": "stubborn roommate who thinks floors are the visible problem and dislikes spending the full budget",
+            "private_goal": "wants the robot vacuum and does not want a counter-space appliance",
+            "preferred_option": "A",
+            "rejection": "B",
+            "rejection_reason": "it is near the budget limit and uses counter space",
+            "traits": {"openness": 2, "conscientiousness": 4, "extraversion": 2, "agreeableness": 1, "neuroticism": 4},
+            "parameters": {
+                "engagement": 0.55,
+                "verbosity": 0.45,
+                "initiative": 0.45,
+                "responsiveness": 0.55,
+                "stubbornness": 0.95,
+                "directness": 0.80,
+                "compromise_threshold": 0.90,
+            },
+        },
+        {
+            "name": "Felix",
+            "description": "stubborn roommate who thinks dishes cause most conflict and distrusts partial floor-only fixes",
+            "private_goal": "wants the dishwasher and does not want a device that ignores the kitchen mess",
+            "preferred_option": "B",
+            "rejection": "A",
+            "rejection_reason": "it does not help with dishes or kitchen cleanup",
+            "traits": {"openness": 2, "conscientiousness": 4, "extraversion": 3, "agreeableness": 1, "neuroticism": 3},
+            "parameters": {
+                "engagement": 0.60,
+                "verbosity": 0.50,
+                "initiative": 0.55,
+                "responsiveness": 0.55,
+                "stubbornness": 0.95,
+                "directness": 0.85,
+                "compromise_threshold": 0.90,
+            },
+        },
+    ]
+
+
 MOD_FULL = {
     "enabled": True,
     "opening": True,
@@ -589,11 +684,17 @@ CASES: list[dict[str, Any]] = [
         "patch": base_patch(seed=106, n=3, env_mode="auto", participants_mode="auto", forced_shape="1-1-1", moderator=MOD_FULL),
     },
     {
-        "id": "f01_auto_auto_n2_edge",
+        "id": "f01_manual_manual_n2_stubborn_deadlock",
         "suite": "full",
-        "why": "Two-person edge case: checks deadlock and vote handling.",
-        "topic": "Choose whether two roommates should buy a robot vacuum or a better dishwasher",
-        "patch": base_patch(seed=201, n=2, env_mode="auto", participants_mode="auto", forced_shape="1-1", moderator=MOD_FULL),
+        "why": "Forced two-person 1-1 split with stubborn manual participants; should trigger deadlock protocol.",
+        "topic": "",
+        "patch": deep_merge(
+            base_patch(seed=201, n=2, env_mode="manual", participants_mode="manual", forced_shape="1-1", moderator=MOD_FULL),
+            {
+                "environment": {"manual": ROOMMATE_ENV},
+                "participants": {"profiles": profiles_stubborn_deadlock_2()},
+            },
+        ),
     },
     {
         "id": "f02_auto_auto_n5_trait_distribution",
