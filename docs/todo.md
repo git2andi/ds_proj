@@ -1,91 +1,71 @@
-# TODO: active implementation plan
+# TODO: latest active fixes
 
-This file is the authoritative work queue for the option-grounded multi-user decision simulator. It is not a changelog. Keep only open work here. Remove an item only after code inspection plus fresh evaluation logs show the issue is solved.
+This file is the only active work queue for the next implementation round. It should contain only open issues. Remove or narrow an item only after code inspection, implementation, targeted example runs, full-suite validation, and manual transcript review show that the issue is solved.
 
-## 0. Project framing
-
-The project is an **option-grounded multi-user decision simulator**, not a generic chatbot and not an open-ended society simulator.
-
-A run should follow this pipeline:
-
-```text
-one-line topic or manual environment
-  -> fixed option-grounded decision environment
-  -> 2-7 configurable simulated users
-  -> controller selects speaker / addressee / dialogue act / option focus
-  -> LLM renders one visible utterance unless the controller owns a procedural/decision line
-  -> observer updates public state from visible text
-  -> discussion narrows through reactions, concerns, stance movement, reservations, and votes
-  -> outcome = successful / majority / unresolved from visible transcript commitments only
-```
-
-Final states remain exactly:
+The project remains an **option-grounded multi-user decision simulator**. Do not turn it into a generic chatbot or open-ended society simulator. Fixed options must remain central. Participants discuss options, compare tradeoffs, may shift stance, may reach compromise conditions, and finish with exactly one of:
 
 - `successful`: all sims visibly agree on the same winning option.
 - `majority`: a majority visibly supports the winning option.
-- `unresolved`: no sufficient agreement is reached after bounded discussion and narrowing.
+- `unresolved`: no sufficient agreement is reached.
 
-Do **not** add a fourth outcome such as `successful_but_faulty`. If an option violates a participant's blocker or still lacks enough acceptance, the transcript should show that participant refusing or staying elsewhere, which naturally yields `majority` or `unresolved`.
+Do not add a fourth outcome label. If a participant cannot plausibly accept the winning option, the transcript should show refusal, reservation, or continued support for another option, which naturally leads to `majority` or `unresolved`.
 
-Participant parameters must remain behaviorally visible: engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should affect turn-taking, response timing, stance movement, and willingness to compromise.
+Use `gpt` as the dialogue-generation provider unless a task explicitly compares providers.
 
-Speaking should **not** be mechanically balanced. Dominant/high-engagement/high-initiative sims may speak more. Quiet sims should not disappear. Opening and vote rounds are intentionally more uniform and should be excluded from most trait-realization judgments.
+## Required implementation protocol
 
-Use `gpt` as the LLM provider for dialogue generation unless explicitly testing provider differences.
+For every issue below, follow this process exactly.
 
-## 1. Implementation protocol
-
-1. Work one issue at a time, in the priority order below.
-2. Before editing an issue, inspect the relevant code.
-3. Prefer deterministic controller/state logic over additional LLM calls.
-4. Do not solve quality problems by broadly adding prompt text. Prompt changes should be local, act-specific, and shorter where possible.
-5. Validate with transcript behavior and `run.json`, not execution success alone.
-6. After each fix, run static checks:
+1. Work on **one issue at a time** unless the issue explicitly says it must be combined with another one.
+2. Before starting, move existing logs into `logs/archive/` so new evaluation artifacts are easy to inspect.
+3. Read the issue carefully and understand why it affects dialogue quality.
+4. Read the relevant code files carefully before editing. Do not patch blindly.
+5. Prefer deterministic controller/state/validation fixes over broad prompt expansion. Keep token usage under control.
+6. Implement the smallest robust fix that solves the issue without breaking already-working behavior.
+7. Run static checks, at minimum:
 
 ```powershell
 py -m py_compile main.py run_eval_suite.py src\*.py
 ```
 
-7. Run targeted evaluation for the touched behavior. Before removing any issue from this file, run and inspect:
+8. Make targeted example runs before continuing:
+   - one `n=3` run is mandatory;
+   - then make 2-3 additional runs with varying group sizes from `n=2` to `n=7`;
+   - inspect both `transcript.md` and `run.json`, not only metrics.
+9. Confirm that the fix works across varying sim counts. If it does not, fix again before moving on.
+10. If a new clear issue appears during this work and is not listed here, fix it directly if it blocks or distorts the current issue. Otherwise add it to this file with priority and evidence.
+11. After the issues form the list are done and look good, run the full suite:
 
 ```powershell
 py run_eval_suite.py --full
 ```
 
-8. Inspect at least these artifacts manually: `logs_eval_suite/eval_suite_runs.csv`, `run.json`, `transcript.md`.
-9. After a verified fix, update `README.md`, `CLAUDE.md`, and the relevant `info/*.md` files. Then remove or narrow the completed item here.
+12. Inspect the full-suite logs manually. Ensure the intended behavior works there as well.
+13. Update all relevant documentation after the verified fix:
+   - `CLAUDE.md`
+   - `README.md`
+   - `docs/todo.md`
+   - relevant `info/*.md` files
+14. Only then remove or narrow the completed issue in this file.
 
-## 2. Open work
+## Open issues
 
-The 2026-07-06 behavioral round closed the previous P1-P9 and P11 items (shorter trait-shaped utterances, question-chain reduction, group-size-aware naming, free-discussion dominance, agreeable manual blockers, earned switches, the issue ledger, bounded compromise wording, cheaper grounding, and the new diagnostics). Validation: full 12-case suite on 2026-07-06 (`logs_eval_suite/eval_suite_runs.csv`) — avg words/turn 12.4-16.4, repeated_unknown_mentions 0 everywhere, final_blocker_violations 0 everywhere, n=2 name-prefix rate 0.0, top free-discussion share 0.26-0.53, unsupported printed turns 0 in 10/12 cases.
+The 2026-07-06 naturalness round (P1-P11) is complete; every item was closed against targeted runs plus the full 12-case suite (final suite 2026-07-06 19:31-19:42, all rc=0). P11 recheck result: free-discussion shares deviate from trait targets by at most ±0.11 (typically ±0.05), top free-discussion shares span 0.28-0.53, and engagement correlations are high except in near-flat casts where correlation is statistically meaningless — anti-dominance damping was left unchanged because it demonstrably does not erase legitimate dominance.
 
-### O1 — Simplify code paths where fixes accumulated (was P10)
+Small items worth monitoring (not blocking, escalate only if they recur):
 
-The controller has many local patches: split-vote handling, post-reservation decisions, continuation guards, grounding repair, option alias parsing, surface style suppression, deadlock protocol, trait-share routing, and now the issue ledger. Behavior is good but harder to reason about.
+- **M1 — occasional cross-option attribute mixups.** ~0.08 printed unsupported turns per run remain (e.g. "Cleaning Trial uses shared supplies" merging two cards' facts). The tripwire flags them; repair usually fixes them. If printed cases rise above ~0.2/run, extend the cross-option token check rather than the judge prompt.
+- **M2 — split-reservation addressing.** In a two-holdout split round, the reservation exchange sometimes lets the caller voice their own reservation before the explicitly addressed holdout answers (q02 final suite, turns 87-88). Harmless conversationally; fix only if it starts reading as ignored questions.
 
-Direction: do not rewrite the architecture. Isolate or simplify persona constraints/preferences, thread state, turn routing priority, stance eligibility, surface flags, and validation fallback — one area at a time, each protected by a fresh `--full` suite run before and after. Static compile is not enough.
+## Non-goals for this round
 
-### O2 — Grounding judge false positives on short grounded lines (narrowed from P9)
+Do not prioritize:
 
-Two lines in the f05 suite case were flagged UNSUPPORTED_FACT although fully card-grounded ("Good filter speed, no espresso option."). Non-blocking flags print anyway, so this only pollutes `unsupported_fact_flags` / `unsupported_printed_turns`. Direction: check the grounding-judge prompt on terse fragment lines before touching thresholds; do not weaken the deterministic asserted-workaround path.
-
-### O3 — Bounded option combinations: keep monitoring (narrowed from P8)
-
-`propose_compromise` turns now carry an explicit one-option instruction, and split/deadlock cases in the suite ended on single-option winners everywhere. Blend proposals ("A for food, B for parking") appeared before the instruction landed and have not been re-observed since. Keep an eye on split runs; if blends reappear, add a deterministic observer check instead of more prompt text.
-
-### O4 — switch_explanation_rate misses em-dash reasons (metric artifact)
-
-The `has_reason` detector keys on because/since/for-style markers; deterministic decision lines like "Okay, X works for me; Y clearly isn't getting the group there." carry a visible reason but are not counted. `switch_bridge_rate` (the P6 signal) is unaffected and stayed 1.0 across the suite. Fix the detector, not the phrasing menus.
-
-## 3. Literature usage guidance
-
-Use the literature selectively. Do not implement papers 1:1.
-
-- ConvLab3: component idea only (environment, policy/controller, simulator, evaluation) — already followed.
-- MUCA: multi-user routing (what to say, when, to whom) — improve controller state, never add a parallel system.
-- Generative Agents: lightweight persistent state only. No full reflection/memory loops.
-- SOTOPIA: judge social plausibility, not just fluent text.
-
-## 4. Non-goals
-
-Do not prioritize: a full agenda simulator; Generative Agents-style memory/reflection; open-ended society simulation; new outcome labels; broad prompt expansion; more personality traits; provider comparisons before the `gpt` baseline is revalidated; large rewrites unrelated to the open items above.
+- full Generative Agents-style memory or reflection;
+- full agenda simulation;
+- open-ended roleplay or society simulation;
+- new outcome labels;
+- large prompt expansion;
+- adding more personality traits;
+- provider comparisons before the `gpt` baseline is stable;
+- broad rewrites unrelated to the listed issues.

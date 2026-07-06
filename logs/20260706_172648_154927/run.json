@@ -1,0 +1,2330 @@
+{
+  "run_id": "20260706_172648_154927",
+  "topic": "Choose a place for the team's Friday dinner",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a place for the team's Friday dinner",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "What matters most for our Friday dinner: budget, atmosphere, or food variety?",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Rustic Italian Trattoria",
+        "attrs": {
+          "average_cost_per_person": "$28",
+          "distance_from_office": "3 miles",
+          "ambiance": "cozy and quiet",
+          "menu_variety": "classic Italian dishes"
+        },
+        "upside": "Authentic Italian flavors with a relaxed atmosphere",
+        "tradeoff": "Limited vegetarian options on the menu",
+        "concern": "Might feel too quiet for a lively team dinner",
+        "best_for": "team members prioritizing food quality and ambiance",
+        "short_name": "Rustic Italian"
+      },
+      {
+        "id": "B",
+        "name": "Downtown Sushi Bar",
+        "attrs": {
+          "average_cost_per_person": "$30",
+          "distance_from_office": "1.5 miles",
+          "ambiance": "modern and bustling",
+          "menu_variety": "wide sushi and sashimi selection"
+        },
+        "upside": "Fresh sushi with quick service close to the office",
+        "tradeoff": "Can be noisy and crowded on Friday nights",
+        "concern": "Not everyone likes raw fish or seafood",
+        "best_for": "team members wanting quick, fresh food and lively vibe",
+        "short_name": "Sushi Bar"
+      },
+      {
+        "id": "C",
+        "name": "Green Garden Vegan Bistro",
+        "attrs": {
+          "average_cost_per_person": "$25",
+          "distance_from_office": "4 miles",
+          "ambiance": "bright and casual",
+          "menu_variety": "plant-based dishes with gluten-free options"
+        },
+        "upside": "Healthy, affordable meals with dietary accommodations",
+        "tradeoff": "Longer travel time and limited meat options",
+        "concern": "Might not satisfy those craving traditional comfort food",
+        "best_for": "team members focused on health and dietary needs",
+        "short_name": "Vegan Bistro"
+      },
+      {
+        "id": "D",
+        "name": "The Classic American Diner",
+        "attrs": {
+          "average_cost_per_person": "$20",
+          "distance_from_office": "2 miles",
+          "ambiance": "retro and casual",
+          "menu_variety": "burgers, fries, and milkshakes"
+        },
+        "upside": "Affordable comfort food in a fun, nostalgic setting",
+        "tradeoff": "Less sophisticated menu and atmosphere",
+        "concern": "Might feel too informal or basic for some tastes",
+        "best_for": "team members wanting budget-friendly and casual dining",
+        "short_name": "American Diner"
+      }
+    ],
+    "shared_context": [
+      "The team has exactly 3 people attending",
+      "Dinner budget is capped at $30 per person",
+      "Dinner should start around 7 PM and last about 2 hours"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Amir",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.25,
+        "directness": 0.825,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "Amir enjoys authentic and high-quality food experiences and values a cozy atmosphere for team bonding.",
+      "private_goal": "He wants a dinner spot with excellent food and a relaxed ambiance to foster good conversations.",
+      "preferred_options": [
+        "A",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Goran",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.7375,
+        "initiative": 0.725,
+        "responsiveness": 0.775,
+        "stubbornness": 0.47500000000000003,
+        "directness": 0.8624999999999999,
+        "compromise_threshold": 0.4624999999999999
+      },
+      "background": "Goran cares about healthy eating and dietary accommodations, often choosing options that support well-being.",
+      "private_goal": "He prefers a place that offers plant-based and gluten-free meals to accommodate diverse dietary needs.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Diego",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4,
+        "initiative": 0.4,
+        "responsiveness": 0.9375,
+        "stubbornness": 0.175,
+        "directness": 0.575,
+        "compromise_threshold": 0.1875
+      },
+      "background": "Diego values casual, budget-friendly dining in a fun and nostalgic environment for relaxed socializing.",
+      "private_goal": "He wants an affordable and informal place where the team can enjoy classic comfort food together.",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 9,
+      "last_spoke_turn": 28,
+      "current_preference": "D",
+      "commitment_strength": 0.4685,
+      "commitment_min": 0.4685,
+      "challenges_received": 1,
+      "concessions_made": 2,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "A": "Rustic Italian fits the budget and vibe perfectly—authentic flavors, cozy space. Only downside: not much for vegetarians."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Rustic Italian fits the budget and vibe perfectly—authentic flavors, cozy space. Only downside: not much for vegetarians.",
+        "Fresh sushi at Downtown Sushi Bar hits the budget and keeps us close to the office.",
+        "Diego’s point about the diner’s vibe is growing on me—it’s fun and budget-friendly.",
+        "Rustic Italian is closer and cozy, great for talking, but veggie options are weak.",
+        "Seating uncertainty at 7 kills the plan, but Rustic Italian’s cozy vibe wins. Limited veggies suck, but it’s under budget and perfect for chatting.",
+        "Alright, let’s cut to the chase—time to lock in our final picks so we can book.",
+        "American Diner gets my vote.",
+        "Diego, what’s holding you back from the American Diner? It’s cheap, close, and we can chat easily for two hours.",
+        "Close and cheap works, Diego. The diner’s menu isn’t fancy but fits the budget and the vibe."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "D",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 11,
+      "last_spoke_turn": 25,
+      "current_preference": "D",
+      "commitment_strength": 0.7398750000000001,
+      "commitment_min": 0.64,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {
+        "C": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp."
+      },
+      "hard_rejections": {
+        "C": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp."
+      },
+      "already_said": [
+        "We should go to Green Garden Vegan Bistro—plant-based and gluten-free options fit our needs, plus it’s under budget. It’s a bit farther, but the healthy menu makes it worth the trip!",
+        "Diego, the diner’s vibe works, but Vegan Bistro’s menu fits all diets and supports health—worth the extra miles!",
+        "We give up the shorter distance for a better menu.",
+        "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp.",
+        "We don’t know if seating’s guaranteed at 7 here. Rustic Italian has limited vegetarian options.",
+        "Two miles is close, but The Classic American Diner has no gluten-free options.",
+        "Travel time to Vegan Bistro adds up, but they guarantee gluten-free and plant-based options. No point picking nostalgia if someone can’t eat there.",
+        "Actually, the Bistro’s bright vibe beats the Diner’s retro feel for a quick, lively dinner.",
+        "Diner’s vibe is fun, but Vegan Bistro nails the dietary needs. Worth the extra miles for health and no compromise on meals!",
+        "I still like Vegan Bistro, but my pick is Rustic Italian — it works better for the group.",
+        "I still like Vegan Bistro, but I vote for American Diner — it works better for the group."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 9,
+      "last_spoke_turn": 29,
+      "current_preference": "A",
+      "commitment_strength": 0.5469500000000002,
+      "commitment_min": 0.52,
+      "challenges_received": 1,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Affordable comfort food in a fun, nostalgic setting like the Classic American Diner could work, Amir.",
+        "Actually, the diner’s vibe is perfect for relaxed socializing and it stays well under budget.",
+        "Plus, the diner’s milkshakes are a classic win for casual fun.",
+        "Two miles isn’t bad, but can we get seated right at 7?",
+        "Goran’s point about cozy vibes at Rustic Italian is fair, though I still like the Diner’s nostalgia and price.",
+        "Goran’s right, the Diner’s retro vibe is pretty fun.",
+        "I'd go with Rustic Italian.",
+        "Close and cheap is great, Amir.",
+        "My vote goes to Rustic Italian."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Rustic Italian fits the budget and vibe perfectly—authentic flavors, cozy space. Only downside: not much for vegetarians.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Rustic Italian fits the budget and vibe perfectly—authentic flavors, cozy space. Only downside: not much for vegetarians.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "A": "Rustic Italian fits the budget and vibe perfectly—authentic flavors, cozy space. Only downside: not much for vegetarians."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 884,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "We should go to Green Garden Vegan Bistro—plant-based and gluten-free options fit our needs, plus it’s under budget. It’s a bit farther, but the healthy menu makes it worth the trip!",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We should go to Green Garden Vegan Bistro—plant-based and gluten-free options fit our needs, plus it’s under budget. It’s a bit farther, but the healthy menu makes it worth the trip!",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 444,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Affordable comfort food in a fun, nostalgic setting like the Classic American Diner could work, Amir.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Affordable comfort food in a fun, nostalgic setting like the Classic American Diner could work, Amir.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 483,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Actually, the diner’s vibe is perfect for relaxed socializing and it stays well under budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Actually, the diner’s vibe is perfect for relaxed socializing and it stays well under budget.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 1259,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Fresh sushi at Downtown Sushi Bar hits the budget and keeps us close to the office.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Fresh sushi at Downtown Sushi Bar hits the budget and keeps us close to the office.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 601,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Diego, the diner’s vibe works, but Vegan Bistro’s menu fits all diets and supports health—worth the extra miles!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Diego, the diner’s vibe works, but Vegan Bistro’s menu fits all diets and supports health—worth the extra miles!",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how Vegan Bistro fits that",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1130,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Diego’s point about the diner’s vibe is growing on me—it’s fun and budget-friendly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Diego’s point about the diner’s vibe is growing on me—it’s fun and budget-friendly.",
+        "act_type": "soften",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "D"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "soften",
+        "reason": "the case others made for American Diner genuinely lands with you — say openly that it is growing on me, name the argument that moved you, and what you still like about Rustic Italian; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "D",
+        "continuation": false
+      },
+      "tokens_in": 1191,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "We give up the shorter distance for a better menu.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We give up the shorter distance for a better menu.",
+        "act_type": "propose_compromise",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 563,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Plus, the diner’s milkshakes are a classic win for casual fun.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Plus, the diner’s milkshakes are a classic win for casual fun.",
+        "act_type": "build",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "add a new grounded reason about American Diner, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 429,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp.",
+        "act_type": "reject",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp."
+        },
+        "hard_rejects": {
+          "C": "Is the 4-mile travel to Vegan Bistro a dealbreaker for anyone? We need to start at 7 sharp."
+        },
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Vegan Bistro",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 1,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 487,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Rustic Italian is closer and cozy, great for talking, but veggie options are weak.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Rustic Italian is closer and cozy, great for talking, but veggie options are weak.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Rustic Italian with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 486,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Two miles isn’t bad, but can we get seated right at 7?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Two miles isn’t bad, but can we get seated right at 7?",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about American Diner that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 511,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "We don’t know if seating’s guaranteed at 7 here. Rustic Italian has limited vegetarian options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "We don’t know if seating’s guaranteed at 7 here. Rustic Italian has limited vegetarian options.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1903,
+      "tokens_out": 103,
+      "validation_issues": [
+        "UNSUPPORTED_FACT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Seating uncertainty at 7 kills the plan, but Rustic Italian’s cozy vibe wins. Limited veggies suck, but it’s under budget and perfect for chatting.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Seating uncertainty at 7 kills the plan, but Rustic Italian’s cozy vibe wins. Limited veggies suck, but it’s under budget and perfect for chatting.",
+        "act_type": "agree",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "agree",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1111,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Two miles is close, but The Classic American Diner has no gluten-free options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Two miles is close, but The Classic American Diner has no gluten-free options.",
+        "act_type": "challenge",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "challenge",
+        "reason": "push back on American Diner with one concrete concern — you currently favor Vegan Bistro, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2166,
+      "tokens_out": 109,
+      "validation_issues": [
+        "UNSUPPORTED_FACT"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Goran’s point about cozy vibes at Rustic Italian is fair, though I still like the Diner’s nostalgia and price.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Goran’s point about cozy vibes at Rustic Italian is fair, though I still like the Diner’s nostalgia and price.",
+        "act_type": "soften",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "soften",
+        "reason": "the case others made for Rustic Italian genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about American Diner; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "A",
+        "continuation": false
+      },
+      "tokens_in": 548,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Travel time to Vegan Bistro adds up, but they guarantee gluten-free and plant-based options. No point picking nostalgia if someone can’t eat there.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Travel time to Vegan Bistro adds up, but they guarantee gluten-free and plant-based options. No point picking nostalgia if someone can’t eat there.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Rustic Italian, American Diner, Vegan Bistro that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1365,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Actually, the Bistro’s bright vibe beats the Diner’s retro feel for a quick, lively dinner.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Actually, the Bistro’s bright vibe beats the Diner’s retro feel for a quick, lively dinner.",
+        "act_type": "build",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 1362,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Goran’s right, the Diner’s retro vibe is pretty fun.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Goran’s right, the Diner’s retro vibe is pretty fun.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare American Diner with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1863,
+      "tokens_out": 68,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "Diner’s vibe is fun, but Vegan Bistro nails the dietary needs. Worth the extra miles for health and no compromise on meals!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Diner’s vibe is fun, but Vegan Bistro nails the dietary needs. Worth the extra miles for health and no compromise on meals!",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Vegan Bistro with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1103,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Alright, let’s cut to the chase—time to lock in our final picks so we can book.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Alright, let’s cut to the chase—time to lock in our final picks so we can book.",
+        "act_type": "call_vote",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "call_vote",
+        "reason": "you feel the group has weighed enough — casually suggest everyone give their definite final pick now, in your own words; do not name or suggest any option in this line",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 693,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "American Diner gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "American Diner gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for a quick, lively dinner",
+          "for a better menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1548,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "I'd go with Rustic Italian.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I'd go with Rustic Italian.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "for a quick, lively dinner",
+          "for a better menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1461,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "I still like Vegan Bistro, but my pick is Rustic Italian — it works better for the group.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still like Vegan Bistro, but my pick is Rustic Italian — it works better for the group.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with"
+        ],
+        "avoid_reasons": [
+          "for a quick, lively dinner",
+          "for a better menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 971,
+      "tokens_out": 43,
+      "validation_issues": [
+        "OFF_TARGET_SWITCH"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "BLOCKED_OPTION_ACCEPTED"
+      ],
+      "state_mutation_blocked": true,
+      "used_fallback": true
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Goran",
+      "text": "I still like Vegan Bistro, but I vote for American Diner — it works better for the group.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still like Vegan Bistro, but I vote for American Diner — it works better for the group.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with",
+          "my pick is"
+        ],
+        "avoid_reasons": [
+          "for a quick, lively dinner",
+          "for a better menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 965,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Diego, what’s holding you back from the American Diner? It’s cheap, close, and we can chat easily for two hours.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Diego, what’s holding you back from the American Diner? It’s cheap, close, and we can chat easily for two hours.",
+        "act_type": "probe_holdout",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "probe_holdout",
+        "reason": "most of the group has landed on American Diner; ask Diego in a friendly, genuine way what still holds them back or what they would need — no pressure",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1112,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "Close and cheap is great, Amir.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Close and cheap is great, Amir.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about American Diner — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 510,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p1",
+      "speaker_name": "Amir",
+      "text": "Close and cheap works, Diego. The diner’s menu isn’t fancy but fits the budget and the vibe.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Close and cheap works, Diego. The diner’s menu isn’t fancy but fits the budget and the vibe.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "respond to Diego's reservation about American Diner honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 27,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1105,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p3",
+      "speaker_name": "Diego",
+      "text": "My vote goes to Rustic Italian.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "My vote goes to Rustic Italian.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Rustic Italian, or briefly state what still holds you back and restate your pick",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote",
+          "I'd go with",
+          "my pick is",
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "for a quick, lively dinner",
+          "for a better menu"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2244,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "reason": "2/3 participants visibly committed to the winning option.",
+    "turns": 29,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p3": "A",
+        "p2": "D"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "A"
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.73",
+        "turn 3: discussion — all participants gave an opening view",
+        "turn 20: narrowing — target discussion length reached",
+        "turn 29: closure — majority visible after vote round 2"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.73",
+    "turn 3: discussion — all participants gave an opening view",
+    "turn 20: narrowing — target discussion length reached",
+    "turn 29: closure — majority visible after vote round 2",
+    "turn 29: closure — closed as majority"
+  ],
+  "metrics": {
+    "participant_turns": 29,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Amir": 9,
+      "Goran": 11,
+      "Diego": 9
+    },
+    "top_speaker_share": 0.379,
+    "avg_words_by_persona": {
+      "Amir": 15.8,
+      "Goran": 18.3,
+      "Diego": 11.0
+    },
+    "avg_words_by_act": {
+      "accept": 11.5,
+      "agree": 24.0,
+      "answer": 12.7,
+      "ask": 18.0,
+      "build": 15.7,
+      "call_vote": 16.0,
+      "challenge": 13.0,
+      "compare": 15.2,
+      "opening": 21.3,
+      "probe_holdout": 20.0,
+      "propose_compromise": 10.0,
+      "soften": 16.0,
+      "vote": 9.7
+    },
+    "short_turn_rate": 0.207,
+    "question_density": 0.103,
+    "tail_question_rate": 0.038,
+    "avg_words_per_turn": 15.2,
+    "repaired_turns": 8,
+    "repair_rate": 0.276,
+    "flagged_turns": 3,
+    "fallback_turns": 5,
+    "invalid_printed_turn_count": 1,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Amir": "D",
+      "Goran": "D",
+      "Diego": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 0.333,
+    "participation_gini": 0.046,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 1.0,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {},
+    "repetition_score": 0.145,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 2,
+    "peer_vote_call": true,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 2,
+    "switch_event_count": 3,
+    "switch_explanation_rate": 0.333,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 2,
+    "name_prefix_rate": 0.069,
+    "option_opening_rate": 0.103,
+    "i_opening_rate": 0.103,
+    "we_opening_rate": 0.103,
+    "name_or_option_opening_rate": 0.172,
+    "repeated_opening_patterns": 3,
+    "unsupported_fact_flags": 3,
+    "unsupported_printed_turns": 2,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.667,
+    "option_coverage": {
+      "A": {
+        "mentions": 7,
+        "reasons": 4,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 7,
+        "reasons": 5,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 14,
+        "reasons": 9,
+        "objections": 1,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Amir": 0.85,
+      "Goran": 0.85,
+      "Diego": 0.512
+    },
+    "expected_turn_share": {
+      "Amir": 0.38,
+      "Goran": 0.362,
+      "Diego": 0.259
+    },
+    "realized_turn_share": {
+      "Amir": 0.31,
+      "Goran": 0.379,
+      "Diego": 0.31
+    },
+    "agenda_status": {
+      "obsolete": 5,
+      "done": 6
+    },
+    "outcome_status": "majority",
+    "final_option": "D",
+    "corpus_preset": "",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 20,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.73",
+      "turn 3: discussion — all participants gave an opening view",
+      "turn 20: narrowing — target discussion length reached",
+      "turn 29: closure — majority visible after vote round 2",
+      "turn 29: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.046,
+    "verbosity_realization_error": 0.099,
+    "engagement_error_by_persona": {
+      "Amir": 0.069,
+      "Goran": 0.018,
+      "Diego": 0.052
+    },
+    "verbosity_error_by_persona": {
+      "Amir": 0.028,
+      "Goran": 0.231,
+      "Diego": 0.038
+    },
+    "engagement_behavior_correlation": 0.5,
+    "verbosity_behavior_correlation": 0.82,
+    "free_discussion_share": {
+      "Amir": 0.333,
+      "Goran": 0.381,
+      "Diego": 0.286
+    },
+    "top_free_discussion_share": 0.381,
+    "free_discussion_engagement_correlation": 0.863,
+    "setup_tokens_in": 2016,
+    "setup_tokens_out": 974,
+    "dialogue_tokens_in": 30498,
+    "dialogue_tokens_out": 1198,
+    "total_tokens_in": 32514,
+    "total_tokens_out": 2172,
+    "tokens_setup_in": 2016,
+    "tokens_setup_out": 974,
+    "calls_setup": 1,
+    "tokens_utterance_in": 16717,
+    "tokens_utterance_out": 800,
+    "calls_utterance": 29,
+    "tokens_grounding_in": 11419,
+    "tokens_grounding_out": 270,
+    "calls_grounding": 20,
+    "tokens_repair_in": 2362,
+    "tokens_repair_out": 128,
+    "calls_repair": 8,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2016,
+    "setup_tokens_out": 974,
+    "dialogue_tokens_in": 30498,
+    "dialogue_tokens_out": 1198,
+    "total_tokens_in": 32514,
+    "total_tokens_out": 2172
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2016,
+      "out": 974,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 16717,
+      "out": 800,
+      "calls": 29
+    },
+    "grounding": {
+      "in": 11419,
+      "out": 270,
+      "calls": 20
+    },
+    "repair": {
+      "in": 2362,
+      "out": 128,
+      "calls": 8
+    }
+  }
+}

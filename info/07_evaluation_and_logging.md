@@ -47,6 +47,9 @@ Inspect these after changes:
 - `free_discussion_share`, `top_free_discussion_share`, `free_discussion_engagement_correlation`: dominance judged on free discussion turns only;
 - `repeated_unknown_mentions` and `issue_ledger`: mentions of a practical unknown beyond its allowed raise+answer pair;
 - `final_blocker_violations`: a hard blocker counted as supporting their rejected option in the final tally — must always be 0.
+- `tiny_turn_rate` (naturalness round): share of participant turns <= 5 words; genuinely short reactions should exist (~0.05 suite average) without flattening verbosity averages.
+
+New validation issue codes from the naturalness round (visible in `repair_trigger_codes`): `CONTINUATION_TOPIC_JUMP` (continuation named only options disjoint from its own previous point), `HYBRID_COMPROMISE` (compromise welded two options into one plan), `MALFORMED_UTTERANCE` (bare marker head or lone subordinate clause).
 
 Long-standing metrics (`avg_words_by_persona`, `verbosity_behavior_correlation`, `question_answer_completion`, `switch_explanation_rate`/`switch_bridge_rate`, `name_prefix_rate`, `unsupported_fact_flags`/`unsupported_printed_turns`, per-call-type token counts) remain the regression baseline. Known artifact: `switch_explanation_rate` under-counts em-dash reason clauses (todo O4).
 

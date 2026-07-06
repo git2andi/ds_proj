@@ -176,8 +176,18 @@ _TRAILING_SUBCLAUSE_STUB = re.compile(
 )
 
 # Terminal punctuation that ends a sentence (not a decimal point: "." inside
-# "$4.50" is followed by a digit, so the lookahead excludes it).
-_SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
+# "$4.50" is followed by a digit, so the lookahead excludes it; not a title
+# abbreviation: "Dr. Chen" must not register as a sentence end, P7).
+_SENTENCE_END = re.compile(
+    r"(?<!\bDr)(?<!\bMr)(?<!\bMs)(?<!\bMrs)(?<!\bSt)(?<!\bvs)(?<!\betc)[.!?](?=\s|$)"
+)
+
+# A clause cut that leaves a verbless coordinated tail ("…is valid, but with
+# our estimated $30,000 annual spend") — strip the dangling tail (P7).
+_TRAILING_VERBLESS_TAIL = re.compile(
+    r"[,;]?\s*\b(?:but|and|or|so|yet)\s+(?:with|for|in|on|at|from|despite|given|about|over|under|near)\b[^.!?]*$",
+    re.I,
+)
 
 
 def compact_words(text: str, max_words: int) -> str:
@@ -219,7 +229,9 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     # chop ("…and the Rustic") never does.
     clause_cut = None
     min_keep = max(4, round(max_words * 0.5))
-    for m in re.finditer(r"[,;]|\s[—–-]\s|\s--\s", window):
+    # A comma with digits on both sides is a thousands separator ("$40,000"),
+    # never a clause boundary (P7): cutting there printed "…given the $40."
+    for m in re.finditer(r"(?<!\d),|,(?!\d)|;|\s[—–-]\s|\s--\s", window):
         prefix = window[: m.start()].rstrip(" ,;:")
         if len(prefix.split()) >= min_keep:
             clause_cut = prefix
@@ -236,6 +248,7 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
     text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
     text = _TRAILING_SUBCLAUSE_STUB.sub("", text).rstrip(" ,;:")
+    text = _TRAILING_VERBLESS_TAIL.sub("", text).rstrip(" ,;:")
     # A chop can still end on a bare function word ("... what and",
     # "... more than the") or a cut wh-word; strip those.
     tail = text.split()

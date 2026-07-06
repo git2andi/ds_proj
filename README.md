@@ -133,7 +133,16 @@ The 2026-07-06 behavioral round made discussions shorter, more causally coherent
 8. compromise proposals are pinned to one concrete option;
 9. grounding runs on a narrowed tripwire with option-scoped judging.
 
-Open work is maintained in `docs/todo.md` (currently: code-path simplification, grounding-judge false positives, combo monitoring, one metric artifact).
+The 2026-07-06 naturalness round (P1-P11) is complete and validated with the full 12-case suite. It added, on top of the earlier mechanisms:
+
+10. participant-owned split summaries and closings in low/no-moderator runs use natural group-member wording (exact vote-count summaries stay moderator-only), and subject-form vote lines ("X still gets my vote — Y hasn't fixed my concern") parse to the correct option instead of producing false unanimity;
+11. an answered point usually gets one same-thread reaction before a fresh issue opens; continuations inherit their own previous focus and never preempt a pending direct answer;
+12. genuinely short reaction beats appear for every sim (budget-aware one-beat prompting; `tiny_turn_rate` metric), while verbosity averages stay trait-shaped;
+13. leading person-names are functional-only and group-size-scaled; option-name openings are damped when context is clear;
+14. deterministic tripwires block hybrid option blends (HYBRID_COMPROMISE), malformed fragments (MALFORMED_UTTERANCE), and invented measurements whose unit class is not on the board, and the grounding judge got a strict off-board-specifics rule;
+15. vote turns are steered into parser-recognized commitment phrasings (UNCLEAR_VISIBLE_COMMITMENT repairs dropped to ~0).
+
+Remaining open items are two small monitoring notes (M1/M2) in `docs/todo.md`.
 
 ## Dialogue behavior principles
 

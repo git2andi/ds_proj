@@ -1,0 +1,2749 @@
+{
+  "run_id": "20260706_185839_247521",
+  "topic": "Pick a mobile plan for the family",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Pick a mobile plan for the family",
+    "decision_kind": "purchase_choice",
+    "opening_question": "What matters most for our family’s mobile plan: cost, data, or flexibility?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Unlimited Data Plan with Family Discounts",
+        "attrs": {
+          "monthly_cost": "115",
+          "data_limit": "unlimited",
+          "coverage_quality": "nationwide 4G/5G"
+        },
+        "upside": "No worries about running out of data for any family member",
+        "tradeoff": "Highest monthly cost close to budget limit",
+        "concern": "May pay for more data than actually used",
+        "best_for": "families prioritizing unlimited data and coverage",
+        "short_name": "Unlimited Data"
+      },
+      {
+        "id": "B",
+        "name": "Shared 30GB Data Plan with Moderate Cost",
+        "attrs": {
+          "monthly_cost": "80",
+          "data_limit": "30GB shared",
+          "coverage_quality": "nationwide 4G"
+        },
+        "upside": "Affordable plan with decent data for average use",
+        "tradeoff": "Data can run out quickly if usage spikes",
+        "concern": "May require monitoring data usage closely",
+        "best_for": "families wanting balance between cost and data",
+        "short_name": "30GB Shared"
+      },
+      {
+        "id": "C",
+        "name": "Individual 10GB Plans with Flexible Add-Ons",
+        "attrs": {
+          "monthly_cost": "100",
+          "data_limit": "10GB per line",
+          "coverage_quality": "nationwide 4G/5G"
+        },
+        "upside": "Each member controls own data, avoiding overuse by others",
+        "tradeoff": "Less data per person compared to unlimited plans",
+        "concern": "Could be inconvenient to manage multiple add-ons",
+        "best_for": "families needing individual control and moderate data",
+        "short_name": "Individual 10GB"
+      },
+      {
+        "id": "D",
+        "name": "Basic Talk and Text Plan with Low Cost",
+        "attrs": {
+          "monthly_cost": "50",
+          "data_limit": "2GB shared",
+          "coverage_quality": "nationwide 3G/4G"
+        },
+        "upside": "Lowest cost plan, good for minimal data users",
+        "tradeoff": "Very limited data and slower network speeds",
+        "concern": "May not support streaming or heavy app use",
+        "best_for": "families focused on calls and texts with minimal data",
+        "short_name": "Talk and Text"
+      }
+    ],
+    "shared_context": [
+      "The family has exactly 4 members",
+      "Monthly budget for mobile plans is capped at $120",
+      "Everyone needs reliable coverage and at least moderate data"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Xena",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.6625,
+        "stubbornness": 0.7749999999999999,
+        "directness": 0.7124999999999999,
+        "compromise_threshold": 0.6
+      },
+      "background": "Xena values individual control over data usage to avoid conflicts within the family.",
+      "private_goal": "She prefers each family member to have their own data allotment with flexible add-ons to manage usage effectively.",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Kira",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.5875,
+        "initiative": 0.625,
+        "responsiveness": 0.7625,
+        "stubbornness": 0.4,
+        "directness": 0.525,
+        "compromise_threshold": 0.23750000000000004
+      },
+      "background": "Kira appreciates a balanced plan that offers decent data at a moderate cost for the whole family.",
+      "private_goal": "She prefers a shared data plan that is affordable but still provides enough data for average family use.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "propose_compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Kenji",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 1,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.2875,
+        "verbosity": 0.3875,
+        "initiative": 0.425,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.45,
+        "compromise_threshold": 0.5375
+      },
+      "background": "Kenji prioritizes having unlimited data and strong nationwide coverage to avoid any connectivity issues.",
+      "private_goal": "He prefers a plan that ensures no family member ever runs out of data, even if it costs more.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": "D",
+      "rejection_reason": "The very limited data and slower network speeds of the Basic Talk and Text plan do not meet his need for reliable, unlimited data.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "D",
+          "reason": "raise the hard concern about D: The very limited data and slower network speeds of the Basic Talk and Text plan do not meet his need for reliable, unlimited data.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Oscar",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.5875,
+        "initiative": 0.625,
+        "responsiveness": 0.6,
+        "stubbornness": 0.6249999999999999,
+        "directness": 0.6875,
+        "compromise_threshold": 0.5249999999999999
+      },
+      "background": "Oscar cares about balancing cost with good coverage and moderate data for each family member.",
+      "private_goal": "He prefers a shared data plan that keeps monthly costs reasonable while providing nationwide 4G coverage.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 9,
+      "last_spoke_turn": 36,
+      "current_preference": "C",
+      "commitment_strength": 0.7164750000000001,
+      "commitment_min": 0.7164750000000001,
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Individual 10GB plans let each person control their own data use.",
+        "What exactly about unlimited data makes it work better for you?",
+        "Coverage and data control matter, but 10GB might run out too fast.",
+        "How would individual 10GB plans handle unexpected heavy data use without extra fees?",
+        "We can add flexible data boosts to the individual 10GB plans to avoid sudden cutoffs.",
+        "The total max with individual 10GB plans.",
+        "Individual 10GB gets my vote.",
+        "Not sure how Shared 30GB splits data fairly per person.",
+        "I'm going with Individual 10GB for full data control."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 7,
+      "last_spoke_turn": 35,
+      "current_preference": "B",
+      "commitment_strength": 0.39320000000000005,
+      "commitment_min": 0.39320000000000005,
+      "challenges_received": 2,
+      "concessions_made": 1,
+      "explicit_vote": "B",
+      "vote_stance": "accept",
+      "accepted_options": [
+        "B"
+      ],
+      "soft_rejections": {
+        "B": "Oscar, I agree 30GB shared fits our budget well, but I worry data might run out fast."
+      },
+      "hard_rejections": {},
+      "already_said": [
+        "Oscar, I agree 30GB shared fits our budget well, but I worry data might run out fast.",
+        "Xena, you’ve got me thinking more about Individual 10GB plans since control over data sounds helpful.",
+        "How often do you think 2GB shared in Talk and Text would actually cover our basic data needs?",
+        "Oscar, 30GB shared is tighter but manageable.",
+        "Actually, 30GB might still feel tight if streaming spikes.",
+        "I still like Individual 10GB, but the Shared 30GB works for me since it keeps us well within budget and balances our overall data needs.",
+        "Fair split depends on usage since 30GB is shared, so heavier users might take more data."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 9,
+      "last_spoke_turn": 30,
+      "current_preference": "B",
+      "commitment_strength": 0.7885,
+      "commitment_min": 0.6699999999999999,
+      "challenges_received": 0,
+      "concessions_made": 2,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {
+        "D": "The very limited data and slower network speeds of the Basic Talk and Text plan do not meet his need for reliable, unlimited data."
+      },
+      "already_said": [
+        "Unlimited data with family discounts fits coverage needs but nearly maxes budget.",
+        "Data runs out too fast with shared 30GB.",
+        "Staying under $120 matters, but coverage and unlimited data matter more.",
+        "True, but throttling after high use is another risk.",
+        "30GB shared might work if we monitor usage closely.",
+        "Individual 10GB plans risk cutting off data fast.",
+        "Data boosts risk unexpected costs; can Xena check total monthly max?",
+        "Adds complexity and risk; prefer guaranteed unlimited data.",
+        "I’m sold on the Shared 30GB plan for affordability."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "B",
+          "has_reason": false,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 8,
+      "last_spoke_turn": 29,
+      "current_preference": "B",
+      "commitment_strength": 0.6687500000000002,
+      "commitment_min": 0.645,
+      "challenges_received": 2,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Keeping costs low with the 30GB shared plan works if we watch data use closely.",
+        "We can manage 30GB shared data by setting clear limits for each person’s usage.",
+        "Setting clear limits helps, but if data runs out often, we risk overages that break our $120 budget.",
+        "Unlimited data means no surprises on overage fees, but it pushes us close to our $120 limit.",
+        "Cutting data control for unlimited coverage at $115 seems worth it, but 30GB shared saves $35 if we manage usage carefully.",
+        "2GB shared won’t cover our needs regularly; we’ll hit limits fast and risk slower speeds.",
+        "30GB shared fits best; keeps cost low with solid nationwide coverage.",
+        "I’m going with the Shared 30GB plan for its affordable nationwide 4G coverage."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Pick a mobile plan for the family.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Unlimited Data Plan with Family Discounts — monthly cost: 115; coverage quality: nationwide 4G/5G; data limit: unlimited (+ No worries about running out of data for any…; − Highest monthly cost close to budget limit)\nB) Shared 30GB Data Plan with Moderate Cost — monthly cost: 80; coverage quality: nationwide 4G; data limit: 30GB shared (+ Affordable plan with decent data for average use; − Data can run out quickly if usage spikes)\nC) Individual 10GB Plans with Flexible Add-Ons — monthly cost: 100; coverage quality: nationwide 4G/5G; data limit: 10GB per line (+ Each member controls own data, avoiding overuse by others; − Less data per person compared to unlimited plans)\nD) Basic Talk and Text Plan with Low Cost — monthly cost: 50; coverage quality: nationwide 3G/4G; data limit: 2GB shared (+ Lowest cost plan, good for minimal data users; − Very limited data and slower network speeds)\nContext: The family has exactly 4 members; Monthly budget for mobile plans is capped at $120; Everyone needs reliable coverage and at least moderate data.\nWhat matters most for our family’s mobile plan: cost, data, or flexibility?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Pick a mobile plan for the family.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Unlimited Data Plan with Family Discounts — monthly cost: 115; coverage quality: nationwide 4G/5G; data limit: unlimited (+ No worries about running out of data for any…; − Highest monthly cost close to budget limit)\nB) Shared 30GB Data Plan with Moderate Cost — monthly cost: 80; coverage quality: nationwide 4G; data limit: 30GB shared (+ Affordable plan with decent data for average use; − Data can run out quickly if usage spikes)\nC) Individual 10GB Plans with Flexible Add-Ons — monthly cost: 100; coverage quality: nationwide 4G/5G; data limit: 10GB per line (+ Each member controls own data, avoiding overuse by others; − Less data per person compared to unlimited plans)\nD) Basic Talk and Text Plan with Low Cost — monthly cost: 50; coverage quality: nationwide 3G/4G; data limit: 2GB shared (+ Lowest cost plan, good for minimal data users; − Very limited data and slower network speeds)\nContext: The family has exactly 4 members; Monthly budget for mobile plans is capped at $120; Everyone needs reliable coverage and at least moderate data.\nWhat matters most for our family’s mobile plan: cost, data, or flexibility?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Keeping costs low with the 30GB shared plan works if we watch data use closely.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Keeping costs low with the 30GB shared plan works if we watch data use closely.",
+        "act_type": "opening",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 625,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Oscar, I agree 30GB shared fits our budget well, but I worry data might run out fast.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Oscar, I agree 30GB shared fits our budget well, but I worry data might run out fast.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "Oscar, I agree 30GB shared fits our budget well, but I worry data might run out fast."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 617,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "Individual 10GB plans let each person control their own data use.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Individual 10GB plans let each person control their own data use.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1773,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Unlimited data with family discounts fits coverage needs but nearly maxes budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Unlimited data with family discounts fits coverage needs but nearly maxes budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 787,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "We can manage 30GB shared data by setting clear limits for each person’s usage.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "We can manage 30GB shared data by setting clear limits for each person’s usage.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "a concern was raised about 30GB Shared, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1017,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Data runs out too fast with shared 30GB.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Data runs out too fast with shared 30GB.",
+        "act_type": "challenge",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on 30GB Shared with one concrete concern — you currently favor Unlimited Data, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 682,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Xena, you’ve got me thinking more about Individual 10GB plans since control over data sounds helpful.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Xena, you’ve got me thinking more about Individual 10GB plans since control over data sounds helpful.",
+        "act_type": "soften",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "soften",
+        "reason": "the case others made for Individual 10GB genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about 30GB Shared; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 1168,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Setting clear limits helps, but if data runs out often, we risk overages that break our $120 budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Setting clear limits helps, but if data runs out often, we risk overages that break our $120 budget.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "a concern was raised about 30GB Shared, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 480,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "What exactly about unlimited data makes it work better for you?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "What exactly about unlimited data makes it work better for you?",
+        "act_type": "ask",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 478,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Unlimited data means no surprises on overage fees, but it pushes us close to our $120 limit.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Unlimited data means no surprises on overage fees, but it pushes us close to our $120 limit.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 469,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Staying under $120 matters, but coverage and unlimited data matter more.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Staying under $120 matters, but coverage and unlimited data matter more.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 553,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "Coverage and data control matter, but 10GB might run out too fast.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Coverage and data control matter, but 10GB might run out too fast.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Individual 10GB that hasn't come up yet",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 546,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "Cutting data control for unlimited coverage at $115 seems worth it, but 30GB shared saves $35 if we manage usage carefully.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Cutting data control for unlimited coverage at $115 seems worth it, but 30GB shared saves $35 if we manage usage carefully.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "compare Unlimited Data, 30GB Shared, Individual 10GB with one clear trade-off",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1334,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "How often do you think 2GB shared in Talk and Text would actually cover our basic data needs?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How often do you think 2GB shared in Talk and Text would actually cover our basic data needs?",
+        "act_type": "ask",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Individual 10GB, Talk and Text",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "True, but throttling after high use is another risk.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "True, but throttling after high use is another risk.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Unlimited Data that hasn't come up yet",
+        "addressee_id": "p4",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 519,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "2GB shared won’t cover our needs regularly; we’ll hit limits fast and risk slower speeds.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "2GB shared won’t cover our needs regularly; we’ll hit limits fast and risk slower speeds.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1136,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Oscar, 30GB shared is tighter but manageable.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Oscar, 30GB shared is tighter but manageable.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 487,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Actually, 30GB might still feel tight if streaming spikes.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Actually, 30GB might still feel tight if streaming spikes.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 560,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "30GB shared might work if we monitor usage closely.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "30GB shared might work if we monitor usage closely.",
+        "act_type": "propose_compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "propose_compromise",
+        "reason": "test whether Individual 10GB, Talk and Text, 30GB Shared could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 706,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "How would individual 10GB plans handle unexpected heavy data use without extra fees?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "How would individual 10GB plans handle unexpected heavy data use without extra fees?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Individual 10GB",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 1,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 500,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "30GB shared fits best; keeps cost low with solid nationwide coverage.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "30GB shared fits best; keeps cost low with solid nationwide coverage.",
+        "act_type": "build",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "build",
+        "reason": "say plainly what matters most to you personally in this choice and how 30GB Shared fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 543,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Individual 10GB plans risk cutting off data fast.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Individual 10GB plans risk cutting off data fast.",
+        "act_type": "challenge",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "challenge",
+        "reason": "push back on Individual 10GB with one concrete concern — you currently favor 30GB Shared, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 624,
+      "tokens_out": 11,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "We can add flexible data boosts to the individual 10GB plans to avoid sudden cutoffs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We can add flexible data boosts to the individual 10GB plans to avoid sudden cutoffs.",
+        "act_type": "build",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "a concern was raised about Individual 10GB, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 495,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Data boosts risk unexpected costs; can Xena check total monthly max?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Data boosts risk unexpected costs; can Xena check total monthly max?",
+        "act_type": "invite",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "invite",
+        "reason": "bring Xena into the discussion with a useful prompt",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 526,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "The total max with individual 10GB plans.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The total max with individual 10GB plans.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 529,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "Adds complexity and risk; prefer guaranteed unlimited data.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Adds complexity and risk; prefer guaranteed unlimited data.",
+        "act_type": "agree",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "agree",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1115,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, let’s wrap this up—who’s ready to share their final pick?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, let’s wrap this up—who’s ready to share their final pick?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p4",
+      "speaker_name": "Oscar",
+      "text": "I’m going with the Shared 30GB plan for its affordable nationwide 4G coverage.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m going with the Shared 30GB plan for its affordable nationwide 4G coverage.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 774,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Kenji",
+      "text": "I’m sold on the Shared 30GB plan for affordability.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m sold on the Shared 30GB plan for affordability.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for its affordable nationwide 4G coverage"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 936,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "I still like Individual 10GB, but the Shared 30GB works for me since it keeps us well within budget and balances our overall data needs.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I still like Individual 10GB, but the Shared 30GB works for me since it keeps us well within budget and balances our overall data needs.",
+        "act_type": "accept",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [
+          "B"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for its affordable nationwide 4G coverage"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 572,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "Individual 10GB gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Individual 10GB gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "accept",
+        "reason": "others have visibly backed this option; commit to it clearly and add one short clause on why you can accept it",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "since it keeps us well within budget and balances our",
+          "for its affordable nationwide 4G coverage"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 925,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 33,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like most are on board with the Shared 30GB plan—Xena, can you live with this or what’s still giving you pause?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like most are on board with the Shared 30GB plan—Xena, can you live with this or what’s still giving you pause?",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "Not sure how Shared 30GB splits data fairly per person.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Not sure how Shared 30GB splits data fairly per person.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about 30GB Shared — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 608,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p2",
+      "speaker_name": "Kira",
+      "text": "Fair split depends on usage since 30GB is shared, so heavier users might take more data.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Fair split depends on usage since 30GB is shared, so heavier users might take more data.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "respond to Xena's reservation about 30GB Shared honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 34,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1098,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p1",
+      "speaker_name": "Xena",
+      "text": "I'm going with Individual 10GB for full data control.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'm going with Individual 10GB for full data control.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "most of the group has landed on the majority option; either accept it with a direct commitment and one clause on what makes it workable despite preferring Individual 10GB, or briefly state what still holds you back and restate your pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [
+          "since 30GB is shared, so heavier users might take more"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1099,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re going with the Shared 30GB Data Plan with Moderate Cost, though Xena had a different pick.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re going with the Shared 30GB Data Plan with Moderate Cost, though Xena had a different pick.",
+        "act_type": "react",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "3/4 participants visibly committed to the winning option.",
+    "turns": 33,
+    "metadata": {
+      "visible_votes": {
+        "p4": "B",
+        "p3": "B",
+        "p2": "B",
+        "p1": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "B",
+        "p3": "B",
+        "p4": "B"
+      },
+      "phase_history": [
+        "pacing: min=20, force=26, hard=30, distinct_initial_prefs=3, avg_compromise=0.53",
+        "turn 5: discussion — all participants gave an opening view",
+        "turn 27: narrowing — target discussion length reached",
+        "turn 36: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 20,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 30
+    }
+  },
+  "phase_history": [
+    "pacing: min=20, force=26, hard=30, distinct_initial_prefs=3, avg_compromise=0.53",
+    "turn 5: discussion — all participants gave an opening view",
+    "turn 27: narrowing — target discussion length reached",
+    "turn 36: closure — majority visible after vote round 1",
+    "turn 37: closure — closed as majority"
+  ],
+  "metrics": {
+    "participant_turns": 33,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.108,
+    "turn_counts": {
+      "Xena": 9,
+      "Kira": 7,
+      "Kenji": 9,
+      "Oscar": 8
+    },
+    "top_speaker_share": 0.273,
+    "avg_words_by_persona": {
+      "Xena": 10.3,
+      "Kira": 15.4,
+      "Kenji": 9.4,
+      "Oscar": 15.5
+    },
+    "avg_words_by_act": {
+      "accept": 15.0,
+      "agree": 8.0,
+      "answer": 13.0,
+      "ask": 14.0,
+      "build": 11.8,
+      "challenge": 8.0,
+      "compare": 21.0,
+      "invite": 11.0,
+      "opening": 13.8,
+      "propose_compromise": 9.0,
+      "soften": 16.0,
+      "vote": 10.3
+    },
+    "short_turn_rate": 0.364,
+    "tiny_turn_rate": 0.03,
+    "question_density": 0.121,
+    "tail_question_rate": 0.0,
+    "avg_words_per_turn": 12.4,
+    "repaired_turns": 5,
+    "repair_rate": 0.152,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Xena": "C",
+      "Kira": "B",
+      "Kenji": "B",
+      "Oscar": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 1.0,
+    "participation_gini": 0.053,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.667,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {},
+    "repetition_score": 0.17,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "peer_vote_call": false,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 1,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 0.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 2,
+    "name_prefix_rate": 0.091,
+    "option_opening_rate": 0.242,
+    "i_opening_rate": 0.152,
+    "we_opening_rate": 0.061,
+    "name_or_option_opening_rate": 0.333,
+    "repeated_opening_patterns": 4,
+    "unsupported_fact_flags": 1,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.75,
+    "option_coverage": {
+      "A": {
+        "mentions": 6,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 15,
+        "reasons": 7,
+        "objections": 2,
+        "acceptances": 1
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 3,
+        "reasons": 2,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Xena": 0.4,
+      "Kira": 0.475,
+      "Kenji": 0.287,
+      "Oscar": 0.512
+    },
+    "expected_turn_share": {
+      "Xena": 0.243,
+      "Kira": 0.277,
+      "Kenji": 0.201,
+      "Oscar": 0.28
+    },
+    "realized_turn_share": {
+      "Xena": 0.273,
+      "Kira": 0.212,
+      "Kenji": 0.273,
+      "Oscar": 0.242
+    },
+    "agenda_status": {
+      "done": 4,
+      "pending": 8,
+      "obsolete": 4
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 20,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=20, force=26, hard=30, distinct_initial_prefs=3, avg_compromise=0.53",
+      "turn 5: discussion — all participants gave an opening view",
+      "turn 27: narrowing — target discussion length reached",
+      "turn 36: closure — majority visible after vote round 1",
+      "turn 37: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.051,
+    "verbosity_realization_error": 0.165,
+    "engagement_error_by_persona": {
+      "Xena": 0.03,
+      "Kira": 0.064,
+      "Kenji": 0.072,
+      "Oscar": 0.037
+    },
+    "verbosity_error_by_persona": {
+      "Xena": 0.018,
+      "Kira": 0.315,
+      "Kenji": 0.014,
+      "Oscar": 0.313
+    },
+    "engagement_behavior_correlation": -0.724,
+    "verbosity_behavior_correlation": 0.99,
+    "free_discussion_share": {
+      "Xena": 0.25,
+      "Kira": 0.208,
+      "Kenji": 0.292,
+      "Oscar": 0.25
+    },
+    "top_free_discussion_share": 0.292,
+    "free_discussion_engagement_correlation": -0.772,
+    "setup_tokens_in": 2056,
+    "setup_tokens_out": 1060,
+    "dialogue_tokens_in": 25749,
+    "dialogue_tokens_out": 841,
+    "total_tokens_in": 27805,
+    "total_tokens_out": 1901,
+    "tokens_setup_in": 2056,
+    "tokens_setup_out": 1060,
+    "calls_setup": 1,
+    "tokens_utterance_in": 19186,
+    "tokens_utterance_out": 616,
+    "calls_utterance": 33,
+    "tokens_grounding_in": 3986,
+    "tokens_grounding_out": 79,
+    "calls_grounding": 7,
+    "tokens_repair_in": 1724,
+    "tokens_repair_out": 73,
+    "calls_repair": 5,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 853,
+    "tokens_moderator_out": 73,
+    "calls_moderator": 3,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2056,
+    "setup_tokens_out": 1060,
+    "dialogue_tokens_in": 25749,
+    "dialogue_tokens_out": 841,
+    "total_tokens_in": 27805,
+    "total_tokens_out": 1901
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2056,
+      "out": 1060,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 19186,
+      "out": 616,
+      "calls": 33
+    },
+    "grounding": {
+      "in": 3986,
+      "out": 79,
+      "calls": 7
+    },
+    "repair": {
+      "in": 1724,
+      "out": 73,
+      "calls": 5
+    },
+    "moderator": {
+      "in": 853,
+      "out": 73,
+      "calls": 3
+    }
+  }
+}

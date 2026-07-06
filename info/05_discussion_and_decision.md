@@ -50,11 +50,13 @@ A bridge phrase alone is not enough if the actual blocker remains unresolved.
 
 Sims may propose bounded combinations, such as “A works if we borrow B's simpler setup.” This is allowed, but it must not always happen and it must not create a hidden fifth option.
 
-The final winner should still be one concrete option from the option board, optionally with a visible condition.
+The final winner should still be one concrete option from the option board, optionally with a visible condition. Since the 2026-07-06 naturalness round a deterministic tripwire (HYBRID_COMPROMISE) blocks compromise turns that weld two options into one plan ("X and also Y", "combined with"); such drafts are repaired to pin one option.
 
 ## Final voting
 
 Every sim should produce a visible final stance. Final votes are not trait-weighted; all participants need an observable stance for the outcome to be valid.
+
+Vote prompts suggest a rotating menu of parser-recognized commitment phrasings not yet used in the round, so vote lines stay varied but observable; subject-form lines ("X still gets my vote — Y hasn't fixed my concern") bind to the option before the phrase. When no moderator closing exists, one participant speaks a short deterministic wrap-up line ("So X wins for most of us, with N still not sold." / "Looks like we're not landing this one today.").
 
 ## No-majority handling
 

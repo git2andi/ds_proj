@@ -110,6 +110,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         if self._mod("closing"):
             closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
             self._emit(self._append_moderator(state, closing, Phase.CLOSURE))
+        else:
+            self._emit_peer_closing(state, outcome)
         self._mark_phase(state, Phase.CLOSURE, f"closed as {outcome.status}")
 
         state.dialogue_tokens_in = self._llm.session_tokens_in
@@ -671,45 +673,121 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         attempt_index: int = 0,
         meta: dict | None = None,
     ) -> None:
-        """Visible, non-malformed split summary for moderator or peer modes."""
+        """Visible, non-malformed split summary.
+
+        The moderator owns exact procedural wording (vote counts, tested
+        candidate). When no moderator vote-call exists, a participant owns the
+        move instead and must sound like a group member (P1): no vote-count
+        dumps, no candidate-testing vocabulary, and never addressing themself.
+        """
         aliases = short_alias_map(state.scenario.options)
         counts = Counter(votes_by_id.values())
-        split = ", ".join(f"{aliases[oid]} ({count})" for oid, count in counts.most_common())
-        prefix = "Second narrowing attempt. " if attempt_index else ""
-        if candidate:
-            candidate_name = aliases[candidate]
-            dissenters = [p.name for p in state.personas if votes_by_id.get(p.id) != candidate]
-            dissenter_text = ", ".join(dissenters) or "the others"
-            meta_text = ""
-            if meta and meta.get("votes", 0) > 1:
-                max_votes = max(counts.values(), default=0)
-                tied_for_lead = sum(1 for count in counts.values() if count == max_votes) > 1
-                if meta.get("votes") == max_votes and not tied_for_lead:
-                    meta_text = " It has the visible lead, so we test it first."
-                elif meta.get("votes") == max_votes and tied_for_lead:
-                    meta_text = " It is tied for the lead, so we test the least-blocked candidate first."
-                else:
-                    meta_text = " It is the next concrete alternative, so we test it once."
-            text = (
-                f"{prefix}We are split: {split}. Let's test {candidate_name} as the compromise; "
-                f"{dissenter_text}, what would still block that for you?"
-                f"{meta_text}"
-            )
-        else:
-            text = (
-                f"{prefix}We are split: {split}. No option has a workable path yet, so let's name the blockers plainly."
-            )
         if self._mod("final_vote_call"):
+            split = ", ".join(f"{aliases[oid]} ({count})" for oid, count in counts.most_common())
+            prefix = "Second narrowing attempt. " if attempt_index else ""
+            if candidate:
+                candidate_name = aliases[candidate]
+                dissenters = [p.name for p in state.personas if votes_by_id.get(p.id) != candidate]
+                dissenter_text = ", ".join(dissenters) or "the others"
+                meta_text = ""
+                if meta and meta.get("votes", 0) > 1:
+                    max_votes = max(counts.values(), default=0)
+                    tied_for_lead = sum(1 for count in counts.values() if count == max_votes) > 1
+                    if meta.get("votes") == max_votes and not tied_for_lead:
+                        meta_text = " It has the visible lead, so we test it first."
+                    elif meta.get("votes") == max_votes and tied_for_lead:
+                        meta_text = " It is tied for the lead, so we test the least-blocked candidate first."
+                    else:
+                        meta_text = " It is the next concrete alternative, so we test it once."
+                text = (
+                    f"{prefix}We are split: {split}. Let's test {candidate_name} as the compromise; "
+                    f"{dissenter_text}, what would still block that for you?"
+                    f"{meta_text}"
+                )
+            else:
+                text = (
+                    f"{prefix}We are split: {split}. No option has a workable path yet, so let's name the blockers plainly."
+                )
             self._emit(self._append_moderator(state, text, Phase.NARROWING))
             return
         caller = self._procedural_speaker(state)
+        contested = [aliases[oid] for oid, _count in counts.most_common(3)]
+        if len(contested) > 2:
+            split_text = ", ".join(contested[:-1]) + " and " + contested[-1]
+        else:
+            split_text = " and ".join(contested)
+        if candidate:
+            candidate_name = aliases[candidate]
+            holdouts = [
+                p.name for p in state.personas
+                if votes_by_id.get(p.id) != candidate and p.id != caller.id
+            ]
+            if holdouts:
+                names = ", ".join(holdouts)
+                if attempt_index:
+                    text = f"Okay, other way around then: would {candidate_name} work? {names}, what still bothers you about it?"
+                else:
+                    text = (
+                        f"Looks like we're still split between {split_text}. "
+                        f"Could {candidate_name} work for everyone? {names}, what still bothers you about it?"
+                    )
+            else:
+                # The caller is the only visible holdout: voice it, don't poll it.
+                if attempt_index:
+                    text = f"Okay, other way around then: {candidate_name}. I'm the one still hesitating, so let me say what bothers me."
+                else:
+                    text = f"Seems like {candidate_name} has the most support and I'm the holdout — let me say what still bothers me about it."
+            focus = [candidate]
+        else:
+            text = (
+                f"We keep going back and forth between {split_text}. "
+                "Maybe everyone just says the one thing that's really blocking them."
+            )
+            focus = [oid for oid, _count in counts.most_common(2)]
         state.procedural_move_count += 1
         self._emit(self._append_peer_procedure(
             state,
             caller,
             text,
             ActType.SUMMARIZE_SPLIT,
-            [candidate] if candidate else list(counts.keys())[:2],
+            focus,
+        ))
+
+    def _emit_peer_closing(self, state: DialogueState, outcome) -> None:
+        """One participant-owned wrap-up line when moderator closing is off (P10).
+
+        Deterministic: the outcome facts must not drift in a paraphrase, and
+        the decision is already made — this line is social closure, not a new
+        move. Natural group-member wording, no vote counts (P1 rules apply).
+        """
+        aliases = short_alias_map(state.scenario.options)
+        caller = self._procedural_speaker(state)
+        final = outcome.final_option
+        if outcome.status == "successful" and final:
+            text = f"Okay, {aliases[final]} it is — glad we landed on the same thing."
+        elif outcome.status == "majority" and final:
+            rt = state.runtimes[caller.id]
+            caller_vote = rt.explicit_vote
+            holdouts = [
+                p.name for p in state.personas
+                if state.runtimes[p.id].explicit_vote != final and p.id != caller.id
+            ]
+            if caller_vote and caller_vote != final:
+                mine = aliases.get(caller_vote, caller_vote)
+                text = f"Alright, {aliases[final]} has the majority — I'm still on {mine}, but so be it."
+            elif holdouts:
+                text = f"So {aliases[final]} wins for most of us, with {', '.join(holdouts)} still not sold."
+            else:
+                text = f"Okay, then {aliases[final]} has the majority."
+        else:
+            text = "Looks like we're not landing this one today."
+        self._emit(self._append_peer_procedure(
+            state,
+            caller,
+            text,
+            ActType.REACT,
+            [final] if final else [],
+            phase=Phase.CLOSURE,
         ))
 
     def _split_reservation_exchange(self, state: DialogueState, holdout: Persona, candidate: str) -> None:
@@ -984,6 +1062,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         text: str,
         act_type: ActType,
         option_focus: list[str],
+        *,
+        phase: Phase = Phase.NARROWING,
     ) -> TurnRecord:
         """Append deterministic participant-owned procedure text.
 
@@ -1010,7 +1090,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             speaker_id=persona.id,
             speaker_name=persona.name,
             text=text,
-            phase=Phase.NARROWING,
+            phase=phase,
             act=act,
         )
         state.turns.append(record)

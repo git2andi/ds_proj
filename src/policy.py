@@ -335,8 +335,9 @@ class PolicyMixin:
             )
 
         # 3. Follow-up: an answer was just given; someone reacts to it instead
-        #    of the topic silently jumping.
-        if last.intent and last.intent.act == ActType.ANSWER and random.random() < 0.6:
+        #    of the topic silently jumping (P2: an answered thread usually gets
+        #    one local development beat before a fresh issue opens).
+        if last.intent and last.intent.act == ActType.ANSWER and random.random() < 0.8:
             speaker = self._choose_speaker(state)
             if speaker.id != last.speaker_id:
                 # Develop the answered point instead of opening the next issue:
@@ -487,24 +488,40 @@ class PolicyMixin:
         probability = 0.03 + 0.07 * persona.sim_params.initiative
         if chain == 2:
             probability *= 0.5
+        # P3: a direct question to another sim means the addressee's answer owns
+        # the floor. A continuation may still slip in as a short addendum before
+        # the answer, but rarely — it must never replace the expected reply.
+        pending_direct = any(
+            q.turn_id == last.index and q.target_id and q.target_id != last.speaker_id
+            for q in state.open_questions
+        )
+        if pending_direct:
+            probability *= 0.4
         if random.random() >= probability:
             return None
         asked_question = "?" in last.text
         if asked_question:
             purpose = (
-                "add a quick separate afterthought on a DIFFERENT aspect than your question — a practical "
-                "point or a small aside; do not repeat or rephrase the question you just asked"
+                "add one quick practical addendum to what you just asked — a detail or why it matters, on "
+                "the SAME topic; do not repeat, rephrase, or answer the question you just asked"
             )
         else:
             purpose = random.choice([
-                "add one quick afterthought that occurred to you — a small practical point you forgot ('Oh, and…')",
+                "add one quick afterthought to the point you just made — a small practical detail you forgot ('Oh, and…')",
                 "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
                 "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
             ])
+        # A continuation inherits its own previous focus (P3): it deepens the
+        # point just made instead of jumping to another option or issue. When
+        # the text named no option, the routed intent still knows the topic.
+        focus = [oid for oid in last.act.option_refs if oid in state.scenario.option_ids][:2]
+        if not focus and last.intent:
+            focus = [oid for oid in last.intent.option_focus if oid in state.scenario.option_ids][:2]
         return MoveIntent(
             speaker_id=persona.id,
             act=ActType.BUILD,
             reason=purpose,
+            option_focus=focus,
             length_hint="short",
             continuation=True,
         )
@@ -608,6 +625,20 @@ class PolicyMixin:
         if participant_turn_count(state) >= max(state.min_discussion_turns, state.force_narrow_turns - 2):
             raw["ask"] *= 0.25
             raw["invite"] *= 0.5
+        # P2: right after an answer the thread is still underdeveloped — favor
+        # reactions on the same point over a fresh question or invite. One
+        # reaction turn lifts the damp again (the last turn is no longer an
+        # answer), so this bounds development, it doesn't freeze the topic.
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        if participant_turns:
+            last_turn = participant_turns[-1]
+            last_act = last_turn.intent.act if last_turn.intent else last_turn.act.act_type
+            if last_act == ActType.ANSWER:
+                raw["ask"] *= 0.3
+                raw["invite"] *= 0.6
+                raw["build"] *= 1.2
+                raw["agree"] *= 1.2
+                raw["challenge"] *= 1.15
         if self._latent_leading_count(state) >= max(2, math.ceil(0.5 * len(state.personas))):
             raw["propose_compromise"] = raw.get("propose_compromise", 0.0) + 0.10
             raw["soften"] = raw.get("soften", 0.0) + 0.08
@@ -749,7 +780,10 @@ class PolicyMixin:
         if act == ActType.CALL_VOTE:
             return "casually ask everyone for a definite final pick now; do not suggest any option yourself"
         if act == ActType.SUMMARIZE_SPLIT:
-            return f"summarize the visible split around {focus_names} and suggest a concrete narrowing step"
+            return (
+                f"note casually that the group is still split around {focus_names} and suggest one concrete next step — "
+                "no vote tallies, no procedure words like 'test' or 'candidate'"
+            )
         if act == ActType.PROBE_HOLDOUT:
             return f"ask the holdout what still blocks {focus_names}, without pressuring them"
         if act == ActType.SUGGEST_NARROWING:
@@ -1013,15 +1047,27 @@ class PolicyMixin:
         keep their functional name use.
         """
         names = [p.name for p in state.personas]
-        # Only inviting a quiet participant truly needs a leading name; answers and
-        # addressed turns can respond without opening on the name, so they are still
-        # subject to suppression when name-prefix density is high.
-        functional_naming = intent.act == ActType.INVITE
+        # Leading names must do interactional work (P5): inviting someone in,
+        # asking or challenging a specific person, or answering a specific
+        # person in a larger group. Ordinary agreement/build/compare turns
+        # don't need the addressee's name up front.
+        functional_naming = (
+            intent.act == ActType.INVITE
+            or (intent.addressee_id is not None and intent.act in {ActType.ASK, ActType.CHALLENGE})
+            or (intent.addressee_id is not None and len(state.personas) >= 4 and intent.act == ActType.ANSWER)
+        )
         window = int(cfg.style.name_prefix_window)
         recent = self._recent_participant_texts(state, window)
-        if not functional_naming and recent:
-            if name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
+        if not functional_naming:
+            if recent and name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
                 intent.suppress_name_prefix = True
+            else:
+                # Proactive group-size-aware damping, not just the density
+                # tripwire: the smaller the group, the less a leading name adds.
+                n = len(state.personas)
+                suppress_p = 0.85 if n == 2 else 0.60 if n == 3 else 0.40
+                if random.random() < suppress_p:
+                    intent.suppress_name_prefix = True
         # In a two-person chat the other person is always "you"; opening on
         # their name every few turns reads artificial (P3). Questions still
         # work without a leading name, so only invites keep it.
@@ -1030,6 +1076,16 @@ class PolicyMixin:
         alias_values = list(short_alias_map(state.scenario.options).values())
         if recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
             intent.suppress_option_opening = True
+        elif intent.option_focus:
+            # P5: when the previous turn already discussed the same option the
+            # context is clear — usually lead with the point, not the name.
+            last_turn = next((t for t in reversed(state.turns) if t.speaker_id != "moderator"), None)
+            if (
+                last_turn is not None
+                and set(intent.option_focus) & set(last_turn.act.option_refs)
+                and random.random() < 0.5
+            ):
+                intent.suppress_option_opening = True
         # Tail-question churn (P2): when the last few turns already put two or
         # more questions on the table, statement-type acts should not tack on
         # yet another one. Real question acts (ask/invite/probe) are exempt.
@@ -1134,6 +1190,10 @@ class PolicyMixin:
         # A continuation is a quick add-on, not a second full turn (issue 6).
         if intent.continuation:
             base = max(8, round(base * 0.55))
+        # Reactive beats routed with an explicit short hint (reservation answers,
+        # deadlock steps, probe replies) actually get the smaller budget (P4).
+        elif intent.length_hint == "short":
+            base = max(8, round(base * 0.75))
         p = persona.sim_params
         # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
         factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30
@@ -1146,8 +1206,8 @@ class PolicyMixin:
             and not (intent.act in _DECISION_ACTS and intent.allow_vote_change)
             and not intent.continuation
         )
-        if short_beat_ok and random.random() < 0.18 + 0.22 * (1.0 - p.verbosity):
-            factor *= random.uniform(0.50, 0.70)
+        if short_beat_ok and random.random() < 0.22 + 0.28 * (1.0 - p.verbosity):
+            factor *= random.uniform(0.42, 0.62)
         else:
             # Per-turn jitter around the persona's average so consecutive turns
             # by the same sim vary naturally instead of one fixed length (I12).

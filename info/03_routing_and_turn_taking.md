@@ -57,7 +57,7 @@ Participants can perform procedural acts, especially when the moderator is reduc
 - suggest narrowing;
 - test a compromise candidate.
 
-These moves should be explicit enough to count in metrics, but still short.
+These moves should be explicit enough to count in metrics, but still short. Participant-owned procedure must sound like a group member, not the controller: no exact vote-count dumps, no candidate-testing vocabulary ("test the least-blocked candidate"), and never addressing the speaker themself. Exact procedural summaries with counts belong to moderator turns only.
 
 ## Current validation focus
 

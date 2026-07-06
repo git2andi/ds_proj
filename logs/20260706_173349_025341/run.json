@@ -1,0 +1,1670 @@
+{
+  "run_id": "20260706_173349_025341",
+  "topic": "Choose a weekend hiking destination for two friends",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a weekend hiking destination for two friends",
+    "decision_kind": "activity_choice",
+    "opening_question": "What matters more for our weekend hike: scenery, challenge, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Eagle Rock Loop Trail",
+        "attrs": {
+          "round_trip_distance_miles": "5.5",
+          "estimated_hiking_time_hours": "3.5",
+          "gas_and_fees_cost_dollars": "25",
+          "trail_difficulty": "moderate"
+        },
+        "upside": "Offers panoramic cliff views and a waterfall",
+        "tradeoff": "Some steep sections may be tiring",
+        "concern": "Trail can be crowded on weekends",
+        "best_for": "scenery lovers who want a moderate challenge",
+        "short_name": "Eagle Rock"
+      },
+      {
+        "id": "B",
+        "name": "Pine Ridge Forest Path",
+        "attrs": {
+          "round_trip_distance_miles": "4",
+          "estimated_hiking_time_hours": "2.5",
+          "gas_and_fees_cost_dollars": "15",
+          "trail_difficulty": "easy"
+        },
+        "upside": "Easy terrain with dense forest and birdwatching",
+        "tradeoff": "Less varied scenery, mostly shaded woods",
+        "concern": "May feel too easy or short for some",
+        "best_for": "those prioritizing relaxation and low effort",
+        "short_name": "Pine Ridge"
+      },
+      {
+        "id": "C",
+        "name": "Summit Ridge Peak Trail",
+        "attrs": {
+          "round_trip_distance_miles": "7",
+          "estimated_hiking_time_hours": "5",
+          "gas_and_fees_cost_dollars": "30",
+          "trail_difficulty": "hard"
+        },
+        "upside": "Challenging hike with rewarding summit views",
+        "tradeoff": "Longer and more strenuous, requires good fitness",
+        "concern": "May be too exhausting for a casual day",
+        "best_for": "those seeking a physical challenge and views",
+        "short_name": "Summit Ridge"
+      },
+      {
+        "id": "D",
+        "name": "Lakeside Meadow Walk",
+        "attrs": {
+          "round_trip_distance_miles": "3.5",
+          "estimated_hiking_time_hours": "2",
+          "gas_and_fees_cost_dollars": "20",
+          "trail_difficulty": "easy"
+        },
+        "upside": "Scenic lakeside route with picnic spots",
+        "tradeoff": "Shorter hike with fewer elevation changes",
+        "concern": "Limited trail variety and fewer wildlife sightings",
+        "best_for": "those wanting a peaceful, easy outdoor experience",
+        "short_name": "Lakeside Meadow"
+      }
+    ],
+    "shared_context": [
+      "We are two friends planning a day hike this Saturday.",
+      "We want to keep total travel and hiking time under 8 hours.",
+      "Our combined budget for gas and park fees is under $40."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Hana",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 1,
+        "neuroticism": 5
+      },
+      "sim_params": {
+        "engagement": 0.325,
+        "verbosity": 0.2625,
+        "initiative": 0.275,
+        "responsiveness": 0.425,
+        "stubbornness": 1.0,
+        "directness": 0.575,
+        "compromise_threshold": 0.95
+      },
+      "background": "Hana prefers moderate hikes with scenic views but is sensitive to stress and crowds.",
+      "private_goal": "She wants a manageable trail that offers beautiful sights without overwhelming difficulty or too many people.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": "C",
+      "rejection_reason": "Summit Ridge is too strenuous and exhausting for a casual day, which conflicts with Hana's preference for manageable hikes.",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "challenge",
+          "option": "C",
+          "reason": "raise the hard concern about C: Summit Ridge is too strenuous and exhausting for a casual day, which conflicts with Hana's preference for manageable hikes.",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "challenge",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Jasper",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.475,
+        "stubbornness": 0.5499999999999999,
+        "directness": 0.575,
+        "compromise_threshold": 0.48749999999999993
+      },
+      "background": "Jasper enjoys exploring nature in a relaxed way, valuing easy terrain and opportunities for birdwatching.",
+      "private_goal": "He prefers a low-effort hike that allows him to unwind and appreciate the forest environment.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "agenda": [
+        {
+          "act": "build",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 19,
+      "current_preference": "A",
+      "commitment_strength": 0.9199999999999999,
+      "commitment_min": 0.8500000000000001,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {
+        "C": "Hard pass on Summit Ridge. Eagle Rock’s shorter, less brutal."
+      },
+      "already_said": [
+        "Fits the budget, manageable 3.5 hours, views worth it—Eagle Rock.",
+        "Hard pass on Summit Ridge. Eagle Rock’s shorter, less brutal.",
+        "Pine Ridge is actually an easier trail.",
+        "Offers panoramic cliff views and a waterfall, still under budget.",
+        "Birdwatching fine, but Eagle Rock’s views beat that.",
+        "My vote goes to Eagle Rock Loop for its great views.",
+        "Pine Ridge is easy but lacks varied scenery.",
+        "My vote goes to Eagle Rock — Pine Ridge still does not solve my concern."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 12,
+      "last_spoke_turn": 20,
+      "current_preference": "B",
+      "commitment_strength": 0.7284999999999999,
+      "commitment_min": 0.6699999999999999,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "accepted_options": [],
+      "soft_rejections": {},
+      "hard_rejections": {},
+      "already_said": [
+        "Pine Ridge Forest Path sounds great for an easy, relaxing hike with good birdwatching, though the scenery might feel a bit repetitive.",
+        "I wonder if the steeper sections on Eagle Rock might slow us down a bit, though the views do sound amazing.",
+        "Considering Lakeside Meadow Walk could be a nice change with its lakeside views.",
+        "Let’s settle on Pine Ridge since it’s easy and fits our budget perfectly.",
+        "I agree, easier terrain will help us relax more.",
+        "Pine Ridge has easy terrain and good birdwatching.",
+        "Since Pine Ridge is only about 2.5 hours hiking time, we’ll have plenty of time to unwind without rushing.",
+        "Let’s lock in our final pick now so we can plan the details.",
+        "I’m happy to settle on Pine Ridge since it lets us enjoy the forest’s peaceful vibe without much effort.",
+        "Looks like we’re tied between Eagle Rock and Pine Ridge.",
+        "Steeper sections on Eagle Rock block me; if those felt easier, I’d switch.",
+        "Pine Ridge gets my vote."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Pine Ridge Forest Path sounds great for an easy, relaxing hike with good birdwatching, though the scenery might feel a bit repetitive.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Pine Ridge Forest Path sounds great for an easy, relaxing hike with good birdwatching, though the scenery might feel a bit repetitive.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 858,
+      "tokens_out": 69,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Fits the budget, manageable 3.5 hours, views worth it—Eagle Rock.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Fits the budget, manageable 3.5 hours, views worth it—Eagle Rock.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 505,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "I wonder if the steeper sections on Eagle Rock might slow us down a bit, though the views do sound amazing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I wonder if the steeper sections on Eagle Rock might slow us down a bit, though the views do sound amazing.",
+        "act_type": "build",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Eagle Rock, Pine Ridge that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 532,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Hard pass on Summit Ridge. Eagle Rock’s shorter, less brutal.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Hard pass on Summit Ridge. Eagle Rock’s shorter, less brutal.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {
+          "C": "Hard pass on Summit Ridge. Eagle Rock’s shorter, less brutal."
+        },
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1211,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Considering Lakeside Meadow Walk could be a nice change with its lakeside views.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Considering Lakeside Meadow Walk could be a nice change with its lakeside views.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 551,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Pine Ridge is actually an easier trail.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Pine Ridge is actually an easier trail.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "bring up a practical, everyday consideration about Pine Ridge, Eagle Rock that hasn't come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 1,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1495,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Let’s settle on Pine Ridge since it’s easy and fits our budget perfectly.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Let’s settle on Pine Ridge since it’s easy and fits our budget perfectly.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "propose_compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 576,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Offers panoramic cliff views and a waterfall, still under budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Offers panoramic cliff views and a waterfall, still under budget.",
+        "act_type": "build",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "build",
+        "reason": "add a new grounded reason about Eagle Rock, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 584,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "I agree, easier terrain will help us relax more.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I agree, easier terrain will help us relax more.",
+        "act_type": "agree",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "agree",
+        "reason": "agree with the recent point where it genuinely fits your view, and add a small new angle about Pine Ridge",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 986,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Pine Ridge has easy terrain and good birdwatching.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Pine Ridge has easy terrain and good birdwatching.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 2138,
+      "tokens_out": 80,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Birdwatching fine, but Eagle Rock’s views beat that.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Birdwatching fine, but Eagle Rock’s views beat that.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Pine Ridge, Eagle Rock with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1207,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Since Pine Ridge is only about 2.5 hours hiking time, we’ll have plenty of time to unwind without rushing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Since Pine Ridge is only about 2.5 hours hiking time, we’ll have plenty of time to unwind without rushing.",
+        "act_type": "build",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "build",
+        "reason": "add a new grounded reason about Pine Ridge, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 488,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Let’s lock in our final pick now so we can plan the details.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Let’s lock in our final pick now so we can plan the details.",
+        "act_type": "call_vote",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "call_vote",
+        "reason": "you feel the group has weighed enough — casually suggest everyone give their definite final pick now, in your own words; do not name or suggest any option in this line",
+        "addressee_id": null,
+        "option_focus": [],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 690,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "I’m happy to settle on Pine Ridge since it lets us enjoy the forest’s peaceful vibe without much effort.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m happy to settle on Pine Ridge since it lets us enjoy the forest’s peaceful vibe without much effort.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "Since Pine Ridge is only about 2.5 hours hiking time,",
+          "since it’s easy and fits our budget perfectly",
+          "for an easy, relaxing hike with good birdwatching, though the"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1189,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "My vote goes to Eagle Rock Loop for its great views.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "My vote goes to Eagle Rock Loop for its great views.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "since it lets us enjoy the forest’s peaceful vibe without",
+          "Since Pine Ridge is only about 2.5 hours hiking time,",
+          "since it’s easy and fits our budget perfectly",
+          "for an easy, relaxing hike with good birdwatching, though the"
+        ],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1588,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Looks like we’re tied between Eagle Rock and Pine Ridge.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Looks like we’re tied between Eagle Rock and Pine Ridge.",
+        "act_type": "summarize_split",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "summarize_split",
+        "reason": "say the vote is one-one between Eagle Rock and Pine Ridge, then suggest each person names the one blocker that would have to change before switching",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 521,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "Pine Ridge is easy but lacks varied scenery.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Pine Ridge is easy but lacks varied scenery.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "deadlock blocker/concession step: use exactly two short clauses. First, name your strongest blocker to switching from Eagle Rock to Pine Ridge. Second, name the one condition or concession that would have to be true before you could move. Do not vote yet.",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1548,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Steeper sections on Eagle Rock block me; if those felt easier, I’d switch.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Steeper sections on Eagle Rock block me; if those felt easier, I’d switch.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "deadlock blocker/concession step: use exactly two short clauses. First, name your strongest blocker to switching from Pine Ridge to Eagle Rock. Second, name the one condition or concession that would have to be true before you could move. Do not vote yet.",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 611,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Hana",
+      "text": "My vote goes to Eagle Rock — Pine Ridge still does not solve my concern.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "My vote goes to Eagle Rock — Pine Ridge still does not solve my concern.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "post_reservation_decision",
+        "reason": "deadlock final decision: choose exactly one visible outcome — switch to Pine Ridge or stay with Eagle Rock and name the remaining blocker. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Jasper",
+      "text": "Pine Ridge gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Pine Ridge gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "post_reservation_decision",
+        "reason": "deadlock final decision: choose exactly one visible outcome — switch to Eagle Rock or stay with Pine Ridge and name the remaining blocker. No vague re-vote.",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 20,
+    "metadata": {
+      "visible_votes": {
+        "p2": "B",
+        "p1": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "B"
+      },
+      "phase_history": [
+        "pacing: min=10, force=15, hard=17, distinct_initial_prefs=2, avg_compromise=0.28",
+        "turn 2: discussion — all participants gave an opening view",
+        "turn 12: narrowing — visible support for one option held after enough back-and-forth",
+        "turn 15: narrowing — all participants voted but no majority; attempting split-vote compromise",
+        "turn 20: closure — vote rounds exhausted without visible consensus"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 10,
+      "force_narrow_turns": 15,
+      "hard_max_turns": 17
+    }
+  },
+  "phase_history": [
+    "pacing: min=10, force=15, hard=17, distinct_initial_prefs=2, avg_compromise=0.28",
+    "turn 2: discussion — all participants gave an opening view",
+    "turn 12: narrowing — visible support for one option held after enough back-and-forth",
+    "turn 15: narrowing — all participants voted but no majority; attempting split-vote compromise",
+    "turn 20: closure — vote rounds exhausted without visible consensus",
+    "turn 20: closure — closed as unresolved"
+  ],
+  "metrics": {
+    "participant_turns": 20,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Hana": 8,
+      "Jasper": 12
+    },
+    "top_speaker_share": 0.6,
+    "avg_words_by_persona": {
+      "Hana": 9.9,
+      "Jasper": 13.8
+    },
+    "avg_words_by_act": {
+      "agree": 9.0,
+      "answer": 10.5,
+      "build": 13.0,
+      "call_vote": 13.0,
+      "compare": 10.3,
+      "opening": 16.0,
+      "post_reservation_decision": 10.0,
+      "propose_compromise": 13.0,
+      "summarize_split": 10.0,
+      "vote": 15.0
+    },
+    "short_turn_rate": 0.5,
+    "question_density": 0.0,
+    "tail_question_rate": 0.0,
+    "avg_words_per_turn": 12.2,
+    "repaired_turns": 4,
+    "repair_rate": 0.2,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 2,
+    "visible_votes": {
+      "Hana": "A",
+      "Jasper": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 1,
+    "concern_response_rate": 0.0,
+    "participation_gini": 0.1,
+    "direct_response_rate": null,
+    "question_answer_completion": null,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {},
+    "repetition_score": 0.173,
+    "compromise_success_rate": 0.0,
+    "reservation_exchange": false,
+    "participant_procedural_moves": 2,
+    "peer_vote_call": true,
+    "two_person_deadlock_attempted": true,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 1,
+    "switch_event_count": 0,
+    "switch_explanation_rate": null,
+    "switch_bridge_rate": null,
+    "discussion_lean_shifts": 0,
+    "name_prefix_rate": 0.0,
+    "option_opening_rate": 0.25,
+    "i_opening_rate": 0.15,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.25,
+    "repeated_opening_patterns": 0,
+    "unsupported_fact_flags": 3,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.0,
+    "option_coverage": {
+      "A": {
+        "mentions": 8,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 10,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Hana": 0.325,
+      "Jasper": 0.588
+    },
+    "expected_turn_share": {
+      "Hana": 0.388,
+      "Jasper": 0.612
+    },
+    "realized_turn_share": {
+      "Hana": 0.4,
+      "Jasper": 0.6
+    },
+    "agenda_status": {
+      "done": 2,
+      "pending": 6
+    },
+    "outcome_status": "unresolved",
+    "final_option": null,
+    "corpus_preset": "",
+    "min_discussion_turns": 10,
+    "force_narrow_turns": 15,
+    "hard_max_turns": 17,
+    "phase_history": [
+      "pacing: min=10, force=15, hard=17, distinct_initial_prefs=2, avg_compromise=0.28",
+      "turn 2: discussion — all participants gave an opening view",
+      "turn 12: narrowing — visible support for one option held after enough back-and-forth",
+      "turn 15: narrowing — all participants voted but no majority; attempting split-vote compromise",
+      "turn 20: closure — vote rounds exhausted without visible consensus",
+      "turn 20: closure — closed as unresolved"
+    ],
+    "engagement_realization_error": 0.012,
+    "verbosity_realization_error": 0.074,
+    "engagement_error_by_persona": {
+      "Hana": 0.012,
+      "Jasper": 0.012
+    },
+    "verbosity_error_by_persona": {
+      "Hana": 0.118,
+      "Jasper": 0.03
+    },
+    "engagement_behavior_correlation": null,
+    "verbosity_behavior_correlation": null,
+    "free_discussion_share": {
+      "Hana": 0.357,
+      "Jasper": 0.643
+    },
+    "top_free_discussion_share": 0.643,
+    "free_discussion_engagement_correlation": null,
+    "setup_tokens_in": 1927,
+    "setup_tokens_out": 903,
+    "dialogue_tokens_in": 17278,
+    "dialogue_tokens_out": 658,
+    "total_tokens_in": 19205,
+    "total_tokens_out": 1561,
+    "tokens_setup_in": 1927,
+    "tokens_setup_out": 903,
+    "calls_setup": 1,
+    "tokens_utterance_in": 10404,
+    "tokens_utterance_out": 490,
+    "calls_utterance": 18,
+    "tokens_grounding_in": 5547,
+    "tokens_grounding_out": 125,
+    "calls_grounding": 10,
+    "tokens_repair_in": 1327,
+    "tokens_repair_out": 43,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 1927,
+    "setup_tokens_out": 903,
+    "dialogue_tokens_in": 17278,
+    "dialogue_tokens_out": 658,
+    "total_tokens_in": 19205,
+    "total_tokens_out": 1561
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 1927,
+      "out": 903,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 10404,
+      "out": 490,
+      "calls": 18
+    },
+    "grounding": {
+      "in": 5547,
+      "out": 125,
+      "calls": 10
+    },
+    "repair": {
+      "in": 1327,
+      "out": 43,
+      "calls": 4
+    }
+  }
+}

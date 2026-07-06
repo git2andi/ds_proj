@@ -45,7 +45,7 @@ _HEDGE = re.compile(
     re.I,
 )
 _COMMIT = re.compile(
-    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
     r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
@@ -63,7 +63,7 @@ _SOFT_COMMIT = re.compile(
     re.I,
 )
 _DIRECT_VOTE = re.compile(
-    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
     r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
@@ -375,6 +375,40 @@ def _option_positions(segment: str, resolver: OptionResolver) -> list[tuple[int,
     return sorted((pos, oid) for oid, pos in hits.items())
 
 
+# Pure connector between two option mentions — the "single plan out of two
+# options" shape (P6). Comparisons and concessions put real words between the
+# two mentions and do not match.
+_BLEND_BETWEEN = re.compile(
+    r"^\W*(?:and(?:\s+also)?(?:\s+(?:use|do|book|add|visit|try|include))?|plus|"
+    r"combined?\s+with|mix(?:ed)?\s+with|together\s+with|along\s+with|with)"
+    r"\s*(?:the\s+|some\s+of\s+)?\W*$",
+    re.I,
+)
+
+
+def hybrid_blend_detected(text: str, resolver: OptionResolver) -> bool:
+    """True when one utterance welds two different options into a single plan
+    (P6): "Pine Ridge and also Willow Creek", "the class combined with the
+    escape room". Used only on compromise-type turns, where a coordinated
+    pair is exactly the implicit-new-option failure."""
+    lower = text.replace("’", "'").lower()
+    spans: list[tuple[int, int, str]] = []
+    for option_id in resolver.by_id:
+        for m in re.finditer(rf"\boption\s+{re.escape(option_id.lower())}\b", lower):
+            spans.append((m.start(), m.end(), option_id))
+    for alias, option_id in resolver.alias_to_id.items():
+        for m in re.finditer(rf"\b{re.escape(alias)}\b", lower):
+            spans.append((m.start(), m.end(), option_id))
+    spans.sort()
+    for (_s1, e1, id1), (s2, _e2, id2) in zip(spans, spans[1:]):
+        if id1 == id2 or s2 <= e1:
+            continue
+        between = lower[e1:s2]
+        if len(between) <= 30 and _BLEND_BETWEEN.match(between):
+            return True
+    return False
+
+
 # Canonical commitment-phrase families with display labels, used to stop one
 # family ("Count me in for ...") dominating a vote round (issue #25).
 _PHRASE_FAMILIES: list[tuple[str, re.Pattern]] = [
@@ -397,6 +431,26 @@ def used_commitment_phrases(texts: list[str]) -> list[str]:
     """Which commitment-phrase families appear in ``texts`` (display labels)."""
     return [label for label, pattern in _PHRASE_FAMILIES if any(pattern.search(t or "") for t in texts)]
 
+
+def unused_commitment_phrases(avoid: list[str], limit: int = 3) -> list[str]:
+    """Parser-recognized commitment phrasings not yet used this vote round (P9):
+    suggesting these keeps LLM vote lines inside the vocabulary the observer
+    can read, instead of pushing later voters into unparseable variety."""
+    avoid_set = {a.lower() for a in avoid}
+    return [label for label, _pattern in _PHRASE_FAMILIES if label.lower() not in avoid_set][:limit]
+
+
+# Commitment phrases whose grammatical object comes before the phrase
+# ("X gets my vote", "X works for me", "X is my pick").
+_SUBJECT_FORM_COMMIT = re.compile(
+    r"(?:gets?\s+my\s+vote|works\s+(?:best\s+)?for\s+me|"
+    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick))",
+    re.I,
+)
+
+# Clause boundaries for commitment-object scoping: sentence punctuation plus
+# em/en dashes and spaced hyphens, which introduce commentary clauses.
+_CLAUSE_SPLIT = re.compile(r"[.;!?—–]|\s-{1,2}\s")
 
 # Reason clause following a commitment ("… for its inclusive menu", "… because
 # it solves the timing issue"). Used to stop voters echoing each other's
@@ -428,16 +482,23 @@ def _commitment_object(check_text: str, resolver: OptionResolver) -> str | None:
     unambiguous: the first option named after the phrase ("go with X ..."), or
     the nearest one before it ("X gets my vote"). A coordinated pair right at
     the object ("either X or Y", "X or Y") stays ambiguous.
+
+    Clauses split on dashes as well as sentence punctuation, and subject-form
+    phrases ("X gets my vote", "X works for me") bind to the option BEFORE the
+    phrase: in "Trello still gets my vote — ClickUp hasn't fixed my concern"
+    the rival named after the dash is commentary, not the vote object.
     """
     match = _COMMIT.search(check_text)
     if not match:
         return None
-    after = re.split(r"[.;!?]", check_text[match.end():])[0]
-    before = re.split(r"[.;!?]", check_text[: match.start()])[-1]
+    after = _CLAUSE_SPLIT.split(check_text[match.end():])[0]
+    before = _CLAUSE_SPLIT.split(check_text[: match.start()])[-1]
     after_hits = _option_positions(after, resolver)
     before_hits = _option_positions(before, resolver)
     after_distance = after_hits[0][0] if after_hits else None
     before_distance = len(before) - before_hits[-1][0] if before_hits else None
+    if before_hits and _SUBJECT_FORM_COMMIT.match(match.group(0)):
+        after_distance = None
 
     if after_distance is not None and (before_distance is None or after_distance <= before_distance):
         first_pos, first_id = after_hits[0]

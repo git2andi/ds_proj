@@ -14,6 +14,7 @@ from collections.abc import Iterable
 from aliases import short_alias_map
 from config_loader import cfg
 from models import DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario
+from parsing import unused_commitment_phrases
 from utils import compact_words
 
 
@@ -267,7 +268,17 @@ def sim_utterance(
     voice = _voice_guidance(persona)
     decision_instruction = ""
     if intent.act.value in {"vote", "accept"}:
-        decision_instruction = "\nFor this decision turn, commit clearly to exactly one option in your own words (like 'I'd go with X', 'X gets my vote', 'my pick is X', or 'X works for me'). Use a different commitment phrasing than the previous voters in the chat. No hedging, no 'leaning', no conditions, no question after it."
+        # P9: steer vote lines into the parser's own commitment vocabulary — a
+        # rotating menu of families not yet used this round, instead of pushing
+        # later voters into unparseable "variety".
+        pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=12)
+        suggestions = random.sample(pool, min(3, len(pool))) if pool else []
+        menu = ", ".join(f"'… {s} …'" for s in suggestions) if suggestions else "'… gets my vote'"
+        decision_instruction = (
+            f"\nFor this decision turn, commit clearly to exactly ONE option using a commitment phrasing "
+            f"such as {menu} (fill in the option name yourself). One short reason may follow the commitment. "
+            "No hedging, no 'leaning', no conditions, no question after it."
+        )
         if intent.avoid_phrases:
             forbidden = "; ".join(f"'{p}'" for p in intent.avoid_phrases)
             decision_instruction += f"\nEarlier speakers already used these phrasings — do NOT use them: {forbidden}."
@@ -297,8 +308,10 @@ def sim_utterance(
     if intent.continuation:
         continuation_note = (
             "\nThis is a quick follow-up to YOUR OWN previous message (you spoke last): one short "
-            "add-on thought. Do not repeat or rephrase anything you just said, do not re-ask the same "
-            "question, and do not address the same person with the same request again."
+            "add-on thought. Stay on the same point and option as your last message — do not switch "
+            "to a different option or open a new issue. Do not repeat or rephrase anything you just "
+            "said, do not re-ask the same question, and do not address the same person with the same "
+            "request again."
         )
     agenda = ""
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
@@ -313,7 +326,14 @@ def sim_utterance(
             f"\nAlready settled as unknown here (nobody can answer them): {', '.join(settled_issues[:5])}. "
             "Do not ask about or re-raise these; argue from the listed facts instead."
         )
-    if params.verbosity <= 0.4:
+    if max_words <= 8 and intent.act.value not in {"vote", "accept", "reject", "post_reservation_decision"}:
+        # A short-beat draw (P4): one genuine quick reaction, not a compressed argument.
+        length_note = (
+            f"Reply with ONE quick chat-style reaction of at most {max_words} words — a quick agreement, "
+            "brief objection, short answer, or one small condition. Do NOT summarize or argue; one beat, "
+            "then stop. A complete short sentence or natural fragment is fine."
+        )
+    elif params.verbosity <= 0.4:
         length_note = f"Keep it very short ({min_words}-{max_words} words), blunt and to the point; a sentence fragment is fine."
     elif params.verbosity >= 0.7:
         length_note = f"Two short clauses or sentences are okay ({min_words}-{max_words} words)."
@@ -405,6 +425,22 @@ def repair_utterance(
     grounding = ""
     if "UNSUPPORTED_FACT" in issue_codes:
         grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
+    malformed = ""
+    if "MALFORMED_UTTERANCE" in issue_codes:
+        malformed = (
+            " The line is an incomplete fragment (a lead-in with no content, or a lone subordinate clause). "
+            "Write the complete short thought it was building toward — one clear point, still brief."
+        )
+    if "CONTINUATION_TOPIC_JUMP" in issue_codes:
+        malformed += (
+            " The follow-up jumped to a different option than your previous message; stay on the same "
+            "option and point you just made."
+        )
+    if "HYBRID_COMPROMISE" in issue_codes:
+        malformed += (
+            " The line combined two options into one plan; propose exactly ONE existing option "
+            "(a condition on it is fine), not a blend."
+        )
     bridge = ""
     if "UNBRIDGED_SWITCH" in issue_codes:
         aliases = short_alias_map(state.scenario.options)
@@ -425,7 +461,7 @@ Allowed option facts:
 Recent chat:
 {recent}
 
-Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
+Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
 
 
 def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:
@@ -457,9 +493,14 @@ their listed attributes is allowed and grounded (e.g. "X costs more and takes
 longer than Y" when the cards list those costs/durations). Commonsense risk that
 follows from an attribute is allowed (an outdoor activity depending on weather; a
 long session being tiring), and statements of uncertainty are ALWAYS allowed ("we
-don't know the forecast", "it might get canceled"). If every concrete claim traces
-back to the right option's attribute, upside, tradeoff, or concern — or is such
-reasoning or uncertainty — reply false.
+don't know the forecast", "it might get canceled").
+STRICT RULE for specifics: any number, range, count, fee, schedule, menu item,
+feature name, or measurement that does not appear in the cards/context is
+UNSUPPORTED — even if the rest of the message expresses uncertainty, and even if
+it sounds plausible. The only allowed new numbers are simple arithmetic on listed
+numbers (a group total, a difference, a per-person split). If every concrete
+claim traces back to the right option's attribute, upside, tradeoff, or concern —
+or is such reasoning, arithmetic, or uncertainty — reply false.
 
     Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
 

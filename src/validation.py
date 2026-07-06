@@ -22,7 +22,7 @@ from models import (
     Persona,
     _DECISION_ACTS,
 )
-from parsing import switch_bridge_ok
+from parsing import hybrid_blend_detected, switch_bridge_ok
 from utils import jaccard_text
 
 
@@ -30,6 +30,24 @@ from utils import jaccard_text
 class ValidationReport:
     issues: list[str]
     block_state_mutation: bool = False
+
+
+# P7: a discourse-marker head that promises content but delivers none
+# ("Just to be clear.", "Actually.", "Oh, and."). Genuine short reactions
+# ("Fair point.", "Not for me.") do not match.
+_BARE_MARKER_TURN = re.compile(
+    r"^\W*(?:just\s+to\s+be\s+clear|to\s+be\s+clear|actually|oh(?:,\s*and)?|"
+    r"one\s+more\s+thing|by\s+the\s+way|that\s+said|on\s+top\s+of\s+that)\W*$",
+    re.I,
+)
+
+# P7: a lone subordinate clause printed as a whole turn ("Since the Museum
+# plan is low effort."). As an answer to a question this shape is natural
+# ("Because it's cheap."), so the check skips answer acts.
+_SUBORDINATE_ONLY_TURN = re.compile(
+    r"^(?:since|because|although|even\s+if|even\s+though|whereas|unless)\b[^,.!?]*[.!?]?$",
+    re.I,
+)
 
 
 class ValidationMixin:
@@ -47,6 +65,14 @@ class ValidationMixin:
             issues.append("MULTI_TURN_OUTPUT")
         if re.search(r"\[\s*(?:act|opt|stance)\s*=", text, re.I):
             issues.append("LEAKED_METADATA")
+        # Malformed compressed turn (P7): a bare marker head, or a lone
+        # subordinate clause outside answer acts. One repair, then fallback.
+        stripped = text.strip()
+        if _BARE_MARKER_TURN.match(stripped) or (
+            intent.act != ActType.ANSWER and _SUBORDINATE_ONLY_TURN.match(stripped)
+        ):
+            issues.append("MALFORMED_UTTERANCE")
+            block = True
         if self._resolver and self._resolver.invalid_option_refs(text):
             issues.append("INVALID_OPTION_REFERENCE")
             block = True
@@ -62,6 +88,15 @@ class ValidationMixin:
             block = True
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
             issues.append("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION")
+            block = True
+        # A compromise must pin ONE existing option (P6): coordinating two
+        # options as a single plan creates an implicit new hybrid option.
+        if (
+            self._resolver
+            and (intent.act == ActType.PROPOSE_COMPROMISE or act.offers_compromise)
+            and hybrid_blend_detected(text, self._resolver)
+        ):
+            issues.append("HYBRID_COMPROMISE")
             block = True
         # A visible, unresolved active blocker (I3) binds like a setup rejection:
         # committing to that option needs a resolution in the same line.
@@ -87,6 +122,16 @@ class ValidationMixin:
                 and act.question_target_id == last_turns[-1].act.question_target_id
             ):
                 issues.append("CONTINUATION_REPEATS")
+                block = True
+            # A continuation must stay on its own previous focus (P3): naming
+            # only options disjoint from the just-made point is a topic jump,
+            # not an addendum.
+            if (
+                intent.option_focus
+                and act.option_refs
+                and not set(act.option_refs) & set(intent.option_focus)
+            ):
+                issues.append("CONTINUATION_TOPIC_JUMP")
                 block = True
         # A sanctioned switch may only land on the offered option or the sim's
         # own current/initial preference (restate); never a third option.
@@ -270,10 +315,23 @@ class ValidationMixin:
     )
 
     _ASSERTED_WORKAROUND = re.compile(
-        r"\b(?:we|you|they|i)\s+(?:can|will|should|just|could|might)\s+"
+        r"\b(?:we|you|they|i)\s+(?:can|will|should|just|could|might)\s+(?:just\s+|simply\s+|always\s+)?"
         r"(?:pick|get|find|book|reserve|hold|request|ask\s+for|choose|use|take|plan|add|combine)\b[^.!?]{0,80}"
         r"\b(?:quiet(?:er)?|corner|spot|table|shelter\w*|shade|parking|route|booking|reservation|"
         r"indoor|outdoor|seating|discount|weather|forecast|host|hike|kayak|activity|trail)\b",
+        re.I,
+    )
+
+    # P8: a quantity whose unit class exists nowhere in the world facts is an
+    # invented measurement ("height range is 25-51 inches" on a board that
+    # lists no lengths at all). Common units (money, minutes, hours) are left
+    # to the LLM judge because sims legitimately do arithmetic with them.
+    _UNIT_NUMBER = re.compile(
+        r"\b\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?\s*"
+        r"(inches|inch|cm|centimeters?|meters?|metres?|feet|foot|km|kilometers?|miles?|"
+        r"kg|kilograms?|grams?|lbs?|pounds?|liters?|litres?|ml|gb|tb|mb|mah|ghz|mhz|"
+        r"mph|kmh|acres?|watts?|volts?|floors?|stories|degrees?|seats?|rooms?|"
+        r"sessions?|workshops?|stations?|participants?|attendees?)\b",
         re.I,
     )
 
@@ -284,9 +342,6 @@ class ValidationMixin:
         corner"). Uncertain formulations ("maybe", "check if", "we don't know")
         remain allowed and may still be judged by the LLM tripwire if concrete.
         """
-        match = self._ASSERTED_WORKAROUND.search(text)
-        if not match:
-            return None
         world = getattr(self, "_world_text", None)
         if world is None or self._world_state_id != id(state):
             world = " ".join(
@@ -295,6 +350,22 @@ class ValidationMixin:
             self._world_text = world
             self._world_state_id = id(state)
             self._option_tokens = self._distinctive_option_tokens(state)
+        # Invented measurement class (P8): number + unit where neither the
+        # number nor the unit word occurs in any card or shared-context fact.
+        # Not excused by uncertainty wording elsewhere in the message — the
+        # asserted quantity itself is still invented.
+        for m in self._UNIT_NUMBER.finditer(text):
+            unit = m.group(1).lower().rstrip("s")
+            number = re.match(r"\d+(?:[.,]\d+)?", m.group(0)).group(0)
+            if (
+                unit not in world
+                and unit + "s" not in world
+                and not re.search(rf"\b{re.escape(number)}\b", world)
+            ):
+                return "UNSUPPORTED_FACT"
+        match = self._ASSERTED_WORKAROUND.search(text)
+        if not match:
+            return None
         phrase = match.group(0).lower()
         # A workaround is allowed only when the text explicitly marks the
         # mitigation as unknown/check-needed. A bare "we could just..." is still

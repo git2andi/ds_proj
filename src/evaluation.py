@@ -166,10 +166,10 @@ def _expected_words(persona: Persona) -> float:
     base = int(cfg.utterances.word_budgets.discussion)
     p = persona.sim_params
     expected = base * (0.45 + 0.70 * p.verbosity + 0.15 * p.engagement)
-    # policy._word_bounds mixes in occasional short beats (factor ~0.6, more
+    # policy._word_bounds mixes in occasional short beats (factor ~0.52, more
     # often for terse sims); fold that expectation into the average target.
-    short_beat_prob = 0.18 + 0.22 * (1.0 - p.verbosity)
-    return expected * (1.0 - 0.4 * short_beat_prob)
+    short_beat_prob = 0.22 + 0.28 * (1.0 - p.verbosity)
+    return expected * (1.0 - 0.48 * short_beat_prob)
 
 
 def parameter_realization(state: DialogueState) -> dict[str, Any]:
@@ -286,6 +286,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         for act_name, counts in sorted(words_by_act.items())
     }
     short_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 10)
+    tiny_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 5)
     # P2 diagnostic: questions appearing on statement-type turns (the chaining
     # pattern), as opposed to intentional ask/invite acts.
     question_acts = {"ask", "invite", "probe_holdout", "call_vote"}
@@ -321,6 +322,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "avg_words_by_persona": avg_words_by_persona,
         "avg_words_by_act": avg_words_by_act,
         "short_turn_rate": round(short_turn_count / n_turns, 3),
+        "tiny_turn_rate": round(tiny_turn_count / n_turns, 3),
         "question_density": round(sum(1 for t in participant_turns if "?" in t.text) / n_turns, 3),
         "tail_question_rate": round(tail_question_count / max(1, len(statement_turns)), 3),
         "avg_words_per_turn": round(sum(len(t.text.split()) for t in participant_turns) / n_turns, 1),
