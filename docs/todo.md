@@ -1,71 +1,83 @@
-# TODO: latest active fixes
+# TODO – Discourse Naturalness, Trait Visibility, and Defensible Outcomes
 
-This file is the only active work queue for the next implementation round. It should contain only open issues. Remove or narrow an item only after code inspection, implementation, targeted example runs, full-suite validation, and manual transcript review show that the issue is solved.
+This file contains the current open implementation issues only. It is intended as the active handoff for the next coding session.
 
-The project remains an **option-grounded multi-user decision simulator**. Do not turn it into a generic chatbot or open-ended society simulator. Fixed options must remain central. Participants discuss options, compare tradeoffs, may shift stance, may reach compromise conditions, and finish with exactly one of:
+The project is an option-grounded multi-user decision simulator, not a generic chatbot and not a full human social simulator. The goal of these fixes is to improve naturalness, trait visibility, and outcome defensibility without adding broad new architecture, large prompt blocks, or unnecessary LLM calls.
 
-- `successful`: all sims visibly agree on the same winning option.
-- `majority`: a majority visibly supports the winning option.
-- `unresolved`: no sufficient agreement is reached.
+Use `gpt` for dialogue generation unless a task explicitly compares providers.
 
-Do not add a fourth outcome label. If a participant cannot plausibly accept the winning option, the transcript should show refusal, reservation, or continued support for another option, which naturally leads to `majority` or `unresolved`.
+---
 
-Use `gpt` as the dialogue-generation provider unless a task explicitly compares providers.
+## Required implementation workflow
 
-## Required implementation protocol
+Work on exactly one issue at a time unless a dependency is explicitly stated in the issue.
 
-For every issue below, follow this process exactly.
+For each issue:
 
-1. Work on **one issue at a time** unless the issue explicitly says it must be combined with another one.
-2. Before starting, move existing logs into `logs/archive/` so new evaluation artifacts are easy to inspect.
-3. Read the issue carefully and understand why it affects dialogue quality.
-4. Read the relevant code files carefully before editing. Do not patch blindly.
-5. Prefer deterministic controller/state/validation fixes over broad prompt expansion. Keep token usage under control.
-6. Implement the smallest robust fix that solves the issue without breaking already-working behavior.
-7. Run static checks, at minimum:
-
-```powershell
-py -m py_compile main.py run_eval_suite.py src\*.py
-```
-
-8. Make targeted example runs before continuing:
+1. Move all current logs into `logs/archive/` so the active `logs/` folder is clean for this issue.
+2. Read the issue carefully and understand the failure mode it targets.
+3. Inspect the relevant code and documentation before changing anything.
+4. Prefer deterministic controller/state/routing/template fixes over broad prompt expansion.
+5. Keep token usage under control. Do not add large context blocks or extra LLM calls unless clearly necessary.
+6. Implement the smallest fix that addresses the issue.
+7. Run static validation, at minimum:
+   - `py -m py_compile main.py run_eval_suite.py src/*.py`
+8. Run targeted examples only:
+   - Always use a different random topic.
    - one `n=3` run is mandatory;
-   - then make 2-3 additional runs with varying group sizes from `n=2` to `n=7`;
-   - inspect both `transcript.md` and `run.json`, not only metrics.
-9. Confirm that the fix works across varying sim counts. If it does not, fix again before moving on.
-10. If a new clear issue appears during this work and is not listed here, fix it directly if it blocks or distorts the current issue. Otherwise add it to this file with priority and evidence.
-11. After the issues form the list are done and look good, run the full suite:
+   - then run 2–3 additional examples with varying group sizes from `n=2` to `n=7`.
+   - Do not run the full suite after every issue.
+9. Manually inspect the new logs. Verify the issue is solved across varying group sizes.
+10. If the fix is not actually visible in the logs, revise the implementation and re-run targeted examples.
+11. If a new serious issue appears while testing this issue, fix it directly before moving on.
+12. Once the issue is solved, update the documentation:
+    - `CLAUDE.md`
+    - `README.md`
+    - relevant `info/*.md` files
+    - this `docs/todo.md`
+13. Remove the solved issue from this file only after the targeted logs prove the fix works.
+14. Before starting the next issue, again move current logs into `logs/archive/`.
 
-```powershell
-py run_eval_suite.py --full
-```
+Only after all issues in this file are resolved:
 
-12. Inspect the full-suite logs manually. Ensure the intended behavior works there as well.
-13. Update all relevant documentation after the verified fix:
-   - `CLAUDE.md`
-   - `README.md`
-   - `docs/todo.md`
-   - relevant `info/*.md` files
-14. Only then remove or narrow the completed issue in this file.
+1. Move all remaining logs into `logs/archive/`.
+2. Run the full evaluation suite once:
+   - `py run_eval_suite.py --full`
+3. Inspect every generated run.
+4. Confirm that traits are visible, utterances are clean, voting is defensible, outcomes are correct, agenda is not dominating the dialogue, and no major hallucination/option-drift has appeared.
+5. Update `CLAUDE.md`, `README.md`, `docs/todo.md`, and relevant `info/*.md` files to reflect the final current state.
+6. Commit and push to git.
+---
 
 ## Open issues
 
-The 2026-07-06 naturalness round (P1-P11) is complete; every item was closed against targeted runs plus the full 12-case suite (final suite 2026-07-06 19:31-19:42, all rc=0). P11 recheck result: free-discussion shares deviate from trait targets by at most ±0.11 (typically ±0.05), top free-discussion shares span 0.28-0.53, and engagement correlations are high except in near-flat casts where correlation is statistically meaningless — anti-dominance damping was left unchanged because it demonstrably does not erase legitimate dominance.
+None. The 2026-07-07 discourse round (P1 unresolved closure, P2 trait-colored delivery, P3 vote language, P4 micro-reactions, P5 narrowing speech, P6 agenda priority, P7 personal anchors, P8 derived friendliness, P9 flexible pacing) is complete and validated with the full 12-case suite. See `CLAUDE.md` and `info/*.md` for what landed.
 
-Small items worth monitoring (not blocking, escalate only if they recur):
+The two previous monitoring items were fixed in this round: M1-class cross-option mixups (concern misattribution to the speaker's own pick, self-blocker misparse, and dB/mpg/kHz-style invented measurements) and M2 (a split-summary caller answering their own holdout question).
 
-- **M1 — occasional cross-option attribute mixups.** ~0.08 printed unsupported turns per run remain (e.g. "Cleaning Trial uses shared supplies" merging two cards' facts). The tripwire flags them; repair usually fixes them. If printed cases rise above ~0.2/run, extend the cross-option token check rather than the judge prompt.
-- **M2 — split-reservation addressing.** In a two-holdout split round, the reservation exchange sometimes lets the caller voice their own reservation before the explicitly addressed holdout answers (q02 final suite, turns 87-88). Harmless conversationally; fix only if it starts reading as ignored questions.
+## Monitoring notes (not blocking)
 
-## Non-goals for this round
+- M3: rare chopped fragments still slip through `utils.clean_generated` when a
+  clause is cut at a noun phrase ("…but Remote Work's team building."). The
+  salvage now handles dangling prepositions/dashes/subclauses; watch whether
+  the remaining shapes justify another pass.
+- M4: the LLM grounding judge (gpt-4.1-mini) repeatedly accepts invented
+  unit-bearing quantities that the deterministic unit-class net now catches;
+  if new unit families appear in transcripts, extend `validation._UNIT_NUMBER`
+  rather than the judge prompt.
 
-Do not prioritize:
+## General non-goals
 
-- full Generative Agents-style memory or reflection;
-- full agenda simulation;
-- open-ended roleplay or society simulation;
-- new outcome labels;
-- large prompt expansion;
-- adding more personality traits;
-- provider comparisons before the `gpt` baseline is stable;
-- broad rewrites unrelated to the listed issues.
+Do not implement a full human-chat simulator.
+
+Do not add rich long-term memory, full Generative Agents-style reflection, or detailed personal histories.
+
+Do not make agenda the primary dialogue engine.
+
+Do not solve repetition by simply adding large prompt instructions.
+
+Do not add many new personality axes. Friendliness is acceptable because it directly improves surface tone and can be derived from existing traits.
+
+Do not let personal anchors or micro-chatter override option-grounded decision making.
+
+The intended target is not raw WhatsApp realism. The target is plausible controlled decision dialogue with visible configurable participant behavior.

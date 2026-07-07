@@ -148,6 +148,10 @@ _CHOP_TRAIL = _DANGLING_TRAIL | {
     "means", "wonder", "wonders", "makes", "gets", "keeps", "feels", "sounds",
     "seems", "brings", "gives", "helps", "lets", "needs", "wants", "suits",
     "offers", "offer", "make", "get", "keep", "feel", "sound", "seem",
+    "cut", "cuts",
+    # Prepositions that always need a complement ("…cut into.", "…split between.").
+    "into", "onto", "toward", "towards", "between", "against", "per", "via",
+    "within", "across", "along", "beyond", "during", "despite", "upon",
 }
 
 # A chopped stub that still reads as a question ("does the slower setup bother
@@ -168,10 +172,12 @@ _BROKEN_QUESTION_TAIL = re.compile(
 )
 
 # A chopped subordinate/coordinated clause opener left with at most a few
-# words ("…as our base since the clean") — drop the whole stub.
+# words ("…as our base since the clean", "…since it seems like a nice") —
+# drop the whole stub. Only ever applied to chopped text, so a slightly
+# shorter clean ending always beats a hanging clause.
 _TRAILING_SUBCLAUSE_STUB = re.compile(
     r"[,;]?\s*\b(?:since|because|although|though|while|unless|if|when|as|but|and|or|so)\b"
-    r"(?:\s+\S+){0,3}$",
+    r"(?:\s+\S+){0,5}$",
     re.I,
 )
 
@@ -209,6 +215,9 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     text = normalise_ws(text.replace("\n", " "))
     text = text.strip('"“”')
     text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
+    # Models sometimes end a line on an interrupted-style dash; that reads as a
+    # cut-off in the transcript, so drop it.
+    text = re.sub(r"\s*[—–-]+$", "", text).strip()
     text = _remove_generic_filler_tail(text)
     words = text.split()
     if len(words) <= max_words:
@@ -231,7 +240,10 @@ def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
     min_keep = max(4, round(max_words * 0.5))
     # A comma with digits on both sides is a thousands separator ("$40,000"),
     # never a clause boundary (P7): cutting there printed "…given the $40."
-    for m in re.finditer(r"(?<!\d),|,(?!\d)|;|\s[—–-]\s|\s--\s", window):
+    # An unspaced em/en dash between words ("growing on me—especially the bit")
+    # is a clause boundary too — models append clauses that way — but between
+    # digits it is a range ("25–51") and never a cut point.
+    for m in re.finditer(r"(?<!\d),|,(?!\d)|;|\s[—–-]\s|\s--\s|(?<!\d)[—–](?!\d)", window):
         prefix = window[: m.start()].rstrip(" ,;:")
         if len(prefix.split()) >= min_keep:
             clause_cut = prefix

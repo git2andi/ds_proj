@@ -17,6 +17,24 @@ During discussion, participants may:
 
 Local rhythm is enforced since 2026-07-06: a follow-up to an answer stays on the same point (agree/challenge/build, never a fresh ask), and once two questions are open in the recent window, statement-type acts are told to end on a statement. Direct Q→A adjacency stays strong; Q→A→new-question chains are the exception now.
 
+## Pacing (P9)
+
+Discussion length adapts to the conflict state instead of one fixed schedule:
+
+- A cast that starts on the same option gets a lower minimum
+  (`min_discussion_turns_per_participant − 1.5`, floor 3.0), so quick agreement
+  may close earlier.
+- Cast drive (mean engagement + 0.5·initiative) shifts the force/hard points by
+  ±0.5·n turns: an engaged, high-initiative group earns more free turns, a flat
+  one narrows sooner.
+- Split initial preferences and low compromise tendency still add the
+  contention/low-compromise extras.
+- At the forced-narrowing point, a run that is still multi-camp **and** has an
+  unaddressed open concern keeps discussing, bounded by the hard cap.
+
+Rough sanity ranges (not targets): n=2 8-18 turns, n=3-4 16-35, n=5-7 24-50.
+Observed targeted runs: n=2 19, n=3 26/31, n=4 36, n=5 45.
+
 ## Utterance length
 
 Verbosity affects average length, not every turn: the word-budget logic mixes in deterministic short beats for all sims. Realized target bands (validated in the 2026-07-06 suite, avg 12.4-16.4 words/turn overall):

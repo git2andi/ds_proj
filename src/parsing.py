@@ -46,26 +46,28 @@ _HEDGE = re.compile(
 )
 _COMMIT = re.compile(
     r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
-    r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"i'?m\s+choosing|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
+    r"i'?m\s+still\s+on\s+(?!the\s+fence)|i'?ll\s+stay\s+(?:with|on)|i'?ll\s+back\s+(?!down|off|out|up)|"
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
     r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|go\s+with|settle\s+on|pick|choose|"
-    r"i'?(?:d|ll)\s+switch\s+to|i\s+can\s+live\s+with|"
+    r"i'?(?:d|ll)\s+switch\s+to|i\s+can\s+live\s+with|i'?d\s+be\s+happy\s+with|"
     r"i\s+support|i\s+accept|i\s+can\s+support|i'?m\s+fine\s+with|fine\s+with|"
     r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
     re.I,
 )
 _SOFT_COMMIT = re.compile(
     r"\b(?:i\s+can\s+support|i\s+support|i\s+accept|i'?m\s+fine\s+with|fine\s+with|"
-    r"i\s+can\s+live\s+with|"
+    r"i\s+can\s+live\s+with|i'?d\s+be\s+happy\s+with|"
     r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
     re.I,
 )
 _DIRECT_VOTE = re.compile(
     r"\b(?:i\s+vote\s+for|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
-    r"i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"i'?m\s+choosing|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
+    r"i'?m\s+still\s+on\s+(?!the\s+fence)|i'?ll\s+stay\s+(?:with|on)|i'?ll\s+back\s+(?!down|off|out|up)|"
     r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
     r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
     r"i'?(?:d|ll)\s+switch\s+to|"
@@ -418,9 +420,15 @@ _PHRASE_FAMILIES: list[tuple[str, re.Pattern]] = [
     ("my vote is", re.compile(r"\bmy\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)\b", re.I)),
     ("I'd go with", re.compile(r"\bi'?(?:d|ll)\s+go\s+with\b", re.I)),
     ("I'm going with", re.compile(r"\bi'?m\s+going\s+with\b", re.I)),
+    ("I'm choosing", re.compile(r"\bi'?m\s+choosing\b|\bi\s+choose\b", re.I)),
     ("my pick is", re.compile(r"\bmy\s+pick\s+is\b|\bis\s+my\s+pick\b|\bthat'?s\s+my\s+pick\b", re.I)),
     ("my choice is", re.compile(r"\b(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+choice\b|\bmy\s+top\s+choice\s+is\b", re.I)),
     ("I vote for", re.compile(r"\bi\s+vote\s+for\b", re.I)),
+    ("I'm still on", re.compile(r"\bi'?m\s+still\s+on\b|\bmy\s+vote\s+stays\b", re.I)),
+    ("I'll stay with", re.compile(r"\bi'?ll\s+stay\s+(?:with|on)\b", re.I)),
+    ("I'll back", re.compile(r"\bi'?ll\s+back\b", re.I)),
+    ("I can live with", re.compile(r"\bi\s+can\s+live\s+with\b", re.I)),
+    ("I'd be happy with", re.compile(r"\bi'?d\s+be\s+happy\s+with\b", re.I)),
     ("works for me", re.compile(r"\bworks\s+(?:best\s+)?for\s+me\b", re.I)),
     ("let's go with", re.compile(r"\blet'?s\s+go\s+with\b", re.I)),
     ("I'm sold on", re.compile(r"\bi'?m\s+sold\s+on\b", re.I)),

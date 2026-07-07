@@ -142,7 +142,15 @@ The 2026-07-06 naturalness round (P1-P11) is complete and validated with the ful
 14. deterministic tripwires block hybrid option blends (HYBRID_COMPROMISE), malformed fragments (MALFORMED_UTTERANCE), and invented measurements whose unit class is not on the board, and the grounding judge got a strict off-board-specifics rule;
 15. vote turns are steered into parser-recognized commitment phrasings (UNCLEAR_VISIBLE_COMMITMENT repairs dropped to ~0).
 
-Remaining open items are two small monitoring notes (M1/M2) in `docs/todo.md`.
+The 2026-07-07 discourse round (P1-P9: naturalness, trait visibility, defensible outcomes) added:
+
+16. unresolved runs close socially: a participant acknowledgement beat names the contested options before the moderator/peer wrap-up, and narrowing can never move a sim to a visibly smaller camp (no ping-pong switches);
+17. traits shape delivery mid-discussion via compact `trait_color` labels (`challenge_directly`, `soften_and_bridge`, `bridge_condition`, and a once-per-run stubborn `restate_concern`), with act weights scaled by directness and compromise tendency;
+18. vote language varies inside the parser's vocabulary and is trait-fit ("I'm still on X" for stubborn stayers, "I can live with X" for compromising switchers, "I'd be happy with X" for agreeable ones), including the deterministic post-reservation beats;
+19. deterministic option-free micro-reactions ("Fair.", "Not convinced.") with state-derived polarity appear after answers/challenges, bounded per run and costing no LLM call;
+20. participant split summaries are trait-colored and the summary caller never answers their own holdout question;
+21. the private agenda defers to any hot local thread; personal anchors (1-2 per sim, trait-derived or manual) ground a preference or objection at most once per run; a derived `friendliness` parameter separates warm from dry voices;
+22. pacing adapts to conflict state: same-start casts may close sooner, engaged casts get more free turns, and a still-contested run holds off forced narrowing up to the hard cap.
 
 ## Dialogue behavior principles
 

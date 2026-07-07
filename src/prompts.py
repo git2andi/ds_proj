@@ -270,9 +270,18 @@ def sim_utterance(
     if intent.act.value in {"vote", "accept"}:
         # P9: steer vote lines into the parser's own commitment vocabulary — a
         # rotating menu of families not yet used this round, instead of pushing
-        # later voters into unparseable "variety".
-        pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=12)
-        suggestions = random.sample(pool, min(3, len(pool))) if pool else []
+        # later voters into unparseable "variety". P3: order that menu by trait
+        # fit (stubborn stayers "I'm still on", compromising switchers "I can
+        # live with", direct voters "I vote for"), so vote style reflects the
+        # participant, not just rotation.
+        pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=99)
+        staying = not intent.option_focus or intent.option_focus[0] == current
+        if not staying:
+            pool = [f for f in pool if f not in {"I'm still on", "I'll stay with"}]
+        preferred = [f for f in _trait_phrase_preferences(persona, staying) if f in pool]
+        rest = [f for f in pool if f not in preferred]
+        random.shuffle(rest)
+        suggestions = (preferred[:2] + rest)[:3]
         menu = ", ".join(f"'… {s} …'" for s in suggestions) if suggestions else "'… gets my vote'"
         decision_instruction = (
             f"\nFor this decision turn, commit clearly to exactly ONE option using a commitment phrasing "
@@ -317,6 +326,12 @@ def sim_utterance(
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
         agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
+    anchor_note = ""
+    if intent.anchor:
+        anchor_note = (
+            f"\nPersonal angle (yours, this once): {intent.anchor}. You may ground your point in it "
+            "naturally — one small personal reason, not a story, and no new facts about the options."
+        )
     settled_unknowns = ""
     # An issue earns suppression after its raise->"we don't know" pair played
     # out (mentions >= 2); the first raise is useful and gets answered normally.
@@ -345,6 +360,13 @@ def sim_utterance(
         tone_note = " Keep the wording soft and tentative."
     else:
         tone_note = ""
+    # Compact trait-derived delivery label (P2): one line, act-specific.
+    color_note = {
+        "challenge_directly": " Deliver the pushback plainly: one sharp, concrete objection, no 'fair point, but' preamble.",
+        "soften_and_bridge": " Disagree gently: briefly acknowledge what's right in their point first, then add your worry.",
+        "restate_concern": " Your earlier concern still stands — restate it in fresh words and hold your ground; do not drift into agreement.",
+        "bridge_condition": " Name the one concrete condition that would make this option acceptable to you.",
+    }.get(intent.trait_color or "", "")
     style_notes = ""
     if intent.suppress_tail_question:
         style_notes += "\n- Enough questions are already open; end with a statement, not a question."
@@ -366,7 +388,7 @@ def sim_utterance(
 Topic: {state.scenario.topic}
 Context: {context}
 Speaker: background={compact_words(persona.background, 16)}; goal={compact_words(persona.private_goal, 16)}; voice={voice}; initial={initial_name}; current={current_name}{blocked}
-Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
+Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{anchor_note}{target_block}{address}{decision_instruction}
 
 Allowed facts:
 {cards}
@@ -374,12 +396,12 @@ Allowed facts:
 Recent:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note}{color_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a
 # family in intent.avoid_phrases can be dropped from the repair menu (I19).
-# Every form parses as a direct vote in parsing.py.
+# Every form parses as a visible commitment in parsing.py.
 _COMMIT_FORM_EXAMPLES = {
     "I'd go with": "I'd go with X",
     "gets my vote": "X gets my vote",
@@ -388,8 +410,35 @@ _COMMIT_FORM_EXAMPLES = {
     "count me in for": "count me in for X",
     "my vote is": "my vote goes to X",
     "I'm going with": "I'm going with X",
+    "I'm choosing": "I'm choosing X",
     "I'm sold on": "I'm sold on X",
+    "I'll back": "then I'll back X",
+    "I can live with": "I can live with X",
+    "I'd be happy with": "I'd be happy with X",
 }
+
+
+def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
+    """Commitment-phrase families that fit this persona's traits and stance (P3).
+
+    Stay votes: stubborn sims hold ("I'm still on"), direct sims declare
+    ("I vote for"). Switch/accept votes: compromisers concede ("I can live
+    with"), agreeable or gentle sims warm ("I'd be happy with")."""
+    p = persona.sim_params
+    prefs: list[str] = []
+    if staying:
+        if p.stubbornness >= 0.60:
+            prefs += ["I'm still on", "I'll stay with"]
+        if p.directness >= 0.65:
+            prefs += ["I vote for", "gets my vote"]
+    else:
+        if p.compromise_threshold <= 0.40:
+            prefs += ["I can live with", "I'll back"]
+        if p.directness <= 0.35 or persona.traits.agreeableness >= 4:
+            prefs += ["I'd be happy with"]
+        if p.directness >= 0.65:
+            prefs += ["I'm going with"]
+    return prefs
 
 
 def repair_utterance(
@@ -572,6 +621,11 @@ def _voice_guidance(persona: Persona) -> str:
         parts.append("energetic, jumps in with opinions; the odd exclamation fits")
     elif p.engagement <= 0.35:
         parts.append("dry and minimal; only speaks when it adds something")
+    # Friendliness is tone, not stance (P8): warm sims cushion, dry sims don't.
+    if p.friendliness >= 0.72:
+        parts.append("warm: acknowledges others, upbeat framing (e.g. 'I like that idea, honestly.')")
+    elif p.friendliness <= 0.30:
+        parts.append("dry-toned: no warmth padding, skeptical shrugs (e.g. 'Fine, but it's not great.'), never rude")
     if p.verbosity <= 0.35:
         parts.append("clipped: fragments over full sentences (e.g. 'Games. Cheap, fun, done.')")
     elif p.verbosity >= 0.70:

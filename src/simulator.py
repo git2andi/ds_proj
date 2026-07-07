@@ -16,6 +16,8 @@ should not be implemented opportunistically.
 
 from __future__ import annotations
 
+import random
+
 from models import ActType, AgendaItem, AgendaStatus, Persona, SimulatorParameters, TraitProfile
 
 
@@ -34,7 +36,43 @@ def derive_simulator_parameters(traits: TraitProfile) -> SimulatorParameters:
         stubbornness=0.10 + 0.60 * (1.0 - agree01) + 0.30 * neuro01,
         directness=0.25 + 0.35 * consc01 + 0.25 * extra01 + 0.15 * (1.0 - agree01),
         compromise_threshold=1.0 - traits.compromise_willingness,
+        # P8: warmth is mostly agreeableness, tilted by extraversion; high
+        # neuroticism erodes it only when agreeableness is also low. Never
+        # hostility — low friendliness means dry/blunt-toned, still cooperative.
+        friendliness=0.20 + 0.50 * agree01 + 0.25 * extra01 - 0.20 * neuro01 * (1.0 - agree01),
     ).clipped()
+
+
+def derive_personal_anchors(traits: TraitProfile) -> list[str]:
+    """1-2 compact personal anchors from OCEAN traits (P7).
+
+    Deterministic pool, so anchors are trait-consistent and can never smuggle
+    invented scenario facts. They are small personal reasons ("budget-sensitive",
+    "prefers calm settings"), not backstories; the prompt offers one at most
+    once per discussion.
+    """
+    pool: list[str] = []
+    if traits.conscientiousness >= 4:
+        pool.append("prefers reliable, low-fuss choices that just work")
+        pool.append("has organized things like this before and knows where the annoying parts hide")
+    elif traits.conscientiousness <= 2:
+        pool.append("dislikes planning overhead — the organizing part is usually the worst part")
+    if traits.extraversion >= 4:
+        pool.append("cares a lot about the social atmosphere of whatever is picked")
+    elif traits.extraversion <= 2:
+        pool.append("prefers calm, low-key settings")
+    if traits.agreeableness >= 4:
+        pool.append("cares most that everyone can genuinely take part")
+    if traits.neuroticism >= 4:
+        pool.append("gets uneasy with uncertainty and last-minute changes")
+    if traits.openness >= 4:
+        pool.append("likes giving the less obvious choice a real chance")
+    elif traits.openness <= 2:
+        pool.append("sticks with what has worked before")
+    if not pool:
+        pool = ["budget-sensitive — money left over matters", "likes practical, low-effort choices"]
+    random.shuffle(pool)
+    return pool[:2]
 
 
 def expected_turn_share(personas: list[Persona]) -> dict[str, float]:

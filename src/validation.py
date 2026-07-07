@@ -327,10 +327,10 @@ class ValidationMixin:
     # lists no lengths at all). Common units (money, minutes, hours) are left
     # to the LLM judge because sims legitimately do arithmetic with them.
     _UNIT_NUMBER = re.compile(
-        r"\b\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?\s*"
+        r"\b\d+(?:[.,]\d+)?(?:\s*[-–]\s*\d+(?:[.,]\d+)?)?[\s-]*"
         r"(inches|inch|cm|centimeters?|meters?|metres?|feet|foot|km|kilometers?|miles?|"
         r"kg|kilograms?|grams?|lbs?|pounds?|liters?|litres?|ml|gb|tb|mb|mah|ghz|mhz|"
-        r"mph|kmh|acres?|watts?|volts?|floors?|stories|degrees?|seats?|rooms?|"
+        r"khz|hz|kbps|mbps|bits?|mph|kmh|mpg|db|decibels?|acres?|watts?|volts?|floors?|stories|degrees?|seats?|rooms?|"
         r"sessions?|workshops?|stations?|participants?|attendees?)\b",
         re.I,
     )

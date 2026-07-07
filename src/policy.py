@@ -198,7 +198,20 @@ class PolicyMixin:
 
         speaker = self._choose_speaker(state)
         agenda_pair = next_agenda_item(speaker)
-        if agenda_pair and random.random() < (0.25 + 0.25 * speaker.sim_params.initiative):
+        # P6: the agenda is a weak hint consulted only when the local
+        # conversation lacks direction. A hot thread — a question still on the
+        # floor, an answer nobody has reacted to yet, or an unaddressed open
+        # concern — always outranks a pending private goal, even when the
+        # probabilistic reactive rules above happened not to fire.
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        last_turn = participant_turns[-1] if participant_turns else None
+        last_act = (last_turn.intent.act if last_turn.intent else last_turn.act.act_type) if last_turn else None
+        thread_hot = bool(
+            (last_turn and "?" in last_turn.text)
+            or last_act == ActType.ANSWER
+            or any(c.addressed_by is None for c in state.open_concerns)
+        )
+        if agenda_pair and not thread_hot and random.random() < (0.15 + 0.25 * speaker.sim_params.initiative):
             agenda_index, agenda_item = agenda_pair
             act = agenda_item.act
             focus = [agenda_item.option] if agenda_item.option in state.scenario.option_ids else []
@@ -206,6 +219,49 @@ class PolicyMixin:
             agenda_index = None
             act = self._choose_discussion_act(state, speaker)
             focus = []
+
+        # P2: a high-stubbornness sim visibly preserves its core concern instead
+        # of letting it die after one exchange. Once per run, an ordinary turn
+        # becomes a restate: bring the strongest still-unfixed objection against
+        # a rival back in fresh words, holding the sim's own pick.
+        forced_reason: str | None = None
+        trait_color: str | None = None
+        rt = state.runtimes[speaker.id]
+        current = rt.current_preference or speaker.preferred_option
+        pressable = [
+            oid for oid in {*rt.soft_rejections, *rt.concerns_raised}
+            if oid in state.scenario.option_ids and oid != current
+        ]
+        if (
+            speaker.sim_params.stubbornness >= 0.70
+            and speaker.id not in state.restated_concerns
+            and act in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.CHALLENGE, ActType.ASK}
+            and participant_turn_count(state) >= len(state.personas) + 2
+            and random.random() < 0.80
+        ):
+            # Press a recorded objection when one exists; otherwise the largest
+            # rival camp. Nobody else leaning anywhere means nothing to press —
+            # the beat is skipped, not forced.
+            if pressable:
+                rival = max(pressable, key=lambda oid: self._visible_support_count(state, oid))
+            else:
+                camps = Counter(
+                    r.current_preference for r in state.runtimes.values()
+                    if r.current_preference in state.scenario.option_ids and r.persona_id != speaker.id
+                )
+                camps.pop(current, None)
+                rival = max(camps, key=lambda oid: camps[oid]) if camps else None
+            if rival:
+                state.restated_concerns.add(speaker.id)
+                aliases = short_alias_map(state.scenario.options)
+                act = ActType.CHALLENGE
+                focus = [rival] + ([current] if current in state.scenario.option_ids and current != rival else [])
+                forced_reason = (
+                    f"your core concern about {aliases[rival]} has not actually been answered — bring it "
+                    f"back in different words, tied to what was just said, and make clear you're not "
+                    f"moving off {aliases.get(current, current)} without a real answer"
+                )
+                trait_color = "restate_concern"
 
         target_turn = self._choose_target_turn(state, speaker, act)
         target_speaker = target_turn.speaker_id if target_turn and target_turn.speaker_id != "moderator" else None
@@ -220,8 +276,9 @@ class PolicyMixin:
         addressee = target_speaker if target_speaker and random.random() < address_probability else None
         if not focus:
             focus = self._focus_options(state, speaker, act, target_turn)
-        reason = self._reason_for_act(state, speaker, act, focus, target_turn)
-        moves_lean = act in {ActType.AGREE, ActType.PROPOSE_COMPROMISE} and bool(focus)
+        reason = forced_reason or self._reason_for_act(state, speaker, act, focus, target_turn)
+        if trait_color is None:
+            trait_color = self._trait_color(speaker, act)
         return MoveIntent(
             speaker_id=speaker.id,
             act=act,
@@ -230,6 +287,7 @@ class PolicyMixin:
             option_focus=focus,
             respond_to_turn=target_turn.index if target_turn else None,
             agenda_index=agenda_index,
+            trait_color=trait_color,
         )
 
     def _reactive_intent(self, state: DialogueState) -> MoveIntent | None:
@@ -359,6 +417,7 @@ class PolicyMixin:
                     ),
                     option_focus=focus,
                     respond_to_turn=last.index,
+                    trait_color=self._trait_color(speaker, act),
                 )
 
         # 4. Blocker probe: the leading option has an unresolved visible blocker;
@@ -617,9 +676,15 @@ class PolicyMixin:
         raw = dict(cfg.routing.move_weights.items())
         p = speaker.sim_params
         raw["ask"] = raw.get("ask", 0.0) * (0.75 + p.initiative)
-        raw["challenge"] = raw.get("challenge", 0.0) * (0.70 + p.stubbornness)
+        # Directness sharpens the mix toward pushback, not only stubbornness (P2).
+        raw["challenge"] = raw.get("challenge", 0.0) * (0.55 + 0.75 * p.stubbornness + 0.35 * p.directness)
         raw["agree"] = raw.get("agree", 0.0) * (0.60 + (1.0 - p.stubbornness))
         raw["invite"] = raw.get("invite", 0.0) * (0.50 + p.responsiveness)
+        # Compromise tendency shapes when bridges appear (P2): a compromising sim
+        # proposes common ground during discussion, a stubborn one resists
+        # narrowing moves instead of drifting into them by chance.
+        raw["propose_compromise"] = raw.get("propose_compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.compromise_threshold))
+        raw["soften"] = raw.get("soften", 0.0) * (0.50 + 1.00 * (1.0 - p.stubbornness))
         if self._recent_question_count(state) >= 1:
             raw["ask"] *= 0.25
         if participant_turn_count(state) >= max(state.min_discussion_turns, state.force_narrow_turns - 2):
@@ -738,6 +803,24 @@ class PolicyMixin:
         if act == ActType.PROPOSE_COMPROMISE and leading and leading not in ids:
             ids.insert(0, leading)
         return [x for x in ids if x in state.scenario.option_ids][:3]
+
+    @staticmethod
+    def _trait_color(persona: Persona, act: ActType) -> str | None:
+        """Compact trait-derived delivery label (P2), rendered as one prompt line.
+
+        Probability-gated so trait voice colors turns without templating them:
+        a direct sim usually challenges sharply, a gentle sim wraps disagreement
+        in acknowledgement, and a compromiser's bridge names its condition.
+        """
+        p = persona.sim_params
+        if act == ActType.CHALLENGE:
+            if p.directness >= 0.65 and random.random() < 0.8:
+                return "challenge_directly"
+            if p.directness <= 0.38 and random.random() < 0.8:
+                return "soften_and_bridge"
+        if act in {ActType.PROPOSE_COMPROMISE, ActType.SOFTEN} and p.compromise_threshold <= 0.42:
+            return "bridge_condition"
+        return None
 
     def _reason_for_act(self, state: DialogueState, speaker: Persona, act: ActType, focus: list[str], target_turn: TurnRecord | None) -> str:
         names = short_alias_map(state.scenario.options)
@@ -859,7 +942,15 @@ class PolicyMixin:
         if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
             return False
         if participant_turns >= state.force_narrow_turns:
-            return True
+            # P9: a genuinely contested discussion earns more room. While the
+            # cast is still split into camps AND a concern is actively being
+            # worked, hold the forced narrowing off — bounded by the hard cap
+            # checked above, so this extends a run by a few turns, never forever.
+            camps = {rt.current_preference for rt in state.runtimes.values() if rt.current_preference}
+            contested = len(camps) >= 2 and any(c.addressed_by is None for c in state.open_concerns)
+            if not contested:
+                return True
+            return False
         # Early narrowing needs visible transcript evidence, never latent
         # concentration (issue I5): a support cluster or a visibly proposed
         # compromise, with no open question or active blocker on the candidate.
@@ -1046,6 +1137,25 @@ class PolicyMixin:
         direct question, inviting a quiet participant, or a deliberate addressee
         keep their functional name use.
         """
+        # Personal anchor (P7): offered to at most one prompt per sim per run,
+        # on turns where a small personal reason naturally belongs — the opening
+        # preference statement, resistance, softening, or a compromise pitch.
+        persona = state.persona_by_id(intent.speaker_id)
+        if (
+            persona.anchors
+            and intent.speaker_id not in state.anchors_used
+            and not intent.continuation
+        ):
+            offer = (
+                intent.act == ActType.OPENING and random.random() < 0.35
+            ) or (
+                intent.act in {ActType.BUILD, ActType.CHALLENGE, ActType.SOFTEN, ActType.PROPOSE_COMPROMISE}
+                and random.random() < 0.22
+            )
+            if offer:
+                state.anchors_used.add(intent.speaker_id)
+                intent.anchor = random.choice(persona.anchors)
+
         names = [p.name for p in state.personas]
         # Leading names must do interactional work (P5): inviting someone in,
         # asking or challenging a specific person, or answering a specific

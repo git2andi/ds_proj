@@ -42,7 +42,7 @@ from models import (
 from parsing import OptionResolver
 from simulator import mark_agenda_done
 from style import strip_leading_name
-from utils import clean_generated, normalise_lines
+from utils import clean_generated, normalise_lines, weighted_choice
 from observer import ObserverMixin
 from policy import PolicyMixin
 from validation import ValidationMixin
@@ -107,6 +107,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
 
         outcome = ConsensusManager.finalize(state)
         state.outcome = outcome
+        if outcome.status == "unresolved":
+            self._emit_unresolved_acknowledgement(state, outcome)
         if self._mod("closing"):
             closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
             self._emit(self._append_moderator(state, closing, Phase.CLOSURE))
@@ -150,8 +152,84 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 if procedural is not None:
                     self._emit(self._generate_and_append(state, procedural))
                     continue
+            micro = self._maybe_micro_reaction(state)
+            if micro is not None:
+                self._emit(micro)
+                continue
             intent = self._route_discussion_turn(state)
             self._emit(self._generate_and_append(state, intent))
+
+    # Deterministic micro-reaction pools (P4). Every line is option-free, so the
+    # conservative parser can never read a vote, acceptance, or rejection into
+    # one; the beat is social texture, not a decision move.
+    _MICRO_AGREE = ["Same here.", "Exactly.", "Agreed.", "Good point.", "Yeah, that."]
+    _MICRO_CONCERN = ["That's my worry too.", "Yeah, that part bugs me too.", "Same concern here."]
+    _MICRO_RESIST = ["Not convinced.", "Hmm, I don't know.", "Yeah, but not for me.", "Still not sold."]
+    _MICRO_NEUTRAL = ["Fair.", "Makes sense.", "True.", "Okay, fair point."]
+
+    def _maybe_micro_reaction(self, state: DialogueState) -> TurnRecord | None:
+        """Occasional tiny chat reaction after an answer/challenge/agreement (P4).
+
+        Deterministic and bounded: a small per-run cap, never after a question
+        (the question deserves a real answer), never while a direct answer is
+        owed, and never stacking on another micro turn. The polarity comes from
+        visible state — a sim whose pick was just attacked resists, one whose
+        pick got support agrees — so even a two-word turn contributes socially.
+        """
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        n = len(state.personas)
+        if len(participant_turns) <= n:
+            return None
+        if state.micro_reaction_count >= max(2, n // 2 + 1):
+            return None
+        if self._active_obligation(state) is not None:
+            return None
+        last = participant_turns[-1]
+        if last.state_mutation_blocked or "?" in last.text or len(last.text.split()) <= 4:
+            return None
+        last_act = last.intent.act if last.intent else last.act.act_type
+        if last_act not in {ActType.ANSWER, ActType.CHALLENGE, ActType.AGREE, ActType.BUILD,
+                            ActType.PROPOSE_COMPROMISE, ActType.SOFTEN}:
+            return None
+        if random.random() >= 0.22:
+            return None
+        candidates = [p for p in state.personas if p.id != last.speaker_id]
+        if not candidates:
+            return None
+        speaker = weighted_choice(
+            candidates,
+            [0.3 + p.sim_params.engagement + 0.5 * p.sim_params.responsiveness for p in candidates],
+        )
+        rt = state.runtimes[speaker.id]
+        own = rt.current_preference or speaker.preferred_option
+        refs = last.act.option_refs
+        attacked_own = own in last.act.soft_rejects or own in last.act.hard_rejects or (
+            last_act == ActType.CHALLENGE and refs[:1] == [own]
+        )
+        supported_own = (
+            last.act.explicit_vote == own
+            or own in last.act.accepts
+            or (last_act in {ActType.BUILD, ActType.AGREE} and refs[:1] == [own])
+        )
+        if attacked_own:
+            pool = self._MICRO_RESIST
+        elif supported_own:
+            pool = self._MICRO_AGREE
+        elif last_act == ActType.CHALLENGE:
+            pool = self._MICRO_CONCERN
+        else:
+            pool = self._MICRO_NEUTRAL
+        used = set(rt.already_said)
+        fresh = [t for t in pool if t not in used] or pool
+        state.micro_reaction_count += 1
+        return self._append_peer_procedure(
+            state,
+            speaker,
+            random.choice(fresh),
+            ActType.REACT,
+            [],
+            phase=Phase.DISCUSSION,
+        )
 
     def _decision_loop(self, state: DialogueState) -> None:
         state.phase = Phase.NARROWING
@@ -399,7 +477,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             leader, dissenters, movers, meta = ranked[0]
             tested.add(leader)
             state.candidate_option = leader
-            self._emit_split_summary(state, leader, votes_by_id, attempt_index=attempt_index, meta=meta)
+            caller_id = self._emit_split_summary(state, leader, votes_by_id, attempt_index=attempt_index, meta=meta)
 
             # Ask concrete reservations before final switch/stay beats. Bound the
             # cost: first candidate may get two reservation/supporter pairs; the
@@ -411,6 +489,12 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 [p for p in dissenters if not self._hard_blocks_candidate(state, p, leader)],
                 key=lambda p: self._candidate_resistance(state, p, leader),
             )
+            # M2: the participant who just voiced the split summary must not be
+            # the first to answer it — they'd be replying to their own question.
+            # The addressed holdouts go first; the caller keeps their own
+            # reservation beat only after someone else responded.
+            if caller_id is not None:
+                ordered_holdouts.sort(key=lambda p: p.id == caller_id)
             for holdout in ordered_holdouts[:reservation_limit]:
                 self._split_reservation_exchange(state, holdout, leader)
 
@@ -543,6 +627,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             1 for t in state.turns
             if t.intent is not None and t.intent.act == ActType.POST_RESERVATION_DECISION
         )
+        p = persona.sim_params
         if outcome == "switch_candidate":
             variants = [
                 f"I still like {current_name}, but I'll switch to {candidate_name} — it's the clearest common ground now.",
@@ -550,6 +635,14 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 f"Count me in for {candidate_name} then — I'm letting {current_name} go.",
                 f"I'll go with {candidate_name} because I'd rather land this than keep circling; I can live with it over {current_name}.",
             ]
+            # Trait-flavored switch wording (P3): compromisers concede, reluctant
+            # movers say so, agreeable sims warm to it. All forms parse.
+            if p.compromise_threshold <= 0.40:
+                variants.insert(0, f"I can live with {candidate_name} — better that than circling on {current_name} all night.")
+            if p.stubbornness >= 0.50:
+                variants.insert(0, f"Not my first choice, but I'll back {candidate_name} over dragging this out.")
+            if persona.traits.agreeableness >= 4:
+                variants.insert(0, f"Honestly, I'd be happy with {candidate_name} too — I just liked {current_name} a bit more.")
         elif outcome == "switch_alternative":
             variants = [
                 f"I still prefer {current_name}, but I'd go with {target_name} as the concrete compromise — {candidate_name} doesn't solve my concern.",
@@ -562,14 +655,25 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 f"{current_name} still gets my vote — {candidate_name} hasn't fixed my main concern.",
                 f"My vote goes to {current_name}; {candidate_name} still leaves my main concern open.",
             ]
+            # Trait-flavored stay wording (P3): stubborn sims hold their line,
+            # direct sims say it flat.
+            if p.stubbornness >= 0.60:
+                variants.insert(0, f"I'm still on {current_name} — {candidate_name} doesn't fix my problem.")
+                variants.insert(1, f"I'll stay with {current_name}; nothing about {candidate_name} answers my concern.")
+            if p.directness >= 0.65:
+                variants.insert(0, f"{current_name} gets my vote — {candidate_name} doesn't solve my issue, simple as that.")
         text = variants[beat_index % len(variants)]
 
         act = self._parse_act(state, persona, text, intent)
         report = self._validate_turn_text(text, state, persona, intent, act)
+        trigger_codes = list(report.issues)
+        used_fallback = False
         if report.block_state_mutation:
             text = self._safe_fallback_text(state, persona, intent, report)
             act = self._parse_act(state, persona, text, intent)
             report = self._validate_turn_text(text, state, persona, intent, act)
+            used_fallback = True
+            state.fallback_turn_count += 1
         record = self._append_participant(
             state,
             persona,
@@ -580,9 +684,10 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             0,
             report.issues,
             False,
-            list(report.issues),
+            trigger_codes,
             report.block_state_mutation,
         )
+        record.used_fallback = used_fallback
         if not report.block_state_mutation:
             self._apply_semantics(state, record)
         else:
@@ -597,6 +702,11 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         rt = state.runtimes[persona.id]
         current = rt.explicit_vote or rt.current_preference or persona.preferred_option
         own_votes = sum(1 for vote in votes if vote == current)
+        # Never "compromise" downhill: switching to a camp visibly smaller than
+        # the sim's own breaks a forming majority and lets an ultra-flexible sim
+        # ping-pong between tested candidates across narrowing attempts (P1/P2).
+        if candidate_votes < own_votes:
+            return False
         # Visible majority pressure is the candidate's *net* advantage over the
         # sim's own camp (P6): a 1-1 deadlock or a 2-2 split is symmetric and
         # exerts none — there a switch must come from traits and eroded
@@ -672,13 +782,15 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         *,
         attempt_index: int = 0,
         meta: dict | None = None,
-    ) -> None:
-        """Visible, non-malformed split summary.
+    ) -> str | None:
+        """Visible, non-malformed split summary; returns the peer caller's id.
 
         The moderator owns exact procedural wording (vote counts, tested
         candidate). When no moderator vote-call exists, a participant owns the
         move instead and must sound like a group member (P1): no vote-count
         dumps, no candidate-testing vocabulary, and never addressing themself.
+        Returns None for the moderator form; the caller's persona id otherwise,
+        so the reservation ordering can avoid self-answering (M2).
         """
         aliases = short_alias_map(state.scenario.options)
         counts = Counter(votes_by_id.values())
@@ -709,8 +821,9 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                     f"{prefix}We are split: {split}. No option has a workable path yet, so let's name the blockers plainly."
                 )
             self._emit(self._append_moderator(state, text, Phase.NARROWING))
-            return
+            return None
         caller = self._procedural_speaker(state)
+        cp = caller.sim_params
         contested = [aliases[oid] for oid, _count in counts.most_common(3)]
         if len(contested) > 2:
             split_text = ", ".join(contested[:-1]) + " and " + contested[-1]
@@ -724,13 +837,35 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             ]
             if holdouts:
                 names = ", ".join(holdouts)
+                # Trait-colored narrowing (P5): the same functional move — name
+                # the plausible common ground, ask the holdouts what's in the
+                # way — worded like the caller, not like a controller script.
                 if attempt_index:
-                    text = f"Okay, other way around then: would {candidate_name} work? {names}, what still bothers you about it?"
+                    pool = [
+                        f"Okay, other way around then: would {candidate_name} work? {names}, what still bothers you about it?",
+                        f"Flip it then — say we go with {candidate_name}. {names}, what's the sticking point for you?",
+                    ]
                 else:
-                    text = (
+                    pool = [
                         f"Looks like we're still split between {split_text}. "
                         f"Could {candidate_name} work for everyone? {names}, what still bothers you about it?"
-                    )
+                    ]
+                    if cp.directness >= 0.65:
+                        pool.append(
+                            f"So it's {split_text} and nobody's moving. Would {candidate_name} actually work? "
+                            f"{names}, what's still in the way?"
+                        )
+                    if cp.compromise_threshold <= 0.45:
+                        pool.append(
+                            f"Feels like {candidate_name} is the one fewest of us mind. "
+                            f"{names}, what would still put you off?"
+                        )
+                    if cp.initiative >= 0.65:
+                        pool.append(
+                            f"Let's stop circling. If we said {candidate_name}, "
+                            f"{names}, what's the one thing that still bothers you?"
+                        )
+                text = random.choice(pool)
             else:
                 # The caller is the only visible holdout: voice it, don't poll it.
                 if attempt_index:
@@ -739,10 +874,12 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                     text = f"Seems like {candidate_name} has the most support and I'm the holdout — let me say what still bothers me about it."
             focus = [candidate]
         else:
-            text = (
+            text = random.choice([
                 f"We keep going back and forth between {split_text}. "
-                "Maybe everyone just says the one thing that's really blocking them."
-            )
+                "Maybe everyone just says the one thing that's really blocking them.",
+                f"Honestly, we're circling between {split_text}. "
+                "Can everyone name the single thing they can't get past?",
+            ])
             focus = [oid for oid, _count in counts.most_common(2)]
         state.procedural_move_count += 1
         self._emit(self._append_peer_procedure(
@@ -751,6 +888,68 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             text,
             ActType.SUMMARIZE_SPLIT,
             focus,
+        ))
+        return caller.id
+
+    def _emit_unresolved_acknowledgement(self, state: DialogueState, outcome) -> None:
+        """One participant beat that socially owns the deadlock before the close (P1).
+
+        Deterministic: which options stayed contested is a controller fact, and
+        the outcome is already finalized — this line is social closure, not a
+        new move (it is appended without semantics, so it can never be parsed
+        as a vote). Without it an unresolved run stops right after the last
+        vote line, which reads mechanical rather than earned.
+        """
+        aliases = short_alias_map(state.scenario.options)
+        votes = outcome.metadata.get("visible_votes", {})
+        counts = Counter(v for v in votes.values() if v in state.scenario.option_ids)
+        contested = [oid for oid, _c in counts.most_common(3)]
+        if len(contested) < 2:
+            latent = Counter(
+                rt.current_preference for rt in state.runtimes.values()
+                if rt.current_preference in state.scenario.option_ids
+            )
+            for oid, _c in latent.most_common():
+                if oid not in contested:
+                    contested.append(oid)
+                if len(contested) == 2:
+                    break
+        caller = self._procedural_speaker(state)
+        if len(state.personas) == 2 and len(contested) >= 2 and state.runtimes[caller.id].explicit_vote in contested:
+            mine = state.runtimes[caller.id].explicit_vote
+            theirs = contested[0] if contested[1] == mine else contested[1]
+            variants = [
+                f"I think we're just stuck — I'm staying on {aliases[mine]} and you're staying on {aliases[theirs]}.",
+                f"Then we probably shouldn't force it — {aliases[mine]} versus {aliases[theirs]} isn't resolving tonight.",
+            ]
+        elif len(contested) >= 3 and len(set(counts.values())) == 1:
+            a, b, c = (aliases[oid] for oid in contested[:3])
+            variants = [
+                f"I think we're genuinely stuck — {a}, {b} and {c} all still have support.",
+                f"We've gone back and forth enough; everyone's still on their own pick between {a}, {b} and {c}.",
+            ]
+        elif len(contested) >= 2:
+            a, b = aliases[contested[0]], aliases[contested[1]]
+            variants = [
+                f"I think we're genuinely stuck between {a} and {b}.",
+                f"Honestly, {a} and {b} both have someone who can't get on board — maybe we shouldn't force it.",
+                f"We've gone back and forth enough — {a} works for some of us, {b} for the rest.",
+            ]
+        elif contested:
+            a = aliases[contested[0]]
+            variants = [
+                f"{a} has the most support, but not all of us are sold on it.",
+                f"Seems like {a} is the closest we got, and it still isn't landing for everyone.",
+            ]
+        else:
+            variants = ["We've circled long enough without anyone landing on a pick."]
+        self._emit(self._append_peer_procedure(
+            state,
+            caller,
+            random.choice(variants),
+            ActType.REACT,
+            contested[:3],
+            phase=Phase.CLOSURE,
         ))
 
     def _emit_peer_closing(self, state: DialogueState, outcome) -> None:
@@ -780,7 +979,13 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             else:
                 text = f"Okay, then {aliases[final]} has the majority."
         else:
-            text = "Looks like we're not landing this one today."
+            # The unresolved acknowledgement beat (P1) already named the
+            # contested options, so this wrap-up stays short and personal.
+            text = random.choice([
+                "Looks like we're not landing this one today.",
+                "Okay, let's leave it here for now.",
+                "Agreed — better to leave it open than force it.",
+            ])
         self._emit(self._append_peer_procedure(
             state,
             caller,
@@ -1323,9 +1528,22 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         prefs = [p.preferred_option for p in state.personas]
         distinct = len(set(prefs))
         avg_compromise = sum(1.0 - p.sim_params.compromise_threshold for p in state.personas) / max(1, n)
-        min_turns = math.ceil(float(cfg.conversation.min_discussion_turns_per_participant) * n)
+        avg_drive = sum(p.sim_params.engagement + 0.5 * p.sim_params.initiative for p in state.personas) / max(1, n)
+        min_mult = float(cfg.conversation.min_discussion_turns_per_participant)
+        # P9: real discussions do not all take the same number of turns. A cast
+        # that already agrees may close sooner; a flat, low-drive cast narrows
+        # earlier; an engaged, high-initiative cast earns a few more free turns.
+        if distinct == 1:
+            min_mult = max(3.0, min_mult - 1.5)
+        min_turns = math.ceil(min_mult * n)
         target = math.ceil(float(cfg.conversation.target_discussion_turns_per_participant) * n)
         hard = math.ceil(float(cfg.conversation.max_discussion_turns_per_participant) * n)
+        if avg_drive >= 0.95:
+            target += max(1, round(0.5 * n))
+            hard += max(1, round(0.5 * n))
+        elif avg_drive <= 0.60:
+            target -= max(1, round(0.5 * n))
+            hard -= max(1, round(0.5 * n))
         if distinct > 1:
             target += int(cfg.conversation.contention_extra_turns)
             hard += int(cfg.conversation.contention_extra_turns)
@@ -1337,7 +1555,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         state.force_narrow_turns = max(state.min_discussion_turns + vote_buffer, target)
         state.hard_max_turns = max(state.force_narrow_turns + vote_buffer, hard)
         state.phase_history.append(
-            f"pacing: min={state.min_discussion_turns}, force={state.force_narrow_turns}, hard={state.hard_max_turns}, distinct_initial_prefs={distinct}, avg_compromise={avg_compromise:.2f}"
+            f"pacing: min={state.min_discussion_turns}, force={state.force_narrow_turns}, hard={state.hard_max_turns}, "
+            f"distinct_initial_prefs={distinct}, avg_compromise={avg_compromise:.2f}, avg_drive={avg_drive:.2f}"
         )
 
     def _mark_phase(self, state: DialogueState, phase: Phase, reason: str) -> None:

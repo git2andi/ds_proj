@@ -19,7 +19,7 @@ from aliases import validated_short_alias
 from config_loader import PROFILE_TRAIT_NAMES, cfg, parse_preference_shape
 from llm_client import get_llm_client
 from models import OptionCard, Persona, Scenario, SimulatorParameters, TraitProfile
-from simulator import build_initial_agenda, derive_simulator_parameters
+from simulator import build_initial_agenda, derive_personal_anchors, derive_simulator_parameters
 from utils import sample_int_range
 
 _TOPIC_COUNT_PATTERNS = [
@@ -617,6 +617,7 @@ class SetupBuilder:
                 rejection_reason=profile.get("rejection_reason", ""),
             )
             persona.agenda = build_initial_agenda(persona)
+            persona.anchors = list(profile.get("anchors") or derive_personal_anchors(traits))
             personas.append(persona)
         return personas
 
@@ -782,6 +783,7 @@ class SetupBuilder:
             rejection_reason=rejection_reason,
         )
         persona.agenda = build_initial_agenda(persona)
+        persona.anchors = list(profile.get("anchors") or derive_personal_anchors(traits))
         return persona
 
     @staticmethod

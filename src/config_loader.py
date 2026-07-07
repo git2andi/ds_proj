@@ -16,11 +16,11 @@ import yaml
 PROFILE_TRAIT_NAMES = ("openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism")
 PROFILE_PARAMETER_NAMES = (
     "engagement", "verbosity", "initiative", "responsiveness",
-    "stubbornness", "directness", "compromise_threshold",
+    "stubbornness", "directness", "compromise_threshold", "friendliness",
 )
 _PROFILE_FIELDS = frozenset({
     "name", "description", "private_goal", "preferred_option",
-    "rejection", "rejection_reason", "traits", "parameters",
+    "rejection", "rejection_reason", "traits", "parameters", "anchors",
 })
 
 # Field names accepted in a manual environment (environment.manual).
@@ -322,6 +322,12 @@ class Config(Section):
                     raise ValueError(f"{where}.parameters has unknown parameter {key!r}.")
                 if not (0.0 <= float(value) <= 1.0):
                     raise ValueError(f"{where}.parameters.{key} must be in [0, 1].")
+            anchors = profile.get("anchors")
+            if anchors is not None:
+                if not isinstance(anchors, list) or not all(isinstance(a, str) and a.strip() for a in anchors):
+                    raise ValueError(f"{where}.anchors must be a list of non-empty strings.")
+                if len(anchors) > 2:
+                    raise ValueError(f"{where}.anchors allows at most 2 personal anchors.")
         if len(set(names)) != len(names):
             raise ValueError("participants.profiles names must be unique.")
 

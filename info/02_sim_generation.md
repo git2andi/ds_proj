@@ -26,7 +26,24 @@ OCEAN/persona information is converted into operational parameters such as:
 - responsiveness: tendency to answer direct questions and react to others;
 - stubbornness: resistance to switching;
 - directness: explicitness of disagreement or preference;
-- compromise threshold: how much evidence/social pressure is needed before moving.
+- compromise threshold: how much evidence/social pressure is needed before moving;
+- friendliness (P8, derived): social tone — warm/encouraging vs dry/blunt-toned.
+  Derived as 0.20 + 0.50·agreeableness + 0.25·extraversion − 0.20·neuroticism·(1−agreeableness)
+  (all 0-1 normalized), overridable per manual profile via `parameters.friendliness`.
+  Low friendliness is never hostility or sabotage; it removes warmth padding,
+  it does not remove cooperation.
+
+## Personal anchors (P7)
+
+Each sim carries 1-2 compact personal anchors — small trait-consistent
+personal reasons like "budget-sensitive", "prefers calm, low-key settings", or
+"has organized things like this before". They are derived deterministically
+from OCEAN traits (`simulator.derive_personal_anchors`), so they can never
+smuggle invented scenario facts; manual profiles may override them with an
+`anchors:` list (max 2). The controller offers a sim's anchor to at most one
+prompt per run — the opening preference statement, or a resistance/softening/
+compromise turn — as a one-line "personal angle" note. Anchors are personal
+motivation, never option-board facts, and must not grow into backstories.
 
 ## Hard blockers and constraints
 
