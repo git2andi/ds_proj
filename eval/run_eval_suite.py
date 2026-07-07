@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""
+r"""
 Run a sequential evaluation suite for the option-grounded multi-user simulator.
 
 Usage from the project root:
 
-    py run_eval_suite.py --quick
-    py run_eval_suite.py --full
-    py run_eval_suite.py --list
+    py .\eval\run_eval_suite.py --quick
+    py .\eval\run_eval_suite.py --full
+    py .\eval\run_eval_suite.py --list
 
 The script temporarily overwrites config.yaml for each case, runs main.py, and
 restores the original config.yaml at the end, even if a run fails or you stop it.
 
-It writes all generated logs under logs_eval_suite/ so they are separated from
-normal interactive runs.
+It writes all generated logs under eval/logs_eval_suite/ so they are separated from
+normal interactive runs and kept with the evaluation scripts.
 """
 
 from __future__ import annotations
@@ -45,10 +45,10 @@ except ImportError as exc:
     ) from exc
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 MAIN_PATH = PROJECT_ROOT / "main.py"
-SUITE_LOG_DIR = PROJECT_ROOT / "logs_eval_suite"
+SUITE_LOG_DIR = PROJECT_ROOT / "eval" / "logs_eval_suite"
 SUMMARY_CSV = SUITE_LOG_DIR / "eval_suite_runs.csv"
 
 
@@ -104,7 +104,7 @@ def base_patch(
             "grounding_mode": grounding_mode,
         },
         "output": {
-            "log_dir": "logs_eval_suite",
+            "log_dir": "eval/logs_eval_suite",
             "write_prompts": False,
         },
         "limits": {
@@ -641,7 +641,7 @@ CASES: list[dict[str, Any]] = [
     {
         "id": "q02_manual_manual_no_moderator_peer_process",
         "suite": "quick",
-        "why": "Checks whether participants, not the moderator, can call for picks/probe/summarize.",
+        "why": "Checks whether no-moderator mode can still narrow with participant probes/summaries and visible votes.",
         "topic": "",
         "patch": deep_merge(
             base_patch(seed=102, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_NONE),
@@ -750,7 +750,7 @@ CASES: list[dict[str, Any]] = [
     {
         "id": "f06_auto_env_manual_participants_no_moderator",
         "suite": "full",
-        "why": "Auto environment plus fixed participants without moderator; peer procedure should be visible.",
+        "why": "Auto environment plus fixed participants without moderator; participant probes/summaries and visible votes should still work.",
         "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
         "patch": deep_merge(
             base_patch(seed=206, n=4, env_mode="auto", participants_mode="manual", moderator=MOD_NONE),
@@ -773,7 +773,7 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
     deep_merge(cfg, case["patch"])
 
     # Keep case logs separate inside the suite folder by using run metadata in stdout;
-    # the simulator itself creates timestamped subdirs under logs_eval_suite/.
+    # the simulator itself creates timestamped subdirs under eval/logs_eval_suite/.
     write_config(cfg)
 
     cmd = [sys.executable, str(MAIN_PATH)]
@@ -838,6 +838,19 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "split_reservation_exchanges": metrics.get("split_reservation_exchanges"),
         "two_person_deadlock_attempted": metrics.get("two_person_deadlock_attempted"),
         "unsupported_printed_turns": metrics.get("unsupported_printed_turns"),
+        "invalid_printed_turn_count": metrics.get("invalid_printed_turn_count"),
+        "repaired_turns": metrics.get("repaired_turns"),
+        "fallback_turns": metrics.get("fallback_turns"),
+        "visible_vote_count": metrics.get("visible_vote_count"),
+        "final_support_fraction": metrics.get("final_support_fraction"),
+        "final_blocker_violations": metrics.get("final_blocker_violations"),
+        "direct_response_rate": metrics.get("direct_response_rate"),
+        "concern_response_rate": metrics.get("concern_response_rate"),
+        "participation_gini": metrics.get("participation_gini"),
+        "repetition_score": metrics.get("repetition_score"),
+        "avg_words_per_turn": metrics.get("avg_words_per_turn"),
+        "short_turn_rate": metrics.get("short_turn_rate"),
+        "tiny_turn_rate": metrics.get("tiny_turn_rate"),
         "total_tokens_in": metrics.get("total_tokens_in"),
         "total_tokens_out": metrics.get("total_tokens_out"),
     }

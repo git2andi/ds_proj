@@ -72,7 +72,7 @@ class PolicyMixin:
                 # Nobody outside the candidate camp can even conditionally move.
                 # Testing this first would be a performative dead end.
                 continue
-            movable = [p for p in dissenters if p not in hard_blockers]
+            movable = [p for p in dissenters if p not in hard_blockers and not self._valid_holdout_against(state, p, candidate)]
             resistance = [self._candidate_resistance(state, p, candidate) for p in movable]
             avg_resistance = sum(resistance) / max(1, len(resistance))
             compromise_fit = sum(1.0 - p.sim_params.compromise_threshold for p in movable) / max(1, len(movable))
@@ -117,6 +117,34 @@ class PolicyMixin:
     def _hard_blocks_candidate(state: DialogueState, persona: Persona, candidate: str) -> bool:
         rt = state.runtimes[persona.id]
         return persona.rejection == candidate or candidate in rt.hard_rejections
+
+
+    @staticmethod
+    def _valid_holdout_against(state: DialogueState, persona: Persona, candidate: str) -> bool:
+        """Whether keeping dissent is more realistic than converting to consensus.
+
+        This protects majority outcomes: a sim that has visibly disliked the
+        candidate, has a strong current commitment, or is configured as
+        stubborn/low-compromise should not be converted just because a majority
+        exists. Hard blockers are handled separately by ``_hard_blocks_candidate``.
+        """
+        rt = state.runtimes[persona.id]
+        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        if candidate not in state.scenario.option_ids or current == candidate:
+            return False
+        if candidate in rt.soft_rejections:
+            return True
+        if any(c.raised_by == persona.id and c.option_id == candidate for c in state.open_concerns):
+            return True
+        strong_trait_resistance = (
+            persona.sim_params.stubbornness >= 0.72
+            or persona.sim_params.compromise_threshold >= 0.72
+        )
+        if strong_trait_resistance and rt.commitment_strength >= 0.62:
+            return True
+        if rt.commitment_strength >= 0.82 and candidate not in rt.accepted_options:
+            return True
+        return False
 
     @staticmethod
     def _candidate_resistance(state: DialogueState, persona: Persona, candidate: str) -> float:
@@ -198,11 +226,8 @@ class PolicyMixin:
 
         speaker = self._choose_speaker(state)
         agenda_pair = next_agenda_item(speaker)
-        # P6: the agenda is a weak hint consulted only when the local
-        # conversation lacks direction. A hot thread — a question still on the
-        # floor, an answer nobody has reacted to yet, or an unaddressed open
-        # concern — always outranks a pending private goal, even when the
-        # probabilistic reactive rules above happened not to fire.
+        # Private agenda is only a weak hint. A live local thread should win over
+        # introducing another topic.
         participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
         last_turn = participant_turns[-1] if participant_turns else None
         last_act = (last_turn.intent.act if last_turn.intent else last_turn.act.act_type) if last_turn else None
@@ -220,49 +245,6 @@ class PolicyMixin:
             act = self._choose_discussion_act(state, speaker)
             focus = []
 
-        # P2: a high-stubbornness sim visibly preserves its core concern instead
-        # of letting it die after one exchange. Once per run, an ordinary turn
-        # becomes a restate: bring the strongest still-unfixed objection against
-        # a rival back in fresh words, holding the sim's own pick.
-        forced_reason: str | None = None
-        trait_color: str | None = None
-        rt = state.runtimes[speaker.id]
-        current = rt.current_preference or speaker.preferred_option
-        pressable = [
-            oid for oid in {*rt.soft_rejections, *rt.concerns_raised}
-            if oid in state.scenario.option_ids and oid != current
-        ]
-        if (
-            speaker.sim_params.stubbornness >= 0.70
-            and speaker.id not in state.restated_concerns
-            and act in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.CHALLENGE, ActType.ASK}
-            and participant_turn_count(state) >= len(state.personas) + 2
-            and random.random() < 0.80
-        ):
-            # Press a recorded objection when one exists; otherwise the largest
-            # rival camp. Nobody else leaning anywhere means nothing to press —
-            # the beat is skipped, not forced.
-            if pressable:
-                rival = max(pressable, key=lambda oid: self._visible_support_count(state, oid))
-            else:
-                camps = Counter(
-                    r.current_preference for r in state.runtimes.values()
-                    if r.current_preference in state.scenario.option_ids and r.persona_id != speaker.id
-                )
-                camps.pop(current, None)
-                rival = max(camps, key=lambda oid: camps[oid]) if camps else None
-            if rival:
-                state.restated_concerns.add(speaker.id)
-                aliases = short_alias_map(state.scenario.options)
-                act = ActType.CHALLENGE
-                focus = [rival] + ([current] if current in state.scenario.option_ids and current != rival else [])
-                forced_reason = (
-                    f"your core concern about {aliases[rival]} has not actually been answered — bring it "
-                    f"back in different words, tied to what was just said, and make clear you're not "
-                    f"moving off {aliases.get(current, current)} without a real answer"
-                )
-                trait_color = "restate_concern"
-
         target_turn = self._choose_target_turn(state, speaker, act)
         target_speaker = target_turn.speaker_id if target_turn and target_turn.speaker_id != "moderator" else None
         # Direct addressing scales with group size (P3): with two people the
@@ -276,9 +258,8 @@ class PolicyMixin:
         addressee = target_speaker if target_speaker and random.random() < address_probability else None
         if not focus:
             focus = self._focus_options(state, speaker, act, target_turn)
-        reason = forced_reason or self._reason_for_act(state, speaker, act, focus, target_turn)
-        if trait_color is None:
-            trait_color = self._trait_color(speaker, act)
+        reason = self._reason_for_act(state, speaker, act, focus, target_turn)
+        moves_lean = act in {ActType.AGREE, ActType.PROPOSE_COMPROMISE} and bool(focus)
         return MoveIntent(
             speaker_id=speaker.id,
             act=act,
@@ -287,7 +268,6 @@ class PolicyMixin:
             option_focus=focus,
             respond_to_turn=target_turn.index if target_turn else None,
             agenda_index=agenda_index,
-            trait_color=trait_color,
         )
 
     def _reactive_intent(self, state: DialogueState) -> MoveIntent | None:
@@ -417,7 +397,6 @@ class PolicyMixin:
                     ),
                     option_focus=focus,
                     respond_to_turn=last.index,
-                    trait_color=self._trait_color(speaker, act),
                 )
 
         # 4. Blocker probe: the leading option has an unresolved visible blocker;
@@ -676,13 +655,9 @@ class PolicyMixin:
         raw = dict(cfg.routing.move_weights.items())
         p = speaker.sim_params
         raw["ask"] = raw.get("ask", 0.0) * (0.75 + p.initiative)
-        # Directness sharpens the mix toward pushback, not only stubbornness (P2).
         raw["challenge"] = raw.get("challenge", 0.0) * (0.55 + 0.75 * p.stubbornness + 0.35 * p.directness)
         raw["agree"] = raw.get("agree", 0.0) * (0.60 + (1.0 - p.stubbornness))
         raw["invite"] = raw.get("invite", 0.0) * (0.50 + p.responsiveness)
-        # Compromise tendency shapes when bridges appear (P2): a compromising sim
-        # proposes common ground during discussion, a stubborn one resists
-        # narrowing moves instead of drifting into them by chance.
         raw["propose_compromise"] = raw.get("propose_compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.compromise_threshold))
         raw["soften"] = raw.get("soften", 0.0) * (0.50 + 1.00 * (1.0 - p.stubbornness))
         if self._recent_question_count(state) >= 1:
@@ -804,24 +779,6 @@ class PolicyMixin:
             ids.insert(0, leading)
         return [x for x in ids if x in state.scenario.option_ids][:3]
 
-    @staticmethod
-    def _trait_color(persona: Persona, act: ActType) -> str | None:
-        """Compact trait-derived delivery label (P2), rendered as one prompt line.
-
-        Probability-gated so trait voice colors turns without templating them:
-        a direct sim usually challenges sharply, a gentle sim wraps disagreement
-        in acknowledgement, and a compromiser's bridge names its condition.
-        """
-        p = persona.sim_params
-        if act == ActType.CHALLENGE:
-            if p.directness >= 0.65 and random.random() < 0.8:
-                return "challenge_directly"
-            if p.directness <= 0.38 and random.random() < 0.8:
-                return "soften_and_bridge"
-        if act in {ActType.PROPOSE_COMPROMISE, ActType.SOFTEN} and p.compromise_threshold <= 0.42:
-            return "bridge_condition"
-        return None
-
     def _reason_for_act(self, state: DialogueState, speaker: Persona, act: ActType, focus: list[str], target_turn: TurnRecord | None) -> str:
         names = short_alias_map(state.scenario.options)
         focus_names = ", ".join(names[o] for o in focus) if focus else "the options"
@@ -876,7 +833,7 @@ class PolicyMixin:
     def _vote_intent(self, state: DialogueState, persona: Persona, candidate: str) -> MoveIntent:
         rt = state.runtimes[persona.id]
         blocked = persona.rejection == candidate or candidate in rt.hard_rejections
-        current = rt.current_preference or persona.preferred_option
+        current = self._stance_consistent_vote_target(state, persona, candidate)
         if blocked:
             # The alternative must actually be acceptable: never the blocked
             # candidate itself (even when the sim's lean is stuck on it) and
@@ -898,21 +855,27 @@ class PolicyMixin:
                 option_focus=[alternative, candidate] if alternative != candidate else [alternative],
                 length_hint="short",
                 allow_vote_change=True,
+                required_vote=alternative,
+                old_preference=current,
+                allowed_reason="the tested candidate is blocked, so this is the best acceptable option",
             )
         if self._should_compromise_to_candidate(state, persona, candidate):
             switching = current != candidate
+            allowed_reason = self._allowed_vote_reason(state, persona, candidate, current=current, switching=switching)
             return MoveIntent(
                 speaker_id=persona.id,
                 act=ActType.ACCEPT if switching else ActType.VOTE,
                 reason=(
-                    "others have visibly backed this option; commit to it clearly and add one short "
-                    "clause on why you can accept it"
+                    f"others have visibly backed this option; commit to it clearly and use this grounded reason: {allowed_reason}"
                     if switching
-                    else "make a clear visible commitment to the option you have been backing"
+                    else f"make a clear visible commitment to the option you have been backing; use this grounded reason: {allowed_reason}"
                 ),
                 option_focus=[candidate],
                 length_hint="short",
                 allow_vote_change=True,
+                required_vote=candidate,
+                old_preference=current,
+                allowed_reason=allowed_reason,
             )
         return MoveIntent(
             speaker_id=persona.id,
@@ -924,7 +887,42 @@ class PolicyMixin:
             option_focus=[current if current in state.scenario.option_ids else candidate],
             length_hint="short",
             allow_vote_change=True,
+            required_vote=current if current in state.scenario.option_ids else candidate,
+            old_preference=current if current in state.scenario.option_ids else None,
+            allowed_reason="this remains your most defensible choice from the visible discussion",
         )
+
+    def _stance_consistent_vote_target(self, state: DialogueState, persona: Persona, candidate: str | None = None) -> str:
+        """Best final-vote target consistent with this sim's visible stance.
+
+        The final vote should not silently revert to an old latent favorite after
+        the same sim visibly raised objections against it. This helper prefers
+        the current/accepted/preferred option only when it has not been rejected
+        by the speaker; otherwise it falls back to the best acceptable supported
+        option.
+        """
+        rt = state.runtimes[persona.id]
+        rejected = set(rt.soft_rejections) | set(rt.hard_rejections)
+        if persona.rejection:
+            rejected.add(persona.rejection)
+        def acceptable(oid: str | None) -> bool:
+            return bool(oid and oid in state.scenario.option_ids and oid not in rejected)
+        candidates: list[str | None] = [
+            rt.explicit_vote,
+            rt.current_preference,
+            *list(rt.accepted_options),
+            *persona.preferred_options,
+            candidate,
+        ]
+        visible = sorted(
+            state.scenario.option_ids,
+            key=lambda oid: (-self._visible_support_count(state, oid, exclude=persona.id), oid),
+        )
+        candidates.extend(visible)
+        for oid in candidates:
+            if acceptable(oid):
+                return str(oid)
+        return next((oid for oid in state.scenario.option_ids if oid != persona.rejection), state.scenario.option_ids[0])
 
     # ------------------------------------------------------------------
     # Generation, observation, and state mutation
@@ -942,15 +940,9 @@ class PolicyMixin:
         if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
             return False
         if participant_turns >= state.force_narrow_turns:
-            # P9: a genuinely contested discussion earns more room. While the
-            # cast is still split into camps AND a concern is actively being
-            # worked, hold the forced narrowing off — bounded by the hard cap
-            # checked above, so this extends a run by a few turns, never forever.
             camps = {rt.current_preference for rt in state.runtimes.values() if rt.current_preference}
             contested = len(camps) >= 2 and any(c.addressed_by is None for c in state.open_concerns)
-            if not contested:
-                return True
-            return False
+            return not contested
         # Early narrowing needs visible transcript evidence, never latent
         # concentration (issue I5): a support cluster or a visibly proposed
         # compromise, with no open question or active blocker on the candidate.
@@ -1034,23 +1026,43 @@ class PolicyMixin:
         voted for / accepted the candidate, or someone visibly proposed it as
         common ground. Latent lean concentration is not evidence (issue I4).
         """
-        if not self._can_shift_to(state, persona, candidate):
+        if not self._can_shift_to(state, persona, candidate) or self._valid_holdout_against(state, persona, candidate):
             return False
         rt = state.runtimes[persona.id]
+        unresolved_self_concern = any(
+            c.raised_by == persona.id and c.option_id == candidate and c.addressed_by is None
+            for c in state.open_concerns
+        )
+        if candidate in rt.soft_rejections or unresolved_self_concern:
+            return False
         if rt.current_preference == candidate:
             return True
         support = self._visible_support_count(state, candidate, exclude=persona.id)
         if support == 0 and not self._visibly_proposed(state, candidate):
             return False
         pressure = support / max(1, len(state.personas) - 1)
-        probability = 0.10 + 0.65 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
+        probability = 0.05 + 0.50 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
+        if candidate in rt.soft_rejections:
+            probability -= 0.25
         # Tracked stance state (issue 2): a sim whose hold on its favorite was
         # eroded by challenges/support pressure accepts the candidate more
         # readily; one that spent the discussion defending it resists longer.
         probability += 0.25 * (0.60 - rt.commitment_strength)
         if candidate in persona.preferred_options:
             probability += 0.15
-        return random.random() < min(0.95, probability)
+        return random.random() < min(0.82, probability)
+
+    def _allowed_vote_reason(self, state: DialogueState, persona: Persona, target: str, *, current: str | None, switching: bool) -> str:
+        if target in state.scenario.option_ids:
+            card = state.scenario.option(target)
+            if card.best_for:
+                return f"{card.name} fits {card.best_for}"
+            if card.upside:
+                return f"{card.name} offers {card.upside}"
+            if card.attrs:
+                key, value = next(iter(card.attrs.items()))
+                return f"{card.name} has {key.replace('_', ' ')} {value}"
+        return "it has the strongest visible support" if switching else "it matches your stated preference"
 
     @staticmethod
     def _visible_support_count(state: DialogueState, option_id: str, exclude: str | None = None) -> int:
@@ -1137,25 +1149,6 @@ class PolicyMixin:
         direct question, inviting a quiet participant, or a deliberate addressee
         keep their functional name use.
         """
-        # Personal anchor (P7): offered to at most one prompt per sim per run,
-        # on turns where a small personal reason naturally belongs — the opening
-        # preference statement, resistance, softening, or a compromise pitch.
-        persona = state.persona_by_id(intent.speaker_id)
-        if (
-            persona.anchors
-            and intent.speaker_id not in state.anchors_used
-            and not intent.continuation
-        ):
-            offer = (
-                intent.act == ActType.OPENING and random.random() < 0.35
-            ) or (
-                intent.act in {ActType.BUILD, ActType.CHALLENGE, ActType.SOFTEN, ActType.PROPOSE_COMPROMISE}
-                and random.random() < 0.22
-            )
-            if offer:
-                state.anchors_used.add(intent.speaker_id)
-                intent.anchor = random.choice(persona.anchors)
-
         names = [p.name for p in state.personas]
         # Leading names must do interactional work (P5): inviting someone in,
         # asking or challenging a specific person, or answering a specific

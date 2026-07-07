@@ -1,102 +1,45 @@
 # 08 — Configuration and running
 
-`config.yaml` is the main place for tunable behavior.
+`config.yaml` is the main control surface.
 
 ## Important sections
 
-- `llm`: provider, model, endpoint, sampling, timeouts.
+- `llm`: provider, model, endpoint, timeout, and sampling.
 - `environment`: auto/manual environment setup.
 - `participants`: auto/manual participant setup.
-- `simulation`: participant count, random seed, repair count.
-- `scenario`: option board shape and display limits.
-- `personas`: trait sampling, hard blockers, initial preference distribution.
-- `conversation`: pacing and vote turn caps.
-- `moderator`: visible moderator behavior.
-- `routing`: move weights and trait-weighted participation.
+- `simulation`: participant count, seed, retry/repair counts. Repairs are safeguards, not the normal decision-turn path.
+- `scenario`: option-board shape and display limits.
+- `personas`: trait sampling, hard-blocker probability, preference distribution.
+- `conversation`: pacing, option coverage, and vote caps.
+- `moderator`: visible moderator jobs.
+- `routing`: move weights and participation policy.
 - `style`: name/option/I/we opening suppression.
 - `utterances`: recent context and word budgets.
-- `validation`: turn validation and grounding checks.
+- `validation`: grounding and turn validation.
 - `output`: log paths and prompt dumping.
 
-## LLM provider
-
-For the next quality baseline, use:
-
-```yaml
-llm:
-  provider: "gpt"
-```
-
-Do not compare quality across providers unless provider comparison is the explicit task. Provider differences affect style, grounding, repair behavior, and option parsing.
-
-## Cost-related defaults
-
-The current defaults intentionally keep participant prompts compact:
-
-```yaml
-scenario.option_prompt_max_words: 34
-utterances.recent_turns_in_prompt: 4
-validation.grounding_mode: tripwire
-```
-
-Do not raise these casually. Larger context usually increases cost faster than it improves dialogue quality. The next quality round should mostly reduce turn length and improve deterministic state/routing.
-
-## Current tuning knobs
-
-Settled in the 2026-07-06 round (change only with fresh evidence):
-
-- `utterances.word_budgets`: opening 18, discussion 15, ask/answer 13, vote 11 — the controller scales these by verbosity/engagement and mixes in deterministic short beats (`policy._word_bounds`);
-- `routing.direct_address_probability` (0.32) is additionally scaled down by group size in the policy (x0.15 at n=2, x0.6 at n=3);
-- `style.name_prefix_max_fraction`: 0.3; n=2 suppresses non-functional name prefixes outright;
-- `routing.trait_share_adaptation` 3.5, `max_share_overshoot` 0.16, softened anti-monopoly damp: trait-shaped dominance, never monologue;
-- `personas.hard_blocker_probability`: hard blockers stay rare; manual profiles may pair a rejection with any explicit agreeableness;
-- `validation.grounding_mode`: keep tripwire; the judge is scoped to the options a line actually mentions.
-
-## Running normal simulations
+## Running
 
 ```powershell
 py .\main.py "Choose a restaurant for a group dinner"
-```
-
-For a topic file:
-
-```powershell
 py .\main.py scenarios.txt
+py .\eval\run_eval_suite.py --quick
+py .\eval\run_eval_suite.py --full
+py .\eval\run_eval_suite.py --list
 ```
 
 Manual environment mode ignores CLI topics and uses `environment.manual`.
 
-## Running evaluation
+## Recommended validation sequence
 
 ```powershell
-py .\run_eval_suite.py --quick
-py .\run_eval_suite.py --full
-py .\run_eval_suite.py --list
+py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
+py .\eval\run_eval_suite.py --quick
+py .\eval\run_eval_suite.py --full
 ```
 
-Use `--full` before claiming a behavioral issue is fixed.
+Run the full suite before treating v3 as stable.
 
-## Required mode coverage
+## v3 tuning caution
 
-Across an implementation round, test:
-
-```text
-auto environment + auto participants
-manual environment + auto participants
-auto environment + manual participants
-manual environment + manual participants
-```
-
-Also test:
-
-- n=2 direct-address and deadlock behavior;
-- n=3 three-way split;
-- n=4 trait spread;
-- n=5+ scaling and dominance;
-- full moderator;
-- no moderator;
-- light moderator.
-
-## Current validation focus
-
-Inspect whether `gpt` runs produce shorter, less template-like, more trait-shaped discussions without increasing repair/grounding cost.
+Do not add new knobs before checking whether existing ones already express the desired behavior. The current important behavioral knobs are engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise threshold. Final vote calls are moderator-owned again; peer self-closure was removed to keep the control flow explainable.

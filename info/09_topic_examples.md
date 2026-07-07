@@ -1,6 +1,6 @@
 # 09 — Topic examples
 
-Good topics for this simulator are small-group option-grounded decisions. They should invite tradeoffs but not require external facts.
+Good topics are small-group option-grounded decisions. They should invite tradeoffs but not require current external facts.
 
 ## Good examples
 
@@ -30,9 +30,9 @@ What should Germany do next year?
 Debate whether AI is good or bad.
 ```
 
-Those can be made suitable by turning them into bounded option decisions.
+These can be made suitable by turning them into bounded option decisions.
 
-## Useful stress-test topics
+## Stress-test topics
 
 For split-vote narrowing:
 
@@ -40,13 +40,13 @@ For split-vote narrowing:
 Choose a weekend activity where each participant values a different tradeoff.
 ```
 
-For grounding and repeated unknowns:
+For grounding:
 
 ```text
 Choose between activities with sparse option facts and no external logistics.
 ```
 
-For trait behavior and dominance:
+For trait behavior:
 
 ```text
 Choose a shared office purchase with one dominant organizer and one quiet participant.
@@ -58,18 +58,8 @@ For n=2 deadlock:
 Choose between two household purchases where both roommates are stubborn and prefer opposite options.
 ```
 
-For short turns and direct addressing:
-
-```text
-Choose a Friday dinner plan between two friends with different budgets.
-```
-
-For hard-blocker/manual constraint testing:
+For manual blockers:
 
 ```text
 Choose a restaurant where one manual participant has an explicit dietary constraint.
 ```
-
-## Topic design notes
-
-Do not use topics that force every participant to reject one option from the start unless the goal is a blocker test. In normal runs, participants should start with preferences that can move through discussion.

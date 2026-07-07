@@ -1,68 +1,76 @@
 # Option-grounded multi-user decision simulator
 
-This repository is a university project for generating configurable **multi-user decision discussions** with LLM-driven simulated participants.
+This repository generates configurable **multi-user decision discussions** with LLM-driven simulated participants.
 
-The intended scope is deliberately narrow:
+The project scope is deliberately narrow:
 
 ```text
-fixed option board + simulated group participants + visible discussion/voting outcome
+fixed option board + simulated participants + controller-routed discussion + visible decision outcome
 ```
 
-It is **not** a generic chatbot, open-ended group-chat bot, agenda-based user simulator, or society simulation. The option board is the factual source of truth. Simulated users may compare options, raise concerns, soften their stance, propose bounded compromises, and vote, but they should not invent concrete facts outside the environment.
+It is not a generic chatbot, full society simulation, or full Generative-Agents-style memory system. The option board is the factual source of truth. Sims may compare options, ask questions, raise concerns, soften, resist, compromise, and vote, but they must not invent concrete facts outside the configured environment.
 
-## Current project goal
+## v3 state
 
-Given either a one-line topic or a manual environment, the system should create a small group of 2-7 simulated users who discuss a set of option cards and reach one of three outcomes:
+v3 uses the clearer v1 codebase as the base and ports only selected v2 behavior fixes that directly support the project goal:
+
+- controller-selected, LLM-rendered post-reservation switch/stay decisions after split votes and majority holdout checks;
+- no downhill compromise: a sim should not switch from its own larger/equal visible camp into a weaker one just to force closure;
+- bounded tie compromise for flexible sims when no option has a strict lead;
+- unresolved acknowledgement before closure, so unresolved endings are socially legible rather than abrupt;
+- split-summary self-answer avoidance in no-/low-moderator rounds;
+- trait influence on routing: directness increases challenge tendency, compromise tendency increases bridge/soften moves;
+- agenda is a weak hint only; active questions, answers, and unresolved concerns outrank private agenda items;
+- vote wording is parser-safe, lightly trait-shaped, and validated against the controller-selected target;
+- observer fixes prevent false blockers on a sim's own current favorite;
+- final voting now avoids reverting to an old latent favorite that the same sim visibly objected to;
+- vote calls are moderator-owned again; participant self-closure was removed to keep the phase transition simple and explainable.
+
+v3 deliberately does **not** port v2's micro-reaction subsystem, friendliness parameter, personal anchors, or larger trait-colored wording subsystem. Those features added output texture but made the controller harder to explain.
+
+## Outcomes
+
+A run ends in exactly one of three outcome states:
 
 - `successful`: all visible final stances support the same option.
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no sufficient agreement remains after bounded narrowing.
 
-Do not introduce a fourth outcome for invalid consensus. If a participant cannot accept an option because of a hard blocker, hard constraint, or unresolved decisive concern, that should be visible in the transcript and the existing outcome logic should produce `majority` or `unresolved`.
+Outcomes are derived from visible transcript evidence only: explicit votes, acceptances, and parsed visible commitments. Hidden latent preferences may guide routing, but they should not decide the final result directly.
 
-The important claim is not merely that transcripts sound natural. The project should behave like a **configurable simulator**: participant parameters such as engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should visibly affect turn-taking, answer behavior, stance movement, and willingness to compromise.
-
-## Pipeline
-
-A run follows this high-level pipeline:
+## High-level pipeline
 
 ```text
 CLI topic or manual environment
-  -> option-grounded scenario / option board
+  -> scenario / option board
   -> automatic or manual simulated participants
-  -> controller selects speaker, target, act, and option focus
-  -> LLM renders one visible utterance
-  -> observer parses visible text and updates state
-  -> controller routes follow-ups, concerns, softening, votes, and narrowing
-  -> outcome is computed from visible votes/acceptances only
-  -> transcript, run.json, and metrics.csv are written
+  -> controller chooses speaker, target, act, and option focus
+  -> LLM renders one utterance
+  -> observer parses visible text and updates public state
+  -> controller routes follow-ups, concerns, narrowing, votes, and closure
+  -> consensus manager computes successful / majority / unresolved
+  -> transcript.md, run.json, metrics.csv are written
 ```
 
-The main modules are:
+## Main modules
 
-- `main.py`: CLI entrypoint. Accepts a topic, a topic file, piped topics, or a manual environment from `config.yaml`.
-- `src/config_loader.py`: validates the configuration and manual environment/participant modes.
-- `src/builders.py`: builds scenarios, option boards, shared context, and personas.
+- `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
+- `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases.
+- `config.yaml`: provider, environment, participant, pacing, routing, validation, and output settings.
+- `src/builders.py`: builds automatic/manual scenarios and participants.
 - `src/simulator.py`: converts persona traits into operational simulator parameters.
-- `src/dialogue.py`: orchestrates opening, discussion, vote rounds, narrowing, compromise, and closure.
-- `src/policy.py`: speaker selection, act selection, routing, vote readiness, and procedural moves.
-- `src/observer.py`: parses visible utterances into public state changes.
-- `src/validation.py`: validates turns, repairs invalid output, and runs grounding checks.
-- `src/prompts.py`: setup, participant, moderator, repair, and grounding prompts.
-- `src/consensus.py`: computes `successful`, `majority`, or `unresolved` from visible evidence.
-- `src/logger.py`: writes transcript, JSON trace, metrics, provider/model/mode metadata, and token diagnostics.
-- `src/evaluation.py`: computes dialogue and simulator-realization metrics.
-- `run_eval_suite.py`: sequential evaluation suite covering auto/manual environments, auto/manual participants, multiple group sizes, moderator modes, split votes, and grounding cases.
+- `src/dialogue.py`: orchestration loop for opening, discussion, voting, split narrowing, and closure.
+- `src/policy.py`: speaker choice, act choice, addressee choice, vote readiness, and procedural routing.
+- `src/observer.py`: visible-state updates from generated utterances.
+- `src/parsing.py`: option references, commitments, votes, rejections, and parser-safe phrase families.
+- `src/validation.py`: turn validation, parser/intent alignment, minimal fallback protection, and grounding checks.
+- `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts. Decision prompts deliberately use parser-friendly commitment wording so repair/fallback calls stay rare.
+- `src/consensus.py`: final outcome computation from visible evidence.
+- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, metrics, and token diagnostics.
 
 ## Running
 
-Activate the existing virtual environment for the project, then run:
-
-```powershell
-py .\main.py
-```
-
-For a single topic:
+Activate the existing project environment, then run:
 
 ```powershell
 py .\main.py "Choose a restaurant for a group dinner"
@@ -77,22 +85,12 @@ py .\main.py scenarios.txt
 For the evaluation suite:
 
 ```powershell
-py .\run_eval_suite.py --quick
-py .\run_eval_suite.py --full
+py .\eval\run_eval_suite.py --quick
+py .\eval\run_eval_suite.py --full
+py .\eval\run_eval_suite.py --list
 ```
 
-The suite temporarily overwrites `config.yaml`, runs cases sequentially, writes logs under `logs_eval_suite/`, writes `logs_eval_suite/eval_suite_runs.csv`, and restores the original config at the end.
-
-## LLM provider
-
-Use the `gpt` provider for the next dialogue-quality baseline unless explicitly testing provider differences.
-
-```yaml
-llm:
-  provider: "gpt"
-```
-
-The project also contains other provider paths for compatibility, but quality evaluation should not mix providers casually because provider differences affect style, grounding, and parsing behavior.
+The suite temporarily patches `config.yaml`, writes logs under `eval/logs_eval_suite/`, writes `eval/logs_eval_suite/eval_suite_runs.csv`, and restores the original config afterward.
 
 ## Configuration modes
 
@@ -106,7 +104,7 @@ participants:
   mode: auto | manual
 ```
 
-This creates four important test combinations:
+This gives four important test modes:
 
 ```text
 auto environment + auto participants
@@ -115,74 +113,33 @@ auto environment + manual participants
 manual environment + manual participants
 ```
 
-Manual environments define the option board and shared context deterministically. Manual participants define profiles, initial preferences, optional blockers, and optionally full parameter overrides. Fully manual environments plus complete manual profiles can skip setup LLM calls, but dialogue turns still use the LLM.
+Manual environments are best for controlled tests. Manual participants are best for checking trait behavior, blockers, and specific split-vote shapes.
 
-## Current quality focus
+## LLM provider
 
-The project already has the main literature-shaped architecture: environment setup, simulated participants, controller routing, addressee targeting, visible-state observation, validation/repair, and evaluation. The next improvements should therefore not add a large new subsystem.
+The default quality baseline is the configured `gpt` provider:
 
-The 2026-07-06 behavioral round made discussions shorter, more causally coherent, more trait-shaped, and cheaper to run. The mechanisms now in place:
+```yaml
+llm:
+  provider: "gpt"
+```
 
-1. trait-scaled word budgets with a deterministic short-beat mixture (avg ~13-16 words/turn, short turns for every sim) and clause-boundary salvage instead of mid-sentence chops;
-2. answer follow-ups develop the same thread instead of asking the next question; statement acts get a tail-question suppression flag;
-3. direct addressing scales with group size (rare name prefixes in n=2);
-4. dominance is judged on free discussion turns with softened anti-monopoly damping;
-5. manual profiles may combine an explicit hard constraint with any agreeableness; normal auto personas get preference wording, never absolutes;
-6. stance switches need net visible vote advantage or trait-level flexibility; a sim's own unanswered concerns add switch resistance;
-7. an issue ledger stops repeated "we still don't know about parking" loops after one raise + one answer;
-8. compromise proposals are pinned to one concrete option;
-9. grounding runs on a narrowed tripwire with option-scoped judging.
-
-The 2026-07-06 naturalness round (P1-P11) is complete and validated with the full 12-case suite. It added, on top of the earlier mechanisms:
-
-10. participant-owned split summaries and closings in low/no-moderator runs use natural group-member wording (exact vote-count summaries stay moderator-only), and subject-form vote lines ("X still gets my vote — Y hasn't fixed my concern") parse to the correct option instead of producing false unanimity;
-11. an answered point usually gets one same-thread reaction before a fresh issue opens; continuations inherit their own previous focus and never preempt a pending direct answer;
-12. genuinely short reaction beats appear for every sim (budget-aware one-beat prompting; `tiny_turn_rate` metric), while verbosity averages stay trait-shaped;
-13. leading person-names are functional-only and group-size-scaled; option-name openings are damped when context is clear;
-14. deterministic tripwires block hybrid option blends (HYBRID_COMPROMISE), malformed fragments (MALFORMED_UTTERANCE), and invented measurements whose unit class is not on the board, and the grounding judge got a strict off-board-specifics rule;
-15. vote turns are steered into parser-recognized commitment phrasings (UNCLEAR_VISIBLE_COMMITMENT repairs dropped to ~0).
-
-The 2026-07-07 discourse round (P1-P9: naturalness, trait visibility, defensible outcomes) added:
-
-16. unresolved runs close socially: a participant acknowledgement beat names the contested options before the moderator/peer wrap-up, and narrowing can never move a sim to a visibly smaller camp (no ping-pong switches);
-17. traits shape delivery mid-discussion via compact `trait_color` labels (`challenge_directly`, `soften_and_bridge`, `bridge_condition`, and a once-per-run stubborn `restate_concern`), with act weights scaled by directness and compromise tendency;
-18. vote language varies inside the parser's vocabulary and is trait-fit ("I'm still on X" for stubborn stayers, "I can live with X" for compromising switchers, "I'd be happy with X" for agreeable ones), including the deterministic post-reservation beats;
-19. deterministic option-free micro-reactions ("Fair.", "Not convinced.") with state-derived polarity appear after answers/challenges, bounded per run and costing no LLM call;
-20. participant split summaries are trait-colored and the summary caller never answers their own holdout question;
-21. the private agenda defers to any hot local thread; personal anchors (1-2 per sim, trait-derived or manual) ground a preference or objection at most once per run; a derived `friendliness` parameter separates warm from dry voices;
-22. pacing adapts to conflict state: same-start casts may close sooner, engaged casts get more free turns, and a still-contested run holds off forced narrowing up to the hard cap.
-
-## Dialogue behavior principles
-
-- Direct questions should usually be answered promptly by the addressed sim.
-- A response should not routinely open a fresh unrelated topic.
-- Speaking balance is not the target. Dominant sims may speak more if their traits support it.
-- Quiet sims should still appear enough for their stance to be visible.
-- Same-speaker continuations are allowed when they add new content rather than repeat.
-- Direct names are useful but should be less frequent, especially in n=2 runs.
-- Verbosity is an average tendency. All sims may have both short and longer turns.
-- Sims may propose conditional compromises, but one concrete option should remain the final winner.
-- Normal auto-generated sims should not receive categorical hard constraints unless the hard-blocker path is active.
-- Explicit/manual constraints such as allergies, strict dietary needs, accessibility needs, or budget ceilings should be respected even if the participant is agreeable.
+Provider comparisons should be explicit. Different providers change style, parsing reliability, grounding, and repair rates.
 
 ## Validation
 
-Before claiming a behavioral fix, run:
+Before claiming a behavioral fix, run at least:
 
 ```powershell
-py -m py_compile main.py run_eval_suite.py src\*.py
-py run_eval_suite.py --full
+py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
+py .\eval\run_eval_suite.py --quick
 ```
 
-Inspect transcripts manually. Key questions:
+Before treating a version as stable, run:
 
-- Are turns shorter and less summary-like?
-- Does Q→A adjacency work without creating question churn?
-- Is direct naming lower but still available when useful?
-- Does speaking dominance follow traits on free discussion turns?
-- Do stance switches have visible reasons?
-- Do hard blockers prevent false unanimity?
-- Do repeated unknown logistics disappear?
-- Do repair/grounding token costs stay controlled?
+```powershell
+py .\eval\run_eval_suite.py --full
+```
 
-Execution success alone is not enough. The transcript must read like a plausible option-grounded group decision.
+Then inspect transcripts manually. Metrics alone are insufficient; a run can have a good outcome label while the discussion still feels forced or under-argued.
+

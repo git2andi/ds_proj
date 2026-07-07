@@ -1,54 +1,24 @@
 # 04 — Moderator behavior
 
-The moderator is a configurable visible voice, not the whole controller. The hidden controller still manages state and routing whether or not the moderator appears in the transcript.
+The moderator is optional visible scaffolding. The controller still owns the decision policy even when the moderator voice is disabled.
 
-## Config flags
+## Configurable jobs
 
-`moderator:` in `config.yaml` controls visible moderator turns:
+The moderator can perform:
 
-```yaml
-moderator:
-  enabled: true | false
-  opening: true | false
-  mid_discussion_nudges: true | false
-  final_vote_call: true | false
-  closing: true | false
-```
+- opening / option board presentation;
+- occasional mid-discussion nudges;
+- final vote calls;
+- closing.
 
-## Fully moderated mode
+Disabling moderator turns should not disable routing, narrowing, vote logic, or outcome computation.
 
-The moderator can:
+## Low-/no-moderator mode
 
-- present the option board;
-- nudge stalled discussion;
-- call for final votes;
-- ask holdout/split-vote questions;
-- close the discussion.
+When final vote call or closing is disabled, participants own the procedural move. This should sound like a group member, not like a hidden controller.
 
-## Light/no-moderator modes
+v3 specifically fixes a no-moderator split issue: if a participant voices the split summary, the first reservation response should not be that same participant answering their own prompt.
 
-When moderator functions are reduced, participants should perform more procedural work. High-initiative participants may call for picks, ask holdouts, or summarize split positions.
+## Closure
 
-## Procedural style
-
-Moderator and participant-owned procedure should be short and concrete. It should not add unnecessary conversational bulk.
-
-Good procedural lines:
-
-```text
-We are split: A has two votes, B and C have one each. Let's test A first.
-```
-
-```text
-Can the two B voters live with A, or is that still blocked?
-```
-
-Bad procedural lines:
-
-```text
-Maybe we should all reflect again on the broader implications of the decision and consider whether there is some integrated solution.
-```
-
-## Current open issue
-
-Procedure exists, but it can still contribute to long, summary-like dialogue. Keep it deterministic where possible, but make it shorter. Candidate selection should follow visible support and blocker state.
+Unresolved outcomes now get a short participant acknowledgement before closure. This makes unresolved endings feel socially earned without changing the outcome after it has already been computed.

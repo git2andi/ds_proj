@@ -1,68 +1,38 @@
 # 07 — Evaluation and logging
 
-The project writes human-readable and structured logs for every run.
+Each run writes readable and structured artifacts.
 
 ## Outputs
 
-Each run writes:
+- `transcript.md`: human-readable setup, transcript, outcome, and metrics.
+- `run.json`: structured scenario, personas, turns, state metadata, and outcome.
+- `metrics.csv`: append-only summary rows.
+- optional prompt dump if `output.write_prompts` is enabled.
 
-- `transcript.md`: readable transcript with setup metadata and summary metrics;
-- `run.json`: full structured trace;
-- `metrics.csv`: append-only row of summary metrics;
-- optional prompts file if `output.write_prompts` is true.
+## Important metrics to inspect
 
-## Transcript metadata
-
-Transcripts should show enough metadata to inspect a run without opening JSON:
-
-- provider and model;
-- environment mode;
-- participant mode;
-- moderator flags;
-- random seed;
-- pacing caps;
-- outcome;
-- token summary.
-
-## Important existing metrics
-
-Inspect these after changes:
-
-- `outcome_status` / final option;
-- `visible_votes`;
-- `discussion_lean_shifts`;
-- `split_reservation_exchanges`;
-- `two_person_deadlock_attempted`;
-- `participant_procedural_moves`;
-- `peer_vote_call`;
-- `engagement_behavior_correlation`;
-- `unsupported_fact_flags`;
-- `unsupported_printed_turns`;
+- outcome status and final option;
+- visible votes;
+- split reservation exchanges;
+- two-person deadlock protocol use;
+- participant procedural moves;
+- question/answer completion;
+- turn share and engagement correlation;
+- average words by persona and act;
+- switch explanation / bridge rate;
+- unsupported fact flags and printed unsupported turns;
+- repair/fallback counts, which should stay low because decision prompts and validation are parser-aligned;
 - token usage by call type.
 
-## Diagnostic metrics added in the 2026-07-06 round
+## v3 validation focus
 
-- `avg_words_by_act` and `short_turn_rate` (share of turns <= 10 words);
-- `tail_question_rate`: questions tacked onto statement-type acts — the chaining signal (ask/invite/probe acts are exempt);
-- `free_discussion_share`, `top_free_discussion_share`, `free_discussion_engagement_correlation`: dominance judged on free discussion turns only;
-- `repeated_unknown_mentions` and `issue_ledger`: mentions of a practical unknown beyond its allowed raise+answer pair;
-- `final_blocker_violations`: a hard blocker counted as supporting their rejected option in the final tally — must always be 0.
-- `tiny_turn_rate` (naturalness round): share of participant turns <= 5 words; genuinely short reactions should exist (~0.05 suite average) without flattening verbosity averages.
+After running the quick/full suite, inspect transcripts for:
 
-New validation issue codes from the naturalness round (visible in `repair_trigger_codes`): `CONTINUATION_TOPIC_JUMP` (continuation named only options disjoint from its own previous point), `HYBRID_COMPROMISE` (compromise welded two options into one plan), `MALFORMED_UTTERANCE` (bare marker head or lone subordinate clause).
+- whether split votes are narrowed instead of closing abruptly;
+- whether successful outcomes are earned rather than forced;
+- whether holdouts visibly switch or stay with a concrete reason;
+- whether no-moderator procedural turns sound participant-owned;
+- whether local threads continue before new issues open;
+- whether traits influence behavior without creating obvious templates.
 
-Long-standing metrics (`avg_words_by_persona`, `verbosity_behavior_correlation`, `question_answer_completion`, `switch_explanation_rate`/`switch_bridge_rate`, `name_prefix_rate`, `unsupported_fact_flags`/`unsupported_printed_turns`, per-call-type token counts) remain the regression baseline. Known artifact: `switch_explanation_rate` under-counts em-dash reason clauses (todo O4).
-
-## Metrics interpretation
-
-Balanced participation is not automatically good. A low inequality score can mean the controller flattened trait behavior. Dominance is acceptable when it follows engagement/initiative and does not become repetitive.
-
-Opening and final vote rounds should usually be excluded from trait-realization analysis because they intentionally give everyone a visible stance.
-
-## Suite CSV caution
-
-If metric schema changes, do not mix old and new `metrics.csv` rows without a clear header/version. Historical append-only CSVs can contain stale columns or repeated headers.
-
-## Current validation focus
-
-After running `py run_eval_suite.py --full`, compare transcripts manually against metrics. Do not claim a fix based only on an improved number.
+Metrics are useful but not sufficient. Manual transcript review is required.

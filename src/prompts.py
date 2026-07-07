@@ -257,6 +257,10 @@ def sim_utterance(
     current = state.runtimes[persona.id].current_preference or persona.preferred_option
     current_name = aliases.get(current, state.scenario.option(current).name if current in state.scenario.option_ids else "undecided")
     initial_name = aliases.get(persona.preferred_option, persona.preferred_option)
+    required_name = aliases.get(intent.required_vote, intent.required_vote) if intent.required_vote else ""
+    old_required = intent.old_preference or current
+    old_name = aliases.get(old_required, old_required) if old_required else current_name
+    allowed_reason = intent.allowed_reason or "the listed facts and visible support make it workable"
     blocked = ""
     if persona.rejection:
         blocked = f"\nHard blocker: they strongly reject {aliases.get(persona.rejection, persona.rejection)} because {persona.rejection_reason}. Do not accept or vote for that option."
@@ -270,10 +274,9 @@ def sim_utterance(
     if intent.act.value in {"vote", "accept"}:
         # P9: steer vote lines into the parser's own commitment vocabulary — a
         # rotating menu of families not yet used this round, instead of pushing
-        # later voters into unparseable "variety". P3: order that menu by trait
-        # fit (stubborn stayers "I'm still on", compromising switchers "I can
-        # live with", direct voters "I vote for"), so vote style reflects the
-        # participant, not just rotation.
+        # later voters into unparseable "variety". Order the phrase menu by
+        # trait fit so vote wording reflects stubbornness/directness/compromise
+        # without adding a separate personality subsystem.
         pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=99)
         staying = not intent.option_focus or intent.option_focus[0] == current
         if not staying:
@@ -283,9 +286,14 @@ def sim_utterance(
         random.shuffle(rest)
         suggestions = (preferred[:2] + rest)[:3]
         menu = ", ".join(f"'… {s} …'" for s in suggestions) if suggestions else "'… gets my vote'"
+        if intent.required_vote:
+            target_clause = f"commit clearly to {required_name} and no other option"
+        else:
+            target_clause = "commit clearly to exactly ONE option"
         decision_instruction = (
-            f"\nFor this decision turn, commit clearly to exactly ONE option using a commitment phrasing "
-            f"such as {menu} (fill in the option name yourself). One short reason may follow the commitment. "
+            f"\nFor this decision turn, {target_clause} using a commitment phrasing "
+            f"such as {menu} (fill in the option name yourself). Put the final option immediately next to the commitment phrase, "
+            "preferably at the start of the sentence. One short reason may follow the commitment. "
             "No hedging, no 'leaning', no conditions, no question after it."
         )
         if intent.avoid_phrases:
@@ -296,13 +304,22 @@ def sim_utterance(
             decision_instruction += f"\nEarlier voters already gave these justifications — give a DIFFERENT reason of your own, in your own words: {used}."
         if intent.allow_vote_change:
             decision_instruction += (
-                f"\nIf you move to a different option than {current_name}, you MUST bridge the switch: "
-                f"briefly name that you preferred {current_name} (or concede it, e.g. 'I still like…, but…') "
-                "and give one honest reason you can move now. A short concessive clause is fine here; a "
-                "fresh condition or question is not."
+                f"\nIf this commits to a different option than {old_name}, the controller has selected: "
+                f"old preference={old_name}; final vote={required_name or 'the chosen option'}; allowed reason={allowed_reason}. "
+                "Use one sentence. Start with the final vote, then briefly acknowledge the old preference, then give the allowed reason. "
+                "Example shape only, not fixed wording: 'I vote for FINAL; I preferred OLD, but REASON.' "
+                "Do not add any other factual reason, condition, or pressure language."
             )
     elif intent.act.value == "post_reservation_decision":
-        decision_instruction = "\nThis is a post-reservation decision. Choose exactly one visible outcome: switch to the tested option, stay with your current pick, or switch to one concrete alternative. Use an explicit form such as 'I switch to X because…' or 'My vote stays with Y because…'. No maybe/leaning/unsure wording and no new facts."
+        if intent.required_vote:
+            decision_instruction = (
+                f"\nThis is a post-reservation decision. The controller selected: old preference={old_name}; final vote={required_name}; allowed reason={allowed_reason}. "
+                f"Commit clearly to {required_name} and no other option. Put {required_name} immediately next to the commitment phrase. "
+                f"If {required_name} differs from {old_name}, use one sentence that starts with the final vote, then mentions {old_name}, then gives only the allowed reason in your own wording. "
+                "If they are the same, state the remaining blocker using only the allowed reason. No maybe/leaning/unsure wording and no new facts."
+            )
+        else:
+            decision_instruction = "\nThis is a post-reservation decision. Choose exactly one visible outcome: switch to the tested option, stay with your current pick, or switch to one concrete alternative. Use an explicit form such as 'I switch to X because…' or 'My vote stays with Y because…'. No maybe/leaning/unsure wording and no new facts."
     elif intent.act.value == "reject":
         decision_instruction = "\nFor this decision turn, visibly reject the blocked option and name the acceptable alternative if there is one."
     elif intent.act.value == "answer":
@@ -326,12 +343,6 @@ def sim_utterance(
     if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
         item = persona.agenda[intent.agenda_index]
         agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
-    anchor_note = ""
-    if intent.anchor:
-        anchor_note = (
-            f"\nPersonal angle (yours, this once): {intent.anchor}. You may ground your point in it "
-            "naturally — one small personal reason, not a story, and no new facts about the options."
-        )
     settled_unknowns = ""
     # An issue earns suppression after its raise->"we don't know" pair played
     # out (mentions >= 2); the first raise is useful and gets answered normally.
@@ -360,13 +371,6 @@ def sim_utterance(
         tone_note = " Keep the wording soft and tentative."
     else:
         tone_note = ""
-    # Compact trait-derived delivery label (P2): one line, act-specific.
-    color_note = {
-        "challenge_directly": " Deliver the pushback plainly: one sharp, concrete objection, no 'fair point, but' preamble.",
-        "soften_and_bridge": " Disagree gently: briefly acknowledge what's right in their point first, then add your worry.",
-        "restate_concern": " Your earlier concern still stands — restate it in fresh words and hold your ground; do not drift into agreement.",
-        "bridge_condition": " Name the one concrete condition that would make this option acceptable to you.",
-    }.get(intent.trait_color or "", "")
     style_notes = ""
     if intent.suppress_tail_question:
         style_notes += "\n- Enough questions are already open; end with a statement, not a question."
@@ -388,7 +392,7 @@ def sim_utterance(
 Topic: {state.scenario.topic}
 Context: {context}
 Speaker: background={compact_words(persona.background, 16)}; goal={compact_words(persona.private_goal, 16)}; voice={voice}; initial={initial_name}; current={current_name}{blocked}
-Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{anchor_note}{target_block}{address}{decision_instruction}
+Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
 
 Allowed facts:
 {cards}
@@ -396,12 +400,12 @@ Allowed facts:
 Recent:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note}{color_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a
 # family in intent.avoid_phrases can be dropped from the repair menu (I19).
-# Every form parses as a visible commitment in parsing.py.
+# Every form parses as a direct vote in parsing.py.
 _COMMIT_FORM_EXAMPLES = {
     "I'd go with": "I'd go with X",
     "gets my vote": "X gets my vote",
@@ -419,11 +423,7 @@ _COMMIT_FORM_EXAMPLES = {
 
 
 def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
-    """Commitment-phrase families that fit this persona's traits and stance (P3).
-
-    Stay votes: stubborn sims hold ("I'm still on"), direct sims declare
-    ("I vote for"). Switch/accept votes: compromisers concede ("I can live
-    with"), agreeable or gentle sims warm ("I'd be happy with")."""
+    """Commitment phrase families that fit the current stance and traits."""
     p = persona.sim_params
     prefs: list[str] = []
     if staying:
@@ -434,7 +434,7 @@ def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
     else:
         if p.compromise_threshold <= 0.40:
             prefs += ["I can live with", "I'll back"]
-        if p.directness <= 0.35 or persona.traits.agreeableness >= 4:
+        if persona.traits.agreeableness >= 4 or p.directness <= 0.35:
             prefs += ["I'd be happy with"]
         if p.directness >= 0.65:
             prefs += ["I'm going with"]
@@ -454,8 +454,22 @@ def repair_utterance(
     focus = [state.scenario.option(o) for o in intent.option_focus if o in state.scenario.option_ids]
     cards = _option_cards(focus or state.scenario.options)
     recent = "\n".join(recent_lines[-3:]) if recent_lines else "(no recent turns)"
+    aliases = short_alias_map(state.scenario.options)
+    required_name = aliases.get(intent.required_vote, intent.required_vote) if intent.required_vote else ""
+    current = state.runtimes[persona.id].current_preference or persona.preferred_option
+    old_required = intent.old_preference or current
+    old_name = aliases.get(old_required, old_required) if old_required else "your earlier pick"
+    allowed_reason = intent.allowed_reason or "the listed facts make it workable"
     clear_commit = ""
-    if intent.act.value in {"vote", "accept"}:
+    if intent.required_vote and intent.act.value in {"vote", "accept", "post_reservation_decision", "reject"}:
+        clear_commit = (
+            f" The line MUST visibly commit to {required_name} and no other option. "
+            f"If this is a switch away from {old_name}, mention {old_name} and {required_name}. "
+            f"Use only this allowed reason, paraphrased naturally: {allowed_reason}. "
+            "Use a clear parser-friendly phrase such as 'I vote for X', 'X gets my vote', "
+            "'I'm going with X', or 'I can live with X'. No hedging, no conditions, no question after it."
+        )
+    elif intent.act.value in {"vote", "accept"}:
         # Offer only commitment forms not yet used this round / by this speaker,
         # in shuffled order, so repaired vote turns stop converging on one
         # fixed menu (I19).
@@ -471,6 +485,8 @@ def repair_utterance(
     required_focus = ""
     if intent.option_focus and "MISSING_REQUIRED_OPTION_FOCUS" in issue_codes:
         required_focus = f" Mention and discuss Option {intent.option_focus[0]} explicitly."
+    if intent.required_vote and "REQUIRED_VOTE_MISMATCH" in issue_codes:
+        required_focus += f" Your previous line committed to the wrong option; commit to {required_name} instead."
     grounding = ""
     if "UNSUPPORTED_FACT" in issue_codes:
         grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
@@ -492,13 +508,10 @@ def repair_utterance(
         )
     bridge = ""
     if "UNBRIDGED_SWITCH" in issue_codes:
-        aliases = short_alias_map(state.scenario.options)
-        current = state.runtimes[persona.id].current_preference or persona.preferred_option
-        old_name = aliases.get(current, current)
         bridge = (
-            f" The line switches away from {old_name} (your earlier pick) with no explanation. "
-            f"Keep the new commitment, but bridge it: name that you preferred {old_name} or concede it "
-            "(e.g. 'I still like…, but…'), and give one honest reason you can move now."
+            f" The line switches away from {old_name} with no valid bridge. "
+            f"Keep the required commitment to {required_name or 'the target option'}, mention the earlier pick {old_name}, "
+            f"and use only this reason: {allowed_reason}. Vary the wording naturally; do not use a fixed template."
         )
     return f"""Repair this generated chat line.
 
@@ -621,11 +634,6 @@ def _voice_guidance(persona: Persona) -> str:
         parts.append("energetic, jumps in with opinions; the odd exclamation fits")
     elif p.engagement <= 0.35:
         parts.append("dry and minimal; only speaks when it adds something")
-    # Friendliness is tone, not stance (P8): warm sims cushion, dry sims don't.
-    if p.friendliness >= 0.72:
-        parts.append("warm: acknowledges others, upbeat framing (e.g. 'I like that idea, honestly.')")
-    elif p.friendliness <= 0.30:
-        parts.append("dry-toned: no warmth padding, skeptical shrugs (e.g. 'Fine, but it's not great.'), never rude")
     if p.verbosity <= 0.35:
         parts.append("clipped: fragments over full sentences (e.g. 'Games. Cheap, fun, done.')")
     elif p.verbosity >= 0.70:

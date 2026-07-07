@@ -1,68 +1,38 @@
 # 02 — Sim generation and participant parameters
 
-A sim is a configurable participant in the group decision. Sims are not just names in a prompt; their traits and parameters should influence observable behavior.
+A sim is a configurable participant, not just a name inserted into a prompt. Traits and operational parameters should influence observable behavior.
 
 ## Modes
 
 `participants.mode = auto`:
 
-- participants are sampled/generated automatically;
-- traits, private goals, and initial preferences are assigned;
-- useful for demos and varied runs.
+- names, traits, initial preferences, backgrounds, and goals are generated/sampled;
+- useful for varied runs and demos.
 
 `participants.mode = manual`:
 
 - profiles are provided in `config.yaml`;
 - complete profiles can skip the persona setup LLM call;
-- this is the main mode for controlled behavior tests.
+- useful for controlled tests of traits, blockers, and split votes.
 
 ## Operational parameters
 
-OCEAN/persona information is converted into operational parameters such as:
+The relevant simulator parameters are:
 
-- engagement: how often the sim enters the discussion;
-- verbosity: expected average utterance length;
-- initiative: tendency to propose, summarize, call votes, or drive procedure;
-- responsiveness: tendency to answer direct questions and react to others;
-- stubbornness: resistance to switching;
-- directness: explicitness of disagreement or preference;
-- compromise threshold: how much evidence/social pressure is needed before moving;
-- friendliness (P8, derived): social tone — warm/encouraging vs dry/blunt-toned.
-  Derived as 0.20 + 0.50·agreeableness + 0.25·extraversion − 0.20·neuroticism·(1−agreeableness)
-  (all 0-1 normalized), overridable per manual profile via `parameters.friendliness`.
-  Low friendliness is never hostility or sabotage; it removes warmth padding,
-  it does not remove cooperation.
+- `engagement`: tendency to participate;
+- `verbosity`: average turn length;
+- `initiative`: tendency to drive procedure or propose moves;
+- `responsiveness`: tendency to answer and react;
+- `stubbornness`: resistance to switching;
+- `directness`: likelihood of explicit pushback;
+- `compromise_threshold`: how much evidence/social pressure is needed before moving.
 
-## Personal anchors (P7)
+## v3 stance on personality
 
-Each sim carries 1-2 compact personal anchors — small trait-consistent
-personal reasons like "budget-sensitive", "prefers calm, low-key settings", or
-"has organized things like this before". They are derived deterministically
-from OCEAN traits (`simulator.derive_personal_anchors`), so they can never
-smuggle invented scenario facts; manual profiles may override them with an
-`anchors:` list (max 2). The controller offers a sim's anchor to at most one
-prompt per run — the opening preference statement, or a resistance/softening/
-compromise turn — as a one-line "personal angle" note. Anchors are personal
-motivation, never option-board facts, and must not grow into backstories.
+v3 intentionally avoids adding extra personality layers such as `friendliness` or personal anchors. Traits should affect behavior first: who speaks, what act they choose, how resistant they are, and whether they can compromise. Wording variation is secondary and kept small.
 
-## Hard blockers and constraints
+## Hard blockers
 
-`personas.hard_blocker_probability` controls the rare case where a sim is blocker-like by sampled traits. A hard blocker should resist compromise strongly, but should not sabotage the chat or refuse to interact.
+Hard blockers should be rare in automatic generation. Manual profiles may explicitly define a rejection. A hard blocker should resist the blocked option but still participate normally in the discussion.
 
-Normal auto-generated sims should not routinely receive categorical hard constraints. They may start with preferences and goals, but those should usually be movable.
-
-Manual profiles may explicitly define blockers. If a profile or generated description contains a genuinely absolute constraint such as strict dietary need, allergy, accessibility need, hard budget ceiling, or schedule impossibility, agreeableness should not erase the constraint. An agreeable participant can reject an option politely.
-
-Since 2026-07-06 this is decoupled in the builder: a manual profile with a `rejection` keeps its explicitly configured agreeableness (the constraint binds regardless of personality); only a profile that leaves agreeableness unset falls back to the classic pinned-to-1 blocker persona. Normal auto personas are additionally instructed to phrase needs as preferences, never absolutes.
-
-## Current behavior
-
-Verbosity orders average turn length (~8 words for terse sims, ~16-18 for chatty ones) while every sim also produces genuinely short beats. Engagement shapes free-discussion turn share (correlation mostly 0.7-1.0 in the 2026-07-06 suite); opening/vote rounds stay intentionally uniform and are excluded from dominance judgments.
-
-## Important design point
-
-Do not implement a rigid agenda checklist. A sim may have goals, concerns, and commitments, but it should not mechanically execute an agenda item every turn. Persistent state should create pressure and continuity, while local dialogue decides the next act.
-
-## Current open issue
-
-Trait realization should be evaluated on free discussion turns, not on opening and final vote rounds. The next round should allow plausible dominance by high-engagement/high-initiative sims while preventing repetitive monologues and total disappearance of quieter sims.
+An agreeable participant can still have a real constraint if it is manually configured. Agreeableness affects tone and flexibility, not whether an absolute constraint exists.

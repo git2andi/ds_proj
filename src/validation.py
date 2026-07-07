@@ -86,6 +86,14 @@ class ValidationMixin:
         if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             issues.append("UNCLEAR_VISIBLE_COMMITMENT")
             block = True
+        if intent.required_vote and intent.act in _DECISION_ACTS:
+            committed_to_required = (
+                act.explicit_vote == intent.required_vote
+                or intent.required_vote in act.accepts
+            )
+            if not committed_to_required:
+                issues.append("REQUIRED_VOTE_MISMATCH")
+                block = True
         if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
             issues.append("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION")
             block = True
@@ -137,6 +145,8 @@ class ValidationMixin:
         # own current/initial preference (restate); never a third option.
         if intent.allow_vote_change and act.explicit_vote and intent.option_focus:
             allowed = set(intent.option_focus) | {rt.current_preference, persona.preferred_option}
+            if intent.required_vote:
+                allowed.add(intent.required_vote)
             if act.explicit_vote not in allowed:
                 issues.append("OFF_TARGET_SWITCH")
                 block = True
@@ -146,12 +156,18 @@ class ValidationMixin:
         # transcript shows a socially unexplained flip. Blocking: if the LLM
         # cannot produce the bridge, the deterministic fallback restates the
         # current lean rather than fabricating an unexplained switch.
-        current = rt.current_preference or persona.preferred_option
+        # Sanctioned vote/switch turns carry the controller's visible previous
+        # stance in intent.old_preference. Use that as the bridge source instead
+        # of the mutable runtime current_preference. Otherwise a valid sentence
+        # like "I preferred Ninja, but I vote for Moccamaster because ..." can be
+        # falsely checked against a newer latent preference and rejected as
+        # UNBRIDGED_SWITCH. This was the root cause of many repair/fallback loops.
+        bridge_from = intent.old_preference or rt.current_preference or persona.preferred_option
         if (
             act.explicit_vote
-            and current in state.scenario.option_ids
-            and act.explicit_vote != current
-            and not switch_bridge_ok(text, current, self._resolver)
+            and bridge_from in state.scenario.option_ids
+            and act.explicit_vote != bridge_from
+            and not switch_bridge_ok(text, bridge_from, self._resolver)
         ):
             issues.append("UNBRIDGED_SWITCH")
             block = True
@@ -177,9 +193,22 @@ class ValidationMixin:
             # allowed by _deterministic_grounding_issue and never get here.
             report.block_state_mutation = True
             return report, 0, 0
+        # Do not spend an LLM grounding call on text that already failed a
+        # deterministic structural/commitment check. In the previous version, a
+        # malformed vote could trigger: utterance -> grounding judge -> repair ->
+        # grounding judge -> fallback. That raised token cost without improving
+        # the turn. First make the turn parse as the intended act; only then ask
+        # the grounding judge about factual support.
+        if report.block_state_mutation:
+            return report, 0, 0
         issue, gti, gto = self._grounding_issue(text, state, intent, act, focus_options)
         if issue and issue not in report.issues:
-            report.issues.append(issue)  # non-blocking; drives one repair toward grounded text
+            report.issues.append(issue)
+        if issue == "UNSUPPORTED_FACT":
+            # Grounding is a source-of-truth constraint, not just telemetry. The
+            # repair path still gets one chance, but unsupported facts that survive
+            # repair are replaced by fallback before reaching the transcript.
+            report.block_state_mutation = True
         return report, gti, gto
 
     def _grounding_issue(
@@ -243,14 +272,19 @@ class ValidationMixin:
             # reference, no commitment vocabulary, nothing the parser reads.
             return "Anyway, that's my two cents for now."
         blocked = persona.rejection
-        # Restate-first: never fabricate consent. The sim's own current/initial
-        # preference wins over the intent's offered options; runtime blockers
-        # (parsed dealbreakers) disqualify a target just like the setup rejection.
-        candidates = [rt.current_preference, persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
-        target = next(
-            (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.hard_rejections),
-            next(o for o in state.scenario.option_ids if o != blocked),
-        )
+        # Required decision targets are controller-selected and validation-safe;
+        # prefer them on decision turns. Otherwise restate the sim's own current
+        # stance. Never fabricate acceptance of a hard-blocked option.
+        if intent.act in _DECISION_ACTS and intent.required_vote in state.scenario.option_ids:
+            target = intent.required_vote
+        else:
+            candidates = [rt.current_preference, persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
+            target = next(
+                (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.hard_rejections),
+                next(o for o in state.scenario.option_ids if o != blocked),
+            )
+        if target == blocked or target in rt.hard_rejections:
+            target = next(o for o in state.scenario.option_ids if o != blocked and o not in rt.hard_rejections)
         if intent.act in _DECISION_ACTS:
             # Labels match parsing._PHRASE_FAMILIES so avoid_phrases rotation
             # works; every template parses as a direct vote (I19: a wide pool
@@ -269,20 +303,26 @@ class ValidationMixin:
                 ((l, t) for l, t in templates if l not in intent.avoid_phrases),
                 templates[0],
             )
-            line = template.format(o=aliases[target])
+            target_name = aliases[target]
+            line = template.format(o=target_name)
             if blocked and "HARD_BLOCKER_ACCEPTED_REJECTED_OPTION" in report.issues:
-                tail = line if line.startswith("I") else line[0].lower() + line[1:]
-                return f"I can't get behind {aliases[blocked]}, so {tail}"
-            current = rt.current_preference or persona.preferred_option
+                return f"I can't get behind {aliases[blocked]}, so I vote for {target_name}."
+            current = intent.old_preference or rt.current_preference or persona.preferred_option
             if current in state.scenario.option_ids and current != target:
-                # The restate target was disqualified (or the intent demands a
-                # switch), so the deterministic line is itself a switch — it must
-                # carry the bridge or it would fail the same UNBRIDGED_SWITCH
-                # check that sent us here.
-                body = line.rstrip(".")
-                if not body.startswith("I"):
-                    body = body[0].lower() + body[1:]
-                return f"I still like {aliases[current]}, but {body} — it works better for the group."
+                old_name = aliases[current]
+                reason = intent.allowed_reason or f"{target_name} has the clearest visible support now"
+                switch_templates = [
+                    "I vote for {target}; I was on {old}, but {reason}.",
+                    "I'll switch to {target}; I preferred {old}, but {reason}.",
+                    "{target} gets my vote now; I preferred {old}, but {reason}.",
+                    "I can live with {target}; {old} was my first pick, but {reason}.",
+                    "My vote goes to {target}; I started on {old}, but {reason}.",
+                    "I'm going with {target}; {old} was my earlier pick, but {reason}.",
+                    "Count me in for {target}; I was leaning toward {old}, but {reason}.",
+                    "I'll go with {target}; I preferred {old}, but {reason}.",
+                ]
+                idx = (state.turn_index + len(persona.id) + len(report.issues)) % len(switch_templates)
+                return switch_templates[idx].format(old=old_name, target=target_name, reason=reason.rstrip('.'))
             return line
         if "MISSING_REQUIRED_OPTION_FOCUS" in report.issues and intent.option_focus:
             gap = intent.option_focus[0]
@@ -401,6 +441,18 @@ class ValidationMixin:
                 if (uncertain or question_like) and not asserted_workaround:
                     continue
                 return True
+        # Unsupported comparative/detail risks such as "clearly labels", "faster",
+        # or "less travel time" should be judged even when generic words like
+        # "travel" appear somewhere in the scenario. The judge can allow direct
+        # implications from listed distance/time/cost facts.
+        if self._COMPARATIVE.search(text) and re.search(
+            r"\b(?:label\w*|fast\w*|quick\w*|speed|travel|distance|closer|farther|nearer|commute|cheaper|pricier|expensive)\b",
+            text,
+            re.I,
+        ):
+            return True
+        if re.search(r"\bclearly\s+label\w*\b", text, re.I):
+            return True
         # Cross-option transfer: tokens unique to one card showing up in a line
         # that names a different option (or that compares several cards' facts)
         # are judged — the claim exists in the world but may sit on the wrong
@@ -453,4 +505,7 @@ class ValidationMixin:
             return True
         if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             return True
+        if intent.required_vote and intent.act in _DECISION_ACTS:
+            if act.explicit_vote != intent.required_vote and intent.required_vote not in act.accepts:
+                return True
         return False

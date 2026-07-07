@@ -1,8 +1,8 @@
 # 00 — Overview
 
-This project is an option-grounded multi-user decision simulator. It generates group discussions between 2-7 simulated users over a fixed option board and logs the interaction as a structured trace.
+The project is an option-grounded multi-user decision simulator. It generates group discussions between 2-7 simulated users over a fixed option board and logs both a readable transcript and a structured trace.
 
-The purpose is not to create arbitrary chat. The purpose is to define a controllable simulation environment where participant parameters influence observable dialogue behavior.
+The important target is not arbitrary natural chat. The target is a configurable simulator: participant parameters such as engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should visibly affect who speaks, how they react, how strongly they resist, and whether they can move toward consensus.
 
 ## Core flow
 
@@ -10,43 +10,36 @@ The purpose is not to create arbitrary chat. The purpose is to define a controll
 topic or manual environment
   -> scenario + option board
   -> simulated participants
-  -> discussion controller
-  -> LLM utterance rendering
-  -> visible-state observer
-  -> narrowing / voting / outcome
-  -> transcript + JSON + metrics
+  -> controller routes speaker / act / target / focus
+  -> LLM renders one visible utterance
+  -> observer parses public state
+  -> controller narrows / votes / repairs split
+  -> consensus manager returns successful / majority / unresolved
 ```
 
-## Current components
+## v3 design decision
 
-- Environment generation can be automatic or manual.
-- Participant generation can be automatic or manual.
-- Sims have traits and operational parameters.
-- The controller selects speakers, addressees, dialogue acts, and option focus.
-- The LLM writes one visible utterance at a time.
-- The observer updates state only from visible text.
-- The moderator voice is configurable and can be reduced or disabled.
-- Participant-owned procedural moves exist for low-/no-moderator modes.
-- Final outcomes come from visible votes/acceptances only.
-- Logs include transcripts, `run.json`, metrics, token usage, provider/model, mode settings, and pacing metadata.
+v3 is a combination version. It uses v1 as the explainable base and ports only selected v2 features that directly improve outcomes or simulator validity.
 
-## Current strengths
+Kept from v2:
 
-The architecture is mostly in the right shape. The system is already closer to the relevant literature than to a generic chatbot: it has an environment, option board, participant simulators, routing policy, visible-state observer, validation, and evaluation.
+- deterministic switch/stay decisions for holdouts after reservations;
+- no downhill compromise;
+- flexible tie compromise only when traits and resistance make it plausible;
+- unresolved acknowledgement before closure;
+- split-summary self-answer avoidance;
+- active local threads outrank private agenda items;
+- small trait influence on routing and vote phrase choice;
+- observer fixes that prevent false blockers on a sim's own current favorite.
 
-Current logs show that sims compare fixed options, react to others, raise tradeoffs, vote visibly, and can produce `successful`, `majority`, or `unresolved` outcomes.
+Not kept from v2:
 
-## Current state (after the 2026-07-06 behavioral round)
+- separate micro-reaction subsystem;
+- friendliness parameter;
+- personal anchors;
+- broad trait-color wording subsystem;
+- extra dynamic-pacing complexity.
 
-The former quality weaknesses were addressed and verified with the full 12-case suite:
+## Current state
 
-- turns average ~13-16 words with genuine short beats for every sim, while verbosity still orders the averages;
-- answers develop the same thread; question density and tail questions dropped sharply;
-- direct addressing scales with group size (no name prefixes in n=2 runs);
-- dominance is trait-shaped and judged on free discussion turns (top share ~0.26-0.53 across the suite);
-- stance switches need net visible support or trait-level flexibility; a sim's own open concerns resist switching;
-- explicit constraints hold regardless of agreeableness, and no final tally contains a blocker violation;
-- an issue ledger prevents repeated unknown-logistics loops (repeated_unknown_mentions 0 across the suite);
-- grounding runs on a narrowed tripwire with option-scoped judging.
-
-Remaining open work is the accumulated-code-path simplification plus small residuals. Use `docs/todo.md` as the authoritative current issue list.
+The core requirements are present: auto/manual environment, auto/manual participants, 2-7 sims, option-grounded dialogue, visible final outcomes, moderator/no-moderator modes, structured logs, and an eval suite. The next work should be simplification and validation, not feature expansion.

@@ -190,7 +190,8 @@ _REASON_MARKER = re.compile(
     r"\b(?:because|since|despite|even\s+though|"
     r"for\s+(?:its|their|the|a|an)\b|to\s+(?:keep|boost|get|make|support|showcase|save|avoid|stay)\b|"
     r"so\s+(?:we|it|everyone|the)\b|"
-    r"it\s+(?:solves|fixes|keeps|gives|covers|fits|means|delivers|works|saves|hits))\b|—|:\s",
+    r"it\s+(?:solves|fixes|keeps|gives|covers|fits|means|delivers|works|saves|hits))\b|"
+    r"\bbut\b|—|;|:\s",
     re.I,
 )
 

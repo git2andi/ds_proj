@@ -116,9 +116,7 @@ class ObserverMixin:
         self._update_concern_threads(state, record)
         challenged = set(act.soft_rejects) | set(act.hard_rejects)
         if record.intent and record.intent.act == ActType.CHALLENGE:
-            # A challenge targets a rival: never register the concern against
-            # the speaker's own current pick just because its name appears
-            # first in the line (that eroded allies' commitment, P2).
+            # Register challenge concerns against rivals, not the speaker's own current pick.
             own = state.runtimes[record.speaker_id].current_preference if record.speaker_id in state.runtimes else None
             rival_refs = [oid for oid in act.option_refs if oid != own]
             challenged.update(rival_refs[:1] or act.option_refs[:1])
@@ -159,11 +157,7 @@ class ObserverMixin:
         for option_id, reason in act.soft_rejects.items():
             rt.soft_rejections[option_id] = reason
         for option_id, reason in act.hard_rejects.items():
-            # A sim does not veto its own current favorite in passing: that
-            # shape is a misattributed rival objection ("Upkeep's a dealbreaker
-            # — X's low maintenance suits us better" binding to X because X is
-            # the nearest name, M1). A wrong hard blocker binds every later
-            # vote, so it must never be recorded against the speaker's own lean.
+            # A parse artifact must not turn the speaker's own current favorite into a hard blocker.
             if option_id == (rt.current_preference or persona.preferred_option):
                 continue
             rt.hard_rejections[option_id] = reason
@@ -257,8 +251,6 @@ class ObserverMixin:
         if option_id not in state.scenario.option_ids:
             return
         state.concerns_raised_total += 1
-        if record.speaker_id in state.runtimes:
-            state.runtimes[record.speaker_id].concerns_raised.setdefault(option_id, record.text)
         state.open_concerns.append(
             Concern(turn_id=record.index, raised_by=record.speaker_id, option_id=option_id, text=record.text)
         )

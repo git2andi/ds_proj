@@ -1,57 +1,39 @@
 # 01 — Scenario and environment generation
 
-The environment defines the factual decision space. It should provide enough shared facts for sims to argue concretely without needing to invent details.
+The environment defines the factual decision space. It should provide enough shared facts for sims to argue concretely without requiring external knowledge.
 
 ## Modes
 
 `environment.mode = auto`:
 
-- The CLI topic is sent to the setup LLM.
-- The setup LLM creates the scenario, opening question, shared context, and option cards.
-- Generated options are validated before the run starts.
+- the CLI topic is sent to the setup LLM;
+- the setup LLM creates the topic framing, shared context, opening question, and option cards;
+- generated options are validated before the discussion starts.
 
 `environment.mode = manual`:
 
-- `environment.manual` in `config.yaml` defines the topic, shared context, and options.
-- The CLI topic is ignored.
-- The environment setup LLM call is skipped.
-- This is the best mode for controlled tests.
+- `environment.manual` in `config.yaml` defines the topic, context, and options;
+- the CLI topic is ignored;
+- the scenario setup LLM call is skipped;
+- this is the preferred mode for controlled tests.
 
 ## Option board
 
-The option board is the source of truth. Each option should have:
+The option board is the source of truth. Each option should have an ID, name, concrete attributes, upside, tradeoff, concern, best-for note, and preferably a short alias.
 
-- a stable ID, usually A-D;
-- a concrete name;
-- factual attributes;
-- upside/tradeoff/concern/best-for notes where useful;
-- a short alias for natural dialogue.
-
-The option board should be factual enough to support comparison, but not overloaded. Too many facts increase prompt size and may worsen generation.
+The board should expose tradeoffs. Avoid one obvious winner unless the goal is to test quick consensus.
 
 ## Grounding rule
 
-Sims may use:
+Sims may use only:
 
 - option facts;
 - shared context;
-- visible prior dialogue;
+- prior visible dialogue;
 - explicit uncertainty.
 
-Sims should not state new concrete facts as known. Hypothetical mitigations are allowed only when marked as uncertain.
+They must not state unsupported concrete facts as known. Hypothetical mitigation is acceptable only when marked as uncertain.
 
-Allowed:
+## v3 relevance
 
-```text
-Maybe we could ask for a quieter table, but the board does not say whether that is possible.
-```
-
-Not allowed:
-
-```text
-They have a quieter table available.
-```
-
-## Repeated unknown logistics
-
-Sparse option facts are useful for testing grounding, but they used to create repeated unknown-logistics talk. Since the 2026-07-06 round the observer keeps an issue ledger (parking, booking, weather, seating, availability, prep time, crowds): an unknown may be raised once and answered once; after that the sim prompts list it as settled-unknown and it must not be re-raised. `repeated_unknown_mentions` in the metrics tracks violations.
+v3 keeps the option board central. The outcome-repair logic may move holdouts only when the tested candidate is plausible according to visible votes, blockers, resistance, and traits. It does not create new options or blended plans.

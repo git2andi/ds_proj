@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from config_loader import cfg
-from evaluation import flat_metrics_for, metrics_for, token_summary_for
+from eval import flat_metrics_for, metrics_for, token_summary_for
 from models import DialogueState, RunOutcome
 
 
@@ -100,7 +100,7 @@ class DialogueLogger:
                 f"sim params: engagement={params.engagement:.2f} verbosity={params.verbosity:.2f} "
                 f"initiative={params.initiative:.2f} responsiveness={params.responsiveness:.2f} "
                 f"stubbornness={params.stubbornness:.2f} directness={params.directness:.2f} "
-                f"compromise_threshold={params.compromise_threshold:.2f} friendliness={params.friendliness:.2f}"
+                f"compromise_threshold={params.compromise_threshold:.2f}"
             )
             lines.append(f"goal: {persona.private_goal}")
             lines.append(f"initial preference: {', '.join(persona.preferred_options)}")

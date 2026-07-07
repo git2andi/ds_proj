@@ -191,9 +191,6 @@ class SimulatorParameters:
     stubbornness: float
     directness: float
     compromise_threshold: float
-    # Derived social tone (P8): high = warm/encouraging, low = dry/blunt-toned.
-    # Never hostility — low friendliness stays cooperative, just unsoftened.
-    friendliness: float = 0.5
 
     def clipped(self) -> "SimulatorParameters":
         return SimulatorParameters(**{name: _clip01(getattr(self, name)) for name in self.__dataclass_fields__})
@@ -230,10 +227,6 @@ class Persona:
     rejection: str | None = None
     rejection_reason: str = ""
     agenda: list[AgendaItem] = field(default_factory=list)
-    # 1-2 compact personal anchors (P7): small trait-consistent reasons a person
-    # gives for preferences ("budget-sensitive", "prefers calm settings"). Used
-    # at most about once per discussion; never scenario facts.
-    anchors: list[str] = field(default_factory=list)
 
     @property
     def preferred_option(self) -> str:
@@ -260,14 +253,11 @@ class MoveIntent:
     avoid_phrases: list[str] = field(default_factory=list)
     avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
     allow_vote_change: bool = False
+    required_vote: str | None = None   # controller-selected decision target; validation blocks drift
+    old_preference: str | None = None  # controller-visible previous pick for sanctioned switches
+    allowed_reason: str | None = None  # grounded reason fragment the LLM may use for a vote/switch
     soften_toward: str | None = None  # routed softening beat's attractor (issue 3)
     continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
-    # Compact trait-derived delivery label (P2): rendered as one short prompt
-    # line so traits shape phrasing mid-discussion, not only at vote time.
-    # One of: challenge_directly | soften_and_bridge | restate_concern | bridge_condition.
-    trait_color: str | None = None
-    # Personal anchor offered to this turn's prompt (P7); at most once per sim per run.
-    anchor: str | None = None
 
 
 @dataclass(slots=True)
@@ -360,10 +350,6 @@ class ParticipantRuntime:
     explicit_vote: str | None = None       # observed public commitment from visible text
     vote_stance: str | None = None         # how the vote was stated: "vote" (direct) or "accept"
     accepted_options: set[str] = field(default_factory=set)
-    # Options this sim visibly raised a concern/challenge about (persistent for
-    # the whole run, unlike the short-lived open_concerns threads). Feeds the
-    # stubborn restate-concern route (P2).
-    concerns_raised: dict[str, str] = field(default_factory=dict)
     soft_rejections: dict[str, str] = field(default_factory=dict)
     hard_rejections: dict[str, str] = field(default_factory=dict)
     already_said: list[str] = field(default_factory=list)
@@ -422,8 +408,8 @@ class DialogueState:
     minority_check_attempted: bool = False
     reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
     split_reservation_exchanges: int = 0     # reservation/supporter pairs during split/tie narrowing
-    procedural_move_count: int = 0           # participant-owned structure beats taken (issue 5)
-    peer_vote_call_done: bool = False        # a participant already called for final picks (issue 5)
+    procedural_move_count: int = 0           # participant-owned structure beats taken (split summaries/probes)
+    peer_vote_call_done: bool = False        # legacy metric; v3 uses moderator-owned vote calls
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0
@@ -435,9 +421,6 @@ class DialogueState:
     # discussion stops reopening them. issue -> {"mentions": int, "options": [ids]}
     issue_ledger: dict[str, dict] = field(default_factory=dict)
     stagnation_break_done: bool = False  # the one bounded circling-rescue beat was used (I20)
-    restated_concerns: set[str] = field(default_factory=set)  # sims that already got their stubborn restate beat (P2)
-    micro_reaction_count: int = 0        # deterministic tiny reaction beats emitted (P4)
-    anchors_used: set[str] = field(default_factory=set)  # sims whose personal anchor was already offered to a prompt (P7)
     softened_sims: set[str] = field(default_factory=set)  # sims already routed to a visible softening beat (issue 3)
     discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)
     phase_history: list[str] = field(default_factory=list)
