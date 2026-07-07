@@ -81,7 +81,7 @@ participants:
   # missing background/private_goal written by the setup LLM, missing preferred_option
   # drawn at random). If every profile is complete (name, description, private_goal,
   # preferred_option), the persona LLM call is skipped entirely and the cast is
-  # fully deterministic. Giving a profile a rejection makes it a hard blocker
+  # fully deterministic. Giving a profile a rejection initializes that option at rank 0
   # (rejection_reason required). If the profile leaves agreeableness unset it is
   # pinned to 1 (classic blocker persona); an explicit agreeableness is kept, so
   # an agreeable participant can still hold a hard constraint politely.
@@ -98,7 +98,7 @@ participants:
   #     parameters: {verbosity: 0.9, initiative: 0.8} # direct 0-1 overrides, partial ok
   #   - name: "Sven"
   #     description: "veteran sysadmin burned by flaky vendor tools before"
-  #     rejection: "B"                 # hard blocker on option B
+  #     rejection: "B"                 # initializes option B at rank 0
   #     rejection_reason: "refuses another vendor lock-in after the last migration"
 
 scenario:
@@ -193,15 +193,14 @@ routing:
   # base weights; reactive rules (defend a challenged pick, answer a question,
   # probe a blocker, ...) override the mix when triggered.
   move_weights:
-    build: 0.23       # add a reason or extend common ground
-    agree: 0.14       # agree with someone and add a small reason
-    challenge: 0.16   # object or push back
-    ask: 0.10         # ask a concrete question
-    answer: 0.10      # answer an open question
-    compare: 0.16     # compare two options
-    invite: 0.05      # pull a quiet participant in
-    propose_compromise: 0.06
-    soften: 0.04       # non-final stance movement when another option becomes persuasive
+    support: 0.30        # add or reinforce a grounded reason
+    concern: 0.16        # object or push back
+    ask: 0.10            # ask a concrete question
+    answer: 0.10         # answer an open question
+    compare: 0.16        # compare two options
+    process: 0.05        # pull in quieter participants or manage the phase
+    compromise: 0.06     # test common ground
+    soften_toward: 0.04  # non-final stance movement when another option becomes persuasive
   direct_address_probability: 0.32     # chance a turn is aimed at a named person rather than the group
   # Trait-weighted participation: each sim gets a target turn share derived from
   # engagement/initiative/responsiveness; the router boosts sims behind their
@@ -264,7 +263,7 @@ validation:
   # policy-style terms, cross-option fact use) | always: judge every eligible
   # turn (more thorough, roughly doubles dialogue cost).
   grounding_mode: "tripwire"
-  grounding_acts: ["opening", "build", "agree", "challenge", "answer", "compare", "propose_compromise", "soften", "call_vote", "summarize_split", "probe_holdout", "suggest_narrowing", "post_reservation_decision", "vote", "accept", "reject"]  # act types that are ever fact-checked
+  grounding_acts: ["opening", "support", "concern", "answer", "compare", "soften_toward", "compromise", "process", "vote", "closing"]  # act types that are ever fact-checked
 
 limits:
   warn_total_input_tokens: 30000   # print a warning if a run's total input tokens exceed this (nothing is stopped)

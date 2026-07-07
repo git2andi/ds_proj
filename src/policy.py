@@ -23,6 +23,10 @@ from models import (
     MoveIntent,
     Persona,
     TurnRecord,
+    STANCE_ACCEPTABLE,
+    STANCE_DISLIKED,
+    STANCE_PREFERRED,
+    STANCE_REJECTED,
     _DECISION_ACTS,
     _DISCUSSION_ACTS,
 )
@@ -116,7 +120,7 @@ class PolicyMixin:
     @staticmethod
     def _hard_blocks_candidate(state: DialogueState, persona: Persona, candidate: str) -> bool:
         rt = state.runtimes[persona.id]
-        return persona.rejection == candidate or candidate in rt.hard_rejections
+        return rt.rank(candidate) <= STANCE_REJECTED
 
 
     @staticmethod
@@ -129,10 +133,10 @@ class PolicyMixin:
         exists. Hard blockers are handled separately by ``_hard_blocks_candidate``.
         """
         rt = state.runtimes[persona.id]
-        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        current = rt.explicit_vote or rt.top_option() or persona.preferred_option
         if candidate not in state.scenario.option_ids or current == candidate:
             return False
-        if candidate in rt.soft_rejections:
+        if rt.rank(candidate) <= STANCE_DISLIKED:
             return True
         if any(c.raised_by == persona.id and c.option_id == candidate for c in state.open_concerns):
             return True
@@ -142,7 +146,7 @@ class PolicyMixin:
         )
         if strong_trait_resistance and rt.commitment_strength >= 0.62:
             return True
-        if rt.commitment_strength >= 0.82 and candidate not in rt.accepted_options:
+        if rt.commitment_strength >= 0.82 and rt.rank(candidate) < STANCE_ACCEPTABLE:
             return True
         return False
 
@@ -150,7 +154,7 @@ class PolicyMixin:
     def _candidate_resistance(state: DialogueState, persona: Persona, candidate: str) -> float:
         """Lower means the dissenter is a better candidate for a switch/stay beat."""
         rt = state.runtimes[persona.id]
-        if persona.rejection == candidate or candidate in rt.hard_rejections:
+        if rt.rank(candidate) <= STANCE_REJECTED:
             return 99.0
         resistance = 0.45 * rt.commitment_strength
         resistance += 0.35 * persona.sim_params.compromise_threshold
@@ -158,7 +162,7 @@ class PolicyMixin:
         # A switch must be earned (P6): the sim's own visible, still-unanswered
         # objections against the candidate are resistance, not noise. A bridge
         # phrase alone doesn't resolve a concern the transcript left open.
-        if candidate in rt.soft_rejections:
+        if rt.rank(candidate) <= STANCE_DISLIKED:
             resistance += 0.25
         resistance += 0.30 * sum(
             1 for c in state.open_concerns
@@ -166,9 +170,9 @@ class PolicyMixin:
         )
         if candidate in persona.preferred_options:
             resistance -= 0.25
-        if candidate in rt.accepted_options:
+        if rt.rank(candidate) >= STANCE_ACCEPTABLE:
             resistance -= 0.20
-        if rt.current_preference == candidate:
+        if rt.rank(candidate) >= STANCE_PREFERRED or rt.top_option() == candidate:
             resistance -= 0.35
         return max(0.0, resistance)
 
@@ -199,7 +203,7 @@ class PolicyMixin:
             # names it cleanly, we do not re-route the same option forever.
             state.coverage[coverage_gap].coverage_attempts += 1
             speaker = self._speaker_for_option_coverage(state, coverage_gap)
-            current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+            current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
             focus = [coverage_gap]
             if current in state.scenario.option_ids and current != coverage_gap:
                 focus.append(current)
@@ -259,7 +263,7 @@ class PolicyMixin:
         if not focus:
             focus = self._focus_options(state, speaker, act, target_turn)
         reason = self._reason_for_act(state, speaker, act, focus, target_turn)
-        moves_lean = act in {ActType.AGREE, ActType.PROPOSE_COMPROMISE} and bool(focus)
+        moves_lean = act in {ActType.SUPPORT, ActType.COMPROMISE} and bool(focus)
         return MoveIntent(
             speaker_id=speaker.id,
             act=act,
@@ -298,7 +302,7 @@ class PolicyMixin:
                 # Trigger: eroded commitment, OR sustained social pressure — the
                 # favorite keeps taking challenges, nobody else visibly backs
                 # it, and the sim is flexible enough to plausibly move.
-                own = rt.current_preference or p.preferred_option
+                own = rt.top_option() or p.preferred_option
                 pressured = (
                     rt.challenges_received >= 2
                     and self._visible_support_count(state, own, exclude=p.id) == 0
@@ -312,7 +316,7 @@ class PolicyMixin:
             if movers:
                 persona, attractor = min(movers, key=lambda pair: state.runtimes[pair[0].id].commitment_strength)
                 state.softened_sims.add(persona.id)
-                current = state.runtimes[persona.id].current_preference or persona.preferred_option
+                current = state.runtimes[persona.id].top_option() or persona.preferred_option
                 phrase = random.choice([
                     "is starting to make more sense to me",
                     "is starting to look better to me",
@@ -320,7 +324,7 @@ class PolicyMixin:
                 ])
                 return MoveIntent(
                     speaker_id=persona.id,
-                    act=ActType.SOFTEN,
+                    act=ActType.SOFTEN_TOWARD,
                     reason=(
                         f"the case others made for {aliases[attractor]} genuinely lands with you — say "
                         f"openly that it {phrase}, name the argument that moved you, and what you still "
@@ -344,7 +348,7 @@ class PolicyMixin:
             advocates = [
                 p for p in state.personas
                 if p.id not in {concern.raised_by, last.speaker_id}
-                and state.runtimes[p.id].current_preference == concern.option_id
+                and state.runtimes[p.id].top_option() == concern.option_id
             ]
             if not advocates or random.random() >= 0.80:
                 continue
@@ -365,7 +369,7 @@ class PolicyMixin:
                 )
             return MoveIntent(
                 speaker_id=speaker.id,
-                act=ActType.BUILD,
+                act=ActType.SUPPORT,
                 reason=reason,
                 option_focus=[concern.option_id],
                 respond_to_turn=concern.turn_id,
@@ -381,7 +385,7 @@ class PolicyMixin:
                 # Develop the answered point instead of opening the next issue:
                 # a fresh ask here is exactly the question-chaining pattern (P2).
                 act = weighted_choice(
-                    [ActType.AGREE, ActType.CHALLENGE, ActType.BUILD],
+                    [ActType.SUPPORT, ActType.CONCERN, ActType.SUPPORT],
                     [0.4 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
                      0.3 + speaker.sim_params.stubbornness * 0.4,
                      0.30 + speaker.sim_params.initiative * 0.2],
@@ -403,7 +407,7 @@ class PolicyMixin:
         #    a supporter asks once what would make it workable.
         leading = self._visible_candidate(state) or self._latent_leading_option(state)
         if leading and leading not in state.blocker_probes:
-            blockers = [p for p in state.personas if leading in state.runtimes[p.id].hard_rejections]
+            blockers = [p for p in state.personas if leading in state.runtimes[p.id].rejected_options()]
             askers = [
                 p for p in state.personas
                 if p.id != last.speaker_id and p not in blockers
@@ -429,13 +433,13 @@ class PolicyMixin:
         if len(supported) >= 2 and random.random() < 0.5:
             recent = participant_turns[-4:]
             recently_compared = any(
-                t.intent and t.intent.act in {ActType.COMPARE, ActType.PROPOSE_COMPROMISE} for t in recent
+                t.intent and t.intent.act in {ActType.COMPARE, ActType.COMPROMISE} for t in recent
             )
             if not recently_compared:
                 speaker = self._choose_speaker(state)
                 pair = sorted(supported, key=lambda oid: -self._visible_support_count(state, oid))[:2]
                 act = (
-                    ActType.PROPOSE_COMPROMISE
+                    ActType.COMPROMISE
                     if speaker.sim_params.compromise_threshold <= 0.4 and random.random() < 0.5
                     else ActType.COMPARE
                 )
@@ -445,7 +449,7 @@ class PolicyMixin:
                     reason=(
                         f"the group is visibly split between {aliases[pair[0]]} and {aliases[pair[1]]}; "
                         + ("test whether one of them could be common ground without claiming it's decided"
-                           if act == ActType.PROPOSE_COMPROMISE
+                           if act == ActType.COMPROMISE
                            else "put them side by side on the trade-off that actually divides the group")
                     ),
                     option_focus=pair,
@@ -467,15 +471,15 @@ class PolicyMixin:
                 or t.act.resolves_blocker or "?" in t.text
                 for t in window
             )
-            camps = {rt.current_preference for rt in state.runtimes.values() if rt.current_preference}
+            camps = {rt.top_option() for rt in state.runtimes.values() if rt.top_option()}
             if not moved and len(camps) >= 2:
                 state.stagnation_break_done = True
                 speaker = self._choose_speaker(state)
-                own = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+                own = state.runtimes[speaker.id].top_option() or speaker.preferred_option
                 other = next((c for c in sorted(camps) if c != own), None)
                 pair = [o for o in (own, other) if o in state.scenario.option_ids]
                 act = (
-                    ActType.PROPOSE_COMPROMISE
+                    ActType.COMPROMISE
                     if speaker.sim_params.compromise_threshold <= 0.5
                     else ActType.ASK
                 )
@@ -485,7 +489,7 @@ class PolicyMixin:
                     reason=(
                         "the discussion is circling with both sides restating their pick; "
                         + ("name what you would give up and propose concretely which option could work for everyone"
-                           if act == ActType.PROPOSE_COMPROMISE
+                           if act == ActType.COMPROMISE
                            else "ask the other side directly what would make your pick workable for them, or what single thing their pick does better")
                     ),
                     option_focus=pair,
@@ -557,7 +561,7 @@ class PolicyMixin:
             focus = [oid for oid in last.intent.option_focus if oid in state.scenario.option_ids][:2]
         return MoveIntent(
             speaker_id=persona.id,
-            act=ActType.BUILD,
+            act=ActType.SUPPORT,
             reason=purpose,
             option_focus=focus,
             length_hint="short",
@@ -568,18 +572,18 @@ class PolicyMixin:
         """The option a shaken sim would plausibly warm to (issue 3): visibly
         backed or argued-for by others, shiftable, and not the sim's current pick."""
         rt = state.runtimes[persona.id]
-        current = rt.current_preference or persona.preferred_option
+        current = rt.top_option() or persona.preferred_option
         best: tuple[float, str] | None = None
         latent_counts = Counter(
-            rt.current_preference for pid, rt in state.runtimes.items()
-            if pid != persona.id and rt.current_preference in state.scenario.option_ids
+            rt.top_option() for pid, rt in state.runtimes.items()
+            if pid != persona.id and rt.top_option() in state.scenario.option_ids
         )
         for option_id in state.scenario.option_ids:
             if option_id == current or not self._can_shift_to(state, persona, option_id):
                 continue
             # Don't warm to an option this sim itself visibly objected to (P6)
             # unless it was on their own acceptable list from the start.
-            if option_id in rt.soft_rejections and option_id not in persona.preferred_options:
+            if option_id in rt.disliked_options() and option_id not in persona.preferred_options:
                 continue
             score = 2.0 * self._visible_support_count(state, option_id, exclude=persona.id)
             score += 0.75 * state.coverage[option_id].reasons
@@ -655,61 +659,57 @@ class PolicyMixin:
         raw = dict(cfg.routing.move_weights.items())
         p = speaker.sim_params
         raw["ask"] = raw.get("ask", 0.0) * (0.75 + p.initiative)
-        raw["challenge"] = raw.get("challenge", 0.0) * (0.55 + 0.75 * p.stubbornness + 0.35 * p.directness)
-        raw["agree"] = raw.get("agree", 0.0) * (0.60 + (1.0 - p.stubbornness))
-        raw["invite"] = raw.get("invite", 0.0) * (0.50 + p.responsiveness)
-        raw["propose_compromise"] = raw.get("propose_compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.compromise_threshold))
-        raw["soften"] = raw.get("soften", 0.0) * (0.50 + 1.00 * (1.0 - p.stubbornness))
+        raw["concern"] = raw.get("concern", 0.0) * (0.55 + 0.75 * p.stubbornness + 0.35 * p.directness)
+        raw["support"] = raw.get("support", 0.0) * (0.70 + (1.0 - p.stubbornness))
+        raw["process"] = raw.get("process", 0.0) * (0.50 + p.responsiveness)
+        raw["compromise"] = raw.get("compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.compromise_threshold))
+        raw["soften_toward"] = raw.get("soften_toward", 0.0) * (0.50 + 1.00 * (1.0 - p.stubbornness))
         if self._recent_question_count(state) >= 1:
             raw["ask"] *= 0.25
         if participant_turn_count(state) >= max(state.min_discussion_turns, state.force_narrow_turns - 2):
             raw["ask"] *= 0.25
-            raw["invite"] *= 0.5
-        # P2: right after an answer the thread is still underdeveloped — favor
-        # reactions on the same point over a fresh question or invite. One
-        # reaction turn lifts the damp again (the last turn is no longer an
-        # answer), so this bounds development, it doesn't freeze the topic.
+            raw["process"] *= 0.5
+        # Right after an answer, keep developing the same thread rather than
+        # immediately opening a new question.
         participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
         if participant_turns:
             last_turn = participant_turns[-1]
             last_act = last_turn.intent.act if last_turn.intent else last_turn.act.act_type
             if last_act == ActType.ANSWER:
                 raw["ask"] *= 0.3
-                raw["invite"] *= 0.6
-                raw["build"] *= 1.2
-                raw["agree"] *= 1.2
-                raw["challenge"] *= 1.15
+                raw["process"] *= 0.6
+                raw["support"] *= 1.2
+                raw["concern"] *= 1.15
         if self._latent_leading_count(state) >= max(2, math.ceil(0.5 * len(state.personas))):
-            raw["propose_compromise"] = raw.get("propose_compromise", 0.0) + 0.10
-            raw["soften"] = raw.get("soften", 0.0) + 0.08
-        # When recent turns are stuck in a concession/worry/trade-off-plus-objection
-        # shape, bias act selection toward moves that break the template.
+            raw["compromise"] = raw.get("compromise", 0.0) + 0.10
+            raw["soften_toward"] = raw.get("soften_toward", 0.0) + 0.08
+        # If recent turns use the same surface pattern, prefer comparison or
+        # questions over more support/concern phrasing.
         recent_texts = self._recent_participant_texts(state, int(cfg.style.repeated_pattern_window))
         recent_patterns = [surface_pattern(t) for t in recent_texts]
-        templated = sum(recent_patterns.count(p) for p in ("concede_but", "worry_but", "tradeoff_but"))
+        templated = sum(recent_patterns.count(pat) for pat in ("concede_but", "worry_but", "tradeoff_but"))
         if templated >= 2:
-            raw["agree"] *= 0.4
-            raw["build"] = raw.get("build", 0.0) * 0.6
-            raw["challenge"] = raw.get("challenge", 0.0) * 0.7  # challenge tends to reuse the "but" shape too
+            raw["support"] *= 0.6
+            raw["concern"] *= 0.7
             raw["compare"] = raw.get("compare", 0.0) * 1.3
             raw["ask"] = raw.get("ask", 0.0) * 1.4
-            raw["propose_compromise"] = raw.get("propose_compromise", 0.0) * 1.5
+            raw["compromise"] = raw.get("compromise", 0.0) * 1.4
         mapping = {
-            "build": ActType.BUILD,
-            "agree": ActType.AGREE,
-            "challenge": ActType.CHALLENGE,
+            "support": ActType.SUPPORT,
+            "concern": ActType.CONCERN,
             "ask": ActType.ASK,
             "answer": ActType.ANSWER,
             "compare": ActType.COMPARE,
-            "invite": ActType.INVITE,
-            "propose_compromise": ActType.PROPOSE_COMPROMISE,
-            "soften": ActType.SOFTEN,
+            "process": ActType.PROCESS,
+            "compromise": ActType.COMPROMISE,
+            "soften_toward": ActType.SOFTEN_TOWARD,
         }
         names = [k for k in raw if k in mapping]
         act = mapping[weighted_choice(names, [float(raw[k]) for k in names])]
         if act == ActType.ANSWER and not self._next_answerable_question(state):
-            return ActType.BUILD
+            return ActType.SUPPORT
         return act
+
 
     _last_target_speaker: str | None = None
     def _choose_target_turn(self, state: DialogueState, speaker: Persona, act: ActType) -> TurnRecord | None:
@@ -749,7 +749,7 @@ class PolicyMixin:
             if under and under in turn.act.option_refs:
                 score += 0.4
             rt = state.runtimes.get(turn.speaker_id)
-            if leading and rt and rt.current_preference and rt.current_preference != leading:
+            if leading and rt and rt.top_option() and rt.top_option() != leading:
                 score += 0.6  # minority/holdout voices stay in play
             if turn.speaker_id == self._last_target_speaker:
                 score *= 0.6  # don't keep targeting the same person
@@ -767,36 +767,30 @@ class PolicyMixin:
         ids: list[str] = []
         if target_turn:
             ids.extend(target_turn.act.option_refs)
-        current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
+        current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
         if current and current not in ids:
             ids.append(current)
-        if act in {ActType.COMPARE, ActType.CHALLENGE, ActType.ASK, ActType.SOFTEN}:
+        if act in {ActType.COMPARE, ActType.CONCERN, ActType.ASK, ActType.SOFTEN_TOWARD}:
             rival = self._rival_option(state, speaker, exclude=set(ids))
             if rival:
                 ids.append(rival)
         leading = self._latent_leading_option(state)
-        if act == ActType.PROPOSE_COMPROMISE and leading and leading not in ids:
+        if act == ActType.COMPROMISE and leading and leading not in ids:
             ids.insert(0, leading)
         return [x for x in ids if x in state.scenario.option_ids][:3]
 
     def _reason_for_act(self, state: DialogueState, speaker: Persona, act: ActType, focus: list[str], target_turn: TurnRecord | None) -> str:
         names = short_alias_map(state.scenario.options)
         focus_names = ", ".join(names[o] for o in focus) if focus else "the options"
-        if act == ActType.BUILD:
-            # Rotate the move purpose so back-to-back build turns don't all
-            # become the same trade-off-statement shape (issue I12).
+        current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
+        current_name = names.get(current, current)
+        if act == ActType.SUPPORT:
             return random.choice([
                 f"add a new grounded reason about {focus_names}, connected to the current discussion",
-                f"bring up a practical, everyday consideration about {focus_names} that hasn't come up yet",
+                f"bring up a practical, everyday consideration about {focus_names} that has not come up yet",
                 f"say plainly what matters most to you personally in this choice and how {focus_names} fits that",
             ])
-        current = state.runtimes[speaker.id].current_preference or speaker.preferred_option
-        current_name = names.get(current, current)
-        if act == ActType.AGREE:
-            return f"agree with the recent point where it genuinely fits your view, and add a small new angle about {focus_names}"
-        if act == ActType.CHALLENGE:
-            # Never route a sim into arguing against their own pick right before
-            # voting for it (issue I9, restaurant run).
+        if act == ActType.CONCERN:
             rivals = [o for o in focus if o != current]
             if rivals:
                 return (
@@ -807,32 +801,28 @@ class PolicyMixin:
         if act == ActType.ASK:
             return f"ask one concrete question that helps compare {focus_names}"
         if act == ActType.ANSWER:
-            return f"answer the recent question using only the option facts, then move the decision forward"
+            return "answer the recent question using only the option facts, then move the decision forward"
         if act == ActType.COMPARE:
             return f"compare {focus_names} with one clear trade-off"
-        if act == ActType.INVITE:
-            quiet = self._quietest_other(state, speaker.id)
-            return f"bring {quiet.name if quiet else 'someone quieter'} into the discussion with a useful prompt"
-        if act == ActType.PROPOSE_COMPROMISE:
-            return f"test whether {focus_names} could be common ground without claiming it is already decided"
-        if act == ActType.SOFTEN:
+        if act == ActType.SOFTEN_TOWARD:
             return f"non-finally acknowledge that {focus_names} is becoming more convincing, while still naming what you give up"
-        if act == ActType.CALL_VOTE:
-            return "casually ask everyone for a definite final pick now; do not suggest any option yourself"
-        if act == ActType.SUMMARIZE_SPLIT:
-            return (
-                f"note casually that the group is still split around {focus_names} and suggest one concrete next step — "
-                "no vote tallies, no procedure words like 'test' or 'candidate'"
-            )
-        if act == ActType.PROBE_HOLDOUT:
-            return f"ask the holdout what still blocks {focus_names}, without pressuring them"
-        if act == ActType.SUGGEST_NARROWING:
-            return f"suggest narrowing the discussion to {focus_names} or the main trade-off"
+        if act == ActType.COMPROMISE:
+            return f"test whether {focus_names} could be common ground without claiming it is already decided"
+        if act == ActType.PROCESS:
+            quiet = self._quietest_other(state, speaker.id)
+            if quiet:
+                return f"bring {quiet.name} into the discussion with one useful prompt"
+            return f"suggest one concrete next step around {focus_names}"
+        if act == ActType.OPENING:
+            return "state your initial favorite and one grounded reason"
+        if act == ActType.CLOSING:
+            return "close briefly and naturally"
         return "respond naturally and move the decision forward"
+
 
     def _vote_intent(self, state: DialogueState, persona: Persona, candidate: str) -> MoveIntent:
         rt = state.runtimes[persona.id]
-        blocked = persona.rejection == candidate or candidate in rt.hard_rejections
+        blocked = candidate in rt.rejected_options()
         current = self._stance_consistent_vote_target(state, persona, candidate)
         if blocked:
             # The alternative must actually be acceptable: never the blocked
@@ -843,8 +833,7 @@ class PolicyMixin:
                     o for o in [current, *persona.preferred_options, *state.scenario.option_ids]
                     if o in state.scenario.option_ids
                     and o != candidate
-                    and o != persona.rejection
-                    and o not in rt.hard_rejections
+                    and o not in rt.rejected_options()
                 ),
                 candidate,
             )
@@ -864,7 +853,7 @@ class PolicyMixin:
             allowed_reason = self._allowed_vote_reason(state, persona, candidate, current=current, switching=switching)
             return MoveIntent(
                 speaker_id=persona.id,
-                act=ActType.ACCEPT if switching else ActType.VOTE,
+                act=ActType.VOTE if switching else ActType.VOTE,
                 reason=(
                     f"others have visibly backed this option; commit to it clearly and use this grounded reason: {allowed_reason}"
                     if switching
@@ -872,9 +861,9 @@ class PolicyMixin:
                 ),
                 option_focus=[candidate],
                 length_hint="short",
-                allow_vote_change=True,
+                allow_vote_change=switching,
                 required_vote=candidate,
-                old_preference=current,
+                old_preference=(current if switching else None),
                 allowed_reason=allowed_reason,
             )
         return MoveIntent(
@@ -886,9 +875,9 @@ class PolicyMixin:
             ),
             option_focus=[current if current in state.scenario.option_ids else candidate],
             length_hint="short",
-            allow_vote_change=True,
+            allow_vote_change=False,
             required_vote=current if current in state.scenario.option_ids else candidate,
-            old_preference=current if current in state.scenario.option_ids else None,
+            old_preference=None,
             allowed_reason="this remains your most defensible choice from the visible discussion",
         )
 
@@ -902,15 +891,13 @@ class PolicyMixin:
         option.
         """
         rt = state.runtimes[persona.id]
-        rejected = set(rt.soft_rejections) | set(rt.hard_rejections)
-        if persona.rejection:
-            rejected.add(persona.rejection)
+        rejected = set(rt.disliked_options()) | set(rt.rejected_options())
         def acceptable(oid: str | None) -> bool:
             return bool(oid and oid in state.scenario.option_ids and oid not in rejected)
         candidates: list[str | None] = [
             rt.explicit_vote,
-            rt.current_preference,
-            *list(rt.accepted_options),
+            rt.top_option(),
+            *list(rt.acceptable_options()),
             *persona.preferred_options,
             candidate,
         ]
@@ -922,7 +909,7 @@ class PolicyMixin:
         for oid in candidates:
             if acceptable(oid):
                 return str(oid)
-        return next((oid for oid in state.scenario.option_ids if oid != persona.rejection), state.scenario.option_ids[0])
+        return next((oid for oid in state.scenario.option_ids if oid not in rt.rejected_options()), state.scenario.option_ids[0])
 
     # ------------------------------------------------------------------
     # Generation, observation, and state mutation
@@ -940,7 +927,7 @@ class PolicyMixin:
         if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
             return False
         if participant_turns >= state.force_narrow_turns:
-            camps = {rt.current_preference for rt in state.runtimes.values() if rt.current_preference}
+            camps = {rt.top_option() for rt in state.runtimes.values() if rt.top_option()}
             contested = len(camps) >= 2 and any(c.addressed_by is None for c in state.open_concerns)
             return not contested
         # Early narrowing needs visible transcript evidence, never latent
@@ -974,7 +961,7 @@ class PolicyMixin:
 
     @staticmethod
     def _candidate_blocked(state: DialogueState, candidate: str) -> bool:
-        return any(candidate in rt.hard_rejections for rt in state.runtimes.values())
+        return any(candidate in rt.rejected_options() for rt in state.runtimes.values())
 
     @staticmethod
     def _open_question_about(state: DialogueState, candidate: str) -> bool:
@@ -1001,7 +988,7 @@ class PolicyMixin:
         for rt in state.runtimes.values():
             if rt.explicit_vote in option_ids:
                 scores[rt.explicit_vote] += 2
-            for oid in rt.accepted_options:
+            for oid in rt.acceptable_options():
                 if oid in option_ids and oid != rt.explicit_vote:
                     scores[oid] += 1
         for turn in state.turns:
@@ -1033,16 +1020,16 @@ class PolicyMixin:
             c.raised_by == persona.id and c.option_id == candidate and c.addressed_by is None
             for c in state.open_concerns
         )
-        if candidate in rt.soft_rejections or unresolved_self_concern:
+        if candidate in rt.disliked_options() or unresolved_self_concern:
             return False
-        if rt.current_preference == candidate:
+        if rt.top_option() == candidate:
             return True
         support = self._visible_support_count(state, candidate, exclude=persona.id)
         if support == 0 and not self._visibly_proposed(state, candidate):
             return False
         pressure = support / max(1, len(state.personas) - 1)
         probability = 0.05 + 0.50 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
-        if candidate in rt.soft_rejections:
+        if candidate in rt.disliked_options():
             probability -= 0.25
         # Tracked stance state (issue 2): a sim whose hold on its favorite was
         # eroded by challenges/support pressure accepts the candidate more
@@ -1054,22 +1041,26 @@ class PolicyMixin:
 
     def _allowed_vote_reason(self, state: DialogueState, persona: Persona, target: str, *, current: str | None, switching: bool) -> str:
         if target in state.scenario.option_ids:
+            rt = state.runtimes[persona.id]
+            personal = rt.reason_for(target)
+            if personal:
+                return personal
             card = state.scenario.option(target)
-            if card.best_for:
-                return f"{card.name} fits {card.best_for}"
             if card.upside:
-                return f"{card.name} offers {card.upside}"
+                return card.upside
+            if card.best_for:
+                return f"works for {card.best_for}"
             if card.attrs:
                 key, value = next(iter(card.attrs.items()))
-                return f"{card.name} has {key.replace('_', ' ')} {value}"
-        return "it has the strongest visible support" if switching else "it matches your stated preference"
+                return f"{key.replace('_', ' ')}: {value}"
+        return "it has the clearest visible support" if switching else "it is still your strongest option"
 
     @staticmethod
     def _visible_support_count(state: DialogueState, option_id: str, exclude: str | None = None) -> int:
         return sum(
             1
             for pid, rt in state.runtimes.items()
-            if pid != exclude and (rt.explicit_vote == option_id or option_id in rt.accepted_options)
+            if pid != exclude and (rt.explicit_vote == option_id or option_id in rt.acceptable_options())
         )
 
     @staticmethod
@@ -1081,10 +1072,8 @@ class PolicyMixin:
         )
 
     def _can_shift_to(self, state: DialogueState, persona: Persona, option_id: str) -> bool:
-        if persona.rejection == option_id:
-            return False
-        # A visible, unresolved blocker binds exactly like a setup rejection.
-        if option_id in state.runtimes[persona.id].hard_rejections:
+        # Rank-0 options are hard blocked.
+        if option_id in state.runtimes[persona.id].rejected_options():
             return False
         if persona.sim_params.stubbornness >= 0.85 and option_id != persona.preferred_option:
             return random.random() < 0.04
@@ -1125,7 +1114,7 @@ class PolicyMixin:
         return max(candidates, key=score)
 
     def _vote_order(self, state: DialogueState, candidate: str) -> list[Persona]:
-        return sorted(state.personas, key=lambda p: (state.runtimes[p.id].current_preference != candidate, state.runtimes[p.id].turn_count))
+        return sorted(state.personas, key=lambda p: (state.runtimes[p.id].top_option() != candidate, state.runtimes[p.id].turn_count))
 
     @staticmethod
     def _recent_participant_texts(state: DialogueState, limit: int) -> list[str]:
@@ -1155,8 +1144,8 @@ class PolicyMixin:
         # person in a larger group. Ordinary agreement/build/compare turns
         # don't need the addressee's name up front.
         functional_naming = (
-            intent.act == ActType.INVITE
-            or (intent.addressee_id is not None and intent.act in {ActType.ASK, ActType.CHALLENGE})
+            intent.act == ActType.PROCESS
+            or (intent.addressee_id is not None and intent.act in {ActType.ASK, ActType.CONCERN})
             or (intent.addressee_id is not None and len(state.personas) >= 4 and intent.act == ActType.ANSWER)
         )
         window = int(cfg.style.name_prefix_window)
@@ -1193,13 +1182,13 @@ class PolicyMixin:
         # more questions on the table, statement-type acts should not tack on
         # yet another one. Real question acts (ask/invite/probe) are exempt.
         if (
-            intent.act in {ActType.BUILD, ActType.AGREE, ActType.ANSWER, ActType.COMPARE,
-                           ActType.SOFTEN, ActType.PROPOSE_COMPROMISE, ActType.CHALLENGE}
+            intent.act in {ActType.SUPPORT, ActType.SUPPORT, ActType.ANSWER, ActType.COMPARE,
+                           ActType.SOFTEN_TOWARD, ActType.COMPROMISE, ActType.CONCERN}
             and sum(1 for t in recent if "?" in t) >= 2
         ):
             intent.suppress_tail_question = True
         # Decision turns are exempt: "I vote/I'd go with" is natural and parser-relevant there.
-        if recent and intent.act not in {ActType.VOTE, ActType.ACCEPT, ActType.REJECT}:
+        if recent and intent.act not in {ActType.VOTE, ActType.VOTE, ActType.CONCERN}:
             if first_person_opening_fraction(recent) >= float(cfg.style.i_opening_max_fraction):
                 intent.suppress_i_opening = True
             if we_opening_fraction(recent) >= float(cfg.style.we_opening_max_fraction):
@@ -1264,12 +1253,12 @@ class PolicyMixin:
 
     @staticmethod
     def _latent_leading_option(state: DialogueState) -> str | None:
-        counts = Counter(rt.current_preference for rt in state.runtimes.values() if rt.current_preference)
+        counts = Counter(rt.top_option() for rt in state.runtimes.values() if rt.top_option())
         return counts.most_common(1)[0][0] if counts else None
 
     @staticmethod
     def _latent_leading_count(state: DialogueState) -> int:
-        counts = Counter(rt.current_preference for rt in state.runtimes.values() if rt.current_preference)
+        counts = Counter(rt.top_option() for rt in state.runtimes.values() if rt.top_option())
         return counts.most_common(1)[0][1] if counts else 0
 
     @staticmethod
@@ -1305,7 +1294,7 @@ class PolicyMixin:
         # terse sims doing it more often. Openings, split summaries, and
         # bridge-eligible decisions keep full room for their required content.
         short_beat_ok = (
-            intent.act not in {ActType.OPENING, ActType.SUMMARIZE_SPLIT}
+            intent.act not in {ActType.OPENING, ActType.PROCESS}
             and not (intent.act in _DECISION_ACTS and intent.allow_vote_change)
             and not intent.continuation
         )

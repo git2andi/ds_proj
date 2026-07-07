@@ -20,44 +20,32 @@ class Phase(str, Enum):
 
 
 class ActType(str, Enum):
+    """Compact dialogue-act vocabulary used by routing, prompting, and logs."""
+
     OPENING = "opening"
-    BUILD = "build"
-    AGREE = "agree"
-    CHALLENGE = "challenge"
+    SUPPORT = "support"
+    CONCERN = "concern"
     ASK = "ask"
     ANSWER = "answer"
     COMPARE = "compare"
-    INVITE = "invite"
-    PROPOSE_COMPROMISE = "propose_compromise"
-    SOFTEN = "soften"
-    CALL_VOTE = "call_vote"
-    SUMMARIZE_SPLIT = "summarize_split"
-    PROBE_HOLDOUT = "probe_holdout"
-    SUGGEST_NARROWING = "suggest_narrowing"
-    POST_RESERVATION_DECISION = "post_reservation_decision"
+    SOFTEN_TOWARD = "soften_toward"
+    COMPROMISE = "compromise"
+    PROCESS = "process"
     VOTE = "vote"
-    ACCEPT = "accept"
-    REJECT = "reject"
-    REACT = "react"
+    CLOSING = "closing"
 
 
-# Act groupings shared across the routing/observation/validation modules
-# (defined here to avoid a shared-constant import cycle between them, issue 8).
-_DECISION_ACTS = {ActType.VOTE, ActType.ACCEPT, ActType.REJECT, ActType.POST_RESERVATION_DECISION}
+# Act groupings shared across the routing/observation/validation modules.
+_DECISION_ACTS = {ActType.VOTE}
 _DISCUSSION_ACTS = {
-    ActType.BUILD,
-    ActType.AGREE,
-    ActType.CHALLENGE,
+    ActType.SUPPORT,
+    ActType.CONCERN,
     ActType.ASK,
     ActType.ANSWER,
     ActType.COMPARE,
-    ActType.INVITE,
-    ActType.PROPOSE_COMPROMISE,
-    ActType.SOFTEN,
-    ActType.CALL_VOTE,
-    ActType.SUMMARIZE_SPLIT,
-    ActType.PROBE_HOLDOUT,
-    ActType.SUGGEST_NARROWING,
+    ActType.SOFTEN_TOWARD,
+    ActType.COMPROMISE,
+    ActType.PROCESS,
 }
 
 
@@ -215,6 +203,37 @@ class AgendaItem:
     status: AgendaStatus = AgendaStatus.PENDING
 
 
+STANCE_REJECTED = 0
+STANCE_DISLIKED = 1
+STANCE_NEUTRAL = 2
+STANCE_ACCEPTABLE = 3
+STANCE_PREFERRED = 4
+
+
+@dataclass(slots=True)
+class OptionStance:
+    """One simulator's stance toward one option.
+
+    Rank is the single source of truth for preference/rejection buckets:
+    4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected/hard-blocked.
+    Reasons are deliberately short setup hints; they are not hidden transcript
+    facts, only controller guidance for plausible moves.
+    """
+
+    option_id: str
+    rank: int = STANCE_NEUTRAL
+    reason_for: str = ""
+    reason_against: str = ""
+
+    def clipped(self) -> "OptionStance":
+        return OptionStance(
+            option_id=self.option_id,
+            rank=max(STANCE_REJECTED, min(STANCE_PREFERRED, int(self.rank))),
+            reason_for=self.reason_for.strip(),
+            reason_against=self.reason_against.strip(),
+        )
+
+
 @dataclass(slots=True)
 class Persona:
     id: str
@@ -226,6 +245,7 @@ class Persona:
     preferred_options: list[str]
     rejection: str | None = None
     rejection_reason: str = ""
+    option_stances: dict[str, OptionStance] = field(default_factory=dict)
     agenda: list[AgendaItem] = field(default_factory=list)
 
     @property
@@ -338,27 +358,94 @@ class ParticipantRuntime:
     persona_id: str
     turn_count: int = 0
     last_spoke_turn: int | None = None
-    current_preference: str | None = None  # latent simulator preference, not public evidence
-    # Stateful stance tracking (issue 2): how firmly the sim holds its current
-    # favorite. Eroded by challenges against it and by visible group support for
-    # rivals (scaled by stubbornness); rebuilt a little by defending it. Low
-    # commitment makes softening/switching easier, during discussion and at votes.
+    # Stance ranks are the runtime source of truth.
+    # 4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected.
+    option_ranks: dict[str, int] = field(default_factory=dict)
+    reasons_for: dict[str, str] = field(default_factory=dict)
+    reasons_against: dict[str, str] = field(default_factory=dict)
     commitment_strength: float = 0.6
-    commitment_min: float = 1.0            # lowest commitment reached during the run (tuning telemetry)
-    challenges_received: int = 0           # visible challenges landed on this sim's favorite
-    concessions_made: int = 0              # times this sim visibly conceded a point/switched
-    explicit_vote: str | None = None       # observed public commitment from visible text
-    vote_stance: str | None = None         # how the vote was stated: "vote" (direct) or "accept"
-    accepted_options: set[str] = field(default_factory=set)
-    soft_rejections: dict[str, str] = field(default_factory=dict)
-    hard_rejections: dict[str, str] = field(default_factory=dict)
+    commitment_min: float = 1.0
+    challenges_received: int = 0
+    concessions_made: int = 0
+    explicit_vote: str | None = None
+    vote_stance: str | None = None
     already_said: list[str] = field(default_factory=list)
-    # Visible vote movements:
-    # {"from": old-or-initial, "to": new, "has_reason": bool, "has_bridge": bool}.
-    # has_bridge is the issue-5 signal: the switch line links the old stance to
-    # the new pick with a reason, not just any loose reason clause.
     switch_events: list[dict] = field(default_factory=list)
 
+    def rank(self, option_id: str | None) -> int:
+        if not option_id:
+            return STANCE_NEUTRAL
+        return int(self.option_ranks.get(option_id, STANCE_NEUTRAL))
+
+    def reason_for(self, option_id: str | None) -> str:
+        return self.reasons_for.get(option_id or "", "")
+
+    def reason_against(self, option_id: str | None) -> str:
+        return self.reasons_against.get(option_id or "", "")
+
+    def set_rank(self, option_id: str, rank: int, *, reason_for: str = "", reason_against: str = "") -> None:
+        self.option_ranks[option_id] = max(STANCE_REJECTED, min(STANCE_PREFERRED, int(rank)))
+        if reason_for:
+            self.reasons_for[option_id] = reason_for.strip()
+        if reason_against:
+            self.reasons_against[option_id] = reason_against.strip()
+
+    def adjust_rank(self, option_id: str, delta: int, *, reason_for: str = "", reason_against: str = "") -> None:
+        self.set_rank(option_id, self.rank(option_id) + int(delta), reason_for=reason_for, reason_against=reason_against)
+
+    def top_option(self, *, fallback: str | None = None) -> str | None:
+        if not self.option_ranks:
+            return fallback
+        best_rank = max(self.option_ranks.values())
+        candidates = [oid for oid, rank in self.option_ranks.items() if rank == best_rank]
+        if fallback in candidates:
+            return fallback
+        return sorted(candidates)[0] if candidates else fallback
+
+    def options_at_rank(self, rank: int) -> set[str]:
+        return {oid for oid, value in self.option_ranks.items() if value == rank}
+
+    def acceptable_options(self) -> set[str]:
+        top = self.top_option()
+        return {
+            oid for oid, value in self.option_ranks.items()
+            if value >= STANCE_ACCEPTABLE and oid != top
+        }
+
+    def liked_options(self) -> set[str]:
+        return {oid for oid, value in self.option_ranks.items() if value >= STANCE_ACCEPTABLE}
+
+    def disliked_options(self) -> set[str]:
+        return {oid for oid, value in self.option_ranks.items() if value == STANCE_DISLIKED}
+
+    def rejected_options(self) -> set[str]:
+        return {oid for oid, value in self.option_ranks.items() if value == STANCE_REJECTED}
+
+    def is_acceptable(self, option_id: str | None) -> bool:
+        return self.rank(option_id) >= STANCE_ACCEPTABLE
+
+    def is_disliked(self, option_id: str | None) -> bool:
+        return self.rank(option_id) == STANCE_DISLIKED
+
+    def is_rejected(self, option_id: str | None) -> bool:
+        return self.rank(option_id) == STANCE_REJECTED
+
+    def promote_to_preferred(self, option_id: str, *, reason_for: str = "") -> None:
+        old = self.top_option()
+        if old and old != option_id and self.rank(old) >= STANCE_PREFERRED:
+            self.option_ranks[old] = STANCE_ACCEPTABLE
+        self.set_rank(option_id, STANCE_PREFERRED, reason_for=reason_for)
+
+    def mark_acceptable(self, option_id: str, *, reason_for: str = "") -> None:
+        if self.rank(option_id) > STANCE_REJECTED:
+            self.set_rank(option_id, max(self.rank(option_id), STANCE_ACCEPTABLE), reason_for=reason_for)
+
+    def mark_disliked(self, option_id: str, *, reason_against: str = "") -> None:
+        if self.rank(option_id) > STANCE_REJECTED and self.rank(option_id) < STANCE_PREFERRED:
+            self.set_rank(option_id, STANCE_DISLIKED, reason_against=reason_against)
+
+    def mark_rejected(self, option_id: str, *, reason_against: str = "") -> None:
+        self.set_rank(option_id, STANCE_REJECTED, reason_against=reason_against)
 
 @dataclass(slots=True)
 class TurnRecord:
@@ -409,7 +496,6 @@ class DialogueState:
     reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
     split_reservation_exchanges: int = 0     # reservation/supporter pairs during split/tie narrowing
     procedural_move_count: int = 0           # participant-owned structure beats taken (split summaries/probes)
-    peer_vote_call_done: bool = False        # legacy metric; v3 uses moderator-owned vote calls
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

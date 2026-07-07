@@ -1,0 +1,3318 @@
+{
+  "run_id": "20260708_010656_625888",
+  "topic": "Choose a venue for a student project celebration with different budgets and travel times",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a venue for a student project celebration with different budgets and travel times",
+    "decision_kind": "generic_decision",
+    "opening_question": "What matters most to us for the celebration: budget, travel time, or atmosphere?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Downtown Bistro Private Room",
+        "attrs": {
+          "cost": "280",
+          "travel_time_minutes": "30",
+          "capacity": "10",
+          "food_quality_rating": "4.5"
+        },
+        "upside": "Cozy private space with high-quality food",
+        "tradeoff": "Close to budget limit, leaving little room for extras",
+        "concern": "Might feel a bit formal for a casual celebration",
+        "best_for": "prioritizing atmosphere and food quality",
+        "short_name": "Downtown Bistro"
+      },
+      {
+        "id": "B",
+        "name": "Campus Student Center Lounge",
+        "attrs": {
+          "cost": "50",
+          "travel_time_minutes": "5",
+          "capacity": "20",
+          "food_quality_rating": "3.0"
+        },
+        "upside": "Very affordable and extremely close to campus",
+        "tradeoff": "Limited food options and less festive atmosphere",
+        "concern": "Might feel too casual or boring for a special event",
+        "best_for": "prioritizing budget and convenience",
+        "short_name": "Student Center"
+      },
+      {
+        "id": "C",
+        "name": "Riverside Park Picnic Area",
+        "attrs": {
+          "cost": "120",
+          "travel_time_minutes": "40",
+          "capacity": "15",
+          "outdoor_setting": "True"
+        },
+        "upside": "Relaxed outdoor setting with space for activities",
+        "tradeoff": "Weather dependent and requires self-arranged catering",
+        "concern": "Risk of bad weather or bugs disrupting the event",
+        "best_for": "prioritizing atmosphere and group activities",
+        "short_name": "Riverside Park"
+      },
+      {
+        "id": "D",
+        "name": "Local Pizza Place Party Room",
+        "attrs": {
+          "cost": "200",
+          "travel_time_minutes": "25",
+          "capacity": "12",
+          "food_quality_rating": "4.0"
+        },
+        "upside": "Casual and fun with familiar food everyone likes",
+        "tradeoff": "Less private and can be noisy or crowded",
+        "concern": "May not feel special enough for a celebration",
+        "best_for": "prioritizing fun and moderate budget",
+        "short_name": "Pizza Place"
+      }
+    ],
+    "shared_context": [
+      "The celebration is for exactly 5 students after completing a project",
+      "The total budget for the venue and food is capped at $300",
+      "The venue must be reachable within 45 minutes of travel from campus"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Rina",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.525,
+        "compromise_threshold": 0.11249999999999993
+      },
+      "background": "Rina enjoys creative, outdoor group activities and values a relaxed atmosphere for celebrations.",
+      "private_goal": "She wants a venue that supports group activities and a fun, informal vibe.",
+      "preferred_options": [
+        "C",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Might feel a bit formal for a casual celebration"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Might feel too casual or boring for a special event"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Relaxed outdoor setting with space for activities",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Casual and fun with familiar food everyone likes",
+          "reason_against": "Less private and can be noisy or crowded"
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "done"
+        },
+        {
+          "act": "compromise",
+          "option": "C",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Felix",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5125,
+        "verbosity": 0.4,
+        "initiative": 0.4,
+        "responsiveness": 0.7125,
+        "stubbornness": 0.625,
+        "directness": 0.6499999999999999,
+        "compromise_threshold": 0.5875
+      },
+      "background": "Felix prefers practical, budget-conscious choices that minimize travel time.",
+      "private_goal": "He wants the venue to be affordable and very close to campus for convenience.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Close to budget limit, leaving little room for extras"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Very affordable and extremely close to campus",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Relaxed outdoor setting with space for activities",
+          "reason_against": "Weather dependent and requires self-arranged catering"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "concern",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Anton",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.7000000000000001,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 1.0,
+        "stubbornness": 0.175,
+        "directness": 0.725,
+        "compromise_threshold": 0.13749999999999996
+      },
+      "background": "Anton values high food quality and a nice atmosphere for celebrating achievements.",
+      "private_goal": "He wants a venue with a cozy private space and excellent food.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Cozy private space with high-quality food",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Limited food options and less festive atmosphere"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Requires self-arranged catering"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Casual and fun with familiar food everyone likes",
+          "reason_against": "May not feel special enough for a celebration"
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "A",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Marco",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.45,
+        "initiative": 0.5,
+        "responsiveness": 0.775,
+        "stubbornness": 0.55,
+        "directness": 0.6749999999999999,
+        "compromise_threshold": 0.4
+      },
+      "background": "Marco prefers a fun, casual environment but is cautious about noise and crowding.",
+      "private_goal": "He wants a moderately priced venue that feels lively but not overwhelming.",
+      "preferred_options": [
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Might feel a bit formal for a casual celebration"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Very affordable and extremely close to campus",
+          "reason_against": "Might feel too casual or boring for a special event"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Weather dependent and requires self-arranged catering"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Casual and fun with familiar food everyone likes",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "name": "Thea",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 4,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.25,
+        "directness": 0.825,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "Thea values convenience and budget but also wants a somewhat festive atmosphere.",
+      "private_goal": "She prefers a venue close to campus that balances cost and a pleasant environment.",
+      "preferred_options": [
+        "B",
+        "D"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Close to budget limit, leaving little room for extras"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Very affordable and extremely close to campus",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Weather dependent and requires self-arranged catering"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Casual and fun with familiar food everyone likes",
+          "reason_against": "May not feel special enough for a celebration"
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 32,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "C": "Relaxed outdoor setting with space for activities",
+        "D": "Casual and fun with familiar food everyone likes",
+        "B": "Counting on the Student Center works for me—super close and keeps us under budget."
+      },
+      "reasons_against": {
+        "A": "Might feel a bit formal for a casual celebration",
+        "B": "Might feel too casual or boring for a special event",
+        "D": "Less private and can be noisy or crowded"
+      },
+      "commitment_strength": 0.628675,
+      "commitment_min": 0.5273,
+      "challenges_received": 1,
+      "concessions_made": 2,
+      "explicit_vote": "B",
+      "vote_stance": "accept",
+      "already_said": [
+        "How about Riverside Park?",
+        "Handling our own food means we can customize everything exactly how we like—plus.",
+        "Having space to spread out and do fun group activities really sets Riverside Park apart from the Student Center, Felix!",
+        "I’m starting to see the appeal of the Student Center, especially with how close and affordable it is, Marco.",
+        "Remember the Student Center’s limited food choices might make us a bit hungry, but at least we won’t get soaked!",
+        "Riverside Park is great for fun outdoor stuff, but bad weather risks are real—plus, we’d need to handle food ourselves.",
+        "Good point, Anton! Also, the Bistro’s price leaves little wiggle room for drinks or extras.",
+        "Counting on the Student Center works for me—super close and keeps us under budget."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 4,
+      "last_spoke_turn": 30,
+      "option_ranks": {
+        "A": 1,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "reasons_for": {
+        "B": "I’ll stay with Student Center—affordable and just five minutes away.",
+        "C": "Relaxed outdoor setting with space for activities"
+      },
+      "reasons_against": {
+        "A": "Close to budget limit, leaving little room for extras",
+        "C": "Weather dependent and requires self-arranged catering"
+      },
+      "commitment_strength": 0.711875,
+      "commitment_min": 0.7,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Saving most of the budget and travel time matters—Student Center keeps both low.",
+        "What’s one thing about Riverside Park that beats the Student Center for you?",
+        "Risk of bad weather means Riverside Park could ruin the whole day.",
+        "I’ll stay with Student Center—affordable and just five minutes away."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 10,
+      "last_spoke_turn": 38,
+      "option_ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 0,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "Cozy private space with high-quality food",
+        "D": "Pizza Place gets my vote.",
+        "B": "I vote for Student Center; I was on Pizza Place, but The Student Center’s budget and travel time advantage is starting to convince me, Marco."
+      },
+      "reasons_against": {
+        "B": "Limited food options and less festive atmosphere",
+        "C": "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker.",
+        "D": "May not feel special enough for a celebration"
+      },
+      "commitment_strength": 0.6245,
+      "commitment_min": 0.52,
+      "challenges_received": 0,
+      "concessions_made": 4,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "We should consider Downtown Bistro since it offers a cozy private room and top-notch food, even if it’s tight on budget.",
+        "Rina, remember Riverside Park means we handle all the food ourselves—adds risk with weather and work.",
+        "The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+        "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker.",
+        "Let’s settle on the Student Center if we can boost the food options a bit—it’s close and fits the budget perfectly!",
+        "Let’s pick the Pizza Place party room—it’s fun but might be noisy or crowded.",
+        "Bringing snacks helps, but the Student Center’s food and vibe still feel too basic compared to the Pizza Place or Bistro.",
+        "Pizza Place gets my vote.",
+        "Worried the Student Center’s food quality won’t feel special enough.",
+        "I vote for Student Center; I was on Pizza Place, but The Student Center’s budget and travel time advantage is starting to convince me, Marco."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "D",
+          "has_reason": false,
+          "has_bridge": true
+        },
+        {
+          "from": "D",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 5,
+      "last_spoke_turn": 33,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 1,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "I’m going with Student Center instead of Pizza Place—affordable and close.",
+        "D": "Casual and fun with familiar food everyone likes"
+      },
+      "reasons_against": {
+        "A": "Might feel a bit formal for a casual celebration",
+        "B": "Might feel too casual or boring for a special event",
+        "C": "Space for activities sounds good, but I worry about the weather and food hassle at Riverside Park."
+      },
+      "commitment_strength": 0.587,
+      "commitment_min": 0.587,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "The Pizza Place feels lively and casual, but I’m a bit worried about noise and crowds there.",
+        "Space for activities sounds good, but I worry about the weather and food hassle at Riverside Park.",
+        "Noise is a worry, but familiar food and fun vibe matter most.",
+        "How noisy does the Pizza Place get on weeknights?",
+        "I’m going with Student Center instead of Pizza Place—affordable and close."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p5": {
+      "persona_id": "p5",
+      "turn_count": 8,
+      "last_spoke_turn": 37,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "I vote for Student Center—very affordable and right next to campus.",
+        "D": "Casual and fun with familiar food everyone likes"
+      },
+      "reasons_against": {
+        "A": "Close to budget limit, leaving little room for extras",
+        "C": "Weather dependent and requires self-arranged catering",
+        "D": "May not feel special enough for a celebration"
+      },
+      "commitment_strength": 0.6287500000000001,
+      "commitment_min": 0.55,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "The Student Center costs way less and is right next to campus. It might feel a bit plain though.",
+        "Keep in mind the Student Center saves over $150 and travel time, but it’s less festive.",
+        "Riverside Park sounds nice, but the Student Center keeps us safe from bad weather and food stress.",
+        "Closer and cheaper beats a nice view when the weather’s iffy. Pizza Place offers better food but might get noisy and cramped.",
+        "Space for activities is cool but not if it rains.",
+        "We can do the Student Center if someone brings extra snacks. It’s cheap, close, and we stay dry.",
+        "I vote for Student Center—very affordable and right next to campus.",
+        "Food quality rates a 3.0, so it won’t be gourmet, Anton."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a venue for a student project celebration with different budgets and travel times.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Downtown Bistro Private Room — cost: 280; travel time minutes: 30; food quality rating: 4.5 (+ Cozy private space with high-quality food; − Close to budget limit, leaving little room for extras)\nB) Campus Student Center Lounge — cost: 50; travel time minutes: 5; food quality rating: 3.0 (+ Very affordable and extremely close to campus; − Limited food options and less festive atmosphere)\nC) Riverside Park Picnic Area — cost: 120; travel time minutes: 40; capacity: 15 (+ Relaxed outdoor setting with space for activities; − Weather dependent and requires self-arranged catering)\nD) Local Pizza Place Party Room — cost: 200; travel time minutes: 25; food quality rating: 4.0 (+ Casual and fun with familiar food everyone likes; − Less private and can be noisy or crowded)\nContext: The celebration is for exactly 5 students after completing a project; The total budget for the venue and food is capped at $300; The venue must be reachable within 45 minutes of travel from campus.\nWhat matters most to us for the celebration: budget, travel time, or atmosphere?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a venue for a student project celebration with different budgets and travel times.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Downtown Bistro Private Room — cost: 280; travel time minutes: 30; food quality rating: 4.5 (+ Cozy private space with high-quality food; − Close to budget limit, leaving little room for extras)\nB) Campus Student Center Lounge — cost: 50; travel time minutes: 5; food quality rating: 3.0 (+ Very affordable and extremely close to campus; − Limited food options and less festive atmosphere)\nC) Riverside Park Picnic Area — cost: 120; travel time minutes: 40; capacity: 15 (+ Relaxed outdoor setting with space for activities; − Weather dependent and requires self-arranged catering)\nD) Local Pizza Place Party Room — cost: 200; travel time minutes: 25; food quality rating: 4.0 (+ Casual and fun with familiar food everyone likes; − Less private and can be noisy or crowded)\nContext: The celebration is for exactly 5 students after completing a project; The total budget for the venue and food is capped at $300; The venue must be reachable within 45 minutes of travel from campus.\nWhat matters most to us for the celebration: budget, travel time, or atmosphere?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "The Student Center costs way less and is right next to campus. It might feel a bit plain though.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The Student Center costs way less and is right next to campus. It might feel a bit plain though.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 713,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "How about Riverside Park?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "How about Riverside Park?",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 793,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "We should consider Downtown Bistro since it offers a cozy private room and top-notch food, even if it’s tight on budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We should consider Downtown Bistro since it offers a cozy private room and top-notch food, even if it’s tight on budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 799,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p4",
+      "speaker_name": "Marco",
+      "text": "The Pizza Place feels lively and casual, but I’m a bit worried about noise and crowds there.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The Pizza Place feels lively and casual, but I’m a bit worried about noise and crowds there.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": true,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1416,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Saving most of the budget and travel time matters—Student Center keeps both low.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Saving most of the budget and travel time matters—Student Center keeps both low.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 550,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Rina, remember Riverside Park means we handle all the food ourselves—adds risk with weather and work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Rina, remember Riverside Park means we handle all the food ourselves—adds risk with weather and work.",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Riverside Park, Downtown Bistro that has not come up yet",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 632,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "Keep in mind the Student Center saves over $150 and travel time, but it’s less festive.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Keep in mind the Student Center saves over $150 and travel time, but it’s less festive.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "the group is visibly split between Pizza Place and Student Center; put them side by side on the trade-off that actually divides the group",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1292,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "soften_toward",
+        "reason": "the case others made for Student Center genuinely lands with you — say openly that it is starting to look better to me, name the argument that moved you, and what you still like about Downtown Bistro; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": "B",
+        "continuation": false
+      },
+      "tokens_in": 657,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Handling our own food means we can customize everything exactly how we like—plus.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Handling our own food means we can customize everything exactly how we like—plus.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Riverside Park, connected to the current discussion",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 572,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "What’s one thing about Riverside Park that beats the Student Center for you?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "What’s one thing about Riverside Park that beats the Student Center for you?",
+        "act_type": "ask",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 628,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Having space to spread out and do fun group activities really sets Riverside Park apart from the Student Center, Felix!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Having space to spread out and do fun group activities really sets Riverside Park apart from the Student Center, Felix!",
+        "act_type": "answer",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 655,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p4",
+      "speaker_name": "Marco",
+      "text": "Space for activities sounds good, but I worry about the weather and food hassle at Riverside Park.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Space for activities sounds good, but I worry about the weather and food hassle at Riverside Park.",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Space for activities sounds good, but I worry about the weather and food hassle at Riverside Park."
+        },
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 606,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "I’m starting to see the appeal of the Student Center, especially with how close and affordable it is, Marco.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’m starting to see the appeal of the Student Center, especially with how close and affordable it is, Marco.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "B"
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "soften_toward",
+        "reason": "the case others made for Student Center genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Riverside Park; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": "B",
+        "continuation": false
+      },
+      "tokens_in": 656,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "Riverside Park sounds nice, but the Student Center keeps us safe from bad weather and food stress.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Riverside Park sounds nice, but the Student Center keeps us safe from bad weather and food stress.",
+        "act_type": "support",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "support",
+        "reason": "add a new grounded reason about Student Center, Riverside Park, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 651,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker.",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker."
+        },
+        "hard_rejects": {
+          "C": "We get better food and a cozy vibe at Pizza Place, but Riverside Park’s weather risk is a dealbreaker."
+        },
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "the group is visibly split between Pizza Place and Riverside Park; put them side by side on the trade-off that actually divides the group",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1280,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Risk of bad weather means Riverside Park could ruin the whole day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Risk of bad weather means Riverside Park could ruin the whole day.",
+        "act_type": "concern",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "push back on Riverside Park with one concrete concern — you currently favor Student Center, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 686,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "Closer and cheaper beats a nice view when the weather’s iffy. Pizza Place offers better food but might get noisy and cramped.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Closer and cheaper beats a nice view when the weather’s iffy. Pizza Place offers better food but might get noisy and cramped.",
+        "act_type": "compare",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "compare Student Center, Riverside Park, Pizza Place with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1437,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Let’s settle on the Student Center if we can boost the food options a bit—it’s close and fits the budget perfectly!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s settle on the Student Center if we can boost the food options a bit—it’s close and fits the budget perfectly!",
+        "act_type": "compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B",
+        "resolves_blocker": null,
+        "conditional_support": "B",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compromise",
+        "reason": "test whether Student Center could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 657,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Remember the Student Center’s limited food choices might make us a bit hungry, but at least we won’t get soaked!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Remember the Student Center’s limited food choices might make us a bit hungry, but at least we won’t get soaked!",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Student Center, Riverside Park that has not come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 653,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "Space for activities is cool but not if it rains.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Space for activities is cool but not if it rains.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Riverside Park, Student Center fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1346,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Riverside Park is great for fun outdoor stuff, but bad weather risks are real—plus, we’d need to handle food ourselves.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Riverside Park is great for fun outdoor stuff, but bad weather risks are real—plus, we’d need to handle food ourselves.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Riverside Park with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": 2,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 525,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Let’s pick the Pizza Place party room—it’s fun but might be noisy or crowded.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s pick the Pizza Place party room—it’s fun but might be noisy or crowded.",
+        "act_type": "compromise",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "D",
+        "resolves_blocker": null,
+        "conditional_support": "D",
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compromise",
+        "reason": "test whether Pizza Place, Student Center could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1777,
+      "tokens_out": 56,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "We can do the Student Center if someone brings extra snacks. It’s cheap, close, and we stay dry.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "We can do the Student Center if someone brings extra snacks. It’s cheap, close, and we stay dry.",
+        "act_type": "compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compromise",
+        "reason": "test whether Student Center could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 684,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Bringing snacks helps, but the Student Center’s food and vibe still feel too basic compared to the Pizza Place or Bistro.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Bringing snacks helps, but the Student Center’s food and vibe still feel too basic compared to the Pizza Place or Bistro.",
+        "act_type": "compare",
+        "option_refs": [
+          "B",
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Student Center, Pizza Place, Downtown Bistro with one clear trade-off",
+        "addressee_id": "p5",
+        "option_focus": [
+          "B",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 768,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Marco",
+      "text": "Noise is a worry, but familiar food and fun vibe matter most.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Noise is a worry, but familiar food and fun vibe matter most.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Pizza Place fits that",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": 0,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 644,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Good point, Anton! Also, the Bistro’s price leaves little wiggle room for drinks or extras.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Good point, Anton! Also, the Bistro’s price leaves little wiggle room for drinks or extras.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Student Center, Pizza Place, Downtown Bistro that has not come up yet",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 673,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p4",
+      "speaker_name": "Marco",
+      "text": "How noisy does the Pizza Place get on weeknights?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "How noisy does the Pizza Place get on weeknights?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Pizza Place",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 503,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can you each share the one spot you’re definitely choosing for this outing?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can you each share the one spot you’re definitely choosing for this outing?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "I’ll stay with Student Center—affordable and just five minutes away.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’ll stay with Student Center—affordable and just five minutes away.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: Very affordable and extremely close to campus",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "Very affordable and extremely close to campus",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 607,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "I vote for Student Center—very affordable and right next to campus.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I vote for Student Center—very affordable and right next to campus.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: Very affordable and extremely close to campus",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "Very affordable and extremely close to campus",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 691,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p1",
+      "speaker_name": "Rina",
+      "text": "Counting on the Student Center works for me—super close and keeps us under budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Counting on the Student Center works for me—super close and keeps us under budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [
+          "B"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: I’m starting to see the appeal of the Student Center, especially with how close and affordable it is, Marco.",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "I’m starting to see the appeal of the Student Center, especially with how close and affordable it is, Marco.",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 704,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p4",
+      "speaker_name": "Marco",
+      "text": "I’m going with Student Center instead of Pizza Place—affordable and close.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m going with Student Center instead of Pizza Place—affordable and close.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Very affordable and extremely close to campus",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for",
+          "works for me"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "D",
+        "allowed_reason": "Very affordable and extremely close to campus",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1061,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Pizza Place gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Pizza Place gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for",
+          "works for me"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "D",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 982,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "REQUIRED_VOTE_MISMATCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like most of us are happy with the Student Center Lounge—Anton, can you share what’s holding you back?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like most of us are happy with the Student Center Lounge—Anton, can you share what’s holding you back?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "Worried the Student Center’s food quality won’t feel special enough.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Worried the Student Center’s food quality won’t feel special enough.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Student Center — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1302,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p5",
+      "speaker_name": "Thea",
+      "text": "Food quality rates a 3.0, so it won’t be gourmet, Anton.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Food quality rates a 3.0, so it won’t be gourmet, Anton.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "respond to Anton's reservation about Student Center honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 36,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 630,
+      "tokens_out": 57,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p3",
+      "speaker_name": "Anton",
+      "text": "I vote for Student Center; I was on Pizza Place, but The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Student Center; I was on Pizza Place, but The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "final decision: controller outcome is a switch from Pizza Place to Student Center. Use exactly this grounded reason, in your own words: The Student Center’s budget and travel time advantage is starting to convince me, Marco.. Do not add new facts or pressure language",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "D",
+        "allowed_reason": "The Student Center’s budget and travel time advantage is starting to convince me, Marco.",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1320,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 39,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, looks like Campus Student Center Lounge it is for everyone!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, looks like Campus Student Center Lounge it is for everyone!",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 35,
+    "metadata": {
+      "visible_votes": {
+        "p2": "B",
+        "p5": "B",
+        "p1": "B",
+        "p4": "B",
+        "p3": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "B",
+        "p4": "B",
+        "p5": "B"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 2,
+          "B": 4,
+          "C": 3,
+          "D": 3
+        },
+        "p2": {
+          "A": 1,
+          "B": 4,
+          "C": 3,
+          "D": 2
+        },
+        "p3": {
+          "A": 3,
+          "B": 4,
+          "C": 0,
+          "D": 3
+        },
+        "p4": {
+          "A": 2,
+          "B": 4,
+          "C": 1,
+          "D": 3
+        },
+        "p5": {
+          "A": 2,
+          "B": 4,
+          "C": 2,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=25, force=32, hard=37, distinct_initial_prefs=4, avg_compromise=0.72",
+        "turn 6: discussion — all participants gave an opening view",
+        "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+        "turn 38: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 25,
+      "force_narrow_turns": 32,
+      "hard_max_turns": 37
+    }
+  },
+  "phase_history": [
+    "pacing: min=25, force=32, hard=37, distinct_initial_prefs=4, avg_compromise=0.72",
+    "turn 6: discussion — all participants gave an opening view",
+    "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+    "turn 38: closure — successful visible after vote round 1",
+    "turn 39: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 35,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.103,
+    "turn_counts": {
+      "Rina": 8,
+      "Felix": 4,
+      "Anton": 10,
+      "Marco": 5,
+      "Thea": 8
+    },
+    "top_speaker_share": 0.286,
+    "avg_words_by_persona": {
+      "Rina": 15.6,
+      "Felix": 12.0,
+      "Anton": 16.6,
+      "Marco": 13.2,
+      "Thea": 15.5
+    },
+    "avg_words_by_act": {
+      "answer": 13.7,
+      "ask": 11.0,
+      "compare": 19.6,
+      "compromise": 17.7,
+      "concern": 12.0,
+      "opening": 14.8,
+      "soften_toward": 16.5,
+      "support": 15.0,
+      "vote": 12.7
+    },
+    "short_turn_rate": 0.171,
+    "tiny_turn_rate": 0.057,
+    "question_density": 0.086,
+    "tail_question_rate": 0.03,
+    "avg_words_per_turn": 15.1,
+    "repaired_turns": 4,
+    "repair_rate": 0.114,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 5,
+    "visible_votes": {
+      "Rina": "B",
+      "Felix": "B",
+      "Anton": "B",
+      "Marco": "B",
+      "Thea": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 0.667,
+    "participation_gini": 0.171,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 1.0,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {},
+    "repetition_score": 0.143,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 0,
+    "switch_event_count": 4,
+    "switch_explanation_rate": 0.75,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 3,
+    "name_prefix_rate": 0.029,
+    "option_opening_rate": 0.171,
+    "i_opening_rate": 0.143,
+    "we_opening_rate": 0.086,
+    "name_or_option_opening_rate": 0.2,
+    "repeated_opening_patterns": 4,
+    "unsupported_fact_flags": 1,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 1.0,
+    "stance_rank_distribution": {
+      "0": 1,
+      "1": 2,
+      "2": 5,
+      "3": 7,
+      "4": 5
+    },
+    "runtime_preferred_by_rank": {
+      "Rina": "B",
+      "Felix": "B",
+      "Anton": "B",
+      "Marco": "B",
+      "Thea": "B"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 3,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 18,
+        "reasons": 10,
+        "objections": 0,
+        "acceptances": 1
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 6,
+        "objections": 3,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 9,
+        "reasons": 5,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Rina": 0.737,
+      "Felix": 0.512,
+      "Anton": 0.7,
+      "Marco": 0.4,
+      "Thea": 0.85
+    },
+    "expected_turn_share": {
+      "Rina": 0.228,
+      "Felix": 0.163,
+      "Anton": 0.21,
+      "Marco": 0.153,
+      "Thea": 0.246
+    },
+    "realized_turn_share": {
+      "Rina": 0.229,
+      "Felix": 0.114,
+      "Anton": 0.286,
+      "Marco": 0.143,
+      "Thea": 0.229
+    },
+    "agenda_status": {
+      "done": 4,
+      "obsolete": 6,
+      "pending": 10
+    },
+    "outcome_status": "successful",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 25,
+    "force_narrow_turns": 32,
+    "hard_max_turns": 37,
+    "phase_history": [
+      "pacing: min=25, force=32, hard=37, distinct_initial_prefs=4, avg_compromise=0.72",
+      "turn 6: discussion — all participants gave an opening view",
+      "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+      "turn 38: closure — successful visible after vote round 1",
+      "turn 39: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.031,
+    "verbosity_realization_error": 0.178,
+    "engagement_error_by_persona": {
+      "Rina": 0.001,
+      "Felix": 0.049,
+      "Anton": 0.076,
+      "Marco": 0.01,
+      "Thea": 0.018
+    },
+    "verbosity_error_by_persona": {
+      "Rina": 0.021,
+      "Felix": 0.218,
+      "Anton": 0.35,
+      "Marco": 0.3,
+      "Thea": 0.001
+    },
+    "engagement_behavior_correlation": 0.761,
+    "verbosity_behavior_correlation": 0.736,
+    "free_discussion_share": {
+      "Rina": 0.25,
+      "Felix": 0.083,
+      "Anton": 0.292,
+      "Marco": 0.125,
+      "Thea": 0.25
+    },
+    "top_free_discussion_share": 0.292,
+    "free_discussion_engagement_correlation": 0.821,
+    "setup_tokens_in": 2340,
+    "setup_tokens_out": 2038,
+    "dialogue_tokens_in": 30345,
+    "dialogue_tokens_out": 1094,
+    "total_tokens_in": 32685,
+    "total_tokens_out": 3132,
+    "tokens_setup_in": 2340,
+    "tokens_setup_out": 2038,
+    "calls_setup": 1,
+    "tokens_utterance_in": 23506,
+    "tokens_utterance_out": 906,
+    "calls_utterance": 35,
+    "tokens_grounding_in": 4618,
+    "tokens_grounding_out": 77,
+    "calls_grounding": 7,
+    "tokens_repair_in": 1426,
+    "tokens_repair_out": 56,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 795,
+    "tokens_moderator_out": 55,
+    "calls_moderator": 3,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2340,
+    "setup_tokens_out": 2038,
+    "dialogue_tokens_in": 30345,
+    "dialogue_tokens_out": 1094,
+    "total_tokens_in": 32685,
+    "total_tokens_out": 3132
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2340,
+      "out": 2038,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 23506,
+      "out": 906,
+      "calls": 35
+    },
+    "grounding": {
+      "in": 4618,
+      "out": 77,
+      "calls": 7
+    },
+    "repair": {
+      "in": 1426,
+      "out": 56,
+      "calls": 4
+    },
+    "moderator": {
+      "in": 795,
+      "out": 55,
+      "calls": 3
+    }
+  }
+}

@@ -609,7 +609,7 @@ def parse_dialogue_act(
     if question_target is None and _QUESTION.search(text) and _is_genuine_question(text):
         question_target = _best_respondent(speaker_id, previous_speaker_id, participant_names)
 
-    act_type = intent.act if intent else (ActType.ASK if question_target else ActType.REACT)
+    act_type = intent.act if intent else (ActType.ASK if question_target else ActType.SUPPORT)
     commitment = visible_commitment(
         text, resolver, sanctioned_switch=bool(intent and intent.allow_vote_change)
     )
@@ -625,14 +625,14 @@ def parse_dialogue_act(
             explicit_vote = option_id
             if stance == "accept":
                 accepts.append(option_id)
-            act_type = ActType.VOTE if stance == "vote" else ActType.ACCEPT
+            act_type = ActType.VOTE if stance == "vote" else ActType.VOTE
         elif stance == "reject":
             soft_rejects[option_id] = text
-            act_type = ActType.REJECT
+            act_type = ActType.CONCERN
     elif option_refs:
         if _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text):
             soft_rejects[option_refs[0]] = text
-        if act_type == ActType.PROPOSE_COMPROMISE and len(option_refs) == 1:
+        if act_type == ActType.COMPROMISE and len(option_refs) == 1:
             proposes_option = option_refs[0]
 
     blocker = active_blocker_option(check_text, resolver)

@@ -5,7 +5,7 @@ Each run writes readable and structured artifacts.
 ## Outputs
 
 - `transcript.md`: human-readable setup, transcript, outcome, and metrics.
-- `run.json`: structured scenario, personas, turns, state metadata, and outcome.
+- `run.json`: structured scenario, personas, turns, runtime stance ranks, and outcome.
 - `metrics.csv`: append-only summary rows.
 - optional prompt dump if `output.write_prompts` is enabled.
 
@@ -13,26 +13,16 @@ Each run writes readable and structured artifacts.
 
 - outcome status and final option;
 - visible votes;
+- stance-rank distribution;
+- runtime preferred option by rank;
 - split reservation exchanges;
 - two-person deadlock protocol use;
-- participant procedural moves;
 - question/answer completion;
 - turn share and engagement correlation;
 - average words by persona and act;
 - switch explanation / bridge rate;
 - unsupported fact flags and printed unsupported turns;
-- repair/fallback counts, which should stay low because decision prompts and validation are parser-aligned;
+- repair/fallback counts;
 - token usage by call type.
 
-## v3 validation focus
-
-After running the quick/full suite, inspect transcripts for:
-
-- whether split votes are narrowed instead of closing abruptly;
-- whether successful outcomes are earned rather than forced;
-- whether holdouts visibly switch or stay with a concrete reason;
-- whether no-moderator procedural turns sound participant-owned;
-- whether local threads continue before new issues open;
-- whether traits influence behavior without creating obvious templates.
-
-Metrics are useful but not sufficient. Manual transcript review is required.
+Metrics are useful but not sufficient. Manual transcript review is required, especially after stance-rank changes.

@@ -1,0 +1,2536 @@
+{
+  "run_id": "20260708_010257_428504",
+  "topic": "Choose a restaurant for a mixed-preference group dinner",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "manual",
+  "environment_mode": "manual",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a restaurant for a mixed-preference group dinner",
+    "decision_kind": "restaurant_choice",
+    "opening_question": "Which restaurant gives the best compromise between price, dietary fit, travel time, and atmosphere?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Corner Ramen",
+        "attrs": {
+          "price": "18 euros",
+          "travel": "10 minutes by tram",
+          "vegetarian": "two vegetarian bowls"
+        },
+        "upside": "warm, quick, and easy to organize",
+        "tradeoff": "limited non-soup options",
+        "concern": "may not feel special enough for everyone",
+        "best_for": "a low-effort dinner with predictable timing",
+        "short_name": "Ramen"
+      },
+      {
+        "id": "B",
+        "name": "La Piazza",
+        "attrs": {
+          "price": "26 euros",
+          "travel": "18 minutes by bus",
+          "vegetarian": "several pasta and pizza options"
+        },
+        "upside": "broad menu and relaxed atmosphere",
+        "tradeoff": "slightly above the target budget",
+        "concern": "can become noisy on Fridays",
+        "best_for": "a familiar compromise for mixed tastes",
+        "short_name": "Piazza"
+      },
+      {
+        "id": "C",
+        "name": "Green Table",
+        "attrs": {
+          "price": "24 euros",
+          "travel": "20 minutes walking",
+          "vegetarian": "mostly vegetarian menu"
+        },
+        "upside": "best dietary fit and calm setting",
+        "tradeoff": "less appealing for people wanting meat dishes",
+        "concern": "some may see it as too niche",
+        "best_for": "a dietary-safe and quieter dinner",
+        "short_name": "Green Table"
+      },
+      {
+        "id": "D",
+        "name": "Burger Cellar",
+        "attrs": {
+          "price": "21 euros",
+          "travel": "8 minutes walking",
+          "vegetarian": "one vegetarian burger"
+        },
+        "upside": "closest and casual",
+        "tradeoff": "weakest vegetarian variety",
+        "concern": "may not satisfy the dietary requirement well",
+        "best_for": "a cheap, easy, informal choice",
+        "short_name": "Burger Cellar"
+      }
+    ],
+    "shared_context": [
+      "The group wants dinner this Friday after work.",
+      "The budget target is around 25 euros per person.",
+      "One participant prefers vegetarian-friendly choices."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Clara",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "initiative": 0.4,
+        "responsiveness": 0.7,
+        "stubbornness": 0.85,
+        "directness": 0.75,
+        "compromise_threshold": 0.8
+      },
+      "background": "detail-focused participant who will not accept weak dietary fit",
+      "private_goal": "wants the option that clearly protects the dietary requirement",
+      "preferred_options": [
+        "C"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "a dietary-safe and quieter dinner",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "concern",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.6,
+        "verbosity": 0.5,
+        "initiative": 0.55,
+        "responsiveness": 0.75,
+        "stubbornness": 0.35,
+        "directness": 0.5,
+        "compromise_threshold": 0.4
+      },
+      "background": "cost-conscious participant who likes broad, familiar compromises",
+      "private_goal": "wants a safe group choice that does not exceed the budget too much",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "a familiar compromise for mixed tastes",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "done"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Iris",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.85,
+        "verbosity": 0.7,
+        "initiative": 0.85,
+        "responsiveness": 0.7,
+        "stubbornness": 0.3,
+        "directness": 0.65,
+        "compromise_threshold": 0.35
+      },
+      "background": "active social organizer who prefers easy logistics and broad menus",
+      "private_goal": "wants the group to settle on a practical choice without dragging the debate out",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "a familiar compromise for mixed tastes",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.4,
+        "verbosity": 0.35,
+        "initiative": 0.25,
+        "responsiveness": 0.8,
+        "stubbornness": 0.2,
+        "directness": 0.35,
+        "compromise_threshold": 0.25
+      },
+      "background": "relaxed participant who usually follows a reasonable majority",
+      "private_goal": "wants a choice that avoids obvious inconvenience",
+      "preferred_options": [
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "a familiar compromise for mixed tastes",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "B",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "B",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "B",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "B",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 27,
+      "option_ranks": {
+        "A": 2,
+        "B": 2,
+        "C": 4,
+        "D": 2
+      },
+      "reasons_for": {
+        "C": "I’ll stay with Green Table because it’s the only calm option that respects the dietary need without compromise."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.7490000000000001,
+      "commitment_min": 0.7490000000000001,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "already_said": [
+        "Green Table fits the vegetarian need best and keeps things quiet, unlike La Piazza.",
+        "What exactly does La Piazza offer that justifies the extra cost and noise?",
+        "The noise is a dealbreaker, and 26 euros is over budget.",
+        "Its mostly vegetarian menu suits most diets.",
+        "Ben, seating’s tight at Piazza on Fridays—Green Table stays quiet and fits dietary needs better. What’s your take, Iris?",
+        "I’m going with Green Table for best fit.",
+        "I’ll stay with Green Table because it’s the only calm option that respects the dietary need without compromise."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 8,
+      "last_spoke_turn": 24,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 2,
+        "D": 2
+      },
+      "reasons_for": {
+        "B": "I’m still on Piazza since the vegetarian pasta options make it easy for everyone to find something they like."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.6345000000000001,
+      "commitment_min": 0.59,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Since we want something familiar and relaxed, La Piazza’s broad menu fits well despite being just above budget.",
+        "Would the slightly quieter vibe at Green Table help balance out the menu tradeoff?",
+        "Considering Burger Cellar’s price and casual vibe might keep us under budget, but vegetarian choices are pretty limited compared to La Piazza.",
+        "It’s the broad menu and veggie-friendly pasta and pizzas that make La Piazza stand out.",
+        "Clara, Piazza’s menu is solid, but we should keep in mind it can get pretty noisy on Fridays.",
+        "Does Piazza have enough seating to keep things from getting too cramped on a busy Friday?",
+        "Clara, I get the calm vibe appeal.",
+        "I’m still on Piazza since the vegetarian pasta options make it easy for everyone to find something they like."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 28,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 2,
+        "D": 2
+      },
+      "reasons_for": {
+        "B": "I’m sold on Piazza—it’s close enough by bus and the menu really works for everyone."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.6110000000000002,
+      "commitment_min": 0.5700000000000001,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Hey everyone, La Piazza stands out with its broad menu and good veggie options.",
+        "Corner Ramen’s quick and cozy vibe could save us time, but La Piazza offers more variety for everyone’s taste.",
+        "The bus ride to La Piazza is just 18 minutes, which keeps our timing easy after work.",
+        "Ben’s right about the menu, and the bus ride keeps it practical.",
+        "Let’s go with Piazza—broad menu covers everyone, including vegetarians, and it’s just a bit over budget.",
+        "I’m sold on Piazza—it’s close enough by bus and the menu really works for everyone.",
+        "So Piazza wins for most of us, with Clara still not sold."
+      ],
+      "switch_events": []
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 6,
+      "last_spoke_turn": 26,
+      "option_ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "reasons_for": {
+        "B": "Switching from Green Table—I’m going with Piazza for variety.",
+        "C": "Green Table’s calm vibe is growing on me, Ben—better for veggies."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.5379999999999999,
+      "commitment_min": 0.53,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Maybe okay to stretch budget a bit if La Piazza’s vibe suits us and veggie options.",
+        "Green Table’s calm vibe is growing on me, Ben—better for veggies.",
+        "Green Table’s calm vibe is growing on me, though I guess I miss some meat options.",
+        "Just to be clear, it fits our budget.",
+        "Maybe worth noting Green Table’s calm vibe helps unwind after work.",
+        "Switching from Green Table—I’m going with Piazza for variety."
+      ],
+      "switch_events": []
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "Hey everyone, La Piazza stands out with its broad menu and good veggie options.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Hey everyone, La Piazza stands out with its broad menu and good veggie options.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 946,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Since we want something familiar and relaxed, La Piazza’s broad menu fits well despite being just above budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Since we want something familiar and relaxed, La Piazza’s broad menu fits well despite being just above budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 977,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "Green Table fits the vegetarian need best and keeps things quiet, unlike La Piazza.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Green Table fits the vegetarian need best and keeps things quiet, unlike La Piazza.",
+        "act_type": "opening",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 417,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Maybe okay to stretch budget a bit if La Piazza’s vibe suits us and veggie options.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Maybe okay to stretch budget a bit if La Piazza’s vibe suits us and veggie options.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 522,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Would the slightly quieter vibe at Green Table help balance out the menu tradeoff?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Would the slightly quieter vibe at Green Table help balance out the menu tradeoff?",
+        "act_type": "ask",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Piazza, Green Table",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 513,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "Corner Ramen’s quick and cozy vibe could save us time, but La Piazza offers more variety for everyone’s taste.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Corner Ramen’s quick and cozy vibe could save us time, but La Piazza offers more variety for everyone’s taste.",
+        "act_type": "compare",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1191,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Considering Burger Cellar’s price and casual vibe might keep us under budget, but vegetarian choices are pretty limited compared to La Piazza.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Considering Burger Cellar’s price and casual vibe might keep us under budget, but vegetarian choices are pretty limited compared to La Piazza.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1139,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Green Table’s calm vibe is growing on me, Ben—better for veggies.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Green Table’s calm vibe is growing on me, Ben—better for veggies.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "soften_toward",
+        "reason": "the case others made for Green Table genuinely lands with you — say openly that it is growing on me, name the argument that moved you, and what you still like about Piazza; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": "C",
+        "continuation": false
+      },
+      "tokens_in": 571,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "The bus ride to La Piazza is just 18 minutes, which keeps our timing easy after work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The bus ride to La Piazza is just 18 minutes, which keeps our timing easy after work.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Piazza that has not come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1113,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "What exactly does La Piazza offer that justifies the extra cost and noise?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "What exactly does La Piazza offer that justifies the extra cost and noise?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 636,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "It’s the broad menu and veggie-friendly pasta and pizzas that make La Piazza stand out.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "It’s the broad menu and veggie-friendly pasta and pizzas that make La Piazza stand out.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 525,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "The noise is a dealbreaker, and 26 euros is over budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The noise is a dealbreaker, and 26 euros is over budget.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 599,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "Ben’s right about the menu, and the bus ride keeps it practical.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Ben’s right about the menu, and the bus ride keeps it practical.",
+        "act_type": "compromise",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compromise",
+        "reason": "test whether Green Table, Piazza could be common ground without claiming it is already decided",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 566,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Green Table’s calm vibe is growing on me, though I guess I miss some meat options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Green Table’s calm vibe is growing on me, though I guess I miss some meat options.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": "C"
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "soften_toward",
+        "reason": "non-finally acknowledge that Green Table, Burger Cellar is becoming more convincing, while still naming what you give up",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 561,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Just to be clear, it fits our budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Just to be clear, it fits our budget.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 842,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MALFORMED_UTTERANCE"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "Its mostly vegetarian menu suits most diets.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Its mostly vegetarian menu suits most diets.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Green Table, connected to the current discussion",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1369,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Clara, Piazza’s menu is solid, but we should keep in mind it can get pretty noisy on Fridays.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Clara, Piazza’s menu is solid, but we should keep in mind it can get pretty noisy on Fridays.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Piazza that has not come up yet",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 460,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "Let’s go with Piazza—broad menu covers everyone, including vegetarians, and it’s just a bit over budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s go with Piazza—broad menu covers everyone, including vegetarians, and it’s just a bit over budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compromise",
+        "reason": "test whether Green Table, Piazza could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1219,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Maybe worth noting Green Table’s calm vibe helps unwind after work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Maybe worth noting Green Table’s calm vibe helps unwind after work.",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "add a new grounded reason about Piazza, Green Table, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 609,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Does Piazza have enough seating to keep things from getting too cramped on a busy Friday?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Does Piazza have enough seating to keep things from getting too cramped on a busy Friday?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Piazza",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_index": 1,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 468,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "Ben, seating’s tight at Piazza on Fridays—Green Table stays quiet and fits dietary needs better. What’s your take, Iris?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Ben, seating’s tight at Piazza on Fridays—Green Table stays quiet and fits dietary needs better. What’s your take, Iris?",
+        "act_type": "process",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "process",
+        "reason": "bring Iris into the discussion with one useful prompt",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 606,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Clara, I get the calm vibe appeal.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Clara, I get the calm vibe appeal.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 21,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 643,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "I’m sold on Piazza—it’s close enough by bus and the menu really works for everyone.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I’m sold on Piazza—it’s close enough by bus and the menu really works for everyone.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: Let’s go with Piazza—broad menu covers everyone, including vegetarians, and it’s just a bit over budget.",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep things from getting too cramped on a busy",
+          "Since we want something familiar and relaxed, La Piazza’s broad"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "Let’s go with Piazza—broad menu covers everyone, including vegetarians, and it’s just a bit over budget.",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1245,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m still on Piazza since the vegetarian pasta options make it easy for everyone to find something they like.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m still on Piazza since the vegetarian pasta options make it easy for everyone to find something they like.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: a familiar compromise for mixed tastes",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep things from getting too cramped on a busy",
+          "Since we want something familiar and relaxed, La Piazza’s broad"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "a familiar compromise for mixed tastes",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1180,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "I’m going with Green Table for best fit.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’m going with Green Table for best fit.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "since the vegetarian pasta options make it easy for everyone",
+          "to keep things from getting too cramped on a busy",
+          "Since we want something familiar and relaxed, La Piazza’s broad"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "C",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2169,
+      "tokens_out": 63,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Switching from Green Table—I’m going with Piazza for variety.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Switching from Green Table—I’m going with Piazza for variety.",
+        "act_type": "vote",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: a familiar compromise for mixed tastes",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "since the vegetarian pasta options make it easy for everyone",
+          "to keep things from getting too cramped on a busy",
+          "Since we want something familiar and relaxed, La Piazza’s broad"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "C",
+        "allowed_reason": "a familiar compromise for mixed tastes",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1694,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Clara",
+      "text": "I’ll stay with Green Table because it’s the only calm option that respects the dietary need without compromise.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’ll stay with Green Table because it’s the only calm option that respects the dietary need without compromise.",
+        "act_type": "vote",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "C",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "final decision: controller outcome is staying with Green Table; Piazza still does not solve the concern. Use exactly this grounded reason, in your own words: listed concern remains: can become noisy on Fridays. Do not accept Piazza",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "since the vegetarian pasta options make it easy for everyone",
+          "to keep things from getting too cramped on a busy",
+          "Since we want something familiar and relaxed, La Piazza’s broad"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "C",
+        "old_preference": null,
+        "allowed_reason": "listed concern remains: can become noisy on Fridays",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1356,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p3",
+      "speaker_name": "Iris",
+      "text": "So Piazza wins for most of us, with Clara still not sold.",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "p3",
+        "text": "So Piazza wins for most of us, with Clara still not sold.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "3/4 participants visibly committed to the winning option.",
+    "turns": 27,
+    "metadata": {
+      "visible_votes": {
+        "p3": "B",
+        "p2": "B",
+        "p1": "C",
+        "p4": "B"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "B",
+        "p3": "B",
+        "p4": "B"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 2,
+          "B": 2,
+          "C": 4,
+          "D": 2
+        },
+        "p2": {
+          "A": 2,
+          "B": 4,
+          "C": 2,
+          "D": 2
+        },
+        "p3": {
+          "A": 2,
+          "B": 4,
+          "C": 2,
+          "D": 2
+        },
+        "p4": {
+          "A": 2,
+          "B": 4,
+          "C": 3,
+          "D": 2
+        }
+      },
+      "phase_history": [
+        "pacing: min=20, force=26, hard=30, distinct_initial_prefs=2, avg_compromise=0.55",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 22: narrowing — visible support for one option held after enough back-and-forth",
+        "turn 27: closure — majority visible after vote round 1"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 20,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 30
+    }
+  },
+  "phase_history": [
+    "pacing: min=20, force=26, hard=30, distinct_initial_prefs=2, avg_compromise=0.55",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 22: narrowing — visible support for one option held after enough back-and-forth",
+    "turn 27: closure — majority visible after vote round 1",
+    "turn 28: closure — closed as majority"
+  ],
+  "metrics": {
+    "participant_turns": 28,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Clara": 7,
+      "Ben": 8,
+      "Iris": 7,
+      "Omar": 6
+    },
+    "top_speaker_share": 0.286,
+    "avg_words_by_persona": {
+      "Clara": 12.9,
+      "Ben": 16.1,
+      "Iris": 15.0,
+      "Omar": 11.8
+    },
+    "avg_words_by_act": {
+      "answer": 11.0,
+      "ask": 14.3,
+      "compare": 20.5,
+      "compromise": 14.0,
+      "opening": 15.5,
+      "process": 19.0,
+      "soften_toward": 13.5,
+      "support": 12.0,
+      "unknown": 12.0,
+      "vote": 13.8
+    },
+    "short_turn_rate": 0.179,
+    "tiny_turn_rate": 0.0,
+    "question_density": 0.143,
+    "tail_question_rate": 0.0,
+    "avg_words_per_turn": 14.1,
+    "repaired_turns": 4,
+    "repair_rate": 0.143,
+    "flagged_turns": 0,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Clara": "C",
+      "Ben": "B",
+      "Iris": "B",
+      "Omar": "B"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 0,
+    "concern_response_rate": null,
+    "participation_gini": 0.054,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": 0.5,
+    "open_questions_at_end": 0,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {
+      "seating/space": {
+        "mentions": 2,
+        "options": [
+          "B",
+          "C"
+        ]
+      }
+    },
+    "repetition_score": 0.147,
+    "compromise_success_rate": null,
+    "reservation_exchange": false,
+    "participant_procedural_moves": 0,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 1,
+    "switch_event_count": 0,
+    "switch_explanation_rate": null,
+    "switch_bridge_rate": null,
+    "discussion_lean_shifts": 1,
+    "name_prefix_rate": 0.107,
+    "option_opening_rate": 0.143,
+    "i_opening_rate": 0.179,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.25,
+    "repeated_opening_patterns": 1,
+    "unsupported_fact_flags": 2,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.75,
+    "stance_rank_distribution": {
+      "0": 0,
+      "1": 0,
+      "2": 11,
+      "3": 1,
+      "4": 4
+    },
+    "runtime_preferred_by_rank": {
+      "Clara": "C",
+      "Ben": "B",
+      "Iris": "B",
+      "Omar": "B"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 16,
+        "reasons": 8,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 9,
+        "reasons": 4,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Clara": 0.55,
+      "Ben": 0.6,
+      "Iris": 0.85,
+      "Omar": 0.4
+    },
+    "expected_turn_share": {
+      "Clara": 0.229,
+      "Ben": 0.253,
+      "Iris": 0.328,
+      "Omar": 0.189
+    },
+    "realized_turn_share": {
+      "Clara": 0.25,
+      "Ben": 0.286,
+      "Iris": 0.25,
+      "Omar": 0.214
+    },
+    "agenda_status": {
+      "done": 4,
+      "pending": 9,
+      "obsolete": 3
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 20,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=20, force=26, hard=30, distinct_initial_prefs=2, avg_compromise=0.55",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 22: narrowing — visible support for one option held after enough back-and-forth",
+      "turn 27: closure — majority visible after vote round 1",
+      "turn 28: closure — closed as majority"
+    ],
+    "engagement_realization_error": 0.039,
+    "verbosity_realization_error": 0.243,
+    "engagement_error_by_persona": {
+      "Clara": 0.021,
+      "Ben": 0.032,
+      "Iris": 0.078,
+      "Omar": 0.025
+    },
+    "verbosity_error_by_persona": {
+      "Clara": 0.12,
+      "Ben": 0.46,
+      "Iris": 0.097,
+      "Omar": 0.295
+    },
+    "engagement_behavior_correlation": 0.436,
+    "verbosity_behavior_correlation": 0.557,
+    "free_discussion_share": {
+      "Clara": 0.222,
+      "Ben": 0.333,
+      "Iris": 0.222,
+      "Omar": 0.222
+    },
+    "top_free_discussion_share": 0.333,
+    "free_discussion_engagement_correlation": -0.0,
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 24136,
+    "dialogue_tokens_out": 821,
+    "total_tokens_in": 24136,
+    "total_tokens_out": 821,
+    "tokens_setup_in": 0,
+    "tokens_setup_out": 0,
+    "calls_setup": 0,
+    "tokens_utterance_in": 15264,
+    "tokens_utterance_out": 633,
+    "calls_utterance": 27,
+    "tokens_grounding_in": 7707,
+    "tokens_grounding_out": 147,
+    "calls_grounding": 13,
+    "tokens_repair_in": 1165,
+    "tokens_repair_out": 41,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 24136,
+    "dialogue_tokens_out": 821,
+    "total_tokens_in": 24136,
+    "total_tokens_out": 821
+  },
+  "token_usage_by_call_type": {
+    "utterance": {
+      "in": 15264,
+      "out": 633,
+      "calls": 27
+    },
+    "grounding": {
+      "in": 7707,
+      "out": 147,
+      "calls": 13
+    },
+    "repair": {
+      "in": 1165,
+      "out": 41,
+      "calls": 4
+    }
+  }
+}

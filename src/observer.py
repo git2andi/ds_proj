@@ -91,7 +91,7 @@ class ObserverMixin:
         act = record.act
         before = self._snapshot_progress(state)
         prior_vote = rt.explicit_vote
-        prior_pref = rt.current_preference or persona.preferred_option
+        prior_pref = rt.top_option() or persona.preferred_option
 
         if act.question_target_id:
             self._register_question(state, record)
@@ -101,9 +101,9 @@ class ObserverMixin:
         for option_id in act.option_refs:
             cov = state.coverage[option_id]
             cov.mentions += 1
-            if act.act_type in {ActType.BUILD, ActType.AGREE, ActType.COMPARE, ActType.PROPOSE_COMPROMISE, ActType.SOFTEN, ActType.OPENING}:
+            if act.act_type in {ActType.SUPPORT, ActType.SUPPORT, ActType.COMPARE, ActType.COMPROMISE, ActType.SOFTEN_TOWARD, ActType.OPENING}:
                 cov.reasons += 1
-            if act.act_type in {ActType.CHALLENGE, ActType.REJECT} or option_id in act.soft_rejects or option_id in act.hard_rejects:
+            if act.act_type in {ActType.CONCERN, ActType.CONCERN} or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
 
         self._update_issue_ledger(state, record)
@@ -115,9 +115,9 @@ class ObserverMixin:
         # advocates.
         self._update_concern_threads(state, record)
         challenged = set(act.soft_rejects) | set(act.hard_rejects)
-        if record.intent and record.intent.act == ActType.CHALLENGE:
+        if record.intent and record.intent.act == ActType.CONCERN:
             # Register challenge concerns against rivals, not the speaker's own current pick.
-            own = state.runtimes[record.speaker_id].current_preference if record.speaker_id in state.runtimes else None
+            own = state.runtimes[record.speaker_id].top_option() if record.speaker_id in state.runtimes else None
             rival_refs = [oid for oid in act.option_refs if oid != own]
             challenged.update(rival_refs[:1] or act.option_refs[:1])
         for option_id in challenged:
@@ -128,39 +128,40 @@ class ObserverMixin:
         for option_id in supported:
             self._apply_support_pressure(state, record.speaker_id, option_id)
         # Speaking in support of the own favorite rebuilds commitment a little.
-        own = rt.current_preference
+        own = rt.top_option()
         if (
             own
             and own in act.option_refs
-            and act.act_type in {ActType.OPENING, ActType.BUILD, ActType.AGREE, ActType.COMPARE}
+            and act.act_type in {ActType.OPENING, ActType.SUPPORT, ActType.SUPPORT, ActType.COMPARE}
             and own not in challenged
         ):
             self._set_commitment(rt, rt.commitment_strength + 0.04)
 
-        # A visible resolution clears a parsed blocker for THIS sim only, and it
-        # must run before votes so "that fixes my concern; I can live with X"
-        # counts. The persona-level setup rejection is never cleared by a casual
-        # line; it needs the explicit compromise path.
-        if act.resolves_blocker and act.resolves_blocker != persona.rejection:
-            rt.hard_rejections.pop(act.resolves_blocker, None)
+        # A visible resolution can reopen a parsed blocker for THIS sim only, and it
+        # must run before votes so "that fixes my concern; I can live with X" counts.
+        if act.resolves_blocker:
+            # Re-open a previously blocked option only when the speaker visibly
+            # resolves their own blocker; rank moves back to neutral/acceptable later.
+            if rt.rank(act.resolves_blocker) == 0:
+                rt.set_rank(act.resolves_blocker, 2)
 
         allow_change = bool(record.intent and record.intent.allow_vote_change)
-        if act.explicit_vote and act.explicit_vote not in rt.hard_rejections:
+        if act.explicit_vote and act.explicit_vote not in rt.rejected_options():
             vote_stance = "accept" if act.explicit_vote in act.accepts else "vote"
             self._set_vote(rt, act.explicit_vote, act.text, force=allow_change, stance=vote_stance)
         for option_id in act.accepts:
-            if option_id in rt.hard_rejections:
+            if option_id in rt.rejected_options():
                 continue  # an actively blocked option needs a visible resolution first
-            rt.accepted_options.add(option_id)
+            rt.mark_acceptable(option_id, reason_for=act.text)
             self._set_vote(rt, option_id, act.text, force=allow_change, stance="accept")
             state.coverage[option_id].acceptances += 1
         for option_id, reason in act.soft_rejects.items():
-            rt.soft_rejections[option_id] = reason
+            rt.mark_disliked(option_id, reason_against=reason)
         for option_id, reason in act.hard_rejects.items():
             # A parse artifact must not turn the speaker's own current favorite into a hard blocker.
-            if option_id == (rt.current_preference or persona.preferred_option):
+            if option_id == (rt.top_option() or persona.preferred_option):
                 continue
-            rt.hard_rejections[option_id] = reason
+            rt.mark_rejected(option_id, reason_against=reason)
 
         # Record visible vote movement (first vote away from the initial
         # preference, or a change of an earlier vote). `has_reason` is the weak
@@ -188,31 +189,31 @@ class ObserverMixin:
         # or proposal, or explicit conditional support. Never from routing
         # intent alone (issue I4).
         if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
-            rt.current_preference = record.intent.option_focus[0]
-        elif (softened := self._softening_signal(state, record, rt)) and softened != rt.current_preference and self._can_shift_to(state, persona, softened):
+            rt.promote_to_preferred(record.intent.option_focus[0])
+        elif (softened := self._softening_signal(state, record, rt)) and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
             # Explicit visible softening ("B is starting to make more sense to
             # me", issue 3): the internal lean follows the sim's own words —
             # withholding the shift would make the state dishonest.
-            rt.current_preference = softened
+            rt.promote_to_preferred(softened, reason_for=act.text)
             rt.concessions_made += 1
             self._set_commitment(rt, max(rt.commitment_strength, 0.30) + 0.10)
             if record.phase == Phase.DISCUSSION:
                 state.discussion_lean_shifts += 1
         else:
             signal = act.offers_compromise or act.proposes_option or act.conditional_support
-            if signal and signal != rt.current_preference and self._can_shift_to(state, persona, signal):
+            if signal and signal != rt.top_option() and self._can_shift_to(state, persona, signal):
                 # Movability scales with the tracked commitment (issue 2): a sim
                 # whose favorite took unanswered challenges/pressure moves more
                 # easily than one that has been defending it.
                 effective = persona.sim_params.compromise_threshold * (0.4 + 0.9 * rt.commitment_strength)
                 if random.random() > effective:
-                    rt.current_preference = signal
+                    rt.promote_to_preferred(signal, reason_for=act.text)
                     rt.concessions_made += 1
                     self._set_commitment(rt, max(rt.commitment_strength, 0.35) + 0.10)
                     if record.phase == Phase.DISCUSSION:
                         state.discussion_lean_shifts += 1
 
-        refresh_agenda(persona, rt.current_preference)
+        refresh_agenda(persona, rt.top_option())
 
         after = self._snapshot_progress(state)
         state.no_progress_count = 0 if after != before else state.no_progress_count + 1
@@ -257,7 +258,7 @@ class ObserverMixin:
         state.open_concerns = state.open_concerns[-3:]
         for persona in state.personas:
             rt = state.runtimes[persona.id]
-            if persona.id != record.speaker_id and rt.current_preference == option_id:
+            if persona.id != record.speaker_id and rt.top_option() == option_id:
                 rt.challenges_received += 1
                 erosion = 0.12 * (1.0 - 0.7 * persona.sim_params.stubbornness)
                 self._set_commitment(rt, rt.commitment_strength - erosion)
@@ -285,7 +286,7 @@ class ObserverMixin:
                 # than a defended one (issue 2/3 — unrebutted points erode).
                 for persona in state.personas:
                     rt = state.runtimes[persona.id]
-                    if persona.id != concern.raised_by and rt.current_preference == concern.option_id:
+                    if persona.id != concern.raised_by and rt.top_option() == concern.option_id:
                         self._set_commitment(
                             rt, rt.commitment_strength - 0.10 * (1.0 - 0.7 * persona.sim_params.stubbornness)
                         )
@@ -297,7 +298,7 @@ class ObserverMixin:
             return
         for persona in state.personas:
             rt = state.runtimes[persona.id]
-            if persona.id != supporter_id and rt.current_preference and rt.current_preference != option_id:
+            if persona.id != supporter_id and rt.top_option() and rt.top_option() != option_id:
                 erosion = 0.05 * (1.0 - 0.7 * persona.sim_params.stubbornness)
                 self._set_commitment(rt, rt.commitment_strength - erosion)
 
@@ -319,7 +320,10 @@ class ObserverMixin:
                 return
         rt.explicit_vote = option_id
         rt.vote_stance = stance
-        rt.current_preference = option_id
+        if stance == "accept":
+            rt.mark_acceptable(option_id, reason_for=text)
+        else:
+            rt.promote_to_preferred(option_id, reason_for=text)
 
     # ------------------------------------------------------------------
     # Utilities
@@ -454,7 +458,7 @@ class ObserverMixin:
 
     @staticmethod
     def _snapshot_progress(state: DialogueState) -> tuple:
-        leans = tuple(sorted((pid, rt.current_preference) for pid, rt in state.runtimes.items()))
+        leans = tuple(sorted((pid, rt.top_option()) for pid, rt in state.runtimes.items()))
         votes = tuple(sorted((pid, rt.explicit_vote) for pid, rt in state.runtimes.items() if rt.explicit_vote))
         questions = tuple((q.turn_id, q.target_id) for q in state.open_questions)
         return leans, votes, questions

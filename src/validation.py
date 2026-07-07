@@ -94,14 +94,15 @@ class ValidationMixin:
             if not committed_to_required:
                 issues.append("REQUIRED_VOTE_MISMATCH")
                 block = True
-        if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
+        rejected = state.runtimes[persona.id].rejected_options()
+        if any(oid in rejected for oid in ([act.explicit_vote] if act.explicit_vote else []) + list(act.accepts)):
             issues.append("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION")
             block = True
         # A compromise must pin ONE existing option (P6): coordinating two
         # options as a single plan creates an implicit new hybrid option.
         if (
             self._resolver
-            and (intent.act == ActType.PROPOSE_COMPROMISE or act.offers_compromise)
+            and (intent.act == ActType.COMPROMISE or act.offers_compromise)
             and hybrid_blend_detected(text, self._resolver)
         ):
             issues.append("HYBRID_COMPROMISE")
@@ -111,7 +112,7 @@ class ValidationMixin:
         rt = state.runtimes[persona.id]
         committed = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
         for option_id in committed:
-            if option_id in rt.hard_rejections and act.resolves_blocker != option_id:
+            if option_id in rt.rejected_options() and act.resolves_blocker != option_id:
                 issues.append("BLOCKED_OPTION_ACCEPTED")
                 block = True
         # A continuation must genuinely add something (issue 6): a near-repeat of
@@ -144,7 +145,7 @@ class ValidationMixin:
         # A sanctioned switch may only land on the offered option or the sim's
         # own current/initial preference (restate); never a third option.
         if intent.allow_vote_change and act.explicit_vote and intent.option_focus:
-            allowed = set(intent.option_focus) | {rt.current_preference, persona.preferred_option}
+            allowed = set(intent.option_focus) | {rt.top_option(), persona.preferred_option}
             if intent.required_vote:
                 allowed.add(intent.required_vote)
             if act.explicit_vote not in allowed:
@@ -158,11 +159,11 @@ class ValidationMixin:
         # current lean rather than fabricating an unexplained switch.
         # Sanctioned vote/switch turns carry the controller's visible previous
         # stance in intent.old_preference. Use that as the bridge source instead
-        # of the mutable runtime current_preference. Otherwise a valid sentence
+        # of a mutable runtime preference field. Otherwise a valid sentence
         # like "I preferred Ninja, but I vote for Moccamaster because ..." can be
         # falsely checked against a newer latent preference and rejected as
         # UNBRIDGED_SWITCH. This was the root cause of many repair/fallback loops.
-        bridge_from = intent.old_preference or rt.current_preference or persona.preferred_option
+        bridge_from = intent.old_preference or rt.top_option() or persona.preferred_option
         if (
             act.explicit_vote
             and bridge_from in state.scenario.option_ids
@@ -271,20 +272,20 @@ class ValidationMixin:
             # A failed continuation add-on gets a neutral closer: no option
             # reference, no commitment vocabulary, nothing the parser reads.
             return "Anyway, that's my two cents for now."
-        blocked = persona.rejection
+        blocked = next(iter(rt.rejected_options()), None)
         # Required decision targets are controller-selected and validation-safe;
         # prefer them on decision turns. Otherwise restate the sim's own current
         # stance. Never fabricate acceptance of a hard-blocked option.
         if intent.act in _DECISION_ACTS and intent.required_vote in state.scenario.option_ids:
             target = intent.required_vote
         else:
-            candidates = [rt.current_preference, persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
+            candidates = [rt.top_option(), persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
             target = next(
-                (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.hard_rejections),
+                (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.rejected_options()),
                 next(o for o in state.scenario.option_ids if o != blocked),
             )
-        if target == blocked or target in rt.hard_rejections:
-            target = next(o for o in state.scenario.option_ids if o != blocked and o not in rt.hard_rejections)
+        if target == blocked or target in rt.rejected_options():
+            target = next(o for o in state.scenario.option_ids if o != blocked and o not in rt.rejected_options())
         if intent.act in _DECISION_ACTS:
             # Labels match parsing._PHRASE_FAMILIES so avoid_phrases rotation
             # works; every template parses as a direct vote (I19: a wide pool
@@ -307,7 +308,7 @@ class ValidationMixin:
             line = template.format(o=target_name)
             if blocked and "HARD_BLOCKER_ACCEPTED_REJECTED_OPTION" in report.issues:
                 return f"I can't get behind {aliases[blocked]}, so I vote for {target_name}."
-            current = intent.old_preference or rt.current_preference or persona.preferred_option
+            current = intent.old_preference or rt.top_option() or persona.preferred_option
             if current in state.scenario.option_ids and current != target:
                 old_name = aliases[current]
                 reason = intent.allowed_reason or f"{target_name} has the clearest visible support now"
@@ -501,8 +502,7 @@ class ValidationMixin:
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
-        if persona.rejection and (act.explicit_vote == persona.rejection or persona.rejection in act.accepts):
-            return True
+        # Semantic hard blocks are checked through runtime rank-0 options in validate().
         if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             return True
         if intent.required_vote and intent.act in _DECISION_ACTS:

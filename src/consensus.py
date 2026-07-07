@@ -52,7 +52,8 @@ class ConsensusManager:
         turns = participant_turn_count(state)
         metadata = {
             "visible_votes": votes,
-            "latent_preferences": {pid: rt.current_preference for pid, rt in state.runtimes.items()},
+            "latent_preferences": {pid: rt.top_option() for pid, rt in state.runtimes.items()},
+            "stance_ranks": {pid: dict(rt.option_ranks) for pid, rt in state.runtimes.items()},
             "phase_history": list(state.phase_history),
             "candidate_option": state.candidate_option,
             "min_discussion_turns": state.min_discussion_turns,

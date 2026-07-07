@@ -18,7 +18,10 @@ import prompts
 from aliases import validated_short_alias
 from config_loader import PROFILE_TRAIT_NAMES, cfg, parse_preference_shape
 from llm_client import get_llm_client
-from models import OptionCard, Persona, Scenario, SimulatorParameters, TraitProfile
+from models import (
+    OptionCard, OptionStance, Persona, Scenario, SimulatorParameters, TraitProfile,
+    STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED,
+)
 from simulator import build_initial_agenda, derive_simulator_parameters
 from utils import sample_int_range
 
@@ -280,6 +283,95 @@ def _require(value: Any, field: str) -> str:
     return text
 
 
+def _clip_reason(text: str, limit: int = 11) -> str:
+    words = str(text or "").strip().split()
+    if not words:
+        return ""
+    return " ".join(words[:limit]).rstrip(" ,.;:")
+
+
+def _option_hint(option: OptionCard, positive: bool) -> str:
+    if positive:
+        return _clip_reason(option.best_for or option.upside, 10)
+    return _clip_reason(option.concern or option.tradeoff, 10)
+
+
+def _stance_from_option_table(row: dict[str, Any], labels: list[str], scenario: Scenario) -> dict[str, OptionStance]:
+    """Parse the optional per-sim/per-option compatibility table.
+
+    Missing rows stay neutral. The table is an initial stance guide, not a final
+    script: most options should remain neutral/acceptable, with hard rejects only
+    when explicitly configured or generated for a low-agreeableness blocker.
+    """
+    raw = row.get("option_stances") or row.get("option_compatibility") or []
+    by_id: dict[str, OptionStance] = {}
+    if isinstance(raw, dict):
+        iterable = [{"option": oid, **(value if isinstance(value, dict) else {"rank": value})} for oid, value in raw.items()]
+    elif isinstance(raw, list):
+        iterable = raw
+    else:
+        iterable = []
+    for item in iterable:
+        if not isinstance(item, dict):
+            continue
+        oid = str(item.get("option") or item.get("option_id") or item.get("id") or "").strip().upper()
+        if oid not in labels:
+            continue
+        try:
+            rank = int(item.get("rank", STANCE_NEUTRAL))
+        except (TypeError, ValueError):
+            rank = STANCE_NEUTRAL
+        by_id[oid] = OptionStance(
+            option_id=oid,
+            rank=max(STANCE_REJECTED, min(STANCE_PREFERRED, rank)),
+            reason_for=_clip_reason(item.get("reason_for", "")),
+            reason_against=_clip_reason(item.get("reason_against", "")),
+        ).clipped()
+    for oid in labels:
+        by_id.setdefault(oid, OptionStance(option_id=oid, rank=STANCE_NEUTRAL))
+    return by_id
+
+
+def _normalise_initial_stances(
+    scenario: Scenario,
+    stances: dict[str, OptionStance],
+    preferred_options: list[str],
+    rejection: str | None,
+    rejection_reason: str,
+) -> dict[str, OptionStance]:
+    labels = scenario.option_ids
+    normal: dict[str, OptionStance] = {}
+    preferred = preferred_options[0] if preferred_options else None
+    secondary = set(preferred_options[1:])
+    for oid in labels:
+        option = scenario.option(oid)
+        source = stances.get(oid, OptionStance(option_id=oid, rank=STANCE_NEUTRAL))
+        rank = source.rank
+        reason_for = source.reason_for
+        reason_against = source.reason_against
+        if oid == preferred:
+            rank = STANCE_PREFERRED
+            reason_for = reason_for or _option_hint(option, True)
+            reason_against = ""
+        elif oid in secondary:
+            rank = max(rank, STANCE_ACCEPTABLE)
+            reason_for = reason_for or _option_hint(option, True)
+        elif oid == rejection:
+            rank = STANCE_REJECTED
+            reason_against = _clip_reason(rejection_reason) or reason_against or _option_hint(option, False)
+            reason_for = ""
+        else:
+            rank = min(max(rank, STANCE_DISLIKED), STANCE_ACCEPTABLE)
+            # Avoid over-biasing neutral options: keep only one short side unless
+            # the setup LLM explicitly provided it.
+            if rank >= STANCE_ACCEPTABLE:
+                reason_for = reason_for or _option_hint(option, True)
+            elif rank <= STANCE_DISLIKED:
+                reason_against = reason_against or _option_hint(option, False)
+        normal[oid] = OptionStance(oid, rank, _clip_reason(reason_for), _clip_reason(reason_against)).clipped()
+    return normal
+
+
 class SetupBuilder:
     def __init__(self, topic: str) -> None:
         self.topic = topic.strip()
@@ -331,6 +423,7 @@ class SetupBuilder:
         required_preferences = self._preference_assignments(n, scenario.option_ids, preference_shape)
         if self._profiles_complete():
             # Fully specified manual cast: no persona LLM call, no sampling noise.
+            self._current_scenario = scenario
             personas = self._personas_from_profiles(trait_rows, required_preferences)
             self._validate_preference_assignments(personas, required_preferences)
             self._validate_world(scenario, personas)
@@ -605,6 +698,9 @@ class SetupBuilder:
                 [], profile.get("rejection"), required_preferences.get(pid),
                 single_only=traits.agreeableness == 1,
             )
+            option_stances = _normalise_initial_stances(
+                self._current_scenario, {}, preferred_options, profile.get("rejection"), profile.get("rejection_reason", "")
+            )
             persona = Persona(
                 id=pid,
                 name=row["name"],
@@ -615,6 +711,7 @@ class SetupBuilder:
                 preferred_options=preferred_options,
                 rejection=profile.get("rejection"),
                 rejection_reason=profile.get("rejection_reason", ""),
+                option_stances=option_stances,
             )
             persona.agenda = build_initial_agenda(persona)
             personas.append(persona)
@@ -765,6 +862,10 @@ class SetupBuilder:
         )
         if not preferred_options:
             raise ValueError(f"participant {pid} has no valid preferred_options")
+        raw_stances = _stance_from_option_table(row, labels, scenario)
+        option_stances = _normalise_initial_stances(
+            scenario, raw_stances, preferred_options, rejection, rejection_reason
+        )
         persona = Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
@@ -780,6 +881,7 @@ class SetupBuilder:
             preferred_options=preferred_options,
             rejection=rejection,
             rejection_reason=rejection_reason,
+            option_stances=option_stances,
         )
         persona.agenda = build_initial_agenda(persona)
         return persona

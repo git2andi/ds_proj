@@ -104,8 +104,16 @@ class DialogueLogger:
             )
             lines.append(f"goal: {persona.private_goal}")
             lines.append(f"initial preference: {', '.join(persona.preferred_options)}")
-            if persona.rejection:
-                lines.append(f"hard rejection: {persona.rejection} — {persona.rejection_reason}")
+            stance_bits = []
+            for oid in state.scenario.option_ids:
+                stance = (persona.option_stances or {}).get(oid)
+                if not stance or stance.rank == 2:
+                    continue
+                label = {4: "preferred", 3: "acceptable", 1: "disliked", 0: "rejected"}.get(stance.rank, str(stance.rank))
+                reason = stance.reason_for if stance.rank >= 3 else stance.reason_against
+                stance_bits.append(f"{oid}:{label}" + (f" ({reason})" if reason else ""))
+            if stance_bits:
+                lines.append("initial option ranks: " + "; ".join(stance_bits))
             lines.append("")
         lines += ["", "## Transcript", ""]
         for turn in state.turns:

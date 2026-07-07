@@ -8,21 +8,16 @@ The simulator has exactly three outcome labels:
 
 ## Visible evidence rule
 
-The final outcome is computed from visible transcript evidence. Public votes, acceptances, and parser-recognized commitments count. Hidden current preferences guide routing but do not directly decide the outcome.
+The final outcome is computed from visible transcript evidence. Public votes, acceptances, and parser-recognized commitments count. Private option ranks guide routing, but do not directly decide the outcome.
 
-## v3 compromise rule
+## Rank-aware compromise rule
 
-v3 keeps compromise conservative and visible. The latest version also protects valid holdouts so majority outcomes remain possible instead of converting every dissent into consensus:
+The option ranks guide whether a switch is plausible:
 
-- no downhill compromise into a smaller visible camp;
-- strict plurality gives some pressure;
-- ties only get a small compromise bonus for flexible, non-hard-blocked sims;
-- very stubborn or high-threshold sims require stronger evidence to switch;
-- decision turns have a required target, so generated vote/switch lines cannot silently commit to a different option;
-- final-vote routing avoids old latent favorites that the same sim visibly rejected.
+- rank 4: the sim naturally supports it;
+- rank 3: the sim can accept it as compromise;
+- rank 2: the sim may move toward it if discussion gives a reason;
+- rank 1: the sim should resist unless the concern is addressed;
+- rank 0: the sim should not accept it.
 
-This should reduce unresolved endings without making every split magically successful.
-
-## Unresolved endings
-
-Unresolved is valid. It should appear when the transcript shows real remaining blockers or unresolved preference camps. v3 adds one participant acknowledgement before closure so the deadlock is explicit in the conversation.
+This should allow consensus when earned, preserve majority outcomes when a holdout is coherent, and leave rare unresolved cases when no option is visibly acceptable enough.

@@ -10,23 +10,45 @@ fixed option board + simulated participants + controller-routed discussion + vis
 
 It is not a generic chatbot, full society simulation, or full Generative-Agents-style memory system. The option board is the factual source of truth. Sims may compare options, ask questions, raise concerns, soften, resist, compromise, and vote, but they must not invent concrete facts outside the configured environment.
 
-## v3 state
+## Current v3 state
 
-v3 uses the clearer v1 codebase as the base and ports only selected v2 behavior fixes that directly support the project goal:
+The current v3 line keeps the v1/v3 architecture but replaces the scattered private stance logic with one central per-sim/per-option rank table.
 
-- controller-selected, LLM-rendered post-reservation switch/stay decisions after split votes and majority holdout checks;
-- no downhill compromise: a sim should not switch from its own larger/equal visible camp into a weaker one just to force closure;
-- bounded tie compromise for flexible sims when no option has a strict lead;
-- unresolved acknowledgement before closure, so unresolved endings are socially legible rather than abrupt;
-- split-summary self-answer avoidance in no-/low-moderator rounds;
-- trait influence on routing: directness increases challenge tendency, compromise tendency increases bridge/soften moves;
-- agenda is a weak hint only; active questions, answers, and unresolved concerns outrank private agenda items;
-- vote wording is parser-safe, lightly trait-shaped, and validated against the controller-selected target;
-- observer fixes prevent false blockers on a sim's own current favorite;
-- final voting now avoids reverting to an old latent favorite that the same sim visibly objected to;
-- vote calls are moderator-owned again; participant self-closure was removed to keep the phase transition simple and explainable.
+```text
+4 = preferred
+3 = acceptable
+2 = neutral / untested
+1 = disliked but negotiable
+0 = rejected / hard blocked
+```
 
-v3 deliberately does **not** port v2's micro-reaction subsystem, friendliness parameter, personal anchors, or larger trait-colored wording subsystem. Those features added output texture but made the controller harder to explain.
+Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from ranks. There are no separate runtime preference/rejection containers.
+
+The persona setup may also provide a compact compatibility table for each sim and option:
+
+```text
+option id -> rank, short reason_for, short reason_against
+```
+
+Most options should remain neutral or acceptable. Strong dislikes and hard rejects should be rare and grounded.
+
+## Controller / LLM separation
+
+The controller owns the intended move:
+
+```text
+speaker + macro act + target option + reason + intended stance effect
+```
+
+The LLM renders one natural message. Validation checks whether the line visibly matches the intended move and stays grounded. State changes are applied through the rank table only after validation.
+
+The compact macro act vocabulary is:
+
+```text
+opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
+```
+
+Only these macro acts are used by routing, prompts, and logs. Legacy act aliases were removed to avoid double control.
 
 ## Outcomes
 
@@ -36,7 +58,7 @@ A run ends in exactly one of three outcome states:
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no sufficient agreement remains after bounded narrowing.
 
-Outcomes are derived from visible transcript evidence only: explicit votes, acceptances, and parsed visible commitments. Hidden latent preferences may guide routing, but they should not decide the final result directly.
+Outcomes are derived from visible transcript evidence only: explicit votes, acceptances, and parsed visible commitments. Private stance ranks guide routing, but they do not directly decide the final result.
 
 ## High-level pipeline
 
@@ -44,9 +66,11 @@ Outcomes are derived from visible transcript evidence only: explicit votes, acce
 CLI topic or manual environment
   -> scenario / option board
   -> automatic or manual simulated participants
-  -> controller chooses speaker, target, act, and option focus
+  -> initial per-sim option ranks
+  -> controller chooses speaker, target, macro act, and option focus
   -> LLM renders one utterance
-  -> observer parses visible text and updates public state
+  -> validation checks intent alignment and grounding
+  -> observer updates rank/state views
   -> controller routes follow-ups, concerns, narrowing, votes, and closure
   -> consensus manager computes successful / majority / unresolved
   -> transcript.md, run.json, metrics.csv are written
@@ -57,16 +81,17 @@ CLI topic or manual environment
 - `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
 - `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases.
 - `config.yaml`: provider, environment, participant, pacing, routing, validation, and output settings.
-- `src/builders.py`: builds automatic/manual scenarios and participants.
-- `src/simulator.py`: converts persona traits into operational simulator parameters.
+- `src/builders.py`: builds automatic/manual scenarios and participants, including initial option-rank compatibility.
+- `src/models.py`: dataclasses, compact macro acts, and per-option stance ranks.
+- `src/simulator.py`: converts persona traits into operational simulator parameters and weak agenda hints.
 - `src/dialogue.py`: orchestration loop for opening, discussion, voting, split narrowing, and closure.
-- `src/policy.py`: speaker choice, act choice, addressee choice, vote readiness, and procedural routing.
-- `src/observer.py`: visible-state updates from generated utterances.
+- `src/policy.py`: speaker choice, macro-act choice, addressee choice, vote readiness, and procedural routing.
+- `src/observer.py`: validated visible-state updates and rank movements from generated utterances.
 - `src/parsing.py`: option references, commitments, votes, rejections, and parser-safe phrase families.
 - `src/validation.py`: turn validation, parser/intent alignment, minimal fallback protection, and grounding checks.
-- `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts. Decision prompts deliberately use parser-friendly commitment wording so repair/fallback calls stay rare.
+- `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts.
 - `src/consensus.py`: final outcome computation from visible evidence.
-- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, metrics, and token diagnostics.
+- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, stance-rank metrics, and token diagnostics.
 
 ## Running
 
@@ -76,70 +101,15 @@ Activate the existing project environment, then run:
 py .\main.py "Choose a restaurant for a group dinner"
 ```
 
-For a topic file:
-
-```powershell
-py .\main.py scenarios.txt
-```
-
-For the evaluation suite:
+For eval cases:
 
 ```powershell
 py .\eval\run_eval_suite.py --quick
 py .\eval\run_eval_suite.py --full
-py .\eval\run_eval_suite.py --list
 ```
 
-The suite temporarily patches `config.yaml`, writes logs under `eval/logs_eval_suite/`, writes `eval/logs_eval_suite/eval_suite_runs.csv`, and restores the original config afterward.
-
-## Configuration modes
-
-Two independent mode switches matter:
-
-```yaml
-environment:
-  mode: auto | manual
-
-participants:
-  mode: auto | manual
-```
-
-This gives four important test modes:
-
-```text
-auto environment + auto participants
-manual environment + auto participants
-auto environment + manual participants
-manual environment + manual participants
-```
-
-Manual environments are best for controlled tests. Manual participants are best for checking trait behavior, blockers, and specific split-vote shapes.
-
-## LLM provider
-
-The default quality baseline is the configured `gpt` provider:
-
-```yaml
-llm:
-  provider: "gpt"
-```
-
-Provider comparisons should be explicit. Different providers change style, parsing reliability, grounding, and repair rates.
-
-## Validation
-
-Before claiming a behavioral fix, run at least:
+Static check:
 
 ```powershell
 py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
-py .\eval\run_eval_suite.py --quick
 ```
-
-Before treating a version as stable, run:
-
-```powershell
-py .\eval\run_eval_suite.py --full
-```
-
-Then inspect transcripts manually. Metrics alone are insufficient; a run can have a good outcome label while the discussion still feels forced or under-argued.
-

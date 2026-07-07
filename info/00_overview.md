@@ -1,45 +1,40 @@
 # 00 — Overview
 
-The project is an option-grounded multi-user decision simulator. It generates group discussions between 2-7 simulated users over a fixed option board and logs both a readable transcript and a structured trace.
+The project is an option-grounded multi-user decision simulator. It creates 2-7 simulated participants, gives them tunable behavioral parameters, and lets them discuss a fixed option board until the run ends as `successful`, `majority`, or `unresolved`.
 
-The important target is not arbitrary natural chat. The target is a configurable simulator: participant parameters such as engagement, initiative, responsiveness, verbosity, stubbornness, directness, and compromise tendency should visibly affect who speaks, how they react, how strongly they resist, and whether they can move toward consensus.
-
-## Core flow
+The target is not arbitrary chat. The target is an explainable simulator:
 
 ```text
-topic or manual environment
-  -> scenario + option board
-  -> simulated participants
-  -> controller routes speaker / act / target / focus
-  -> LLM renders one visible utterance
-  -> observer parses public state
-  -> controller narrows / votes / repairs split
-  -> consensus manager returns successful / majority / unresolved
+topic/manual environment
+  -> option board
+  -> simulated users with initial option ranks
+  -> controller routes speaker / macro act / target / focus
+  -> LLM renders one utterance
+  -> validation checks intent and grounding
+  -> observer updates visible state and option ranks
+  -> consensus manager computes outcome from visible evidence
 ```
 
-## v3 design decision
+## Current stance model
 
-v3 is a combination version. It uses v1 as the explainable base and ports only selected v2 features that directly improve outcomes or simulator validity.
+Each sim stores one rank for every option:
 
-Kept from v2:
+```text
+4 = preferred
+3 = acceptable
+2 = neutral / untested
+1 = disliked but negotiable
+0 = rejected / hard blocked
+```
 
-- deterministic switch/stay decisions for holdouts after reservations;
-- no downhill compromise;
-- flexible tie compromise only when traits and resistance make it plausible;
-- unresolved acknowledgement before closure;
-- split-summary self-answer avoidance;
-- active local threads outrank private agenda items;
-- small trait influence on routing and vote phrase choice;
-- observer fixes that prevent false blockers on a sim's own current favorite.
+Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from this table. There are no separate runtime preference/rejection containers.
 
-Not kept from v2:
+## Current act model
 
-- separate micro-reaction subsystem;
-- friendliness parameter;
-- personal anchors;
-- broad trait-color wording subsystem;
-- extra dynamic-pacing complexity.
+The controller uses a compact macro-act vocabulary:
 
-## Current state
+```text
+opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
+```
 
-The core requirements are present: auto/manual environment, auto/manual participants, 2-7 sims, option-grounded dialogue, visible final outcomes, moderator/no-moderator modes, structured logs, and an eval suite. The next work should be simplification and validation, not feature expansion.
+Only the macro set is used. Legacy act aliases were removed so routing and prompts cannot silently rely on the old taxonomy.

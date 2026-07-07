@@ -4,9 +4,7 @@ Run a sequential evaluation suite for the option-grounded multi-user simulator.
 
 Usage from the project root:
 
-    py .\eval\run_eval_suite.py --quick
-    py .\eval\run_eval_suite.py --full
-    py .\eval\run_eval_suite.py --list
+    py .\eval\run_eval_suite.py
 
 The script temporarily overwrites config.yaml for each case, runs main.py, and
 restores the original config.yaml at the end, even if a run fails or you stop it.
@@ -17,7 +15,6 @@ normal interactive runs and kept with the evaluation scripts.
 
 from __future__ import annotations
 
-import argparse
 import copy
 import csv
 import json
@@ -760,12 +757,10 @@ CASES: list[dict[str, Any]] = [
 ]
 
 
-def selected_cases(mode: str) -> list[dict[str, Any]]:
-    if mode == "quick":
-        return [c for c in CASES if c["suite"] == "quick"]
-    if mode == "full":
-        return CASES
-    raise ValueError(mode)
+def selected_cases() -> list[dict[str, Any]]:
+    """Return the full suite. The eval script intentionally has no quick/list modes."""
+    return CASES
+
 
 
 def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any]:
@@ -868,50 +863,67 @@ def append_summary(row: dict[str, Any]) -> None:
         writer.writerow(row)
 
 
-def print_case_list(mode: str) -> None:
-    for case in selected_cases(mode):
-        print(f"{case['id']} [{case['suite']}]: {case['why']}")
+def remove_extra_metrics_csv() -> None:
+    """Remove per-run metrics.csv files; keep only eval_suite_runs.csv as suite summary."""
+    if not SUITE_LOG_DIR.exists():
+        return
+    for metrics_path in SUITE_LOG_DIR.rglob("metrics.csv"):
+        if metrics_path.resolve() == SUMMARY_CSV.resolve():
+            continue
+        try:
+            metrics_path.unlink()
+        except OSError as exc:
+            print(f"Warning: could not remove extra metrics CSV {metrics_path}: {exc}", file=sys.stderr)
+
+
+def zip_suite_log_dir() -> Path:
+    """Create eval/logs_eval_suite.zip containing the complete logs_eval_suite folder."""
+    if not SUITE_LOG_DIR.exists():
+        raise FileNotFoundError(f"Cannot zip missing suite log directory: {SUITE_LOG_DIR}")
+    archive_base = SUITE_LOG_DIR.parent / SUITE_LOG_DIR.name
+    archive_path = shutil.make_archive(
+        str(archive_base),
+        "zip",
+        root_dir=SUITE_LOG_DIR.parent,
+        base_dir=SUITE_LOG_DIR.name,
+    )
+    return Path(archive_path)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--quick", action="store_true", help="run 6 focused cases")
-    group.add_argument("--full", action="store_true", help="run all cases")
-    group.add_argument("--list", action="store_true", help="list cases without running")
-    args = parser.parse_args()
-
     if not CONFIG_PATH.exists() or not MAIN_PATH.exists():
         print("Run this script from the project root, next to config.yaml and main.py.", file=sys.stderr)
         return 2
 
-    mode = "full" if args.full else "quick"
-    if args.list:
-        print_case_list("full")
-        return 0
-
-    cases = selected_cases(mode)
+    cases = selected_cases()
     backup_path = CONFIG_PATH.with_suffix(".yaml.eval_backup")
     original_text = CONFIG_PATH.read_text(encoding="utf-8")
     backup_path.write_text(original_text, encoding="utf-8")
     base_config = yaml.safe_load(original_text) or {}
 
     SUITE_LOG_DIR.mkdir(exist_ok=True)
+    if SUMMARY_CSV.exists():
+        SUMMARY_CSV.unlink()
 
-    print(f"Running {len(cases)} eval cases. Logs: {SUITE_LOG_DIR}")
+    print(f"Running {len(cases)} full eval cases. Logs: {SUITE_LOG_DIR}")
     print(f"Original config backup: {backup_path}")
 
     rows: list[dict[str, Any]] = []
+    return_code = 0
     try:
         for case in cases:
             row = run_case(case, base_config)
             rows.append(row)
             if row["returncode"] != 0:
-                print(f"\nStopping because {case['id']} failed with return code {row['returncode']}.")
-                return row["returncode"]
+                return_code = row["returncode"]
+                print(f"\nStopping because {case['id']} failed with return code {return_code}.")
+                break
     finally:
         CONFIG_PATH.write_text(original_text, encoding="utf-8")
         print("\nRestored original config.yaml.")
+
+    remove_extra_metrics_csv()
+    zip_path = zip_suite_log_dir()
 
     print("\nSummary:")
     for row in rows:
@@ -926,8 +938,8 @@ def main() -> int:
             f"tokens_in={row.get('total_tokens_in')}"
         )
     print(f"\nSuite CSV: {SUMMARY_CSV}")
-    return 0
-
+    print(f"Suite ZIP: {zip_path}")
+    return return_code
 
 if __name__ == "__main__":
     raise SystemExit(main())

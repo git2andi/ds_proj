@@ -100,6 +100,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         self._print_header(state, show_board=not self._mod("opening"))
         if self._mod("opening"):
             self._emit(self._append_moderator(state, prompts.moderator_opening(scenario), Phase.OPENING))
+            print("=" * 72)
 
         self._opening_round(state)
         self._discussion_loop(state)
@@ -255,12 +256,12 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             self._reservation_exchange(state, negotiator, winner)
         for persona in dissenters:
             can_move = self._can_shift_to(state, persona, winner) and not self._valid_holdout_against(state, persona, winner)
-            current = state.runtimes[persona.id].explicit_vote or state.runtimes[persona.id].current_preference or persona.preferred_option
+            current = state.runtimes[persona.id].explicit_vote or state.runtimes[persona.id].top_option() or persona.preferred_option
             if current not in state.scenario.option_ids:
                 current = persona.preferred_option
             intent = MoveIntent(
                 speaker_id=persona.id,
-                act=ActType.POST_RESERVATION_DECISION,
+                act=ActType.VOTE,
                 reason=(
                     "majority acceptance pass: the group has a clear winner. Accept the majority option "
                     "only if it is actually workable for you; otherwise stay with your own pick and name "
@@ -274,7 +275,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 allow_vote_change=can_move,
             )
             self._emit(
-                self._append_post_reservation_decision(
+                self._append_final_decision(
                     state,
                     persona,
                     intent,
@@ -344,7 +345,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         asker = max(supporters, key=lambda p: p.sim_params.initiative + 0.3 * p.sim_params.engagement)
         intent = MoveIntent(
             speaker_id=asker.id,
-            act=ActType.PROBE_HOLDOUT,
+            act=ActType.PROCESS,
             reason=(
                 f"most of the group has landed on {aliases[candidate]}; ask {holdout.name} in a friendly, "
                 "genuine way what still holds them back or what they would need — no pressure"
@@ -417,7 +418,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             for persona in dissenters:
                 can_move = persona in movers
                 alternative = self._holdout_alternative_candidate(state, persona, leader, tested=tested)
-                intent = self._post_reservation_decision_intent(
+                intent = self._final_decision_intent(
                     state,
                     persona,
                     leader,
@@ -425,7 +426,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                     alternative=alternative if attempt_index == 0 else None,
                 )
                 self._emit(
-                    self._append_post_reservation_decision(
+                    self._append_final_decision(
                         state,
                         persona,
                         intent,
@@ -443,7 +444,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             # returned; otherwise the next loop tests the best remaining candidate.
         return True
 
-    def _post_reservation_decision_intent(
+    def _final_decision_intent(
         self,
         state: DialogueState,
         persona: Persona,
@@ -453,7 +454,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         alternative: str | None = None,
     ) -> MoveIntent:
         aliases = short_alias_map(state.scenario.options)
-        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        current = state.runtimes[persona.id].top_option() or persona.preferred_option
         current_name = aliases.get(current, current)
         candidate_name = aliases.get(candidate, candidate)
         focus = [candidate]
@@ -468,7 +469,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 else ""
             )
             reason = (
-                f"post-reservation decision step: choose exactly one visible outcome — switch to {candidate_name}, "
+                f"final decision step: choose exactly one visible outcome — switch to {candidate_name}, "
                 f"stay with {current_name}{alt_clause}. If you switch, commit clearly and bridge from your earlier pick; "
                 "if you stay or propose the alternative, name the one blocker that remains. No vague re-vote."
             )
@@ -479,19 +480,19 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 else ""
             )
             reason = (
-                f"post-reservation decision step: do not accept {candidate_name}; clearly stay with {current_name}"
+                f"final decision step: do not accept {candidate_name}; clearly stay with {current_name}"
                 f"{alt_clause}, and state the concrete blocker that remains. No new option facts."
             )
         return MoveIntent(
             speaker_id=persona.id,
-            act=ActType.POST_RESERVATION_DECISION,
+            act=ActType.VOTE,
             reason=reason,
             option_focus=focus,
             length_hint="short",
             allow_vote_change=can_move or bool(alternative),
         )
 
-    def _append_post_reservation_decision(
+    def _append_final_decision(
         self,
         state: DialogueState,
         persona: Persona,
@@ -510,7 +511,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         """
         aliases = short_alias_map(state.scenario.options)
         rt = state.runtimes[persona.id]
-        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        current = rt.explicit_vote or rt.top_option() or persona.preferred_option
         if current not in state.scenario.option_ids:
             current = persona.preferred_option
 
@@ -543,28 +544,28 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 focus.append(oid)
         if outcome == "switch_candidate":
             reason = (
-                f"post-reservation decision: controller outcome is a switch from {current_name} to {candidate_name}. "
+                f"final decision: controller outcome is a switch from {current_name} to {candidate_name}. "
                 f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not add new facts or pressure language"
             )
         elif outcome == "switch_alternative":
             reason = (
-                f"post-reservation decision: controller outcome is a concrete alternative switch from {current_name} to {target_name}. "
+                f"final decision: controller outcome is a concrete alternative switch from {current_name} to {target_name}. "
                 f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not add new facts"
             )
         else:
             reason = (
-                f"post-reservation decision: controller outcome is staying with {current_name}; {candidate_name} still does not solve the concern. "
+                f"final decision: controller outcome is staying with {current_name}; {candidate_name} still does not solve the concern. "
                 f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not accept {candidate_name}"
             )
         generated_intent = MoveIntent(
             speaker_id=persona.id,
-            act=ActType.POST_RESERVATION_DECISION,
+            act=ActType.VOTE,
             reason=reason,
             option_focus=focus,
             length_hint=intent.length_hint,
             allow_vote_change=target != current,
             required_vote=target,
-            old_preference=current,
+            old_preference=(current if target != current else None),
             allowed_reason=allowed_reason,
         )
         return self._generate_and_append(state, generated_intent)
@@ -588,23 +589,30 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         """
         if target not in state.scenario.option_ids:
             return "it is the clearest option left in the visible discussion"
+        rt = state.runtimes[persona.id]
+        personal_for = rt.reason_for(target)
+        if outcome != "stay" and personal_for:
+            return personal_for
         card = state.scenario.option(target)
         if outcome == "stay":
             if candidate and candidate in state.scenario.option_ids:
                 cand = state.scenario.option(candidate)
                 if cand.concern:
-                    return f"{cand.name} still has this listed concern: {cand.concern}"
+                    return f"listed concern remains: {cand.concern}"
+            personal_against = rt.reason_against(candidate) if candidate else ""
+            if personal_against:
+                return personal_against
             if card.upside:
-                return f"{card.name} keeps the benefit already listed: {card.upside}"
-            return f"{card.name} remains the option you can defend from the listed facts"
-        if card.best_for:
-            return f"{card.name} fits {card.best_for}"
+                return card.upside
+            return "this is still the more defensible option from the listed facts"
         if card.upside:
-            return f"{card.name} offers {card.upside}"
+            return card.upside
+        if card.best_for:
+            return f"works for {card.best_for}"
         if card.attrs:
             key, value = next(iter(card.attrs.items()))
-            return f"{card.name} has {key.replace('_', ' ')} {value}"
-        return f"{card.name} has the broadest visible support now"
+            return f"{key.replace('_', ' ')}: {value}"
+        return "it has the broadest visible support now"
 
     def _should_switch_after_reservation(self, state: DialogueState, persona: Persona, candidate: str) -> bool:
         if not self._can_shift_to(state, persona, candidate) or self._valid_holdout_against(state, persona, candidate):
@@ -612,7 +620,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         votes = [state.runtimes[p.id].explicit_vote for p in state.personas]
         candidate_votes = sum(1 for vote in votes if vote == candidate)
         rt = state.runtimes[persona.id]
-        current = rt.explicit_vote or rt.current_preference or persona.preferred_option
+        current = rt.explicit_vote or rt.top_option() or persona.preferred_option
         own_votes = sum(1 for vote in votes if vote == current)
         # Never "compromise" downhill: switching to a smaller visible camp breaks a
         # forming majority and makes flexible sims ping-pong between candidates.
@@ -672,7 +680,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             for rt in state.runtimes.values()
             if rt.explicit_vote in state.scenario.option_ids
         )
-        current = state.runtimes[persona.id].current_preference or persona.preferred_option
+        current = state.runtimes[persona.id].top_option() or persona.preferred_option
         ordered = [oid for oid, _count in counts.most_common()]
         ordered.extend(persona.preferred_options)
         ordered.extend(state.scenario.option_ids)
@@ -773,7 +781,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             state,
             caller,
             text,
-            ActType.SUMMARIZE_SPLIT,
+            ActType.PROCESS,
             focus,
         ))
         return caller.id
@@ -791,8 +799,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         contested = [oid for oid, _count in counts.most_common(3)]
         if len(contested) < 2:
             latent = Counter(
-                rt.current_preference for rt in state.runtimes.values()
-                if rt.current_preference in state.scenario.option_ids
+                rt.top_option() for rt in state.runtimes.values()
+                if rt.top_option() in state.scenario.option_ids
             )
             for oid, _count in latent.most_common():
                 if oid not in contested:
@@ -814,7 +822,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             state,
             caller,
             text,
-            ActType.REACT,
+            ActType.SUPPORT,
             contested[:3],
             phase=Phase.CLOSURE,
         ))
@@ -855,7 +863,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             state,
             caller,
             text,
-            ActType.REACT,
+            ActType.SUPPORT,
             [final] if final else [],
             phase=Phase.CLOSURE,
         ))
@@ -923,7 +931,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             state.procedural_move_count += 1
             intent = MoveIntent(
                 speaker_id=caller.id,
-                act=ActType.SUMMARIZE_SPLIT,
+                act=ActType.PROCESS,
                 reason=(
                     f"say the vote is one-one between {aliases[v1]} and {aliases[v2]}, then suggest each person names "
                     "the one blocker that would have to change before switching"
@@ -947,11 +955,11 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             )
             self._emit(self._generate_and_append(state, intent))
         for speaker, other_vote in ((p1, v2), (p2, v1)):
-            own = state.runtimes[speaker.id].explicit_vote or state.runtimes[speaker.id].current_preference or speaker.preferred_option
+            own = state.runtimes[speaker.id].explicit_vote or state.runtimes[speaker.id].top_option() or speaker.preferred_option
             can_move = self._can_shift_to(state, speaker, other_vote)
             intent = MoveIntent(
                 speaker_id=speaker.id,
-                act=ActType.POST_RESERVATION_DECISION,
+                act=ActType.VOTE,
                 reason=(
                     f"deadlock final decision: choose exactly one visible outcome — switch to {aliases[other_vote]} "
                     f"or stay with {aliases.get(own, own)} and name the remaining blocker. No vague re-vote."
@@ -961,7 +969,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 allow_vote_change=can_move,
             )
             self._emit(
-                self._append_post_reservation_decision(
+                self._append_final_decision(
                     state,
                     speaker,
                     intent,
@@ -1142,7 +1150,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
     def _append_moderator(self, state: DialogueState, text: str, phase: Phase) -> TurnRecord:
         state.turn_index += 1
         text = normalise_lines(text)
-        act = DialogueAct(speaker_id="moderator", text=text, act_type=ActType.REACT)
+        act = DialogueAct(speaker_id="moderator", text=text, act_type=ActType.SUPPORT)
         record = TurnRecord(index=state.turn_index, speaker_id="moderator", speaker_name="Moderator", text=text, phase=phase, act=act)
         state.turns.append(record)
         return record
@@ -1253,8 +1261,8 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         speaker = max(candidates, key=lambda p: p.sim_params.initiative + 0.5 * p.sim_params.engagement)
         aliases = short_alias_map(state.scenario.options)
         camps = sorted({
-            rt.current_preference for rt in state.runtimes.values()
-            if rt.current_preference in state.scenario.option_ids
+            rt.top_option() for rt in state.runtimes.values()
+            if rt.top_option() in state.scenario.option_ids
         })
         untouched = [oid for oid, cov in state.coverage.items() if cov.mentions <= 1 and oid not in camps]
         if len(camps) >= 2:
@@ -1265,21 +1273,21 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 "your own option in this line"
             )
             focus = camps[:2]
-            act = ActType.SUMMARIZE_SPLIT
+            act = ActType.PROCESS
         elif untouched:
             reason = (
                 f"suggest the group set {aliases[untouched[0]]} aside since nobody has made a case for it, "
                 "so the discussion can focus on the real contenders"
             )
             focus = [untouched[0]]
-            act = ActType.SUGGEST_NARROWING
+            act = ActType.PROCESS
         else:
             reason = (
                 "you feel the group has compared enough — suggest in your own casual words that it's time "
                 "to move toward a decision, and ask if anything important is still unresolved"
             )
             focus = []
-            act = ActType.SUGGEST_NARROWING
+            act = ActType.PROCESS
         return MoveIntent(
             speaker_id=speaker.id,
             act=act,
@@ -1375,7 +1383,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
             # An unresolved visible blocker on the likely candidate is the most
             # useful thing to surface; ask that person directly, once.
             probe_key = f"mod:{candidate}"
-            blockers = [p for p in state.personas if candidate in state.runtimes[p.id].hard_rejections]
+            blockers = [p for p in state.personas if candidate in state.runtimes[p.id].rejected_options()]
             if blockers and probe_key not in state.blocker_probes:
                 state.blocker_probes.add(probe_key)
                 return (
@@ -1397,12 +1405,12 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
                 supported[:2],
             )
         if candidate:
-            dissenters = [p for p in state.personas if state.runtimes[p.id].current_preference != candidate]
+            dissenters = [p for p in state.personas if state.runtimes[p.id].top_option() != candidate]
             if len(dissenters) == 1:
                 return (
                     dissenters[0].id,
                     "ask what remaining concern would need to be resolved to move",
-                    [candidate, state.runtimes[dissenters[0].id].current_preference or dissenters[0].preferred_option],
+                    [candidate, state.runtimes[dissenters[0].id].top_option() or dissenters[0].preferred_option],
                 )
         return (None, "ask for the strongest remaining concern before choosing", [candidate] if candidate else [])
 
@@ -1471,19 +1479,36 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
 
 def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
     state = DialogueState(scenario=scenario, personas=personas)
-    # Initial commitment to the starting favorite scales with stubbornness, so a
-    # flexible sim starts movable and a stubborn one starts dug in (issue 2).
-    state.runtimes = {
-        p.id: ParticipantRuntime(
+    # Per-sim option ranks are the single runtime source of truth for private
+    # stance. Derived helpers read from these ranks; no separate preference/rejection
+    # containers are maintained.
+    state.runtimes = {}
+    for p in personas:
+        ranks = {option.id: 2 for option in scenario.options}
+        reasons_for: dict[str, str] = {}
+        reasons_against: dict[str, str] = {}
+        for oid, stance in (p.option_stances or {}).items():
+            if oid in ranks:
+                ranks[oid] = int(stance.rank)
+                if stance.reason_for:
+                    reasons_for[oid] = stance.reason_for
+                if stance.reason_against:
+                    reasons_against[oid] = stance.reason_against
+        for oid in p.preferred_options:
+            if oid in ranks:
+                ranks[oid] = max(ranks[oid], 4 if oid == p.preferred_option else 3)
+        if p.rejection and p.rejection in ranks:
+            ranks[p.rejection] = 0
+            if p.rejection_reason:
+                reasons_against[p.rejection] = p.rejection_reason
+        rt = ParticipantRuntime(
             persona_id=p.id,
-            current_preference=p.preferred_option,
+            option_ranks=ranks,
+            reasons_for=reasons_for,
+            reasons_against=reasons_against,
             commitment_strength=0.45 + 0.40 * p.sim_params.stubbornness,
             commitment_min=0.45 + 0.40 * p.sim_params.stubbornness,
         )
-        for p in personas
-    }
+        state.runtimes[p.id] = rt
     state.coverage = {option.id: OptionCoverage() for option in scenario.options}
-    for persona in personas:
-        if persona.rejection:
-            state.runtimes[persona.id].hard_rejections[persona.rejection] = persona.rejection_reason
     return state

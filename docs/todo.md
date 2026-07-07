@@ -2,95 +2,44 @@
 
 This file is the active work queue. It should contain only open work.
 
-The project remains an **option-grounded multi-user decision simulator**. Keep exactly three outcomes:
+The project remains an **option-grounded multi-user decision simulator** with exactly three outcomes:
 
 - `successful`
 - `majority`
 - `unresolved`
 
-Do not add a fourth outcome and do not add broad new personality subsystems without evidence from logs.
-
 ## Current baseline
 
-v3 is based on v1 plus selected v2 fixes:
+The current v3 version has a central per-sim/per-option stance table:
 
-- controller-selected, LLM-rendered holdout switch/stay turns after majority and split-vote reservations;
-- no downhill compromise;
-- bounded tie compromise for flexible sims;
-- unresolved acknowledgement before closure;
-- split-summary self-answer avoidance;
-- active-thread priority over private agenda;
-- small trait influence on act choice and vote phrase selection;
-- required-vote validation so generated decision lines cannot drift to the wrong option;
-- moderator-owned final vote call; participant self-closure was removed to avoid extra routing complexity;
-- observer fixes for false hard blockers on a sim's own current favorite.
+```text
+4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected/hard blocked
+```
 
-v3 intentionally excludes v2 micro-reactions, friendliness, personal anchors, and large trait-color wording logic.
+Runtime stance now uses this rank table directly. There are no separate runtime preference/rejection containers. The compact controller act vocabulary is:
+
+```text
+opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
+```
 
 ## Required protocol
 
 1. Work on one issue at a time.
-2. Prefer controller/state simplification over prompt expansion.
-3. Run static checks after every code change:
+2. Prefer replacing old logic over adding parallel logic.
+3. Run static checks before packaging:
 
 ```powershell
 py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
 ```
 
-4. If LLM access is available, run at least:
+4. Run quick/full eval locally when provider access is available.
+5. Inspect transcripts manually.
 
-```powershell
-py .\eval\run_eval_suite.py --quick
-```
+## Open checks after this refactor
 
-5. Before declaring the version stable, run:
-
-```powershell
-py .\eval\run_eval_suite.py --full
-```
-
-6. Inspect transcripts manually. Do not rely only on metrics.
-7. Update `README.md`, `CLAUDE.md`, and relevant `info/*.md` files after behavior changes.
-
-## Open issues
-
-### O1 — Validate v3 behavior with the eval suite
-
-Run the quick suite first, then the full suite. Compare against the intended v3 behavior:
-
-- fewer abrupt unresolved endings;
-- no fake successful outcomes from forced compromise;
-- holdouts visibly switch or stay with reasons;
-- no participant immediately answers their own split prompt;
-- directness/compromise affect behavior without making everyone sound templated;
-- final votes do not contradict the sim's own visible objections;
-- majority outcomes remain possible when a holdout has a convincing visible reason to stay.
-
-### O2 — File-by-file simplification
-
-Simplify without changing behavior. Priority files:
-
-1. `src/dialogue.py` — split orchestration helpers into clearer sections or smaller pure helpers.
-2. `src/policy.py` — keep routing rules explainable; remove duplicate or stale branches.
-3. `src/builders.py` — separate manual validation from auto generation if it improves readability.
-4. `src/prompts.py` — keep only behavior-relevant prompt rules.
-
-Do not reduce file count at all costs. The goal is clearer responsibility, not artificial minimalism.
-
-### O3 — Remove obsolete code only after proving it is unused
-
-Before deleting a helper, search all references and confirm it is not used by logs, JSON serialization, metrics, or eval cases. Prefer removing dead code over adding abstractions.
-
-### O4 — Outcome plausibility review
-
-After full-suite logs exist, inspect cases where `successful` appears after a split. Confirm the transcript actually earns unanimity. If closure looks forced, tune `_should_switch_after_reservation`, not the prompt.
-
-## Non-goals
-
-- More traits.
-- Micro-reaction subsystem.
-- Personal anchors.
-- Full agenda simulation.
-- Full memory/reflection.
-- Open-domain group chat.
-- Provider comparison before v3 is stable.
+- Run `py .\eval\run_eval_suite.py --quick` and inspect the transcripts.
+- Verify that repair/fallback counts did not increase.
+- Verify that successful, majority, and rare unresolved outcomes still appear naturally.
+- Verify that opening turns are chat-like but not repetitive.
+- Verify that rank movements explain final switches and do not force consensus.
+- If repair cost is still high, next simplification should target decision/vote prompting and parser compatibility, not new features.

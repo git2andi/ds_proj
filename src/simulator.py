@@ -67,7 +67,7 @@ def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
     p = persona.sim_params
     agenda = [
         AgendaItem(
-            act=ActType.BUILD,
+            act=ActType.SUPPORT,
             option=preferred,
             reason="state one grounded reason for the initial preference",
             priority=1.0,
@@ -85,21 +85,26 @@ def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
             priority=0.65,
         ),
     ]
-    if persona.rejection:
+    rejected = [oid for oid, stance in (persona.option_stances or {}).items() if int(stance.rank) == 0]
+    if persona.rejection and persona.rejection not in rejected:
+        rejected.append(persona.rejection)
+    if rejected:
+        oid = rejected[0]
+        reason = (persona.option_stances.get(oid).reason_against if oid in persona.option_stances else persona.rejection_reason)
         agenda.insert(
             1,
             AgendaItem(
-                act=ActType.CHALLENGE,
-                option=persona.rejection,
-                reason=f"raise the hard concern about {persona.rejection}: {persona.rejection_reason}",
+                act=ActType.CONCERN,
+                option=oid,
+                reason=f"raise the hard concern about {oid}" + (f": {reason}" if reason else ""),
                 priority=0.95,
             ),
         )
     # Cooperative sims carry an intent to look for common ground.
-    if p.compromise_threshold <= 0.45 and not persona.rejection:
+    if p.compromise_threshold <= 0.45 and not rejected:
         agenda.append(
             AgendaItem(
-                act=ActType.PROPOSE_COMPROMISE,
+                act=ActType.COMPROMISE,
                 option=preferred,
                 reason="look for a workable compromise the group could accept",
                 priority=0.55,
@@ -109,7 +114,7 @@ def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
     if p.stubbornness >= 0.6:
         agenda.append(
             AgendaItem(
-                act=ActType.CHALLENGE,
+                act=ActType.CONCERN,
                 option=None,
                 reason="object to the main rival option with a concrete concern",
                 priority=0.6,
@@ -118,7 +123,7 @@ def build_initial_agenda(persona: Persona) -> list[AgendaItem]:
     return agenda
 
 
-def refresh_agenda(persona: Persona, current_preference: str | None) -> None:
+def refresh_agenda(persona: Persona, active_option: str | None) -> None:
     """Mark agenda items obsolete/blocked as the sim's stance evolves.
 
     Keeps continuity honest: once a sim has moved off an option, its pending
@@ -129,14 +134,14 @@ def refresh_agenda(persona: Persona, current_preference: str | None) -> None:
         if item.status != AgendaStatus.PENDING:
             continue
         if (
-            current_preference
+            active_option
             and item.option
-            and item.option != current_preference
-            and item.act in {ActType.BUILD, ActType.ASK, ActType.PROPOSE_COMPROMISE}
+            and item.option != active_option
+            and item.act in {ActType.SUPPORT, ActType.ASK, ActType.COMPROMISE}
             and item.option == persona.preferred_option
         ):
             item.status = AgendaStatus.OBSOLETE
-        if item.act == ActType.PROPOSE_COMPROMISE and persona.rejection == current_preference:
+        if item.act == ActType.COMPROMISE and active_option in {oid for oid, stance in (persona.option_stances or {}).items() if int(stance.rank) == 0}:
             item.status = AgendaStatus.BLOCKED
 
 

@@ -289,7 +289,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     tiny_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 5)
     # P2 diagnostic: questions appearing on statement-type turns (the chaining
     # pattern), as opposed to intentional ask/invite acts.
-    question_acts = {"ask", "invite", "probe_holdout", "call_vote"}
+    question_acts = {"ask", "process"}
     statement_turns = [
         t for t in participant_turns
         if t.intent and t.intent.act.value not in question_acts
@@ -356,7 +356,6 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "compromise_success_rate": _compromise_success(state, outcome),
         "reservation_exchange": bool(state.reservation_exchange_done),
         "participant_procedural_moves": int(state.procedural_move_count),
-        "peer_vote_call": bool(state.peer_vote_call_done),
         "two_person_deadlock_attempted": bool(state.two_person_deadlock_attempted),
         "split_reservation_exchanges": int(state.split_reservation_exchanges),
         # Same-speaker follow-up turns (issue 6) — rare by design.
@@ -389,10 +388,17 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         # option in the final tally — must always be 0.
         "final_blocker_violations": sum(
             1 for p in state.personas
-            if p.rejection and outcome.final_option == p.rejection
-            and visible_vote_ids.get(p.id) == p.rejection
+            if outcome.final_option in state.runtimes[p.id].rejected_options()
+            and visible_vote_ids.get(p.id) == outcome.final_option
         ),
         "final_support_fraction": _final_support_fraction(state, outcome),
+        "stance_rank_distribution": {
+            str(rank): sum(1 for rt in state.runtimes.values() for value in rt.option_ranks.values() if value == rank)
+            for rank in range(5)
+        },
+        "runtime_preferred_by_rank": {
+            p.name: state.runtimes[p.id].top_option() for p in state.personas
+        },
         "option_coverage": {
             opt: {
                 "mentions": c.mentions,
@@ -433,7 +439,7 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
         "llm_provider": provider,
         "llm_model": str(cfg.llm.models.get(provider, "unknown")),
         "num_participants": len(state.personas),
-        "hard_blocker_present": any(p.rejection for p in state.personas),
+        "hard_blocker_present": any(state.runtimes[p.id].rejected_options() for p in state.personas),
         **scalar,
     }
 
@@ -454,6 +460,6 @@ def _final_support_fraction(state: DialogueState, outcome: RunOutcome) -> float:
     backers = sum(
         1
         for p in state.personas
-        if state.runtimes[p.id].explicit_vote == final or final in state.runtimes[p.id].accepted_options
+        if state.runtimes[p.id].explicit_vote == final or final in state.runtimes[p.id].acceptable_options()
     )
     return round(backers / max(1, len(state.personas)), 3)
