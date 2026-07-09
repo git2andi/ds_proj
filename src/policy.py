@@ -19,6 +19,7 @@ from config_loader import cfg
 from consensus import participant_turn_count
 from models import (
     ActType,
+    AgendaStatus,
     DialogueState,
     MoveIntent,
     Persona,
@@ -31,7 +32,7 @@ from models import (
     _DISCUSSION_ACTS,
 )
 from parsing import round_reason_snippets, used_commitment_phrases
-from simulator import expected_turn_share, next_agenda_item
+from simulator import expected_turn_share
 from style import (
     first_person_opening_fraction,
     name_prefix_fraction,
@@ -216,7 +217,8 @@ class PolicyMixin:
 
         # Reactive adjacency-pair moves (defend a challenged pick, follow up an
         # answer, probe a blocker, compare a visible split) come before the
-        # agenda: local context drives acts, the agenda only fills quiet moments.
+        # global agenda: local context drives acts, the checklist fills quiet
+        # moments and makes pre-vote coverage explicit.
         reactive = self._reactive_intent(state)
         if reactive is not None:
             return reactive
@@ -228,26 +230,13 @@ class PolicyMixin:
         if continuation is not None:
             return continuation
 
+        agenda_intent = self._global_agenda_intent(state)
+        if agenda_intent is not None:
+            return agenda_intent
+
         speaker = self._choose_speaker(state)
-        agenda_pair = next_agenda_item(speaker)
-        # Private agenda is only a weak hint. A live local thread should win over
-        # introducing another topic.
-        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
-        last_turn = participant_turns[-1] if participant_turns else None
-        last_act = (last_turn.intent.act if last_turn.intent else last_turn.act.act_type) if last_turn else None
-        thread_hot = bool(
-            (last_turn and "?" in last_turn.text)
-            or last_act == ActType.ANSWER
-            or any(c.addressed_by is None for c in state.open_concerns)
-        )
-        if agenda_pair and not thread_hot and random.random() < (0.15 + 0.25 * speaker.sim_params.initiative):
-            agenda_index, agenda_item = agenda_pair
-            act = agenda_item.act
-            focus = [agenda_item.option] if agenda_item.option in state.scenario.option_ids else []
-        else:
-            agenda_index = None
-            act = self._choose_discussion_act(state, speaker)
-            focus = []
+        act = self._choose_discussion_act(state, speaker)
+        focus: list[str] = []
 
         target_turn = self._choose_target_turn(state, speaker, act)
         target_speaker = target_turn.speaker_id if target_turn and target_turn.speaker_id != "moderator" else None
@@ -271,7 +260,7 @@ class PolicyMixin:
             addressee_id=addressee,
             option_focus=focus,
             respond_to_turn=target_turn.index if target_turn else None,
-            agenda_index=agenda_index,
+            agenda_key=None,
         )
 
     def _reactive_intent(self, state: DialogueState) -> MoveIntent | None:
@@ -763,6 +752,66 @@ class PolicyMixin:
         pairs = sorted(state.coverage.items(), key=lambda kv: (kv[1].mentions, kv[0]))
         return pairs[0][0] if pairs else None
 
+    def _global_agenda_intent(self, state: DialogueState) -> MoveIntent | None:
+        """Route one pending chat-level checklist item when the thread is quiet."""
+        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
+        if len(participant_turns) <= len(state.personas):
+            return None
+        last_turn = participant_turns[-1] if participant_turns else None
+        last_act = (last_turn.intent.act if last_turn.intent else last_turn.act.act_type) if last_turn else None
+        thread_hot = bool(
+            (last_turn and "?" in last_turn.text)
+            or last_act == ActType.ANSWER
+            or any(c.addressed_by is None for c in state.open_concerns)
+        )
+        if thread_hot:
+            return None
+
+        item = next(
+            (entry for entry in state.discussion_agenda if entry.status == AgendaStatus.PENDING and entry.required),
+            None,
+        )
+        if item is None:
+            item = next(
+                (entry for entry in state.discussion_agenda if entry.status == AgendaStatus.PENDING and not entry.required),
+                None,
+            )
+        if item is None:
+            return None
+
+        focus: list[str] = []
+        if item.option in state.scenario.option_ids:
+            focus.append(str(item.option))
+            speaker = self._speaker_for_option_coverage(state, str(item.option))
+            current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
+            if current in state.scenario.option_ids and current != item.option:
+                focus.append(current)
+        elif item.key == "compare_top_options":
+            focus = self._top_agenda_options(state)
+            speaker = self._speaker_for_option_coverage(state, focus[0]) if focus else self._choose_speaker(state)
+        else:
+            speaker = self._choose_speaker(state)
+            focus = self._focus_options(state, speaker, item.act, None)
+
+        return MoveIntent(
+            speaker_id=speaker.id,
+            act=item.act,
+            reason=item.reason,
+            option_focus=focus,
+            agenda_key=item.key,
+        )
+
+    def _top_agenda_options(self, state: DialogueState) -> list[str]:
+        scored = sorted(
+            state.scenario.option_ids,
+            key=lambda oid: (
+                -self._visible_support_count(state, oid),
+                -state.coverage[oid].mentions,
+                oid,
+            ),
+        )
+        return scored[:2]
+
     def _focus_options(self, state: DialogueState, speaker: Persona, act: ActType, target_turn: TurnRecord | None) -> list[str]:
         ids: list[str] = []
         if target_turn:
@@ -926,6 +975,8 @@ class PolicyMixin:
             return False
         if self._coverage_gap_option(state) is not None and participant_turns < state.hard_max_turns:
             return False
+        if self._required_agenda_pending(state) and participant_turns < state.force_narrow_turns:
+            return False
         if participant_turns >= state.force_narrow_turns:
             camps = {rt.top_option() for rt in state.runtimes.values() if rt.top_option()}
             contested = len(camps) >= 2 and any(c.addressed_by is None for c in state.open_concerns)
@@ -946,6 +997,10 @@ class PolicyMixin:
         if support >= cluster:
             return True
         return support >= 1 and self._visibly_proposed(state, candidate)
+
+    @staticmethod
+    def _required_agenda_pending(state: DialogueState) -> bool:
+        return any(item.required and item.status == AgendaStatus.PENDING for item in state.discussion_agenda)
 
     def _visible_candidate(self, state: DialogueState) -> str | None:
         """Option with the most visible backing (votes + acceptances), if any."""

@@ -1,0 +1,3203 @@
+{
+  "run_id": "20260709_163134_283703",
+  "topic": "Book a flight from Miami to Stockholm",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Book a flight from Miami to Stockholm",
+    "decision_kind": "travel_destination",
+    "opening_question": "What matters most to you when choosing a flight to Stockholm: price, travel time, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Direct Delta Airlines Flight Miami to Stockholm",
+        "attrs": {
+          "cost": "$680 per person",
+          "duration": "10 hours nonstop",
+          "departure_time": "Evening departure"
+        },
+        "upside": "Shortest travel time with no layovers",
+        "tradeoff": "Highest cost among options",
+        "concern": "Limited seat availability for a group of 5",
+        "best_for": "travelers prioritizing speed and convenience",
+        "short_name": "Direct Delta"
+      },
+      {
+        "id": "B",
+        "name": "American Airlines Flight with One Layover in London",
+        "attrs": {
+          "cost": "$620 per person",
+          "duration": "14 hours total",
+          "layover_duration": "2 hours in London"
+        },
+        "upside": "Moderate price with a manageable layover",
+        "tradeoff": "Longer total travel time due to layover",
+        "concern": "Potential delays during layover connection",
+        "best_for": "travelers balancing cost and convenience",
+        "short_name": ""
+      },
+      {
+        "id": "C",
+        "name": "Icelandair Flight with Overnight Stop in Reykjavik",
+        "attrs": {
+          "cost": "$550 per person",
+          "duration": "20 hours total including overnight",
+          "layover_duration": "8 hours overnight in Reykjavik"
+        },
+        "upside": "Lowest price and chance to rest overnight",
+        "tradeoff": "Significantly longer travel time",
+        "concern": "Extra effort managing overnight stop",
+        "best_for": "budget-conscious travelers willing to extend travel time",
+        "short_name": "Icelandair Stop"
+      },
+      {
+        "id": "D",
+        "name": "United Airlines Flight with Two Short Layovers in Newark and Frankfurt",
+        "attrs": {
+          "cost": "$640 per person",
+          "duration": "16 hours total",
+          "layover_durations": "1 hour in Newark, 1.5 hours in Frankfurt"
+        },
+        "upside": "Balanced cost and multiple flight options",
+        "tradeoff": "More complex itinerary with two connections",
+        "concern": "Higher risk of missed connections or delays",
+        "best_for": "travelers open to connections for moderate savings",
+        "short_name": ""
+      }
+    ],
+    "shared_context": [
+      "The group consists of exactly 5 participants",
+      "The total budget per person is capped at $700",
+      "The goal is to arrive in Stockholm by the evening of the second day"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Felix",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 4,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7374999999999999,
+        "verbosity": 0.8,
+        "initiative": 0.7999999999999999,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.25,
+        "directness": 0.525,
+        "compromise_threshold": 0.125
+      },
+      "background": "Felix works in a dynamic tech startup and values efficient travel to maximize his limited vacation time.",
+      "private_goal": "prefers the United Airlines option for its balanced cost and multiple flight choices despite the complexity",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Shortest travel time with no layovers",
+          "reason_against": "Higher cost and limited group seat availability"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Too long travel time with overnight stop"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Balanced cost and multiple flight options",
+          "reason_against": ""
+        }
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Leo",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.9249999999999999,
+        "verbosity": 0.9375,
+        "initiative": 0.9249999999999999,
+        "responsiveness": 0.5375,
+        "stubbornness": 0.7,
+        "directness": 0.7875000000000001,
+        "compromise_threshold": 0.6125
+      },
+      "background": "Leo is an early career marketing professional who enjoys social travel but watches his budget carefully.",
+      "private_goal": "prefers the American Airlines flight with one layover for its moderate price and manageable layover",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 26,
+      "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Cost is a bit high for budget"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Good balance of cost and convenience",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Lowest price and chance to rest overnight",
+          "reason_against": "Long travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "More complex itinerary"
+        }
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Sami",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.7250000000000001,
+        "initiative": 0.75,
+        "responsiveness": 0.5875,
+        "stubbornness": 0.55,
+        "directness": 0.5375,
+        "compromise_threshold": 0.4
+      },
+      "background": "Sami is a freelance graphic designer who values creativity and budget flexibility in travel plans.",
+      "private_goal": "prefers the American Airlines flight for its balance of cost and travel time",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 31,
+      "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Higher cost"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Moderate price with manageable layover",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Lowest price and chance to rest overnight",
+          "reason_against": "Longer travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Two layovers add complexity"
+        }
+      }
+    },
+    {
+      "id": "p4",
+      "name": "Isla",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.4375,
+        "verbosity": 0.525,
+        "initiative": 0.55,
+        "responsiveness": 0.475,
+        "stubbornness": 0.7,
+        "directness": 0.5125,
+        "compromise_threshold": 0.6125
+      },
+      "background": "Isla is a junior consultant who prefers straightforward travel plans that balance cost and convenience.",
+      "private_goal": "prefers the American Airlines flight for its moderate price and manageable layover",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Cost is high and limited seats"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Good balance of cost and convenience",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Long travel time with overnight stop"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "More complex itinerary"
+        }
+      }
+    },
+    {
+      "id": "p5",
+      "name": "Vera",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 4,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 1.0,
+        "verbosity": 1.0,
+        "initiative": 1.0,
+        "responsiveness": 0.8875,
+        "stubbornness": 0.25,
+        "directness": 0.8875,
+        "compromise_threshold": 0.16249999999999998
+      },
+      "background": "Vera is a senior manager who values speed and convenience to optimize her limited travel time.",
+      "private_goal": "prefers the direct Delta flight for the shortest travel time and nonstop convenience",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 52,
+      "style": "clear and practical middle-aged professional style: measured and direct",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Shortest travel time with no layovers",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Moderate price and manageable layover",
+          "reason_against": "Longer travel time"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Too long travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "More complex itinerary"
+        }
+      }
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 9,
+      "last_spoke_turn": 37,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 4
+      },
+      "reasons_for": {
+        "A": "I’d go with Direct Delta—cutting travel time means more energy on arrival, and $680 is still within our budget.",
+        "D": "Balanced cost and multiple flight options",
+        "B": "Vera, good point on American Airlines staying under budget and that layover buffer!"
+      },
+      "reasons_against": {
+        "A": "Higher cost and limited group seat availability",
+        "C": "Too long travel time with overnight stop"
+      },
+      "commitment_strength": 0.6050000000000001,
+      "commitment_min": 0.55,
+      "challenges_received": 0,
+      "concessions_made": 2,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Hey all, I like United Airlines here because it hits a nice middle ground on cost and timing.",
+        "Okay, that Delta nonstop is getting more appealing with the time saved, even if it’s pricier and seats might be tight.",
+        "Vera, good point on American Airlines staying under budget and that layover buffer!",
+        "Actually, that layover’s also a good chance to stretch—keeps us fresh!",
+        "Delays hit us harder than a longer layover—United’s flexibility still wins for me.",
+        "That 2-hour London layover Vera mentioned is starting to sound more manageable.",
+        "Isla, what’s your take on American Airlines’ 2-hour London layover versus United’s two shorter ones?",
+        "I’d go with Direct Delta—cutting travel time means more energy on arrival, and $680 is still within our budget.",
+        "We don’t have seat counts for Direct Delta here, Vera."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 6,
+      "last_spoke_turn": 32,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 4,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "Good balance of cost and convenience",
+        "C": "Lowest price and chance to rest overnight",
+        "A": "I’m all in for Direct Delta—no layovers means less chance of travel headaches and still fits the budget."
+      },
+      "reasons_against": {
+        "A": "Cost is a bit high for budget",
+        "C": "Long travel time",
+        "D": "More complex itinerary"
+      },
+      "commitment_strength": 0.7335000000000002,
+      "commitment_min": 0.73,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "American Airlines looks solid—$620 and just one two-hour layover in London is manageable. It’s not the fastest, but it keeps us under budget without killing energy.",
+        "Cutting travel time by half with Delta costs $60 more and risks no seats left. Icelandair saves $130 but adds a long overnight stop—worth the tradeoff?",
+        "Watch the 2-hour London layover—it’s great for delays but adds to total travel time.",
+        "Longer layover in London is fine, but United’s two quick stops increase total travel time and risk delays.",
+        "Direct Delta gets us there fast and on budget, but seats are tight.",
+        "I’m all in for Direct Delta—no layovers means less chance of travel headaches and still fits the budget."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 5,
+      "last_spoke_turn": 30,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 4,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "Moderate price with manageable layover",
+        "C": "Lowest price and chance to rest overnight",
+        "A": "I vote for Direct Delta; I was on American Airlines, but Shortest travel time with no layovers."
+      },
+      "reasons_against": {
+        "A": "Higher cost",
+        "C": "Longer travel time",
+        "D": "Two layovers add complexity"
+      },
+      "commitment_strength": 0.7592500000000002,
+      "commitment_min": 0.67,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Thinking about cost and travel balance, American Airlines with that London layover seems pretty solid—manageable price and not too exhausting.",
+        "Saving a bit under budget with American Airlines is definitely solid, Isla.",
+        "Two quick stops might sound efficient, but they really jack up the total travel time.",
+        "Getting there fast is tempting, but tight seats feel like a budget squeeze—American Airlines.",
+        "I vote for Direct Delta; I was on American Airlines, but Shortest travel time with no layovers."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 5,
+      "last_spoke_turn": 31,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "Good balance of cost and convenience",
+        "A": "Let’s go with Direct Delta for the shortest travel time—worth the extra cost to avoid any layover hassle."
+      },
+      "reasons_against": {
+        "A": "Cost is high and limited seats",
+        "C": "Long travel time with overnight stop",
+        "D": "More complex itinerary"
+      },
+      "commitment_strength": 0.7590000000000001,
+      "commitment_min": 0.73,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Saving a bit under budget with American Airlines is nice.",
+        "That Delta nonstop sounds tempting, but seat availability worries me.",
+        "The layover’s a bit longer, but I’d rather keep costs predictable and avoid seat stress.",
+        "Felix, that 2-hour layover’s solid enough.",
+        "Let’s go with Direct Delta for the shortest travel time—worth the extra cost to avoid any layover hassle."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p5": {
+      "persona_id": "p5",
+      "turn_count": 10,
+      "last_spoke_turn": 38,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "I’ll back Direct Delta for the shortest travel time with no layovers. American Airlines saves money but adds too much travel time.",
+        "B": "American Airlines gets my vote."
+      },
+      "reasons_against": {
+        "B": "Longer travel time",
+        "C": "Too long travel time",
+        "D": "More complex itinerary"
+      },
+      "commitment_strength": 0.5460000000000002,
+      "commitment_min": 0.4910000000000001,
+      "challenges_received": 1,
+      "concessions_made": 3,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "The Direct Delta flight works best—shortest nonstop travel gets us there by evening. It’s pricey, but seats might run out fast.",
+        "The London layover on American Airlines makes more sense for budget and less risk on seats.",
+        "We should take American Airlines for $620 to stay under budget and avoid the Delta seat gamble.",
+        "Remember the 2-hour layover gives us a buffer if the first flight’s delayed.",
+        "Felix, the 2-hour layover in London is workable but stretches travel time to 14 hours.",
+        "Does the $60 price difference for United really justify the extra six hours of travel and added delay risk?",
+        "Two hours in London isn’t ideal, but the $620 price and a bit more comfort make American Airlines workable.",
+        "American Airlines gets my vote.",
+        "Worried about seat availability on Direct Delta—can we confirm enough spots?",
+        "I’ll back Direct Delta for the shortest travel time with no layovers. American Airlines saves money but adds too much travel time."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "B",
+          "has_reason": false,
+          "has_bridge": true
+        },
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Book a flight from Miami to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct Delta Airlines Flight Miami to Stockholm — cost: $680 per person; duration: 10 hours nonstop; departure time: Evening departure (+ Shortest travel time with no layovers; − Highest cost among options)\nB) American Airlines Flight with One Layover in London — cost: $620 per person; duration: 14 hours total; layover duration: 2 hours in London (+ Moderate price with a manageable layover; − Longer total travel time due to layover)\nC) Icelandair Flight with Overnight Stop in Reykjavik — cost: $550 per person; duration: 20 hours total including overnight; layover duration: 8 hours overnight in Reykjavik (+ Lowest price and chance to rest overnight; − Significantly longer travel time)\nD) United Airlines Flight with Two Short Layovers in Newark and Frankfurt — cost: $640 per person; duration: 16 hours total; layover durations: 1 hour in Newark, 1.5 hours in Frankfurt (+ Balanced cost and multiple flight options; − More complex itinerary with two connections)\nContext: The group consists of exactly 5 participants; The total budget per person is capped at $700; The goal is to arrive in Stockholm by the evening of the second day.\nWhat matters most to you when choosing a flight to Stockholm: price, travel time, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Book a flight from Miami to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct Delta Airlines Flight Miami to Stockholm — cost: $680 per person; duration: 10 hours nonstop; departure time: Evening departure (+ Shortest travel time with no layovers; − Highest cost among options)\nB) American Airlines Flight with One Layover in London — cost: $620 per person; duration: 14 hours total; layover duration: 2 hours in London (+ Moderate price with a manageable layover; − Longer total travel time due to layover)\nC) Icelandair Flight with Overnight Stop in Reykjavik — cost: $550 per person; duration: 20 hours total including overnight; layover duration: 8 hours overnight in Reykjavik (+ Lowest price and chance to rest overnight; − Significantly longer travel time)\nD) United Airlines Flight with Two Short Layovers in Newark and Frankfurt — cost: $640 per person; duration: 16 hours total; layover durations: 1 hour in Newark, 1.5 hours in Frankfurt (+ Balanced cost and multiple flight options; − More complex itinerary with two connections)\nContext: The group consists of exactly 5 participants; The total budget per person is capped at $700; The goal is to arrive in Stockholm by the evening of the second day.\nWhat matters most to you when choosing a flight to Stockholm: price, travel time, or convenience?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "The Direct Delta flight works best—shortest nonstop travel gets us there by evening. It’s pricey, but seats might run out fast.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The Direct Delta flight works best—shortest nonstop travel gets us there by evening. It’s pricey, but seats might run out fast.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 772,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "American Airlines looks solid—$620 and just one two-hour layover in London is manageable. It’s not the fastest, but it keeps us under budget without killing energy.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "American Airlines looks solid—$620 and just one two-hour layover in London is manageable. It’s not the fastest, but it keeps us under budget without killing energy.",
+        "act_type": "opening",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 839,
+      "tokens_out": 35,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Hey all, I like United Airlines here because it hits a nice middle ground on cost and timing.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Hey all, I like United Airlines here because it hits a nice middle ground on cost and timing.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 865,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Sami",
+      "text": "Thinking about cost and travel balance, American Airlines with that London layover seems pretty solid—manageable price and not too exhausting.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Thinking about cost and travel balance, American Airlines with that London layover seems pretty solid—manageable price and not too exhausting.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 864,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p4",
+      "speaker_name": "Isla",
+      "text": "Saving a bit under budget with American Airlines is nice.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Saving a bit under budget with American Airlines is nice.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 548,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Cutting travel time by half with Delta costs $60 more and risks no seats left. Icelandair saves $130 but adds a long overnight stop—worth the tradeoff?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cutting travel time by half with Delta costs $60 more and risks no seats left. Icelandair saves $130 but adds a long overnight stop—worth the tradeoff?",
+        "act_type": "compare",
+        "option_refs": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "the group is visibly split between Icelandair Stop and Direct Delta; put them side by side on the trade-off that actually divides the group",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1324,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p4",
+      "speaker_name": "Isla",
+      "text": "That Delta nonstop sounds tempting, but seat availability worries me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "That Delta nonstop sounds tempting, but seat availability worries me.",
+        "act_type": "concern",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "concern",
+        "reason": "push back on Direct Delta with one concrete concern — you currently favor American Airlines, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 536,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "The London layover on American Airlines makes more sense for budget and less risk on seats.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "The London layover on American Airlines makes more sense for budget and less risk on seats.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "soften_toward",
+        "reason": "the case others made for American Airlines genuinely lands with you — say openly that it is starting to make more sense to me, name the argument that moved you, and what you still like about Direct Delta; this is a shift in view, NOT a final vote — do not fully commit",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": "B",
+        "continuation": false
+      },
+      "tokens_in": 1383,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Okay, that Delta nonstop is getting more appealing with the time saved, even if it’s pricier and seats might be tight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Okay, that Delta nonstop is getting more appealing with the time saved, even if it’s pricier and seats might be tight.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "soften_toward",
+        "reason": "non-finally acknowledge that Icelandair Stop, Direct Delta, United Airlines is becoming more convincing, while still naming what you give up",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1454,
+      "tokens_out": 67,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Sami",
+      "text": "Saving a bit under budget with American Airlines is definitely solid, Isla.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Saving a bit under budget with American Airlines is definitely solid, Isla.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare American Airlines, United Airlines with one clear trade-off",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 533,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "We should take American Airlines for $620 to stay under budget and avoid the Delta seat gamble.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "We should take American Airlines for $620 to stay under budget and avoid the Delta seat gamble.",
+        "act_type": "compromise",
+        "option_refs": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compromise",
+        "reason": "the discussion is circling with both sides restating their pick; name what you would give up and propose concretely which option could work for everyone",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 681,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "Remember the 2-hour layover gives us a buffer if the first flight’s delayed.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Remember the 2-hour layover gives us a buffer if the first flight’s delayed.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "support",
+        "reason": "add one quick afterthought to the point you just made — a small practical detail you forgot ('Oh, and…')",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 709,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Watch the 2-hour London layover—it’s great for delays but adds to total travel time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Watch the 2-hour London layover—it’s great for delays but adds to total travel time.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about American Airlines that has not come up yet",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 601,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Vera, good point on American Airlines staying under budget and that layover buffer!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Vera, good point on American Airlines staying under budget and that layover buffer!",
+        "act_type": "compromise",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "B",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compromise",
+        "reason": "test whether American Airlines, Direct Delta, United Airlines could be common ground without claiming it is already decided",
+        "addressee_id": "p5",
+        "option_focus": [
+          "B",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 667,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Actually, that layover’s also a good chance to stretch—keeps us fresh!",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Actually, that layover’s also a good chance to stretch—keeps us fresh!",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": true
+      },
+      "tokens_in": 1230,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p4",
+      "speaker_name": "Isla",
+      "text": "The layover’s a bit longer, but I’d rather keep costs predictable and avoid seat stress.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The layover’s a bit longer, but I’d rather keep costs predictable and avoid seat stress.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how American Airlines, Direct Delta fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1190,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "Felix, the 2-hour layover in London is workable but stretches travel time to 14 hours.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Felix, the 2-hour layover in London is workable but stretches travel time to 14 hours.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "compare",
+        "reason": "compare American Airlines, Icelandair Stop with one clear trade-off",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 646,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Longer layover in London is fine, but United’s two quick stops increase total travel time and risk delays.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Longer layover in London is fine, but United’s two quick stops increase total travel time and risk delays.",
+        "act_type": "concern",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "push back on United Airlines with one concrete concern — you currently favor American Airlines, so aim at the rival, not your own pick",
+        "addressee_id": "p4",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1279,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p3",
+      "speaker_name": "Sami",
+      "text": "Two quick stops might sound efficient, but they really jack up the total travel time.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Two quick stops might sound efficient, but they really jack up the total travel time.",
+        "act_type": "concern",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "concern",
+        "reason": "push back on United Airlines with one concrete concern — you currently favor American Airlines, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 730,
+      "tokens_out": 60,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Delays hit us harder than a longer layover—United’s flexibility still wins for me.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Delays hit us harder than a longer layover—United’s flexibility still wins for me.",
+        "act_type": "support",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how United Airlines, American Airlines fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 739,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "Does the $60 price difference for United really justify the extra six hours of travel and added delay risk?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Does the $60 price difference for United really justify the extra six hours of travel and added delay risk?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare American Airlines, United Airlines, Direct Delta",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 776,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "Direct Delta gets us there fast and on budget, but seats are tight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Direct Delta gets us there fast and on budget, but seats are tight.",
+        "act_type": "compare",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "the group is visibly split between Direct Delta and Icelandair Stop; put them side by side on the trade-off that actually divides the group",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 571,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "That 2-hour London layover Vera mentioned is starting to sound more manageable.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "That 2-hour London layover Vera mentioned is starting to sound more manageable.",
+        "act_type": "soften_toward",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "soften_toward",
+        "reason": "non-finally acknowledge that American Airlines, Direct Delta is becoming more convincing, while still naming what you give up",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1348,
+      "tokens_out": 89,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Sami",
+      "text": "Getting there fast is tempting, but tight seats feel like a budget squeeze—American Airlines.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Getting there fast is tempting, but tight seats feel like a budget squeeze—American Airlines.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Direct Delta, American Airlines fits that",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 609,
+      "tokens_out": 50,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "Two hours in London isn’t ideal, but the $620 price and a bit more comfort make American Airlines workable.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Two hours in London isn’t ideal, but the $620 price and a bit more comfort make American Airlines workable.",
+        "act_type": "support",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how American Airlines fits that",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 582,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "Isla, what’s your take on American Airlines’ 2-hour London layover versus United’s two shorter ones?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Isla, what’s your take on American Airlines’ 2-hour London layover versus United’s two shorter ones?",
+        "act_type": "process",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": "p4",
+        "question_target_id": "p4",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "process",
+        "reason": "bring Isla into the discussion with one useful prompt",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 669,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p4",
+      "speaker_name": "Isla",
+      "text": "Felix, that 2-hour layover’s solid enough.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Felix, that 2-hour layover’s solid enough.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 27,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 612,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can we each share the one option we’re definitely going with now?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can we each share the one option we’re definitely going with now?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Sami",
+      "text": "I vote for Direct Delta; I was on American Airlines, but Shortest travel time with no layovers.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Direct Delta; I was on American Airlines, but Shortest travel time with no layovers.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Shortest travel time with no layovers",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "Shortest travel time with no layovers",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1008,
+      "tokens_out": 62,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 31,
+      "speaker_id": "p4",
+      "speaker_name": "Isla",
+      "text": "Let’s go with Direct Delta for the shortest travel time—worth the extra cost to avoid any layover hassle.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Let’s go with Direct Delta for the shortest travel time—worth the extra cost to avoid any layover hassle.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Shortest travel time with no layovers",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "Shortest travel time with no layovers",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1313,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p2",
+      "speaker_name": "Leo",
+      "text": "I’m all in for Direct Delta—no layovers means less chance of travel headaches and still fits the budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m all in for Direct Delta—no layovers means less chance of travel headaches and still fits the budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Shortest travel time with no layovers",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "for the shortest travel time—worth the extra cost to avoid"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "Shortest travel time with no layovers",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1492,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "I’d go with Direct Delta—cutting travel time means more energy on arrival, and $680 is still within our budget.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’d go with Direct Delta—cutting travel time means more energy on arrival, and $680 is still within our budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Shortest travel time with no layovers",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "for the shortest travel time—worth the extra cost to avoid"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "Shortest travel time with no layovers",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1362,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "American Airlines gets my vote.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "American Airlines gets my vote.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "for the shortest travel time—worth the extra cost to avoid"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 708,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like Direct Delta is the favorite—Vera, can you share what’s keeping you from joining in?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like Direct Delta is the favorite—Vera, can you share what’s keeping you from joining in?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "Worried about seat availability on Direct Delta—can we confirm enough spots?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "Worried about seat availability on Direct Delta—can we confirm enough spots?",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Direct Delta — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 703,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p1",
+      "speaker_name": "Felix",
+      "text": "We don’t have seat counts for Direct Delta here, Vera.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "We don’t have seat counts for Direct Delta here, Vera.",
+        "act_type": "answer",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "respond to Vera's reservation about Direct Delta honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p5",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 36,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 730,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p5",
+      "speaker_name": "Vera",
+      "text": "I’ll back Direct Delta for the shortest travel time with no layovers. American Airlines saves money but adds too much travel time.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p5",
+        "text": "I’ll back Direct Delta for the shortest travel time with no layovers. American Airlines saves money but adds too much travel time.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p5",
+        "act": "vote",
+        "reason": "final decision: controller outcome is a switch from American Airlines to Direct Delta. Use exactly this grounded reason, in your own words: Shortest travel time with no layovers. Do not add new facts or pressure language",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_key": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "gets my vote"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "Shortest travel time with no layovers",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 851,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Great, looks like we’re all set with the Direct Delta flight to Stockholm!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Great, looks like we’re all set with the Direct Delta flight to Stockholm!",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 35,
+    "metadata": {
+      "visible_votes": {
+        "p3": "A",
+        "p4": "A",
+        "p2": "A",
+        "p1": "A",
+        "p5": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A",
+        "p4": "A",
+        "p5": "A"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 5,
+          "B": 4,
+          "C": 2,
+          "D": 4
+        },
+        "p2": {
+          "A": 5,
+          "B": 4,
+          "C": 4,
+          "D": 3
+        },
+        "p3": {
+          "A": 5,
+          "B": 4,
+          "C": 4,
+          "D": 3
+        },
+        "p4": {
+          "A": 5,
+          "B": 4,
+          "C": 3,
+          "D": 3
+        },
+        "p5": {
+          "A": 5,
+          "B": 4,
+          "C": 3,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.62",
+        "turn 6: discussion — all participants gave an opening view",
+        "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+        "turn 38: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 25,
+      "force_narrow_turns": 32,
+      "hard_max_turns": 37
+    }
+  },
+  "phase_history": [
+    "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.62",
+    "turn 6: discussion — all participants gave an opening view",
+    "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+    "turn 38: closure — successful visible after vote round 1",
+    "turn 39: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 35,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.103,
+    "turn_counts": {
+      "Felix": 9,
+      "Leo": 6,
+      "Sami": 5,
+      "Isla": 5,
+      "Vera": 10
+    },
+    "top_speaker_share": 0.286,
+    "avg_words_by_persona": {
+      "Felix": 14.7,
+      "Leo": 19.2,
+      "Sami": 15.6,
+      "Isla": 11.8,
+      "Vera": 15.8
+    },
+    "avg_words_by_act": {
+      "answer": 9.0,
+      "ask": 19.0,
+      "compare": 16.5,
+      "compromise": 15.0,
+      "concern": 14.3,
+      "opening": 19.0,
+      "process": 15.0,
+      "soften_toward": 16.3,
+      "support": 14.1,
+      "vote": 16.5
+    },
+    "short_turn_rate": 0.143,
+    "tiny_turn_rate": 0.029,
+    "question_density": 0.114,
+    "tail_question_rate": 0.061,
+    "avg_words_per_turn": 15.5,
+    "repaired_turns": 1,
+    "repair_rate": 0.029,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 5,
+    "visible_votes": {
+      "Felix": "A",
+      "Leo": "A",
+      "Sami": "A",
+      "Isla": "A",
+      "Vera": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 3,
+    "concern_response_rate": 1.0,
+    "participation_gini": 0.16,
+    "direct_response_rate": 0.5,
+    "question_answer_completion": 0.5,
+    "open_questions_at_end": 1,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {
+      "availability/scheduling": {
+        "mentions": 1,
+        "options": [
+          "A"
+        ]
+      },
+      "seating/space": {
+        "mentions": 2,
+        "options": [
+          "C",
+          "A"
+        ]
+      }
+    },
+    "repetition_score": 0.108,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 2,
+    "switch_event_count": 6,
+    "switch_explanation_rate": 0.833,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 2,
+    "name_prefix_rate": 0.114,
+    "option_opening_rate": 0.114,
+    "i_opening_rate": 0.114,
+    "we_opening_rate": 0.057,
+    "name_or_option_opening_rate": 0.229,
+    "repeated_opening_patterns": 7,
+    "unsupported_fact_flags": 0,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 1.0,
+    "stance_rank_distribution": {
+      "0": 0,
+      "1": 0,
+      "2": 1,
+      "3": 6,
+      "4": 8
+    },
+    "runtime_preferred_by_rank": {
+      "Felix": "A",
+      "Leo": "A",
+      "Sami": "A",
+      "Isla": "A",
+      "Vera": "A"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 13,
+        "reasons": 5,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 23,
+        "reasons": 16,
+        "objections": 1,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 11,
+        "reasons": 4,
+        "objections": 2,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Felix": 0.737,
+      "Leo": 0.925,
+      "Sami": 0.588,
+      "Isla": 0.438,
+      "Vera": 1.0
+    },
+    "expected_turn_share": {
+      "Felix": 0.203,
+      "Leo": 0.23,
+      "Sami": 0.175,
+      "Isla": 0.141,
+      "Vera": 0.251
+    },
+    "realized_turn_share": {
+      "Felix": 0.257,
+      "Leo": 0.171,
+      "Sami": 0.143,
+      "Isla": 0.143,
+      "Vera": 0.286
+    },
+    "agenda_status": {},
+    "outcome_status": "successful",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 25,
+    "force_narrow_turns": 32,
+    "hard_max_turns": 37,
+    "phase_history": [
+      "pacing: min=25, force=32, hard=37, distinct_initial_prefs=3, avg_compromise=0.62",
+      "turn 6: discussion — all participants gave an opening view",
+      "turn 28: narrowing — visible support for one option held after enough back-and-forth",
+      "turn 38: closure — successful visible after vote round 1",
+      "turn 39: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.036,
+    "verbosity_realization_error": 0.098,
+    "engagement_error_by_persona": {
+      "Felix": 0.054,
+      "Leo": 0.058,
+      "Sami": 0.032,
+      "Isla": 0.002,
+      "Vera": 0.034
+    },
+    "verbosity_error_by_persona": {
+      "Felix": 0.006,
+      "Leo": 0.158,
+      "Sami": 0.16,
+      "Isla": 0.073,
+      "Vera": 0.094
+    },
+    "engagement_behavior_correlation": 0.687,
+    "verbosity_behavior_correlation": 0.796,
+    "free_discussion_share": {
+      "Felix": 0.292,
+      "Leo": 0.167,
+      "Sami": 0.125,
+      "Isla": 0.125,
+      "Vera": 0.292
+    },
+    "top_free_discussion_share": 0.292,
+    "free_discussion_engagement_correlation": 0.65,
+    "setup_tokens_in": 2613,
+    "setup_tokens_out": 2038,
+    "dialogue_tokens_in": 31763,
+    "dialogue_tokens_out": 1390,
+    "total_tokens_in": 34376,
+    "total_tokens_out": 3428,
+    "tokens_setup_in": 2613,
+    "tokens_setup_out": 2038,
+    "calls_setup": 1,
+    "tokens_utterance_in": 23935,
+    "tokens_utterance_out": 1222,
+    "calls_utterance": 35,
+    "tokens_grounding_in": 6628,
+    "tokens_grounding_out": 100,
+    "calls_grounding": 10,
+    "tokens_repair_in": 361,
+    "tokens_repair_out": 13,
+    "calls_repair": 1,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 839,
+    "tokens_moderator_out": 55,
+    "calls_moderator": 3,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2613,
+    "setup_tokens_out": 2038,
+    "dialogue_tokens_in": 31763,
+    "dialogue_tokens_out": 1390,
+    "total_tokens_in": 34376,
+    "total_tokens_out": 3428
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2613,
+      "out": 2038,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 23935,
+      "out": 1222,
+      "calls": 35
+    },
+    "grounding": {
+      "in": 6628,
+      "out": 100,
+      "calls": 10
+    },
+    "moderator": {
+      "in": 839,
+      "out": 55,
+      "calls": 3
+    },
+    "repair": {
+      "in": 361,
+      "out": 13,
+      "calls": 1
+    }
+  }
+}

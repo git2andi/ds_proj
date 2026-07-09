@@ -4,7 +4,7 @@ Working instructions for coding agents in this repository.
 
 ## Project framing
 
-This is a university project for an **option-grounded multi-user decision simulator**. The system simulates 2-7 LLM-driven participants discussing a fixed set of options. The goal is a configurable simulator whose participant parameters visibly affect turn-taking, stance movement, disagreement, compromise, and final outcomes.
+This is a university project for an option-grounded multi-user decision simulator. The system simulates 2-7 LLM-driven participants discussing a fixed set of options. The goal is a configurable simulator whose participant parameters visibly affect turn-taking, stance movement, disagreement, compromise, and final outcomes.
 
 The architecture should stay explainable:
 
@@ -19,16 +19,40 @@ The LLM renders utterances. The controller owns phase logic, routing, narrowing,
 Private stance is stored as one per-sim/per-option rank table:
 
 ```text
-4 = preferred
-3 = acceptable
-2 = neutral / untested
-1 = disliked but negotiable
-0 = rejected / hard blocked
+5 = preferred
+4 = acceptable
+3 = neutral / untested
+2 = disliked but negotiable
+1 = rejected / hard blocked
 ```
 
 Use `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` as computed helpers over the rank table. Do not add a second independent preference model.
 
 Participant setup may provide short `reason_for` / `reason_against` fields for each option. Keep these short. Leave neutral options neutral. Hard rejects should be rare and grounded.
+
+## Personas, traits, age, and style
+
+Traits are the behavioral source of truth. They drive engagement, verbosity, initiative, responsiveness, stubbornness, directness, and compromise threshold.
+
+Age and style are surface-realization metadata. They may alter wording, formality, sentence shape, and conversational flavor. They must not alter routing, stance strength, vote choice, compromise willingness, or outcome logic.
+
+Profiles/backgrounds should be plausible for the generated or manually configured age. The builder performs deterministic checks for obvious contradictions such as a very young participant being described as a senior executive, long-term homeowner, married parent, or having decades of experience.
+
+Manual participant profiles may include `age` and `style`. If omitted, age/style are filled by the builder.
+
+## Discussion agenda
+
+Do not reintroduce per-sim scripted agendas. The active pre-vote checklist is the chat-level `DialogueState.discussion_agenda`.
+
+Persona-specific perspectives belong in:
+
+```text
+Persona.private_goal
+OptionStance.reason_for
+OptionStance.reason_against
+```
+
+The global agenda should track what the whole discussion still needs, not what one participant is scripted to say.
 
 ## Compact act vocabulary
 
@@ -38,15 +62,17 @@ The controller should reason over macro acts:
 opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
 ```
 
-Legacy act aliases have been removed. Do not grow the act list unless there is strong log evidence that a new act cannot be represented by the macro set.
+Do not grow the act list unless there is strong log evidence that a new act cannot be represented by the macro set.
 
 ## Implementation principles
 
 - Prefer deterministic controller/state logic over new LLM calls.
 - Keep prompts act-specific and compact.
 - Use the option-rank table as the stance source of truth.
+- Keep traits behavior-relevant; keep style wording-only.
 - Do not add more personality traits unless required.
 - Do not turn the project into a full agenda simulator.
+- Do not reintroduce per-sim agenda steering.
 - Normal auto-generated sims should have movable preferences, not categorical blockers.
 - Manual hard constraints must remain binding.
 - Unresolved outcomes are allowed, but must be earned after narrowing attempts.
@@ -88,4 +114,6 @@ py .\eval\run_eval_suite.py --full
 - Do final votes respect the sim's rank/visible stance?
 - Do rank movements make majority/success/unresolved outcomes plausible?
 - Are blockers preventing false unanimity?
+- Are age/profile/style fields present and plausible?
+- Is style visible without overriding trait-driven behavior?
 - Are repair/fallback/token counts reasonable?

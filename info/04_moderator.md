@@ -17,8 +17,12 @@ Disabling moderator turns should not disable routing, narrowing, vote logic, or 
 
 When final vote call or closing is disabled, participants own the procedural move. This should sound like a group member, not like a hidden controller.
 
-v3 specifically fixes a no-moderator split issue: if a participant voices the split summary, the first reservation response should not be that same participant answering their own prompt.
+If a participant voices a split summary, the first reservation response should not be that same participant answering their own prompt.
 
 ## Closure
 
-Unresolved outcomes now get a short participant acknowledgement before closure. This makes unresolved endings feel socially earned without changing the outcome after it has already been computed.
+Unresolved outcomes get a short participant or moderator acknowledgement before closure. This makes unresolved endings feel socially earned without changing the outcome after it has already been computed.
+
+## Style interaction
+
+Moderator style is separate from participant style. Participant age/style should affect participant utterances, not moderator scaffolding.

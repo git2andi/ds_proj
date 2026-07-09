@@ -13,7 +13,7 @@ The opening round gives every participant a visible initial stance. It may inclu
 Private stance movement is represented by option ranks:
 
 ```text
-4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected
+5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected
 ```
 
 The controller chooses an intended move and effect, for example:
@@ -26,6 +26,10 @@ reason = B answers a concern or has visible group support
 ```
 
 The LLM renders the utterance. Validation checks that the utterance visibly matches the move. Only then does the observer update the rank table.
+
+## Discussion agenda
+
+During discussion, the controller considers the chat-level agenda, open questions, open concerns, coverage gaps, visible support, and resistance. The agenda is a global checklist, not a per-person plan.
 
 ## Split-vote handling
 
@@ -40,10 +44,15 @@ If final votes are split with no majority, the controller may run bounded narrow
 
 A future extension may test a second compromise candidate, but it should stay bounded and should not create an endless loop.
 
+## Style boundary
+
+Age/style may change how a participant says a point. It must not change what the controller asks them to do, which option they prefer, or whether a switch is plausible.
+
 ## What must not happen
 
 - no hidden consensus from private ranks;
 - no invented blended option;
-- no forced successful outcome when a rank-0 blocker remains;
+- no forced successful outcome when a rank-1 blocker remains;
 - no invalid line printed as transcript evidence;
-- no endless negotiation loop.
+- no endless negotiation loop;
+- no style feature overriding trait-driven behavior.

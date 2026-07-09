@@ -14,6 +14,7 @@ import re
 from config_loader import cfg
 from models import (
     ActType,
+    AgendaStatus,
     Concern,
     DialogueAct,
     DialogueState,
@@ -23,10 +24,12 @@ from models import (
     Persona,
     Phase,
     ResponseObligation,
+    STANCE_NEUTRAL,
+    STANCE_REJECTED,
     TurnRecord,
 )
 from parsing import commitment_has_reason, parse_dialogue_act, switch_bridge_ok
-from simulator import expected_turn_share, refresh_agenda
+from simulator import expected_turn_share
 from utils import weighted_choice
 
 _VOTE_CHANGE = re.compile(
@@ -142,8 +145,8 @@ class ObserverMixin:
         if act.resolves_blocker:
             # Re-open a previously blocked option only when the speaker visibly
             # resolves their own blocker; rank moves back to neutral/acceptable later.
-            if rt.rank(act.resolves_blocker) == 0:
-                rt.set_rank(act.resolves_blocker, 2)
+            if rt.rank(act.resolves_blocker) == STANCE_REJECTED:
+                rt.set_rank(act.resolves_blocker, STANCE_NEUTRAL)
 
         allow_change = bool(record.intent and record.intent.allow_vote_change)
         if act.explicit_vote and act.explicit_vote not in rt.rejected_options():
@@ -213,10 +216,41 @@ class ObserverMixin:
                     if record.phase == Phase.DISCUSSION:
                         state.discussion_lean_shifts += 1
 
-        refresh_agenda(persona, rt.top_option())
+        self._update_discussion_agenda(state, record)
 
         after = self._snapshot_progress(state)
         state.no_progress_count = 0 if after != before else state.no_progress_count + 1
+
+    def _update_discussion_agenda(self, state: DialogueState, record: TurnRecord) -> None:
+        """Mark chat-level checklist items completed by visible transcript evidence."""
+        act = record.act
+        for item in state.discussion_agenda:
+            if item.status != AgendaStatus.PENDING:
+                continue
+            if item.key.startswith("cover_option:") and item.option in state.coverage:
+                coverage = state.coverage[item.option]
+                if coverage.mentions > 0 or item.option in act.option_refs:
+                    item.status = AgendaStatus.DONE
+            elif item.key == "compare_top_options":
+                compared = [oid for oid in act.option_refs if oid in state.scenario.option_ids]
+                if act.act_type == ActType.COMPARE and len(set(compared)) >= 2:
+                    item.status = AgendaStatus.DONE
+            elif item.key == "candidate_concern_check":
+                candidate = state.candidate_option or self._visible_candidate(state) or self._latent_leading_option(state)
+                if candidate and (candidate in act.soft_rejects or candidate in act.hard_rejects):
+                    item.status = AgendaStatus.DONE
+                elif candidate and state.coverage[candidate].objections > 0:
+                    item.status = AgendaStatus.DONE
+
+        # Avoid controller loops: if a checklist-routed turn failed to satisfy
+        # its own item after validation/parsing, do not route the same item
+        # forever. Coverage and vote readiness can still force progress.
+        routed_key = record.intent.agenda_key if record.intent else None
+        if routed_key:
+            for item in state.discussion_agenda:
+                if item.key == routed_key and item.status == AgendaStatus.PENDING:
+                    item.status = AgendaStatus.SKIPPED
+                    break
 
     # ------------------------------------------------------------------
     # Concern threads and commitment dynamics (issue 2)

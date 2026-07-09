@@ -20,7 +20,7 @@ PROFILE_PARAMETER_NAMES = (
 )
 _PROFILE_FIELDS = frozenset({
     "name", "description", "private_goal", "preferred_option",
-    "rejection", "rejection_reason", "traits", "parameters",
+    "age", "style", "rejection", "rejection_reason", "traits", "parameters",
 })
 
 # Field names accepted in a manual environment (environment.manual).
@@ -294,6 +294,12 @@ class Config(Section):
             preferred = str(profile.get("preferred_option") or "").strip().upper() or None
             if preferred is not None and preferred not in labels:
                 raise ValueError(f"{where}.preferred_option must be one of {sorted(labels)}.")
+            if "age" in profile and profile.get("age") is not None:
+                age = int(profile["age"])
+                if not (16 <= age <= 85):
+                    raise ValueError(f"{where}.age must be in [16, 85].")
+            if "style" in profile and not str(profile.get("style") or "").strip():
+                raise ValueError(f"{where}.style must be a non-empty string when provided.")
             rejection = str(profile.get("rejection") or "").strip().upper() or None
             if rejection is not None:
                 if rejection not in labels:

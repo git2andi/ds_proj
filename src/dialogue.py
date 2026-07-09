@@ -2,7 +2,7 @@
 
 The runner separates four responsibilities:
 1. environment setup (scenario + option board),
-2. simulator state (private lean, agenda, tunable behavior),
+2. simulator state (private lean, personal reasons, tunable behavior),
 3. routing policy (who speaks, to whom, with which dialogue act), and
 4. visible transcript observation (votes/outcomes from public text only).
 
@@ -31,8 +31,13 @@ from models import (
     DialogueAct,
     DialogueRunResult,
     DialogueState,
+    DiscussionAgendaItem,
     MoveIntent,
     OptionCoverage,
+    STANCE_ACCEPTABLE,
+    STANCE_NEUTRAL,
+    STANCE_PREFERRED,
+    STANCE_REJECTED,
     ParticipantRuntime,
     Persona,
     Phase,
@@ -40,7 +45,6 @@ from models import (
     TurnRecord,
 )
 from parsing import OptionResolver
-from simulator import mark_agenda_done
 from style import strip_leading_name
 from utils import clean_generated, normalise_lines
 from observer import ObserverMixin
@@ -1091,7 +1095,6 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         record.used_fallback = used_fallback
         if not block:
             self._apply_semantics(state, record)
-            mark_agenda_done(persona, intent.agenda_index)
         else:
             state.no_progress_count += 1
         return record
@@ -1484,7 +1487,7 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
     # containers are maintained.
     state.runtimes = {}
     for p in personas:
-        ranks = {option.id: 2 for option in scenario.options}
+        ranks = {option.id: STANCE_NEUTRAL for option in scenario.options}
         reasons_for: dict[str, str] = {}
         reasons_against: dict[str, str] = {}
         for oid, stance in (p.option_stances or {}).items():
@@ -1496,9 +1499,9 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
                     reasons_against[oid] = stance.reason_against
         for oid in p.preferred_options:
             if oid in ranks:
-                ranks[oid] = max(ranks[oid], 4 if oid == p.preferred_option else 3)
+                ranks[oid] = max(ranks[oid], STANCE_PREFERRED if oid == p.preferred_option else STANCE_ACCEPTABLE)
         if p.rejection and p.rejection in ranks:
-            ranks[p.rejection] = 0
+            ranks[p.rejection] = STANCE_REJECTED
             if p.rejection_reason:
                 reasons_against[p.rejection] = p.rejection_reason
         rt = ParticipantRuntime(
@@ -1511,4 +1514,41 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
         )
         state.runtimes[p.id] = rt
     state.coverage = {option.id: OptionCoverage() for option in scenario.options}
+    state.discussion_agenda = _build_discussion_agenda(scenario)
     return state
+
+
+def _build_discussion_agenda(scenario) -> list[DiscussionAgendaItem]:
+    """Create the chat-level checklist used by routing and vote readiness.
+
+    Required items capture work the group should visibly perform before voting.
+    Optional items provide useful structure without blocking narrowing.
+    """
+    items = [
+        DiscussionAgendaItem(
+            key=f"cover_option:{option.id}",
+            act=ActType.COMPARE,
+            option=option.id,
+            reason="make sure this option is at least briefly considered by the group",
+            required=True,
+        )
+        for option in scenario.options
+    ]
+    if len(scenario.options) >= 2:
+        items.append(
+            DiscussionAgendaItem(
+                key="compare_top_options",
+                act=ActType.COMPARE,
+                reason="compare the currently strongest options before narrowing",
+                required=True,
+            )
+        )
+    items.append(
+        DiscussionAgendaItem(
+            key="candidate_concern_check",
+            act=ActType.CONCERN,
+            reason="surface or address one practical concern about the likely winner if needed",
+            required=False,
+        )
+    )
+    return items

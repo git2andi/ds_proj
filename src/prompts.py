@@ -13,7 +13,7 @@ from collections.abc import Iterable
 
 from aliases import short_alias_map
 from config_loader import cfg
-from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario
+from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED
 from parsing import unused_commitment_phrases
 from utils import compact_words
 
@@ -95,12 +95,12 @@ def setup_personas(
     options_json: list[dict],
 ) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
-    # Manual participant profiles may fix background/private_goal; tell the LLM
-    # to keep them verbatim so its generated fields stay consistent with them.
+    # Manual participant profiles may fix persona/style fields; tell the LLM
+    # to keep them verbatim so generated fields stay consistent with them.
     fixed_field_rule = (
-        "\n- If a trait row already contains background or private_goal, copy that text exactly "
-        "and keep the other fields consistent with it."
-        if any(row.get("background") or row.get("private_goal") for row in trait_rows)
+        "\n- If a trait row already contains background, private_goal, age, or style, copy that field exactly "
+        "and keep the other fields consistent with it, including age plausibility."
+        if any(row.get("background") or row.get("private_goal") or row.get("age") or row.get("style") for row in trait_rows)
         else ""
     )
     preference_lines = "\n".join(
@@ -112,12 +112,14 @@ def setup_personas(
             {
                 "id": "p1",
                 "name": "exact name from trait row",
+                "age": 28,
+                "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
                 "background": "one sentence explaining the person's angle on this decision",
                 "private_goal": "what they personally want from the decision",
                 "preferred_options": ["A"],
                 "option_stances": [
-                    {"option": "A", "rank": 4, "reason_for": "short grounded pro", "reason_against": ""},
-                    {"option": "B", "rank": 2, "reason_for": "", "reason_against": ""}
+                    {"option": "A", "rank": 5, "reason_for": "short grounded pro", "reason_against": ""},
+                    {"option": "B", "rank": 3, "reason_for": "", "reason_against": ""}
                 ],
                 "rejection": None,
                 "rejection_reason": "",
@@ -138,18 +140,27 @@ Initial primary preference assignment. preferred_options[0] MUST match this exac
 
 Rules:
 - Use the exact id and name from each trait row.
+- Assign a plausible age between 18 and 72 unless age is already fixed in the trait row.
+- The background/private_goal must be plausible for that age. Use soft age bands:
+  * 18-22: student, apprentice, trainee, early job, shared flat/parents, no spouse/kids/mortgage/senior role.
+  * 23-35: student or early/mid career, partner possible, young family possible only from late 20s onward.
+  * 36-55: established career/family/home routines are plausible.
+  * 56-72: senior career, older children, retirement planning, formal habits are plausible; do not make them teenagers/apprentices.
+- Do not create absurd biographies: no 19-year-old married parent with two kids, no 21-year-old senior manager with a mortgage, no 25-year-old with 20 years of professional experience.
+- Provide one concise style instruction that matches the age: younger speakers may be more casual/digital-native, middle-aged speakers clearer and practical, older speakers more measured/formal. Avoid stereotypes, forced slang, emojis, and caricature.
 - preferred_options is the person's initial private preference, not a final vote. Add at most one secondary acceptable option if it fits.
-- Also provide option_stances for EVERY option, using discrete rank: 4=preferred, 3=acceptable, 2=neutral/untested, 1=disliked but negotiable, 0=rejected/hard blocked.
-- The assigned primary preference must have rank 4. A secondary preferred option, if any, should have rank 3.
-- Keep most non-preferred options neutral or acceptable. Only give rank 1/0 when the option clearly conflicts with the person's background/goal.
+- Also provide option_stances for EVERY option, using discrete rank: 5=preferred, 4=acceptable, 3=neutral/untested, 2=disliked but negotiable, 1=rejected/hard blocked.
+- The assigned primary preference must have rank 5. A secondary preferred option, if any, should have rank 4.
+- Keep most non-preferred options neutral or acceptable. Only give rank 2/1 when the option clearly conflicts with the person's background/goal.
 - Give short reason_for/reason_against only where useful; leave neutral reasons empty. Do not write long explanations.
 - A participant with agreeableness=1 must have exactly one preferred option (no secondary).
 - Participants want a workable group decision. High openness/agreeableness means easier compromise; low agreeableness means more resistance.
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
-- background and private_goal must be one sentence each, specific to this topic, and grounded in the option cards/shared context.
+- background and private_goal must be one sentence each, specific to this topic, grounded in the option cards/shared context, and age-plausible.
 - For participants with agreeableness above 1, phrase needs as preferences ("prefers", "values", "cares most about"), never as absolute constraints ("cannot", "must", "refuses", "allergic", "strictly").
-- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.{fixed_field_rule}
+- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.
+- The style field controls wording only. It must not change facts, stances, votes, or reasoning strength.{fixed_field_rule}
 
 Return JSON only:
 {_schema(schema)}"""
@@ -251,13 +262,19 @@ Do not add new reasons or facts. No farewell. No speaker prefix."""
 def _stance_summary(state: DialogueState, persona: Persona) -> str:
     rt = state.runtimes[persona.id]
     aliases = short_alias_map(state.scenario.options)
-    labels = {4: "preferred", 3: "acceptable", 2: "neutral", 1: "disliked", 0: "rejected"}
+    labels = {
+        STANCE_PREFERRED: "preferred",
+        STANCE_ACCEPTABLE: "acceptable",
+        STANCE_NEUTRAL: "neutral",
+        STANCE_DISLIKED: "disliked",
+        STANCE_REJECTED: "rejected",
+    }
     parts = []
     for oid in state.scenario.option_ids:
         rank = rt.rank(oid)
-        if rank == 2:
+        if rank == STANCE_NEUTRAL:
             continue
-        reason = rt.reason_for(oid) if rank >= 3 else rt.reason_against(oid)
+        reason = rt.reason_for(oid) if rank >= STANCE_ACCEPTABLE else rt.reason_against(oid)
         text = f"{aliases.get(oid, oid)}={labels.get(rank, str(rank))}"
         if reason:
             text += f" ({compact_words(reason, 7)})"
@@ -363,9 +380,10 @@ def sim_utterance(
             "request again."
         )
     agenda = ""
-    if intent.agenda_index is not None and 0 <= intent.agenda_index < len(persona.agenda):
-        item = persona.agenda[intent.agenda_index]
-        agenda = f"\nPending simulator agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
+    if intent.agenda_key:
+        item = next((entry for entry in state.discussion_agenda if entry.key == intent.agenda_key), None)
+        if item is not None:
+            agenda = f"\nCurrent group agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
     settled_unknowns = ""
     # An issue earns suppression after its raise->"we don't know" pair played
     # out (mentions >= 2); the first raise is useful and gets answered normally.
@@ -414,7 +432,7 @@ def sim_utterance(
 
 Topic: {state.scenario.topic}
 Context: {context}
-Speaker: background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; voice={voice}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
+Speaker: age={persona.age}; background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; voice={voice}; style={persona.style}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
 Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
 
 Allowed facts:
@@ -423,7 +441,7 @@ Allowed facts:
 Recent:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice and age/style instruction naturally; do not overdo slang or formality. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a

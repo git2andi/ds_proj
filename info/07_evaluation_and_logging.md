@@ -9,6 +9,12 @@ Each run writes readable and structured artifacts.
 - `metrics.csv`: append-only summary rows.
 - optional prompt dump if `output.write_prompts` is enabled.
 
+## Persona logging
+
+Logs include participant traits, simulator parameters, age/style, profile/background, private goal, initial preference, and initial option ranks. This is important for checking whether behavior comes from traits while wording variation comes from style.
+
+The eval suite also records a compact `persona_age_style` summary so manual eval casts can be checked quickly.
+
 ## Important metrics to inspect
 
 - outcome status and final option;
@@ -23,6 +29,7 @@ Each run writes readable and structured artifacts.
 - switch explanation / bridge rate;
 - unsupported fact flags and printed unsupported turns;
 - repair/fallback counts;
-- token usage by call type.
+- token usage by call type;
+- persona age/style/profile plausibility.
 
-Metrics are useful but not sufficient. Manual transcript review is required, especially after stance-rank changes.
+Metrics are useful but not sufficient. Manual transcript review is required, especially after stance-rank, agenda, or persona-style changes.

@@ -502,7 +502,7 @@ class ValidationMixin:
 
     @staticmethod
     def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
-        # Semantic hard blocks are checked through runtime rank-0 options in validate().
+        # Semantic hard blocks are checked through runtime rank-1 options in validate().
         if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
             return True
         if intent.required_vote and intent.act in _DECISION_ACTS:

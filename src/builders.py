@@ -22,7 +22,7 @@ from models import (
     OptionCard, OptionStance, Persona, Scenario, SimulatorParameters, TraitProfile,
     STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED,
 )
-from simulator import build_initial_agenda, derive_simulator_parameters
+from simulator import derive_simulator_parameters
 from utils import sample_int_range
 
 _TOPIC_COUNT_PATTERNS = [
@@ -69,6 +69,80 @@ _SCOPE_TOKENS = {
     "travel": ("travel", "commute", "distance"),
     "set": ("setup", "set up", "set-up"),
 }
+
+
+def _style_for_age(age: int) -> str:
+    """Return a concise, age-consistent speech-style instruction.
+
+    The style changes wording only; it must not change preferences, votes, or
+    factual claims. Labels are deliberately broad to avoid caricatured output.
+    """
+    age = max(16, min(85, int(age)))
+    if age <= 24:
+        return "young casual digital-native style: relaxed, concise, occasional modern phrasing, no heavy slang"
+    if age <= 39:
+        return "millennial conversational style: casual but clear, pragmatic, lightly informal"
+    if age <= 55:
+        return "middle-aged professional style: direct, practical, moderately formal"
+    return "older formal style: measured, polite, more traditional wording"
+
+
+def _age_for_profile(profile: dict, traits: TraitProfile | None = None) -> int:
+    """Use manual age when present, otherwise sample a stable plausible age.
+
+    Traits get a weak influence so generated casts are not fully uniform, but age
+    remains a surface-style attribute, not a decision variable.
+    """
+    raw = profile.get("age")
+    if raw is not None and str(raw).strip():
+        return max(16, min(85, int(raw)))
+    if traits is None:
+        return random.randint(20, 65)
+    base = 38 + int(round((traits.conscientiousness - 3) * 4 - (traits.openness - 3) * 3))
+    return max(18, min(72, base + random.randint(-12, 12)))
+
+
+def _style_for_profile(profile: dict, age: int) -> str:
+    manual = str(profile.get("style") or "").strip()
+    return manual if manual else _style_for_age(age)
+
+
+
+
+_YOUNG_FAMILY_RE = re.compile(
+    r"\b(?:married|spouse|husband|wife|fianc[eé]|children|kids?|toddler|baby|son|daughter|parent\s+of|mother\s+of|father\s+of)\b",
+    re.I,
+)
+_YOUNG_ESTABLISHED_RE = re.compile(
+    r"\b(?:mortgage|homeowner|owns?\s+(?:a\s+)?home|senior\s+(?:manager|lead|director)|director\s+of|executive|head\s+of|decades?\s+of)\b",
+    re.I,
+)
+_LONG_EXPERIENCE_RE = re.compile(r"\b(\d{2})\+?\s+years?\s+(?:of\s+)?(?:experience|in\s+the\s+field|working)\b", re.I)
+_OLDER_YOUTH_RE = re.compile(r"\b(?:teen(?:ager)?|high[- ]school student|first[- ]year student|apprentice living with parents)\b", re.I)
+
+
+def _age_plausibility_issues(age: int, *texts: str) -> list[str]:
+    """Return obvious age/backstory contradictions.
+
+    This is intentionally conservative. It catches absurd setup artifacts such as
+    a 19-year-old married parent with a mortgage or a 21-year-old senior director,
+    but it does not try to model a full biography.
+    """
+    joined = " ".join(str(text or "") for text in texts)
+    issues: list[str] = []
+    if age <= 22 and _YOUNG_FAMILY_RE.search(joined):
+        issues.append("very young participant has spouse/children/family role")
+    if age <= 24 and _YOUNG_ESTABLISHED_RE.search(joined):
+        issues.append("very young participant has established-life or senior-career marker")
+    if age <= 26 and re.search(r"\bsenior\s+(?:manager|lead|director)|\bexecutive\b|\bhead\s+of\b", joined, re.I):
+        issues.append("young participant has implausibly senior career")
+    for match in _LONG_EXPERIENCE_RE.finditer(joined):
+        years = int(match.group(1))
+        if age - years < 16:
+            issues.append(f"{years} years of experience is implausible for age {age}")
+    if age >= 56 and _OLDER_YOUTH_RE.search(joined):
+        issues.append("older participant has youth/student marker")
+    return issues
 
 
 def _to_number(raw: str) -> float:
@@ -235,6 +309,8 @@ def manual_participant_profiles() -> list[dict]:
             "description": str(row.get("description") or "").strip(),
             "private_goal": str(row.get("private_goal") or "").strip(),
             "preferred_option": preferred,
+            "age": int(row["age"]) if row.get("age") is not None and str(row.get("age")).strip() else None,
+            "style": str(row.get("style") or "").strip(),
             "rejection": rejection,
             "rejection_reason": str(row.get("rejection_reason") or "").strip(),
             "traits": {key: int(value) for key, value in (row.get("traits") or {}).items()},
@@ -568,6 +644,10 @@ class SetupBuilder:
                 row["background"] = profile["description"]
             if profile.get("private_goal"):
                 row["private_goal"] = profile["private_goal"]
+            if profile.get("age") is not None:
+                row["age"] = profile["age"]
+            if profile.get("style"):
+                row["style"] = profile["style"]
             rows.append(row)
         return rows
 
@@ -701,19 +781,26 @@ class SetupBuilder:
             option_stances = _normalise_initial_stances(
                 self._current_scenario, {}, preferred_options, profile.get("rejection"), profile.get("rejection_reason", "")
             )
+            age = _age_for_profile(profile, traits)
+            background = profile["description"]
+            private_goal = profile["private_goal"]
+            plausibility = _age_plausibility_issues(age, background, private_goal)
+            if plausibility:
+                raise ValueError(f"participant {pid} age/profile mismatch: {'; '.join(plausibility)}")
             persona = Persona(
                 id=pid,
                 name=row["name"],
                 traits=traits,
                 sim_params=self._sim_params_for(traits, profile),
-                background=profile["description"],
-                private_goal=profile["private_goal"],
+                background=background,
+                private_goal=private_goal,
                 preferred_options=preferred_options,
+                age=age,
+                style=_style_for_profile(profile, age),
                 rejection=profile.get("rejection"),
                 rejection_reason=profile.get("rejection_reason", ""),
                 option_stances=option_stances,
             )
-            persona.agenda = build_initial_agenda(persona)
             personas.append(persona)
         return personas
 
@@ -866,24 +953,36 @@ class SetupBuilder:
         option_stances = _normalise_initial_stances(
             scenario, raw_stances, preferred_options, rejection, rejection_reason
         )
+        raw_age = row.get("age")
+        profile_age = profile.get("age")
+        age_source = profile_age if profile_age is not None else raw_age
+        age = _age_for_profile({"age": age_source} if age_source is not None else profile, traits)
+        raw_style = str(row.get("style") or "").strip()
+        style = _style_for_profile({"style": profile.get("style") or raw_style}, age)
+        background = profile.get("description") or _require(
+            row.get("background") or row.get("backstory"),
+            f"participant {pid} background",
+        )
+        private_goal = profile.get("private_goal") or _require(
+            row.get("private_goal"), f"participant {pid} private_goal"
+        )
+        plausibility = _age_plausibility_issues(age, background, private_goal)
+        if plausibility:
+            raise ValueError(f"participant {pid} age/profile mismatch: {'; '.join(plausibility)}")
         persona = Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
             traits=traits,
             sim_params=self._sim_params_for(traits, profile),
-            background=profile.get("description") or _require(
-                row.get("background") or row.get("backstory"),
-                f"participant {pid} background",
-            ),
-            private_goal=profile.get("private_goal") or _require(
-                row.get("private_goal"), f"participant {pid} private_goal"
-            ),
+            background=background,
+            private_goal=private_goal,
             preferred_options=preferred_options,
+            age=age,
+            style=style,
             rejection=rejection,
             rejection_reason=rejection_reason,
             option_stances=option_stances,
         )
-        persona.agenda = build_initial_agenda(persona)
         return persona
 
     @staticmethod
@@ -950,4 +1049,9 @@ class SetupBuilder:
                 raise ValueError(f"participant {persona.id} cannot reject a preferred option")
             if persona.traits.agreeableness == 1 and len(persona.preferred_options) > 1:
                 raise ValueError(f"hard blocker {persona.id} should have exactly one preferred option")
+            plausibility = _age_plausibility_issues(persona.age, persona.background, persona.private_goal)
+            if plausibility:
+                raise ValueError(
+                    f"participant {persona.id} age/profile mismatch: {'; '.join(plausibility)}"
+                )
 

@@ -360,16 +360,62 @@ ROOMMATE_ENV = {
 }
 
 
+def persona_profile(
+    *,
+    age: int,
+    style: str,
+    description: str,
+    private_goal: str,
+    preferred_option: str,
+    traits: dict[str, int],
+    parameters: dict[str, float],
+    name: str,
+    rejection: str | None = None,
+    rejection_reason: str = "",
+) -> dict[str, Any]:
+    """Create a manual persona profile with explicit age/style fields.
+
+    Eval personas intentionally keep behavior-driving traits and parameters
+    separate from surface wording. Age/style help inspect whether the utterance
+    prompt realizes different voices, but routing, compromise, verbosity, and
+    directness still come from traits/parameters.
+    """
+    profile: dict[str, Any] = {
+        "name": name,
+        "age": age,
+        "style": style,
+        "description": description,
+        "private_goal": private_goal,
+        "preferred_option": preferred_option,
+        "traits": traits,
+        "parameters": parameters,
+    }
+    if rejection:
+        profile["rejection"] = rejection
+        profile["rejection_reason"] = rejection_reason
+    return profile
+
+
+STYLE_YOUNG_RELAXED = "young relaxed chat style: short, direct, light modern phrasing, no heavy slang or emojis"
+STYLE_YOUNG_CAREFUL = "young careful student style: polite, concise, slightly tentative, clear questions"
+STYLE_MILLENNIAL_PRAGMATIC = "millennial pragmatic style: casual but clear, concrete, uses contractions naturally"
+STYLE_BALANCED_PROFESSIONAL = "balanced professional style: structured, plain-spoken, practical, not stiff"
+STYLE_DIRECT_MANAGER = "direct manager style: concise, decisive, focused on risk and next steps"
+STYLE_OLDER_FORMAL = "older formal style: measured, polite, complete sentences, avoids slang"
+
+
 def profiles_three_way() -> list[dict[str, Any]]:
     """Three distinct initial favorites; designed to catch premature split-vote closure."""
     return [
-        {
-            "name": "Mira",
-            "description": "organized planner who cares about broad fit and avoiding awkward logistics",
-            "private_goal": "wants the option that works for most people without needing extra coordination",
-            "preferred_option": "A",
-            "traits": {"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
-            "parameters": {
+        persona_profile(
+            name="Mira",
+            age=42,
+            style=STYLE_BALANCED_PROFESSIONAL,
+            description="organized project coordinator who cares about broad fit and avoiding awkward logistics",
+            private_goal="wants the option that works for most people without needing extra coordination",
+            preferred_option="A",
+            traits={"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
+            parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
                 "initiative": 0.55,
@@ -378,14 +424,16 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "directness": 0.50,
                 "compromise_threshold": 0.45,
             },
-        },
-        {
-            "name": "Jonas",
-            "description": "practical budget-watcher who changes his mind when a concrete tradeoff is convincing",
-            "private_goal": "wants the group to avoid overspending but can accept a better compromise",
-            "preferred_option": "B",
-            "traits": {"openness": 3, "conscientiousness": 4, "extraversion": 2, "agreeableness": 4, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Jonas",
+            age=24,
+            style=STYLE_YOUNG_CAREFUL,
+            description="early-career budget-watcher who rents a shared flat and avoids unnecessary spending",
+            private_goal="wants the group to avoid overspending but can accept a better compromise",
+            preferred_option="B",
+            traits={"openness": 3, "conscientiousness": 4, "extraversion": 2, "agreeableness": 4, "neuroticism": 2},
+            parameters={
                 "engagement": 0.35,
                 "verbosity": 0.35,
                 "initiative": 0.30,
@@ -394,14 +442,16 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "directness": 0.45,
                 "compromise_threshold": 0.35,
             },
-        },
-        {
-            "name": "Lea",
-            "description": "high-energy participant who likes memorable choices and often drives the conversation forward",
-            "private_goal": "wants the group to choose something that feels worth the effort",
-            "preferred_option": "C",
-            "traits": {"openness": 5, "conscientiousness": 3, "extraversion": 5, "agreeableness": 3, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Lea",
+            age=29,
+            style=STYLE_MILLENNIAL_PRAGMATIC,
+            description="high-energy event planner who likes memorable choices and often drives the conversation forward",
+            private_goal="wants the group to choose something that feels worth the effort",
+            preferred_option="C",
+            traits={"openness": 5, "conscientiousness": 3, "extraversion": 5, "agreeableness": 3, "neuroticism": 2},
+            parameters={
                 "engagement": 0.90,
                 "verbosity": 0.80,
                 "initiative": 0.90,
@@ -410,20 +460,22 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "directness": 0.70,
                 "compromise_threshold": 0.55,
             },
-        },
+        ),
     ]
 
 
 def profiles_trait_spread_4() -> list[dict[str, Any]]:
     """One very active sim, one quiet sim, two middle sims."""
     return [
-        {
-            "name": "Nora",
-            "description": "very engaged organizer who notices process problems and proposes next steps",
-            "private_goal": "wants a clear decision and tends to keep the group moving",
-            "preferred_option": "B",
-            "traits": {"openness": 4, "conscientiousness": 4, "extraversion": 5, "agreeableness": 3, "neuroticism": 1},
-            "parameters": {
+        persona_profile(
+            name="Nora",
+            age=37,
+            style=STYLE_DIRECT_MANAGER,
+            description="very engaged product lead who notices process problems and proposes next steps",
+            private_goal="wants a clear decision and tends to keep the group moving",
+            preferred_option="B",
+            traits={"openness": 4, "conscientiousness": 4, "extraversion": 5, "agreeableness": 3, "neuroticism": 1},
+            parameters={
                 "engagement": 0.95,
                 "verbosity": 0.85,
                 "initiative": 0.95,
@@ -432,14 +484,16 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "directness": 0.75,
                 "compromise_threshold": 0.40,
             },
-        },
-        {
-            "name": "Tarek",
-            "description": "quiet participant who answers when asked but rarely pushes himself into the discussion",
-            "private_goal": "wants the simplest acceptable choice and avoids long arguments",
-            "preferred_option": "D",
-            "traits": {"openness": 2, "conscientiousness": 3, "extraversion": 1, "agreeableness": 4, "neuroticism": 3},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Tarek",
+            age=21,
+            style=STYLE_YOUNG_RELAXED,
+            description="quiet university student who answers when asked but rarely pushes himself into the discussion",
+            private_goal="wants the simplest acceptable choice and avoids long arguments",
+            preferred_option="D",
+            traits={"openness": 2, "conscientiousness": 3, "extraversion": 1, "agreeableness": 4, "neuroticism": 3},
+            parameters={
                 "engagement": 0.15,
                 "verbosity": 0.25,
                 "initiative": 0.10,
@@ -448,14 +502,16 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "directness": 0.35,
                 "compromise_threshold": 0.30,
             },
-        },
-        {
-            "name": "Eva",
-            "description": "balanced participant who weighs concrete constraints before moving position",
-            "private_goal": "wants the option with the fewest hidden tradeoffs",
-            "preferred_option": "A",
-            "traits": {"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Eva",
+            age=56,
+            style=STYLE_OLDER_FORMAL,
+            description="experienced office administrator who weighs concrete constraints before moving position",
+            private_goal="wants the option with the fewest hidden tradeoffs",
+            preferred_option="A",
+            traits={"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
+            parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
                 "initiative": 0.45,
@@ -464,14 +520,16 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "directness": 0.55,
                 "compromise_threshold": 0.45,
             },
-        },
-        {
-            "name": "Sam",
-            "description": "socially flexible participant who often bridges between opposing preferences",
-            "private_goal": "wants the final choice to feel acceptable to everyone",
-            "preferred_option": "C",
-            "traits": {"openness": 4, "conscientiousness": 3, "extraversion": 3, "agreeableness": 5, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Sam",
+            age=31,
+            style=STYLE_MILLENNIAL_PRAGMATIC,
+            description="socially flexible UX designer who often bridges between opposing preferences",
+            private_goal="wants the final choice to feel acceptable to everyone",
+            preferred_option="C",
+            traits={"openness": 4, "conscientiousness": 3, "extraversion": 3, "agreeableness": 5, "neuroticism": 2},
+            parameters={
                 "engagement": 0.50,
                 "verbosity": 0.50,
                 "initiative": 0.50,
@@ -480,20 +538,22 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "directness": 0.40,
                 "compromise_threshold": 0.25,
             },
-        },
+        ),
     ]
 
 
 def profiles_hard_holdout_4() -> list[dict[str, Any]]:
     """One stubborn minority, useful for bounded reservation/compromise testing."""
     return [
-        {
-            "name": "Clara",
-            "description": "detail-focused participant who will not accept weak dietary fit",
-            "private_goal": "wants the option that clearly protects the dietary requirement",
-            "preferred_option": "C",
-            "traits": {"openness": 3, "conscientiousness": 5, "extraversion": 2, "agreeableness": 2, "neuroticism": 3},
-            "parameters": {
+        persona_profile(
+            name="Clara",
+            age=46,
+            style=STYLE_BALANCED_PROFESSIONAL,
+            description="detail-focused operations specialist who will not accept weak dietary fit",
+            private_goal="wants the option that clearly protects the dietary requirement",
+            preferred_option="C",
+            traits={"openness": 3, "conscientiousness": 5, "extraversion": 2, "agreeableness": 2, "neuroticism": 3},
+            parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
                 "initiative": 0.40,
@@ -502,14 +562,16 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "directness": 0.75,
                 "compromise_threshold": 0.80,
             },
-        },
-        {
-            "name": "Ben",
-            "description": "cost-conscious participant who likes broad, familiar compromises",
-            "private_goal": "wants a safe group choice that does not exceed the budget too much",
-            "preferred_option": "B",
-            "traits": {"openness": 3, "conscientiousness": 4, "extraversion": 3, "agreeableness": 4, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Ben",
+            age=27,
+            style=STYLE_MILLENNIAL_PRAGMATIC,
+            description="cost-conscious early-career employee who likes broad, familiar compromises",
+            private_goal="wants a safe group choice that does not exceed the budget too much",
+            preferred_option="B",
+            traits={"openness": 3, "conscientiousness": 4, "extraversion": 3, "agreeableness": 4, "neuroticism": 2},
+            parameters={
                 "engagement": 0.60,
                 "verbosity": 0.50,
                 "initiative": 0.55,
@@ -518,14 +580,16 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "directness": 0.50,
                 "compromise_threshold": 0.40,
             },
-        },
-        {
-            "name": "Iris",
-            "description": "active social organizer who prefers easy logistics and broad menus",
-            "private_goal": "wants the group to settle on a practical choice without dragging the debate out",
-            "preferred_option": "B",
-            "traits": {"openness": 4, "conscientiousness": 3, "extraversion": 5, "agreeableness": 4, "neuroticism": 1},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Iris",
+            age=34,
+            style=STYLE_DIRECT_MANAGER,
+            description="active social organizer who prefers easy logistics and broad menus",
+            private_goal="wants the group to settle on a practical choice without dragging the debate out",
+            preferred_option="B",
+            traits={"openness": 4, "conscientiousness": 3, "extraversion": 5, "agreeableness": 4, "neuroticism": 1},
+            parameters={
                 "engagement": 0.85,
                 "verbosity": 0.70,
                 "initiative": 0.85,
@@ -534,14 +598,16 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "directness": 0.65,
                 "compromise_threshold": 0.35,
             },
-        },
-        {
-            "name": "Omar",
-            "description": "relaxed participant who usually follows a reasonable majority",
-            "private_goal": "wants a choice that avoids obvious inconvenience",
-            "preferred_option": "B",
-            "traits": {"openness": 3, "conscientiousness": 3, "extraversion": 2, "agreeableness": 5, "neuroticism": 2},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Omar",
+            age=62,
+            style=STYLE_OLDER_FORMAL,
+            description="relaxed retired teacher who usually follows a reasonable majority",
+            private_goal="wants a choice that avoids obvious inconvenience",
+            preferred_option="B",
+            traits={"openness": 3, "conscientiousness": 3, "extraversion": 2, "agreeableness": 5, "neuroticism": 2},
+            parameters={
                 "engagement": 0.40,
                 "verbosity": 0.35,
                 "initiative": 0.25,
@@ -550,22 +616,24 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "directness": 0.35,
                 "compromise_threshold": 0.25,
             },
-        },
+        ),
     ]
 
 
 def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
     """Two stubborn opposing participants; designed to force the 1-1 protocol."""
     return [
-        {
-            "name": "Maja",
-            "description": "stubborn roommate who thinks floors are the visible problem and dislikes spending the full budget",
-            "private_goal": "wants the robot vacuum and does not want a counter-space appliance",
-            "preferred_option": "A",
-            "rejection": "B",
-            "rejection_reason": "it is near the budget limit and uses counter space",
-            "traits": {"openness": 2, "conscientiousness": 4, "extraversion": 2, "agreeableness": 1, "neuroticism": 4},
-            "parameters": {
+        persona_profile(
+            name="Maja",
+            age=23,
+            style=STYLE_YOUNG_CAREFUL,
+            description="stubborn graduate student in a shared apartment who thinks floors are the visible problem",
+            private_goal="wants the robot vacuum and does not want a counter-space appliance",
+            preferred_option="A",
+            rejection="B",
+            rejection_reason="it is near the budget limit and uses counter space",
+            traits={"openness": 2, "conscientiousness": 4, "extraversion": 2, "agreeableness": 1, "neuroticism": 4},
+            parameters={
                 "engagement": 0.55,
                 "verbosity": 0.45,
                 "initiative": 0.45,
@@ -574,16 +642,18 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
                 "directness": 0.80,
                 "compromise_threshold": 0.90,
             },
-        },
-        {
-            "name": "Felix",
-            "description": "stubborn roommate who thinks dishes cause most conflict and distrusts partial floor-only fixes",
-            "private_goal": "wants the dishwasher and does not want a device that ignores the kitchen mess",
-            "preferred_option": "B",
-            "rejection": "A",
-            "rejection_reason": "it does not help with dishes or kitchen cleanup",
-            "traits": {"openness": 2, "conscientiousness": 4, "extraversion": 3, "agreeableness": 1, "neuroticism": 3},
-            "parameters": {
+        ),
+        persona_profile(
+            name="Felix",
+            age=58,
+            style=STYLE_OLDER_FORMAL,
+            description="stubborn long-time tenant who thinks dishes cause most conflict and distrusts partial floor-only fixes",
+            private_goal="wants the dishwasher and does not want a device that ignores the kitchen mess",
+            preferred_option="B",
+            rejection="A",
+            rejection_reason="it does not help with dishes or kitchen cleanup",
+            traits={"openness": 2, "conscientiousness": 4, "extraversion": 3, "agreeableness": 1, "neuroticism": 3},
+            parameters={
                 "engagement": 0.60,
                 "verbosity": 0.50,
                 "initiative": 0.55,
@@ -592,7 +662,7 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
                 "directness": 0.85,
                 "compromise_threshold": 0.90,
             },
-        },
+        ),
     ]
 
 
@@ -802,6 +872,7 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
             log_dir = line.split("Logs:", 1)[1].strip()
 
     metrics: dict[str, Any] = {}
+    run_data: dict[str, Any] = {}
     if log_dir:
         run_json = Path(log_dir) / "run.json"
         if run_json.exists():
@@ -810,6 +881,11 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
                 metrics = run_data.get("metrics", {}) or {}
             except Exception as exc:  # noqa: BLE001 - diagnostic only
                 metrics = {"metrics_read_error": str(exc)}
+
+    persona_age_style = "; ".join(
+        f"{p.get('name', '?')}:{p.get('age', '?')}:{p.get('style', '')}"
+        for p in run_data.get("personas", [])
+    )
 
     row = {
         "case_id": case["id"],
@@ -824,6 +900,7 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "final_vote_call": cfg.get("moderator", {}).get("final_vote_call"),
         "n": cfg.get("simulation", {}).get("num_participants"),
         "forced_shape": cfg.get("personas", {}).get("preference_distribution", {}).get("forced_shape"),
+        "persona_age_style": persona_age_style,
         "outcome": metrics.get("outcome_status") or metrics.get("outcome"),
         "final_option": metrics.get("final_option"),
         "engagement_behavior_correlation": metrics.get("engagement_behavior_correlation"),

@@ -2,7 +2,7 @@
 
 The project simulates several user simulators in a shared decision environment.
 LLMs render utterances, but the environment owns the option board, simulator
-parameters, agenda items, routing state, visible commitments, and outcome logic.
+parameters, global agenda items, routing state, visible commitments, and outcome logic.
 """
 
 from __future__ import annotations
@@ -189,25 +189,27 @@ def _clip01(value: float) -> float:
 
 
 @dataclass(slots=True)
-class AgendaItem:
-    """One pending private communicative goal.
+class DiscussionAgendaItem:
+    """One chat-level item the controller should cover before narrowing.
 
-    Part of a weak hint list consulted only in quiet moments — not an
-    agenda-based simulation mechanism (see simulator.build_initial_agenda).
+    This is a global discussion checklist, not a per-simulator script. It keeps
+    required decision work explicit while persona-specific reasons stay inside
+    OptionStance.reason_for / reason_against.
     """
 
+    key: str
     act: ActType
+    reason: str
     option: str | None = None
-    reason: str = ""
-    priority: float = 1.0
+    required: bool = True
     status: AgendaStatus = AgendaStatus.PENDING
 
 
-STANCE_REJECTED = 0
-STANCE_DISLIKED = 1
-STANCE_NEUTRAL = 2
-STANCE_ACCEPTABLE = 3
-STANCE_PREFERRED = 4
+STANCE_REJECTED = 1
+STANCE_DISLIKED = 2
+STANCE_NEUTRAL = 3
+STANCE_ACCEPTABLE = 4
+STANCE_PREFERRED = 5
 
 
 @dataclass(slots=True)
@@ -215,7 +217,7 @@ class OptionStance:
     """One simulator's stance toward one option.
 
     Rank is the single source of truth for preference/rejection buckets:
-    4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected/hard-blocked.
+    5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected/hard-blocked.
     Reasons are deliberately short setup hints; they are not hidden transcript
     facts, only controller guidance for plausible moves.
     """
@@ -243,14 +245,26 @@ class Persona:
     background: str
     private_goal: str
     preferred_options: list[str]
+    age: int
+    style: str
     rejection: str | None = None
     rejection_reason: str = ""
     option_stances: dict[str, OptionStance] = field(default_factory=dict)
-    agenda: list[AgendaItem] = field(default_factory=list)
 
     @property
     def preferred_option(self) -> str:
         return self.preferred_options[0]
+
+    @property
+    def agenda(self) -> list[object]:
+        """Compatibility shim for older run/eval code paths.
+
+        Per-person scripted agendas were removed in favor of the chat-level
+        DialogueState.discussion_agenda checklist. Returning an empty list keeps
+        stale readers from crashing while ensuring no per-sim agenda can steer
+        the dialogue.
+        """
+        return []
 
 
 @dataclass(slots=True)
@@ -262,7 +276,7 @@ class MoveIntent:
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
     respond_to_turn: int | None = None
-    agenda_index: int | None = None
+    agenda_key: str | None = None
     suppress_name_prefix: bool = False
     suppress_option_opening: bool = False
     suppress_i_opening: bool = False
@@ -359,7 +373,7 @@ class ParticipantRuntime:
     turn_count: int = 0
     last_spoke_turn: int | None = None
     # Stance ranks are the runtime source of truth.
-    # 4 preferred, 3 acceptable, 2 neutral, 1 disliked, 0 rejected.
+    # 5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected.
     option_ranks: dict[str, int] = field(default_factory=dict)
     reasons_for: dict[str, str] = field(default_factory=dict)
     reasons_against: dict[str, str] = field(default_factory=dict)
@@ -482,6 +496,7 @@ class DialogueState:
     turns: list[TurnRecord] = field(default_factory=list)
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
+    discussion_agenda: list[DiscussionAgendaItem] = field(default_factory=list)
     open_questions: list[OpenQuestion] = field(default_factory=list)
     open_concerns: list[Concern] = field(default_factory=list)
     concerns_raised_total: int = 0

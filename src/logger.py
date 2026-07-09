@@ -11,7 +11,7 @@ from typing import Any
 
 from config_loader import cfg
 from eval import flat_metrics_for, metrics_for, token_summary_for
-from models import DialogueState, RunOutcome
+from models import DialogueState, RunOutcome, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED
 
 
 class DialogueLogger:
@@ -102,15 +102,22 @@ class DialogueLogger:
                 f"stubbornness={params.stubbornness:.2f} directness={params.directness:.2f} "
                 f"compromise_threshold={params.compromise_threshold:.2f}"
             )
+            lines.append(f"age/style: {persona.age} — {persona.style}")
+            lines.append(f"profile: {persona.background}")
             lines.append(f"goal: {persona.private_goal}")
             lines.append(f"initial preference: {', '.join(persona.preferred_options)}")
             stance_bits = []
             for oid in state.scenario.option_ids:
                 stance = (persona.option_stances or {}).get(oid)
-                if not stance or stance.rank == 2:
+                if not stance or stance.rank == STANCE_NEUTRAL:
                     continue
-                label = {4: "preferred", 3: "acceptable", 1: "disliked", 0: "rejected"}.get(stance.rank, str(stance.rank))
-                reason = stance.reason_for if stance.rank >= 3 else stance.reason_against
+                label = {
+                    STANCE_PREFERRED: "preferred",
+                    STANCE_ACCEPTABLE: "acceptable",
+                    STANCE_DISLIKED: "disliked",
+                    STANCE_REJECTED: "rejected",
+                }.get(stance.rank, str(stance.rank))
+                reason = stance.reason_for if stance.rank >= STANCE_ACCEPTABLE else stance.reason_against
                 stance_bits.append(f"{oid}:{label}" + (f" ({reason})" if reason else ""))
             if stance_bits:
                 lines.append("initial option ranks: " + "; ".join(stance_bits))

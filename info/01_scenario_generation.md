@@ -34,6 +34,6 @@ Sims may use only:
 
 They must not state unsupported concrete facts as known. Hypothetical mitigation is acceptable only when marked as uncertain.
 
-## v3 relevance
+## Current relevance
 
-v3 keeps the option board central. The outcome-repair logic may move holdouts only when the tested candidate is plausible according to visible votes, blockers, resistance, and traits. It does not create new options or blended plans.
+The option board remains central. The controller may move holdouts only when the tested candidate is plausible according to visible votes, blockers, resistance, rank state, and traits. It does not create new options or blended plans.
