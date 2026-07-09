@@ -25,4 +25,4 @@ Unresolved outcomes get a short participant or moderator acknowledgement before 
 
 ## Style interaction
 
-Moderator style is separate from participant style. Participant age/style should affect participant utterances, not moderator scaffolding.
+Moderator style is separate from participant speech_style. Participant age/speech_style should affect participant utterances, not moderator scaffolding.

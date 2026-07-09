@@ -71,20 +71,20 @@ _SCOPE_TOKENS = {
 }
 
 
-def _style_for_age(age: int) -> str:
-    """Return a concise, age-consistent speech-style instruction.
+def _speech_style_for_age(age: int) -> str:
+    """Return the compact, age-consistent speech-style register.
 
-    The style changes wording only; it must not change preferences, votes, or
-    factual claims. Labels are deliberately broad to avoid caricatured output.
+    speech_style is small register coloring only: it changes wording, never
+    preferences, votes, decision behavior, turn length, or directness.
     """
     age = max(16, min(85, int(age)))
-    if age <= 24:
-        return "young casual digital-native style: relaxed, concise, occasional modern phrasing, no heavy slang"
-    if age <= 39:
-        return "millennial conversational style: casual but clear, pragmatic, lightly informal"
-    if age <= 55:
-        return "middle-aged professional style: direct, practical, moderately formal"
-    return "older formal style: measured, polite, more traditional wording"
+    if age <= 27:
+        return "young casual wording"
+    if age <= 40:
+        return "relaxed practical wording"
+    if age <= 58:
+        return "direct workplace wording"
+    return "measured traditional wording"
 
 
 def _age_for_profile(profile: dict, traits: TraitProfile | None = None) -> int:
@@ -102,9 +102,9 @@ def _age_for_profile(profile: dict, traits: TraitProfile | None = None) -> int:
     return max(18, min(72, base + random.randint(-12, 12)))
 
 
-def _style_for_profile(profile: dict, age: int) -> str:
-    manual = str(profile.get("style") or "").strip()
-    return manual if manual else _style_for_age(age)
+def _speech_style_for_profile(profile: dict, age: int) -> str:
+    manual = str(profile.get("speech_style") or "").strip()
+    return manual if manual else _speech_style_for_age(age)
 
 
 
@@ -310,7 +310,7 @@ def manual_participant_profiles() -> list[dict]:
             "private_goal": str(row.get("private_goal") or "").strip(),
             "preferred_option": preferred,
             "age": int(row["age"]) if row.get("age") is not None and str(row.get("age")).strip() else None,
-            "style": str(row.get("style") or "").strip(),
+            "speech_style": str(row.get("speech_style") or "").strip(),
             "rejection": rejection,
             "rejection_reason": str(row.get("rejection_reason") or "").strip(),
             "traits": {key: int(value) for key, value in (row.get("traits") or {}).items()},
@@ -646,8 +646,6 @@ class SetupBuilder:
                 row["private_goal"] = profile["private_goal"]
             if profile.get("age") is not None:
                 row["age"] = profile["age"]
-            if profile.get("style"):
-                row["style"] = profile["style"]
             rows.append(row)
         return rows
 
@@ -796,7 +794,7 @@ class SetupBuilder:
                 private_goal=private_goal,
                 preferred_options=preferred_options,
                 age=age,
-                style=_style_for_profile(profile, age),
+                speech_style=_speech_style_for_profile(profile, age),
                 rejection=profile.get("rejection"),
                 rejection_reason=profile.get("rejection_reason", ""),
                 option_stances=option_stances,
@@ -957,8 +955,9 @@ class SetupBuilder:
         profile_age = profile.get("age")
         age_source = profile_age if profile_age is not None else raw_age
         age = _age_for_profile({"age": age_source} if age_source is not None else profile, traits)
-        raw_style = str(row.get("style") or "").strip()
-        style = _style_for_profile({"style": profile.get("style") or raw_style}, age)
+        # speech_style is builder-derived from age (or a manual profile
+        # override); the persona LLM never writes it.
+        speech_style = _speech_style_for_profile(profile, age)
         background = profile.get("description") or _require(
             row.get("background") or row.get("backstory"),
             f"participant {pid} background",
@@ -978,7 +977,7 @@ class SetupBuilder:
             private_goal=private_goal,
             preferred_options=preferred_options,
             age=age,
-            style=style,
+            speech_style=speech_style,
             rejection=rejection,
             rejection_reason=rejection_reason,
             option_stances=option_stances,

@@ -98,11 +98,9 @@ class DialogueLogger:
             )
             lines.append(
                 f"sim params: engagement={params.engagement:.2f} verbosity={params.verbosity:.2f} "
-                f"initiative={params.initiative:.2f} responsiveness={params.responsiveness:.2f} "
-                f"stubbornness={params.stubbornness:.2f} directness={params.directness:.2f} "
-                f"compromise_threshold={params.compromise_threshold:.2f}"
+                f"directness={params.directness:.2f} stubbornness={params.stubbornness:.2f}"
             )
-            lines.append(f"age/style: {persona.age} — {persona.style}")
+            lines.append(f"age/speech_style: {persona.age} — {persona.speech_style}")
             lines.append(f"profile: {persona.background}")
             lines.append(f"goal: {persona.private_goal}")
             lines.append(f"initial preference: {', '.join(persona.preferred_options)}")

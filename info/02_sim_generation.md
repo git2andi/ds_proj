@@ -6,15 +6,15 @@ A sim is a configurable participant, not just a name inserted into a prompt. Tra
 
 `participants.mode = auto`:
 
-- names, traits, age, style, backgrounds, goals, and option-rank compatibility are generated/sampled;
+- names, hidden OCEAN traits, age, backgrounds, goals, and option-rank compatibility are generated/sampled; speech_style is derived from age;
 - useful for varied runs and demos.
 
 `participants.mode = manual`:
 
 - profiles are provided in `config.yaml`;
-- manual profiles may include age and style;
+- manual profiles may include age and speech_style;
 - complete profiles can skip the persona setup LLM call;
-- useful for controlled tests of traits, blockers, style visibility, and split votes.
+- useful for controlled tests of parameters, blockers, speech-style visibility, and split votes.
 
 ## Option-rank compatibility
 
@@ -38,30 +38,39 @@ Design rule:
 - avoid hard rejects unless explicitly needed;
 - allow rank movement during discussion.
 
-## Operational parameters
+## OCEAN -> parameters -> attributes
 
-The relevant simulator parameters are:
+OCEAN traits are hidden setup traits. They are sampled (or manually fixed), used once to derive the simulator parameters and to keep generated persona content plausible, and never passed into utterance prompts or routing.
 
-- `engagement`: tendency to participate;
-- `verbosity`: average turn length;
-- `initiative`: tendency to drive procedure or propose moves;
-- `responsiveness`: tendency to answer and react;
-- `stubbornness`: resistance to switching;
-- `directness`: likelihood of explicit pushback;
-- `compromise_threshold`: how much evidence/social pressure is needed before moving.
+The four simulator parameters are the only numeric behavior controls:
 
-These parameters are derived from traits and are behavior-relevant.
+- `engagement`: expected speaker frequency / turn share;
+- `verbosity`: average turn length, realized only as numeric word budgets;
+- `directness`: blunt vs soft wording;
+- `stubbornness`: resistance to changing stance and strength of stance defense.
 
-## Age, profile, and style
+Derivation (`src/simulator.py::derive_simulator_parameters`) uses normalized OCEAN values: extraversion (plus some conscientiousness) drives engagement; extraversion and openness drive verbosity; conscientiousness, extraversion, and low agreeableness drive directness; low agreeableness, neuroticism, low openness, and conscientiousness drive stubbornness. All parameters are clipped to `[0, 1]`. Manual profile `parameters` may override any of the four directly.
+
+High stubbornness means very resistant but theoretically movable; a hard blocker comes only from `rejection` (option rank 1), never from stubbornness alone.
+
+## Age, profile, and speech style
 
 Each persona has:
 
-- `age`: integer in the configured valid range;
-- `style`: concise speech-style instruction;
+- `age`: integer in the configured valid range (generated ages stay adult, 18-75);
+- `speech_style`: compact age-band register, derived from age unless manually overridden:
+
+```text
+18-27 -> young casual wording
+28-40 -> relaxed practical wording
+41-58 -> direct workplace wording
+59+   -> measured traditional wording
+```
+
 - `background`: short plausible profile/backstory;
 - `private_goal`: decision motivation.
 
-Age and style are not behavioral traits. They should affect wording only: formality, phrasing, sentence shape, and conversational flavor. They must not change the option-rank table, vote logic, compromise logic, or turn-taking weights.
+Age and speech_style are not behavioral controls. They affect wording only: formality, phrasing, sentence shape, and conversational flavor. They must not change the option-rank table, vote logic, compromise logic, or turn-taking weights, and no speech_style string encodes preferences, decision behavior, turn length, or directness.
 
 The builder checks for obvious age/profile contradictions. Examples that should fail:
 
@@ -73,7 +82,8 @@ The builder checks for obvious age/profile contradictions. Examples that should 
 The intended separation is:
 
 ```text
-traits -> behavior
-age/profile/style -> plausibility and wording
+hidden OCEAN traits -> the four simulator parameters + plausible persona content
+simulator parameters -> behavior
+age/profile/speech_style -> plausibility and wording
 option stances -> decision preferences
 ```

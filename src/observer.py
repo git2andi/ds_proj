@@ -208,7 +208,7 @@ class ObserverMixin:
                 # Movability scales with the tracked commitment (issue 2): a sim
                 # whose favorite took unanswered challenges/pressure moves more
                 # easily than one that has been defending it.
-                effective = persona.sim_params.compromise_threshold * (0.4 + 0.9 * rt.commitment_strength)
+                effective = persona.sim_params.stubbornness * (0.4 + 0.9 * rt.commitment_strength)
                 if random.random() > effective:
                     rt.promote_to_preferred(signal, reason_for=act.text)
                     rt.concessions_made += 1
@@ -382,9 +382,9 @@ class ObserverMixin:
             return
         # A group-directed question (no name, no "you") should not always fall to
         # the previous speaker — that chains one sim into an interview loop
-        # (issue 1). Re-target by responsiveness and turn-share deficit.
+        # (issue 1). Re-target by relevance, engagement, and turn-share deficit.
         if not self._question_explicitly_addressed(state, record, target):
-            target = self._pick_group_respondent(state, record.speaker_id)
+            target = self._pick_group_respondent(state, record.speaker_id, record.act.option_refs[:2])
             if target is None:
                 return
             record.act.question_target_id = target
@@ -407,10 +407,13 @@ class ObserverMixin:
             return True
         return bool(re.search(r"\byou(?:r|rs)?\b", record.text, re.I))
 
-    def _pick_group_respondent(self, state: DialogueState, asker_id: str) -> str | None:
-        """Respondent for a group-directed question: responsive sims behind on
-        their trait share answer first, so one sim never becomes the room's
-        default interviewee."""
+    def _pick_group_respondent(
+        self, state: DialogueState, asker_id: str, option_focus: list[str] | None = None
+    ) -> str | None:
+        """Respondent for a group-directed question, chosen by a weighted score:
+        relevance to the question's option focus, engagement, expected-share
+        deficit relative to the sim's own target, a recent-speaker penalty, and
+        the sampler's randomness. Not simply the quietest person."""
         others = [p for p in state.personas if p.id != asker_id]
         if not others:
             return None
@@ -418,8 +421,15 @@ class ObserverMixin:
         total = sum(rt.turn_count for rt in state.runtimes.values()) or 1
         weights = []
         for p in others:
-            deficit = expected[p.id] - state.runtimes[p.id].turn_count / total
-            weights.append(0.30 + p.sim_params.responsiveness + max(0.0, 3.0 * deficit))
+            rt = state.runtimes[p.id]
+            deficit = expected[p.id] - rt.turn_count / total
+            relevance = sum(
+                0.35 for oid in (option_focus or []) if rt.rank(oid) != STANCE_NEUTRAL
+            )
+            weight = 0.30 + p.sim_params.engagement + relevance + max(0.0, 3.0 * deficit)
+            if rt.last_spoke_turn is not None and state.turn_index - rt.last_spoke_turn <= 1:
+                weight *= 0.5
+            weights.append(weight)
         return weighted_choice(others, weights).id
 
     def _set_obligation(

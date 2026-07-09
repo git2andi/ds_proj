@@ -171,12 +171,13 @@ def _switch_stats(state: DialogueState) -> tuple[int, float | None, float | None
 
 def _expected_words(persona: Persona) -> float:
     """The controller's own length target for a discussion turn (midpoint of
-    the jitter band in dialogue._word_bounds), used as the verbosity
-    expectation. Openings/votes use other budgets, so treat deviations as a
-    band, not an exact target."""
+    the jitter band in policy._word_bounds), used as the verbosity
+    expectation. Verbosity is the only persona parameter affecting length.
+    Openings/votes use other budgets, so treat deviations as a band, not an
+    exact target."""
     base = int(cfg.utterances.word_budgets.discussion)
     p = persona.sim_params
-    expected = base * (0.45 + 0.70 * p.verbosity + 0.15 * p.engagement)
+    expected = base * (0.45 + 0.85 * p.verbosity)
     # policy._word_bounds mixes in occasional short beats (factor ~0.52, more
     # often for terse sims); fold that expectation into the average target.
     short_beat_prob = 0.22 + 0.28 * (1.0 - p.verbosity)
@@ -187,7 +188,7 @@ def parameter_realization(state: DialogueState) -> dict[str, Any]:
     """Configured-parameter vs realized-behavior comparison for this run."""
     participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
     total_turns = max(1, len(participant_turns))
-    # The router's own trait-derived share targets (simulator.expected_turn_share),
+    # The router's own engagement-derived share targets (simulator.expected_turn_share),
     # so realization error measures deviation from what the controller aimed for.
     expected_shares = expected_turn_share(state.personas)
 

@@ -95,12 +95,12 @@ def setup_personas(
     options_json: list[dict],
 ) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
-    # Manual participant profiles may fix persona/style fields; tell the LLM
-    # to keep them verbatim so generated fields stay consistent with them.
+    # Manual participant profiles may fix persona fields; tell the LLM to keep
+    # them verbatim so generated fields stay consistent with them.
     fixed_field_rule = (
-        "\n- If a trait row already contains background, private_goal, age, or style, copy that field exactly "
+        "\n- If a trait row already contains background, private_goal, or age, copy that field exactly "
         "and keep the other fields consistent with it, including age plausibility."
-        if any(row.get("background") or row.get("private_goal") or row.get("age") or row.get("style") for row in trait_rows)
+        if any(row.get("background") or row.get("private_goal") or row.get("age") for row in trait_rows)
         else ""
     )
     preference_lines = "\n".join(
@@ -113,7 +113,6 @@ def setup_personas(
                 "id": "p1",
                 "name": "exact name from trait row",
                 "age": 28,
-                "style": "millennial conversational style: casual but clear, pragmatic, lightly informal",
                 "background": "one sentence explaining the person's angle on this decision",
                 "private_goal": "what they personally want from the decision",
                 "preferred_options": ["A"],
@@ -140,14 +139,13 @@ Initial primary preference assignment. preferred_options[0] MUST match this exac
 
 Rules:
 - Use the exact id and name from each trait row.
-- Assign a plausible age between 18 and 72 unless age is already fixed in the trait row.
+- Assign a plausible age between 18 and 75 unless age is already fixed in the trait row.
 - The background/private_goal must be plausible for that age. Use soft age bands:
   * 18-22: student, apprentice, trainee, early job, shared flat/parents, no spouse/kids/mortgage/senior role.
   * 23-35: student or early/mid career, partner possible, young family possible only from late 20s onward.
   * 36-55: established career/family/home routines are plausible.
   * 56-72: senior career, older children, retirement planning, formal habits are plausible; do not make them teenagers/apprentices.
 - Do not create absurd biographies: no 19-year-old married parent with two kids, no 21-year-old senior manager with a mortgage, no 25-year-old with 20 years of professional experience.
-- Provide one concise style instruction that matches the age: younger speakers may be more casual/digital-native, middle-aged speakers clearer and practical, older speakers more measured/formal. Avoid stereotypes, forced slang, emojis, and caricature.
 - preferred_options is the person's initial private preference, not a final vote. Add at most one secondary acceptable option if it fits.
 - Also provide option_stances for EVERY option, using discrete rank: 5=preferred, 4=acceptable, 3=neutral/untested, 2=disliked but negotiable, 1=rejected/hard blocked.
 - The assigned primary preference must have rank 5. A secondary preferred option, if any, should have rank 4.
@@ -159,8 +157,7 @@ Rules:
 - For all other participants, rejection must be null.
 - background and private_goal must be one sentence each, specific to this topic, grounded in the option cards/shared context, and age-plausible.
 - For participants with agreeableness above 1, phrase needs as preferences ("prefers", "values", "cares most about"), never as absolute constraints ("cannot", "must", "refuses", "allergic", "strictly").
-- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.
-- The style field controls wording only. It must not change facts, stances, votes, or reasoning strength.{fixed_field_rule}
+- background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.{fixed_field_rule}
 
 Return JSON only:
 {_schema(schema)}"""
@@ -315,7 +312,6 @@ def sim_utterance(
     address = f"\nAddress {addressee_name} if it sounds natural." if addressee_name else ""
     context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) if state.scenario.shared_context else "none"
     params = persona.sim_params
-    voice = _voice_guidance(persona)
     decision_instruction = ""
     if intent.act == ActType.VOTE:
         # P9: steer vote lines into the parser's own commitment vocabulary — a
@@ -393,6 +389,8 @@ def sim_utterance(
             f"\nAlready settled as unknown here (nobody can answer them): {', '.join(settled_issues[:5])}. "
             "Do not ask about or re-raise these; argue from the listed facts instead."
         )
+    # Verbosity reaches the prompt only as this numeric word range; the range
+    # itself (not a persona parameter) picks the phrasing of the length rule.
     if max_words <= 8 and intent.act != ActType.VOTE:
         # A short-beat draw (P4): one genuine quick reaction, not a compressed argument.
         length_note = (
@@ -400,18 +398,10 @@ def sim_utterance(
             "brief objection, short answer, or one small condition. Do NOT summarize or argue; one beat, "
             "then stop. A complete short sentence or natural fragment is fine."
         )
-    elif params.verbosity <= 0.4:
-        length_note = f"Keep it very short ({min_words}-{max_words} words), blunt and to the point; a sentence fragment is fine."
-    elif params.verbosity >= 0.7:
+    elif max_words >= 20:
         length_note = f"Two short clauses or sentences are okay ({min_words}-{max_words} words)."
     else:
-        length_note = f"Aim for {min_words}-{max_words} words, one casual sentence."
-    if params.directness >= 0.65:
-        tone_note = " Say it plainly, almost no hedging."
-    elif params.directness <= 0.35:
-        tone_note = " Keep the wording soft and tentative."
-    else:
-        tone_note = ""
+        length_note = f"Aim for {min_words}-{max_words} words, one casual message; a sentence fragment is fine."
     style_notes = ""
     if intent.suppress_tail_question:
         style_notes += "\n- Enough questions are already open; end with a statement, not a question."
@@ -432,7 +422,8 @@ def sim_utterance(
 
 Topic: {state.scenario.topic}
 Context: {context}
-Speaker: age={persona.age}; background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; voice={voice}; style={persona.style}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
+Speaker: age={persona.age}; background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
+Speech style: {persona.speech_style}. Directness: {_scale_1_5(params.directness)}/5. Stubbornness: {_scale_1_5(params.stubbornness)}/5.
 Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
 
 Allowed facts:
@@ -441,7 +432,12 @@ Allowed facts:
 Recent:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note}{tone_note} Match the speaker voice and age/style instruction naturally; do not overdo slang or formality. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Rules: one message only, no speaker prefix, no bullets/metadata. {length_note} Match the speech style and age naturally; do not overdo slang or formality. High directness means blunt plain wording, low directness soft tentative wording. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+
+
+def _scale_1_5(value: float) -> int:
+    """Map a [0,1] simulator parameter onto the 1-5 scale shown in prompts."""
+    return max(1, min(5, round(1 + 4 * float(value))))
 
 
 # Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a
@@ -473,7 +469,7 @@ def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
         if p.directness >= 0.65:
             prefs += ["I vote for", "gets my vote"]
     else:
-        if p.compromise_threshold <= 0.40:
+        if p.stubbornness <= 0.40:
             prefs += ["I can live with", "I'll back"]
         if persona.traits.agreeableness >= 4 or p.directness <= 0.35:
             prefs += ["I'd be happy with"]
@@ -662,36 +658,6 @@ def _public_state_summary(state: DialogueState) -> str:
     if open_q:
         parts.append("open questions: " + ", ".join(open_q))
     return "; ".join(parts)
-
-
-def _voice_guidance(persona: Persona) -> str:
-    """Contrastive, concrete register instructions. Abstract adjectives get
-    flattened by the model into one polite voice; micro-examples do not."""
-    p = persona.sim_params
-    parts: list[str] = []
-    if p.directness >= 0.75:
-        parts.append("blunt: plain declaratives, no softeners (e.g. 'Too pricey. Not worth it.')")
-    elif p.directness >= 0.60:
-        parts.append("direct, concrete, low hedging")
-    elif p.directness <= 0.35:
-        parts.append("tentative: hedges like 'maybe' or 'I guess', suggests rather than insists")
-    if p.stubbornness >= 0.80:
-        parts.append("digs in: dismisses alternatives curtly, keeps returning to their own priority, concedes nothing without a strong reason")
-    elif p.stubbornness >= 0.60:
-        parts.append("pushes their concern instead of agreeing too quickly")
-    elif p.compromise_threshold <= 0.35:
-        parts.append("actively looks for workable compromise")
-    if p.engagement >= 0.70:
-        parts.append("energetic, jumps in with opinions; the odd exclamation fits")
-    elif p.engagement <= 0.35:
-        parts.append("dry and minimal; only speaks when it adds something")
-    if p.verbosity <= 0.35:
-        parts.append("clipped: fragments over full sentences (e.g. 'Games. Cheap, fun, done.')")
-    elif p.verbosity >= 0.70:
-        parts.append("flowing: happily adds a second thought or a small aside")
-    if p.responsiveness >= 0.70:
-        parts.append("reacts to the previous speaker by name when natural")
-    return "; ".join(parts) if parts else "balanced, natural, no assistant-like phrasing"
 
 
 def _recent_chat(state: DialogueState, limit: int) -> str:

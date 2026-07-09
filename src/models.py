@@ -153,32 +153,25 @@ class TraitProfile:
     agreeableness: int
     neuroticism: int
 
-    @property
-    def compromise_willingness(self) -> float:
-        agree = (self.agreeableness - 1) / 4
-        openness = (self.openness - 1) / 4
-        calm = (5 - self.neuroticism) / 4
-        value = 0.65 * agree + 0.20 * openness + 0.15 * calm
-        floor = 0.05 if self.agreeableness == 1 else 0.35
-        return max(floor, min(0.95, value))
-
 
 @dataclass(slots=True)
 class SimulatorParameters:
     """Operational controls for a simulated user.
 
-    OCEAN traits are retained as a compact personality source, but routing and
-    prompts use these explicit parameters because they are easier to tune and
-    evaluate.
+    OCEAN traits are hidden setup traits: they only derive these four explicit
+    parameters (and plausible persona content). Routing and prompts read the
+    parameters, never the traits.
+
+    engagement    -> expected speaker frequency / turn share
+    verbosity     -> average utterance length via numeric word budgets
+    directness    -> blunt vs soft wording
+    stubbornness  -> resistance to changing stance, strength of stance defense
     """
 
     engagement: float
     verbosity: float
-    initiative: float
-    responsiveness: float
-    stubbornness: float
     directness: float
-    compromise_threshold: float
+    stubbornness: float
 
     def clipped(self) -> "SimulatorParameters":
         return SimulatorParameters(**{name: _clip01(getattr(self, name)) for name in self.__dataclass_fields__})
@@ -246,7 +239,7 @@ class Persona:
     private_goal: str
     preferred_options: list[str]
     age: int
-    style: str
+    speech_style: str
     rejection: str | None = None
     rejection_reason: str = ""
     option_stances: dict[str, OptionStance] = field(default_factory=dict)
@@ -355,7 +348,6 @@ class ResponseObligation:
     created_turn: int
     expires_after: int        # turn_index after which the obligation lapses
     option_focus: list[str] = field(default_factory=list)
-    deferred: bool = False    # a low-responsiveness sim already sat out one beat
 
 
 @dataclass(slots=True)

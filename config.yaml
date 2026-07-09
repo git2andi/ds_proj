@@ -95,7 +95,9 @@ participants:
   #     private_goal: "wants the choice that keeps her daily workflow fast"
   #     preferred_option: "A"          # option id (A-D), initial private preference
   #     traits: {extraversion: 5, agreeableness: 4}   # OCEAN 1-5, partial ok
-  #     parameters: {verbosity: 0.9, initiative: 0.8} # direct 0-1 overrides, partial ok
+  #     parameters: {verbosity: 0.9, engagement: 0.8} # direct 0-1 overrides, partial ok
+  #                                                   # (engagement, verbosity, directness, stubbornness)
+  #     speech_style: "relaxed practical wording"     # optional register override; age-derived if omitted
   #   - name: "Sven"
   #     description: "veteran sysadmin burned by flaky vendor tools before"
   #     rejection: "B"                 # initializes option B at rank 1
@@ -116,9 +118,9 @@ scenario:
   short_alias_max_words: 3
 
 personas:
-  # OCEAN traits are sampled here, then converted into explicit simulator parameters
-  # in src/simulator.py: engagement, verbosity, initiative, responsiveness,
-  # stubbornness, directness, and compromise_threshold.
+  # OCEAN traits are hidden setup traits: they are sampled here, then converted
+  # into the four explicit simulator parameters in src/simulator.py:
+  # engagement, verbosity, directness, and stubbornness.
   # Chance that exactly one participant is sampled as a hard blocker.
   # A hard blocker gets agreeableness=1 and normally cannot accept their rejected option.
   hard_blocker_probability: 0.06
@@ -202,9 +204,9 @@ routing:
     compromise: 0.06     # test common ground
     soften_toward: 0.04  # non-final stance movement when another option becomes persuasive
   direct_address_probability: 0.32     # chance a turn is aimed at a named person rather than the group
-  # Trait-weighted participation: each sim gets a target turn share derived from
-  # engagement/initiative/responsiveness; the router boosts sims behind their
-  # target and damps sims ahead of it (never strict turn equalization).
+  # Engagement-weighted participation: each sim gets a target turn share derived
+  # from engagement alone; the router boosts sims behind their target and damps
+  # sims ahead of it (never strict turn equalization).
   trait_share_adaptation: 3.5          # how strongly actual share is pulled toward the trait target (exp slope)
   max_share_overshoot: 0.16            # actual share this far above target -> hard damp (anti-monopoly)
   max_silence_rounds: 2                # a sim silent this many full rounds is pushed back in (min visibility)

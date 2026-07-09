@@ -42,19 +42,19 @@ option id -> rank, short reason_for, short reason_against
 
 Most options should remain neutral or acceptable. Strong dislikes and hard rejects should be rare and grounded.
 
-## Personas, traits, age, and style
+## Personas, hidden traits, age, and speech style
 
-A participant contains:
+Sim generation follows one split:
 
-- OCEAN-style traits;
-- derived simulator parameters;
-- age;
-- speech style;
-- concise background/profile;
-- private decision goal;
-- initial option ranks and reasons.
+- **OCEAN traits are hidden setup traits.** They are only used to derive simulator parameters and plausible persona content; they never appear in utterance prompts or routing.
+- **Sim attributes** describe who the simulated user is: `id`, `name`, `age`, `background`, `private_goal`, `preferred_options`, `option_stances`, `speech_style`, `rejection`, `rejection_reason`.
+- **Simulator parameters** are the only numeric behavior controls:
+  - `engagement`: expected speaker frequency / turn share;
+  - `verbosity`: average utterance length, realized only as numeric word budgets;
+  - `directness`: blunt vs soft wording;
+  - `stubbornness`: resistance to changing stance and strength of stance defense.
 
-Traits and derived simulator parameters drive behavior: participation, initiative, responsiveness, directness, stubbornness, compromise, and verbosity. Age/style affects surface wording only. It must not override stance, vote choice, willingness to compromise, or turn-taking behavior.
+`speech_style` is small register coloring derived from age (four compact bands: young casual / relaxed practical / direct workplace / measured traditional wording). It changes wording only and must not override stance, vote choice, willingness to compromise, or turn-taking behavior. Hard blockers come only from `rejection`, never from high stubbornness alone.
 
 Generated and manual profiles are checked for obvious age/profile contradictions. For example, a very young participant should not receive a senior-executive biography, a mortgage-heavy family profile, or decades of experience.
 
@@ -98,7 +98,7 @@ Outcomes are derived from visible transcript evidence only: explicit votes, acce
 CLI topic or manual environment
   -> scenario / option board
   -> automatic or manual simulated participants
-  -> age/profile/style plausibility checks
+  -> age/profile/speech-style plausibility checks
   -> initial per-sim option ranks
   -> chat-level discussion agenda
   -> controller chooses speaker, target, macro act, and option focus
@@ -113,11 +113,11 @@ CLI topic or manual environment
 ## Main modules
 
 - `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
-- `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases. Manual eval personas include age/style/profile variation.
+- `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases. Manual eval personas include age/speech-style/profile variation.
 - `config.yaml`: provider, environment, participant, pacing, routing, validation, and output settings.
-- `src/builders.py`: builds automatic/manual scenarios and participants, including age/style/profile validation and initial option-rank compatibility.
-- `src/models.py`: dataclasses, compact macro acts, age/style/profile fields, chat-level agenda items, and per-option stance ranks.
-- `src/simulator.py`: converts persona traits into operational simulator parameters.
+- `src/builders.py`: builds automatic/manual scenarios and participants, including age/speech-style/profile validation and initial option-rank compatibility.
+- `src/models.py`: dataclasses, compact macro acts, age/speech-style/profile fields, chat-level agenda items, and per-option stance ranks.
+- `src/simulator.py`: converts hidden OCEAN traits into the four simulator parameters and the engagement-based expected turn share.
 - `src/dialogue.py`: orchestration loop for opening, discussion, voting, split narrowing, and closure.
 - `src/policy.py`: speaker choice, macro-act choice, addressee choice, vote readiness, and procedural routing.
 - `src/observer.py`: validated visible-state updates, rank movements, question/concern tracking, and agenda progress.
@@ -125,7 +125,7 @@ CLI topic or manual environment
 - `src/validation.py`: turn validation, parser/intent alignment, minimal fallback protection, and grounding checks.
 - `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts.
 - `src/consensus.py`: final outcome computation from visible evidence.
-- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, stance-rank metrics, age/style/profile logging, and token diagnostics.
+- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, stance-rank metrics, age/speech-style/profile logging, and token diagnostics.
 
 ## Running
 
@@ -135,11 +135,10 @@ Activate the existing project environment, then run:
 py .\main.py "Choose a restaurant for a group dinner"
 ```
 
-For eval cases:
+For eval cases (the suite always runs all cases):
 
 ```powershell
-py .\eval\run_eval_suite.py --quick
-py .\eval\run_eval_suite.py --full
+py .\eval\run_eval_suite.py
 ```
 
 Static check:

@@ -7,7 +7,7 @@ The target is not arbitrary chat. The target is an explainable simulator:
 ```text
 topic/manual environment
   -> option board
-  -> simulated users with traits, age, style, profile, and initial option ranks
+  -> simulated users with hidden traits, age, speech_style, profile, and initial option ranks
   -> chat-level discussion agenda
   -> controller routes speaker / macro act / target / focus
   -> LLM renders one utterance
@@ -32,12 +32,12 @@ Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_option
 
 ## Current participant model
 
-A sim has traits and derived simulator parameters for behavior. Age, style, and profile are descriptive metadata for plausibility and surface wording.
+A sim has hidden OCEAN traits that derive four simulator parameters (engagement, verbosity, directness, stubbornness) for behavior. Age, speech_style, and profile are descriptive metadata for plausibility and surface wording.
 
 Core rule:
 
 ```text
-traits decide behavior; style changes wording only
+the four parameters decide behavior; speech_style changes wording only
 ```
 
 Age/profile plausibility is checked during setup so generated personas do not contain obvious contradictions.

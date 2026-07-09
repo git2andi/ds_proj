@@ -5,7 +5,7 @@ Important configuration sections:
 - `llm`: provider and model selection.
 - `simulation`: seeds and setup attempts.
 - `environment`: auto/manual scenario setup.
-- `participants`: auto/manual participant setup, hard-blocker probability, preference distribution, manual age/style/profile fields.
+- `participants`: auto/manual participant setup, hard-blocker probability, preference distribution, manual age/speech_style/profile fields.
 - `conversation`: pacing, vote rounds, and discussion length.
 - `moderator`: opening, nudges, vote call, and closing behavior.
 - `output`: log paths and prompt dumps.
@@ -18,7 +18,7 @@ Manual participant profiles may include:
 name: "Mina"
 description: "A 22-year-old design student who prefers cheap, flexible plans."
 age: 22
-style: "young casual style: concise, relaxed, lightly informal"
+speech_style: "young casual wording"
 preferred_option: "B"
 traits:
   openness: 4
@@ -26,9 +26,14 @@ traits:
   extraversion: 3
   agreeableness: 4
   neuroticism: 3
+parameters:
+  engagement: 0.6
+  verbosity: 0.4
+  directness: 0.5
+  stubbornness: 0.3
 ```
 
-Age must be plausible for the profile. Style should describe wording, not behavior.
+`parameters` accepts only `engagement`, `verbosity`, `directness`, and `stubbornness` (each 0-1, partial overrides allowed; unset values are derived from traits). Age must be plausible for the profile. speech_style should describe wording register only, not behavior; if omitted it is derived from age.
 
 ## Run one topic
 
@@ -39,11 +44,10 @@ py .\main.py "Choose a restaurant for a group dinner"
 ## Run eval
 
 ```powershell
-py .\eval\run_eval_suite.py --quick
-py .\eval\run_eval_suite.py --full
+py .\eval\run_eval_suite.py
 ```
 
-The eval suite patches config for controlled cases and includes manual personas with varied age/style/profile fields.
+The eval suite patches config for controlled cases and includes manual personas with varied age/speech_style/profile fields. It always runs all cases.
 
 ## Static check
 

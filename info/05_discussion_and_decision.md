@@ -44,9 +44,20 @@ If final votes are split with no majority, the controller may run bounded narrow
 
 A future extension may test a second compromise candidate, but it should stay bounded and should not create an endless loop.
 
-## Style boundary
+## Stubbornness vs rejection
 
-Age/style may change how a participant says a point. It must not change what the controller asks them to do, which option they prefer, or whether a switch is plausible.
+Resistance to switching, compromise pacing, and holdout behavior are all controlled by `stubbornness`:
+
+```text
+stubbornness high = very resistant, but theoretically movable
+rejection true    = hard blocker / cannot accept the rejected option (rank 1)
+```
+
+High-stubbornness sims defend longer and switch less often; low-stubbornness sims compromise and soften more easily. A hard blocker never comes from stubbornness alone — only `rejection` and option-rank 1 are binding.
+
+## Speech-style boundary
+
+Age/speech_style may change how a participant says a point. It must not change what the controller asks them to do, which option they prefer, or whether a switch is plausible.
 
 ## What must not happen
 
@@ -55,4 +66,4 @@ Age/style may change how a participant says a point. It must not change what the
 - no forced successful outcome when a rank-1 blocker remains;
 - no invalid line printed as transcript evidence;
 - no endless negotiation loop;
-- no style feature overriding trait-driven behavior.
+- no speech-style feature overriding parameter-driven behavior.

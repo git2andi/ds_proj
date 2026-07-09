@@ -80,7 +80,7 @@ class PolicyMixin:
             movable = [p for p in dissenters if p not in hard_blockers and not self._valid_holdout_against(state, p, candidate)]
             resistance = [self._candidate_resistance(state, p, candidate) for p in movable]
             avg_resistance = sum(resistance) / max(1, len(resistance))
-            compromise_fit = sum(1.0 - p.sim_params.compromise_threshold for p in movable) / max(1, len(movable))
+            compromise_fit = sum(1.0 - p.sim_params.stubbornness for p in movable) / max(1, len(movable))
             support_quality = 0.25 * state.coverage[candidate].reasons + 0.10 * state.coverage[candidate].mentions
             meta = {
                 "votes": count,
@@ -141,10 +141,7 @@ class PolicyMixin:
             return True
         if any(c.raised_by == persona.id and c.option_id == candidate for c in state.open_concerns):
             return True
-        strong_trait_resistance = (
-            persona.sim_params.stubbornness >= 0.72
-            or persona.sim_params.compromise_threshold >= 0.72
-        )
+        strong_trait_resistance = persona.sim_params.stubbornness >= 0.72
         if strong_trait_resistance and rt.commitment_strength >= 0.62:
             return True
         if rt.commitment_strength >= 0.82 and rt.rank(candidate) < STANCE_ACCEPTABLE:
@@ -158,8 +155,7 @@ class PolicyMixin:
         if rt.rank(candidate) <= STANCE_REJECTED:
             return 99.0
         resistance = 0.45 * rt.commitment_strength
-        resistance += 0.35 * persona.sim_params.compromise_threshold
-        resistance += 0.20 * persona.sim_params.stubbornness
+        resistance += 0.55 * persona.sim_params.stubbornness
         # A switch must be earned (P6): the sim's own visible, still-unanswered
         # objections against the candidate are resistance, not noise. A bridge
         # phrase alone doesn't resolve a concern the transcript left open.
@@ -184,19 +180,9 @@ class PolicyMixin:
     def _route_discussion_turn(self, state: DialogueState) -> MoveIntent:
         obligation = self._active_obligation(state)
         if obligation is not None:
-            # Responsiveness controls how promptly a directly-addressed sim
-            # answers (issue 1): a low-responsiveness sim may sit out one beat
-            # before replying, but only when the obligation window still has
-            # room — hesitation alone never lets a direct question lapse.
-            target = state.persona_by_id(obligation.target_id)
-            answer_now = 0.45 + 0.55 * target.sim_params.responsiveness
-            if (
-                obligation.deferred
-                or state.turn_index + 1 >= obligation.expires_after
-                or random.random() < answer_now
-            ):
-                return self._obligation_intent(state, obligation)
-            obligation.deferred = True
+            # A directly-addressed question is answered on the next turn; only a
+            # stronger validation/safety condition downstream may prevent it.
+            return self._obligation_intent(state, obligation)
 
         coverage_gap = self._coverage_gap_option(state)
         if coverage_gap is not None:
@@ -295,7 +281,7 @@ class PolicyMixin:
                 pressured = (
                     rt.challenges_received >= 2
                     and self._visible_support_count(state, own, exclude=p.id) == 0
-                    and p.sim_params.compromise_threshold <= 0.50
+                    and p.sim_params.stubbornness <= 0.50
                 )
                 if rt.commitment_strength > 0.58 and not pressured:
                     continue
@@ -374,10 +360,9 @@ class PolicyMixin:
                 # Develop the answered point instead of opening the next issue:
                 # a fresh ask here is exactly the question-chaining pattern (P2).
                 act = weighted_choice(
-                    [ActType.SUPPORT, ActType.CONCERN, ActType.SUPPORT],
-                    [0.4 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
-                     0.3 + speaker.sim_params.stubbornness * 0.4,
-                     0.30 + speaker.sim_params.initiative * 0.2],
+                    [ActType.SUPPORT, ActType.CONCERN],
+                    [0.55 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
+                     0.3 + speaker.sim_params.stubbornness * 0.4],
                 )
                 focus = last.act.option_refs[:2]
                 return MoveIntent(
@@ -404,7 +389,7 @@ class PolicyMixin:
             if blockers and askers:
                 state.blocker_probes.add(leading)
                 blocker = blockers[0]
-                speaker = max(askers, key=lambda p: p.sim_params.responsiveness)
+                speaker = max(askers, key=lambda p: (p.sim_params.engagement, random.random()))
                 return MoveIntent(
                     speaker_id=speaker.id,
                     act=ActType.ASK,
@@ -429,7 +414,7 @@ class PolicyMixin:
                 pair = sorted(supported, key=lambda oid: -self._visible_support_count(state, oid))[:2]
                 act = (
                     ActType.COMPROMISE
-                    if speaker.sim_params.compromise_threshold <= 0.4 and random.random() < 0.5
+                    if speaker.sim_params.stubbornness <= 0.4 and random.random() < 0.5
                     else ActType.COMPARE
                 )
                 return MoveIntent(
@@ -469,7 +454,7 @@ class PolicyMixin:
                 pair = [o for o in (own, other) if o in state.scenario.option_ids]
                 act = (
                     ActType.COMPROMISE
-                    if speaker.sim_params.compromise_threshold <= 0.5
+                    if speaker.sim_params.stubbornness <= 0.5
                     else ActType.ASK
                 )
                 return MoveIntent(
@@ -516,7 +501,7 @@ class PolicyMixin:
         if chain >= 3 or len(state.personas) < 2:
             return None
         persona = state.persona_by_id(last.speaker_id)
-        probability = 0.03 + 0.07 * persona.sim_params.initiative
+        probability = 0.06
         if chain == 2:
             probability *= 0.5
         # P3: a direct question to another sim means the addressee's answer owns
@@ -601,7 +586,7 @@ class PolicyMixin:
         if preset:
             dominant_id = max(
                 state.personas,
-                key=lambda p: (p.sim_params.engagement + 0.5 * p.sim_params.initiative, p.id),
+                key=lambda p: (p.sim_params.engagement, p.id),
             ).id
         candidates: list[Persona] = []
         weights: list[float] = []
@@ -610,7 +595,7 @@ class PolicyMixin:
                 continue
             rt = state.runtimes[persona.id]
             p = persona.sim_params
-            base = 0.35 + p.engagement + 0.35 * p.initiative
+            base = 0.35 + p.engagement
             if preset:
                 base = preset_dominance_weight(
                     base, persona.id == dominant_id, rt.turn_count,
@@ -647,12 +632,21 @@ class PolicyMixin:
     def _choose_discussion_act(self, state: DialogueState, speaker: Persona) -> ActType:
         raw = dict(cfg.routing.move_weights.items())
         p = speaker.sim_params
-        raw["ask"] = raw.get("ask", 0.0) * (0.75 + p.initiative)
         raw["concern"] = raw.get("concern", 0.0) * (0.55 + 0.75 * p.stubbornness + 0.35 * p.directness)
         raw["support"] = raw.get("support", 0.0) * (0.70 + (1.0 - p.stubbornness))
-        raw["process"] = raw.get("process", 0.0) * (0.50 + p.responsiveness)
-        raw["compromise"] = raw.get("compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.compromise_threshold))
+        raw["compromise"] = raw.get("compromise", 0.0) * (0.40 + 1.40 * (1.0 - p.stubbornness))
         raw["soften_toward"] = raw.get("soften_toward", 0.0) * (0.50 + 1.00 * (1.0 - p.stubbornness))
+        # Proactive moves come from dialogue state, not a personality knob:
+        # a question is worth asking when an unresolved objection is on the
+        # table; a process move helps when the thread is stuck or a quiet
+        # participant should be brought in.
+        if any(c.addressed_by is None for c in state.open_concerns):
+            raw["ask"] = raw.get("ask", 0.0) * 1.4
+        if state.no_progress_count >= 2:
+            raw["process"] = raw.get("process", 0.0) * 1.5
+        quietest = self._quietest_other(state, speaker.id)
+        if quietest and self._silence_streak(state, quietest.id) >= len(state.personas):
+            raw["process"] = raw.get("process", 0.0) * 1.4
         if self._recent_question_count(state) >= 1:
             raw["ask"] *= 0.25
         if participant_turn_count(state) >= max(state.min_discussion_turns, state.force_narrow_turns - 2):
@@ -1083,7 +1077,7 @@ class PolicyMixin:
         if support == 0 and not self._visibly_proposed(state, candidate):
             return False
         pressure = support / max(1, len(state.personas) - 1)
-        probability = 0.05 + 0.50 * (1.0 - persona.sim_params.compromise_threshold) + 0.25 * pressure
+        probability = 0.05 + 0.50 * (1.0 - persona.sim_params.stubbornness) + 0.25 * pressure
         if candidate in rt.disliked_options():
             probability -= 0.25
         # Tracked stance state (issue 2): a sim whose hold on its favorite was
@@ -1159,13 +1153,13 @@ class PolicyMixin:
     def _speaker_for_option_coverage(self, state: DialogueState, option_id: str) -> Persona:
         last = self._last_participant_id(state)
         # Prefer a participant who can plausibly discuss the option: secondary
-        # preference first, then high openness/initiative, while avoiding the
+        # preference first, then engagement and flexibility, while avoiding the
         # last speaker in ordinary discussion.
         candidates = [p for p in state.personas if p.id != last] or state.personas[:]
         def score(persona: Persona) -> tuple[float, float]:
             p = persona.sim_params
             preference_bonus = 1.0 if option_id in persona.preferred_options else 0.0
-            return (preference_bonus + 0.45 * p.initiative + 0.35 * p.engagement + 0.20 * (1.0 - p.stubbornness), -state.runtimes[persona.id].turn_count)
+            return (preference_bonus + 0.60 * p.engagement + 0.20 * (1.0 - p.stubbornness), -state.runtimes[persona.id].turn_count)
         return max(candidates, key=score)
 
     def _vote_order(self, state: DialogueState, candidate: str) -> list[Persona]:
@@ -1318,7 +1312,8 @@ class PolicyMixin:
 
     @staticmethod
     def _word_bounds(intent: MoveIntent, persona: Persona) -> tuple[int, int]:
-        """Trait-driven (min, max) word budget so verbosity/engagement are visible."""
+        """Verbosity-driven (min, max) word budget; verbosity only ever
+        becomes this numeric range, never prompt prose."""
         budgets = cfg.utterances.word_budgets
         if intent.act == ActType.OPENING:
             base = int(budgets.opening)
@@ -1342,8 +1337,9 @@ class PolicyMixin:
         elif intent.length_hint == "short":
             base = max(8, round(base * 0.75))
         p = persona.sim_params
-        # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones longer.
-        factor = 0.45 + 0.70 * p.verbosity + 0.15 * p.engagement   # ~0.45..1.30
+        # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones
+        # longer. Verbosity is the only persona parameter affecting length.
+        factor = 0.45 + 0.85 * p.verbosity   # ~0.45..1.30
         # Verbosity is an average, not a per-turn template: every sim sometimes
         # drops a genuinely short beat (quick agreement, one-line answer), with
         # terse sims doing it more often. Openings, split summaries, and

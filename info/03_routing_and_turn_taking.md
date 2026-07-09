@@ -7,17 +7,25 @@ The router decides who speaks next, which macro act they perform, who they addre
 Speaker choice combines:
 
 ```text
-trait-derived participation pressure
+engagement-based expected turn share (actual share vs own target)
 + response obligations
 + unresolved questions / concerns
 + relevance to current option camps
-+ anti-monologue damping
++ recent-speaker penalty and anti-monologue damping
 + minimum visibility for quiet sims
 ```
 
-The router should not force perfect balance. High-engagement/high-initiative sims may speak more, but quieter sims must still show visible stances.
+`engagement` is the only participation-share parameter: each sim gets an expected share (`0.30 + engagement`, normalized) and the router boosts sims behind their own target and damps sims ahead of it. It does not equalize turn counts — a low-engagement sim is never pulled up to a high-engagement sim's count.
 
-Age/style must not be used as a routing signal. A young/casual participant should not speak more because of style, and an older/formal participant should not become more stubborn because of age. Those effects belong to traits and simulator parameters.
+Age/speech_style must not be used as a routing signal. A young/casual participant should not speak more because of style, and an older/formal participant should not become more stubborn because of age. Those effects belong to the simulator parameters.
+
+## Question obligations
+
+If a participant is directly asked a question, they answer on the next turn unless a stronger validation/safety condition prevents it — there is no personality-based delay.
+
+Group-directed questions pick a respondent by a weighted score: relevance to the question's option focus, engagement, expected-share deficit relative to the sim's own target, a recent-speaker penalty, and small randomness. Not simply the quietest person.
+
+Proactive moves (questions, process beats, compromise tests) are routed from dialogue state: an unresolved issue makes a question worthwhile, a stuck thread or a silent participant makes a process move worthwhile, concentrating support makes a compromise test worthwhile. Opening order uses engagement plus light randomness.
 
 ## Macro acts
 
@@ -39,10 +47,9 @@ Direct questions, recent answers, and unresolved concerns should usually be deve
 
 Personal perspective should come from option stances and private goals, not from hidden per-sim agenda items.
 
-## Trait influence
+## Parameter influence
 
 - higher directness increases concern/challenge behavior;
-- higher compromise tendency increases compromise and softening moves;
-- stubbornness raises resistance;
-- responsiveness helps with answers and invitations;
-- engagement and initiative affect how often a sim participates.
+- lower stubbornness increases compromise and softening moves;
+- higher stubbornness raises resistance and stance defense;
+- engagement decides how often a sim participates.

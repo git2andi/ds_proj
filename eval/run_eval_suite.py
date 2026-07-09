@@ -363,7 +363,7 @@ ROOMMATE_ENV = {
 def persona_profile(
     *,
     age: int,
-    style: str,
+    speech_style: str,
     description: str,
     private_goal: str,
     preferred_option: str,
@@ -373,17 +373,16 @@ def persona_profile(
     rejection: str | None = None,
     rejection_reason: str = "",
 ) -> dict[str, Any]:
-    """Create a manual persona profile with explicit age/style fields.
+    """Create a manual persona profile with explicit age/speech_style fields.
 
-    Eval personas intentionally keep behavior-driving traits and parameters
-    separate from surface wording. Age/style help inspect whether the utterance
-    prompt realizes different voices, but routing, compromise, verbosity, and
-    directness still come from traits/parameters.
+    Eval personas intentionally keep behavior-driving parameters separate from
+    surface wording: engagement/verbosity/directness/stubbornness control
+    behavior; speech_style is only age-consistent register coloring.
     """
     profile: dict[str, Any] = {
         "name": name,
         "age": age,
-        "style": style,
+        "speech_style": speech_style,
         "description": description,
         "private_goal": private_goal,
         "preferred_option": preferred_option,
@@ -396,12 +395,11 @@ def persona_profile(
     return profile
 
 
-STYLE_YOUNG_RELAXED = "young relaxed chat style: short, direct, light modern phrasing, no heavy slang or emojis"
-STYLE_YOUNG_CAREFUL = "young careful student style: polite, concise, slightly tentative, clear questions"
-STYLE_MILLENNIAL_PRAGMATIC = "millennial pragmatic style: casual but clear, concrete, uses contractions naturally"
-STYLE_BALANCED_PROFESSIONAL = "balanced professional style: structured, plain-spoken, practical, not stiff"
-STYLE_DIRECT_MANAGER = "direct manager style: concise, decisive, focused on risk and next steps"
-STYLE_OLDER_FORMAL = "older formal style: measured, polite, complete sentences, avoids slang"
+# The four compact age-band registers used by the builder (src/builders.py).
+STYLE_YOUNG = "young casual wording"
+STYLE_RELAXED = "relaxed practical wording"
+STYLE_WORKPLACE = "direct workplace wording"
+STYLE_TRADITIONAL = "measured traditional wording"
 
 
 def profiles_three_way() -> list[dict[str, Any]]:
@@ -410,7 +408,7 @@ def profiles_three_way() -> list[dict[str, Any]]:
         persona_profile(
             name="Mira",
             age=42,
-            style=STYLE_BALANCED_PROFESSIONAL,
+            speech_style=STYLE_WORKPLACE,
             description="organized project coordinator who cares about broad fit and avoiding awkward logistics",
             private_goal="wants the option that works for most people without needing extra coordination",
             preferred_option="A",
@@ -418,17 +416,14 @@ def profiles_three_way() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
-                "initiative": 0.55,
-                "responsiveness": 0.75,
-                "stubbornness": 0.45,
                 "directness": 0.50,
-                "compromise_threshold": 0.45,
+                "stubbornness": 0.45,
             },
         ),
         persona_profile(
             name="Jonas",
             age=24,
-            style=STYLE_YOUNG_CAREFUL,
+            speech_style=STYLE_YOUNG,
             description="early-career budget-watcher who rents a shared flat and avoids unnecessary spending",
             private_goal="wants the group to avoid overspending but can accept a better compromise",
             preferred_option="B",
@@ -436,17 +431,14 @@ def profiles_three_way() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.35,
                 "verbosity": 0.35,
-                "initiative": 0.30,
-                "responsiveness": 0.80,
-                "stubbornness": 0.35,
                 "directness": 0.45,
-                "compromise_threshold": 0.35,
+                "stubbornness": 0.35,
             },
         ),
         persona_profile(
             name="Lea",
             age=29,
-            style=STYLE_MILLENNIAL_PRAGMATIC,
+            speech_style=STYLE_RELAXED,
             description="high-energy event planner who likes memorable choices and often drives the conversation forward",
             private_goal="wants the group to choose something that feels worth the effort",
             preferred_option="C",
@@ -454,11 +446,8 @@ def profiles_three_way() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.90,
                 "verbosity": 0.80,
-                "initiative": 0.90,
-                "responsiveness": 0.60,
-                "stubbornness": 0.55,
                 "directness": 0.70,
-                "compromise_threshold": 0.55,
+                "stubbornness": 0.55,
             },
         ),
     ]
@@ -470,7 +459,7 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
         persona_profile(
             name="Nora",
             age=37,
-            style=STYLE_DIRECT_MANAGER,
+            speech_style=STYLE_WORKPLACE,
             description="very engaged product lead who notices process problems and proposes next steps",
             private_goal="wants a clear decision and tends to keep the group moving",
             preferred_option="B",
@@ -478,17 +467,14 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.95,
                 "verbosity": 0.85,
-                "initiative": 0.95,
-                "responsiveness": 0.70,
-                "stubbornness": 0.35,
                 "directness": 0.75,
-                "compromise_threshold": 0.40,
+                "stubbornness": 0.35,
             },
         ),
         persona_profile(
             name="Tarek",
             age=21,
-            style=STYLE_YOUNG_RELAXED,
+            speech_style=STYLE_YOUNG,
             description="quiet university student who answers when asked but rarely pushes himself into the discussion",
             private_goal="wants the simplest acceptable choice and avoids long arguments",
             preferred_option="D",
@@ -496,17 +482,14 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.15,
                 "verbosity": 0.25,
-                "initiative": 0.10,
-                "responsiveness": 0.65,
-                "stubbornness": 0.30,
                 "directness": 0.35,
-                "compromise_threshold": 0.30,
+                "stubbornness": 0.30,
             },
         ),
         persona_profile(
             name="Eva",
             age=56,
-            style=STYLE_OLDER_FORMAL,
+            speech_style=STYLE_WORKPLACE,
             description="experienced office administrator who weighs concrete constraints before moving position",
             private_goal="wants the option with the fewest hidden tradeoffs",
             preferred_option="A",
@@ -514,17 +497,14 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
-                "initiative": 0.45,
-                "responsiveness": 0.75,
-                "stubbornness": 0.50,
                 "directness": 0.55,
-                "compromise_threshold": 0.45,
+                "stubbornness": 0.50,
             },
         ),
         persona_profile(
             name="Sam",
             age=31,
-            style=STYLE_MILLENNIAL_PRAGMATIC,
+            speech_style=STYLE_RELAXED,
             description="socially flexible UX designer who often bridges between opposing preferences",
             private_goal="wants the final choice to feel acceptable to everyone",
             preferred_option="C",
@@ -532,11 +512,8 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.50,
                 "verbosity": 0.50,
-                "initiative": 0.50,
-                "responsiveness": 0.85,
-                "stubbornness": 0.20,
                 "directness": 0.40,
-                "compromise_threshold": 0.25,
+                "stubbornness": 0.20,
             },
         ),
     ]
@@ -548,7 +525,7 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
         persona_profile(
             name="Clara",
             age=46,
-            style=STYLE_BALANCED_PROFESSIONAL,
+            speech_style=STYLE_WORKPLACE,
             description="detail-focused operations specialist who will not accept weak dietary fit",
             private_goal="wants the option that clearly protects the dietary requirement",
             preferred_option="C",
@@ -556,17 +533,14 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.55,
                 "verbosity": 0.55,
-                "initiative": 0.40,
-                "responsiveness": 0.70,
-                "stubbornness": 0.85,
                 "directness": 0.75,
-                "compromise_threshold": 0.80,
+                "stubbornness": 0.85,
             },
         ),
         persona_profile(
             name="Ben",
             age=27,
-            style=STYLE_MILLENNIAL_PRAGMATIC,
+            speech_style=STYLE_YOUNG,
             description="cost-conscious early-career employee who likes broad, familiar compromises",
             private_goal="wants a safe group choice that does not exceed the budget too much",
             preferred_option="B",
@@ -574,17 +548,14 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.60,
                 "verbosity": 0.50,
-                "initiative": 0.55,
-                "responsiveness": 0.75,
-                "stubbornness": 0.35,
                 "directness": 0.50,
-                "compromise_threshold": 0.40,
+                "stubbornness": 0.35,
             },
         ),
         persona_profile(
             name="Iris",
             age=34,
-            style=STYLE_DIRECT_MANAGER,
+            speech_style=STYLE_RELAXED,
             description="active social organizer who prefers easy logistics and broad menus",
             private_goal="wants the group to settle on a practical choice without dragging the debate out",
             preferred_option="B",
@@ -592,17 +563,14 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.85,
                 "verbosity": 0.70,
-                "initiative": 0.85,
-                "responsiveness": 0.70,
-                "stubbornness": 0.30,
                 "directness": 0.65,
-                "compromise_threshold": 0.35,
+                "stubbornness": 0.30,
             },
         ),
         persona_profile(
             name="Omar",
             age=62,
-            style=STYLE_OLDER_FORMAL,
+            speech_style=STYLE_TRADITIONAL,
             description="relaxed retired teacher who usually follows a reasonable majority",
             private_goal="wants a choice that avoids obvious inconvenience",
             preferred_option="B",
@@ -610,11 +578,8 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.40,
                 "verbosity": 0.35,
-                "initiative": 0.25,
-                "responsiveness": 0.80,
-                "stubbornness": 0.20,
                 "directness": 0.35,
-                "compromise_threshold": 0.25,
+                "stubbornness": 0.20,
             },
         ),
     ]
@@ -626,7 +591,7 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
         persona_profile(
             name="Maja",
             age=23,
-            style=STYLE_YOUNG_CAREFUL,
+            speech_style=STYLE_YOUNG,
             description="stubborn graduate student in a shared apartment who thinks floors are the visible problem",
             private_goal="wants the robot vacuum and does not want a counter-space appliance",
             preferred_option="A",
@@ -636,17 +601,14 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.55,
                 "verbosity": 0.45,
-                "initiative": 0.45,
-                "responsiveness": 0.55,
-                "stubbornness": 0.95,
                 "directness": 0.80,
-                "compromise_threshold": 0.90,
+                "stubbornness": 0.95,
             },
         ),
         persona_profile(
             name="Felix",
             age=58,
-            style=STYLE_OLDER_FORMAL,
+            speech_style=STYLE_WORKPLACE,
             description="stubborn long-time tenant who thinks dishes cause most conflict and distrusts partial floor-only fixes",
             private_goal="wants the dishwasher and does not want a device that ignores the kitchen mess",
             preferred_option="B",
@@ -656,11 +618,8 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
             parameters={
                 "engagement": 0.60,
                 "verbosity": 0.50,
-                "initiative": 0.55,
-                "responsiveness": 0.55,
-                "stubbornness": 0.95,
                 "directness": 0.85,
-                "compromise_threshold": 0.90,
+                "stubbornness": 0.95,
             },
         ),
     ]
@@ -883,7 +842,7 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
                 metrics = {"metrics_read_error": str(exc)}
 
     persona_age_style = "; ".join(
-        f"{p.get('name', '?')}:{p.get('age', '?')}:{p.get('style', '')}"
+        f"{p.get('name', '?')}:{p.get('age', '?')}:{p.get('speech_style', '')}"
         for p in run_data.get("personas", [])
     )
 

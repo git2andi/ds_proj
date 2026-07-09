@@ -30,15 +30,24 @@ Use `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_
 
 Participant setup may provide short `reason_for` / `reason_against` fields for each option. Keep these short. Leave neutral options neutral. Hard rejects should be rare and grounded.
 
-## Personas, traits, age, and style
+## Personas, hidden traits, age, and speech style
 
-Traits are the behavioral source of truth. They drive engagement, verbosity, initiative, responsiveness, stubbornness, directness, and compromise threshold.
+OCEAN traits are hidden setup traits. They only derive the four simulator parameters and plausible persona content; they are never passed into participant utterance prompts or routing.
 
-Age and style are surface-realization metadata. They may alter wording, formality, sentence shape, and conversational flavor. They must not alter routing, stance strength, vote choice, compromise willingness, or outcome logic.
+The simulator parameters are the only numeric behavior controls:
+
+```text
+engagement    -> expected speaker frequency / turn share
+verbosity     -> average utterance length (numeric word budgets only, never prose)
+directness    -> blunt vs soft wording
+stubbornness  -> resistance to changing stance, strength of stance defense
+```
+
+Age and `speech_style` are surface-realization metadata. `speech_style` is derived from age in four compact bands (18-27 young casual, 28-40 relaxed practical, 41-58 direct workplace, 59+ measured traditional wording) unless manually overridden. It may alter wording, formality, and conversational flavor, but must not alter routing, stance strength, vote choice, compromise willingness, or outcome logic. Hard blockers come only from `rejection`, not from `stubbornness`.
 
 Profiles/backgrounds should be plausible for the generated or manually configured age. The builder performs deterministic checks for obvious contradictions such as a very young participant being described as a senior executive, long-term homeowner, married parent, or having decades of experience.
 
-Manual participant profiles may include `age` and `style`. If omitted, age/style are filled by the builder.
+Manual participant profiles may include `age` and `speech_style`. If omitted, age/speech_style are filled by the builder. Manual `parameters` accept only `engagement`, `verbosity`, `directness`, and `stubbornness`.
 
 ## Discussion agenda
 
@@ -69,8 +78,8 @@ Do not grow the act list unless there is strong log evidence that a new act cann
 - Prefer deterministic controller/state logic over new LLM calls.
 - Keep prompts act-specific and compact.
 - Use the option-rank table as the stance source of truth.
-- Keep traits behavior-relevant; keep style wording-only.
-- Do not add more personality traits unless required.
+- Keep the four simulator parameters behavior-relevant; keep speech_style wording-only.
+- Do not add more personality traits or simulator parameters unless required.
 - Do not turn the project into a full agenda simulator.
 - Do not reintroduce per-sim agenda steering.
 - Normal auto-generated sims should have movable preferences, not categorical blockers.
@@ -90,20 +99,14 @@ Do not grow the act list unless there is strong log evidence that a new act cann
 py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
 ```
 
-5. Run targeted eval cases if LLM access is available:
+5. Before claiming stable behavior, run the eval suite (it always runs all cases) if LLM access is available:
 
 ```powershell
-py .\eval\run_eval_suite.py --quick
+py .\eval\run_eval_suite.py
 ```
 
-6. Before claiming stable behavior, run:
-
-```powershell
-py .\eval\run_eval_suite.py --full
-```
-
-7. Inspect `transcript.md` and `run.json`, not only CSV metrics.
-8. Update `README.md`, `docs/todo.md`, and relevant `info/*.md` files when behavior or workflow changes.
+6. Inspect `transcript.md` and `run.json`, not only CSV metrics.
+7. Update `README.md`, `docs/todo.md`, and relevant `info/*.md` files when behavior or workflow changes.
 
 ## What to inspect in logs
 
@@ -114,6 +117,6 @@ py .\eval\run_eval_suite.py --full
 - Do final votes respect the sim's rank/visible stance?
 - Do rank movements make majority/success/unresolved outcomes plausible?
 - Are blockers preventing false unanimity?
-- Are age/profile/style fields present and plausible?
-- Is style visible without overriding trait-driven behavior?
+- Are age/profile/speech_style fields present and plausible?
+- Is speech_style visible without overriding parameter-driven behavior?
 - Are repair/fallback/token counts reasonable?

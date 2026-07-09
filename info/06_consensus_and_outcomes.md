@@ -24,4 +24,4 @@ This should allow consensus when earned, preserve majority outcomes when a holdo
 
 ## What does not decide the outcome
 
-Age, style, and background do not directly compute the outcome. They can influence the wording of visible commitments, but the outcome parser still relies on explicit transcript evidence.
+Age, speech_style, and background do not directly compute the outcome. They can influence the wording of visible commitments, but the outcome parser still relies on explicit transcript evidence.

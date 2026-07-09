@@ -320,7 +320,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         ]
         if not supporters:
             return
-        responder = max(supporters, key=lambda p: p.sim_params.responsiveness + 0.3 * p.sim_params.engagement)
+        responder = max(supporters, key=lambda p: (p.sim_params.engagement, random.random()))
         response = MoveIntent(
             speaker_id=responder.id,
             act=ActType.ANSWER,
@@ -346,7 +346,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         if not supporters:
             return
         aliases = short_alias_map(state.scenario.options)
-        asker = max(supporters, key=lambda p: p.sim_params.initiative + 0.3 * p.sim_params.engagement)
+        asker = max(supporters, key=lambda p: (p.sim_params.engagement, random.random()))
         intent = MoveIntent(
             speaker_id=asker.id,
             act=ActType.PROCESS,
@@ -636,21 +636,18 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         max_votes = max(counts.values(), default=0)
         strict_plurality = candidate_votes == max_votes and sum(1 for c in counts.values() if c == max_votes) == 1
         tied_leader = candidate_votes == own_votes and candidate_votes == max_votes and len(counts) > 1
-        compromise_capacity = 1.0 - persona.sim_params.compromise_threshold
         flexibility = 1.0 - persona.sim_params.stubbornness
         pressure = (
             0.22
             + 0.58 * advantage
-            + 0.30 * compromise_capacity
-            + 0.15 * flexibility
-            + 0.06 * persona.sim_params.responsiveness
+            + 0.48 * flexibility
             - 0.12 * rt.commitment_strength
             - 0.08 * min(resistance, 1.5)
         )
         plurality_bonus = 0.10 if strict_plurality else 0.0
-        tie_compromise_bonus = 0.08 if (tied_leader and compromise_capacity >= 0.35 and flexibility >= 0.25) else 0.0
+        tie_compromise_bonus = 0.08 if (tied_leader and flexibility >= 0.30) else 0.0
         threshold = 0.39
-        if persona.sim_params.stubbornness >= 0.70 or persona.sim_params.compromise_threshold >= 0.70:
+        if persona.sim_params.stubbornness >= 0.70:
             threshold += 0.12
         return pressure + plurality_bonus + tie_compromise_bonus >= threshold
 
@@ -899,7 +896,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         ]
         if not supporters:
             return
-        responder = max(supporters, key=lambda p: p.sim_params.responsiveness + 0.3 * p.sim_params.engagement)
+        responder = max(supporters, key=lambda p: (p.sim_params.engagement, random.random()))
         response = MoveIntent(
             speaker_id=responder.id,
             act=ActType.ANSWER,
@@ -987,7 +984,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
     def _procedural_speaker(self, state: DialogueState) -> Persona:
         last = self._last_participant_id(state)
         candidates = [p for p in state.personas if p.id != last] or state.personas[:]
-        return max(candidates, key=lambda p: p.sim_params.initiative + 0.5 * p.sim_params.engagement)
+        return max(candidates, key=lambda p: (p.sim_params.engagement, p.id))
 
     def _generate_and_append(self, state: DialogueState, intent: MoveIntent) -> TurnRecord:
         self._apply_style_flags(state, intent)
@@ -1245,7 +1242,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
 
     def _maybe_participant_procedural(self, state: DialogueState) -> MoveIntent | None:
         """Participant-owned structure beat (issue 5), active when the moderator's
-        mid-discussion voice is off: a high-initiative sim summarizes the visible
+        mid-discussion voice is off: an engaged sim summarizes the visible
         split and suggests narrowing, proposes dropping an untouched option, or
         suggests moving toward a decision. Same stall conditions as the moderator
         nudge, bounded to two per run."""
@@ -1261,7 +1258,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         state.no_progress_count = 0
         last = self._last_participant_id(state)
         candidates = [p for p in state.personas if p.id != last] or state.personas[:]
-        speaker = max(candidates, key=lambda p: p.sim_params.initiative + 0.5 * p.sim_params.engagement)
+        speaker = max(candidates, key=lambda p: (p.sim_params.engagement, p.id))
         aliases = short_alias_map(state.scenario.options)
         camps = sorted({
             rt.top_option() for rt in state.runtimes.values()
@@ -1425,14 +1422,14 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         n = len(state.personas)
         prefs = [p.preferred_option for p in state.personas]
         distinct = len(set(prefs))
-        avg_compromise = sum(1.0 - p.sim_params.compromise_threshold for p in state.personas) / max(1, n)
+        avg_flexibility = sum(1.0 - p.sim_params.stubbornness for p in state.personas) / max(1, n)
         min_turns = math.ceil(float(cfg.conversation.min_discussion_turns_per_participant) * n)
         target = math.ceil(float(cfg.conversation.target_discussion_turns_per_participant) * n)
         hard = math.ceil(float(cfg.conversation.max_discussion_turns_per_participant) * n)
         if distinct > 1:
             target += int(cfg.conversation.contention_extra_turns)
             hard += int(cfg.conversation.contention_extra_turns)
-        if avg_compromise < 0.45:
+        if avg_flexibility < 0.45:
             target += int(cfg.conversation.low_compromise_extra_turns)
             hard += int(cfg.conversation.low_compromise_extra_turns)
         state.min_discussion_turns = max(n, min_turns)
@@ -1440,7 +1437,7 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
         state.force_narrow_turns = max(state.min_discussion_turns + vote_buffer, target)
         state.hard_max_turns = max(state.force_narrow_turns + vote_buffer, hard)
         state.phase_history.append(
-            f"pacing: min={state.min_discussion_turns}, force={state.force_narrow_turns}, hard={state.hard_max_turns}, distinct_initial_prefs={distinct}, avg_compromise={avg_compromise:.2f}"
+            f"pacing: min={state.min_discussion_turns}, force={state.force_narrow_turns}, hard={state.hard_max_turns}, distinct_initial_prefs={distinct}, avg_flexibility={avg_flexibility:.2f}"
         )
 
     def _mark_phase(self, state: DialogueState, phase: Phase, reason: str) -> None:
@@ -1449,7 +1446,9 @@ class DialogueRunner(PolicyMixin, ObserverMixin, ValidationMixin):
 
     @staticmethod
     def _opening_order(personas: list[Persona]) -> list[Persona]:
-        return sorted(personas, key=lambda p: (p.sim_params.initiative, random.random()), reverse=True)
+        # Engagement plus light randomness: engaged sims tend to open first,
+        # but the order is not a fixed ranking.
+        return sorted(personas, key=lambda p: p.sim_params.engagement + random.uniform(0.0, 0.5), reverse=True)
 
     def _resolve_pending_question(self, state: DialogueState) -> None:
         """Let a directly-asked participant answer before a vote round starts."""
