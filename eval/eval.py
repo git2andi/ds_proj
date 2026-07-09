@@ -12,7 +12,18 @@ during the run; no LLM calls.
 from __future__ import annotations
 
 import re
+import sys
+from pathlib import Path
 from typing import Any
+
+# This module's imports (aliases, config_loader, ...) live in src/, not on
+# sys.path by default. main.py adds src/ before it ever triggers this import
+# (via logger.py), so that path works from the app's entry point; but eval.py
+# also needs to be importable on its own (e.g. `import eval`, or running this
+# file directly), so ensure src/ is on sys.path here too.
+_SRC = Path(__file__).resolve().parent.parent / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 from aliases import short_alias_map
 from config_loader import cfg

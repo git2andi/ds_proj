@@ -1,0 +1,2358 @@
+{
+  "run_id": "20260708_155457_607310",
+  "topic": "Book a flight to Stockholm",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Book a flight to Stockholm",
+    "decision_kind": "travel_destination",
+    "opening_question": "What matters most for our Stockholm trip: cost, travel time, or convenience?",
+    "options": [
+      {
+        "id": "A",
+        "name": "Direct morning flight with Scandinavian Airlines",
+        "attrs": {
+          "cost": "780 USD total",
+          "duration": "3 hours 15 minutes",
+          "departure_time": "7:30 AM",
+          "baggage_allowance": "1 checked bag per passenger"
+        },
+        "upside": "Fastest travel time with direct flight",
+        "tradeoff": "Highest cost within budget",
+        "concern": "Early departure might be inconvenient for some",
+        "best_for": "prioritizing shortest travel time",
+        "short_name": "Direct morning"
+      },
+      {
+        "id": "B",
+        "name": "Evening flight with one layover in Copenhagen",
+        "attrs": {
+          "cost": "650 USD total",
+          "duration": "6 hours 45 minutes",
+          "departure_time": "6:00 PM",
+          "baggage_allowance": "1 carry-on bag only"
+        },
+        "upside": "Cheaper tickets and more relaxed departure time",
+        "tradeoff": "Longer travel time due to layover",
+        "concern": "Layover may cause stress or delays",
+        "best_for": "prioritizing lower cost over speed",
+        "short_name": "Evening layover"
+      },
+      {
+        "id": "C",
+        "name": "Midday flight with budget airline Norwegian Air",
+        "attrs": {
+          "cost": "540 USD total",
+          "duration": "4 hours 30 minutes",
+          "departure_time": "12:45 PM",
+          "baggage_allowance": "No checked bags included"
+        },
+        "upside": "Lowest cost option",
+        "tradeoff": "Extra fees likely for checked baggage",
+        "concern": "Less comfort and stricter luggage limits",
+        "best_for": "prioritizing cost savings",
+        "short_name": "Midday budget"
+      },
+      {
+        "id": "D",
+        "name": "Early afternoon flight with Lufthansa via Frankfurt",
+        "attrs": {
+          "cost": "770 USD total",
+          "duration": "5 hours 20 minutes",
+          "departure_time": "2:15 PM",
+          "baggage_allowance": "2 checked bags per passenger"
+        },
+        "upside": "Good baggage allowance and reputable airline",
+        "tradeoff": "Longer travel time with layover",
+        "concern": "Higher cost and possible tight connection in Frankfurt",
+        "best_for": "prioritizing baggage and airline quality",
+        "short_name": "Afternoon Lufthansa"
+      }
+    ],
+    "shared_context": [
+      "Group size is exactly 3 people",
+      "Budget cap is 800 USD total for all tickets",
+      "Departure date is fixed on July 15, returning July 20"
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nadia",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 4,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.8125,
+        "verbosity": 0.8625,
+        "initiative": 0.875,
+        "responsiveness": 0.6,
+        "stubbornness": 0.7,
+        "directness": 0.8125,
+        "compromise_threshold": 0.5625
+      },
+      "background": "Nadia enjoys exploring new places with a flexible schedule and appreciates saving money on travel.",
+      "private_goal": "She cares most about minimizing travel cost while maintaining reasonable travel time.",
+      "preferred_options": [
+        "C",
+        "B"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Highest cost within budget"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Cheaper tickets and more relaxed departure time",
+          "reason_against": "Longer travel time due to layover"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Lowest cost option",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Higher cost and longer travel time"
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "C",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "C",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "C",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "concern",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Wyatt",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 5,
+        "extraversion": 5,
+        "agreeableness": 2,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 1.0,
+        "verbosity": 0.8125,
+        "initiative": 0.7749999999999999,
+        "responsiveness": 0.6625,
+        "stubbornness": 0.7,
+        "directness": 0.9624999999999999,
+        "compromise_threshold": 0.65
+      },
+      "background": "Wyatt values punctuality and efficiency, preferring reliable and fast travel options.",
+      "private_goal": "He prioritizes the shortest travel time with a direct flight to minimize disruption.",
+      "preferred_options": [
+        "A"
+      ],
+      "rejection": "B",
+      "rejection_reason": "Layover may cause stress or delays",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Fastest travel time with direct flight",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 0,
+          "reason_for": "",
+          "reason_against": "Layover may cause stress or delays"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Less comfort and stricter luggage limits"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Good baggage allowance and reputable airline",
+          "reason_against": "Longer travel time with layover"
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "A",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "done"
+        },
+        {
+          "act": "concern",
+          "option": "B",
+          "reason": "raise the hard concern about B: Layover may cause stress or delays",
+          "priority": 0.95,
+          "status": "pending"
+        },
+        {
+          "act": "ask",
+          "option": "A",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "pending"
+        },
+        {
+          "act": "compare",
+          "option": "A",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "concern",
+          "option": null,
+          "reason": "object to the main rival option with a concrete concern",
+          "priority": 0.6,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Olga",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.5875,
+        "verbosity": 0.6000000000000001,
+        "initiative": 0.6,
+        "responsiveness": 0.8125,
+        "stubbornness": 0.32499999999999996,
+        "directness": 0.4625,
+        "compromise_threshold": 0.21250000000000002
+      },
+      "background": "Olga prefers comfort and convenience, especially when traveling with luggage.",
+      "private_goal": "She values good baggage allowance and reputable airlines for a smoother trip.",
+      "preferred_options": [
+        "D",
+        "A"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Fastest travel time with direct flight",
+          "reason_against": "Early departure might be inconvenient"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Layover may cause stress or delays"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "No checked bags included"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Good baggage allowance and reputable airline",
+          "reason_against": ""
+        }
+      },
+      "agenda": [
+        {
+          "act": "support",
+          "option": "D",
+          "reason": "state one grounded reason for the initial preference",
+          "priority": 1.0,
+          "status": "obsolete"
+        },
+        {
+          "act": "ask",
+          "option": "D",
+          "reason": "ask about a practical constraint that could affect the choice",
+          "priority": 0.7,
+          "status": "obsolete"
+        },
+        {
+          "act": "compare",
+          "option": "D",
+          "reason": "compare the preferred option with a realistic alternative",
+          "priority": 0.65,
+          "status": "pending"
+        },
+        {
+          "act": "compromise",
+          "option": "D",
+          "reason": "look for a workable compromise the group could accept",
+          "priority": 0.55,
+          "status": "obsolete"
+        }
+      ]
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 7,
+      "last_spoke_turn": 23,
+      "option_ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 2
+      },
+      "reasons_for": {
+        "B": "Cheaper tickets and more relaxed departure time",
+        "C": "Lowest cost option",
+        "A": "I'll switch to Direct morning; I preferred Midday budget, but Fastest travel time with direct flight."
+      },
+      "reasons_against": {
+        "A": "Highest cost within budget",
+        "B": "Longer travel time due to layover",
+        "D": "Higher cost and longer travel time"
+      },
+      "commitment_strength": 0.7335000000000002,
+      "commitment_min": 0.73,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "The midday flight with Norwegian Air costs only 540 USD total and fits well under budget.",
+        "Longer travel time on Lufthansa cuts into our schedule, but baggage matters more here.",
+        "What exactly does Scandinavian Airlines’ direct flight do better for you than Norwegian’s midday option besides saving travel time?",
+        "Cutting bags to carry-on only still risks extra fees and stress; Norwegian’s midday flight costs way less and keeps us on budget.",
+        "Saving 240 bucks is huge for us; 4.5 hours isn’t a deal breaker with Norwegian.",
+        "Does anyone know if Lufthansa’s extra baggage and afternoon start balance out its longer travel time?",
+        "I'll switch to Direct morning; I preferred Midday budget, but Fastest travel time with direct flight."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 10,
+      "last_spoke_turn": 26,
+      "option_ranks": {
+        "A": 4,
+        "B": 0,
+        "C": 2,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "I’ll stay with the direct morning flight on Scandinavian Airlines.",
+        "D": "Good baggage allowance and reputable airline"
+      },
+      "reasons_against": {
+        "B": "Layover may cause stress or delays",
+        "C": "Less comfort and stricter luggage limits",
+        "D": "Longer travel time with layover"
+      },
+      "commitment_strength": 0.7633000000000001,
+      "commitment_min": 0.6688,
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Go with the direct morning flight on Scandinavian Airlines. Fastest travel time and no layover stress—worth the cost since it fits our budget.",
+        "Are we sure the longer travel time on Lufthansa won’t eat into our schedule? Nadia, what’s your take on baggage versus flight duration?",
+        "Option B’s evening flight is cheaper but too long with that Copenhagen layover.",
+        "Cost hits the limit but saves hours and stress.",
+        "Offers a checked bag per person without extra fees, unlike Norwegian’s no-bag policy.",
+        "Late flights risk delays that ruin the whole day. Scandinavian’s morning flight gets us there fast and with checked bags.",
+        "Cutting bags to carry-on may still cause fees; Scandinavian’s morning flight is faster with checked bags included.",
+        "Longer travel time cuts into our trip and adds stress. Direct morning flight avoids that hassle.",
+        "I’ll stay with the direct morning flight on Scandinavian Airlines.",
+        "7:30 AM means check-in lines should be shorter, less crowded."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 27,
+      "option_ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 1,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "Direct morning works for me—I’m sold on the fastest travel time and can live with the early start.",
+        "D": "Let’s go with Afternoon Lufthansa for the better baggage allowance despite the longer trip."
+      },
+      "reasons_against": {
+        "A": "Early departure might be inconvenient",
+        "B": "Layover may cause stress or delays",
+        "C": "No checked bags included"
+      },
+      "commitment_strength": 0.5041249999999999,
+      "commitment_min": 0.5041249999999999,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Considering luggage needs, Lufthansa’s early afternoon flight offers solid baggage allowance despite the longer travel time.",
+        "Wyatt, the direct morning flight’s cost is right at our budget limit.",
+        "Wyatt, evening flights cost less and depart later but allow only carry-on bags.",
+        "The extra baggage with Lufthansa does help, but the longer travel time still eats into our trip.",
+        "Let’s go with Afternoon Lufthansa for the better baggage allowance despite the longer trip.",
+        "The 7:30 AM start worries me—can we handle luggage check-in that early?",
+        "Direct morning works for me—I’m sold on the fastest travel time and can live with the early start."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Book a flight to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct morning flight with Scandinavian Airlines — cost: 780 USD total; duration: 3 hours 15 minutes; departure time: 7:30 AM (+ Fastest travel time with direct flight; − Highest cost within budget)\nB) Evening flight with one layover in Copenhagen — cost: 650 USD total; duration: 6 hours 45 minutes; departure time: 6:00 PM (+ Cheaper tickets and more relaxed departure time; − Longer travel time due to layover)\nC) Midday flight with budget airline Norwegian Air — cost: 540 USD total; duration: 4 hours 30 minutes; departure time: 12:45 PM (+ Lowest cost option; − Extra fees likely for checked baggage)\nD) Early afternoon flight with Lufthansa via Frankfurt — cost: 770 USD total; duration: 5 hours 20 minutes; departure time: 2:15 PM (+ Good baggage allowance and reputable airline; − Longer travel time with layover)\nContext: Group size is exactly 3 people; Budget cap is 800 USD total for all tickets; Departure date is fixed on July 15, returning July 20.\nWhat matters most for our Stockholm trip: cost, travel time, or convenience?",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Book a flight to Stockholm.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Direct morning flight with Scandinavian Airlines — cost: 780 USD total; duration: 3 hours 15 minutes; departure time: 7:30 AM (+ Fastest travel time with direct flight; − Highest cost within budget)\nB) Evening flight with one layover in Copenhagen — cost: 650 USD total; duration: 6 hours 45 minutes; departure time: 6:00 PM (+ Cheaper tickets and more relaxed departure time; − Longer travel time due to layover)\nC) Midday flight with budget airline Norwegian Air — cost: 540 USD total; duration: 4 hours 30 minutes; departure time: 12:45 PM (+ Lowest cost option; − Extra fees likely for checked baggage)\nD) Early afternoon flight with Lufthansa via Frankfurt — cost: 770 USD total; duration: 5 hours 20 minutes; departure time: 2:15 PM (+ Good baggage allowance and reputable airline; − Longer travel time with layover)\nContext: Group size is exactly 3 people; Budget cap is 800 USD total for all tickets; Departure date is fixed on July 15, returning July 20.\nWhat matters most for our Stockholm trip: cost, travel time, or convenience?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "The midday flight with Norwegian Air costs only 540 USD total and fits well under budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The midday flight with Norwegian Air costs only 540 USD total and fits well under budget.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1292,
+      "tokens_out": 47,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Go with the direct morning flight on Scandinavian Airlines. Fastest travel time and no layover stress—worth the cost since it fits our budget.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Go with the direct morning flight on Scandinavian Airlines. Fastest travel time and no layover stress—worth the cost since it fits our budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [
+          "A"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1430,
+      "tokens_out": 39,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Considering luggage needs, Lufthansa’s early afternoon flight offers solid baggage allowance despite the longer travel time.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Considering luggage needs, Lufthansa’s early afternoon flight offers solid baggage allowance despite the longer travel time.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1373,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Are we sure the longer travel time on Lufthansa won’t eat into our schedule? Nadia, what’s your take on baggage versus flight duration?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Are we sure the longer travel time on Lufthansa won’t eat into our schedule? Nadia, what’s your take on baggage versus flight duration?",
+        "act_type": "process",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "process",
+        "reason": "bring Nadia into the discussion with one useful prompt",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1627,
+      "tokens_out": 38,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Longer travel time on Lufthansa cuts into our schedule, but baggage matters more here.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Longer travel time on Lufthansa cuts into our schedule, but baggage matters more here.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p2",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1242,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Option B’s evening flight is cheaper but too long with that Copenhagen layover.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Option B’s evening flight is cheaper but too long with that Copenhagen layover.",
+        "act_type": "compare",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1583,
+      "tokens_out": 58,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Wyatt, the direct morning flight’s cost is right at our budget limit.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Wyatt, the direct morning flight’s cost is right at our budget limit.",
+        "act_type": "concern",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "concern",
+        "reason": "push back on Direct morning with one concrete concern — you currently favor Afternoon Lufthansa, so aim at the rival, not your own pick",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 682,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Cost hits the limit but saves hours and stress.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cost hits the limit but saves hours and stress.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "a concern was raised about Direct morning, which you back — respond to it directly: defend it with a grounded reason or concede the point honestly",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 605,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "What exactly does Scandinavian Airlines’ direct flight do better for you than Norwegian’s midday option besides saving travel time?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "What exactly does Scandinavian Airlines’ direct flight do better for you than Norwegian’s midday option besides saving travel time?",
+        "act_type": "ask",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_target_id": "p2",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "the discussion is circling with both sides restating their pick; ask the other side directly what would make your pick workable for them, or what single thing their pick does better",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 581,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Offers a checked bag per person without extra fees, unlike Norwegian’s no-bag policy.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Offers a checked bag per person without extra fees, unlike Norwegian’s no-bag policy.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1384,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Wyatt, evening flights cost less and depart later but allow only carry-on bags.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Wyatt, evening flights cost less and depart later but allow only carry-on bags.",
+        "act_type": "compare",
+        "option_refs": [],
+        "addressee_id": "p2",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Evening layover, Afternoon Lufthansa, Midday budget with one clear trade-off",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2527,
+      "tokens_out": 72,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Late flights risk delays that ruin the whole day. Scandinavian’s morning flight gets us there fast and with checked bags.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Late flights risk delays that ruin the whole day. Scandinavian’s morning flight gets us there fast and with checked bags.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a new grounded reason about Direct morning, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1172,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Cutting bags to carry-on only still risks extra fees and stress; Norwegian’s midday flight costs way less and keeps us on budget.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Cutting bags to carry-on only still risks extra fees and stress; Norwegian’s midday flight costs way less and keeps us on budget.",
+        "act_type": "compromise",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": "C",
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compromise",
+        "reason": "test whether Midday budget could be common ground without claiming it is already decided",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1182,
+      "tokens_out": 37,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Cutting bags to carry-on may still cause fees; Scandinavian’s morning flight is faster with checked bags included.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Cutting bags to carry-on may still cause fees; Scandinavian’s morning flight is faster with checked bags included.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a new grounded reason about Midday budget, Direct morning, connected to the current discussion",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 2355,
+      "tokens_out": 90,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Saving 240 bucks is huge for us; 4.5 hours isn’t a deal breaker with Norwegian.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Saving 240 bucks is huge for us; 4.5 hours isn’t a deal breaker with Norwegian.",
+        "act_type": "compare",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Midday budget, Direct morning with one clear trade-off",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1304,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "Longer travel time cuts into our trip and adds stress. Direct morning flight avoids that hassle.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Longer travel time cuts into our trip and adds stress. Direct morning flight avoids that hassle.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Direct morning fits that",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "agenda_index": 0,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1166,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "Does anyone know if Lufthansa’s extra baggage and afternoon start balance out its longer travel time?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Does anyone know if Lufthansa’s extra baggage and afternoon start balance out its longer travel time?",
+        "act_type": "ask",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": "p3",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Direct morning, Midday budget, Afternoon Lufthansa",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 615,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "The extra baggage with Lufthansa does help, but the longer travel time still eats into our trip.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The extra baggage with Lufthansa does help, but the longer travel time still eats into our trip.",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1182,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Hey everyone, can each of you share your final pick now, just naming the one option you’re going with?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Hey everyone, can each of you share your final pick now, just naming the one option you’re going with?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "I’ll stay with the direct morning flight on Scandinavian Airlines.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’ll stay with the direct morning flight on Scandinavian Airlines.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: Go with the direct morning flight on Scandinavian Airlines. Fastest travel time and no layover stress—worth the cost since it fits our budget.",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "Go with the direct morning flight on Scandinavian Airlines. Fastest travel time and no layover stress—worth the cost since it fits our budget.",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 681,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Let’s go with Afternoon Lufthansa for the better baggage allowance despite the longer trip.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Let’s go with Afternoon Lufthansa for the better baggage allowance despite the longer trip.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "D",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 548,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Nadia",
+      "text": "I'll switch to Direct morning; I preferred Midday budget, but Fastest travel time with direct flight.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I'll switch to Direct morning; I preferred Midday budget, but Fastest travel time with direct flight.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: Fastest travel time with direct flight",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "for the better baggage allowance despite the longer trip"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "C",
+        "allowed_reason": "Fastest travel time with direct flight",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1036,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like most of you favor the direct morning flight—Olga, can you live with that or what’s still holding you back?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like most of you favor the direct morning flight—Olga, can you live with that or what’s still holding you back?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "The 7:30 AM start worries me—can we handle luggage check-in that early?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The 7:30 AM start worries me—can we handle luggage check-in that early?",
+        "act_type": "answer",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "question_target_id": "p1",
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "say concretely what still makes you hesitate about Direct morning — one specific reservation or condition, grounded in the option facts or what they leave unknown; do not cast a vote yet",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 1216,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p2",
+      "speaker_name": "Wyatt",
+      "text": "7:30 AM means check-in lines should be shorter, less crowded.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "7:30 AM means check-in lines should be shorter, less crowded.",
+        "act_type": "answer",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "respond to Olga's reservation about Direct morning honestly: use only the option facts, concede what the board cannot prove, and point to what still helps their concern — no pressure to switch",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 25,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 668,
+      "tokens_out": 49,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p3",
+      "speaker_name": "Olga",
+      "text": "Direct morning works for me—I’m sold on the fastest travel time and can live with the early start.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Direct morning works for me—I’m sold on the fastest travel time and can live with the early start.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "final decision: controller outcome is a switch from Afternoon Lufthansa to Direct morning. Use exactly this grounded reason, in your own words: Fastest travel time with direct flight. Do not add new facts or pressure language",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "agenda_index": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "D",
+        "allowed_reason": "Fastest travel time with direct flight",
+        "soften_toward": null,
+        "continuation": false
+      },
+      "tokens_in": 705,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re all set with the direct morning flight on Scandinavian Airlines!",
+      "phase": "closure",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re all set with the direct morning flight on Scandinavian Airlines!",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "proposes_option": null,
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 24,
+    "metadata": {
+      "visible_votes": {
+        "p2": "A",
+        "p3": "A",
+        "p1": "A"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 4,
+          "B": 3,
+          "C": 3,
+          "D": 2
+        },
+        "p2": {
+          "A": 4,
+          "B": 0,
+          "C": 2,
+          "D": 3
+        },
+        "p3": {
+          "A": 4,
+          "B": 2,
+          "C": 1,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.53",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 19: narrowing — visible support for one option held after enough back-and-forth",
+        "turn 27: closure — successful visible after vote round 1"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.53",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 19: narrowing — visible support for one option held after enough back-and-forth",
+    "turn 27: closure — successful visible after vote round 1",
+    "turn 28: closure — closed as successful"
+  ],
+  "metrics": {
+    "participant_turns": 24,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.143,
+    "turn_counts": {
+      "Nadia": 7,
+      "Wyatt": 10,
+      "Olga": 7
+    },
+    "top_speaker_share": 0.417,
+    "avg_words_by_persona": {
+      "Nadia": 16.9,
+      "Wyatt": 15.4,
+      "Olga": 14.6
+    },
+    "avg_words_by_act": {
+      "answer": 13.2,
+      "ask": 17.5,
+      "compare": 13.7,
+      "compromise": 22.0,
+      "concern": 12.0,
+      "opening": 18.3,
+      "process": 23.0,
+      "support": 15.5,
+      "vote": 14.5
+    },
+    "short_turn_rate": 0.125,
+    "tiny_turn_rate": 0.0,
+    "question_density": 0.167,
+    "tail_question_rate": 0.048,
+    "avg_words_per_turn": 15.6,
+    "repaired_turns": 4,
+    "repair_rate": 0.167,
+    "flagged_turns": 0,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Nadia": "A",
+      "Wyatt": "A",
+      "Olga": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "concern_threads": 1,
+    "concern_response_rate": 1.0,
+    "participation_gini": 0.083,
+    "direct_response_rate": 0.75,
+    "question_answer_completion": 0.5,
+    "open_questions_at_end": 1,
+    "repeated_unknown_mentions": 0,
+    "issue_ledger": {
+      "crowds/queues": {
+        "mentions": 1,
+        "options": []
+      }
+    },
+    "repetition_score": 0.152,
+    "compromise_success_rate": null,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 0,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 0,
+    "switch_event_count": 2,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 0,
+    "name_prefix_rate": 0.083,
+    "option_opening_rate": 0.208,
+    "i_opening_rate": 0.083,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.292,
+    "repeated_opening_patterns": 2,
+    "unsupported_fact_flags": 2,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 1.0,
+    "stance_rank_distribution": {
+      "0": 1,
+      "1": 1,
+      "2": 3,
+      "3": 4,
+      "4": 3
+    },
+    "runtime_preferred_by_rank": {
+      "Nadia": "A",
+      "Wyatt": "A",
+      "Olga": "A"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 9,
+        "reasons": 3,
+        "objections": 1,
+        "acceptances": 1
+      },
+      "B": {
+        "mentions": 1,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 6,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 8,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "expected_engagement": {
+      "Nadia": 0.812,
+      "Wyatt": 1.0,
+      "Olga": 0.588
+    },
+    "expected_turn_share": {
+      "Nadia": 0.344,
+      "Wyatt": 0.379,
+      "Olga": 0.277
+    },
+    "realized_turn_share": {
+      "Nadia": 0.292,
+      "Wyatt": 0.417,
+      "Olga": 0.292
+    },
+    "agenda_status": {
+      "obsolete": 5,
+      "pending": 7,
+      "done": 1
+    },
+    "outcome_status": "successful",
+    "final_option": "A",
+    "corpus_preset": "",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 20,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_compromise=0.53",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 19: narrowing — visible support for one option held after enough back-and-forth",
+      "turn 27: closure — successful visible after vote round 1",
+      "turn 28: closure — closed as successful"
+    ],
+    "engagement_realization_error": 0.035,
+    "verbosity_realization_error": 0.103,
+    "engagement_error_by_persona": {
+      "Nadia": 0.052,
+      "Wyatt": 0.038,
+      "Olga": 0.015
+    },
+    "verbosity_error_by_persona": {
+      "Nadia": 0.091,
+      "Wyatt": 0.011,
+      "Olga": 0.206
+    },
+    "engagement_behavior_correlation": 0.839,
+    "verbosity_behavior_correlation": 0.877,
+    "free_discussion_share": {
+      "Nadia": 0.294,
+      "Wyatt": 0.471,
+      "Olga": 0.235
+    },
+    "top_free_discussion_share": 0.471,
+    "free_discussion_engagement_correlation": 0.945,
+    "setup_tokens_in": 2196,
+    "setup_tokens_out": 1475,
+    "dialogue_tokens_in": 28982,
+    "dialogue_tokens_out": 1031,
+    "total_tokens_in": 31178,
+    "total_tokens_out": 2506,
+    "tokens_setup_in": 2196,
+    "tokens_setup_out": 1475,
+    "calls_setup": 1,
+    "tokens_utterance_in": 15764,
+    "tokens_utterance_out": 702,
+    "calls_utterance": 24,
+    "tokens_grounding_in": 11009,
+    "tokens_grounding_out": 191,
+    "calls_grounding": 17,
+    "tokens_repair_in": 1383,
+    "tokens_repair_out": 73,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 826,
+    "tokens_moderator_out": 65,
+    "calls_moderator": 3,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 2196,
+    "setup_tokens_out": 1475,
+    "dialogue_tokens_in": 28982,
+    "dialogue_tokens_out": 1031,
+    "total_tokens_in": 31178,
+    "total_tokens_out": 2506
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2196,
+      "out": 1475,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 15764,
+      "out": 702,
+      "calls": 24
+    },
+    "grounding": {
+      "in": 11009,
+      "out": 191,
+      "calls": 17
+    },
+    "repair": {
+      "in": 1383,
+      "out": 73,
+      "calls": 4
+    },
+    "moderator": {
+      "in": 826,
+      "out": 65,
+      "calls": 3
+    }
+  }
+}
