@@ -6,7 +6,7 @@ The moderator is optional visible scaffolding. The controller still owns the dec
 
 The moderator can perform:
 
-- opening / option board presentation;
+- opening / option board presentation (fixed neutral wording: board + shared context, then "Let's discuss which option fits best overall." — never criteria selected by the setup);
 - occasional mid-discussion nudges;
 - final vote calls;
 - closing.

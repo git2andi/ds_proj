@@ -32,8 +32,6 @@ _TOPIC_COUNT_PATTERNS = [
 ]
 _TOPIC_COUNT_WORDS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
 
-_INCOMPLETE_NAME_ENDINGS = frozenset({"a", "an", "the", "to", "from", "and", "or", "of", "in", "at", "by", "for", "with", "on", "via", "but", "&"})
-
 # --- I6: hard shared-context caps vs option attributes -----------------------
 # Soft qualifiers make a number a guideline, not a cap.
 _SOFT_CAP = re.compile(r"\b(?:around|about|roughly|approximately|moderate|flexible)\b", re.I)
@@ -368,8 +366,8 @@ def _clip_reason(text: str, limit: int = 11) -> str:
 
 def _option_hint(option: OptionCard, positive: bool) -> str:
     if positive:
-        return _clip_reason(option.best_for or option.upside, 10)
-    return _clip_reason(option.concern or option.tradeoff, 10)
+        return _clip_reason(option.upside, 10)
+    return _clip_reason(option.concern, 10)
 
 
 def _stance_from_option_table(row: dict[str, Any], labels: list[str], scenario: Scenario) -> dict[str, OptionStance]:
@@ -543,21 +541,25 @@ class SetupBuilder:
                 for k, v in (row.get("attrs") or {}).items()
                 if str(k).strip() and str(v).strip()
             }
+            # Manual mode has no retry loop: an invalid short_name is a config error.
+            short_name = validated_short_alias(name, str(row.get("short_name") or ""))
+            if not short_name:
+                raise ValueError(
+                    f"environment.manual.options[{idx}].short_name is missing or unusable: "
+                    f"{row.get('short_name')!r} (a concise natural alias of the option name is required)"
+                )
             options.append(OptionCard(
                 id=labels[idx],
                 name=name,
-                short_name=validated_short_alias(name, str(row.get("short_name") or "")),
+                short_name=short_name,
                 attrs=attrs,
                 upside=str(row.get("upside") or "").strip(),
-                tradeoff=str(row.get("tradeoff") or "").strip(),
                 concern=str(row.get("concern") or "").strip(),
-                best_for=str(row.get("best_for") or "").strip(),
             ))
+        self._require_unique_short_names(options)
         shared_context = [str(item).strip() for item in env.get("shared_context") or [] if str(item).strip()]
         scenario = Scenario(
             topic=self.topic,
-            decision_kind=str(env.get("decision_kind") or "generic_decision").strip(),
-            opening_question=str(env.get("opening_question") or "").strip() or prompts.DEFAULT_OPENING_QUESTION,
             options=options,
             shared_context=shared_context,
         )
@@ -570,8 +572,7 @@ class SetupBuilder:
         options_json = [
             {
                 "id": option.id, "name": option.name, "short_name": option.short_name,
-                "attrs": dict(option.attrs), "upside": option.upside,
-                "tradeoff": option.tradeoff, "concern": option.concern, "best_for": option.best_for,
+                "attrs": dict(option.attrs), "upside": option.upside, "concern": option.concern,
             }
             for option in options
         ]
@@ -605,7 +606,10 @@ class SetupBuilder:
     def _generate_personas(self, n: int, trait_rows: list[dict], required_preferences: dict[str, str],
                            options_json: list[dict], scenario: Scenario) -> list[Persona]:
         data = self._llm.generate_json(
-            prompts.setup_personas(self.topic, n, trait_rows, required_preferences, options_json),
+            prompts.setup_personas(
+                self.topic, n, trait_rows, required_preferences, options_json,
+                list(scenario.shared_context),
+            ),
             profile="setup",
         )
         return self._parse_personas(data.get("participants", []), trait_rows, scenario, required_preferences)
@@ -817,13 +821,12 @@ class SetupBuilder:
         options = [self._parse_option(item, labels[i]) for i, item in enumerate(options_raw[: len(labels)])]
         if len(options) != len(labels):
             raise ValueError("wrong number of options")
+        self._require_unique_short_names(options)
         ctx_raw = raw.get("shared_context", [])
         shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
         self._validate_participant_references(shared_context, n)
         return Scenario(
             topic=self.topic,
-            decision_kind=_require(raw.get("decision_kind"), "scenario.decision_kind"),
-            opening_question=_require(raw.get("opening_question"), "scenario.opening_question"),
             options=options,
             shared_context=shared_context,
         )
@@ -876,15 +879,20 @@ class SetupBuilder:
         if len(clean_attrs) < attr_min:
             raise ValueError("option has too few attributes")
         name = self._clean_name(_require(raw.get("name"), f"option {expected_id} name"))
+        # A missing/unusable short_name rejects this scenario attempt (setup
+        # retries); it is never repaired by clipping words from the full name.
+        short_name = validated_short_alias(name, str(raw.get("short_name") or ""))
+        if not short_name:
+            raise ValueError(
+                f"option {expected_id} short_name is missing or unusable: {raw.get('short_name')!r}"
+            )
         return OptionCard(
             id=str(raw.get("id") or expected_id).strip().upper(),
             name=name,
-            short_name=validated_short_alias(name, str(raw.get("short_name") or "")),
+            short_name=short_name,
             attrs=clean_attrs,
             upside=_require(raw.get("upside"), f"option {expected_id} upside"),
-            tradeoff=_require(raw.get("tradeoff"), f"option {expected_id} tradeoff"),
             concern=_require(raw.get("concern"), f"option {expected_id} concern"),
-            best_for=_require(raw.get("best_for") or raw.get("best for"), f"option {expected_id} best_for"),
         )
 
     def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario,
@@ -986,34 +994,21 @@ class SetupBuilder:
 
     @staticmethod
     def _clean_name(raw: str) -> str:
-        """Normalize an option name without treating cosmetic length as a setup failure.
+        """Whitespace-normalize an option name. Full names are never shortened
+        or otherwise mutated; concise references come from short_name."""
+        return " ".join(str(raw).split())
 
-        The option name is not part of the factual source of truth; the full option
-        card still carries attributes, upside, tradeoff, and concern. Earlier
-        versions truncated at option_name_max_words and aborted when the cut ended
-        on a function word. That made valid travel names such as
-        "Two-stop flight with short layovers in Boston and Copenhagen" fail even
-        though the scenario was usable.
-
-        We therefore keep complete names up to a permissive cap and only shorten
-        genuinely excessive names. If shortening is required, we avoid ending on
-        connector words, but we do not fail the whole run for name wording.
-        """
-        words = str(raw).split()
-        if not words:
-            return ""
-
-        configured_cap = int(cfg.scenario.option_name_max_words)
-        # Cosmetic names produced by slower/local models are often 9-12 words.
-        # Treat the configured cap as a display target, not as a hard validator.
-        hard_cap = max(configured_cap, 12)
-        if len(words) <= hard_cap:
-            return " ".join(words)
-
-        shortened = words[:hard_cap]
-        while len(shortened) > 2 and shortened[-1].lower().strip(",.;:-") in _INCOMPLETE_NAME_ENDINGS:
-            shortened.pop()
-        return " ".join(shortened)
+    @staticmethod
+    def _require_unique_short_names(options: list[OptionCard]) -> None:
+        seen: dict[str, str] = {}
+        for option in options:
+            key = option.short_name.casefold()
+            if key in seen:
+                raise ValueError(
+                    f"options {seen[key]} and {option.id} share the short_name {option.short_name!r}; "
+                    "short names must be unique"
+                )
+            seen[key] = option.id
 
     @staticmethod
     def _validate_preference_assignments(

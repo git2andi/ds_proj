@@ -23,8 +23,8 @@ _PROFILE_FIELDS = frozenset({
 })
 
 # Field names accepted in a manual environment (environment.manual).
-_MANUAL_ENV_FIELDS = frozenset({"topic", "decision_kind", "opening_question", "shared_context", "options"})
-_MANUAL_OPTION_FIELDS = frozenset({"id", "name", "short_name", "attrs", "upside", "tradeoff", "concern", "best_for"})
+_MANUAL_ENV_FIELDS = frozenset({"topic", "shared_context", "options"})
+_MANUAL_OPTION_FIELDS = frozenset({"id", "name", "short_name", "attrs", "upside", "concern"})
 
 
 def parse_preference_shape(value: Any) -> tuple[int, ...]:

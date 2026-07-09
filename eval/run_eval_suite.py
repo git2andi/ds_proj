@@ -128,29 +128,21 @@ def option(
     name: str,
     attrs: dict[str, str],
     upside: str,
-    tradeoff: str,
     concern: str,
-    best_for: str,
-    short_name: str | None = None,
+    short_name: str,
 ) -> dict[str, Any]:
-    data = {
+    return {
         "id": option_id,
         "name": name,
         "attrs": attrs,
         "upside": upside,
-        "tradeoff": tradeoff,
         "concern": concern,
-        "best_for": best_for,
+        "short_name": short_name,
     }
-    if short_name:
-        data["short_name"] = short_name
-    return data
 
 
 RESTAURANT_ENV = {
     "topic": "Choose a restaurant for a mixed-preference group dinner",
-    "decision_kind": "restaurant_choice",
-    "opening_question": "Which restaurant gives the best compromise between price, dietary fit, travel time, and atmosphere?",
     "shared_context": [
         "The group wants dinner this Friday after work.",
         "The budget target is around 25 euros per person.",
@@ -162,9 +154,7 @@ RESTAURANT_ENV = {
             "Corner Ramen",
             {"price": "18 euros", "travel": "10 minutes by tram", "vegetarian": "two vegetarian bowls"},
             "warm, quick, and easy to organize",
-            "limited non-soup options",
             "may not feel special enough for everyone",
-            "a low-effort dinner with predictable timing",
             "Ramen",
         ),
         option(
@@ -172,9 +162,7 @@ RESTAURANT_ENV = {
             "La Piazza",
             {"price": "26 euros", "travel": "18 minutes by bus", "vegetarian": "several pasta and pizza options"},
             "broad menu and relaxed atmosphere",
-            "slightly above the target budget",
             "can become noisy on Fridays",
-            "a familiar compromise for mixed tastes",
             "Piazza",
         ),
         option(
@@ -182,9 +170,7 @@ RESTAURANT_ENV = {
             "Green Table",
             {"price": "24 euros", "travel": "20 minutes walking", "vegetarian": "mostly vegetarian menu"},
             "best dietary fit and calm setting",
-            "less appealing for people wanting meat dishes",
             "some may see it as too niche",
-            "a dietary-safe and quieter dinner",
             "Green Table",
         ),
         option(
@@ -192,9 +178,7 @@ RESTAURANT_ENV = {
             "Burger Cellar",
             {"price": "21 euros", "travel": "8 minutes walking", "vegetarian": "one vegetarian burger"},
             "closest and casual",
-            "weakest vegetarian variety",
             "may not satisfy the dietary requirement well",
-            "a cheap, easy, informal choice",
             "Burger Cellar",
         ),
     ],
@@ -202,8 +186,6 @@ RESTAURANT_ENV = {
 
 WEEKEND_ENV = {
     "topic": "Choose a weekend activity for three friends with different energy levels",
-    "decision_kind": "activity_choice",
-    "opening_question": "Which activity balances cost, effort, travel, and enough flexibility for everyone?",
     "shared_context": [
         "The group only has Saturday available.",
         "Nobody wants to spend more than 60 euros.",
@@ -215,9 +197,7 @@ WEEKEND_ENV = {
             "Museum and Cafe Day",
             {"cost": "24 euros", "travel": "15 minutes by subway", "duration": "4 hours"},
             "low effort and easy to adjust",
-            "less exciting for active participants",
             "may feel too quiet",
-            "a relaxed low-risk day",
             "Museum",
         ),
         option(
@@ -225,9 +205,7 @@ WEEKEND_ENV = {
             "Lake Bike Ride",
             {"cost": "12 euros", "travel": "25 minutes by train", "duration": "6 hours"},
             "active and inexpensive",
-            "physically demanding",
             "bad fit for someone tired",
-            "a cheap outdoor activity",
             "Bike Ride",
         ),
         option(
@@ -235,9 +213,7 @@ WEEKEND_ENV = {
             "Escape Room",
             {"cost": "32 euros", "travel": "20 minutes by tram", "duration": "2 hours"},
             "interactive and memorable",
-            "shorter than a full-day plan",
             "less flexible once booked",
-            "a focused group activity",
             "Escape Room",
         ),
         option(
@@ -245,9 +221,7 @@ WEEKEND_ENV = {
             "Home Cooking Night",
             {"cost": "18 euros", "travel": "none", "duration": "5 hours"},
             "cheapest and most flexible",
-            "requires planning and cleanup",
             "may feel too ordinary",
-            "a flexible low-cost option",
             "Cooking",
         ),
     ],
@@ -255,8 +229,6 @@ WEEKEND_ENV = {
 
 COFFEE_ENV = {
     "topic": "Choose a coffee machine for a small shared office kitchen",
-    "decision_kind": "purchase_choice",
-    "opening_question": "Which machine is the best fit for price, reliability, maintenance, and daily throughput?",
     "shared_context": [
         "The maximum budget is 320 euros.",
         "The kitchen counter is small.",
@@ -268,9 +240,7 @@ COFFEE_ENV = {
             "Moccamaster KBG Select",
             {"cost": "299 euros", "type": "filter", "capacity": "10 cups"},
             "reliable for shared pots",
-            "no espresso or milk drinks",
             "highest upfront cost",
-            "teams that drink regular filter coffee",
             "Moccamaster",
         ),
         option(
@@ -278,9 +248,7 @@ COFFEE_ENV = {
             "DeLonghi Dedica",
             {"cost": "179 euros", "type": "espresso", "capacity": "single shots"},
             "compact and good for espresso",
-            "slower for many users",
             "requires more hands-on use",
-            "small espresso-focused teams",
             "Dedica",
         ),
         option(
@@ -288,9 +256,7 @@ COFFEE_ENV = {
             "Philips Senseo Switch",
             {"cost": "119 euros", "type": "pads and filter", "capacity": "7 cups"},
             "flexible and cheap",
-            "pad waste and weaker taste",
             "less premium build",
-            "mixed casual use on a budget",
             "Senseo",
         ),
         option(
@@ -298,9 +264,7 @@ COFFEE_ENV = {
             "Ninja Filter Brewer",
             {"cost": "149 euros", "type": "filter", "capacity": "12 cups"},
             "large capacity for the price",
-            "larger footprint",
             "less compact than the others",
-            "high-volume budget coffee",
             "Ninja",
         ),
     ],
@@ -308,8 +272,6 @@ COFFEE_ENV = {
 
 ROOMMATE_ENV = {
     "topic": "Choose whether two roommates should upgrade cleaning at home",
-    "decision_kind": "purchase_choice",
-    "opening_question": "Which purchase best addresses the shared cleaning problem without creating a new burden?",
     "shared_context": [
         "Two roommates share the apartment costs equally.",
         "The maximum budget is 450 euros.",
@@ -322,8 +284,6 @@ ROOMMATE_ENV = {
             {"cost": "260 euros", "task": "daily floor cleaning", "space": "needs clear floor paths"},
             "reduces visible dust without manual effort",
             "does not help with dishes or kitchen cleanup",
-            "can get stuck if the floor is cluttered",
-            "someone who mainly worries about floors",
             "Robot Vacuum",
         ),
         option(
@@ -331,9 +291,7 @@ ROOMMATE_ENV = {
             "Bosch Compact Dishwasher",
             {"cost": "430 euros", "task": "daily dishes", "space": "uses counter space"},
             "removes the most common kitchen chore",
-            "near the top of the budget and takes space",
             "does not help with dust or floors",
-            "someone who mainly worries about dishes",
             "Dishwasher",
         ),
         option(
@@ -341,9 +299,7 @@ ROOMMATE_ENV = {
             "Monthly Cleaning Service Trial",
             {"cost": "80 euros per month", "task": "general cleaning", "duration": "three-month trial"},
             "covers several chores without buying equipment",
-            "recurring cost instead of a one-time purchase",
             "depends on scheduling someone to come in",
-            "testing whether outside help reduces conflict",
             "Cleaning Trial",
         ),
         option(
@@ -351,9 +307,7 @@ ROOMMATE_ENV = {
             "Shared Cleaning Supplies Kit",
             {"cost": "70 euros", "task": "manual cleaning", "storage": "small closet box"},
             "cheap and easy to start immediately",
-            "still requires both roommates to do the work",
             "may not change habits enough",
-            "a low-cost reset before buying a device",
             "Supplies Kit",
         ),
     ],

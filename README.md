@@ -20,6 +20,12 @@ symbolic controller + LLM utterance renderer + parser/validator feedback loop
 
 The controller owns phase logic, speaker choice, macro-act choice, option focus, narrowing, and outcome rules. The LLM only renders one natural utterance for the controller's current intent.
 
+## Scenario schema
+
+A scenario is exactly `topic` + `shared_context` + `options`. Shared context is the public source of truth: facts every participant knows (group constraints, hard caps, timing). Each option card has `id`, `name`, `short_name`, `attrs`, `upside`, and `concern` — no `decision_kind`, generated `opening_question`, `tradeoff`, or `best_for` fields exist.
+
+Attributes are topic-specific and chosen by the setup LLM; the prompt gives no example dimensions and the code hard-codes no preferred ones. `short_name` is a required concise natural alias (unique, copied from the name, never derived by clipping). The moderator opening is fixed and neutral: board + context, then "Let's discuss which option fits best overall."
+
 ## Stance model
 
 Private stance is stored as one central per-sim/per-option rank table:
@@ -60,7 +66,7 @@ Generated and manual profiles are checked for obvious age/profile contradictions
 
 ## Chat-level discussion agenda
 
-The project no longer uses per-sim scripted agendas to steer the discussion. Remaining pre-vote work is tracked as a chat-level `DialogueState.discussion_agenda` checklist. It covers global discussion needs such as option coverage and major tradeoff coverage.
+The project no longer uses per-sim scripted agendas to steer the discussion. Remaining pre-vote work is tracked as a chat-level `DialogueState.discussion_agenda` checklist. It covers global discussion needs: brief visibility for every option, a top-option comparison, and an optional concern check focused on the likely winner — never a mechanical concern sweep over all options.
 
 Persona-specific reasons still exist through `OptionStance.reason_for` and `OptionStance.reason_against`. This keeps personal perspectives without adding a second agenda system.
 

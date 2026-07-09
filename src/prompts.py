@@ -18,8 +18,10 @@ from parsing import unused_commitment_phrases
 from utils import compact_words
 
 
-# Fallback opening question for manual environments that do not specify one.
-DEFAULT_OPENING_QUESTION = "What matters most to each of us in this decision?"
+# Fixed neutral line that opens general discussion after the option board.
+# Deliberately criteria-free: the setup must not steer the first turns toward
+# predefined decision dimensions.
+NEUTRAL_OPENING_LINE = "Let's discuss which option fits best overall."
 
 
 def _schema(obj: object) -> str:
@@ -42,10 +44,8 @@ def setup_scenario(topic: str, n: int) -> str:
     labels = list(cfg.scenario.option_labels)
     schema = {
         "scenario": {
-            "decision_kind": "restaurant_choice | travel_destination | tool_choice | activity_choice | schedule_choice | purchase_choice | generic_decision",
-            "opening_question": "one casual question about priorities and trade-offs",
             "shared_context": [
-                "2-3 facts everyone knows before the discussion: timing, budget, group size, goal, or constraints"
+                "2-3 public facts every participant knows before the discussion"
             ],
             "options": [
                 {
@@ -53,13 +53,11 @@ def setup_scenario(topic: str, n: int) -> str:
                     "name": "specific realistic option name",
                     "short_name": "1-2 recognizable words copied from name",
                     "attrs": {
-                        "cost/time/effort/etc": "stable value",
-                        "other_relevant_attribute": "stable value",
+                        "attribute_name": "stable value",
+                        "another_attribute": "stable value",
                     },
                     "upside": "specific benefit",
-                    "tradeoff": "specific downside or cost",
                     "concern": "stable objection people could raise",
-                    "best_for": "priority this option serves",
                 }
                 for label in labels
             ],
@@ -76,11 +74,12 @@ Rules:
 - Each option name must be specific, realistic, and not a generic category.
 - Keep option names concise, ideally 3-10 words.
 - Option names must be complete noun phrases; do not end with words like "with", "in", "and", "on", "departing", "including", or a comma.
-- Every option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} concrete attributes with stable values.
+- Every option needs a short_name: a concise natural alias of 1-{cfg.scenario.short_alias_max_words} words copied from its name, unique across options.
+- Every option must have {cfg.scenario.public_attr_min}-{cfg.scenario.public_attr_max} concrete attributes with stable values. Choose attributes that are natural for this topic.
 - Do not use unknown, TBD, live availability, current weather, or facts that need internet lookup.
 - Options should expose real trade-offs, not one obvious winner.
-- shared_context must be general context known to everyone, not hidden persona facts.
-- If shared_context states a numeric limit (budget cap, max distance, max duration), every option must satisfy it — never create an option that violates a stated cap.
+- shared_context is the public source of truth: facts known by ALL participants before the discussion. Never put private-only or single-person information there.
+- If shared_context states a hard numeric limit, every option must satisfy it — never create an option that violates a stated cap.
 - If shared_context mentions the group size, it must say exactly {n}.
 
 Return JSON only:
@@ -93,6 +92,7 @@ def setup_personas(
     trait_rows: list[dict],
     required_preferences: dict[str, str],
     options_json: list[dict],
+    shared_context: list[str],
 ) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
     # Manual participant profiles may fix persona fields; tell the LLM to keep
@@ -125,9 +125,12 @@ def setup_personas(
             }
         ]
     }
+    context_lines = "\n".join(f"- {item}" for item in shared_context) or "- none"
     return f"""Create {n} simulated users for an option-grounded group decision.
 
 Topic: {topic}
+Shared context (public facts every participant knows):
+{context_lines}
 Options:
 {json.dumps(options_json, ensure_ascii=False, indent=2)}
 
@@ -156,6 +159,7 @@ Rules:
 - For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
 - For all other participants, rejection must be null.
 - background and private_goal must be one sentence each, specific to this topic, grounded in the option cards/shared context, and age-plausible.
+- Backgrounds, private goals, and constraints must fit the shared context where relevant and must never contradict it (group size, hard caps, timing, or other public facts).
 - For participants with agreeableness above 1, phrase needs as preferences ("prefers", "values", "cares most about"), never as absolute constraints ("cannot", "must", "refuses", "allergic", "strictly").
 - background and private_goal must be consistent with the participant's assigned primary preference: the goal should explain why they would initially lean toward that option, and must never state a need that the preferred option's card explicitly fails to meet.{fixed_field_rule}
 
@@ -178,7 +182,7 @@ def moderator_opening(scenario: Scenario) -> str:
             for item in context_items
         )
         lines.append("Context: " + context.rstrip(".") + ".")
-    lines.append(compact_words(scenario.opening_question, 20))
+    lines.append(NEUTRAL_OPENING_LINE)
     return "\n".join(lines)
 
 
@@ -608,7 +612,7 @@ feature name, or measurement that does not appear in the cards/context is
 UNSUPPORTED — even if the rest of the message expresses uncertainty, and even if
 it sounds plausible. The only allowed new numbers are simple arithmetic on listed
 numbers (a group total, a difference, a per-person split). If every concrete
-claim traces back to the right option's attribute, upside, tradeoff, or concern —
+claim traces back to the right option's attribute, upside, or concern —
 or is such reasoning, arithmetic, or uncertainty — reply false.
 
     Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
@@ -626,12 +630,8 @@ def _grounding_cards(options: Iterable[OptionCard]) -> str:
         facts = [f"{k.replace('_', ' ')}={v}" for k, v in option.attrs.items()]
         if option.upside:
             facts.append(f"upside={option.upside}")
-        if option.tradeoff:
-            facts.append(f"tradeoff={option.tradeoff}")
         if option.concern:
             facts.append(f"concern={option.concern}")
-        if option.best_for:
-            facts.append(f"best_for={option.best_for}")
         rows.append(f"- {option.id}) {option.name}: " + compact_words("; ".join(facts), 46))
     return "\n".join(rows)
 

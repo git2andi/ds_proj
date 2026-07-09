@@ -38,33 +38,30 @@ environment:
   #   manual = the scenario is built deterministically from manual: below; the scenario
   #            LLM call is skipped and no CLI topic is needed (a given one is ignored).
   # Manual environments must define exactly len(scenario.option_labels) options, each
-  # with a name and at least one factual attribute; upside/tradeoff/concern/best_for/
-  # short_name are optional. Constraints (budget/distance/duration caps) belong in
+  # with a name, a valid concise short_name, and at least one factual attribute;
+  # upside/concern are optional. Constraints (budget/distance/duration caps) belong in
   # shared_context — hard numeric caps are parsed from there and the options are
   # checked against them at startup (a violation is a config error, never a silent
-  # rewrite). decision_kind and opening_question fall back to neutral defaults.
-  # Pacing/stopping conditions stay under conversation: and consensus:.
+  # rewrite). The moderator opening ends with a fixed neutral line; there is no
+  # opening_question or decision_kind field. Pacing/stopping conditions stay under
+  # conversation: and consensus:.
   mode: auto   # auto | manual
   manual: {}
   # manual:
   #   topic: "Choose a coffee machine for the office"
-  #   decision_kind: "purchase_choice"                 # optional
-  #   opening_question: "What matters most: price, speed, or taste?"  # optional
   #   shared_context:
   #     - "Budget is capped at $300"
   #     - "The machine must fit the small kitchen counter"
   #   options:
   #     - name: "Moccamaster KBG Select"
-  #       short_name: "Moccamaster"                    # optional
+  #       short_name: "Moccamaster"                    # required, concise natural alias
   #       attrs: {cost: "$290", brew time: "6 minutes", type: "filter"}
-  #       upside: "very durable and fast for full pots" # optional, like the rest
-  #       tradeoff: "no espresso or milk drinks"
-  #       concern: "highest price in the lineup"
-  #       best_for: "steady team-wide filter coffee"
+  #       upside: "very durable and fast for full pots" # optional
+  #       concern: "highest price in the lineup"        # optional
   #     - name: "..."   # exactly as many options as scenario.option_labels
 
 simulation:
-  num_participants: 5                 # how many sims join the discussion
+  num_participants: 3                 # how many sims join the discussion
   min_participants: 2                 # allowed range (validation + corpus-preset clamping)
   max_participants: 7
   random_seed: null                   # int = reproducible controller decisions; null = random each run
@@ -109,7 +106,6 @@ scenario:
   public_attr_min: 3                  # attributes per option card (min..max)
   public_attr_max: 5
   option_prompt_max_words: 34         # word cap on card text as shown inside sim prompts
-  option_name_max_words: 12           # cap on generated option names
   option_board_attr_max: 3            # attrs shown in transcript/moderator opening; full facts remain available to prompts
   option_board_note_max_words: 9      # length of the +/- notes in the shown board
   shared_context_max_items: 3         # shared facts like "budget is $500" (count / words each)

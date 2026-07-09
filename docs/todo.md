@@ -25,4 +25,4 @@ py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
 
 ## Open todos
 
-None. The v10 stabilization/simplification round (simulator-parameter model, OCEAN derivation, speech_style rename, age bands, engagement-only turn share, verbosity-only word budgets, deterministic question obligations, dialogue-state move logic, stubbornness merge, prompt simplification, eval fixtures/labels, docs) was completed on 2026-07-09 and verified with a full eval suite pass (12/12 cases, rc=0, no unsupported printed turns, no blocker violations).
+None. The scenario-simplification round (removed generated `opening_question` + `decision_kind`, fixed neutral moderator opening, removed `tradeoff`/`best_for` from option cards, strict no-clipping `short_name` validation, public shared_context with persona alignment, topic-natural attributes without prompt examples, fixture/log/doc updates) was completed on 2026-07-09 and verified with a full eval suite pass (12/12 cases rc=0, no removed fields in generated logs, no unsupported printed turns, no blocker violations).

@@ -66,9 +66,7 @@ class OptionCard:
     name: str
     attrs: dict[str, str] = field(default_factory=dict)
     upside: str = ""
-    tradeoff: str = ""
     concern: str = ""
-    best_for: str = ""
     short_name: str = ""
 
     def public_line(self, max_attrs: int = 3, note_words: int = 9) -> str:
@@ -80,8 +78,8 @@ class OptionCard:
         suffix_bits: list[str] = []
         if self.upside:
             suffix_bits.append(f"+ {_clip_words(self.upside, note_words)}")
-        if self.tradeoff:
-            suffix_bits.append(f"− {_clip_words(self.tradeoff, note_words)}")
+        if self.concern:
+            suffix_bits.append(f"− {_clip_words(self.concern, note_words)}")
         suffix = f" ({'; '.join(suffix_bits)})" if suffix_bits else ""
         return f"{self.id}) {self.name}" + (f" — {details}" if details else "") + suffix
 
@@ -91,9 +89,7 @@ class OptionCard:
             f"{self.id}) {self.name}",
             f"attrs: {attrs}" if attrs else "attrs: none",
             f"upside: {self.upside}" if self.upside else "",
-            f"tradeoff: {self.tradeoff}" if self.tradeoff else "",
             f"concern: {self.concern}" if self.concern else "",
-            f"best_for: {self.best_for}" if self.best_for else "",
         ]
         return "; ".join(p for p in pieces if p)
 
@@ -106,29 +102,17 @@ def _clip_words(text: str, limit: int) -> str:
 
 
 def ordered_attrs(attrs: dict[str, str]) -> list[tuple[str, str]]:
-    priority = [
-        "cost", "price", "budget", "wait", "duration", "time", "length", "pages",
-        "genre", "rating", "release", "difficulty", "availability", "flight",
-        "departure", "arrival", "baggage", "distance", "drive", "capacity",
-        "temperature", "ambiance", "setting", "activity", "effort", "battery",
-        "comfort", "privacy", "accuracy", "safety", "space", "yield", "maintenance",
-    ]
+    """Attributes in the order the setup provided them.
 
-    def rank_for(key: str) -> tuple[int, str]:
-        normalised = key.lower().replace("_", " ")
-        for index, needle in enumerate(priority):
-            if needle in normalised:
-                return index, normalised
-        return 999, normalised
-
-    return sorted(attrs.items(), key=lambda item: rank_for(item[0]))
+    No hard-coded dimension priority: the setup chooses attributes that are
+    natural for the topic, and its own ordering is kept for display.
+    """
+    return list(attrs.items())
 
 
 @dataclass(slots=True)
 class Scenario:
     topic: str
-    decision_kind: str
-    opening_question: str
     options: list[OptionCard]
     shared_context: list[str] = field(default_factory=list)
     environment_type: str = "option_grounded_group_decision"

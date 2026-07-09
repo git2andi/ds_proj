@@ -7,21 +7,37 @@ The environment defines the factual decision space. It should provide enough sha
 `environment.mode = auto`:
 
 - the CLI topic is sent to the setup LLM;
-- the setup LLM creates the topic framing, shared context, opening question, and option cards;
-- generated options are validated before the discussion starts.
+- the setup LLM creates the shared context and option cards (nothing else — there is no generated opening question or decision-kind category);
+- generated options are validated before the discussion starts; an invalid attempt (including a missing/unusable/duplicate `short_name`) is rejected and retried.
 
 `environment.mode = manual`:
 
-- `environment.manual` in `config.yaml` defines the topic, context, and options;
+- `environment.manual` in `config.yaml` defines the topic, shared context, and options;
 - the CLI topic is ignored;
 - the scenario setup LLM call is skipped;
 - this is the preferred mode for controlled tests.
 
-## Option board
+## Scenario schema
 
-The option board is the source of truth. Each option should have an ID, name, concrete attributes, upside, tradeoff, concern, best-for note, and preferably a short alias.
+A scenario is exactly:
 
-The board should expose tradeoffs. Avoid one obvious winner unless the goal is to test quick consensus.
+```text
+topic
+shared_context   (public facts every participant knows — the public source of truth)
+options          (one card per option label)
+```
+
+Each option card has: `id`, `name`, `short_name`, `attrs`, `upside`, `concern`.
+
+- `attrs` are concrete, stable, topic-natural attributes. The setup LLM chooses which attributes fit the topic; the prompt gives no example dimensions and the code hard-codes no preferred dimensions.
+- `upside` is one positive argument; `concern` is one stable likely objection. There is no separate `tradeoff` or `best_for` field.
+- `short_name` is a required concise natural alias copied from the name, unique across options. It is never derived by clipping words from the full name; full names are never mutated.
+
+The board should expose real trade-offs. Avoid one obvious winner unless the goal is to test quick consensus.
+
+## Moderator opening
+
+The moderator opening is fixed and neutral: it introduces the topic, lists the option board and shared context, then ends with the criteria-free line "Let's discuss which option fits best overall." The setup never selects concrete decision dimensions for the first turns.
 
 ## Grounding rule
 

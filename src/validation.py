@@ -484,7 +484,7 @@ class ValidationMixin:
         shared = set(re.findall(r"[a-z0-9]{4,}", " ".join(state.scenario.shared_context).lower()))
         generic_fact_tokens = {
             "cost", "price", "minutes", "minute", "hours", "hour", "people", "person",
-            "group", "option", "upside", "tradeoff", "concern", "best", "short",
+            "group", "option", "upside", "concern", "best", "short",
             "works", "work", "better", "flexible", "flexibility", "quality", "simple",
             "standard", "original", "select", "classic", "premium", "basic", "plus",
             "route", "parking", "booking", "reservation", "weather", "indoor", "outdoor",

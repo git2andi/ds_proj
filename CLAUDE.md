@@ -14,6 +14,10 @@ state -> route speaker/macro-act/target/focus -> generate one utterance -> valid
 
 The LLM renders utterances. The controller owns phase logic, routing, narrowing, and final outcome rules.
 
+## Scenario model
+
+A scenario is exactly `topic` + `shared_context` + `options`; option cards carry `id`, `name`, `short_name`, `attrs`, `upside`, `concern`. There is no `decision_kind`, generated `opening_question`, `tradeoff`, or `best_for`. `shared_context` is the public source of truth known by all participants; personas must align with it. Attributes are topic-natural and chosen by the setup LLM — do not add example dimensions to the setup prompt or hard-code preferred dimensions. `short_name` is required, unique, and never derived by clipping; an invalid generated one rejects the attempt (retry), an invalid manual one is a config error. The moderator opening is fixed and neutral ("Let's discuss which option fits best overall.").
+
 ## Current stance model
 
 Private stance is stored as one per-sim/per-option rank table:

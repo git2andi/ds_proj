@@ -36,36 +36,25 @@ def validated_short_alias(option_name: str, proposed: str) -> str:
     return alias
 
 
-def deterministic_alias(option_name: str) -> str:
-    words = _words(option_name)
-    if len(words) <= int(cfg.scenario.short_alias_max_words):
-        return option_name.strip()
-    content = [word for word in words if word.lower() not in _STOPWORDS]
-    chosen = (content or words)[:2]
-    return " ".join(chosen)
-
-
 def short_alias_map(options: Iterable[Any]) -> dict[str, str]:
-    """Return unique, parser-safe display aliases for a complete option set."""
+    """Return unique display aliases for a complete option set.
+
+    Setup guarantees every option carries a valid, unique short_name (invalid
+    generated ones reject the scenario attempt; invalid manual ones are a
+    config error), so no clipped fallback aliases are ever derived here. The
+    full-name fallback only protects against objects built outside setup.
+    """
     option_list = list(options)
     aliases = {
-        option.id: validated_short_alias(option.name, getattr(option, "short_name", ""))
-        or deterministic_alias(option.name)
+        option.id: (getattr(option, "short_name", "") or option.name).strip()
         for option in option_list
     }
     owners: dict[str, list[str]] = {}
     for option_id, alias in aliases.items():
         owners.setdefault(alias.casefold(), []).append(option_id)
-    collisions = {option_id for ids in owners.values() if len(ids) > 1 for option_id in ids}
-    if collisions:
-        for option in option_list:
-            if option.id in collisions:
-                aliases[option.id] = deterministic_alias(option.name)
-        owners.clear()
-        for option_id, alias in aliases.items():
-            owners.setdefault(alias.casefold(), []).append(option_id)
-        collisions = {option_id for ids in owners.values() if len(ids) > 1 for option_id in ids}
-        for option in option_list:
-            if option.id in collisions:
-                aliases[option.id] = option.name
+    for ids in owners.values():
+        if len(ids) > 1:
+            for option in option_list:
+                if option.id in ids:
+                    aliases[option.id] = option.name.strip()
     return aliases

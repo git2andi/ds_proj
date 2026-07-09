@@ -1097,8 +1097,6 @@ class PolicyMixin:
             card = state.scenario.option(target)
             if card.upside:
                 return card.upside
-            if card.best_for:
-                return f"works for {card.best_for}"
             if card.attrs:
                 key, value = next(iter(card.attrs.items()))
                 return f"{key.replace('_', ' ')}: {value}"
