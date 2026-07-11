@@ -635,8 +635,13 @@ def parse_dialogue_act(
         elif stance == "reject":
             soft_rejects[option_id] = text
     elif option_refs:
-        if _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text):
-            soft_rejects[option_refs[0]] = text
+        objection = _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text)
+        if objection:
+            # The objection binds to the option named nearest the objection
+            # phrase ("A seems too expensive, while B fits better" objects to
+            # A) — option_refs order is alias-match order, not textual order.
+            target = _nearest_option(check_text, objection.start(), objection.end(), resolver)
+            soft_rejects[target or option_refs[0]] = text
 
     blocker = active_blocker_option(check_text, resolver)
     if blocker and blocker != explicit_vote:
@@ -712,6 +717,12 @@ def realized_comparison(text: str, resolver: OptionResolver) -> bool:
     (a comparative question realizes ASK *and* a comparison)."""
     check = text.replace("’", "'").replace("‘", "'")
     return len(set(resolver.ids_in_text(check))) >= 2 and bool(_COMPARATIVE.search(check))
+
+
+def has_support_claim(text: str) -> bool:
+    """Visible benefit-claim wording (the realized-SUPPORT signal), usable as
+    independent evidence when another act won the realized-act precedence."""
+    return bool(_PRO_CLAIM.search(text.replace("’", "'")))
 
 
 def _realized_act_type(

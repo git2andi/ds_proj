@@ -69,5 +69,67 @@ class CommentSemanticsTests(unittest.TestCase):
         self.assertEqual(len(state.threads), 1)
 
 
+class CoverageEvidenceTests(unittest.TestCase):
+    """Closeout 5: coverage updates from per-option semantic evidence, not
+    only the dominant realized act label."""
+
+    def setUp(self):
+        random.seed(63)
+        self.state = make_state()
+        self.runner = make_runner(self.state)
+
+    def _apply(self, pid, text, intent):
+        from tests.fixtures import append_turn
+
+        record = append_turn(self.state, pid, text, intent=intent)
+        self.runner._apply_semantics(self.state, record)
+        return record
+
+    def test_comparative_question_counts_comparison_evidence(self):
+        intent = MoveIntent(speaker_id="p2", act=ActType.ASK, reason="ask", option_focus=["A", "B"])
+        record = self._apply(
+            "p2", "Back to the Museum versus the Bike Ride: which actually fits a tired group?", intent
+        )
+        self.assertEqual(record.act.act_type, ActType.ASK)  # question wins the label
+        self.assertEqual(self.state.coverage["A"].reasons, 1)
+        self.assertEqual(self.state.coverage["B"].reasons, 1)
+
+    def test_answer_containing_objection_counts_objection(self):
+        intent = MoveIntent(speaker_id="p2", act=ActType.ANSWER, reason="answer", option_focus=["C"])
+        self._apply("p2", "Honestly the Escape Room cost bothers me.", intent)
+        self.assertEqual(self.state.coverage["C"].objections, 1)
+        self.assertEqual(self.state.coverage["C"].reasons, 0)
+
+    def test_opening_with_support_and_concern_splits_evidence(self):
+        intent = MoveIntent(speaker_id="p1", act=ActType.OPENING, reason="open", option_focus=["A"])
+        self._apply(
+            "p1", "The Museum seems too expensive for what it offers, while the Bike Ride fits us much better.", intent
+        )
+        self.assertEqual(self.state.coverage["A"].objections, 1)
+        self.assertEqual(self.state.coverage["A"].reasons, 0)
+        self.assertEqual(self.state.coverage["B"].reasons, 1)
+        self.assertEqual(self.state.coverage["B"].objections, 0)
+
+    def test_neutral_mention_counts_mention_only(self):
+        intent = MoveIntent(speaker_id="p2", act=ActType.COMMENT, reason="light beat", option_focus=["A"])
+        self._apply("p2", "The Museum is on the list, sure.", intent)
+        self.assertEqual(self.state.coverage["A"].mentions, 1)
+        self.assertEqual(self.state.coverage["A"].reasons, 0)
+        self.assertEqual(self.state.coverage["A"].objections, 0)
+
+    def test_ordinary_support_and_comparison_turns_count_reasons(self):
+        self._apply(
+            "p1", "The Museum keeps the day easy to adjust.",
+            MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="support", option_focus=["A"]),
+        )
+        self.assertEqual(self.state.coverage["A"].reasons, 1)
+        self._apply(
+            "p2", "The Museum beats the Bike Ride on flexibility for us.",
+            MoveIntent(speaker_id="p2", act=ActType.COMPARE, reason="compare", option_focus=["A", "B"]),
+        )
+        self.assertEqual(self.state.coverage["A"].reasons, 2)
+        self.assertEqual(self.state.coverage["B"].reasons, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

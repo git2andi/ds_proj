@@ -70,6 +70,26 @@ class IntentTextMismatchTests(unittest.TestCase):
         self._apply("p3", "The Museum and the Bike Ride both have something going for them.", intent)
         self.assertEqual(self.state.runtimes["p3"].top_option(), "C")  # unchanged initial preference
 
+    def test_opening_contrast_never_promotes_the_rejected_routed_option(self):
+        # Closeout 3: "A seems too expensive, while B fits us much better"
+        # must lean B — the routed favorite is visibly objected to.
+        intent = MoveIntent(speaker_id="p1", act=ActType.OPENING, reason="open", option_focus=["A"])
+        record = self._apply(
+            "p1", "The Museum seems too expensive for what it offers, while the Bike Ride fits us much better.", intent
+        )
+        self.assertIn("A", record.act.soft_rejects)
+        self.assertEqual(self.state.runtimes["p1"].top_option(), "B")
+
+    def test_opening_supporting_the_routed_option_promotes_it(self):
+        intent = MoveIntent(speaker_id="p2", act=ActType.OPENING, reason="open", option_focus=["A"])
+        self._apply("p2", "The Museum keeps things easy to adjust, which suits me.", intent)
+        self.assertEqual(self.state.runtimes["p2"].top_option(), "A")
+
+    def test_opening_with_no_positive_option_moves_nothing(self):
+        intent = MoveIntent(speaker_id="p1", act=ActType.OPENING, reason="open", option_focus=["A"])
+        self._apply("p1", "Honestly, the Escape Room seems too expensive to me.", intent)
+        self.assertEqual(self.state.runtimes["p1"].top_option(), "A")  # unchanged
+
     def test_routed_vote_without_visible_commitment_records_no_vote(self):
         self._apply("p2", "I'm honestly still torn on this one.", vote_intent("p2", "B"))
         self.assertIsNone(self.state.runtimes["p2"].explicit_vote)

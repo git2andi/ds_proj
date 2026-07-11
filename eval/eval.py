@@ -76,8 +76,16 @@ def _pearson(xs: list[float], ys: list[float]) -> float | None:
 
 
 def _answered_by_target(state: DialogueState, question_turn: TurnRecord, within: int | None = None) -> bool:
+    """Whether the addressee spoke after the question (optionally within a window).
+
+    Turn indices are 1-based while list positions are 0-based, so eligibility
+    is by ``turn.index > question_turn.index`` — slicing by index skipped the
+    immediately following turn (closeout 6).
+    """
     target = question_turn.act.question_target_id
-    for turn in state.turns[question_turn.index + 1:]:
+    for turn in state.turns:
+        if turn.index <= question_turn.index:
+            continue
         if turn.speaker_id == target:
             return within is None or (turn.index - question_turn.index) <= within
     return False

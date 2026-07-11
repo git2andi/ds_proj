@@ -58,6 +58,46 @@ class IssueKeyTests(unittest.TestCase):
         self.assertEqual(normalize_pair(["C", "A", "C"]), ["A", "C"])
         self.assertEqual(normalize_pair(["A", "C"]), normalize_pair(["C", "A"]))
 
+    def test_card_concern_paraphrases_share_one_key(self):
+        # Closeout 4: equivalent paraphrases of a card-listed concern converge
+        # on one stable key built from the card's tokens, not per-wording sigs.
+        key1 = normalize_issue_key(
+            "It might be a bit too quiet at the Museum for a whole day.",
+            self.scenario, self.names, focus_options=["A"],
+        )
+        key2 = normalize_issue_key(
+            "Won't the Museum end up feeling really quiet, though?",
+            self.scenario, self.names, focus_options=["A"],
+        )
+        self.assertEqual(key1, key2)
+        self.assertTrue(key1.startswith("concern:"))
+
+    def test_different_issues_on_same_option_stay_separate(self):
+        cost = normalize_issue_key(
+            "The Museum cost seems high for what it is.", self.scenario, self.names, focus_options=["A"]
+        )
+        quiet = normalize_issue_key(
+            "Won't the Museum end up feeling really quiet, though?", self.scenario, self.names, focus_options=["A"]
+        )
+        self.assertEqual(cost, "cost")
+        self.assertNotEqual(cost, quiet)
+
+    def test_card_upside_relevance_gets_upside_key(self):
+        key = normalize_issue_key(
+            "Is the Museum actually easy to adjust if plans change?",
+            self.scenario, self.names, focus_options=["A"],
+        )
+        self.assertTrue(key.startswith("upside:"))
+
+    def test_other_cards_concern_does_not_capture_focused_issue(self):
+        # B's concern mentions "tired"; with focus on A the key must not come
+        # from another option's card.
+        key = normalize_issue_key(
+            "Is the Museum actually easy to adjust if someone gets tired early?",
+            self.scenario, self.names, focus_options=["A"],
+        )
+        self.assertTrue(key.startswith("upside:"))
+
 
 class ThreadCreationTests(unittest.TestCase):
     def test_same_issue_on_two_options_creates_two_threads_with_shared_key(self):

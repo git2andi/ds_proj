@@ -73,8 +73,12 @@ def normalize_issue_key(
 ) -> str:
     """Deterministic issue key for a visible utterance (5.6).
 
-    Priority: matching scenario option attribute key, then a deterministic
-    parser category, then a normalized content signature. No LLM, no embeddings.
+    Priority: matching scenario option attribute key, then the focused
+    option's normalized card concern, then its card upside, then a
+    deterministic parser category, then a normalized content signature only
+    as a last resort — so equivalent paraphrases of a card-listed issue
+    converge on one key instead of scattering into per-wording signatures.
+    No LLM, no embeddings.
     """
     lower = text.lower()
     # 1. Scenario attribute keys, focus options first for stable preference.
@@ -90,11 +94,6 @@ def normalize_issue_key(
     for key in seen_keys:
         if _attr_key_in_text(key, lower):
             return key.lower().replace(" ", "_")
-    # 2. Deterministic categories.
-    for name, pattern in _CATEGORY_PATTERNS:
-        if pattern.search(text):
-            return name
-    # 3. Content signature from stable tokens.
     drop = set(_STOPWORDS) | set(_GENERIC) | set(_EVALUATIVE)
     for name in participant_names:
         drop.update(w.lower() for w in _WORD.findall(name))
@@ -104,7 +103,26 @@ def normalize_issue_key(
     alias_map = short_alias_map(scenario.options)
     for alias in alias_map.values():
         drop.update(w.lower() for w in _WORD.findall(alias))
-    tokens = sorted({w.lower() for w in _WORD.findall(text)} - drop)
+    text_tokens = {w.lower() for w in _WORD.findall(text)} - drop
+    # 2./3. The card's own listed concern, then upside, of the RELEVANT
+    # options only (the focus options when given — another card's concern
+    # must not capture this option's issue): the key is built from the
+    # CARD's distinctive tokens, so every paraphrase gets the same key.
+    card_options = [
+        scenario.option(oid) for oid in focus if oid in scenario.option_ids
+    ] or ordered_options
+    for field_name in ("concern", "upside"):
+        for option in card_options:
+            card_text = getattr(option, field_name, "") or ""
+            card_tokens = {w.lower() for w in _WORD.findall(card_text)} - drop
+            if card_tokens and card_tokens & text_tokens:
+                return f"{field_name}:" + "-".join(sorted(card_tokens)[:3])
+    # 4. Deterministic categories.
+    for name, pattern in _CATEGORY_PATTERNS:
+        if pattern.search(text):
+            return name
+    # 5. Content signature from stable tokens.
+    tokens = sorted(text_tokens)
     if not tokens:
         return "general"
     return "sig:" + "-".join(tokens[:3])

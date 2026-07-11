@@ -7,7 +7,7 @@ import unittest
 
 import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
-from models import ActType, MoveIntent, ThreadStatus, ThreadType
+from models import ActType, MoveIntent, Phase, ThreadStatus, ThreadType
 
 from tests.fixtures import append_turn, make_state
 from tests.stubs import make_runner
@@ -73,6 +73,50 @@ class QuestionThreadCreationTests(unittest.TestCase):
         )
         self.assertTrue(record.state_mutation_blocked)
         self.assertEqual(_question_threads(self.state), [])
+
+    def test_voting_and_repair_questions_open_no_threads(self):
+        # Closeout 1: the bounded decision flow owns its own question/answer
+        # exchanges — they never become ordinary question threads that could
+        # sit falsely hot/cooling at closing.
+        for phase in (Phase.VOTING, Phase.COMPROMISE_REPAIR):
+            state = make_state()
+            runner = make_runner(state)
+            state.phase = phase
+            _observe(
+                runner, state, "p1",
+                "Jonas, what would make the Escape Room workable for you?",
+                intent=MoveIntent(
+                    speaker_id="p1", act=ActType.ASK, reason="repair probe",
+                    addressee_id="p2", option_focus=["C"],
+                    route_source="majority_holdout_repair",
+                ),
+            )
+            self.assertEqual(_question_threads(state), [])
+            _observe(
+                runner, state, "p2",
+                "A later slot would make the Escape Room workable for me.",
+                intent=MoveIntent(
+                    speaker_id="p2", act=ActType.ANSWER, reason="repair answer",
+                    route_source="majority_holdout_repair", option_focus=["C"],
+                ),
+            )
+            active = [
+                t for t in state.threads.values()
+                if t.status in (ThreadStatus.HOT, ThreadStatus.COOLING)
+            ]
+            self.assertEqual(active, [], f"leftover active thread in {phase}")
+
+    def test_discussion_questions_still_open_threads(self):
+        self.state.phase = Phase.DISCUSSION
+        _observe(
+            self.runner, self.state, "p1",
+            "Jonas, what do you think about the Museum?",
+            intent=MoveIntent(
+                speaker_id="p1", act=ActType.ASK, reason="ask",
+                addressee_id="p2", option_focus=["A"],
+            ),
+        )
+        self.assertEqual(len(_question_threads(self.state)), 1)
 
 
 class QuestionRoutingTests(unittest.TestCase):
@@ -168,6 +212,33 @@ class QuestionResolutionTests(unittest.TestCase):
         _observe(self.runner, self.state, "p3", "Fair enough, I can see that.")
         _observe(self.runner, self.state, "p1", "Good, that settles my worry.")
         self.assertEqual(self.thread.status, ThreadStatus.RESOLVED)
+
+    def test_routed_answer_with_unrelated_text_does_not_resolve(self):
+        # Closeout 2: the routed act alone never cools a question — an accepted
+        # but unrelated line from the required respondent leaves it hot.
+        answer_intent = self.runner._answer_intent_for_thread(self.state, self.thread)
+        answer_intent.option_focus = []  # drop the prompt hint so the text can miss
+        _observe(self.runner, self.state, "p2", "Weekends always fill up fast around here.", intent=answer_intent)
+        self.assertEqual(self.thread.status, ThreadStatus.HOT)
+
+    def test_issue_key_relation_resolves_focusless_question(self):
+        # A group question with no parseable option focus is still answerable
+        # through its normalized issue key (cost here).
+        random.seed(24)
+        state = make_state()
+        runner = make_runner(state)
+        _observe(
+            runner, state, "p1",
+            "Which of these actually stays inside our budget?",
+            intent=MoveIntent(speaker_id="p1", act=ActType.ASK, reason="ask"),
+        )
+        thread = _question_threads(state)[0]
+        self.assertEqual(thread.focus_options, [])
+        respondent = thread.required_respondent
+        answer_intent = runner._answer_intent_for_thread(state, thread)
+        answer_intent.option_focus = []
+        _observe(runner, state, respondent, "Cost-wise everything here stays under the sixty euro budget.", intent=answer_intent)
+        self.assertEqual(thread.status, ThreadStatus.COOLING)
 
 
 if __name__ == "__main__":

@@ -69,5 +69,41 @@ class CoverageSelectedVsRealizedTests(unittest.TestCase):
         self.assertEqual(metrics["coverage_turns_realized"], 0)
 
 
+class QuestionAnswerCompletionTests(unittest.TestCase):
+    """Closeout 6: the answer search must include the immediately following turn."""
+
+    def _ask(self, state, asker, text, addressee):
+        return append_turn(
+            state, asker, text,
+            intent=MoveIntent(speaker_id=asker, act=ActType.ASK, reason="ask", addressee_id=addressee),
+        )
+
+    def test_immediate_answer_counts(self):
+        state = make_state()
+        self._ask(state, "p1", "Jonas, what do you think about the Museum?", "p2")
+        append_turn(state, "p2", "The Museum works fine for a calm day.")
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["question_answer_completion"], 1.0)
+        self.assertEqual(metrics["open_questions_at_end"], 0)
+
+    def test_earlier_turns_and_question_turn_do_not_count(self):
+        state = make_state()
+        append_turn(state, "p2", "The Bike Ride keeps the cost low.")  # BEFORE the question
+        self._ask(state, "p1", "Jonas, what do you think about the Museum?", "p2")
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["question_answer_completion"], 0.0)
+        self.assertEqual(metrics["open_questions_at_end"], 1)
+
+    def test_answer_outside_window_is_not_prompt(self):
+        state = make_state()
+        self._ask(state, "p1", "Jonas, what do you think about the Museum?", "p2")
+        for _ in range(5):  # window is 2 * question_answer_window_turns = 4
+            append_turn(state, "p3", "Still weighing the options here.")
+        append_turn(state, "p2", "The Museum works fine for a calm day.")
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["question_answer_completion"], 0.0)  # late
+        self.assertEqual(metrics["open_questions_at_end"], 0)         # but answered
+
+
 if __name__ == "__main__":
     unittest.main()

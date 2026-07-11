@@ -31,7 +31,13 @@ from models import (
     TurnRecord,
 )
 from controller import threads as threads_engine
-from parsing import commitment_has_reason, parse_dialogue_act, realized_comparison, switch_bridge_ok
+from parsing import (
+    commitment_has_reason,
+    has_support_claim,
+    parse_dialogue_act,
+    realized_comparison,
+    switch_bridge_ok,
+)
 from simulator import expected_turn_share
 from utils import weighted_choice
 
@@ -67,18 +73,35 @@ class ObserverMixin:
 
         # Question threads (6.1): first fold this turn into existing threads
         # (a valid answer moves hot -> cooling), then open a thread for any new
-        # visible question, then age all threads post-turn.
+        # visible question, then age all threads post-turn. Questions inside
+        # voting/repair/closing belong to the bounded decision flow that asked
+        # them — they never open ordinary discussion question threads, so a
+        # finished repair exchange cannot leave a false hot question behind.
         self._observe_question_answers(state, record)
-        if act.question_scope:
+        if act.question_scope and record.phase in (Phase.OPENING, Phase.DISCUSSION, Phase.NARROWING):
             self._register_question_thread(state, record)
 
+        # Coverage from independent per-option semantic evidence (closeout 5):
+        # a multi-function line can carry mentions, positive support, objection,
+        # and comparison evidence at once — the dominant act label stays for
+        # routing/reporting but is not the only coverage signal. An objected
+        # option gets an objection, not a reason; a positively engaged option
+        # in a supportive/comparative/committing line gets a reason.
+        challenged = set(act.soft_rejects) | set(act.hard_rejects)
+        committed = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
+        compared = self._resolver is not None and realized_comparison(record.text, self._resolver)
+        supportive_line = (
+            compared
+            or act.act_type in {ActType.SUPPORT, ActType.COMPROMISE, ActType.OPENING}
+            or has_support_claim(record.text)
+        )
         for option_id in act.option_refs:
             cov = state.coverage[option_id]
             cov.mentions += 1
-            if act.act_type in {ActType.SUPPORT, ActType.COMPARE, ActType.COMPROMISE, ActType.OPENING}:
-                cov.reasons += 1
-            if act.act_type is ActType.CONCERN or option_id in act.soft_rejects or option_id in act.hard_rejects:
+            if option_id in challenged:
                 cov.objections += 1
+            elif option_id in committed or supportive_line:
+                cov.reasons += 1
 
         # Concern/blocker threads (6.2/6.3): first fold this turn into open
         # threads (a semantically relevant reply moves hot -> cooling; a
@@ -92,7 +115,6 @@ class ObserverMixin:
         # Concern/blocker threads open only from parsed objections in the final
         # accepted text — a routed CONCERN intent whose line shows no visible
         # objection registers nothing (accepted text is the semantic authority).
-        challenged = set(act.soft_rejects) | set(act.hard_rejects)
         for option_id in challenged:
             self._register_concern_thread(state, record, option_id)
         # Visible support is social pressure too: a commitment/acceptance for one
@@ -201,12 +223,19 @@ class ObserverMixin:
         intent alone (votes/acceptances are handled by ``_set_vote``)."""
         act = record.act
         if record.intent and record.intent.act == ActType.OPENING:
-            # The opening lean follows the option the line visibly names: the
-            # routed favorite when the text names it, a lone named option when
-            # the text went its own way, nothing when the naming is ambiguous.
-            refs = [oid for oid in act.option_refs if oid in state.scenario.option_ids]
+            # The opening lean follows the option the line visibly BACKS: an
+            # option the same line soft/hard-rejects is never promoted, even
+            # when it was the routed favorite ("A seems too expensive, while B
+            # fits us much better" leans B). Preference order: the routed
+            # favorite when named positively, else a unique positively named
+            # option; ambiguous or all-negative naming moves nothing.
+            challenged = set(act.soft_rejects) | set(act.hard_rejects)
+            positive = [
+                oid for oid in act.option_refs
+                if oid in state.scenario.option_ids and oid not in challenged
+            ]
             focus = record.intent.option_focus[0] if record.intent.option_focus else None
-            target = focus if focus in refs else (refs[0] if len(set(refs)) == 1 else None)
+            target = focus if focus in positive else (positive[0] if len(set(positive)) == 1 else None)
             if target:
                 rt.promote_to_preferred(target)
         elif (softened := act.softens_toward) and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
@@ -467,12 +496,12 @@ class ObserverMixin:
     def _observe_question_answers(self, state: DialogueState, record: TurnRecord) -> None:
         """Move question threads hot -> cooling when this final turn answers them.
 
-        A response counts only when the required respondent speaks AND either
-        the turn was routed as the answer to this thread (validated upstream) or
-        it visibly overlaps the question's option focus. A respondent speaking
-        about something unrelated closes nothing (6.1).
+        A response counts only when the required respondent speaks AND the
+        accepted text visibly relates to the question — its focused option or
+        its normalized issue key. The routed act alone is never sufficient
+        (closeout 2): an accepted but unrelated statement closes nothing, and
+        a deterministic fallback line never realizes an answer (Section 15).
         """
-        intent = record.intent
         for thread in list(state.threads.values()):
             if thread.thread_type is not ThreadType.QUESTION or thread.status is not ThreadStatus.HOT:
                 continue
@@ -480,19 +509,13 @@ class ObserverMixin:
                 continue
             if record.index <= thread.source_turn_index:
                 continue
-            # A fallback line never realizes the routed answer (Section 15): it
-            # must not resolve the question thread just because it was routed.
-            routed_answer = bool(
-                intent
-                and intent.act == ActType.ANSWER
-                and intent.respond_to_turn == thread.source_turn_index
-                and not record.used_fallback
-            )
+            if record.used_fallback:
+                continue
             relevant = (
-                not thread.focus_options
-                or bool(set(thread.focus_options) & set(record.act.option_refs))
+                bool(set(thread.focus_options) & set(record.act.option_refs))
+                or self._issue_relevant(state, record.text, thread)
             )
-            if routed_answer or relevant:
+            if relevant:
                 threads_engine.mark_response(
                     state, thread, responder_id=record.speaker_id, turn_index=record.index
                 )
