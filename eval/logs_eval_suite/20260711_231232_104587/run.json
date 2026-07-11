@@ -1,0 +1,5883 @@
+{
+  "run_id": "20260711_231232_104587",
+  "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "manual",
+  "environment_mode": "auto",
+  "moderator_config": {
+    "enabled": false,
+    "opening": false,
+    "mid_discussion_nudges": false,
+    "final_vote_call": false,
+    "closing": false
+  },
+  "scenario": {
+    "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lakeside Cabin with Hiking Trails",
+        "attrs": {
+          "distance_hours": "2.5",
+          "accommodation_type": "cabin",
+          "activity_level": "moderate",
+          "noise_level": "low"
+        },
+        "upside": "Offers peaceful lakeside relaxation with nearby hiking for activity.",
+        "concern": "Cabin is rustic and may lack modern amenities some prefer.",
+        "short_name": "Lakeside Cabin"
+      },
+      {
+        "id": "B",
+        "name": "Downtown City Escape with Nightlife",
+        "attrs": {
+          "distance_hours": "1.5",
+          "accommodation_type": "hotel",
+          "activity_level": "high",
+          "noise_level": "high"
+        },
+        "upside": "Vibrant nightlife and many active options like walking tours and clubs.",
+        "concern": "Noisy environment may not satisfy the friend wanting quiet.",
+        "short_name": "City Escape"
+      },
+      {
+        "id": "C",
+        "name": "Secluded Beach House with Kayaking",
+        "attrs": {
+          "distance_hours": "3",
+          "accommodation_type": "house",
+          "activity_level": "moderate",
+          "noise_level": "low"
+        },
+        "upside": "Quiet beach setting with optional kayaking for moderate activity.",
+        "concern": "Limited dining and entertainment options nearby.",
+        "short_name": "Beach House"
+      },
+      {
+        "id": "D",
+        "name": "Mountain Resort with Skiing and Spa",
+        "attrs": {
+          "distance_hours": "2.75",
+          "accommodation_type": "resort",
+          "activity_level": "high",
+          "noise_level": "medium"
+        },
+        "upside": "Combines vigorous skiing with relaxing spa facilities for balance.",
+        "concern": "Resort can be crowded and somewhat noisy during peak times.",
+        "short_name": "Mountain Resort"
+      }
+    ],
+    "shared_context": [
+      "The group consists of exactly 4 friends planning a weekend trip together.",
+      "One friend prefers a quiet, relaxing environment while another prefers active, physical activities.",
+      "The trip duration is from Friday afternoon to Sunday evening, within 3 hours driving distance."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.95,
+        "verbosity": 0.85,
+        "directness": 0.75,
+        "stubbornness": 0.35,
+        "switch_resistance": 0.3
+      },
+      "background": "very engaged product lead who notices process problems and proposes next steps",
+      "private_goal": "wants a clear decision and tends to keep the group moving",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 37,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Vibrant nightlife and many active options like walking tours and",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Tarek",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 3,
+        "extraversion": 1,
+        "agreeableness": 4,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.15,
+        "verbosity": 0.25,
+        "directness": 0.35,
+        "stubbornness": 0.3,
+        "switch_resistance": 0.3
+      },
+      "background": "quiet university student who answers when asked but rarely pushes himself into the discussion",
+      "private_goal": "wants the simplest acceptable choice and avoids long arguments",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 21,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Combines vigorous skiing with relaxing spa facilities for balance",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Eva",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "directness": 0.55,
+        "stubbornness": 0.5,
+        "switch_resistance": 0.55
+      },
+      "background": "experienced office administrator who weighs concrete constraints before moving position",
+      "private_goal": "wants the option with the fewest hidden tradeoffs",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 56,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Offers peaceful lakeside relaxation with nearby hiking for activity",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Sam",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 3,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.5,
+        "verbosity": 0.5,
+        "directness": 0.4,
+        "stubbornness": 0.2,
+        "switch_resistance": 0.15
+      },
+      "background": "socially flexible UX designer who often bridges between opposing preferences",
+      "private_goal": "wants the final choice to feel acceptable to everyone",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 31,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Quiet beach setting with optional kayaking for moderate activity",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 15,
+      "last_spoke_turn": 44,
+      "option_ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "I’m voting City Escape—plenty of late-night events and things to keep us moving all weekend."
+      },
+      "reasons_against": {},
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Hey everyone, I’m leaning toward City Escape since the nightlife and active options will keep things lively, especially Friday night. We should also figure out how to balance the noise for the quieter preference early on.",
+        "The Mountain Resort’s crowd and noise could actually make it harder to satisfy our quieter friend’s needs.",
+        "But the resort’s spa offers a great way to unwind after skiing.",
+        "Sam, the Beach House is quiet but limits dining options—City Escape offers more variety despite the noise.",
+        "I get the spa appeal, but Lakeside Cabin’s quieter vibe and real hiking access keep it ahead for balance.",
+        "I get the spa draw, but what matters most to me is everyone staying energized and engaged—City Escape’s vibrant nightlife and active options make that happen.",
+        "Less quiet but with way more things going on, City Escape keeps energy high for all.",
+        "City Escape’s noise level might make it hard to get restful sleep, which could affect our energy the next day.",
+        "Limited dining at Beach House means we’ll need a solid meal plan to keep things smooth.",
+        "Looks like City Escape is the front-runner; let’s quickly confirm everyone’s good with the noise and activity levels before locking it in.",
+        "I’m voting City Escape—plenty of late-night events and things to keep us moving all weekend.",
+        "Looks like we're still split between City Escape, Lakeside Cabin and Mountain Resort. Could City Escape work for everyone? Tarek, Eva, what still bothers you about it?",
+        "I get the noise issue, Eva, but City Escape’s late-night options make the trade-off worth it.",
+        "True, City Escape is noisy, but the walking tours offer quieter downtime options.",
+        "So City Escape wins for most of us, with Tarek still not sold."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 10,
+      "last_spoke_turn": 42,
+      "option_ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "reasons_for": {
+        "D": "Honestly, Mountain Resort works best for me since we get both epic skiing and chill spa time.",
+        "A": "I’m all in for Lakeside Cabin instead of Mountain Resort since it’s way more about peaceful lakeside chill with some hiking on the side."
+      },
+      "reasons_against": {
+        "B": "City Escape’s nightlife sounds fun but might keep us up way too late, making it harder to actually stay energized all weekend."
+      },
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "I’m thinking the Mountain Resort might work since skiing and spa balance both vibes.",
+        "I get the Beach House is chill, but Mountain Resort's spa actually feels more relaxing after all that skiing.",
+        "Sure, Beach House is quiet, but the Mountain Resort actually lets us switch up between chill spa time and way more intense skiing.",
+        "Yeah, but Mountain Resort’s spa beats Lakeside Cabin’s rustic vibe.",
+        "Mountain Resort offers skiing plus spa relaxation.",
+        "City Escape’s nightlife sounds fun but might keep us up way too late, making it harder to actually stay energized all weekend.",
+        "True, but what if the noise keeps us restless?",
+        "Honestly, Mountain Resort works best for me since we get both epic skiing and chill spa time.",
+        "The noise and high activity level in City Escape still feel way too much for a chill weekend.",
+        "I’m all in for Lakeside Cabin instead of Mountain Resort since it’s way more about peaceful lakeside chill with some hiking on the side."
+      ],
+      "switch_events": [
+        {
+          "from": "D",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 43,
+      "option_ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "I vote for Lakeside Cabin because its calm setting recharges us.",
+        "B": "City Escape is my pick instead of Lakeside Cabin for the lively nightlife and plenty of active options."
+      },
+      "reasons_against": {},
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "Lakeside Cabin seems best so far—quiet but still offers hiking for activity.",
+        "Sam, Mountain Resort’s noise and crowd don’t beat Lakeside Cabin’s quiet balance with hiking.",
+        "Even with fewer amenities, Lakeside Cabin’s privacy means less stress for everyone.",
+        "The Lakeside Cabin offers peaceful relaxation that helps everyone recharge between activities.",
+        "I vote for Lakeside Cabin because its calm setting recharges us.",
+        "The constant noise in City Escape makes it tough for quiet downtime.",
+        "City Escape is my pick instead of Lakeside Cabin for the lively nightlife and plenty of active options."
+      ],
+      "switch_events": [
+        {
+          "from": "A",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p4": {
+      "persona_id": "p4",
+      "turn_count": 12,
+      "last_spoke_turn": 36,
+      "option_ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "reasons_for": {
+        "C": "Quiet beach setting with optional kayaking for moderate activity",
+        "B": "Switching from Beach House to City Escape for the nightlife vibe and all the active stuff like walking tours and clubs."
+      },
+      "reasons_against": {},
+      "challenges_received": 1,
+      "concessions_made": 1,
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "I’m leaning toward the beach house since the quiet vibe with kayaking feels like a good mix.",
+        "I get that nightlife’s fun, but what matters most to me is a space where we can actually relax and recharge without feeling overwhelmed. The Beach House nails that with its quiet setting, plus kayaking gives us a decent activity without turning the weekend into a full-on hustle.",
+        "The Mountain Resort mixes activity and spa, but it’s still noisier than the Beach House’s quiet vibe with kayaking.",
+        "True, but Lakeside Cabin’s quiet beats Mountain Resort’s crowds.",
+        "The Lakeside Cabin’s rustic feel might get old fast without modern comforts.",
+        "That’s why Beach House works better—it’s quiet but still lets us kayak if we want to stay active.",
+        "If noise’s an issue, Beach House keeps us rested and still moving with kayaking options.",
+        "Noise’s less a problem at Beach House, but we should plan meals since dining options are limited.",
+        "Tarek, the Beach House noise won’t bother us much, and kayaking’s a good way to burn energy without the usual crowd.",
+        "Good call, Nora—rest is key if City Escape’s noise could throw us off.",
+        "I could live with City Escape since the nightlife keeps things lively enough to balance the noise.",
+        "Switching from Beach House to City Escape for the nightlife vibe and all the active stuff like walking tours and clubs."
+      ],
+      "switch_events": [
+        {
+          "from": "C",
+          "to": "B",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    }
+  },
+  "threads": {
+    "t001": {
+      "thread_id": "t001",
+      "thread_type": "comparison",
+      "status": "stale",
+      "focus_options": [
+        "C",
+        "D"
+      ],
+      "issue_key": "pair",
+      "started_by": "p4",
+      "required_respondent": null,
+      "participants_involved": [
+        "p4",
+        "p2"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 10,
+      "created_turn": 10,
+      "last_touched_turn": 11,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t002": {
+      "thread_id": "t002",
+      "thread_type": "comparison",
+      "status": "hot",
+      "focus_options": [
+        "A",
+        "D"
+      ],
+      "issue_key": "pair",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3",
+        "p2",
+        "p4"
+      ],
+      "contribution_count": 4,
+      "probe_count": 0,
+      "source_turn_index": 12,
+      "created_turn": 12,
+      "last_touched_turn": 42,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t003": {
+      "thread_id": "t003",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "B"
+      ],
+      "issue_key": "timing",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 22,
+      "created_turn": 22,
+      "last_touched_turn": 23,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t004": {
+      "thread_id": "t004",
+      "thread_type": "question",
+      "status": "stale",
+      "focus_options": [],
+      "issue_key": "sig:but-keeps-noise",
+      "started_by": "p2",
+      "required_respondent": "p4",
+      "participants_involved": [
+        "p2"
+      ],
+      "contribution_count": 1,
+      "probe_count": 0,
+      "source_turn_index": 24,
+      "created_turn": 24,
+      "last_touched_turn": 24,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": "group"
+    },
+    "t005": {
+      "thread_id": "t005",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "C"
+      ],
+      "issue_key": "concern:dining-entertainment-limited",
+      "started_by": "p4",
+      "required_respondent": null,
+      "participants_involved": [
+        "p4",
+        "p1"
+      ],
+      "contribution_count": 4,
+      "probe_count": 0,
+      "source_turn_index": 26,
+      "created_turn": 26,
+      "last_touched_turn": 29,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t006": {
+      "thread_id": "t006",
+      "thread_type": "concern",
+      "status": "cooling",
+      "focus_options": [
+        "B"
+      ],
+      "issue_key": "upside:active-clubs-many",
+      "started_by": "p1",
+      "required_respondent": null,
+      "participants_involved": [
+        "p1",
+        "p3"
+      ],
+      "contribution_count": 3,
+      "probe_count": 0,
+      "source_turn_index": 39,
+      "created_turn": 39,
+      "last_touched_turn": 43,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t007": {
+      "thread_id": "t007",
+      "thread_type": "comparison",
+      "status": "hot",
+      "focus_options": [
+        "A",
+        "B"
+      ],
+      "issue_key": "pair",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3"
+      ],
+      "contribution_count": 1,
+      "probe_count": 0,
+      "source_turn_index": 43,
+      "created_turn": 43,
+      "last_touched_turn": 43,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    }
+  },
+  "active_repair": null,
+  "repair_history": [
+    {
+      "repair_reason": "split_vote",
+      "candidate_or_pair": [
+        "B"
+      ],
+      "participants_involved": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "status": "resolved"
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Hey everyone, I’m leaning toward City Escape since the nightlife and active options will keep things lively, especially Friday night. We should also figure out how to balance the noise for the quieter preference early on.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Hey everyone, I’m leaning toward City Escape since the nightlife and active options will keep things lively, especially Friday night. We should also figure out how to balance the noise for the quieter preference early on.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1015,
+      "tokens_out": 51,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Lakeside Cabin seems best so far—quiet but still offers hiking for activity.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Lakeside Cabin seems best so far—quiet but still offers hiking for activity.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 452,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I’m leaning toward the beach house since the quiet vibe with kayaking feels like a good mix.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I’m leaning toward the beach house since the quiet vibe with kayaking feels like a good mix.",
+        "act_type": "opening",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1063,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "I’m thinking the Mountain Resort might work since skiing and spa balance both vibes.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m thinking the Mountain Resort might work since skiing and spa balance both vibes.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 518,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The Mountain Resort’s crowd and noise could actually make it harder to satisfy our quieter friend’s needs.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The Mountain Resort’s crowd and noise could actually make it harder to satisfy our quieter friend’s needs.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "push back on Mountain Resort with one concrete concern — you currently favor City Escape, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1381,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "But the resort’s spa offers a great way to unwind after skiing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "But the resort’s spa offers a great way to unwind after skiing.",
+        "act_type": "support",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "clarify one thing from your last message in different words so it can't be misread ('Just to be clear…')",
+        "route_source": "continuation",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": true
+      },
+      "tokens_in": 1514,
+      "tokens_out": 48,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "CONTINUATION_TOPIC_JUMP"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I get that nightlife’s fun, but what matters most to me is a space where we can actually relax and recharge without feeling overwhelmed. The Beach House nails that with its quiet setting, plus kayaking gives us a decent activity without turning the weekend into a full-on hustle.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I get that nightlife’s fun, but what matters most to me is a space where we can actually relax and recharge without feeling overwhelmed. The Beach House nails that with its quiet setting, plus kayaking gives us a decent activity without turning the weekend into a full-on hustle.",
+        "act_type": "support",
+        "option_refs": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Beach House fits it",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 1,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 641,
+      "tokens_out": 54,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "I get the Beach House is chill, but Mountain Resort's spa actually feels more relaxing after all that skiing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I get the Beach House is chill, but Mountain Resort's spa actually feels more relaxing after all that skiing.",
+        "act_type": "comment",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Beach House, City Escape, Mountain Resort with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 687,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Sam, the Beach House is quiet but limits dining options—City Escape offers more variety despite the noise.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Sam, the Beach House is quiet but limits dining options—City Escape offers more variety despite the noise.",
+        "act_type": "support",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": "p4",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Beach House, City Escape, Mountain Resort with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": "p4",
+        "option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1400,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "The Mountain Resort mixes activity and spa, but it’s still noisier than the Beach House’s quiet vibe with kayaking.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The Mountain Resort mixes activity and spa, but it’s still noisier than the Beach House’s quiet vibe with kayaking.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "compare Mountain Resort, Beach House, City Escape with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 690,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Sure, Beach House is quiet, but the Mountain Resort actually lets us switch up between chill spa time and way more intense skiing.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Sure, Beach House is quiet, but the Mountain Resort actually lets us switch up between chill spa time and way more intense skiing.",
+        "act_type": "comment",
+        "option_refs": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "someone just weighed Beach House against Mountain Resort — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "thread_id": "t001",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 647,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Sam, Mountain Resort’s noise and crowd don’t beat Lakeside Cabin’s quiet balance with hiking.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Sam, Mountain Resort’s noise and crowd don’t beat Lakeside Cabin’s quiet balance with hiking.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": "p4",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Mountain Resort, Beach House, Lakeside Cabin with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": "p4",
+        "option_focus": [
+          "D",
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 680,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Yeah, but Mountain Resort’s spa beats Lakeside Cabin’s rustic vibe.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Yeah, but Mountain Resort’s spa beats Lakeside Cabin’s rustic vibe.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "someone just weighed Lakeside Cabin against Mountain Resort — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "thread_id": "t002",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1040,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "COMPARISON_MISSES_OPTIONS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I get the spa appeal, but Lakeside Cabin’s quieter vibe and real hiking access keep it ahead for balance.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get the spa appeal, but Lakeside Cabin’s quieter vibe and real hiking access keep it ahead for balance.",
+        "act_type": "comment",
+        "option_refs": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "the group has been weighing Lakeside Cabin against Mountain Resort — add your own take on that trade-off in one beat",
+        "route_source": "thread_cooling",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": "t002",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 616,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "True, but Lakeside Cabin’s quiet beats Mountain Resort’s crowds.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "True, but Lakeside Cabin’s quiet beats Mountain Resort’s crowds.",
+        "act_type": "compare",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "compare",
+        "reason": "the group has been weighing Lakeside Cabin against Mountain Resort — add your own take on that trade-off in one beat",
+        "route_source": "thread_cooling",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": "t002",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1675,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "COMPARISON_MISSES_OPTIONS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Mountain Resort offers skiing plus spa relaxation.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Mountain Resort offers skiing plus spa relaxation.",
+        "act_type": "support",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a new grounded reason for Mountain Resort, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "concede_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 2547,
+      "tokens_out": 46,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I get the spa draw, but what matters most to me is everyone staying energized and engaged—City Escape’s vibrant nightlife and active options make that happen.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get the spa draw, but what matters most to me is everyone staying energized and engaged—City Escape’s vibrant nightlife and active options make that happen.",
+        "act_type": "comment",
+        "option_refs": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how City Escape fits it",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 696,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "Even with fewer amenities, Lakeside Cabin’s privacy means less stress for everyone.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Even with fewer amenities, Lakeside Cabin’s privacy means less stress for everyone.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a new grounded reason for Lakeside Cabin, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 612,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Less quiet but with way more things going on, City Escape keeps energy high for all.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Less quiet but with way more things going on, City Escape keeps energy high for all.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Mountain Resort, Lakeside Cabin, City Escape with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 662,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "The Lakeside Cabin’s rustic feel might get old fast without modern comforts.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "The Lakeside Cabin’s rustic feel might get old fast without modern comforts.",
+        "act_type": "comment",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "concern",
+        "reason": "push back on Lakeside Cabin with one concrete concern — you currently favor Beach House, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 18,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 660,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "The Lakeside Cabin offers peaceful relaxation that helps everyone recharge between activities.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The Lakeside Cabin offers peaceful relaxation that helps everyone recharge between activities.",
+        "act_type": "support",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a new grounded reason for Lakeside Cabin, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 19,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1668,
+      "tokens_out": 44,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNSUPPORTED_FACT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "City Escape’s nightlife sounds fun but might keep us up way too late, making it harder to actually stay energized all weekend.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "City Escape’s nightlife sounds fun but might keep us up way too late, making it harder to actually stay energized all weekend.",
+        "act_type": "concern",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "City Escape’s nightlife sounds fun but might keep us up way too late, making it harder to actually stay energized all weekend."
+        },
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "push back on City Escape with one concrete concern — you currently favor Mountain Resort, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 661,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "City Escape’s noise level might make it hard to get restful sleep, which could affect our energy the next day.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "City Escape’s noise level might make it hard to get restful sleep, which could affect our energy the next day.",
+        "act_type": "comment",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "a concern was raised about City Escape, which you back, and it lands — concede the point honestly and say what still matters to you in this choice (no final vote)",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "thread_id": "t003",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 853,
+      "tokens_out": 43,
+      "validation_issues": [
+        "CONCERN_NOT_REALIZED"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "CONCERN_NOT_REALIZED"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "True, but what if the noise keeps us restless?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, but what if the noise keeps us restless?",
+        "act_type": "ask",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": "group",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "someone responded to your point about City Escape — it does not fully settle it for you: push back once with the one thing that still bothers you; do not restate the original wording",
+        "route_source": "thread_cooling",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 23,
+        "thread_id": "t003",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 904,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "THREAD_RESPONSE_MISSES_OPTION"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "That’s why Beach House works better—it’s quiet but still lets us kayak if we want to stay active.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "That’s why Beach House works better—it’s quiet but still lets us kayak if we want to stay active.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 569,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "If noise’s an issue, Beach House keeps us rested and still moving with kayaking options.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "If noise’s an issue, Beach House keeps us rested and still moving with kayaking options.",
+        "act_type": "concern",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "If noise’s an issue, Beach House keeps us rested and still moving with kayaking options."
+        },
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 551,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Noise’s less a problem at Beach House, but we should plan meals since dining options are limited.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Noise’s less a problem at Beach House, but we should plan meals since dining options are limited.",
+        "act_type": "concern",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "C": "Noise’s less a problem at Beach House, but we should plan meals since dining options are limited."
+        },
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 572,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Tarek, the Beach House noise won’t bother us much, and kayaking’s a good way to burn energy without the usual crowd.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Tarek, the Beach House noise won’t bother us much, and kayaking’s a good way to burn energy without the usual crowd.",
+        "act_type": "answer",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 24,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 564,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Limited dining at Beach House means we’ll need a solid meal plan to keep things smooth.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Limited dining at Beach House means we’ll need a solid meal plan to keep things smooth.",
+        "act_type": "support",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "comment",
+        "reason": "a concern was raised about Beach House — say in one beat what the listed facts actually settle about that issue, without taking a side",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 26,
+        "thread_id": "t005",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 602,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Good call, Nora—rest is key if City Escape’s noise could throw us off.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Good call, Nora—rest is key if City Escape’s noise could throw us off.",
+        "act_type": "comment",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "comment",
+        "reason": "briefly acknowledge or interpret the point just made — one light beat, no new argument needed",
+        "route_source": "normal",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 654,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Looks like City Escape is the front-runner; let’s quickly confirm everyone’s good with the noise and activity levels before locking it in.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Looks like City Escape is the front-runner; let’s quickly confirm everyone’s good with the noise and activity levels before locking it in.",
+        "act_type": "process",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "process",
+        "reason": "you feel the group has mostly landed on City Escape — sum that up in your own words and suggest checking whether it actually works for everyone",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 548,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 32,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "I could live with City Escape since the nightlife keeps things lively enough to balance the noise.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p4",
+        "text": "I could live with City Escape since the nightlife keeps things lively enough to balance the noise.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "support",
+        "reason": "the group is testing City Escape: say honestly that you could live with City Escape and name the one thing that makes it workable for you — this is not a final vote",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1206,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m voting City Escape—plenty of late-night events and things to keep us moving all weekend.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I’m voting City Escape—plenty of late-night events and things to keep us moving all weekend.",
+        "act_type": "vote",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: vibrant nightlife and many active options like walking tours and",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "vibrant nightlife and many active options like walking tours and",
+        "continuation": false
+      },
+      "tokens_in": 668,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "I vote for Lakeside Cabin because its calm setting recharges us.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Lakeside Cabin because its calm setting recharges us.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [
+          "to keep us moving all weekend",
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 1640,
+      "tokens_out": 42,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "REQUIRED_VOTE_MISMATCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 35,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "Honestly, Mountain Resort works best for me since we get both epic skiing and chill spa time.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Honestly, Mountain Resort works best for me since we get both epic skiing and chill spa time.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [
+          "D"
+        ],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "because its calm setting recharges us",
+          "to keep us moving all weekend",
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "D",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 712,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 36,
+      "speaker_id": "p4",
+      "speaker_name": "Sam",
+      "text": "Switching from Beach House to City Escape for the nightlife vibe and all the active stuff like walking tours and clubs.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p4",
+        "text": "Switching from Beach House to City Escape for the nightlife vibe and all the active stuff like walking tours and clubs.",
+        "act_type": "vote",
+        "option_refs": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p4",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: vibrant nightlife and many active options like walking tours and clubs",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "since we get both epic skiing and chill spa time",
+          "because its calm setting recharges us",
+          "to keep us moving all weekend",
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "C",
+        "allowed_reason": "vibrant nightlife and many active options like walking tours and clubs",
+        "continuation": false
+      },
+      "tokens_in": 762,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 37,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Looks like we're still split between City Escape, Lakeside Cabin and Mountain Resort. Could City Escape work for everyone? Tarek, Eva, what still bothers you about it?",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Looks like we're still split between City Escape, Lakeside Cabin and Mountain Resort. Could City Escape work for everyone? Tarek, Eva, what still bothers you about it?",
+        "act_type": "process",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 38,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "The constant noise in City Escape makes it tough for quiet downtime.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p3",
+        "text": "The constant noise in City Escape makes it tough for quiet downtime.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes City Escape hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, do not borrow tradeoffs from another option, and do not invent facts",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 645,
+      "tokens_out": 13,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 39,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I get the noise issue, Eva, but City Escape’s late-night options make the trade-off worth it.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p1",
+        "text": "I get the noise issue, Eva, but City Escape’s late-night options make the trade-off worth it.",
+        "act_type": "concern",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {
+          "B": "I get the noise issue, Eva, but City Escape’s late-night options make the trade-off worth it."
+        },
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "respond directly to Eva's reservation about City Escape; concede what the option board cannot prove, then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, and do not import facts from any other option",
+        "route_source": "split_vote_repair",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 38,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 657,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 40,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "The noise and high activity level in City Escape still feel way too much for a chill weekend.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p2",
+        "text": "The noise and high activity level in City Escape still feel way too much for a chill weekend.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes City Escape hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, do not borrow tradeoffs from another option, and do not invent facts",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 636,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 41,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "True, City Escape is noisy, but the walking tours offer quieter downtime options.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p1",
+        "text": "True, City Escape is noisy, but the walking tours offer quieter downtime options.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "respond directly to Tarek's reservation about City Escape; concede what the option board cannot prove, then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, and do not import facts from any other option",
+        "route_source": "split_vote_repair",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 40,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 602,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 42,
+      "speaker_id": "p2",
+      "speaker_name": "Tarek",
+      "text": "I’m all in for Lakeside Cabin instead of Mountain Resort since it’s way more about peaceful lakeside chill with some hiking on the side.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I’m all in for Lakeside Cabin instead of Mountain Resort since it’s way more about peaceful lakeside chill with some hiking on the side.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "final decision: the controller outcome is a switch to the workable alternative; do not add new facts",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for",
+          "I'm switching to",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "for a chill weekend",
+          "for the nightlife vibe and all the active stuff like",
+          "since we get both epic skiing and chill spa time",
+          "because its calm setting recharges us",
+          "to keep us moving all weekend",
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "D",
+        "allowed_reason": "offers peaceful lakeside relaxation with nearby hiking for activity",
+        "continuation": false
+      },
+      "tokens_in": 894,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 43,
+      "speaker_id": "p3",
+      "speaker_name": "Eva",
+      "text": "City Escape is my pick instead of Lakeside Cabin for the lively nightlife and plenty of active options.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p3",
+        "text": "City Escape is my pick instead of Lakeside Cabin for the lively nightlife and plenty of active options.",
+        "act_type": "vote",
+        "option_refs": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "B",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "final decision: the controller outcome is a compromise switch; do not add new facts or pressure language",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for",
+          "I'm switching to",
+          "works for me"
+        ],
+        "avoid_reasons": [
+          "since it’s way more about peaceful lakeside chill with some",
+          "for a chill weekend",
+          "for the nightlife vibe and all the active stuff like",
+          "since we get both epic skiing and chill spa time",
+          "because its calm setting recharges us",
+          "to keep us moving all weekend",
+          "since the nightlife keeps things lively enough to balance the",
+          "to keep things smooth",
+          "since dining options are limited",
+          "to stay active",
+          "to get restful sleep, which could affect our energy the",
+          "since skiing and spa balance both vibes",
+          "since the quiet vibe with kayaking feels like a good",
+          "since the nightlife and active options will keep things lively,"
+        ],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "A",
+        "allowed_reason": "vibrant nightlife and many active options like walking tours and clubs",
+        "continuation": false
+      },
+      "tokens_in": 842,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 44,
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "So City Escape wins for most of us, with Tarek still not sold.",
+      "phase": "closing",
+      "act": {
+        "speaker_id": "p1",
+        "text": "So City Escape wins for most of us, with Tarek still not sold.",
+        "act_type": "support",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "reason": "3/4 participants visibly committed to the winning option.",
+    "turns": 43,
+    "metadata": {
+      "visible_votes": {
+        "p1": "B",
+        "p3": "B",
+        "p2": "A",
+        "p4": "B"
+      },
+      "latent_preferences": {
+        "p1": "B",
+        "p2": "A",
+        "p3": "B",
+        "p4": "B"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 3,
+          "B": 5,
+          "C": 3,
+          "D": 3
+        },
+        "p2": {
+          "A": 5,
+          "B": 2,
+          "C": 3,
+          "D": 4
+        },
+        "p3": {
+          "A": 4,
+          "B": 5,
+          "C": 3,
+          "D": 3
+        },
+        "p4": {
+          "A": 3,
+          "B": 5,
+          "C": 4,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_flexibility=0.66",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 30: narrowing — hard cap reached; forcing narrowing instead of closing early",
+        "turn 32: voting — narrowing complete; collecting formal votes",
+        "turn 36: compromise_repair — running split_vote repair",
+        "turn 43: closing — majority stands after bounded repair"
+      ],
+      "candidate_option": "B",
+      "min_discussion_turns": 20,
+      "force_narrow_turns": 26,
+      "hard_max_turns": 30
+    }
+  },
+  "phase_history": [
+    "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_flexibility=0.66",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 30: narrowing — hard cap reached; forcing narrowing instead of closing early",
+    "turn 32: voting — narrowing complete; collecting formal votes",
+    "turn 36: compromise_repair — running split_vote repair",
+    "turn 43: closing — majority stands after bounded repair",
+    "turn 44: closing — closed as majority"
+  ],
+  "controller_trace": [
+    {
+      "type": "turn",
+      "turn_index": 1,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1015,
+        "tokens_out": 51
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 2,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 452,
+        "tokens_out": 17
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 3,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1063,
+        "tokens_out": 29
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 4,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 518,
+        "tokens_out": 16
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 4,
+      "from_phase": "opening",
+      "to_phase": "discussion",
+      "reason": "all participants gave an opening view"
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1381,
+        "tokens_out": 30
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 6,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "continuation",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "CONTINUATION_TOPIC_JUMP"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1514,
+        "tokens_out": 48
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 7,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 1,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 641,
+        "tokens_out": 54
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 8,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "compare",
+        "selected_addressee_id": "p4",
+        "selected_option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 687,
+        "tokens_out": 22
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 9,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "compare",
+        "selected_addressee_id": "p4",
+        "selected_option_focus": [
+          "C",
+          "B",
+          "D"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": "p4",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1400,
+        "tokens_out": 31
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 10,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 5
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 690,
+        "tokens_out": 24
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "routed_thread_id": "t001",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "D"
+        ],
+        "respond_to_turn": 10,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 647,
+        "tokens_out": 26
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 12,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "compare",
+        "selected_addressee_id": "p4",
+        "selected_option_focus": [
+          "D",
+          "C",
+          "A"
+        ],
+        "respond_to_turn": 10,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": "p4",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 680,
+        "tokens_out": 20
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "routed_thread_id": "t002",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 12,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "COMPARISON_MISSES_OPTIONS"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1040,
+        "tokens_out": 29
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 14,
+      "pre": {
+        "routed_thread_id": "t002",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "cooling",
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_cooling",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 616,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 15,
+      "pre": {
+        "routed_thread_id": "t002",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "cooling",
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_cooling",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "COMPARISON_MISSES_OPTIONS"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1675,
+        "tokens_out": 36
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 16,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C",
+          "D"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNSUPPORTED_FACT"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 2547,
+        "tokens_out": 46
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 17,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 696,
+        "tokens_out": 31
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 18,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A"
+        ],
+        "respond_to_turn": 16,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 612,
+        "tokens_out": 16
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 19,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 15,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 5
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 662,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 20,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 18,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 6
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 660,
+        "tokens_out": 15
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 21,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "support",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 19,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 7
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNSUPPORTED_FACT"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1668,
+        "tokens_out": 44
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 22,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "D",
+          "C"
+        ],
+        "respond_to_turn": 17,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 8
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 661,
+        "tokens_out": 25
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 23,
+      "pre": {
+        "routed_thread_id": "t003",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 22,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "CONCERN_NOT_REALIZED"
+        ],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "CONCERN_NOT_REALIZED"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 853,
+        "tokens_out": 43
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 24,
+      "pre": {
+        "routed_thread_id": "t003",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "cooling",
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_cooling",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 23,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "THREAD_RESPONSE_MISSES_OPTION"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 904,
+        "tokens_out": 24
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 25,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 24,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t004",
+        "required_respondent_id": "p4",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 569,
+        "tokens_out": 22
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 26,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 24,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t004",
+        "required_respondent_id": "p4",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 551,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 27,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 24,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t004",
+        "required_respondent_id": "p4",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 572,
+        "tokens_out": 20
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 28,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 24,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t004",
+        "required_respondent_id": "p4",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": "p2",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 564,
+        "tokens_out": 27
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 29,
+      "pre": {
+        "routed_thread_id": "t005",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "comment",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 26,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 602,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 30,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "comment",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 23,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": "p1",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 654,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 30,
+      "from_phase": "discussion",
+      "to_phase": "narrowing",
+      "reason": "hard cap reached; forcing narrowing instead of closing early"
+    },
+    {
+      "type": "turn",
+      "turn_index": 31,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "process",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "process",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 548,
+        "tokens_out": 28
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 32,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1206,
+        "tokens_out": 28
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 32,
+      "from_phase": "narrowing",
+      "to_phase": "voting",
+      "reason": "narrowing complete; collecting formal votes"
+    },
+    {
+      "type": "turn",
+      "turn_index": 33,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 668,
+        "tokens_out": 21
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 34,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNCLEAR_VISIBLE_COMMITMENT",
+          "REQUIRED_VOTE_MISMATCH"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1640,
+        "tokens_out": 42
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 35,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "D",
+        "accepts_realized": [
+          "D"
+        ],
+        "coverage_realized": false,
+        "tokens_in": 712,
+        "tokens_out": 19
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 36,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p4",
+        "speaker_name": "Sam",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 762,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 36,
+      "from_phase": "voting",
+      "to_phase": "compromise_repair",
+      "reason": "running split_vote repair"
+    },
+    {
+      "type": "peer_procedure",
+      "turn_index": 37,
+      "phase": "compromise_repair",
+      "speaker_id": "p1",
+      "act": "process",
+      "option_focus": [
+        "B"
+      ]
+    },
+    {
+      "type": "turn",
+      "turn_index": 38,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "answer",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 645,
+        "tokens_out": 13
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 39,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "answer",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 38,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": "p3",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 657,
+        "tokens_out": 22
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 40,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "answer",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 636,
+        "tokens_out": 19
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 41,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p1",
+        "speaker_name": "Nora",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 40,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 602,
+        "tokens_out": 16
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 42,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p2",
+        "speaker_name": "Tarek",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 894,
+        "tokens_out": 29
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 43,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 2,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p3",
+        "speaker_name": "Eva",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "B",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 842,
+        "tokens_out": 20
+      }
+    },
+    {
+      "type": "repair",
+      "turn_index": 43,
+      "repair_reason": "split_vote",
+      "candidate_or_pair": [
+        "B"
+      ],
+      "attempt_count": 1,
+      "status": "resolved"
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 43,
+      "from_phase": "compromise_repair",
+      "to_phase": "closing",
+      "reason": "majority stands after bounded repair"
+    },
+    {
+      "type": "peer_procedure",
+      "turn_index": 44,
+      "phase": "closing",
+      "speaker_id": "p1",
+      "act": "support",
+      "option_focus": [
+        "B"
+      ]
+    }
+  ],
+  "metrics": {
+    "participant_turns": 44,
+    "moderator_turns": 0,
+    "moderator_ratio": 0.0,
+    "turn_counts": {
+      "Nora": 15,
+      "Tarek": 10,
+      "Eva": 7,
+      "Sam": 12
+    },
+    "top_speaker_share": 0.341,
+    "avg_words_by_persona": {
+      "Nora": 19.0,
+      "Tarek": 16.3,
+      "Eva": 13.0,
+      "Sam": 18.9
+    },
+    "avg_words_by_act": {
+      "answer": 16.2,
+      "comment": 14.5,
+      "compare": 16.2,
+      "concern": 16.0,
+      "opening": 19.8,
+      "process": 22.0,
+      "support": 19.1,
+      "unknown": 20.0,
+      "vote": 17.7
+    },
+    "short_turn_rate": 0.091,
+    "tiny_turn_rate": 0.0,
+    "question_density": 0.045,
+    "tail_question_rate": 0.024,
+    "avg_words_per_turn": 17.4,
+    "repaired_turns": 8,
+    "repair_rate": 0.182,
+    "flagged_turns": 1,
+    "fallback_turns": 0,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 4,
+    "visible_votes": {
+      "Nora": "B",
+      "Tarek": "A",
+      "Eva": "B",
+      "Sam": "B"
+    },
+    "unanswered_direct_questions": 1,
+    "question_threads": 1,
+    "concern_threads": 3,
+    "concern_response_rate": 1.0,
+    "thread_count_by_type": {
+      "question": 1,
+      "concern": 3,
+      "blocker": 0,
+      "comparison": 3
+    },
+    "thread_count_by_status": {
+      "hot": 2,
+      "cooling": 1,
+      "resolved": 0,
+      "stale": 4
+    },
+    "participation_gini": 0.148,
+    "direct_response_rate": 0.0,
+    "question_answer_completion": null,
+    "open_questions_at_end": 0,
+    "settled_issue_keys": [
+      "concern:dining-entertainment-limited",
+      "timing"
+    ],
+    "repetition_score": 0.164,
+    "compromise_success_rate": 1.0,
+    "repairs_run": [
+      "split_vote"
+    ],
+    "repair_statuses": {
+      "split_vote": "resolved"
+    },
+    "unclear_vote_repairs": 0,
+    "reservation_exchange": true,
+    "participant_procedural_moves": 3,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 2,
+    "continuation_turns": 1,
+    "switch_event_count": 3,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 0,
+    "name_prefix_rate": 0.068,
+    "option_opening_rate": 0.341,
+    "i_opening_rate": 0.25,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.409,
+    "repeated_opening_patterns": 6,
+    "unsupported_fact_flags": 2,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.75,
+    "stance_rank_distribution": {
+      "1": 0,
+      "2": 1,
+      "3": 8,
+      "4": 3,
+      "5": 4
+    },
+    "runtime_preferred_by_rank": {
+      "Nora": "B",
+      "Tarek": "A",
+      "Eva": "B",
+      "Sam": "B"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 11,
+        "reasons": 9,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 17,
+        "reasons": 8,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 12,
+        "reasons": 6,
+        "objections": 2,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 14,
+        "reasons": 9,
+        "objections": 0,
+        "acceptances": 1
+      }
+    },
+    "coverage_routes_selected": 0,
+    "coverage_turns_realized": 0,
+    "route_source_distribution": {
+      "answer_required": 4,
+      "continuation": 1,
+      "normal": 14,
+      "opening": 4,
+      "participant_narrowing": 2,
+      "split_vote_repair": 6,
+      "thread_cooling": 3,
+      "thread_hot": 4,
+      "vote": 4
+    },
+    "act_mismatch_rate": 0.333,
+    "expected_engagement": {
+      "Nora": 0.95,
+      "Tarek": 0.15,
+      "Eva": 0.55,
+      "Sam": 0.5
+    },
+    "expected_switch_resistance": {
+      "Nora": 0.3,
+      "Tarek": 0.3,
+      "Eva": 0.55,
+      "Sam": 0.15
+    },
+    "expected_turn_share": {
+      "Nora": 0.373,
+      "Tarek": 0.134,
+      "Eva": 0.254,
+      "Sam": 0.239
+    },
+    "realized_turn_share": {
+      "Nora": 0.341,
+      "Tarek": 0.227,
+      "Eva": 0.159,
+      "Sam": 0.273
+    },
+    "outcome_status": "majority",
+    "final_option": "B",
+    "corpus_preset": "",
+    "min_discussion_turns": 20,
+    "force_narrow_turns": 26,
+    "hard_max_turns": 30,
+    "phase_history": [
+      "pacing: min=20, force=26, hard=30, distinct_initial_prefs=4, avg_flexibility=0.66",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 30: narrowing — hard cap reached; forcing narrowing instead of closing early",
+      "turn 32: voting — narrowing complete; collecting formal votes",
+      "turn 36: compromise_repair — running split_vote repair",
+      "turn 43: closing — majority stands after bounded repair",
+      "turn 44: closing — closed as majority"
+    ],
+    "engagement_realization_error": 0.064,
+    "verbosity_realization_error": 0.544,
+    "engagement_error_by_persona": {
+      "Nora": 0.032,
+      "Tarek": 0.093,
+      "Eva": 0.095,
+      "Sam": 0.034
+    },
+    "verbosity_error_by_persona": {
+      "Nora": 0.236,
+      "Tarek": 1.067,
+      "Eva": 0.133,
+      "Sam": 0.742
+    },
+    "engagement_behavior_correlation": 0.589,
+    "verbosity_behavior_correlation": 0.337,
+    "free_discussion_share": {
+      "Nora": 0.344,
+      "Tarek": 0.219,
+      "Eva": 0.125,
+      "Sam": 0.312
+    },
+    "top_free_discussion_share": 0.344,
+    "free_discussion_engagement_correlation": 0.483,
+    "setup_tokens_in": 1328,
+    "setup_tokens_out": 1099,
+    "dialogue_tokens_in": 36606,
+    "dialogue_tokens_out": 1121,
+    "total_tokens_in": 37934,
+    "total_tokens_out": 2220,
+    "tokens_setup_in": 1328,
+    "tokens_setup_out": 1099,
+    "calls_setup": 1,
+    "tokens_utterance_in": 26676,
+    "tokens_utterance_out": 886,
+    "calls_utterance": 42,
+    "tokens_grounding_in": 6983,
+    "tokens_grounding_out": 122,
+    "calls_grounding": 11,
+    "tokens_repair_in": 2947,
+    "tokens_repair_out": 113,
+    "calls_repair": 8,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 0,
+    "tokens_moderator_out": 0,
+    "calls_moderator": 0,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 1328,
+    "setup_tokens_out": 1099,
+    "dialogue_tokens_in": 36606,
+    "dialogue_tokens_out": 1121,
+    "total_tokens_in": 37934,
+    "total_tokens_out": 2220
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 1328,
+      "out": 1099,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 26676,
+      "out": 886,
+      "calls": 42
+    },
+    "grounding": {
+      "in": 6983,
+      "out": 122,
+      "calls": 11
+    },
+    "repair": {
+      "in": 2947,
+      "out": 113,
+      "calls": 8
+    }
+  }
+}

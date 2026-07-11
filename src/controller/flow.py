@@ -17,6 +17,7 @@ import prompts
 from aliases import short_alias_map
 from config_loader import cfg
 from consensus import ConsensusManager, participant_turn_count, public_support, visible_votes_from_transcript
+from utils import clause_fragment, usable_reason_fragment
 from controller import threads
 from models import (
     ActType,
@@ -25,6 +26,8 @@ from models import (
     Persona,
     Phase,
     RepairState,
+    STANCE_ACCEPTABLE,
+    STANCE_NEUTRAL,
     ThreadStatus,
     ThreadType,
     TurnRecord,
@@ -181,13 +184,24 @@ class FlowMixin:
             return
         speaker = min(holdouts, key=lambda p: self._candidate_resistance(state, p, candidate))
         aliases = short_alias_map(state.scenario.options)
+        name = aliases.get(candidate, candidate)
+        # The stance direction is decided here from existing state (item 5),
+        # and the act matches the objective (todo_prompt item 4): a live-with
+        # test is SUPPORT, naming a remaining blocker is CONCERN.
+        rt = state.runtimes[speaker.id]
+        rank = rt.rank(candidate)
+        if rank >= STANCE_ACCEPTABLE or (
+            rank == STANCE_NEUTRAL and speaker.sim_params.switch_resistance < 0.5
+        ):
+            act = ActType.SUPPORT
+            objective = f"say honestly that you could live with {name} and name the one thing that makes it workable for you"
+        else:
+            act = ActType.CONCERN
+            objective = f"name the one concrete thing that still blocks {name} for you"
         intent = MoveIntent(
             speaker_id=speaker.id,
-            act=ActType.SUPPORT,
-            reason=(
-                f"the group is testing {aliases.get(candidate, candidate)}: say honestly whether you could "
-                "live with it, or name the one concrete thing that still blocks it — this is not a final vote"
-            ),
+            act=act,
+            reason=f"the group is testing {name}: {objective} — this is not a final vote",
             route_source="participant_narrowing",
             option_focus=[candidate],
             length_hint="short",
@@ -363,8 +377,10 @@ class FlowMixin:
             p for p in dissenters
             if self._can_shift_to(state, p, winner, final_decision=True) and not self._valid_holdout_against(state, p, winner)
         ]
+        # The most movable dissenter negotiates: lowest explicit final-movement
+        # resistance (switch_resistance, candidate rank, own live concerns).
         negotiator = (
-            min(movers, key=lambda p: state.runtimes[p.id].commitment_strength) if movers else None
+            min(movers, key=lambda p: self._candidate_resistance(state, p, winner)) if movers else None
         )
         if self._mod("final_vote_call"):
             text = self._moderator_say(
@@ -618,21 +634,14 @@ class FlowMixin:
         for oid in (candidate, current, alternative):
             if oid and oid in state.scenario.option_ids and oid not in focus:
                 focus.append(oid)
+        # Names and the allowed reason are NOT repeated here: the vote decision
+        # instruction in prompts.sim_utterance carries them once (items 9/11).
         if outcome == "switch_candidate":
-            reason = (
-                f"final decision: controller outcome is a switch from {current_name} to {candidate_name}. "
-                f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not add new facts or pressure language"
-            )
+            reason = "final decision: the controller outcome is a compromise switch; do not add new facts or pressure language"
         elif outcome == "switch_alternative":
-            reason = (
-                f"final decision: controller outcome is a concrete alternative switch from {current_name} to {target_name}. "
-                f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not add new facts"
-            )
+            reason = "final decision: the controller outcome is a switch to the workable alternative; do not add new facts"
         else:
-            reason = (
-                f"final decision: controller outcome is staying with {current_name}; {candidate_name} still does not solve the concern. "
-                f"Use exactly this grounded reason, in your own words: {allowed_reason}. Do not accept {candidate_name}"
-            )
+            reason = f"final decision: stay with your current pick; {candidate_name} still does not solve the concern — do not accept it"
         generated_intent = MoveIntent(
             speaker_id=persona.id,
             act=ActType.VOTE,
@@ -667,23 +676,25 @@ class FlowMixin:
         if target not in state.scenario.option_ids:
             return "it is the clearest option left in the visible discussion"
         rt = state.runtimes[persona.id]
-        personal_for = rt.reason_for(target)
+        card = state.scenario.option(target)
+        # Stored reasons may be whole earlier utterances; only a short,
+        # hedge-free fragment may be embedded in a decision line.
+        personal_for = usable_reason_fragment(rt.reason_for(target), card.name)
         if outcome != "stay" and personal_for:
             return personal_for
-        card = state.scenario.option(target)
         if outcome == "stay":
             if candidate and candidate in state.scenario.option_ids:
                 cand = state.scenario.option(candidate)
                 if cand.concern:
-                    return f"listed concern remains: {cand.concern}"
-            personal_against = rt.reason_against(candidate) if candidate else ""
+                    return f"the listed concern remains: {clause_fragment(cand.concern, cand.name)}"
+            personal_against = usable_reason_fragment(rt.reason_against(candidate) if candidate else "", "")
             if personal_against:
                 return personal_against
             if card.upside:
-                return card.upside
+                return clause_fragment(card.upside, card.name)
             return "this is still the more defensible option from the listed facts"
         if card.upside:
-            return card.upside
+            return clause_fragment(card.upside, card.name)
         if card.attrs:
             key, value = next(iter(card.attrs.items()))
             return f"{key.replace('_', ' ')}: {value}"
@@ -708,14 +719,14 @@ class FlowMixin:
         max_votes = max(counts.values(), default=0)
         strict_plurality = candidate_votes == max_votes and sum(1 for c in counts.values() if c == max_votes) == 1
         tied_leader = candidate_votes == own_votes and candidate_votes == max_votes and len(counts) > 1
-        # Final switching is switch_resistance territory (Section 14).
+        # Final switching is switch_resistance territory (Section 14); the
+        # explicit resistance score already carries rank and live-concern load.
         flexibility = 1.0 - persona.sim_params.switch_resistance
         pressure = (
             0.22
             + 0.58 * advantage
             + 0.48 * flexibility
-            - 0.12 * rt.commitment_strength
-            - 0.08 * min(resistance, 1.5)
+            - 0.14 * min(resistance, 1.5)
         )
         plurality_bonus = 0.10 if strict_plurality else 0.0
         tie_compromise_bonus = 0.08 if (tied_leader and flexibility >= 0.30) else 0.0

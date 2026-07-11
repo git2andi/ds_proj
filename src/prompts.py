@@ -13,8 +13,7 @@ from collections.abc import Iterable
 
 from aliases import short_alias_map
 from config_loader import cfg
-from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED, ThreadStatus, ThreadType
-from parsing import unused_commitment_phrases
+from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED, ThreadStatus, ThreadType
 from utils import compact_words
 
 
@@ -93,6 +92,7 @@ def setup_personas(
     required_preferences: dict[str, str],
     options_json: list[dict],
     shared_context: list[str],
+    hard_blocker_id: str | None = None,
 ) -> str:
     names_by_id = {row["id"]: row.get("name", row["id"]) for row in trait_rows}
     # Manual participant profiles may fix persona fields; tell the LLM to keep
@@ -125,6 +125,24 @@ def setup_personas(
             }
         ]
     }
+    if hard_blocker_id:
+        blocker_name = names_by_id.get(hard_blocker_id, hard_blocker_id)
+        blocker_pref = required_preferences.get(hard_blocker_id, "their assigned option")
+        hard_blocker_rules = (
+            f"\n- {hard_blocker_id} ({blocker_name}) is this group's ONE exclusive hard blocker: "
+            f"give {blocker_pref} rank 5, and give EVERY other option rank 1 with a short grounded "
+            "reason_against each (or one clear exclusive requirement that explains all of them). "
+            "Their background and private_goal must state that one non-negotiable requirement that "
+            f"only {blocker_pref} satisfies — one plausible story, politely held. "
+            "You may also set rejection to the most central alternative with a matching rejection_reason."
+            "\n- Every other participant must remain movable: rejection null, no rank-1 options."
+        )
+    else:
+        hard_blocker_rules = (
+            "\n- For agreeableness=1 only, you may set one grounded rejection if an option conflicts "
+            "with their background/goal. That rejection is a hard blocker."
+            "\n- For all other participants, rejection must be null."
+        )
     context_lines = "\n".join(f"- {item}" for item in shared_context) or "- none"
     return f"""Create {n} simulated users for an option-grounded group decision.
 
@@ -155,9 +173,7 @@ Rules:
 - Keep most non-preferred options neutral or acceptable. Only give rank 2/1 when the option clearly conflicts with the person's background/goal.
 - Give short reason_for/reason_against only where useful; leave neutral reasons empty. Do not write long explanations.
 - A participant with agreeableness=1 must have exactly one preferred option (no secondary).
-- Participants want a workable group decision. High openness/agreeableness means easier compromise; low agreeableness means more resistance.
-- For agreeableness=1 only, you may set one grounded rejection if an option conflicts with their background/goal. That rejection is a hard blocker.
-- For all other participants, rejection must be null.
+- Participants want a workable group decision. High openness/agreeableness means easier compromise; low agreeableness means more resistance.{hard_blocker_rules}
 - background and private_goal must be one sentence each, specific to this topic, grounded in the option cards/shared context, and age-plausible.
 - Backgrounds, private goals, and constraints must fit the shared context where relevant and must never contradict it (group size, hard caps, timing, or other public facts).
 - For participants with agreeableness above 1, phrase needs as preferences ("prefers", "values", "cares most about"), never as absolute constraints ("cannot", "must", "refuses", "allergic", "strictly").
@@ -196,31 +212,27 @@ def moderator_nudge_prompt(
     focus_options: list[str] | None = None,
 ) -> str:
     recent = _recent_chat(state, limit=5)
-    candidate = candidate_name or "no single option yet"
-    focus = _option_names(state, focus_options or []) or "not specified"
+    focus = _option_names(state, focus_options or [])
+    focus_line = f"\nFocus options: {focus}" if focus else ""
+    candidate_line = f"\nCurrent likely common ground: {candidate_name}" if candidate_name else ""
     target = target_name or "the group"
     action = requested_action or "move the decision forward with one concrete next step"
-    public = _public_state_summary(state)
     return f"""You are the neutral moderator of a casual group decision chat.
+Verbalize the intervention below in your own words — when to intervene, whom to
+address, and what to accomplish have already been decided.
 
-Use MUCA-style control: decide what to ask, when to intervene, and who to address.
-Write one short progress nudge, under {cfg.utterances.word_budgets.moderator} words.
-Do not vote, do not decide, do not add facts, and do not repeat the option board.
-Sound like a person in the chat, not a script: never dictate a quoted reply
-template (no "please state your final vote clearly by saying 'I vote for …'").
-Vary your phrasing between interventions; avoid stock phrases like "where everyone stands".
-Follow the requested action exactly — if it says not to name an option, name none.
-Reason to intervene: {reason}
-Address this target if useful: {target}
-Requested action: {action}
-Current likely common ground: {candidate}
-Focus options: {focus}
-Visible state: {public}
+Why now: {reason}
+Address: {target}
+Do: {action}{candidate_line}{focus_line}
 
 Recent chat:
 {recent}
 
-No speaker prefix. One sentence only."""
+Write one short progress nudge, under {cfg.utterances.word_budgets.moderator} words.
+Follow the requested action exactly — if it says not to name an option, name none.
+Do not vote, decide, add facts, or repeat the option board. Sound like a person in
+the chat, not a script: never dictate a quoted reply template, and vary your
+phrasing between interventions. No speaker prefix. One sentence only."""
 
 
 def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
@@ -260,7 +272,16 @@ Sound conversational, like a person wrapping up a chat, not a formal announcemen
 Do not add new reasons or facts. No farewell. No speaker prefix."""
 
 
-def _stance_summary(state: DialogueState, persona: Persona) -> str:
+def _stance_summary(
+    state: DialogueState,
+    persona: Persona,
+    restrict_to: set[str] | None = None,
+    skip_bare_current: str | None = None,
+) -> str:
+    """Compact private-stance line; with ``restrict_to`` only the options the
+    current move actually touches are listed (item 3: no full stance maps when
+    one or two stances matter). ``skip_bare_current`` drops a reason-less
+    preferred entry for that option — it would only restate the current pick."""
     rt = state.runtimes[persona.id]
     aliases = short_alias_map(state.scenario.options)
     labels = {
@@ -272,15 +293,71 @@ def _stance_summary(state: DialogueState, persona: Persona) -> str:
     }
     parts = []
     for oid in state.scenario.option_ids:
+        if restrict_to is not None and oid not in restrict_to:
+            continue
         rank = rt.rank(oid)
         if rank == STANCE_NEUTRAL:
             continue
         reason = rt.reason_for(oid) if rank >= STANCE_ACCEPTABLE else rt.reason_against(oid)
+        if oid == skip_bare_current and rank >= STANCE_PREFERRED and not reason:
+            continue
         text = f"{aliases.get(oid, oid)}={labels.get(rank, str(rank))}"
         if reason:
             text += f" ({compact_words(reason, 7)})"
         parts.append(text)
     return "; ".join(parts[:5]) or "mostly neutral"
+
+
+# One concise semantic requirement per dialogue act (todo_new item 4): what the
+# realized line must MEAN, never how it must be phrased. Vote turns get their
+# requirement from the decision instruction, which also carries the
+# controller's target and the parser-visible commitment vocabulary.
+_ACT_REQUIREMENTS = {
+    ActType.OPENING: (
+        "State your current favorite and one grounded reason; a tiny chat greeting "
+        "is fine. Do not make it sound like a final vote."
+    ),
+    ActType.SUPPORT: (
+        "Give real support: one clearly positive reason or consequence for the focused "
+        "option. You may briefly acknowledge a concern first, but your supportive "
+        "position must stay clear — acknowledgment alone is not support."
+    ),
+    ActType.CONCERN: (
+        "Raise one concrete downside, risk, unknown, or unmet need — an actual "
+        "objection, not a vague cautious remark."
+    ),
+    ActType.ASK: (
+        "Ask exactly one genuine, answerable question about the intended issue. Do not "
+        "bundle several unrelated questions or dress a statement up as a question."
+    ),
+    ActType.ANSWER: (
+        "Answer the question first, directly. If it asks for information that is not in "
+        "the option cards or shared context, say plainly that we don't know that here. "
+        "A short explanation may follow. Do not replace the answer with a generic "
+        "reaction or a counter-question."
+    ),
+    ActType.COMPARE: (
+        "Make both options identifiable (short names or clear references are fine, "
+        "anywhere in the message) and state at least one real difference or trade-off "
+        "between them."
+    ),
+    ActType.COMMENT: (
+        "This is a light comment, not an argument: acknowledge, interpret, or name a "
+        "priority in one beat. You do not have to support, reject, compare, or ask "
+        "anything."
+    ),
+    ActType.COMPROMISE: (
+        "Propose exactly ONE of the existing options as the possible common ground; a "
+        "visible condition on it is fine. Do not invent blends, split plans, or "
+        "combinations of options."
+    ),
+    ActType.PROCESS: (
+        "Make one concrete procedural suggestion about how the group should continue. "
+        "Keep it short and socially natural. Do not cast your own final vote in this "
+        "line unless explicitly asked."
+    ),
+    ActType.VOTE: "Make your chosen option and your commitment unambiguous.",
+}
 
 
 def sim_utterance(
@@ -292,54 +369,59 @@ def sim_utterance(
     focus_options: list[OptionCard],
     addressee_name: str | None,
     max_words: int,
-    min_words: int = 6,
+    min_words: int = 1,
 ) -> str:
     aliases = short_alias_map(state.scenario.options)
     cards = _option_cards(focus_options or state.scenario.options)
     recent = "\n".join(recent_lines) if recent_lines else "(no recent turns)"
     current = state.runtimes[persona.id].top_option() or persona.preferred_option
     current_name = aliases.get(current, state.scenario.option(current).name if current in state.scenario.option_ids else "undecided")
-    stance = _stance_summary(state, persona)
+    # Stance restricted to the options this move touches (item 3): the current
+    # lean plus the focus options; the full map appears only without a focus.
+    # The current pick itself is listed only when it carries a stored reason —
+    # a bare "X=preferred" would duplicate "current pick X" (todo_prompt item 8).
+    relevant = {current, *intent.option_focus} if intent.option_focus else None
+    stance = _stance_summary(state, persona, restrict_to=relevant, skip_bare_current=current)
     initial_name = aliases.get(persona.preferred_option, persona.preferred_option)
+    initial_note = f" (initial preference {initial_name})" if persona.preferred_option != current else ""
+    stance_note = f"; stance: {stance}" if stance != "mostly neutral" else ""
     required_name = aliases.get(intent.required_vote, intent.required_vote) if intent.required_vote else ""
     old_required = intent.old_preference or current
     old_name = aliases.get(old_required, old_required) if old_required else current_name
     allowed_reason = intent.allowed_reason or "the listed facts and visible support make it workable"
     blocked = ""
     rejected_options = state.runtimes[persona.id].rejected_options()
-    if rejected_options:
+    if rejected_options and len(rejected_options) >= len(state.scenario.option_ids) - 1:
+        # Exclusive hard blocker: only the current pick is acceptable at all.
+        only = current if current in state.scenario.option_ids else persona.preferred_option
+        reason = state.runtimes[persona.id].reason_for(only)
+        blocked = (
+            f"\nHard constraint: only {aliases.get(only, only)} is acceptable to them"
+            + (f" ({reason})" if reason else "")
+            + ". They reject every other option; do not accept or vote for any other option, however politely."
+        )
+    elif rejected_options:
         oid = sorted(rejected_options)[0]
         reason = state.runtimes[persona.id].reason_against(oid)
         blocked = f"\nHard blocker: they strongly reject {aliases.get(oid, oid)}" + (f" because {reason}" if reason else "") + ". Do not accept or vote for that option."
-    target = _target_line(state, intent)
-    target_block = f"\nRespond to this recent point: {target}" if target else ""
+    target_block = _target_block(state, intent, len(recent_lines))
     address = f"\nAddress {addressee_name} if it sounds natural." if addressee_name else ""
     context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) if state.scenario.shared_context else "none"
     params = persona.sim_params
     decision_instruction = ""
     if intent.act == ActType.VOTE:
-        # P9: steer vote lines into the parser's own commitment vocabulary — a
-        # rotating menu of families not yet used this round, instead of pushing
-        # later voters into unparseable "variety". Order the phrase menu by
-        # trait fit so vote wording reflects switch_resistance/directness
-        # without adding a separate personality subsystem.
-        pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=99)
-        staying = not intent.option_focus or intent.option_focus[0] == current
-        if not staying:
-            pool = [f for f in pool if f not in {"I'm still on", "I'll stay with"}]
-        preferred = [f for f in _trait_phrase_preferences(persona, staying) if f in pool]
-        rest = [f for f in pool if f not in preferred]
-        random.shuffle(rest)
-        suggestions = (preferred[:2] + rest)[:3]
-        menu = ", ".join(f"'… {s} …'" for s in suggestions) if suggestions else "'… gets my vote'"
+        # Semantic requirement, no phrase menu (todo_prompt item 7): the parser
+        # vocabulary is broad; a failed line still gets one example-backed
+        # repair. The avoid-lists below stay — they are adaptive anti-chorus
+        # evidence from this round, not a palette.
         if intent.required_vote:
             target_clause = f"commit clearly to {required_name} and no other option"
         else:
             target_clause = "commit clearly to exactly ONE option"
         decision_instruction = (
-            f"\nFor this decision turn, {target_clause} using a commitment phrasing "
-            f"such as {menu} (fill in the option name yourself). Put the final option immediately next to the commitment phrase, "
-            "preferably at the start of the sentence. One short reason may follow the commitment. "
+            f"\nFor this decision turn, {target_clause}, in plain words of your own that state the "
+            "commitment directly (a clear vote, pick, or works-for-me statement) with the option name "
+            "right next to it. The sentence may otherwise take any shape. One short reason may follow. "
             "No hedging, no 'leaning', no conditions, no question after it."
         )
         if intent.avoid_phrases:
@@ -349,27 +431,23 @@ def sim_utterance(
             used = "; ".join(f"'{r}'" for r in intent.avoid_reasons[:3])
             decision_instruction += f"\nEarlier voters already gave these justifications — give a DIFFERENT reason of your own, in your own words: {used}."
         if intent.allow_vote_change and intent.old_preference and intent.required_vote and intent.old_preference != intent.required_vote:
+            # The bridge is REQUIRED, matching validation (switch_bridge_ok):
+            # an unexplained flip is rejected, so the prompt must not present
+            # the earlier pick as optional (item 9).
+            # required_name is already fixed by the commit clause above; only
+            # the earlier pick and the allowed reason are new here (item 8).
             decision_instruction += (
-                f"\nThis is a genuine compromise switch: earlier pick={old_name}; final vote={required_name}; "
-                f"allowed reason={allowed_reason}. Use one natural sentence or two short clauses. "
-                "Start with the final vote. You may briefly mention the earlier pick, but avoid a repeated 'I preferred OLD, but ...' template. "
+                f"\nThis is a genuine compromise switch away from {old_name}. Your line MUST make the "
+                f"change of mind visible — mention {old_name} briefly or otherwise make the movement "
+                f"explicit — and give this reason in your own words: {allowed_reason}. "
+                "Use one natural sentence or two short clauses; vary the wording, not the required content. "
                 "Do not add any other factual reason, condition, or pressure language."
             )
         elif intent.required_vote:
             decision_instruction += (
-                f"\nThis is a confirmation, not a switch. Vote for {required_name} directly with one short grounded reason. "
+                f"\nThis is a confirmation, not a switch: one short grounded reason may paraphrase: {allowed_reason}. "
                 "Do not mention an earlier preference unless it is a different option."
             )
-    elif intent.act == ActType.ANSWER:
-        decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
-    elif intent.act == ActType.COMMENT:
-        decision_instruction = "\nThis is a light comment, not an argument: acknowledge, interpret, or name a priority in one beat. You do not have to support, reject, compare, or ask anything."
-    elif intent.act == ActType.COMPROMISE:
-        decision_instruction = "\nPropose exactly ONE of the existing options as the possible common ground; a visible condition on it is fine. Do not invent blends, split plans, or two-venue combinations."
-    elif intent.act == ActType.PROCESS:
-        decision_instruction = "\nThis is a procedural group-management move. Keep it concrete, short, and socially natural. Do not cast your own final vote in this line unless explicitly asked."
-    elif intent.act == ActType.OPENING:
-        decision_instruction = "\nThis is the opening view. Optionally use a tiny chat greeting, then state your current favorite and one grounded reason. Do not make it sound like a final vote."
     continuation_note = ""
     if intent.continuation:
         continuation_note = (
@@ -410,37 +488,50 @@ def sim_utterance(
         length_note = f"Two short clauses or sentences are okay ({min_words}-{max_words} words)."
     else:
         length_note = f"Aim for {min_words}-{max_words} words, one casual message; a sentence fragment is fine."
+    # At most one lexical variation note reaches a turn (policy picks the most
+    # relevant pattern, item 8); the tail-question note is separate flow control.
     style_notes = ""
     if intent.suppress_tail_question:
         style_notes += "\n- Enough questions are already open; end with a statement, not a question."
     if intent.suppress_name_prefix:
-        style_notes += "\n- Recent turns over-used names; do NOT open with another participant's name, just reply."
+        style_notes += "\n- Several recent messages open with a name; just reply directly this time."
     if intent.suppress_option_opening:
-        style_notes += "\n- Do NOT start with an option name or 'The <option>'; lead with your point, a verb, or a question. You may still name the option mid-sentence — if you mean a different option than the previous message discussed, name it instead of saying 'this one' or 'it'."
+        style_notes += "\n- Several recent messages open with an option name; lead with your point this time (naming options mid-sentence is fine)."
     if intent.suppress_i_opening:
-        style_notes += "\n- Too many recent messages start with 'I …'; open this one differently — with the topic, the other person's point, an option fact, or a question."
+        style_notes += "\n- Many recent messages start with 'I …'; open with the topic, the other person's point, or a fact this time."
     if intent.suppress_we_opening:
-        style_notes += "\n- Too many recent messages start with 'We …'; open this one differently — with the point itself, the option's detail, the other person, or a question."
+        style_notes += "\n- Many recent messages start with 'We …'; open with the point itself this time."
     if intent.vary_opening:
-        style_notes += "\n- Recent turns all opened with the same word; start this one a different way."
+        style_notes += "\n- The last few messages all opened with the same word; start this one differently."
     if intent.avoid_pattern in {"concede_but", "worry_but", "tradeoff_but"}:
-        style_notes += "\n- Avoid the 'fair point, but…' / 'X is good but I worry…' concession-objection shape used just now; make a different move (a plain claim, a direct question, a concrete comparison, or a firm stance)."
+        style_notes += "\n- The last few messages all used a concession-then-objection shape; state your point directly this time."
 
+    # Background/private goal shape CONTENT choices (which reasons feel
+    # personal); moves whose content is prescribed elsewhere — answers (the
+    # question), procedure beats, and votes (the controller's target/reason) —
+    # skip them (todo_prompt item 8).
+    persona_line = (
+        ""
+        if intent.act in {ActType.ANSWER, ActType.PROCESS, ActType.VOTE}
+        else f"\nBackground: {compact_words(persona.background, 14)}; goal: {compact_words(persona.private_goal, 14)}."
+    )
     return f"""Write one natural chat message for {persona.name}.
 
-Topic: {state.scenario.topic}
-Context: {context}
-Speaker: age={persona.age}; background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
-Speech style: {persona.speech_style}. Directness: {_scale_1_5(params.directness)}/5. Stubbornness: {_scale_1_5(params.stubbornness)}/5.
-Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{target_block}{address}{decision_instruction}
+Voice: age {persona.age}; {persona.speech_style}. Directness {_scale_1_5(params.directness)}/5 (5 = blunt plain wording, 1 = soft tentative wording). Stubbornness {_scale_1_5(params.stubbornness)}/5 (5 = defends the current stance firmly and concedes slowly, 1 = concedes easily).{persona_line}
+Your stance: current pick {current_name}{initial_note}{stance_note}.{blocked}
 
+Move: {intent.act.value}. {_ACT_REQUIREMENTS.get(intent.act, "")}
+This turn: {intent.reason}{continuation_note}{target_block}{address}{decision_instruction}
+
+Topic: {state.scenario.topic}
+Shared context: {context}
 Allowed facts:
 {cards}
 
-Recent:
+Recent chat:
 {recent}
 
-Rules: one message only, no speaker prefix, no bullets/metadata. {length_note} Match the speech style and age naturally; do not overdo slang or formality. High directness means blunt plain wording, low directness soft tentative wording. Add one new point, answer, concern, or stance shift. Vary the opening; do not start with an option name, "I'm leaning", or "feels". Use only allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Output: one message only, no speaker prefix, no bullets/metadata. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 def _scale_1_5(value: float) -> int:
@@ -448,46 +539,18 @@ def _scale_1_5(value: float) -> int:
     return max(1, min(5, round(1 + 4 * float(value))))
 
 
-# Commitment-form examples keyed by their parsing._PHRASE_FAMILIES label, so a
-# family in intent.avoid_phrases can be dropped from the repair menu (I19).
-# Every form parses as a direct vote in parsing.py.
+# Commitment-form examples for the REPAIR path only (a first attempt already
+# failed to parse there, so concrete parser-visible examples are justified).
+# Keyed by parsing._PHRASE_FAMILIES labels so families already used this round
+# (intent.avoid_phrases) drop out of the menu.
 _COMMIT_FORM_EXAMPLES = {
-    "I'd go with": "I'd go with X",
+    "I vote for": "I vote for X",
     "gets my vote": "X gets my vote",
-    "my pick is": "my pick is X",
     "works for me": "X works for me",
-    "count me in for": "count me in for X",
-    "my vote is": "my vote goes to X",
     "I'm going with": "I'm going with X",
-    "I'm choosing": "I'm choosing X",
-    "I'm sold on": "I'm sold on X",
-    "I'll back": "then I'll back X",
     "I can live with": "I can live with X",
-    "I'd be happy with": "I'd be happy with X",
+    "my pick is": "my pick is X",
 }
-
-
-def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
-    """Commitment phrase families that fit the current stance and traits.
-
-    These run only on formal decision turns, so movement-related wording keys
-    off switch_resistance (final movement), not discussion stubbornness.
-    """
-    p = persona.sim_params
-    prefs: list[str] = []
-    if staying:
-        if p.switch_resistance >= 0.60:
-            prefs += ["I'm still on", "I'll stay with"]
-        if p.directness >= 0.65:
-            prefs += ["I vote for", "gets my vote"]
-    else:
-        if p.switch_resistance <= 0.40:
-            prefs += ["I can live with", "I'll back"]
-        if persona.traits.agreeableness >= 4 or p.directness <= 0.35:
-            prefs += ["I'd be happy with"]
-        if p.directness >= 0.65:
-            prefs += ["I'm going with"]
-    return prefs
 
 
 def repair_utterance(
@@ -512,15 +575,16 @@ def repair_utterance(
     clear_commit = ""
     if intent.required_vote and intent.act == ActType.VOTE:
         switch_note = (
-            f" If this is a switch away from {old_name}, you may mention that earlier pick briefly."
+            f" This is a switch away from {old_name}: mention {old_name} briefly or otherwise make "
+            "the change of mind explicit."
             if intent.old_preference and intent.old_preference != intent.required_vote
             else " This is not a switch; do not mention an earlier preference."
         )
         clear_commit = (
             f" The line MUST visibly commit to {required_name} and no other option."
             f"{switch_note} Use only this allowed reason, paraphrased naturally: {allowed_reason}. "
-            "Use a clear parser-friendly phrase such as 'I vote for X', 'X gets my vote', "
-            "'I'm going with X', or 'I can live with X'. No hedging, no conditions, no question after it."
+            "State the commitment plainly (for example 'I vote for X' or 'X works for me'). "
+            "No hedging, no conditions, no question after it."
         )
     elif intent.act == ActType.VOTE:
         # Offer only commitment forms not yet used this round / by this speaker,
@@ -540,6 +604,20 @@ def repair_utterance(
         required_focus = f" Mention and discuss Option {intent.option_focus[0]} explicitly."
     if intent.required_vote and "REQUIRED_VOTE_MISMATCH" in issue_codes:
         required_focus += f" Your previous line committed to the wrong option; commit to {required_name} instead."
+    if "ANSWER_DOES_NOT_ADDRESS_QUESTION" in issue_codes:
+        required_focus += " The line dodged the question it was asked; answer that question first, directly."
+    if "COMPARISON_MISSES_OPTIONS" in issue_codes and len(intent.option_focus) >= 2:
+        pair = ", ".join(aliases.get(o, o) for o in intent.option_focus[:2])
+        required_focus += f" The comparison must make BOTH options identifiable: {pair}."
+    if "THREAD_RESPONSE_MISSES_OPTION" in issue_codes and intent.option_focus:
+        required_focus += f" Address {aliases.get(intent.option_focus[0], intent.option_focus[0])} — the option this exchange is about."
+    if "CONTINUATION_REPEATS" in issue_codes:
+        required_focus += " The follow-up repeated your previous message; add one genuinely new thought instead."
+    if "SUPPORT_NOT_REALIZED" in issue_codes:
+        focus_name = aliases.get(intent.option_focus[0], intent.option_focus[0]) if intent.option_focus else "the focused option"
+        required_focus += f" The line reads as a neutral aside; make the support visible — one clear positive reason why {focus_name} works."
+    if "CONCERN_NOT_REALIZED" in issue_codes:
+        required_focus += " The line contains no actual objection; state the concrete downside, risk, or unknown plainly."
     grounding = ""
     if "UNSUPPORTED_FACT" in issue_codes:
         grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
@@ -562,19 +640,24 @@ def repair_utterance(
     bridge = ""
     if "UNBRIDGED_SWITCH" in issue_codes:
         if intent.old_preference and intent.required_vote and intent.old_preference != intent.required_vote:
+            # clear_commit above already states the commitment, movement, and
+            # allowed reason; only name the specific defect here (item 11).
             bridge = (
-                f" The line switches away from {old_name} with no valid bridge. "
-                f"Keep the required commitment to {required_name or 'the target option'}, briefly mention the earlier pick {old_name}, "
-                f"and use only this reason: {allowed_reason}. Vary the wording naturally; do not use a fixed template."
+                f" The previous line switched away from {old_name} without making that movement visible — "
+                "fix exactly that."
             )
         else:
             bridge = (
                 f" Commit directly to {required_name or 'the target option'} with one short grounded reason. "
                 "Do not mention an earlier preference because this is not a switch."
             )
-    return f"""Repair this generated chat line.
+    params = persona.sim_params
+    target_block = _target_block(state, intent, len(recent_lines[-3:]))
+    requirement = _ACT_REQUIREMENTS.get(intent.act, "")
+    return f"""Repair this generated chat line — keep its intended move, fix only the problems.
 
-Speaker: {persona.name}
+Speaker: {persona.name} — {persona.speech_style}; directness {_scale_1_5(params.directness)}/5, stubbornness {_scale_1_5(params.stubbornness)}/5.
+Move: {intent.act.value}. {requirement}{target_block}
 Original line: {original_text}
 Problems: {', '.join(issue_codes)}
 Allowed option facts:
@@ -582,7 +665,7 @@ Allowed option facts:
 Recent chat:
 {recent}
 
-Write one natural chat line under {max_words} words. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
+Write one natural chat line, around {max_words} words (a complete sentence somewhat over is fine). No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
 
 
 def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:
@@ -650,43 +733,36 @@ def _option_names(state: DialogueState, ids: list[str]) -> str:
     return ", ".join(names)
 
 
-def _public_state_summary(state: DialogueState) -> str:
-    aliases = short_alias_map(state.scenario.options)
-    votes = []
-    for persona in state.personas:
-        vote = state.runtimes[persona.id].explicit_vote
-        if vote:
-            votes.append(f"{persona.name}->{aliases.get(vote, vote)}")
-    untouched = [oid for oid, cov in state.coverage.items() if cov.mentions == 0]
-    owed = sorted(
-        (
-            t for t in state.threads.values()
-            if t.thread_type is ThreadType.QUESTION
-            and t.status is ThreadStatus.HOT
-            and t.required_respondent in state.runtimes
-        ),
-        key=lambda t: t.created_turn,
-    )
-    open_q = [f"{state.name_for(t.required_respondent)} owes answer" for t in owed[-2:]]
-    parts = []
-    parts.append("votes: " + (", ".join(votes) if votes else "none"))
-    if untouched:
-        parts.append("untouched options: " + ", ".join(untouched))
-    if open_q:
-        parts.append("open questions: " + ", ".join(open_q))
-    return "; ".join(parts)
-
-
 def _recent_chat(state: DialogueState, limit: int) -> str:
-    rows = [f"{t.speaker_name}: {t.text}" for t in state.turns[-limit:]]
+    rows = [f"{t.speaker_name}: {t.text}" for t in recent_turn_window(state, limit)]
     return "\n".join(rows) if rows else "(none yet)"
 
 
-def _target_line(state: DialogueState, intent: MoveIntent) -> str:
+def recent_turn_window(state: DialogueState, limit: int) -> list:
+    """Last ``limit`` turns shown inside sim prompts.
+
+    The moderator's opening board turn is setup scaffolding: its content is
+    already carried by the Allowed facts and Shared context sections, so it is
+    never repeated as chat history (item 3)."""
+    turns = [t for t in state.turns if not (t.speaker_id == "moderator" and t.phase is Phase.OPENING)]
+    return turns[-limit:] if limit > 0 else []
+
+
+def _target_block(state: DialogueState, intent: MoveIntent, recent_count: int) -> str:
+    """Respond-to instruction without duplicating the recent-chat block (item 3).
+
+    A target inside the shown recent window is pointed at, not re-quoted in
+    full; only an older target gets its own compact quote."""
     if intent.respond_to_turn is None:
         return ""
-    for turn in state.turns:
-        if turn.index == intent.respond_to_turn:
-            text = compact_words(turn.text, int(cfg.utterances.response_target_max_words))
-            return f"{turn.speaker_name}: {text}"
-    return ""
+    target = next((t for t in state.turns if t.index == intent.respond_to_turn), None)
+    if target is None:
+        return ""
+    window = recent_turn_window(state, recent_count)
+    if window and target.index >= window[0].index:
+        if target.index == window[-1].index:
+            return f"\nRespond to {target.speaker_name}'s last message in the recent chat."
+        pointer = compact_words(target.text, 8)
+        return f"\nRespond to {target.speaker_name}'s message in the recent chat (\"{pointer}\")."
+    text = compact_words(target.text, int(cfg.utterances.response_target_max_words))
+    return f"\nRespond to this earlier point — {target.speaker_name}: {text}"

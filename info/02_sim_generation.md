@@ -42,16 +42,30 @@ Design rule:
 
 OCEAN traits are hidden setup traits. They are sampled (or manually fixed), used once to derive the simulator parameters and to keep generated persona content plausible, and never passed into utterance prompts or routing.
 
-The four simulator parameters are the only numeric behavior controls:
+The five simulator parameters are the only numeric behavior controls:
 
 - `engagement`: expected speaker frequency / turn share;
-- `verbosity`: average turn length, realized only as numeric word budgets;
+- `verbosity`: average turn length, realized only as numeric word budgets (soft generation targets — accepted turns are never cut to length);
 - `directness`: blunt vs soft wording;
-- `stubbornness`: resistance to changing stance and strength of stance defense.
+- `stubbornness`: discussion-phase stance defense, concession, and willingness to soften — never final switching;
+- `switch_resistance`: final movement only — switching, compromise acceptance, holdout behavior, and vote/repair resistance.
 
-Derivation (`src/simulator.py::derive_simulator_parameters`) uses normalized OCEAN values: extraversion (plus some conscientiousness) drives engagement; extraversion and openness drive verbosity; conscientiousness, extraversion, and low agreeableness drive directness; low agreeableness, neuroticism, low openness, and conscientiousness drive stubbornness. All parameters are clipped to `[0, 1]`. Manual profile `parameters` may override any of the four directly.
+Beyond these five parameters and the per-option rank table there is no other persistent behavioral state: no commitment-strength or confidence float exists, and stance changes come only from accepted visible utterances.
 
-High stubbornness means very resistant but theoretically movable; a hard blocker comes only from `rejection` (option rank 1), never from stubbornness alone.
+Derivation (`src/simulator.py::derive_simulator_parameters`) uses normalized OCEAN values: extraversion (plus some conscientiousness) drives engagement; extraversion and openness drive verbosity; conscientiousness, extraversion, and low agreeableness drive directness; low agreeableness, neuroticism, low openness, and conscientiousness drive stubbornness. switch_resistance combines low agreeableness, conscientiousness, low openness, and neuroticism. All parameters are clipped to `[0, 1]`. Manual profile `parameters` may override any of the five directly.
+
+High stubbornness means very resistant but theoretically movable; a hard blocker comes only from rank-1 rejections, never from stubbornness alone.
+
+## Hard blockers
+
+`personas.hard_blocker_probability` is a low **group-level** probability, sampled once per auto run. When it fires, exactly one participant becomes an exclusive hard blocker:
+
+- exactly one preferred option (rank 5);
+- every other option hard-rejected (rank 1) with a short grounded reason each;
+- background and private goal state the one non-negotiable requirement that only the preferred option satisfies;
+- agreeableness is pinned to 1, which derives high stubbornness and switch_resistance; engagement and verbosity stay free.
+
+Multi-option rejection is represented by the rank table itself; the singular `rejection`/`rejection_reason` field remains the manual single-rejection input. The builder validates the exclusive contract after generation (one rank-5, all alternatives rank 1 with reasons) and retries the persona batch on violations; it also rejects a non-blocker persona that accidentally received the exclusive pattern. A blocker may speak politely, but its decision behavior consistently rejects every non-preferred option.
 
 ## Age, profile, and speech style
 
@@ -82,7 +96,7 @@ The builder checks for obvious age/profile contradictions. Examples that should 
 The intended separation is:
 
 ```text
-hidden OCEAN traits -> the four simulator parameters + plausible persona content
+hidden OCEAN traits -> the five simulator parameters + plausible persona content
 simulator parameters -> behavior
 age/profile/speech_style -> plausibility and wording
 option stances -> decision preferences

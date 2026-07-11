@@ -44,12 +44,80 @@ class BlockReasonTests(unittest.TestCase):
         self._assert_blocks("INVALID_OPTION_REFERENCE", "p1", "Option D looks best to me.", intent)
 
     def test_missing_required_coverage_focus_blocks(self):
+        # The coverage ROUTE requires the focus option, not a magic reason string.
         intent = MoveIntent(
             speaker_id="p1", act=ActType.COMPARE,
-            reason="briefly bring in an option that has not yet been socially processed",
+            reason="bring Escape Room into the discussion and compare it with your current lean",
+            route_source="coverage",
             option_focus=["C"],
         )
         self._assert_blocks("MISSING_REQUIRED_OPTION_FOCUS", "p1", "The Museum keeps things simple.", intent)
+
+    def test_implicit_thread_reply_without_any_option_name_is_not_flagged(self):
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
+            route_source="thread_hot", option_focus=["A"],
+        )
+        report = self._report("p1", "That cost is fair for what we get, honestly.", intent)
+        self.assertNotIn("THREAD_RESPONSE_MISSES_OPTION", report.issues)
+
+    def test_thread_support_realized_as_comment_gets_one_repair_flag(self):
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
+            route_source="thread_hot", option_focus=["A"],
+        )
+        # Mentions the option but neither supports nor objects: a neutral aside.
+        report = self._report("p1", "The Museum has been discussed a lot today.", intent)
+        self.assertIn("SUPPORT_NOT_REALIZED", report.issues)
+        self.assertFalse(report.block_state_mutation)
+
+    def test_thread_concern_without_objection_gets_one_repair_flag(self):
+        intent = MoveIntent(
+            speaker_id="p2", act=ActType.CONCERN, reason="push back",
+            route_source="participant_narrowing", option_focus=["A"],
+        )
+        report = self._report("p2", "The Museum keeps the day easy to adjust.", intent)
+        self.assertIn("CONCERN_NOT_REALIZED", report.issues)
+        self.assertFalse(report.block_state_mutation)
+
+    def test_concession_first_support_is_not_flagged(self):
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
+            route_source="thread_hot", option_focus=["A"],
+        )
+        # Acknowledges the worry, then supports: realizes CONCERN via the
+        # soft-objection wording but is a legitimate concession-first defense.
+        report = self._report(
+            "p1", "I get the cost worry, but the Museum keeps the day easy for everyone.", intent
+        )
+        self.assertNotIn("SUPPORT_NOT_REALIZED", report.issues)
+
+    def test_decision_fallback_always_parses_to_the_target(self):
+        # A stored reason can smuggle in a second commitment phrase, another
+        # option, or a question that voids the composed line's parse; the
+        # self-check must then emit the minimal guaranteed-parseable form.
+        from parsing import visible_commitment
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.VOTE, reason="final decision",
+            option_focus=["B"], required_vote="B", old_preference="A",
+            allow_vote_change=True,
+            allowed_reason="the Museum works for me too, doesn't it?",
+        )
+        from validation import ValidationReport
+        report = ValidationReport(["UNBRIDGED_SWITCH"], True)
+        persona = self.state.persona_by_id("p1")
+        text = self.runner._safe_fallback_text(self.state, persona, intent, report)
+        commit = visible_commitment(text, self.runner._resolver, sanctioned_switch=True)
+        self.assertIsNotNone(commit)
+        self.assertEqual(commit[1], "B")
+
+    def test_normal_route_support_comment_is_not_flagged(self):
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="add a reason",
+            route_source="normal", option_focus=["A"],
+        )
+        report = self._report("p1", "The Museum has been discussed a lot today.", intent)
+        self.assertNotIn("SUPPORT_NOT_REALIZED", report.issues)
 
     def test_unclear_visible_commitment_blocks(self):
         intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["A"])

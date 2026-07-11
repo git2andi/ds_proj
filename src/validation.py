@@ -24,7 +24,7 @@ from models import (
     Persona,
     _DECISION_ACTS,
 )
-from parsing import hybrid_blend_detected, switch_bridge_ok
+from parsing import hybrid_blend_detected, switch_bridge_ok, visible_commitment
 from utils import jaccard_text
 
 
@@ -78,9 +78,12 @@ class ValidationMixin:
         if self._resolver and self._resolver.invalid_option_refs(text):
             issues.append("INVALID_OPTION_REFERENCE")
             block = True
+        # Coverage turns exist to bring one ignored option into the room; the
+        # route itself (not a magic reason string, item 10) requires the line
+        # to actually name that option.
         if (
             intent.option_focus
-            and "not yet been socially processed" in intent.reason
+            and intent.route_source == "coverage"
             and intent.option_focus[0] not in act.option_refs
         ):
             issues.append("MISSING_REQUIRED_OPTION_FOCUS")
@@ -161,10 +164,24 @@ class ValidationMixin:
                 # routed answer, or it would falsely resolve the question thread.
                 issues.append("ANSWER_DOES_NOT_ADDRESS_QUESTION")
                 block = True
+        # Local act-realization alignment (todo_prompt item 6): on thread and
+        # narrowing routes the routed direction matters for thread progress, so
+        # a line whose parsed realization is a generic comment (for SUPPORT) or
+        # shows no objection at all (for CONCERN) gets one focused repair.
+        # Non-blocking: telemetry + one repair chance, never a fallback.
+        if intent.route_source in ("thread_hot", "thread_cooling", "participant_narrowing") and text.strip():
+            if intent.act == ActType.SUPPORT and act.act_type == ActType.COMMENT:
+                issues.append("SUPPORT_NOT_REALIZED")
+            if intent.act == ActType.CONCERN and act.act_type in {ActType.COMMENT, ActType.SUPPORT}:
+                issues.append("CONCERN_NOT_REALIZED")
+        # An implicit reply inside a thread is fine — the exchange makes the
+        # target unambiguous (item 7/10). Only a response that names OTHER
+        # options while skipping the thread's focus is talking past the issue.
         if (
             intent.route_source in ("thread_hot", "thread_cooling")
-            and intent.act in {ActType.SUPPORT, ActType.ANSWER}
+            and intent.act in {ActType.SUPPORT, ActType.ANSWER, ActType.CONCERN, ActType.COMMENT}
             and intent.option_focus
+            and act.option_refs
             and not set(intent.option_focus) & set(act.option_refs)
         ):
             issues.append("THREAD_RESPONSE_MISSES_OPTION")
@@ -199,6 +216,11 @@ class ValidationMixin:
         bridge_from = intent.old_preference or rt.top_option() or persona.preferred_option
         if (
             act.explicit_vote
+            # A soft acceptance ("X works for me too") is not a switch: it makes
+            # the option acceptable without moving the lean, and people accept
+            # without bridging (todo_prompt item 5). Only a direct vote away
+            # from the current lean needs the visible bridge.
+            and act.explicit_vote not in act.accepts
             and bridge_from in state.scenario.option_ids
             and act.explicit_vote != bridge_from
             and not switch_bridge_ok(text, bridge_from, self._resolver)
@@ -289,8 +311,7 @@ class ValidationMixin:
         unsupported = bool(data.get("unsupported")) if isinstance(data, dict) else False
         return ("UNSUPPORTED_FACT" if unsupported else None), self._llm.last_tokens_in, self._llm.last_tokens_out
 
-    @staticmethod
-    def _safe_fallback_text(state: DialogueState, persona: Persona, intent: MoveIntent, report: ValidationReport) -> str:
+    def _safe_fallback_text(self, state: DialogueState, persona: Persona, intent: MoveIntent, report: ValidationReport) -> str:
         """Deterministic replacement for LLM text that kept blocking issues after repair.
 
         The wording is chosen so the conservative parser reads it exactly as
@@ -320,20 +341,17 @@ class ValidationMixin:
         if target == blocked or target in rt.rejected_options():
             target = next(o for o in state.scenario.option_ids if o != blocked and o not in rt.rejected_options())
         if intent.act in _DECISION_ACTS:
-            # Labels match parsing._PHRASE_FAMILIES so avoid_phrases rotation
-            # works; every template parses as a direct vote (I19: a wide pool
-            # keeps seven fallback voters in one round from sounding identical).
+            # Deterministic last-resort lines only (todo_prompt item 7): a small
+            # pool, rotated so several fallback voters in one round do not sound
+            # identical. Labels match parsing._PHRASE_FAMILIES so avoid_phrases
+            # rotation works; every template parses as a direct vote.
             templates = [
                 ("gets my vote", "{o} gets my vote."),
-                ("I'd go with", "I'd go with {o}."),
-                ("my pick is", "My pick is {o}."),
                 ("I vote for", "I vote for {o}."),
-                ("my vote is", "My vote goes to {o}."),
                 ("I'm going with", "I'm going with {o}."),
-                ("I'm sold on", "I'm sold on {o}."),
-                ("count me in for", "Count me in for {o}."),
+                ("my pick is", "My pick is {o}."),
             ]
-            label, template = next(
+            _label, template = next(
                 ((l, t) for l, t in templates if l not in intent.avoid_phrases),
                 templates[0],
             )
@@ -347,16 +365,26 @@ class ValidationMixin:
                 reason = intent.allowed_reason or f"{target_name} has the clearest visible support now"
                 switch_templates = [
                     "I vote for {target}; I was on {old}, but {reason}.",
-                    "I'll switch to {target}; I preferred {old}, but {reason}.",
                     "{target} gets my vote now; I preferred {old}, but {reason}.",
-                    "I can live with {target}; {old} was my first pick, but {reason}.",
-                    "My vote goes to {target}; I started on {old}, but {reason}.",
                     "I'm going with {target}; {old} was my earlier pick, but {reason}.",
-                    "Count me in for {target}; I was leaning toward {old}, but {reason}.",
-                    "I'll go with {target}; I preferred {old}, but {reason}.",
+                    "I can live with {target}; {old} was my first pick, but {reason}.",
                 ]
                 idx = (state.turn_index + len(persona.id) + len(report.issues)) % len(switch_templates)
-                return switch_templates[idx].format(old=old_name, target=target_name, reason=reason.rstrip('.'))
+                line = switch_templates[idx].format(old=old_name, target=target_name, reason=reason.rstrip('.'))
+            # Self-check (todo_prompt item 10): a fallback exists so the decision
+            # turn ALWAYS parses. A stored reason can still smuggle in wording
+            # that voids the commitment (a second commit phrase, a question, a
+            # third option); when the composed line does not parse to the
+            # target, emit the minimal guaranteed-parseable form instead.
+            if self._resolver is not None:
+                commit = visible_commitment(
+                    line, self._resolver, sanctioned_switch=bool(intent.allow_vote_change)
+                )
+                if commit is None or commit[1] != target:
+                    if current in state.scenario.option_ids and current != target:
+                        line = f"I vote for {target_name}; I was on {aliases[current]}, but I can go with the group here."
+                    else:
+                        line = f"I vote for {target_name}."
             return line
         if "MISSING_REQUIRED_OPTION_FOCUS" in report.issues and intent.option_focus:
             gap = intent.option_focus[0]

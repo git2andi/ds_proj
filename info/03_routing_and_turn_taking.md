@@ -21,7 +21,7 @@ Phase/progress nudges run in the discussion loop before the router; narrowing/vo
 
 Local interaction is tracked as threads (`question`, `concern`, `blocker`, `comparison`; `repair` is phase-specific) with statuses `hot / cooling / resolved / stale`. Thread identity is `(type, focus options, deterministic issue key)`; the engine in `controller/threads.py` owns all lifecycle transitions and selects one deterministic primary thread per route decision (repair > direct question > group question > hard blocker on candidate > candidate concern > other hot > cooling).
 
-A hot thread drives the next local move: concern threads route an advocate's defense (or honest concession, depending on tracked commitment), blocker threads route one bounded probe of the blocker and then honest mitigation responses, comparison threads route engagement with the same trade-off. Cooling continuation lets the raiser visibly accept or push back once (concerns/blockers), another participant react to an answer (questions), or a new voice join a comparison — with probabilities from `threads:` config, bounded to freshly cooled threads.
+A hot thread drives the next local move, and the routed act always matches the decided objective. Concern threads: a low-stubbornness advocate concedes (CONCERN), a committed advocate defends (SUPPORT), a bystander who shares the dislike adds a grounded doubt (CONCERN), a neutral bystander grounds the issue in the listed facts (COMMENT). Blocker threads route one bounded probe (ASK), then a backer points to the addressing fact (SUPPORT) or anyone else acknowledges the blocker's weight (COMMENT). Comparison threads route engagement with the same trade-off (COMPARE). Cooling continuation lets the raiser visibly accept (SUPPORT) or push back once (CONCERN) — direction picked by a stubbornness-weighted draw — another participant react to an answer (questions), or a new voice join a comparison; probabilities come from `threads:` config, bounded to freshly cooled threads. There is no hidden commitment float anywhere in these decisions: they read ranks, traits, and thread state only.
 
 ## Speaker choice
 
@@ -51,7 +51,9 @@ Normal sampling is limited to `support, concern, ask, compare, comment`. `answer
 
 ## Parameter influence
 
-- higher directness increases concern/challenge behavior;
-- higher stubbornness raises discussion-phase stance defense and resistance;
-- higher switch_resistance raises final-movement resistance (switches, compromise acceptance, holdout concession);
-- engagement decides how often a sim participates.
+- engagement -> contribution frequency (expected turn share);
+- verbosity -> average utterance length (numeric word budgets, soft targets);
+- directness -> wording bluntness (and a higher concern/challenge prior);
+- stubbornness -> discussion-phase defense, concession, and softening — never final switching;
+- switch_resistance -> final movement only: switches, compromise acceptance, holdout concession, vote/repair resistance;
+- speech_style -> lexical and register variation, never a routing signal.

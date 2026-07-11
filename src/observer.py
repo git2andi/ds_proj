@@ -2,7 +2,7 @@
 
 ``_apply_semantics`` is the only place a final accepted participant turn
 changes semantic dialogue state (votes, stance ranks, coverage, threads,
-commitment dynamics, progress). Thread lifecycle transitions are delegated to
+progress). Thread lifecycle transitions are delegated to
 the thread engine (threads.py); the observer never assigns thread statuses
 directly. The remaining mutation paths outside this module are pipeline
 bookkeeping only: turn/trace appends and bounded route-attempt accounting in
@@ -23,6 +23,7 @@ from models import (
     ParticipantRuntime,
     Persona,
     Phase,
+    STANCE_ACCEPTABLE,
     STANCE_NEUTRAL,
     STANCE_REJECTED,
     ThreadState,
@@ -106,7 +107,7 @@ class ObserverMixin:
         # Concern/blocker threads (6.2/6.3): first fold this turn into open
         # threads (a semantically relevant reply moves hot -> cooling; a
         # raiser's visible acceptance resolves), then open option-specific
-        # threads for objections raised here, eroding advocates' commitment.
+        # threads for objections raised here.
         self._observe_concern_responses(state, record)
         # Comparison threads (6.4): a realized head-to-head gets one normalized
         # pair thread; a relevant pair response cools it. Short-lived by design.
@@ -117,20 +118,6 @@ class ObserverMixin:
         # objection registers nothing (accepted text is the semantic authority).
         for option_id in challenged:
             self._register_concern_thread(state, record, option_id)
-        # Visible support is social pressure too: a commitment/acceptance for one
-        # option slightly erodes other sims' hold on different favorites.
-        supported = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
-        for option_id in supported:
-            self._apply_support_pressure(state, record.speaker_id, option_id)
-        # Speaking in support of the own favorite rebuilds commitment a little.
-        own = rt.top_option()
-        if (
-            own
-            and own in act.option_refs
-            and act.act_type in {ActType.OPENING, ActType.SUPPORT, ActType.COMPARE}
-            and own not in challenged
-        ):
-            self._set_commitment(rt, rt.commitment_strength + 0.04)
 
         # A visible resolution can reopen a parsed blocker for THIS sim only, and it
         # must run before votes so "that fixes my concern; I can live with X" counts.
@@ -181,6 +168,14 @@ class ObserverMixin:
 
         self._apply_lean_movement(state, record, rt, persona)
 
+        # One counting point for genuine discussion-phase lean movement
+        # (todo_prompt item 5): ANY visible evidence path that changed this
+        # speaker's top option during DISCUSSION counts — softening, compromise,
+        # acceptance, or a visible commitment — never controller intent alone
+        # (blocked/dropped turns skip _apply_semantics entirely).
+        if record.phase is Phase.DISCUSSION and rt.top_option() != prior_pref:
+            state.discussion_lean_shifts += 1
+
         # Track the visible top pair per accepted turn for the stability
         # trigger (12.2). Tuples, so equality comparison is exact.
         state.top_pair_history.append(tuple(self._current_top_pair(state)))
@@ -190,28 +185,10 @@ class ObserverMixin:
 
         # Thread aging runs after the progress snapshot: decaying to stale is
         # the absence of progress and must not reset the stagnation counter.
-        # A concern that dies unanswered weighs on the option's advocates more
-        # than a defended one (issue 2/3 — unrebutted points erode).
-        unanswered_hot = {
-            tid for tid, t in state.threads.items()
-            if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
-            and t.status is ThreadStatus.HOT
-        }
         threads_engine.age_threads(state)
-        for tid in unanswered_hot:
-            thread = state.threads[tid]
-            if thread.status is not ThreadStatus.STALE:
-                continue
-            for option_id in thread.focus_options:
-                for persona in state.personas:
-                    prt = state.runtimes[persona.id]
-                    if persona.id != thread.started_by and prt.top_option() == option_id:
-                        self._set_commitment(
-                            prt, prt.commitment_strength - 0.10 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                        )
 
     # ------------------------------------------------------------------
-    # Concern threads and commitment dynamics (issue 2)
+    # Concern threads and lean movement
     # ------------------------------------------------------------------
 
     def _apply_lean_movement(
@@ -244,34 +221,27 @@ class ObserverMixin:
             # withholding the shift would make the state dishonest.
             rt.promote_to_preferred(softened, reason_for=act.text)
             rt.concessions_made += 1
-            self._set_commitment(rt, max(rt.commitment_strength, 0.30) + 0.10)
-            if record.phase == Phase.DISCUSSION:
-                state.discussion_lean_shifts += 1
         else:
             signal = act.offers_compromise or act.conditional_support
             if signal and signal != rt.top_option() and self._can_shift_to(state, persona, signal):
-                # Movability scales with the tracked commitment (issue 2): a sim
-                # whose favorite took unanswered challenges/pressure moves more
-                # easily than one that has been defending it.
-                effective = persona.sim_params.stubbornness * (0.4 + 0.9 * rt.commitment_strength)
-                if random.random() > effective:
+                # The sim visibly floated this option itself; whether the
+                # internal lean follows is discussion-phase concession
+                # territory: stubbornness gates it, and an already-acceptable
+                # target moves more easily than an untested one (no hidden
+                # commitment float — ranks and traits only).
+                resist = persona.sim_params.stubbornness * (
+                    0.5 if rt.rank(signal) >= STANCE_ACCEPTABLE else 0.8
+                )
+                if random.random() > resist:
                     rt.promote_to_preferred(signal, reason_for=act.text)
                     rt.concessions_made += 1
-                    self._set_commitment(rt, max(rt.commitment_strength, 0.35) + 0.10)
-                    if record.phase == Phase.DISCUSSION:
-                        state.discussion_lean_shifts += 1
-
-    @staticmethod
-    def _set_commitment(rt: ParticipantRuntime, value: float) -> None:
-        rt.commitment_strength = max(0.05, min(0.95, value))
-        rt.commitment_min = min(rt.commitment_min, rt.commitment_strength)
 
     def _register_concern_thread(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
         """Open an option-specific concern/blocker thread from a final turn (6.2/6.3).
 
-        Repeats of a resolved issue are suppressed by the thread engine; only a
-        genuinely new thread erodes advocates' commitment, so repeated generic
-        objections stop applying pressure while a fresh issue still bites.
+        Repeats of a resolved issue are suppressed by the thread engine, so
+        repeated generic objections open nothing while a fresh issue still
+        registers as a challenge on the option's advocates.
         """
         if option_id not in state.scenario.option_ids:
             return
@@ -297,8 +267,6 @@ class ObserverMixin:
             rt = state.runtimes[persona.id]
             if persona.id != record.speaker_id and rt.top_option() == option_id:
                 rt.challenges_received += 1
-                erosion = 0.12 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                self._set_commitment(rt, rt.commitment_strength - erosion)
 
     def _observe_concern_responses(self, state: DialogueState, record: TurnRecord) -> None:
         """Fold this final turn into open concern/blocker threads (6.2/6.3).
@@ -420,16 +388,6 @@ class ObserverMixin:
             response_tokens = set(key[4:].split("-"))
             return bool(thread_tokens & response_tokens)
         return False
-
-    def _apply_support_pressure(self, state: DialogueState, supporter_id: str, option_id: str) -> None:
-        """Visible backing for one option erodes rival advocates' commitment."""
-        if option_id not in state.scenario.option_ids:
-            return
-        for persona in state.personas:
-            rt = state.runtimes[persona.id]
-            if persona.id != supporter_id and rt.top_option() and rt.top_option() != option_id:
-                erosion = 0.05 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                self._set_commitment(rt, rt.commitment_strength - erosion)
 
     @staticmethod
     def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:

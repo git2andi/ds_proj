@@ -412,6 +412,7 @@ def _normalise_initial_stances(
     preferred_options: list[str],
     rejection: str | None,
     rejection_reason: str,
+    exclusive_blocker: bool = False,
 ) -> dict[str, OptionStance]:
     labels = scenario.option_ids
     normal: dict[str, OptionStance] = {}
@@ -427,6 +428,18 @@ def _normalise_initial_stances(
             rank = STANCE_PREFERRED
             reason_for = reason_for or _option_hint(option, True)
             reason_against = ""
+        elif exclusive_blocker:
+            # Sampled hard blocker (todo_blocker item 1): every non-preferred
+            # option is hard-rejected with a grounded reason — the sim must not
+            # silently remain neutral or acceptable toward an alternative.
+            rank = STANCE_REJECTED
+            reason_against = (
+                reason_against
+                or (_clip_reason(rejection_reason) if oid == rejection else "")
+                or _option_hint(option, False)
+                or "does not meet their one non-negotiable requirement"
+            )
+            reason_for = ""
         elif oid in secondary:
             rank = max(rank, STANCE_ACCEPTABLE)
             reason_for = reason_for or _option_hint(option, True)
@@ -457,6 +470,7 @@ class SetupBuilder:
         if self._manual_env:
             self.topic = str(self._manual_env["topic"]).strip()
         self._llm = get_llm_client()
+        self._hard_blocker_id: str | None = None
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
         if self._profiles and len(self._profiles) != n:
@@ -609,6 +623,7 @@ class SetupBuilder:
             prompts.setup_personas(
                 self.topic, n, trait_rows, required_preferences, options_json,
                 list(scenario.shared_context),
+                hard_blocker_id=self._hard_blocker_id,
             ),
             profile="setup",
         )
@@ -616,10 +631,12 @@ class SetupBuilder:
 
     def _trait_rows(self, n: int) -> list[dict[str, Any]]:
         # Random hard blockers only in auto mode; a manual cast gets a blocker
-        # solely through an explicit profile rejection.
+        # solely through an explicit profile rejection. The probability is
+        # GROUP-level: at most one exclusive hard blocker per run.
         hard_id = None
         if not self._profiles and n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
             hard_id = f"p{random.randint(1, n)}"
+        self._hard_blocker_id = hard_id
         given_names = [p["name"] for p in self._profiles if p["name"]]
         fill_names = iter(_sample_names(n, exclude=given_names))
         rows: list[dict[str, Any]] = []
@@ -955,9 +972,11 @@ class SetupBuilder:
         )
         if not preferred_options:
             raise ValueError(f"participant {pid} has no valid preferred_options")
+        exclusive_blocker = pid == self._hard_blocker_id
         raw_stances = _stance_from_option_table(row, labels, scenario)
         option_stances = _normalise_initial_stances(
-            scenario, raw_stances, preferred_options, rejection, rejection_reason
+            scenario, raw_stances, preferred_options, rejection, rejection_reason,
+            exclusive_blocker=exclusive_blocker,
         )
         raw_age = row.get("age")
         profile_age = profile.get("age")
@@ -989,6 +1008,7 @@ class SetupBuilder:
             rejection=rejection,
             rejection_reason=rejection_reason,
             option_stances=option_stances,
+            hard_blocker=exclusive_blocker,
         )
         return persona
 
@@ -1043,6 +1063,37 @@ class SetupBuilder:
                 raise ValueError(f"participant {persona.id} cannot reject a preferred option")
             if persona.traits.agreeableness == 1 and len(persona.preferred_options) > 1:
                 raise ValueError(f"hard blocker {persona.id} should have exactly one preferred option")
+            # Exclusive hard-blocker contract (todo_blocker item 3): a sampled
+            # blocker has exactly one rank-5 option and hard-rejects every
+            # alternative with a grounded reason; a non-blocker must never end
+            # up with that exclusive pattern (at most the one manual/LLM
+            # rejection). Violations raise into the existing retry path.
+            stances = persona.option_stances or {}
+            ranks = {oid: stances[oid].rank if oid in stances else STANCE_NEUTRAL for oid in labels}
+            rejected_ids = sorted(oid for oid, rank in ranks.items() if rank == STANCE_REJECTED)
+            if persona.hard_blocker:
+                preferred_ids = sorted(oid for oid, rank in ranks.items() if rank == STANCE_PREFERRED)
+                if len(persona.preferred_options) != 1 or preferred_ids != [persona.preferred_option]:
+                    raise ValueError(
+                        f"hard blocker {persona.id} must have exactly one rank-5 option "
+                        f"({persona.preferred_option}), got {preferred_ids}"
+                    )
+                others = sorted(oid for oid in labels if oid != persona.preferred_option)
+                if rejected_ids != others:
+                    raise ValueError(
+                        f"hard blocker {persona.id} must hard-reject every alternative; "
+                        f"rejected {rejected_ids}, expected {others}"
+                    )
+                for oid in others:
+                    if not stances[oid].reason_against:
+                        raise ValueError(
+                            f"hard blocker {persona.id} rejects {oid} without a grounded reason"
+                        )
+            elif len(rejected_ids) > (1 if persona.rejection else 0):
+                raise ValueError(
+                    f"participant {persona.id} was given hard rejections {rejected_ids} "
+                    "without being the sampled hard blocker or having a manual rejection"
+                )
             plausibility = _age_plausibility_issues(persona.age, persona.background, persona.private_goal)
             if plausibility:
                 raise ValueError(

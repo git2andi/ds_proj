@@ -25,7 +25,7 @@ def normalise_lines(text: str) -> str:
 
 
 def strip_speaker_prefix(text: str, speaker_name: str) -> str:
-    return re.sub(rf"^\s*{re.escape(speaker_name)}\s*:\s*", "", text, flags=re.I).strip()
+    return re.sub(rf"^\s*(?:{re.escape(speaker_name)}\s*:\s*)+", "", text, flags=re.I).strip()
 
 
 def tokenize(text: str, min_len: int = 3) -> list[str]:
@@ -129,61 +129,36 @@ _DANGLING_TRAIL = {
     "because", "so", "that", "is", "are", "in", "on", "at", "as", "if", "from",
 }
 
-# Only used on chopped text (where the ending is known to be cut): a trailing
-# wh-word, pronoun, modal, or "about" is a fragment there, even though some of
-# these can end a full sentence.
-_CHOP_TRAIL = _DANGLING_TRAIL | {
-    "who", "whom", "whose", "which", "what", "when", "where", "why", "how", "about",
-    "should", "could", "would", "can", "will", "might", "must", "may",
-    "we", "you", "they", "he", "she", "it", "i", "our", "your", "their", "my",
-    "this", "these", "those", "there", "be", "been", "was", "were",
-    "has", "have", "had", "do", "does", "did", "just", "really", "very",
-    "though", "while", "unless", "until", "whether",
-    # Transitive/linking verbs that obviously hang without their complement
-    # ("…the family-style menu means.", "…and I wonder.").
-    "means", "wonder", "wonders", "makes", "gets", "keeps", "feels", "sounds",
-    "seems", "brings", "gives", "helps", "lets", "needs", "wants", "suits",
-    "offers", "offer", "make", "get", "keep", "feel", "sound", "seem",
-}
+def clause_fragment(text: str, proper_context: str = "") -> str:
+    """Turn a card sentence into a mid-clause fragment (item 9): trim the
+    trailing period and lowercase a sentence-initial capital, unless the word
+    is capitalized inside ``proper_context`` too (a proper noun/brand)."""
+    t = " ".join(str(text).split()).rstrip(".")
+    words = t.split()
+    if words:
+        first = words[0]
+        if len(first) > 1 and first[0].isupper() and first[1:].islower() and first not in proper_context.split():
+            words[0] = first[0].lower() + first[1:]
+            t = " ".join(words)
+    return t
 
-# A chopped stub that still reads as a question ("does the slower setup bother
-# you more") keeps its "?"; a stub whose interrogative clause was cut away
-# ("We get fresh seafood and a chic vibe at Sushi Bar") must not.
-_INTERROGATIVE_STUB = re.compile(
-    r"\b(?:what|who|whom|whose|which|when|where|why|how|anyone|anybody)\b"
-    r"|\b(?:do|does|did|are|is|was|were|can|could|should|would|will|shall|am)\s+"
-    r"(?:i|we|you|they|it|he|she|that|this|there|anyone|everyone|any|the|our|a|an)\b",
+
+# Wording that voids a decision line when embedded as its reason: hedges,
+# conditionals, and questions read as non-commitment to the parser.
+_REASON_NOISE = re.compile(
+    r"[?]|\b(?:maybe|might|could|unless|only\s+if|depends|not\s+sure|i\s+guess|would\s+need|worr\w+|concern\w*)\b",
     re.I,
 )
 
-# A coordinated interrogative tail cut mid-clause: "..., but what about those who".
-_BROKEN_QUESTION_TAIL = re.compile(
-    r"[,;]?\s*(?:and|but|or|so)?\s*(?:what|how)\s+about\s+"
-    r"(?:the|a|an|those|these|that|this|them|it|us|anyone|everyone)?\s*(?:who|which|that)?\s*$",
-    re.I,
-)
 
-# A chopped subordinate/coordinated clause opener left with at most a few
-# words ("…as our base since the clean") — drop the whole stub.
-_TRAILING_SUBCLAUSE_STUB = re.compile(
-    r"[,;]?\s*\b(?:since|because|although|though|while|unless|if|when|as|but|and|or|so)\b"
-    r"(?:\s+\S+){0,3}$",
-    re.I,
-)
-
-# Terminal punctuation that ends a sentence (not a decimal point: "." inside
-# "$4.50" is followed by a digit, so the lookahead excludes it; not a title
-# abbreviation: "Dr. Chen" must not register as a sentence end, P7).
-_SENTENCE_END = re.compile(
-    r"(?<!\bDr)(?<!\bMr)(?<!\bMs)(?<!\bMrs)(?<!\bSt)(?<!\bvs)(?<!\betc)[.!?](?=\s|$)"
-)
-
-# A clause cut that leaves a verbless coordinated tail ("…is valid, but with
-# our estimated $30,000 annual spend") — strip the dangling tail (P7).
-_TRAILING_VERBLESS_TAIL = re.compile(
-    r"[,;]?\s*\b(?:but|and|or|so|yet)\s+(?:with|for|in|on|at|from|despite|given|about|over|under|near)\b[^.!?]*$",
-    re.I,
-)
+def usable_reason_fragment(text: str, proper_context: str = "", max_words: int = 14) -> str:
+    """Clause-ready reason fragment, or "" when the stored reason is too long or
+    hedged to embed in a decision line. Stored per-option reasons may be whole
+    earlier utterances; embedding those verbatim can void a vote's parse."""
+    t = clause_fragment(text or "", proper_context)
+    if not t or len(t.split()) > max_words or _REASON_NOISE.search(t):
+        return ""
+    return t
 
 
 def compact_words(text: str, max_words: int) -> str:
@@ -198,63 +173,19 @@ def compact_words(text: str, max_words: int) -> str:
     return " ".join(trimmed).rstrip(" ,;:") + "."
 
 
-def clean_generated(text: str, speaker_name: str, max_words: int) -> str:
-    """Normalize a raw model utterance: drop speaker prefix, metadata trailer,
-    generic filler, and enforce a word cap without leaving a dangling fragment."""
+def clean_generated(text: str, speaker_name: str) -> str:
+    """Normalize a raw model utterance: drop speaker prefixes, surrounding
+    quotes, metadata trailers, and generic filler tails.
+
+    Length is a prompt-side generation target only: the returned utterance is
+    never cut at a word boundary to satisfy a budget, so a complete sentence
+    over target stays complete.
+    """
     text = strip_speaker_prefix(text, speaker_name)
     text = normalise_ws(text.replace("\n", " "))
     text = text.strip('"“”')
     text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
-    text = _remove_generic_filler_tail(text)
-    words = text.split()
-    if len(words) <= max_words:
-        return text
-    # The word budget is a style target, not a correctness bound: a complete
-    # sentence slightly over budget reads far better than a chopped stub (I14).
-    soft_cap = max_words + max(8, round(max_words * 0.4))
-    if len(words) <= soft_cap and text[-1] in ".!?":
-        return text
-    was_question = text.rstrip().endswith("?")
-    # Cut at the last full sentence inside the soft window if one exists.
-    window = " ".join(words[:soft_cap]).rstrip(" ,;:")
-    ends = [m.end() for m in _SENTENCE_END.finditer(window)]
-    if ends and ends[-1] >= 10:
-        return window[: ends[-1]].strip()
-    # Next best: the last clause boundary inside the window. Ending a long
-    # sentence at "…solid vegetarian choices" reads complete; a mid-clause word
-    # chop ("…and the Rustic") never does.
-    clause_cut = None
-    min_keep = max(4, round(max_words * 0.5))
-    # A comma with digits on both sides is a thousands separator ("$40,000"),
-    # never a clause boundary (P7): cutting there printed "…given the $40."
-    for m in re.finditer(r"(?<!\d),|,(?!\d)|;|\s[—–-]\s|\s--\s", window):
-        prefix = window[: m.start()].rstrip(" ,;:")
-        if len(prefix.split()) >= min_keep:
-            clause_cut = prefix
-    if clause_cut:
-        chopped = clause_cut
-    elif len(words) <= soft_cap + max_words and text[-1] in ".!?":
-        # One unbroken clause, moderately over budget: a complete sentence over
-        # target reads far better than any chopped stub.
-        return text
-    else:
-        # Last resort: a runaway unbroken clause. Chop at the budget and
-        # salvage; the stub must not end mid-thought.
-        chopped = " ".join(words[:max_words]).rstrip(" ,;:")
-    text = _remove_dangling_fragment(_remove_generic_filler_tail(chopped))
-    text = _BROKEN_QUESTION_TAIL.sub("", text).rstrip(" ,;:")
-    text = _TRAILING_SUBCLAUSE_STUB.sub("", text).rstrip(" ,;:")
-    text = _TRAILING_VERBLESS_TAIL.sub("", text).rstrip(" ,;:")
-    # A chop can still end on a bare function word ("... what and",
-    # "... more than the") or a cut wh-word; strip those.
-    tail = text.split()
-    while tail and tail[-1].lower().rstrip(".,;:") in _CHOP_TRAIL:
-        tail.pop()
-    if tail:
-        text = " ".join(tail).rstrip(" ,;:")
-    if text and text[-1] not in ".!?":
-        text += "?" if was_question and _INTERROGATIVE_STUB.search(text) else "."
-    return text
+    return _remove_generic_filler_tail(text)
 
 
 def _remove_generic_filler_tail(text: str) -> str:
@@ -269,13 +200,3 @@ def _remove_generic_filler_tail(text: str) -> str:
     return out.strip()
 
 
-def _remove_dangling_fragment(text: str) -> str:
-    patterns = [
-        r"\s+(?:even if|even though|although|though|because|since|but|while|whereas|if|when|with|without)$",
-        r"\s+(?:though|although|but|because|since|if)\s+(?:it|that|this|we|they|there|the)\s+(?:might|could|would|is|are|was|were|has|have)?\s*$",
-        r"\s+(?:what|what do|what do you|can|can you|does|does that),?\.?$",
-    ]
-    out = text
-    for pattern in patterns:
-        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
-    return out

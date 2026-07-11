@@ -215,6 +215,11 @@ class Persona:
     rejection: str | None = None
     rejection_reason: str = ""
     option_stances: dict[str, OptionStance] = field(default_factory=dict)
+    # Sampled exclusive hard blocker (setup metadata): exactly one preferred
+    # option, every other option hard-rejected (rank 1). Multi-rejection is
+    # represented by the rank table itself; the singular `rejection` field
+    # remains the manual single-rejection input.
+    hard_blocker: bool = False
 
     @property
     def preferred_option(self) -> str:
@@ -293,8 +298,6 @@ class ParticipantRuntime:
     option_ranks: dict[str, int] = field(default_factory=dict)
     reasons_for: dict[str, str] = field(default_factory=dict)
     reasons_against: dict[str, str] = field(default_factory=dict)
-    commitment_strength: float = 0.6
-    commitment_min: float = 1.0
     challenges_received: int = 0
     concessions_made: int = 0
     explicit_vote: str | None = None

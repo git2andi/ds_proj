@@ -44,7 +44,7 @@ from style import (
     surface_pattern,
     we_opening_fraction,
 )
-from utils import preset_dominance_weight, weighted_choice
+from utils import clause_fragment, preset_dominance_weight, usable_reason_fragment, weighted_choice
 
 # The only acts the NORMAL sampler may select (7.1). answer/process/compromise/
 # softening are route- or phase-driven and never sampled.
@@ -158,10 +158,10 @@ class PolicyMixin:
     def _valid_holdout_against(state: DialogueState, persona: Persona, candidate: str) -> bool:
         """Whether keeping dissent is more realistic than converting to consensus.
 
-        This protects majority outcomes: a sim that has visibly disliked the
-        candidate, has a strong current commitment, or is configured as
-        stubborn/low-compromise should not be converted just because a majority
-        exists. Hard blockers are handled separately by ``_hard_blocks_candidate``.
+        This protects majority outcomes using only explicit signals: the
+        candidate's rank for this sim, the sim's own live concerns against it,
+        and switch_resistance. Hard blockers are handled separately by
+        ``_hard_blocks_candidate``.
         """
         rt = state.runtimes[persona.id]
         current = rt.explicit_vote or rt.top_option() or persona.preferred_option
@@ -172,11 +172,9 @@ class PolicyMixin:
         if PolicyMixin._live_own_concerns(state, persona.id, candidate):
             return True
         # Final-decision holdout protection is switch_resistance territory;
-        # stubbornness only governs discussion-phase defense.
-        strong_trait_resistance = persona.sim_params.switch_resistance >= 0.72
-        if strong_trait_resistance and rt.commitment_strength >= 0.62:
-            return True
-        if rt.commitment_strength >= 0.82 and rt.rank(candidate) < STANCE_ACCEPTABLE:
+        # stubbornness only governs discussion-phase defense. A high-resistance
+        # sim holds out unless the candidate is already acceptable to them.
+        if persona.sim_params.switch_resistance >= 0.72 and rt.rank(candidate) < STANCE_ACCEPTABLE:
             return True
         return False
 
@@ -190,8 +188,7 @@ class PolicyMixin:
         rt = state.runtimes[persona.id]
         if rt.rank(candidate) <= STANCE_REJECTED:
             return 99.0
-        resistance = 0.45 * rt.commitment_strength
-        resistance += 0.55 * persona.sim_params.switch_resistance
+        resistance = 0.70 * persona.sim_params.switch_resistance
         # A switch must be earned (P6): the sim's own visible, still-unanswered
         # objections against the candidate are resistance, not noise. A bridge
         # phrase alone doesn't resolve a concern the transcript left open.
@@ -262,10 +259,14 @@ class PolicyMixin:
             focus = [coverage_gap]
             if current in state.scenario.option_ids and current != coverage_gap:
                 focus.append(current)
+            gap_name = short_alias_map(state.scenario.options).get(coverage_gap, coverage_gap)
             return MoveIntent(
                 speaker_id=speaker.id,
                 act=ActType.COMPARE,
-                reason="briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+                reason=(
+                    f"bring {gap_name} into the discussion — it has not really come up yet — "
+                    "and compare it with your current lean"
+                ),
                 route_source="coverage",
                 option_focus=focus,
             )
@@ -330,27 +331,38 @@ class PolicyMixin:
             speaker = self._thread_speaker(state, advocates or others, thread)
             if speaker is None:
                 return None
-            rt = state.runtimes[speaker.id]
-            if advocates and rt.commitment_strength <= 0.35:
+            # The act follows the decided objective (todo_prompt item 4):
+            # concede -> CONCERN, defend -> SUPPORT, shared doubt -> CONCERN,
+            # neutral fact-grounding -> COMMENT. Concede vs defend is decided
+            # by discussion-phase stubbornness; direction never left to the LLM.
+            speaker_rank = state.runtimes[speaker.id].rank(option_id)
+            if advocates and speaker.sim_params.stubbornness <= 0.35:
+                act = ActType.CONCERN
                 reason = (
                     f"a concern was raised about {aliases[option_id]}, which you back, and it lands — "
-                    "concede the point honestly, say what still matters to you in this choice, and if another "
-                    "option now genuinely looks stronger you may say your view is shifting (no final vote)"
+                    "concede the point honestly and say what still matters to you in this choice (no final vote)"
                 )
             elif advocates:
+                act = ActType.SUPPORT
                 reason = (
                     f"a concern was raised about {aliases[option_id]}, which you back — "
-                    "respond to it directly: defend it with a grounded reason or concede the point honestly"
+                    "respond to the issue directly and defend it with one grounded reason"
+                )
+            elif speaker_rank <= STANCE_DISLIKED:
+                act = ActType.CONCERN
+                reason = (
+                    f"a concern was raised about {aliases[option_id]} — you share the doubt: add one "
+                    "grounded reason from the listed facts why that issue is real"
                 )
             else:
+                act = ActType.COMMENT
                 reason = (
-                    f"a concern was raised about {aliases[option_id]} — respond to the issue itself "
-                    "using only the listed facts: what the board says about it, what it leaves unknown, "
-                    "or what tradeoff it implies"
+                    f"a concern was raised about {aliases[option_id]} — say in one beat what the listed "
+                    "facts actually settle about that issue, without taking a side"
                 )
             return MoveIntent(
                 speaker_id=speaker.id,
-                act=ActType.SUPPORT,
+                act=act,
                 reason=reason,
                 route_source="thread_hot",
                 thread_id=thread.thread_id,
@@ -384,14 +396,25 @@ class PolicyMixin:
                     option_focus=[option_id],
                     respond_to_turn=thread.source_turn_index,
                 )
+            # The act follows the speaker's own stance toward the blocked
+            # option (item 4): a backer points to the addressing fact; anyone
+            # else acknowledges the blocker's weight — no "or concede" menus.
+            if state.runtimes[speaker.id].rank(option_id) >= STANCE_ACCEPTABLE:
+                blocker_act = ActType.SUPPORT
+                blocker_reason = (
+                    f"{raiser_name} rejected {aliases[option_id]} outright — point to the listed fact "
+                    "or concrete condition that could still address their issue; no pressure to convert them"
+                )
+            else:
+                blocker_act = ActType.COMMENT
+                blocker_reason = (
+                    f"{raiser_name} rejected {aliases[option_id]} outright — acknowledge that blocker "
+                    "plainly and say what it means for the group's remaining choices; no pressure"
+                )
             return MoveIntent(
                 speaker_id=speaker.id,
-                act=ActType.SUPPORT,
-                reason=(
-                    f"{raiser_name} rejected {aliases[option_id]} outright — respond honestly to that "
-                    "blocker: concede what the board cannot fix, or point to the listed fact or concrete "
-                    "condition that could still address it; no pressure to convert them"
-                ),
+                act=blocker_act,
+                reason=blocker_reason,
                 route_source="thread_hot",
                 thread_id=thread.thread_id,
                 option_focus=[option_id],
@@ -451,14 +474,27 @@ class PolicyMixin:
             raiser_id = thread.started_by
             if raiser_id == last or raiser_id not in state.runtimes:
                 return None
+            # The controller decides accept vs push-back (item 5), weighted by
+            # the raiser's stubbornness, and the act matches the objective
+            # (item 4): push-back -> CONCERN, acceptance -> SUPPORT.
+            raiser_params = state.persona_by_id(raiser_id).sim_params
+            if random.random() < 0.25 + 0.6 * raiser_params.stubbornness:
+                raiser_act = ActType.CONCERN
+                raiser_reason = (
+                    f"someone responded to your point about {aliases[option_id]} — it does not fully "
+                    "settle it for you: push back once with the one thing that still bothers you; do "
+                    "not restate the original wording"
+                )
+            else:
+                raiser_act = ActType.SUPPORT
+                raiser_reason = (
+                    f"someone responded to your point about {aliases[option_id]} — it lands: say "
+                    "plainly that it settles the issue for you and accept it as a workable tradeoff"
+                )
             return MoveIntent(
                 speaker_id=raiser_id,
-                act=ActType.SUPPORT,
-                reason=(
-                    f"someone responded to your point about {aliases[option_id]} — say plainly whether "
-                    "it actually settles it for you: accept it as a workable tradeoff, or push back once "
-                    "with what still bothers you; do not restate the original wording"
-                ),
+                act=raiser_act,
+                reason=raiser_reason,
                 route_source="thread_cooling",
                 thread_id=thread.thread_id,
                 option_focus=[option_id],
@@ -478,13 +514,18 @@ class PolicyMixin:
                 [0.55 + (1.0 - speaker.sim_params.stubbornness) * 0.3,
                  0.3 + speaker.sim_params.stubbornness * 0.4],
             )
+            # The sampled act already fixes the direction (item 5): the reason
+            # states that one objective instead of offering a menu.
+            if act == ActType.SUPPORT:
+                reaction = "say what it settles for you"
+            else:
+                reaction = "push back once on what it does not settle for you"
             return MoveIntent(
                 speaker_id=speaker.id,
                 act=act,
                 reason=(
-                    "react to the answer just given, staying on the same point: say what it settles for "
-                    "you, push back on what it doesn't, or add one consequence — do not open a new topic "
-                    "or ask a new question"
+                    f"react to the answer just given, staying on the same point: {reaction} — "
+                    "do not open a new topic or ask a new question"
                 ),
                 route_source="thread_cooling",
                 thread_id=thread.thread_id,
@@ -825,10 +866,12 @@ class PolicyMixin:
         current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
         current_name = names.get(current, current)
         if act == ActType.SUPPORT:
+            # Support targets ONE option — the speaker's current lean (item 5);
+            # a comma-joined focus list left the supported option ambiguous.
             return random.choice([
-                f"add a new grounded reason about {focus_names}, connected to the current discussion",
-                f"bring up a practical, everyday consideration about {focus_names} that has not come up yet",
-                f"say plainly what matters most to you personally in this choice and how {focus_names} fits that",
+                f"add a new grounded reason for {current_name}, connected to the current discussion",
+                f"bring up a practical, everyday consideration that favors {current_name} and has not come up yet",
+                f"say plainly what matters most to you personally in this choice and how {current_name} fits it",
             ])
         if act == ActType.CONCERN:
             rivals = [o for o in focus if o != current]
@@ -995,14 +1038,12 @@ class PolicyMixin:
         if support == 0 and not self._visibly_proposed(state, candidate):
             return False
         pressure = support / max(1, len(state.personas) - 1)
-        # Formal-vote movement is governed by switch_resistance (Section 14).
+        # Formal-vote movement is governed by switch_resistance (Section 14);
+        # the candidate's current rank is the sim's explicit stance signal
+        # (disliked candidates already returned False above).
         probability = 0.05 + 0.50 * (1.0 - persona.sim_params.switch_resistance) + 0.25 * pressure
-        if candidate in rt.disliked_options():
-            probability -= 0.25
-        # Tracked stance state (issue 2): a sim whose hold on its favorite was
-        # eroded by challenges/support pressure accepts the candidate more
-        # readily; one that spent the discussion defending it resists longer.
-        probability += 0.25 * (0.60 - rt.commitment_strength)
+        if rt.rank(candidate) >= STANCE_ACCEPTABLE:
+            probability += 0.15
         if candidate in persona.preferred_options:
             probability += 0.15
         return random.random() < min(0.82, probability)
@@ -1010,12 +1051,14 @@ class PolicyMixin:
     def _allowed_vote_reason(self, state: DialogueState, persona: Persona, target: str, *, current: str | None, switching: bool) -> str:
         if target in state.scenario.option_ids:
             rt = state.runtimes[persona.id]
-            personal = rt.reason_for(target)
+            card = state.scenario.option(target)
+            # Stored reasons may be whole earlier utterances; only a short,
+            # hedge-free fragment may be embedded in a decision line.
+            personal = usable_reason_fragment(rt.reason_for(target), card.name)
             if personal:
                 return personal
-            card = state.scenario.option(target)
             if card.upside:
-                return card.upside
+                return clause_fragment(card.upside, card.name)
             if card.attrs:
                 key, value = next(iter(card.attrs.items()))
                 return f"{key.replace('_', ' ')}: {value}"
@@ -1116,9 +1159,11 @@ class PolicyMixin:
     def _apply_style_flags(self, state: DialogueState, intent: MoveIntent) -> None:
         """Set compact surface-style flags (no LLM call) to keep dialogue varied.
 
-        Names are only suppressed for ordinary continuation turns: answering a
-        direct question, inviting a quiet participant, or a deliberate addressee
-        keep their functional name use.
+        Item 8: every tripwire is evidence-based (density/repetition in recent
+        visible turns — no proactive random damping), and a turn gets at most
+        ONE lexical variation note, the most relevant pattern first. The
+        tail-question flag is separate conversational-flow control, not a
+        variation note.
         """
         names = [p.name for p in state.personas]
         # Leading names must do interactional work (P5): inviting someone in,
@@ -1132,34 +1177,6 @@ class PolicyMixin:
         )
         window = int(cfg.style.name_prefix_window)
         recent = self._recent_participant_texts(state, window)
-        if not functional_naming:
-            if recent and name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction):
-                intent.suppress_name_prefix = True
-            else:
-                # Proactive group-size-aware damping, not just the density
-                # tripwire: the smaller the group, the less a leading name adds.
-                n = len(state.personas)
-                suppress_p = 0.85 if n == 2 else 0.60 if n == 3 else 0.40
-                if random.random() < suppress_p:
-                    intent.suppress_name_prefix = True
-        # In a two-person chat the other person is always "you"; opening on
-        # their name every few turns reads artificial (P3). Questions still
-        # work without a leading name, so only invites keep it.
-        if len(state.personas) == 2 and not functional_naming:
-            intent.suppress_name_prefix = True
-        alias_values = list(short_alias_map(state.scenario.options).values())
-        if recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
-            intent.suppress_option_opening = True
-        elif intent.option_focus:
-            # P5: when the previous turn already discussed the same option the
-            # context is clear — usually lead with the point, not the name.
-            last_turn = next((t for t in reversed(state.turns) if t.speaker_id != "moderator"), None)
-            if (
-                last_turn is not None
-                and set(intent.option_focus) & set(last_turn.act.option_refs)
-                and random.random() < 0.5
-            ):
-                intent.suppress_option_opening = True
         # Tail-question churn (P2): when the last few turns already put two or
         # more questions on the table, statement-type acts should not tack on
         # yet another one. Real question acts (ask/invite/probe) are exempt.
@@ -1169,20 +1186,42 @@ class PolicyMixin:
             and sum(1 for t in recent if "?" in t) >= 2
         ):
             intent.suppress_tail_question = True
-        # Decision turns are exempt: "I vote/I'd go with" is natural and parser-relevant there.
-        if recent and intent.act not in {ActType.VOTE, ActType.CONCERN}:
-            if first_person_opening_fraction(recent) >= float(cfg.style.i_opening_max_fraction):
-                intent.suppress_i_opening = True
-            if we_opening_fraction(recent) >= float(cfg.style.we_opening_max_fraction):
-                intent.suppress_we_opening = True
-        opening_window = int(cfg.style.repeated_opening_window)
-        if repeated_opening_token(self._recent_participant_texts(state, opening_window), opening_window):
-            intent.vary_opening = True
+        # One lexical variation note, most relevant repetition pattern first:
+        # rhetorical shape > shared opening word > option-name openings >
+        # name-prefix openings > 'I'/'We' openings.
+        alias_values = list(short_alias_map(state.scenario.options).values())
+        pattern = None
         if intent.act in _DISCUSSION_ACTS:
             pattern_window = int(cfg.style.repeated_pattern_window)
-            intent.avoid_pattern = repeated_pattern(
+            pattern = repeated_pattern(
                 self._recent_participant_texts(state, pattern_window), pattern_window
             )
+        opening_window = int(cfg.style.repeated_opening_window)
+        exempt_from_opening_notes = intent.act in {ActType.VOTE, ActType.CONCERN}
+        if pattern:
+            intent.avoid_pattern = pattern
+        elif repeated_opening_token(self._recent_participant_texts(state, opening_window), opening_window):
+            intent.vary_opening = True
+        elif recent and option_opening_fraction(recent, alias_values) >= float(cfg.style.option_opening_max_fraction):
+            intent.suppress_option_opening = True
+        elif (
+            not functional_naming
+            and recent
+            and name_prefix_fraction(recent, names) >= float(cfg.style.name_prefix_max_fraction)
+        ):
+            intent.suppress_name_prefix = True
+        elif (
+            not exempt_from_opening_notes
+            and recent
+            and first_person_opening_fraction(recent) >= float(cfg.style.i_opening_max_fraction)
+        ):
+            intent.suppress_i_opening = True
+        elif (
+            not exempt_from_opening_notes
+            and recent
+            and we_opening_fraction(recent) >= float(cfg.style.we_opening_max_fraction)
+        ):
+            intent.suppress_we_opening = True
         # Deterministic anti-chorus for decision beats: phrase families already
         # used in this round OR by this speaker in any earlier turn are
         # off-limits, so a re-asked voter never repeats their own line verbatim

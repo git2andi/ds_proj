@@ -27,6 +27,37 @@ class VisibleCommitmentTests(unittest.TestCase):
     def test_acceptance_parses_as_accept(self):
         self.assertEqual(visible_commitment("The Bike Ride works for me.", self.resolver), ("accept", "B"))
 
+    def test_switching_from_to_binds_the_vote_to_the_target(self):
+        # The natural switch idiom must parse as a vote for the NEW option
+        # (todo_prompt item 7): the old option is the bridge, not the object.
+        self.assertEqual(
+            visible_commitment(
+                "I'm switching from the Museum to the Bike Ride for the lower cost.", self.resolver
+            ),
+            ("vote", "B"),
+        )
+        self.assertEqual(
+            visible_commitment(
+                "Switching from the Museum to the Escape Room — the group energy wins.", self.resolver
+            ),
+            ("vote", "C"),
+        )
+
+    def test_natural_vote_wordings_parse(self):
+        # Menu-less vote prompts produce these shapes (todo_prompt item 7).
+        self.assertEqual(
+            visible_commitment("I'm voting Museum — easy day for everyone.", self.resolver),
+            ("vote", "A"),
+        )
+        self.assertEqual(
+            visible_commitment("The Bike Ride is the right choice — cheap and active.", self.resolver),
+            ("vote", "B"),
+        )
+        self.assertEqual(
+            visible_commitment("I'm firmly with the Escape Room on this one.", self.resolver),
+            ("accept", "C"),
+        )
+
     def test_hedged_line_is_not_a_commitment(self):
         self.assertIsNone(visible_commitment("Maybe the Museum could work for me.", self.resolver))
 

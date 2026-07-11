@@ -12,13 +12,37 @@ The opening round gives every participant a visible initial stance. It may inclu
 
 ## Stance movement
 
-Private stance movement is represented by option ranks:
+Private stance movement is represented by option ranks — the ONLY persistent private stance state; there is no hidden commitment/confidence float:
 
 ```text
 5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected
 ```
 
-The controller chooses an intended move (`MoveIntent`); the LLM renders the utterance; validation checks that the line visibly matches the move; only then does the observer update the rank table, thread state, and coverage. Softening is not a routed move: when a final accepted line visibly warms to another option ("B is starting to make more sense to me"), the parser detects it and the observer moves the lean.
+Only accepted visible text moves ranks:
+
+- visible softening ("B is starting to make more sense to me") promotes the softened-to option;
+- a visible acceptance ("B works for me too") makes that option acceptable (rank 4) without moving the lean;
+- a visible bridged vote or sanctioned switch promotes the committed option; the former preferred option drops to acceptable;
+- a visible compromise offer or conditional support by the speaker may move their own lean, gated by stubbornness (an already-acceptable target moves more easily);
+- a hard rejection (rank 1) is never silently removed — only the speaker's own visible resolution reopens it;
+- controller intent alone never changes a rank, and repaired-away, fallback-blocked, or dropped text moves nothing.
+
+`discussion_lean_shifts` counts every accepted turn that changed the speaker's top option during the discussion phase, whatever visible path caused it.
+
+Other participants' turns never rewrite someone else's private ranks. Public support, criticism, or pressure works only through routing and opportunity: the controller may make an option more relevant, select it as a candidate, or route the pressured participant to respond — and only that participant's own accepted visible utterance may then update their ranks.
+
+## One participant turn
+
+```text
+1. controller selects the speaker and a MoveIntent (act, objective, focus, target)
+2. the prompt realizes exactly that move (voice, act requirement, turn objective, focus facts)
+3. generated text is cleaned — labels/quotes/metadata only, never cut to the word budget
+4. the text is parsed into a DialogueAct from visible wording alone
+5. validation may trigger one focused repair, then a deterministic fallback for blocking issues
+6. only the final accepted visible text updates ranks, votes, threads, coverage
+```
+
+Concrete example: the controller routes Jonas a CONCERN about the Museum ("name the one concrete thing that still blocks Museum for you"). The LLM returns "Jonas: The Museum's 24 euros is steep for a quiet afternoon, honestly." Cleanup strips the `Jonas:` prefix; the parser reads a soft objection bound to the Museum; validation finds no issues; the observer opens a `concern` thread on the Museum with issue key `cost`, counts an objection for coverage, and leaves every rank unchanged — Jonas objected, he didn't move.
 
 ## Narrowing readiness
 
@@ -49,7 +73,8 @@ During `voting`, every participant produces one formal visible commitment. After
 ```text
 stubbornness high       = defends hard during discussion, but final movement is separate
 switch_resistance high  = very hard to move in narrowing/voting/repair, yet theoretically movable
-rejection true          = hard blocker / cannot accept the rejected option (rank 1)
+rank-1 rejection        = hard blocker / cannot accept that option (manual `rejection`,
+                          or every non-preferred option for a sampled exclusive blocker)
 ```
 
 A hard blocker never comes from traits alone — only `rejection` and option-rank 1 are binding, and blocker-thread staleness never erases the underlying rejection.

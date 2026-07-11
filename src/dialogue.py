@@ -254,7 +254,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             min_words=min_words,
         )
         self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{persona.id}_{intent.act.value}")
-        text, tokens_in, tokens_out = self._call_participant(prompt, persona.name, max_words)
+        text, tokens_in, tokens_out = self._call_participant(prompt, persona.name)
         self._record_token_usage(state, "utterance", tokens_in, tokens_out)
         if intent.suppress_name_prefix:
             text = strip_leading_name(text, [p.name for p in state.personas])
@@ -281,7 +281,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                 max_words=max_words,
             )
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{persona.id}_repair")
-            candidate_text, ti, to = self._call_participant(repair_prompt, persona.name, max_words)
+            candidate_text, ti, to = self._call_participant(repair_prompt, persona.name)
             self._record_token_usage(state, "repair", ti, to)
             tokens_in += ti
             tokens_out += to
@@ -371,9 +371,9 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             state.no_progress_count += 1
         return record
 
-    def _call_participant(self, prompt: str, speaker_name: str, max_words: int) -> tuple[str, int, int]:
+    def _call_participant(self, prompt: str, speaker_name: str) -> tuple[str, int, int]:
         raw = self._llm.generate(prompt, profile="dialogue")
-        text = clean_generated(raw, speaker_name, max_words)
+        text = clean_generated(raw, speaker_name)
         return text, self._llm.last_tokens_in, self._llm.last_tokens_out
 
     @staticmethod
@@ -493,16 +493,16 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
     def _moderator_say(self, prompt: str, state: DialogueState) -> str:
         raw = self._llm.generate(prompt, profile="dialogue")
         self._record_token_usage(state, "moderator", self._llm.last_tokens_in, self._llm.last_tokens_out)
-        text = clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.moderator))
+        text = clean_generated(raw, "Moderator")
         if self._resolver and self._resolver.invalid_option_refs(text):
             raw = self._llm.generate(prompt + "\nOnly use the exact option names already listed.", profile="repair")
             self._record_token_usage(state, "moderator_repair", self._llm.last_tokens_in, self._llm.last_tokens_out)
-            text = clean_generated(raw, "Moderator", int(cfg.utterances.word_budgets.moderator))
+            text = clean_generated(raw, "Moderator")
         return text or "Let’s make this concrete: what is the strongest remaining concern before we choose?"
 
     def _recent_lines(self, state: DialogueState) -> list[str]:
         limit = int(cfg.utterances.recent_turns_in_prompt)
-        return [f"{turn.speaker_name}: {turn.text}" for turn in state.turns[-limit:]]
+        return [f"{turn.speaker_name}: {turn.text}" for turn in prompts.recent_turn_window(state, limit)]
 
     @staticmethod
     def _print_header(state: DialogueState, show_board: bool = False) -> None:
@@ -551,8 +551,6 @@ def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
             option_ranks=ranks,
             reasons_for=reasons_for,
             reasons_against=reasons_against,
-            commitment_strength=0.45 + 0.40 * p.sim_params.stubbornness,
-            commitment_min=0.45 + 0.40 * p.sim_params.stubbornness,
         )
         state.runtimes[p.id] = rt
     state.coverage = {option.id: OptionCoverage() for option in scenario.options}

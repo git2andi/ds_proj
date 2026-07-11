@@ -115,10 +115,11 @@ scenario:
 
 personas:
   # OCEAN traits are hidden setup traits: they are sampled here, then converted
-  # into the four explicit simulator parameters in src/simulator.py:
-  # engagement, verbosity, directness, and stubbornness.
-  # Chance that exactly one participant is sampled as a hard blocker.
-  # A hard blocker gets agreeableness=1 and normally cannot accept their rejected option.
+  # into the five explicit simulator parameters in src/simulator.py:
+  # engagement, verbosity, directness, stubbornness, and switch_resistance.
+  # GROUP-level chance that exactly one participant is sampled as an exclusive
+  # hard blocker: one preferred option (rank 5), every other option hard-rejected
+  # (rank 1) with a grounded reason. Unsampled groups stay fully movable.
   hard_blocker_probability: 0.06
   trait_min: 1                        # OCEAN scale bounds
   trait_max: 5

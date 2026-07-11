@@ -38,7 +38,7 @@ Private stance is stored as one central per-sim/per-option rank table:
 1 = rejected / hard blocked
 ```
 
-Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from ranks. There are no separate runtime preference/rejection containers.
+Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from ranks. There are no separate runtime preference/rejection containers and no hidden commitment/confidence float: ranks (plus their short stored reasons) are the only persistent private stance state, and only accepted visible utterances move them. Public candidate scores used by narrowing/voting are group-level evidence from the transcript, never private preference values.
 
 The persona setup may also provide a compact compatibility table for each sim and option:
 
@@ -56,12 +56,14 @@ Sim generation follows one split:
 - **Sim attributes** describe who the simulated user is: `id`, `name`, `age`, `background`, `private_goal`, `preferred_options`, `option_stances`, `speech_style`, `rejection`, `rejection_reason`.
 - **Simulator parameters** are the only numeric behavior controls:
   - `engagement`: expected speaker frequency / turn share;
-  - `verbosity`: average utterance length, realized only as numeric word budgets;
+  - `verbosity`: average utterance length, realized only as numeric word budgets (soft generation targets — accepted utterances are never cut to length);
   - `directness`: blunt vs soft wording;
   - `stubbornness`: strength of stance defense during the discussion;
   - `switch_resistance`: resistance to final movement — candidate switches, compromise acceptance, holdout concession, and vote/repair behavior.
 
-`speech_style` is small register coloring derived from age (four compact bands: young casual / relaxed practical / direct workplace / measured traditional wording). It changes wording only and must not override stance, vote choice, willingness to compromise, or turn-taking behavior. Hard blockers come only from `rejection`, never from high stubbornness alone.
+`speech_style` is small register coloring derived from age (four compact bands: young casual / relaxed practical / direct workplace / measured traditional wording). It changes wording only and must not override stance, vote choice, willingness to compromise, or turn-taking behavior.
+
+Hard blockers come only from rank-1 rejections, never from high stubbornness alone. The configured `hard_blocker_probability` is a low **group-level** probability: when the event is sampled, exactly one participant becomes an exclusive hard blocker — one preferred option at rank 5, every other option hard-rejected at rank 1 with a grounded reason, and a background/goal stating the one non-negotiable requirement (they may still speak politely). When it is not sampled, every participant stays movable according to ranks and traits; manual profiles can still bind a single option via `rejection`.
 
 Generated and manual profiles are checked for obvious age/profile contradictions. For example, a very young participant should not receive a senior-executive biography, a mortgage-heavy family profile, or decades of experience.
 
@@ -85,7 +87,7 @@ The controller owns the intended move (`MoveIntent`):
 speaker + macro act + route source + target/addressee + option focus + reason
 ```
 
-The LLM renders one natural message. Validation checks whether the line visibly matches the intended move and stays grounded; routing is read-only, and only the final accepted, parsed turn changes dialogue state (observer). A routed answer, concern response, coverage turn, or vote counts only when the final text visibly realizes it.
+The LLM renders one natural message against a compact realization contract: voice (age/register/directness/stubbornness cues), one act-specific semantic requirement, one turn objective, focus-only option facts, and a soft word range. Cleanup strips speaker labels, quotes, and metadata only — it never cuts an utterance to its word budget. Validation checks whether the line visibly matches the intended move and stays grounded; routing is read-only, and only the final accepted, parsed turn changes dialogue state (observer). A routed answer, concern response, coverage turn, or vote counts only when the final text visibly realizes it.
 
 The compact macro-act vocabulary is:
 

@@ -17,6 +17,20 @@ def _words(text: str) -> list[str]:
     return re.findall(r"[\w'-]+", text, re.UNICODE)
 
 
+def _inflection_match(word: str, name_words: set[str]) -> bool:
+    """Exact name word, or the same word under trivial singular/plural
+    inflection ("Board Games" naturally refers to "Board Game Night"). The
+    alias stays the name's own vocabulary — never clipped or invented."""
+    if word in name_words:
+        return True
+    shorter = {word[:-2]} if word.endswith("es") else set()
+    if word.endswith("s"):
+        shorter.add(word[:-1])
+    if any(c and c in name_words for c in shorter):
+        return True
+    return word + "s" in name_words or word + "es" in name_words
+
+
 def validated_short_alias(option_name: str, proposed: str) -> str:
     """Return a recognizable proposed alias, or empty when it is unsafe to expose."""
     alias = " ".join(proposed.strip().strip('"\'').split())
@@ -31,7 +45,7 @@ def validated_short_alias(option_name: str, proposed: str) -> str:
     if lowered[-1] in _STOPWORDS or all(word in _GENERIC for word in lowered):
         return ""
     name_words = {word.lower() for word in _words(option_name)}
-    if not all(word in name_words for word in lowered):
+    if not all(_inflection_match(word, name_words) for word in lowered):
         return ""
     return alias
 
