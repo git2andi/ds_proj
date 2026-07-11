@@ -1,8 +1,10 @@
-"""Visible-text parsing for option references and public commitments.
+"""Pure visible-semantics layer: text in, DialogueAct out (contract 4.4).
 
-Final outcomes must be based on what the transcript visibly says. This parser is
-therefore conservative: it only records a vote/acceptance when one option is
+Final outcomes must be based on what the transcript visibly says. This parser
+is therefore conservative: it only records a vote/acceptance when one option is
 mentioned unambiguously and the utterance contains a clear commitment phrase.
+It never mutates dialogue state and never makes controller decisions — a group
+question gets a scope, not a respondent.
 """
 
 from __future__ import annotations
@@ -98,7 +100,10 @@ _REJECT = re.compile(
     re.I,
 )
 _SOFT_OBJECT = re.compile(
-    r"\b(?:concern|worry|problem|issue|downside|too\s+expensive|too\s+far|too\s+late|risky|"
+    r"\b(?:concern(?:s|ed)?|worr(?:y|ies|ied)|bother(?:s|ed)?\s+me|problems?|issues?|downsides?|"
+    r"too\s+expensive|too\s+far|too\s+late|too\s+(?:pricey|costly)|risky|"
+    r"(?:a\s+bit|too|rather|quite|pretty)\s+steep|"
+    r"(?:seems?|looks?|feels?)\s+(?:too\s+|quite\s+|pretty\s+|a\s+bit\s+)?(?:high|expensive|pricey|risky|steep)|"
     r"not\s+ideal|doesn'?t\s+fit|would\s+be\s+hard)\b",
     re.I,
 )
@@ -359,10 +364,6 @@ class OptionResolver:
         refs = re.findall(r"\bOption\s+([A-Za-z])\b", text)
         return sorted({r.upper() for r in refs if r.upper() not in valid})
 
-    def option_text(self, option_id: str) -> str:
-        return self.by_id[option_id].prompt_card()
-
-
 def _option_positions(segment: str, resolver: OptionResolver) -> list[tuple[int, str]]:
     """Earliest match position per option in ``segment``, sorted by position."""
     lower = segment.lower()
@@ -605,11 +606,18 @@ def parse_dialogue_act(
     if addressee_id is None and _QUESTION.search(text) and previous_speaker_id and previous_speaker_id != speaker_id:
         if re.search(r"\b(?:you|your|that|what\s+about|how\s+about)\b", text, re.I):
             addressee_id = previous_speaker_id
-    question_target = addressee_id if _QUESTION.search(text) and addressee_id else None
-    if question_target is None and _QUESTION.search(text) and _is_genuine_question(text):
-        question_target = _best_respondent(speaker_id, previous_speaker_id, participant_names)
+    # Question scope from visible text only (4.4/5.5): a named or "you"-directed
+    # question is direct; a genuine question without an addressee is a group
+    # question with NO target — the controller assigns the respondent later.
+    question_scope: str | None = None
+    question_target = None
+    if _QUESTION.search(text):
+        if addressee_id:
+            question_scope = "direct"
+            question_target = addressee_id
+        elif _is_genuine_question(text):
+            question_scope = "group"
 
-    act_type = intent.act if intent else (ActType.ASK if question_target else ActType.SUPPORT)
     commitment = visible_commitment(
         text, resolver, sanctioned_switch=bool(intent and intent.allow_vote_change)
     )
@@ -617,7 +625,6 @@ def parse_dialogue_act(
     accepts: list[str] = []
     soft_rejects: dict[str, str] = {}
     hard_rejects: dict[str, str] = {}
-    proposes_option: str | None = None
 
     if commitment:
         stance, option_id = commitment
@@ -625,15 +632,11 @@ def parse_dialogue_act(
             explicit_vote = option_id
             if stance == "accept":
                 accepts.append(option_id)
-            act_type = ActType.VOTE if stance == "vote" else ActType.VOTE
         elif stance == "reject":
             soft_rejects[option_id] = text
-            act_type = ActType.CONCERN
     elif option_refs:
         if _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text):
             soft_rejects[option_refs[0]] = text
-        if act_type == ActType.COMPROMISE and len(option_refs) == 1:
-            proposes_option = option_refs[0]
 
     blocker = active_blocker_option(check_text, resolver)
     if blocker and blocker != explicit_vote:
@@ -645,18 +648,28 @@ def parse_dialogue_act(
     offers_compromise = compromise_offer_option(check_text, resolver)
     softens_toward = None if commitment else softening_option(check_text, resolver)
 
+    act_type = _realized_act_type(
+        intent=intent,
+        commitment=commitment,
+        soft_rejects=soft_rejects,
+        hard_rejects=hard_rejects,
+        question_scope=question_scope,
+        option_refs=option_refs,
+        check_text=check_text,
+    )
+
     return DialogueAct(
         speaker_id=speaker_id,
         text=text,
         act_type=act_type,
         option_refs=option_refs,
         addressee_id=addressee_id,
+        question_scope=question_scope,  # type: ignore[arg-type]
         question_target_id=question_target,
         explicit_vote=explicit_vote,
         accepts=accepts,
         soft_rejects=soft_rejects,
         hard_rejects=hard_rejects,
-        proposes_option=proposes_option,
         resolves_blocker=resolves_blocker,
         conditional_support=conditional_support,
         offers_compromise=offers_compromise,
@@ -664,25 +677,79 @@ def parse_dialogue_act(
     )
 
 
-def has_commitment_hedge(text: str) -> bool:
-    return bool(_HEDGE.search(text))
+# Contextual acts keep their routed label: visible text alone cannot tell an
+# answer, opening, procedure beat, compromise test, vote turn, or closing line
+# apart from a plain statement — the surrounding controller context defines
+# them. Ordinary acts must earn their label from text.
+_CONTEXTUAL_ACTS = {
+    ActType.OPENING,
+    ActType.ANSWER,
+    ActType.PROCESS,
+    ActType.COMPROMISE,
+    ActType.VOTE,
+    ActType.CLOSING,
+}
+
+# Comparative wording that marks a genuine head-to-head, not two mentions.
+_COMPARATIVE = re.compile(
+    r"\b(?:than|versus|vs\.?|compared?\s+(?:to|with)|instead\s+of|over\b|"
+    r"rather\s+than|beats?|wins?\s+(?:over|against)|side\s+by\s+side|trade-?off)\b",
+    re.I,
+)
+
+# A statement realizes SUPPORT only when it visibly claims a benefit of a named
+# option ("the Museum keeps the day easy"); a mere mention stays a comment.
+_PRO_CLAIM = re.compile(
+    r"\b(?:solves|fixes|keeps|gives|covers|fits|means|delivers|works|saves|hits|"
+    r"offers|helps|suits)\b|\bi\s+(?:really\s+)?(?:like|love|prefer)\b",
+    re.I,
+)
+
+
+def realized_comparison(text: str, resolver: OptionResolver) -> bool:
+    """True when the line visibly contrasts two named options — the single
+    textual authority for comparison threads, independent of the act label
+    (a comparative question realizes ASK *and* a comparison)."""
+    check = text.replace("’", "'").replace("‘", "'")
+    return len(set(resolver.ids_in_text(check))) >= 2 and bool(_COMPARATIVE.search(check))
+
+
+def _realized_act_type(
+    *,
+    intent: MoveIntent | None,
+    commitment: tuple[str, str] | None,
+    soft_rejects: dict[str, str],
+    hard_rejects: dict[str, str],
+    question_scope: str | None,
+    option_refs: list[str],
+    check_text: str,
+) -> ActType:
+    """Realized act from visible text: what the final line actually did.
+
+    Precedence: commitment > objection > question > comparison > benefit
+    claim. A routed ordinary act (support/concern/ask/compare/comment) that
+    shows none of these signals degrades to comment — the routed intent never
+    labels state on its own.
+    """
+    if commitment and commitment[0] in {"vote", "accept"}:
+        return ActType.VOTE
+    if commitment or hard_rejects or soft_rejects:
+        return ActType.CONCERN
+    if question_scope:
+        return ActType.ASK
+    if len(set(option_refs)) >= 2 and _COMPARATIVE.search(check_text):
+        return ActType.COMPARE
+    if intent is not None and intent.act in _CONTEXTUAL_ACTS:
+        return intent.act
+    if option_refs and _PRO_CLAIM.search(check_text):
+        return ActType.SUPPORT
+    return ActType.COMMENT
 
 
 def _is_genuine_question(text: str) -> bool:
     if _RHETORICAL_TAIL.search(text):
         return False
     return bool(_GENUINE_QUESTION.search(text))
-
-
-def _best_respondent(
-    speaker_id: str,
-    previous_speaker_id: str | None,
-    participant_names: dict[str, str],
-) -> str | None:
-    others = [pid for pid in participant_names if pid != speaker_id]
-    if previous_speaker_id and previous_speaker_id in others:
-        return previous_speaker_id
-    return others[0] if others else None
 
 
 def _extract_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> str | None:

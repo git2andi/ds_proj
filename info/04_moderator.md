@@ -7,11 +7,12 @@ The moderator is optional visible scaffolding. The controller still owns the dec
 The moderator can perform:
 
 - opening / option board presentation (fixed neutral wording: board + shared context, then "Let's discuss which option fits best overall." — never criteria selected by the setup);
-- occasional mid-discussion nudges;
-- final vote calls;
+- occasional mid-discussion nudges (a targeted nudge opens a direct question thread: the named participant owes the next answer);
+- moderator-led narrowing summaries when the discussion was circling or the target length forced narrowing;
+- final vote calls and vote-clarification prompts;
 - closing.
 
-Disabling moderator turns should not disable routing, narrowing, vote logic, or outcome computation.
+Disabling moderator turns should not disable routing, narrowing, vote logic, or outcome computation. With `mid_discussion_nudges` off, an engaged participant owns the stall beat; with `final_vote_call` off, participants own the narrowing summary, split summary, and holdout probe.
 
 ## Low-/no-moderator mode
 

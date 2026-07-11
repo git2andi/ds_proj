@@ -372,6 +372,7 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "verbosity": 0.55,
                 "directness": 0.50,
                 "stubbornness": 0.45,
+                "switch_resistance": 0.40,
             },
         ),
         persona_profile(
@@ -387,6 +388,7 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "verbosity": 0.35,
                 "directness": 0.45,
                 "stubbornness": 0.35,
+                "switch_resistance": 0.30,
             },
         ),
         persona_profile(
@@ -402,6 +404,7 @@ def profiles_three_way() -> list[dict[str, Any]]:
                 "verbosity": 0.80,
                 "directness": 0.70,
                 "stubbornness": 0.55,
+                "switch_resistance": 0.50,
             },
         ),
     ]
@@ -423,6 +426,7 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "verbosity": 0.85,
                 "directness": 0.75,
                 "stubbornness": 0.35,
+                "switch_resistance": 0.30,
             },
         ),
         persona_profile(
@@ -438,6 +442,7 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "verbosity": 0.25,
                 "directness": 0.35,
                 "stubbornness": 0.30,
+                "switch_resistance": 0.30,
             },
         ),
         persona_profile(
@@ -453,6 +458,7 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "verbosity": 0.55,
                 "directness": 0.55,
                 "stubbornness": 0.50,
+                "switch_resistance": 0.55,
             },
         ),
         persona_profile(
@@ -468,6 +474,7 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
                 "verbosity": 0.50,
                 "directness": 0.40,
                 "stubbornness": 0.20,
+                "switch_resistance": 0.15,
             },
         ),
     ]
@@ -489,6 +496,7 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "verbosity": 0.55,
                 "directness": 0.75,
                 "stubbornness": 0.85,
+                "switch_resistance": 0.90,
             },
         ),
         persona_profile(
@@ -504,6 +512,7 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "verbosity": 0.50,
                 "directness": 0.50,
                 "stubbornness": 0.35,
+                "switch_resistance": 0.30,
             },
         ),
         persona_profile(
@@ -519,6 +528,7 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "verbosity": 0.70,
                 "directness": 0.65,
                 "stubbornness": 0.30,
+                "switch_resistance": 0.25,
             },
         ),
         persona_profile(
@@ -534,6 +544,7 @@ def profiles_hard_holdout_4() -> list[dict[str, Any]]:
                 "verbosity": 0.35,
                 "directness": 0.35,
                 "stubbornness": 0.20,
+                "switch_resistance": 0.15,
             },
         ),
     ]
@@ -557,6 +568,7 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
                 "verbosity": 0.45,
                 "directness": 0.80,
                 "stubbornness": 0.95,
+                "switch_resistance": 0.95,
             },
         ),
         persona_profile(
@@ -574,6 +586,7 @@ def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
                 "verbosity": 0.50,
                 "directness": 0.85,
                 "stubbornness": 0.95,
+                "switch_resistance": 0.95,
             },
         ),
     ]
@@ -831,6 +844,10 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "final_blocker_violations": metrics.get("final_blocker_violations"),
         "direct_response_rate": metrics.get("direct_response_rate"),
         "concern_response_rate": metrics.get("concern_response_rate"),
+        # Cleanup-pass surfaces: thread-owned issue history and the actual
+        # route-source mix (threads driving local moves vs coverage/normal).
+        "settled_issue_keys": "; ".join(metrics.get("settled_issue_keys") or []),
+        "route_source_distribution": json.dumps(metrics.get("route_source_distribution") or {}, sort_keys=True),
         "participation_gini": metrics.get("participation_gini"),
         "repetition_score": metrics.get("repetition_score"),
         "avg_words_per_turn": metrics.get("avg_words_per_turn"),
@@ -886,7 +903,9 @@ def main() -> int:
         return 2
 
     cases = selected_cases()
-    backup_path = CONFIG_PATH.with_suffix(".yaml.eval_backup")
+    # The safety copy lives under eval/ (not the project root), next to the
+    # suite logs it belongs to.
+    backup_path = PROJECT_ROOT / "eval" / "config.yaml.eval_backup"
     original_text = CONFIG_PATH.read_text(encoding="utf-8")
     backup_path.write_text(original_text, encoding="utf-8")
     base_config = yaml.safe_load(original_text) or {}

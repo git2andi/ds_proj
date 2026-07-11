@@ -15,7 +15,7 @@ import yaml
 # Field names accepted in a manual participant profile (participants.profiles).
 PROFILE_TRAIT_NAMES = ("openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism")
 PROFILE_PARAMETER_NAMES = (
-    "engagement", "verbosity", "directness", "stubbornness",
+    "engagement", "verbosity", "directness", "stubbornness", "switch_resistance",
 )
 _PROFILE_FIELDS = frozenset({
     "name", "description", "private_goal", "preferred_option",

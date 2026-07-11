@@ -1,9 +1,12 @@
-"""Visible-state observation for the dialogue runner (issue 8 extraction).
+"""Post-turn observation: the single semantic state-update entry point.
 
-ObserverMixin turns a generated line into parsed structure and folds it into the
-visible state: it parses the dialogue act, applies semantics (votes, acceptances,
-blockers, latent-lean movement, switch events), and manages response obligations
-and open questions. Mixed into DialogueRunner; all state lives on ``self``.
+``_apply_semantics`` is the only place a final accepted participant turn
+changes semantic dialogue state (votes, stance ranks, coverage, threads,
+commitment dynamics, progress). Thread lifecycle transitions are delegated to
+the thread engine (threads.py); the observer never assigns thread statuses
+directly. The remaining mutation paths outside this module are pipeline
+bookkeeping only: turn/trace appends and bounded route-attempt accounting in
+dialogue.py, and phase/repair flow transitions owned by the flow code.
 """
 
 from __future__ import annotations
@@ -11,24 +14,24 @@ from __future__ import annotations
 import random
 import re
 
-from config_loader import cfg
 from models import (
     ActType,
-    AgendaStatus,
-    Concern,
+    BlockingStrength,
     DialogueAct,
     DialogueState,
     MoveIntent,
-    OpenQuestion,
     ParticipantRuntime,
     Persona,
     Phase,
-    ResponseObligation,
     STANCE_NEUTRAL,
     STANCE_REJECTED,
+    ThreadState,
+    ThreadStatus,
+    ThreadType,
     TurnRecord,
 )
-from parsing import commitment_has_reason, parse_dialogue_act, switch_bridge_ok
+from controller import threads as threads_engine
+from parsing import commitment_has_reason, parse_dialogue_act, realized_comparison, switch_bridge_ok
 from simulator import expected_turn_share
 from utils import weighted_choice
 
@@ -38,20 +41,6 @@ _VOTE_CHANGE = re.compile(
     r"i'?ll\s+switch|then\s+i\s+switch|let'?s\s+switch)\b",
     re.I,
 )
-
-# Practical-logistics issue lexicon for the issue ledger (P7). An issue is
-# recorded only when the turn treats it as unknown or asks about it — a fact
-# actually stated on the option board never trips the uncertainty gate.
-_LEDGER_ISSUES: dict[str, re.Pattern] = {
-    "parking": re.compile(r"\bparking\b", re.I),
-    "booking/reservations": re.compile(r"\breserv\w+\b|\bbook(?:ing|ed|s)?\b", re.I),
-    "weather": re.compile(r"\bweather\b|\brain\w*\b|\bforecast\w*\b", re.I),
-    "seating/space": re.compile(r"\bseating\b|\bseats?\b|\benough\s+(?:space|room)\b|\bfit\s+(?:all|everyone)\b", re.I),
-    "availability/scheduling": re.compile(r"\bavailab\w+\b|\bfree\s+that\s+(?:day|evening|afternoon|night)\b|\bopen\s+(?:on|that|late)\b", re.I),
-    "prep/setup time": re.compile(r"\bprep\s+time\b|\bset-?up\s+time\b", re.I),
-    "crowds/queues": re.compile(r"\bcrowd\w*\b|\bqueue\w*\b|\bhow\s+busy\b", re.I),
-}
-
 
 class ObserverMixin:
     def _parse_act(self, state: DialogueState, persona: Persona, text: str, intent: MoveIntent) -> DialogueAct:
@@ -68,26 +57,6 @@ class ObserverMixin:
             previous_speaker_id=previous,
         )
 
-    def _update_issue_ledger(self, state: DialogueState, record: TurnRecord) -> None:
-        """Track practical unknowns so the discussion stops reopening them (P7).
-
-        A ledger entry opens when a turn raises a logistics issue as unknown or
-        as a question. ``_UNCERTAINTY`` comes from ValidationMixin — both mixins
-        are composed into the same DialogueRunner.
-        """
-        text = record.text
-        uncertain = bool(self._UNCERTAINTY.search(text)) or "?" in text
-        if not uncertain:
-            return
-        for issue, pattern in _LEDGER_ISSUES.items():
-            if not pattern.search(text):
-                continue
-            entry = state.issue_ledger.setdefault(issue, {"mentions": 0, "options": []})
-            entry["mentions"] += 1
-            for option_id in record.act.option_refs:
-                if option_id not in entry["options"]:
-                    entry["options"].append(option_id)
-
     def _apply_semantics(self, state: DialogueState, record: TurnRecord) -> None:
         rt = state.runtimes[record.speaker_id]
         persona = state.persona_by_id(record.speaker_id)
@@ -96,35 +65,36 @@ class ObserverMixin:
         prior_vote = rt.explicit_vote
         prior_pref = rt.top_option() or persona.preferred_option
 
-        if act.question_target_id:
-            self._register_question(state, record)
-        if record.intent and record.intent.act == ActType.ANSWER:
-            self._close_answered_questions(state, record.speaker_id)
+        # Question threads (6.1): first fold this turn into existing threads
+        # (a valid answer moves hot -> cooling), then open a thread for any new
+        # visible question, then age all threads post-turn.
+        self._observe_question_answers(state, record)
+        if act.question_scope:
+            self._register_question_thread(state, record)
 
         for option_id in act.option_refs:
             cov = state.coverage[option_id]
             cov.mentions += 1
-            if act.act_type in {ActType.SUPPORT, ActType.SUPPORT, ActType.COMPARE, ActType.COMPROMISE, ActType.SOFTEN_TOWARD, ActType.OPENING}:
+            if act.act_type in {ActType.SUPPORT, ActType.COMPARE, ActType.COMPROMISE, ActType.OPENING}:
                 cov.reasons += 1
-            if act.act_type in {ActType.CONCERN, ActType.CONCERN} or option_id in act.soft_rejects or option_id in act.hard_rejects:
+            if act.act_type is ActType.CONCERN or option_id in act.soft_rejects or option_id in act.hard_rejects:
                 cov.objections += 1
 
-        self._update_issue_ledger(state, record)
-
-        # Stateful concern threads (issue 2): first fold this turn into any open
-        # threads (a reply about the option addresses it; unanswered threads
-        # age out after a few turns), then open new threads for objections and
-        # challenges raised here, applying social pressure to the option's
-        # advocates.
-        self._update_concern_threads(state, record)
+        # Concern/blocker threads (6.2/6.3): first fold this turn into open
+        # threads (a semantically relevant reply moves hot -> cooling; a
+        # raiser's visible acceptance resolves), then open option-specific
+        # threads for objections raised here, eroding advocates' commitment.
+        self._observe_concern_responses(state, record)
+        # Comparison threads (6.4): a realized head-to-head gets one normalized
+        # pair thread; a relevant pair response cools it. Short-lived by design.
+        self._observe_comparison_responses(state, record)
+        self._register_comparison_thread(state, record)
+        # Concern/blocker threads open only from parsed objections in the final
+        # accepted text — a routed CONCERN intent whose line shows no visible
+        # objection registers nothing (accepted text is the semantic authority).
         challenged = set(act.soft_rejects) | set(act.hard_rejects)
-        if record.intent and record.intent.act == ActType.CONCERN:
-            # Register challenge concerns against rivals, not the speaker's own current pick.
-            own = state.runtimes[record.speaker_id].top_option() if record.speaker_id in state.runtimes else None
-            rival_refs = [oid for oid in act.option_refs if oid != own]
-            challenged.update(rival_refs[:1] or act.option_refs[:1])
         for option_id in challenged:
-            self._register_concern(state, record, option_id)
+            self._register_concern_thread(state, record, option_id)
         # Visible support is social pressure too: a commitment/acceptance for one
         # option slightly erodes other sims' hold on different favorites.
         supported = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
@@ -135,7 +105,7 @@ class ObserverMixin:
         if (
             own
             and own in act.option_refs
-            and act.act_type in {ActType.OPENING, ActType.SUPPORT, ActType.SUPPORT, ActType.COMPARE}
+            and act.act_type in {ActType.OPENING, ActType.SUPPORT, ActType.COMPARE}
             and own not in challenged
         ):
             self._set_commitment(rt, rt.commitment_strength + 0.04)
@@ -187,13 +157,59 @@ class ObserverMixin:
                 })
                 rt.concessions_made += 1
 
-        # Latent lean may move only on a visible signal in the parsed text:
-        # a vote/acceptance (handled by _set_vote), a visible compromise offer
-        # or proposal, or explicit conditional support. Never from routing
-        # intent alone (issue I4).
-        if record.intent and record.intent.act == ActType.OPENING and record.intent.option_focus:
-            rt.promote_to_preferred(record.intent.option_focus[0])
-        elif (softened := self._softening_signal(state, record, rt)) and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
+        self._apply_lean_movement(state, record, rt, persona)
+
+        # Track the visible top pair per accepted turn for the stability
+        # trigger (12.2). Tuples, so equality comparison is exact.
+        state.top_pair_history.append(tuple(self._current_top_pair(state)))
+
+        after = self._snapshot_progress(state)
+        state.no_progress_count = 0 if after != before else state.no_progress_count + 1
+
+        # Thread aging runs after the progress snapshot: decaying to stale is
+        # the absence of progress and must not reset the stagnation counter.
+        # A concern that dies unanswered weighs on the option's advocates more
+        # than a defended one (issue 2/3 — unrebutted points erode).
+        unanswered_hot = {
+            tid for tid, t in state.threads.items()
+            if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
+            and t.status is ThreadStatus.HOT
+        }
+        threads_engine.age_threads(state)
+        for tid in unanswered_hot:
+            thread = state.threads[tid]
+            if thread.status is not ThreadStatus.STALE:
+                continue
+            for option_id in thread.focus_options:
+                for persona in state.personas:
+                    prt = state.runtimes[persona.id]
+                    if persona.id != thread.started_by and prt.top_option() == option_id:
+                        self._set_commitment(
+                            prt, prt.commitment_strength - 0.10 * (1.0 - 0.7 * persona.sim_params.stubbornness)
+                        )
+
+    # ------------------------------------------------------------------
+    # Concern threads and commitment dynamics (issue 2)
+    # ------------------------------------------------------------------
+
+    def _apply_lean_movement(
+        self, state: DialogueState, record: TurnRecord, rt: ParticipantRuntime, persona: Persona
+    ) -> None:
+        """Move the latent lean only on a visible signal in the parsed text:
+        an opening that names an option, visible softening wording, a visible
+        compromise offer, or explicit conditional support. Never from routing
+        intent alone (votes/acceptances are handled by ``_set_vote``)."""
+        act = record.act
+        if record.intent and record.intent.act == ActType.OPENING:
+            # The opening lean follows the option the line visibly names: the
+            # routed favorite when the text names it, a lone named option when
+            # the text went its own way, nothing when the naming is ambiguous.
+            refs = [oid for oid in act.option_refs if oid in state.scenario.option_ids]
+            focus = record.intent.option_focus[0] if record.intent.option_focus else None
+            target = focus if focus in refs else (refs[0] if len(set(refs)) == 1 else None)
+            if target:
+                rt.promote_to_preferred(target)
+        elif (softened := act.softens_toward) and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
             # Explicit visible softening ("B is starting to make more sense to
             # me", issue 3): the internal lean follows the sim's own words —
             # withholding the shift would make the state dishonest.
@@ -203,7 +219,7 @@ class ObserverMixin:
             if record.phase == Phase.DISCUSSION:
                 state.discussion_lean_shifts += 1
         else:
-            signal = act.offers_compromise or act.proposes_option or act.conditional_support
+            signal = act.offers_compromise or act.conditional_support
             if signal and signal != rt.top_option() and self._can_shift_to(state, persona, signal):
                 # Movability scales with the tracked commitment (issue 2): a sim
                 # whose favorite took unanswered challenges/pressure moves more
@@ -216,80 +232,38 @@ class ObserverMixin:
                     if record.phase == Phase.DISCUSSION:
                         state.discussion_lean_shifts += 1
 
-        self._update_discussion_agenda(state, record)
-
-        after = self._snapshot_progress(state)
-        state.no_progress_count = 0 if after != before else state.no_progress_count + 1
-
-    def _update_discussion_agenda(self, state: DialogueState, record: TurnRecord) -> None:
-        """Mark chat-level checklist items completed by visible transcript evidence."""
-        act = record.act
-        for item in state.discussion_agenda:
-            if item.status != AgendaStatus.PENDING:
-                continue
-            if item.key.startswith("cover_option:") and item.option in state.coverage:
-                coverage = state.coverage[item.option]
-                if coverage.mentions > 0 or item.option in act.option_refs:
-                    item.status = AgendaStatus.DONE
-            elif item.key == "compare_top_options":
-                compared = [oid for oid in act.option_refs if oid in state.scenario.option_ids]
-                if act.act_type == ActType.COMPARE and len(set(compared)) >= 2:
-                    item.status = AgendaStatus.DONE
-            elif item.key == "candidate_concern_check":
-                candidate = state.candidate_option or self._visible_candidate(state) or self._latent_leading_option(state)
-                if candidate and (candidate in act.soft_rejects or candidate in act.hard_rejects):
-                    item.status = AgendaStatus.DONE
-                elif candidate and state.coverage[candidate].objections > 0:
-                    item.status = AgendaStatus.DONE
-
-        # Avoid controller loops: if a checklist-routed turn failed to satisfy
-        # its own item after validation/parsing, do not route the same item
-        # forever. Coverage and vote readiness can still force progress.
-        routed_key = record.intent.agenda_key if record.intent else None
-        if routed_key:
-            for item in state.discussion_agenda:
-                if item.key == routed_key and item.status == AgendaStatus.PENDING:
-                    item.status = AgendaStatus.SKIPPED
-                    break
-
-    # ------------------------------------------------------------------
-    # Concern threads and commitment dynamics (issue 2)
-    # ------------------------------------------------------------------
-
-    @staticmethod
-    def _softening_signal(state: DialogueState, record: TurnRecord, rt: ParticipantRuntime) -> str | None:
-        """Option this turn visibly warms to: the parsed softening phrase, or —
-        on a routed softening beat — the attractor, provided the visible text
-        actually engages it (names it, doesn't reject it). Wordings the regex
-        misses ('genuinely clicks with me now') still move the lean then."""
-        if record.act.softens_toward:
-            return record.act.softens_toward
-        intent = record.intent
-        if intent is None or not intent.soften_toward:
-            return None
-        target = intent.soften_toward
-        if (
-            target in record.act.option_refs
-            and target not in record.act.soft_rejects
-            and target not in record.act.hard_rejects
-        ):
-            return target
-        return None
-
     @staticmethod
     def _set_commitment(rt: ParticipantRuntime, value: float) -> None:
         rt.commitment_strength = max(0.05, min(0.95, value))
         rt.commitment_min = min(rt.commitment_min, rt.commitment_strength)
 
-    def _register_concern(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
-        """Open a concern thread and erode advocates' commitment (issue 2)."""
+    def _register_concern_thread(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
+        """Open an option-specific concern/blocker thread from a final turn (6.2/6.3).
+
+        Repeats of a resolved issue are suppressed by the thread engine; only a
+        genuinely new thread erodes advocates' commitment, so repeated generic
+        objections stop applying pressure while a fresh issue still bites.
+        """
         if option_id not in state.scenario.option_ids:
             return
-        state.concerns_raised_total += 1
-        state.open_concerns.append(
-            Concern(turn_id=record.index, raised_by=record.speaker_id, option_id=option_id, text=record.text)
+        is_hard = option_id in record.act.hard_rejects
+        issue_key = threads_engine.normalize_issue_key(
+            record.text,
+            state.scenario,
+            [p.name for p in state.personas],
+            focus_options=[option_id],
         )
-        state.open_concerns = state.open_concerns[-3:]
+        thread = threads_engine.open_thread(
+            state,
+            thread_type=ThreadType.BLOCKER if is_hard else ThreadType.CONCERN,
+            focus_options=[option_id],
+            issue_key=issue_key,
+            started_by=record.speaker_id,
+            source_turn_index=record.index,
+            blocking_strength=BlockingStrength.HARD if is_hard else BlockingStrength.SOFT,
+        )
+        if thread is None or thread.created_turn != record.index:
+            return  # suppressed repeat or reinforcement of an existing thread
         for persona in state.personas:
             rt = state.runtimes[persona.id]
             if persona.id != record.speaker_id and rt.top_option() == option_id:
@@ -297,34 +271,126 @@ class ObserverMixin:
                 erosion = 0.12 * (1.0 - 0.7 * persona.sim_params.stubbornness)
                 self._set_commitment(rt, rt.commitment_strength - erosion)
 
-    def _update_concern_threads(self, state: DialogueState, record: TurnRecord) -> None:
-        """Age open concerns; a reply about the option by someone else closes it."""
-        live: list[Concern] = []
-        for concern in state.open_concerns:
-            if concern.turn_id == record.index:
-                live.append(concern)
+    def _observe_concern_responses(self, state: DialogueState, record: TurnRecord) -> None:
+        """Fold this final turn into open concern/blocker threads (6.2/6.3).
+
+        Merely mentioning the concerned option is not enough: a response counts
+        only when it references the option AND responds to the issue — routed
+        as a reply to the source turn, matching the issue key, visibly
+        resolving the blocker, or visibly accepting the option. The raiser's
+        own visible acceptance/softening/resolution resolves the thread.
+        """
+        act = record.act
+        refs = set(act.option_refs)
+        for thread in list(state.threads.values()):
+            if thread.thread_type not in (ThreadType.CONCERN, ThreadType.BLOCKER):
                 continue
-            if (
-                concern.addressed_by is None
-                and record.speaker_id != concern.raised_by
-                and concern.option_id in record.act.option_refs
-            ):
-                concern.addressed_by = record.speaker_id
-                state.concerns_addressed_total += 1
-                continue  # thread completed, drop it
-            concern.age += 1
-            if concern.addressed_by is None and concern.age < 3:
-                live.append(concern)
-            elif concern.addressed_by is None:
-                # The concern died unanswered: that weighs on the advocates more
-                # than a defended one (issue 2/3 — unrebutted points erode).
-                for persona in state.personas:
-                    rt = state.runtimes[persona.id]
-                    if persona.id != concern.raised_by and rt.top_option() == concern.option_id:
-                        self._set_commitment(
-                            rt, rt.commitment_strength - 0.10 * (1.0 - 0.7 * persona.sim_params.stubbornness)
-                        )
-        state.open_concerns = live
+            if thread.status in (ThreadStatus.RESOLVED, ThreadStatus.STALE):
+                continue
+            focus = set(thread.focus_options)
+            if not focus & refs and act.resolves_blocker not in focus:
+                continue
+            if record.speaker_id == thread.started_by:
+                accepted = bool(
+                    focus & set(act.accepts)
+                    or (act.explicit_vote in focus)
+                    or (act.softens_toward in focus)
+                    or (act.resolves_blocker in focus)
+                )
+                if accepted:
+                    threads_engine.resolve_thread(
+                        state, thread, reason="raiser visibly accepted/softened/resolved"
+                    )
+                else:
+                    # Restating the own concern keeps the thread warm.
+                    threads_engine.touch_thread(
+                        state, thread, turn_index=record.index, participant_id=record.speaker_id
+                    )
+                continue
+            routed_reply = bool(
+                record.intent and record.intent.respond_to_turn == thread.source_turn_index
+            )
+            relevant = (
+                routed_reply
+                or (act.resolves_blocker in focus)
+                or bool(focus & set(act.accepts))
+                or self._issue_relevant(state, record.text, thread)
+            )
+            if relevant and thread.status is ThreadStatus.HOT:
+                threads_engine.mark_response(
+                    state, thread, responder_id=record.speaker_id, turn_index=record.index
+                )
+            elif relevant:
+                threads_engine.touch_thread(
+                    state, thread, turn_index=record.index, participant_id=record.speaker_id
+                )
+
+    def _register_comparison_thread(self, state: DialogueState, record: TurnRecord) -> None:
+        """Open/update one normalized option-pair thread for a realized comparison.
+
+        A comparison is realized when the final text names at least two valid
+        options with visibly comparative wording — the parsed text is the
+        single authority; a routed compare whose line never contrasts anything
+        registers nothing, while a comparative question realizes ASK *and* a
+        comparison. Pair identity ignores the issue key: one pair, one thread
+        ("one normalized option-pair thread", 6.4).
+        """
+        assert self._resolver is not None
+        if not realized_comparison(record.text, self._resolver):
+            return
+        refs = [oid for oid in record.act.option_refs if oid in state.scenario.option_ids]
+        if len(set(refs)) < 2:
+            return
+        pair = threads_engine.normalize_pair(refs)[:2]
+        threads_engine.open_thread(
+            state,
+            thread_type=ThreadType.COMPARISON,
+            focus_options=pair,
+            issue_key="pair",  # pair-only identity: same pair -> same thread
+            started_by=record.speaker_id,
+            source_turn_index=record.index,
+        )
+
+    def _observe_comparison_responses(self, state: DialogueState, record: TurnRecord) -> None:
+        """Move a comparison thread hot -> cooling on a relevant pair response:
+        another participant engaging the same pair (both options named) or
+        replying directly to the comparison turn."""
+        refs = set(record.act.option_refs)
+        for thread in state.threads.values():
+            if thread.thread_type is not ThreadType.COMPARISON:
+                continue
+            if thread.status is not ThreadStatus.HOT:
+                continue
+            if record.speaker_id == thread.started_by:
+                if set(thread.focus_options) <= refs:
+                    threads_engine.touch_thread(
+                        state, thread, turn_index=record.index, participant_id=record.speaker_id
+                    )
+                continue
+            routed_reply = bool(
+                record.intent and record.intent.respond_to_turn == thread.source_turn_index
+            )
+            if routed_reply or set(thread.focus_options) <= refs:
+                threads_engine.mark_response(
+                    state, thread, responder_id=record.speaker_id, turn_index=record.index
+                )
+
+    @staticmethod
+    def _issue_relevant(state: DialogueState, text: str, thread) -> bool:
+        """Deterministic issue-level relevance between a response and a thread."""
+        key = threads_engine.normalize_issue_key(
+            text,
+            state.scenario,
+            [p.name for p in state.personas],
+            focus_options=list(thread.focus_options),
+        )
+        if key == thread.issue_key:
+            return True
+        if thread.issue_key.startswith("sig:") and key.startswith("sig:"):
+            thread_tokens = set(thread.issue_key[4:].split("-"))
+            response_tokens = set(key[4:].split("-"))
+            return bool(thread_tokens & response_tokens)
+        return False
 
     def _apply_support_pressure(self, state: DialogueState, supporter_id: str, option_id: str) -> None:
         """Visible backing for one option erodes rival advocates' commitment."""
@@ -363,49 +429,104 @@ class ObserverMixin:
     # Utilities
     # ------------------------------------------------------------------
 
-    def _next_answerable_question(self, state: DialogueState) -> OpenQuestion | None:
-        live = []
-        for question in state.open_questions:
-            if any(t.speaker_id == question.target_id and t.index > question.turn_id for t in state.turns):
-                continue
-            if question.target_id in state.runtimes:
-                live.append(question)
-        state.open_questions = live[-4:]
-        return state.open_questions[0] if state.open_questions else None
+    def _register_question_thread(self, state: DialogueState, record: TurnRecord) -> None:
+        """Open/update a question thread from a final public question (6.1).
 
-    def _register_question(self, state: DialogueState, record: TurnRecord) -> None:
-        # A direct question is detected from visible text (parser sets
-        # question_target_id), not from the routed act label: a question embedded
-        # in a challenge/compare turn still creates a response obligation.
-        target = record.act.question_target_id
-        if not target or target == record.speaker_id or target not in state.runtimes:
-            return
-        # A group-directed question (no name, no "you") should not always fall to
-        # the previous speaker — that chains one sim into an interview loop
-        # (issue 1). Re-target by relevance, engagement, and turn-share deficit.
-        if not self._question_explicitly_addressed(state, record, target):
-            target = self._pick_group_respondent(state, record.speaker_id, record.act.option_refs[:2])
-            if target is None:
+        Scope comes from the parser's visible-text reading; the respondent for
+        a group question is a controller decision made here, using relevance
+        and turn balance — never the parser's.
+        """
+        act = record.act
+        scope = act.question_scope
+        if scope == "direct":
+            respondent = act.question_target_id
+            if not respondent or respondent == record.speaker_id or respondent not in state.runtimes:
                 return
-            record.act.question_target_id = target
-        state.open_questions.append(OpenQuestion(turn_id=record.index, asked_by=record.speaker_id, target_id=target, text=record.text, option_focus=record.act.option_refs[:2]))
-        state.open_questions = state.open_questions[-4:]
-        self._set_obligation(
+        else:
+            respondent = self._pick_group_respondent(state, record.speaker_id, act.option_refs[:2])
+            if respondent is None:
+                return
+        focus = [oid for oid in act.option_refs[:2] if oid in state.scenario.option_ids]
+        issue_key = threads_engine.normalize_issue_key(
+            record.text,
+            state.scenario,
+            [p.name for p in state.personas],
+            focus_options=focus,
+        )
+        threads_engine.open_thread(
             state,
-            target_id=target,
-            source_id=record.speaker_id,
-            text=record.text,
-            expected_act=ActType.ANSWER,
-            option_focus=record.act.option_refs[:2],
+            thread_type=ThreadType.QUESTION,
+            focus_options=focus,
+            issue_key=issue_key,
+            started_by=record.speaker_id,
+            source_turn_index=record.index,
+            required_respondent=respondent,
+            question_scope=scope,
         )
 
-    @staticmethod
-    def _question_explicitly_addressed(state: DialogueState, record: TurnRecord, target: str) -> bool:
-        """True when the question visibly addresses the target (name or 'you')."""
-        name = state.name_for(target)
-        if name and re.search(rf"\b{re.escape(name.lower())}\b", record.text.lower()):
-            return True
-        return bool(re.search(r"\byou(?:r|rs)?\b", record.text, re.I))
+    def _observe_question_answers(self, state: DialogueState, record: TurnRecord) -> None:
+        """Move question threads hot -> cooling when this final turn answers them.
+
+        A response counts only when the required respondent speaks AND either
+        the turn was routed as the answer to this thread (validated upstream) or
+        it visibly overlaps the question's option focus. A respondent speaking
+        about something unrelated closes nothing (6.1).
+        """
+        intent = record.intent
+        for thread in list(state.threads.values()):
+            if thread.thread_type is not ThreadType.QUESTION or thread.status is not ThreadStatus.HOT:
+                continue
+            if thread.required_respondent != record.speaker_id:
+                continue
+            if record.index <= thread.source_turn_index:
+                continue
+            # A fallback line never realizes the routed answer (Section 15): it
+            # must not resolve the question thread just because it was routed.
+            routed_answer = bool(
+                intent
+                and intent.act == ActType.ANSWER
+                and intent.respond_to_turn == thread.source_turn_index
+                and not record.used_fallback
+            )
+            relevant = (
+                not thread.focus_options
+                or bool(set(thread.focus_options) & set(record.act.option_refs))
+            )
+            if routed_answer or relevant:
+                threads_engine.mark_response(
+                    state, thread, responder_id=record.speaker_id, turn_index=record.index
+                )
+
+    def _required_answer_thread(self, state: DialogueState) -> "ThreadState | None":
+        """The question thread whose answer is owed next: direct before group,
+        then earliest creation. Read-only; deterministic."""
+        candidates = [
+            t for t in state.threads.values()
+            if t.thread_type is ThreadType.QUESTION
+            and t.status is ThreadStatus.HOT
+            and t.required_respondent in state.runtimes
+        ]
+        if not candidates:
+            return None
+        return min(
+            candidates,
+            key=lambda t: (t.question_scope != "direct", t.created_turn, t.thread_id),
+        )
+
+    def _answer_intent_for_thread(self, state: DialogueState, thread: "ThreadState") -> MoveIntent:
+        asker = thread.started_by
+        return MoveIntent(
+            speaker_id=str(thread.required_respondent),
+            act=ActType.ANSWER,
+            reason="answer the direct question you were just asked, then add one implication for the decision",
+            route_source="answer_required",
+            thread_id=thread.thread_id,
+            addressee_id=None if asker in {"moderator", ""} else asker,
+            option_focus=list(thread.focus_options) or self._focus_from_recent(state),
+            # Without this the prompt never shows WHICH question is owed, and
+            # group-directed questions get pivoted around instead of answered.
+            respond_to_turn=thread.source_turn_index,
+        )
 
     def _pick_group_respondent(
         self, state: DialogueState, asker_id: str, option_focus: list[str] | None = None
@@ -432,67 +553,6 @@ class ObserverMixin:
             weights.append(weight)
         return weighted_choice(others, weights).id
 
-    def _set_obligation(
-        self,
-        state: DialogueState,
-        *,
-        target_id: str,
-        source_id: str,
-        text: str,
-        expected_act: ActType,
-        option_focus: list[str],
-    ) -> None:
-        if target_id not in state.runtimes or target_id == source_id:
-            return
-        window = max(1, int(cfg.conversation.get("response_obligation_turns", 2)))
-        state.obligations_created += 1
-        state.response_obligation = ResponseObligation(
-            target_id=target_id,
-            source_id=source_id,
-            question_text=text,
-            expected_act=expected_act,
-            created_turn=state.turn_index,
-            expires_after=state.turn_index + 2 * window,  # turn_index counts moderator turns too
-            option_focus=[o for o in option_focus if o in state.scenario.option_ids][:2],
-        )
-
-    def _active_obligation(self, state: DialogueState) -> ResponseObligation | None:
-        ob = state.response_obligation
-        if ob is None:
-            return None
-        if ob.target_id not in state.runtimes:
-            state.response_obligation = None
-            return None
-        # Satisfied: the target has taken a turn since the obligation was created.
-        if any(t.speaker_id == ob.target_id and t.index > ob.created_turn for t in state.turns):
-            state.response_obligation = None
-            return None
-        # Lapsed: too many turns passed without the target answering.
-        if state.turn_index > ob.expires_after:
-            state.unanswered_obligations += 1
-            state.response_obligation = None
-            return None
-        return ob
-
-    def _obligation_intent(self, state: DialogueState, obligation: ResponseObligation) -> MoveIntent:
-        focus = obligation.option_focus or self._focus_from_recent(state)
-        if obligation.expected_act == ActType.VOTE:
-            return self._vote_intent(state, state.persona_by_id(obligation.target_id), state.candidate_option or (focus[0] if focus else state.personas[0].preferred_option))
-        return MoveIntent(
-            speaker_id=obligation.target_id,
-            act=ActType.ANSWER,
-            reason="answer the direct question you were just asked, then add one implication for the decision",
-            addressee_id=None if obligation.source_id == "moderator" else obligation.source_id,
-            option_focus=focus,
-            # Without this the prompt never shows WHICH question is owed, and
-            # group-directed questions get pivoted around instead of answered.
-            respond_to_turn=obligation.created_turn,
-        )
-
-    @staticmethod
-    def _close_answered_questions(state: DialogueState, speaker_id: str) -> None:
-        state.open_questions = [q for q in state.open_questions if q.target_id != speaker_id]
-
     @staticmethod
     def _focus_from_recent(state: DialogueState) -> list[str]:
         for turn in reversed(state.turns):
@@ -500,9 +560,31 @@ class ObserverMixin:
                 return turn.act.option_refs[:2]
         return []
 
-    @staticmethod
-    def _snapshot_progress(state: DialogueState) -> tuple:
+    def _snapshot_progress(self, state: DialogueState) -> tuple:
+        """Deterministic progress signature (Section 11).
+
+        no_progress_count resets only when this changes meaningfully: a thread
+        changes status (question answered, concern/blocker moved, comparison
+        settled), the visible support/vote picture shifts, someone's lean
+        moves, an option becomes covered, the candidate changes, a phase turns,
+        or a repair objective advances. A generic comment or repeated wording
+        changes none of these and therefore never resets progress.
+        """
         leans = tuple(sorted((pid, rt.top_option()) for pid, rt in state.runtimes.items()))
         votes = tuple(sorted((pid, rt.explicit_vote) for pid, rt in state.runtimes.items() if rt.explicit_vote))
-        questions = tuple((q.turn_id, q.target_id) for q in state.open_questions)
-        return leans, votes, questions
+        support = tuple(
+            (oid, self._visible_support_count(state, oid)) for oid in state.scenario.option_ids
+        )
+        thread_statuses = tuple(
+            sorted((tid, t.status.value) for tid, t in state.threads.items())
+        )
+        coverage = tuple(
+            (oid, cov.mentions > 0, cov.coverage_attempts) for oid, cov in sorted(state.coverage.items())
+        )
+        candidate = (state.candidate_option, self._public_candidate(state))
+        repair = (
+            (state.active_repair.repair_reason, state.active_repair.status, state.active_repair.attempt_count)
+            if state.active_repair
+            else None
+        )
+        return (state.phase.value, leans, votes, support, thread_statuses, coverage, candidate, repair)

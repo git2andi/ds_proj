@@ -98,7 +98,8 @@ class DialogueLogger:
             )
             lines.append(
                 f"sim params: engagement={params.engagement:.2f} verbosity={params.verbosity:.2f} "
-                f"directness={params.directness:.2f} stubbornness={params.stubbornness:.2f}"
+                f"directness={params.directness:.2f} stubbornness={params.stubbornness:.2f} "
+                f"switch_resistance={params.switch_resistance:.2f}"
             )
             lines.append(f"age/speech_style: {persona.age} — {persona.speech_style}")
             lines.append(f"profile: {persona.background}")
@@ -159,6 +160,11 @@ class DialogueLogger:
             # Visible runtime state per simulator — switch_events in particular
             # are needed for preference-movement analysis (todo issues 4/5).
             "runtimes": {pid: _to_jsonable(rt) for pid, rt in state.runtimes.items()},
+            # Thread-engine state and the active repair state; the thread that
+            # routed each turn is in controller_trace ("routed_thread_id").
+            "threads": {tid: _to_jsonable(t) for tid, t in state.threads.items()},
+            "active_repair": _to_jsonable(state.active_repair) if state.active_repair else None,
+            "repair_history": [_to_jsonable(r) for r in state.repair_history],
             "turns": [_to_jsonable(t) for t in state.turns],
             "outcome": _to_jsonable(outcome),
             # Ordered phase trace (pacing / discussion / narrowing / closure).
@@ -166,6 +172,10 @@ class DialogueLogger:
             # issue 6 is checkable: closure entries appear only once the outcome
             # is actually resolved, never on a run still heading into compromise.
             "phase_history": list(state.phase_history),
+            # Immutable controller trace: pre-turn routing snapshot + realized
+            # result per participant turn, plus phase transitions and moderator/
+            # peer-procedure markers. Explains why every turn was selected.
+            "controller_trace": _to_jsonable(state.controller_trace),
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
             "token_usage_by_call_type": _to_jsonable(state.token_usage_by_call_type),

@@ -58,35 +58,46 @@ Sim generation follows one split:
   - `engagement`: expected speaker frequency / turn share;
   - `verbosity`: average utterance length, realized only as numeric word budgets;
   - `directness`: blunt vs soft wording;
-  - `stubbornness`: resistance to changing stance and strength of stance defense.
+  - `stubbornness`: strength of stance defense during the discussion;
+  - `switch_resistance`: resistance to final movement — candidate switches, compromise acceptance, holdout concession, and vote/repair behavior.
 
 `speech_style` is small register coloring derived from age (four compact bands: young casual / relaxed practical / direct workplace / measured traditional wording). It changes wording only and must not override stance, vote choice, willingness to compromise, or turn-taking behavior. Hard blockers come only from `rejection`, never from high stubbornness alone.
 
 Generated and manual profiles are checked for obvious age/profile contradictions. For example, a very young participant should not receive a senior-executive biography, a mortgage-heavy family profile, or decades of experience.
 
-## Chat-level discussion agenda
+## Phases and threads
 
-The project no longer uses per-sim scripted agendas to steer the discussion. Remaining pre-vote work is tracked as a chat-level `DialogueState.discussion_agenda` checklist. It covers global discussion needs: brief visibility for every option, a top-option comparison, and an optional concern check focused on the likely winner — never a mechanical concern sweep over all options.
+There is no content agenda. Global progress is explicit controller phase state:
 
-Persona-specific reasons still exist through `OptionStance.reason_for` and `OptionStance.reason_against`. This keeps personal perspectives without adding a second agenda system.
+```text
+opening -> discussion -> narrowing -> voting -> closing
+narrowing -> discussion            (at most once, when the candidate collapses)
+voting -> compromise_repair -> voting | closing
+```
+
+Local interaction is tracked as deterministic threads (`question`, `concern`, `blocker`, `comparison`, `repair`) with statuses `hot / cooling / resolved / stale`, option-specific deterministic issue keys, and one deterministic primary thread driving routing. Coverage ("was each option socially processed once?") runs only when no hot thread needs attention. Persona-specific reasons live in `OptionStance.reason_for` / `reason_against`.
 
 ## Controller / LLM separation
 
-The controller owns the intended move:
+The controller owns the intended move (`MoveIntent`):
 
 ```text
-speaker + macro act + target/addressee + option focus + reason + intended stance effect
+speaker + macro act + route source + target/addressee + option focus + reason
 ```
 
-The LLM renders one natural message. Validation checks whether the line visibly matches the intended move and stays grounded. State changes are applied through the rank table only after validation.
+The LLM renders one natural message. Validation checks whether the line visibly matches the intended move and stays grounded; routing is read-only, and only the final accepted, parsed turn changes dialogue state (observer). A routed answer, concern response, coverage turn, or vote counts only when the final text visibly realizes it.
 
 The compact macro-act vocabulary is:
 
 ```text
-opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
+opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
 ```
 
-Only these macro acts are used by routing, prompts, and logs.
+Normal discussion sampling is limited to `support, concern, ask, compare, comment`. `answer` is route-driven by question threads; `process`/`compromise` belong to narrowing and repair; softening is an observed stance effect parsed from visible text, never a routed act.
+
+## Voting and repair
+
+Only formal commitments made during `voting`/`compromise_repair` count toward the outcome; opening leans and discussion support move public stance but never silently become final votes. After vote collection, one bounded repair state machine handles (in priority order) unclear votes, majority holdouts, split votes, and two-person deadlocks — each reason at most once per run, with `switch_resistance` governing final movement and hard blockers never pressured into fake agreement.
 
 ## Outcomes
 
@@ -106,32 +117,35 @@ CLI topic or manual environment
   -> automatic or manual simulated participants
   -> age/profile/speech-style plausibility checks
   -> initial per-sim option ranks
-  -> chat-level discussion agenda
-  -> controller chooses speaker, target, macro act, and option focus
+  -> controller routes: required answer > hot thread > cooling thread > coverage > continuation > normal act
   -> LLM renders one utterance
-  -> validation checks intent alignment and grounding
-  -> observer updates visible state, rank table, and agenda progress
-  -> controller routes follow-ups, concerns, narrowing, votes, and closure
-  -> consensus manager computes successful / majority / unresolved
-  -> transcript.md, run.json, metrics.csv are written
+  -> parse -> validate -> repair/fallback -> append final turn
+  -> observer updates threads, coverage, rank table, and progress signature
+  -> flow: explicit phases, bounded narrowing, formal votes, one repair state machine
+  -> consensus manager computes successful / majority / unresolved from formal commitments
+  -> transcript.md, run.json (incl. controller trace), metrics.csv are written
 ```
 
 ## Main modules
 
 - `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
 - `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases. Manual eval personas include age/speech-style/profile variation.
-- `config.yaml`: provider, environment, participant, pacing, routing, validation, and output settings.
+- `config.yaml`: provider, environment, participant, pacing, threads, narrowing, routing, validation, and output settings.
 - `src/builders.py`: builds automatic/manual scenarios and participants, including age/speech-style/profile validation and initial option-rank compatibility.
-- `src/models.py`: dataclasses, compact macro acts, age/speech-style/profile fields, chat-level agenda items, and per-option stance ranks.
-- `src/simulator.py`: converts hidden OCEAN traits into the four simulator parameters and the engagement-based expected turn share.
-- `src/dialogue.py`: orchestration loop for opening, discussion, voting, split narrowing, and closure.
-- `src/policy.py`: speaker choice, macro-act choice, addressee choice, vote readiness, and procedural routing.
-- `src/observer.py`: validated visible-state updates, rank movements, question/concern tracking, and agenda progress.
-- `src/parsing.py`: option references, commitments, votes, rejections, and parser-safe phrase families.
-- `src/validation.py`: turn validation, parser/intent alignment, minimal fallback protection, and grounding checks.
+- `src/models.py`: stable domain dataclasses (scenario, personas, acts, turns, DialogueState) plus re-exports of the controller state types.
+- `src/simulator.py`: converts hidden OCEAN traits into the five simulator parameters and the engagement-based expected turn share.
+- `src/dialogue.py`: run orchestration and the generate→parse→validate→repair→append pipeline, turn/trace appends, logging.
+- `src/controller/state.py`: controller runtime dataclasses — phases, thread state, repair state.
+- `src/controller/threads.py`: deterministic issue keys, thread lifecycle transitions, primary-thread selection.
+- `src/controller/policy.py`: read-only route/speaker/act/option/addressee selection returning `MoveIntent`.
+- `src/controller/flow.py`: phase transition graph, narrowing readiness/behavior, formal voting, and the repair state machine.
+- `src/observer.py`: the single post-turn semantic state-update entry point (threads via the engine, coverage, ranks, progress).
+- `src/parsing.py`: pure visible-semantics layer — option references, commitments, question scope, blockers, softening.
+- `src/validation.py`: side-effect-free turn validation, thread-aware realization checks, grounding, deterministic fallback.
 - `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts.
-- `src/consensus.py`: final outcome computation from visible evidence.
-- `src/logger.py` / `eval/eval.py`: transcripts, structured traces, stance-rank metrics, age/speech-style/profile logging, and token diagnostics.
+- `src/consensus.py`: final outcome from formal visible commitments (voting/compromise_repair phases only).
+- `src/logger.py` / `eval/eval.py`: transcripts, structured traces (controller trace, threads, repair history), metrics, and token diagnostics.
+- `tests/`: deterministic controller tests (`py -m unittest discover -s tests`).
 
 ## Running
 
@@ -147,8 +161,9 @@ For eval cases (the suite always runs all cases):
 py .\eval\run_eval_suite.py
 ```
 
-Static check:
+Deterministic tests and static check:
 
 ```powershell
-py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
+py -m unittest discover -s tests
+py -m compileall -q main.py src eval tests
 ```

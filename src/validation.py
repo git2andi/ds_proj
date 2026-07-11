@@ -1,9 +1,11 @@
-"""Turn-text validation, grounding, and fallback text (issue 8 extraction).
+"""Turn-text validation, grounding, and fallback text — side-effect free.
 
 ValidationMixin owns every check that decides whether a generated line may reach
-the transcript — structural/commitment/blocker/switch validation, the grounding
-tripwire and LLM fact-judge — plus the deterministic restate-first fallback used
-when a blocking issue survives repair. Mixed into DialogueRunner.
+the transcript — structural/commitment/blocker/switch validation, the limited
+thread-aware realization checks, the grounding tripwire and LLM fact-judge —
+plus the deterministic restate-first fallback used when a blocking issue
+survives repair. It returns structured issues, never mutates dialogue state,
+and never resolves threads; the observer decides what a turn realized.
 """
 
 from __future__ import annotations
@@ -142,6 +144,37 @@ class ValidationMixin:
             ):
                 issues.append("CONTINUATION_TOPIC_JUMP")
                 block = True
+        # Limited thread-aware checks (Section 15): validation stays side-effect
+        # free and never touches threads — it only reports whether the routed
+        # thread move was visibly realized, so repair gets one chance before
+        # the observer refuses to count the turn.
+        if intent.route_source == "answer_required" and text.strip():
+            focus_missing = bool(
+                intent.option_focus
+                and not set(intent.option_focus) & set(act.option_refs)
+            )
+            only_counter_question = bool(
+                act.question_scope and text.strip().endswith("?") and not act.option_refs
+            )
+            if only_counter_question or (focus_missing and act.question_scope):
+                # Blocking: an evasive line must not reach the transcript as a
+                # routed answer, or it would falsely resolve the question thread.
+                issues.append("ANSWER_DOES_NOT_ADDRESS_QUESTION")
+                block = True
+        if (
+            intent.route_source in ("thread_hot", "thread_cooling")
+            and intent.act in {ActType.SUPPORT, ActType.ANSWER}
+            and intent.option_focus
+            and not set(intent.option_focus) & set(act.option_refs)
+        ):
+            issues.append("THREAD_RESPONSE_MISSES_OPTION")
+        if (
+            intent.act == ActType.COMPARE
+            and intent.route_source in ("thread_hot", "thread_cooling")
+            and len(intent.option_focus) >= 2
+            and sum(1 for oid in intent.option_focus[:2] if oid in act.option_refs) < 2
+        ):
+            issues.append("COMPARISON_MISSES_OPTIONS")
         # A sanctioned switch may only land on the offered option or the sim's
         # own current/initial preference (restate); never a third option.
         if intent.allow_vote_change and act.explicit_vote and intent.option_focus:
@@ -499,13 +532,3 @@ class ValidationMixin:
             others = set().union(*(raw[o] for o in raw if o != oid)) if len(raw) > 1 else set()
             distinctive[oid] = tokens - others - shared - name_tokens - generic_fact_tokens
         return distinctive
-
-    @staticmethod
-    def _semantic_block(persona: Persona, intent: MoveIntent, act: DialogueAct) -> bool:
-        # Semantic hard blocks are checked through runtime rank-1 options in validate().
-        if intent.act in _DECISION_ACTS and not (act.explicit_vote or act.accepts):
-            return True
-        if intent.required_vote and intent.act in _DECISION_ACTS:
-            if act.explicit_vote != intent.required_vote and intent.required_vote not in act.accepts:
-                return True
-        return False

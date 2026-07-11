@@ -1,9 +1,9 @@
 """Simulator-level behavior controls.
 
-This module translates hidden OCEAN traits into the four explicit, tunable
+This module translates hidden OCEAN traits into the five explicit, tunable
 simulator parameters. Per-simulator communicative reasons are stored in
-OptionStance, while chat-level discussion coverage is handled by
-DialogueState.discussion_agenda.
+OptionStance; chat-level coverage and local interaction are handled by the
+controller's coverage accounting and thread state.
 """
 
 from __future__ import annotations
@@ -26,6 +26,18 @@ def derive_simulator_parameters(traits: TraitProfile) -> SimulatorParameters:
             + 0.25 * neuro01
             + 0.20 * (1.0 - open01)
             + 0.10 * consc01
+        ),
+        # Final-decision movement resistance: how hard the sim is to move during
+        # narrowing/voting/repair (candidate switches, compromise acceptance,
+        # holdout concession). Distinct from stubbornness, which only governs
+        # discussion-phase stance defense. Low agreeableness dominates; high
+        # conscientiousness adds commitment to the announced pick; low openness
+        # and high neuroticism add a smaller reluctance to change course.
+        switch_resistance=(
+            0.40 * (1.0 - agree01)
+            + 0.25 * consc01
+            + 0.20 * (1.0 - open01)
+            + 0.15 * neuro01
         ),
     ).clipped()
 

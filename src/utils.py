@@ -124,10 +124,6 @@ def extract_json_object(text: str) -> dict[str, Any]:
     raise ValueError("No JSON object found in model response.")
 
 
-def extract_numbers(text: str) -> list[str]:
-    return re.findall(r"(?:[$€£]\s*)?\d+(?:[.,:]\d+)?(?:\s*(?:kg|km|h|hr|hrs|hours?|min|minutes?|%|/\s*5))?", text, flags=re.I)
-
-
 _DANGLING_TRAIL = {
     "to", "of", "for", "and", "but", "or", "with", "the", "a", "an", "than",
     "because", "so", "that", "is", "are", "in", "on", "at", "as", "if", "from",

@@ -7,7 +7,11 @@ Important configuration sections:
 - `environment`: auto/manual scenario setup.
 - `participants`: auto/manual participant setup, hard-blocker probability, preference distribution, manual age/speech_style/profile fields.
 - `conversation`: pacing, vote rounds, and discussion length.
+- `threads`: thread-engine timing — cooling window, stale timeouts (longer for hard blockers), per-thread turn caps, cooling-continuation probabilities, reactivation.
+- `narrowing`: discussion→narrowing gates — discussion-support requirement, hot-hard-blocker gate, stable-top-pair window, the single narrowing→discussion fallback.
+- `routing`: normal act weights (`support/concern/ask/compare/comment`) and speaker-share tuning.
 - `moderator`: opening, nudges, vote call, and closing behavior.
+- `validation`: grounding checks.
 - `output`: log paths and prompt dumps.
 
 ## Manual participant fields
@@ -31,9 +35,10 @@ parameters:
   verbosity: 0.4
   directness: 0.5
   stubbornness: 0.3
+  switch_resistance: 0.25
 ```
 
-`parameters` accepts only `engagement`, `verbosity`, `directness`, and `stubbornness` (each 0-1, partial overrides allowed; unset values are derived from traits). Age must be plausible for the profile. speech_style should describe wording register only, not behavior; if omitted it is derived from age.
+`parameters` accepts only `engagement`, `verbosity`, `directness`, `stubbornness`, and `switch_resistance` (each 0-1, partial overrides allowed; unset values are derived from traits). Age must be plausible for the profile. speech_style should describe wording register only, not behavior; if omitted it is derived from age.
 
 ## Run one topic
 
@@ -49,8 +54,11 @@ py .\eval\run_eval_suite.py
 
 The eval suite patches config for controlled cases and includes manual personas with varied age/speech_style/profile fields. It always runs all cases.
 
-## Static check
+## Deterministic tests and static check
 
 ```powershell
-py -m py_compile main.py eval\run_eval_suite.py src\*.py eval\*.py
+py -m unittest discover -s tests
+py -m compileall -q main.py src eval tests
 ```
+
+The deterministic controller tests run without any LLM access and must pass before stochastic evaluation.

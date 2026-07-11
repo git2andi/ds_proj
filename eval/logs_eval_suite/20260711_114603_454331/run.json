@@ -1,0 +1,4079 @@
+{
+  "run_id": "20260711_114603_454331",
+  "topic": "Choose a restaurant for a mixed-preference group dinner",
+  "llm": {
+    "provider": "gpt",
+    "model": "gpt-4.1-mini"
+  },
+  "participants_mode": "auto",
+  "environment_mode": "manual",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a restaurant for a mixed-preference group dinner",
+    "options": [
+      {
+        "id": "A",
+        "name": "Corner Ramen",
+        "attrs": {
+          "price": "18 euros",
+          "travel": "10 minutes by tram",
+          "vegetarian": "two vegetarian bowls"
+        },
+        "upside": "warm, quick, and easy to organize",
+        "concern": "may not feel special enough for everyone",
+        "short_name": "Ramen"
+      },
+      {
+        "id": "B",
+        "name": "La Piazza",
+        "attrs": {
+          "price": "26 euros",
+          "travel": "18 minutes by bus",
+          "vegetarian": "several pasta and pizza options"
+        },
+        "upside": "broad menu and relaxed atmosphere",
+        "concern": "can become noisy on Fridays",
+        "short_name": "Piazza"
+      },
+      {
+        "id": "C",
+        "name": "Green Table",
+        "attrs": {
+          "price": "24 euros",
+          "travel": "20 minutes walking",
+          "vegetarian": "mostly vegetarian menu"
+        },
+        "upside": "best dietary fit and calm setting",
+        "concern": "some may see it as too niche",
+        "short_name": "Green Table"
+      },
+      {
+        "id": "D",
+        "name": "Burger Cellar",
+        "attrs": {
+          "price": "21 euros",
+          "travel": "8 minutes walking",
+          "vegetarian": "one vegetarian burger"
+        },
+        "upside": "closest and casual",
+        "concern": "may not satisfy the dietary requirement well",
+        "short_name": "Burger Cellar"
+      }
+    ],
+    "shared_context": [
+      "The group wants dinner this Friday after work.",
+      "The budget target is around 25 euros per person.",
+      "One participant prefers vegetarian-friendly choices."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Marco",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.3625,
+        "verbosity": 0.45,
+        "directness": 0.5874999999999999,
+        "stubbornness": 0.30000000000000004,
+        "switch_resistance": 0.3875
+      },
+      "background": "Marco is an early-career professional who values casual and convenient dining after work.",
+      "private_goal": "He wants a relaxed, easygoing place that fits the budget and is close by.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "closest and casual, fits budget well",
+          "reason_against": ""
+        }
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Yara",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 2,
+        "extraversion": 2,
+        "agreeableness": 2,
+        "neuroticism": 1
+      },
+      "sim_params": {
+        "engagement": 0.4375,
+        "verbosity": 0.4625,
+        "directness": 0.5125,
+        "stubbornness": 0.4625,
+        "switch_resistance": 0.4625
+      },
+      "background": "Yara is a young professional who enjoys social dinners with a variety of menu options.",
+      "private_goal": "She prefers a lively atmosphere with broad menu choices, even if it means a slightly longer travel and higher price.",
+      "preferred_options": [
+        "B",
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "broad menu and relaxed atmosphere",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "mostly vegetarian menu fits dietary preference",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Oscar",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 4,
+        "extraversion": 1,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.3625,
+        "verbosity": 0.3875,
+        "directness": 0.5874999999999999,
+        "stubbornness": 0.475,
+        "switch_resistance": 0.5125
+      },
+      "background": "Oscar is a mid-career professional who values calm settings and vegetarian-friendly options.",
+      "private_goal": "He wants a mostly vegetarian menu in a calm environment, even if it requires a longer walk.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 40,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "two vegetarian bowls and quick organization",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "best dietary fit and calm setting",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "only one vegetarian burger, may not satisfy dietary preference well"
+        }
+      }
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 29,
+      "option_ranks": {
+        "A": 3,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "reasons_for": {
+        "D": "Count me in for Burger Cellar—closest spot and right on budget."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.6110000000000002,
+      "commitment_min": 0.5700000000000001,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "already_said": [
+        "Closest spot is Burger Cellar—casual and quick, but veg options might be a stretch.",
+        "Noise is a concern, but 18 minutes.",
+        "The quick walk to Burger Cellar means we’d get there sooner and relax more after work.",
+        "Getting there quicker means more time to chill and less hassle overall.",
+        "True, but Burger Cellar’s just a quick walk away.",
+        "Good point, one veg burger could leave someone wanting more.",
+        "The walk back after a long day counts too—Burger Cellar saves us time and hassle.",
+        "Count me in for Burger Cellar—closest spot and right on budget."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 10,
+      "last_spoke_turn": 31,
+      "option_ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "reasons_for": {
+        "B": "broad menu and relaxed atmosphere",
+        "C": "mostly vegetarian menu fits dietary preference",
+        "D": "I'll switch to Burger Cellar; I preferred Piazza, but closest and casual."
+      },
+      "reasons_against": {},
+      "commitment_strength": 0.5735625,
+      "commitment_min": 0.5735625,
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "explicit_vote": "D",
+      "vote_stance": "vote",
+      "already_said": [
+        "Thinking La Piazza could work with its broad menu, though it might get a bit loud.",
+        "How much does the noise at La Piazza bother everyone compared to travel time?",
+        "Green Table sounds quieter.",
+        "True, Oscar, the veggie choice.",
+        "Does the extra travel time to Piazza feel worth it for the vibe and menu?",
+        "Noted—veg options definitely shape how relaxed the night can be.",
+        "Ramen’s veg choices are solid.",
+        "A lively spot with plenty of veg options matters most—Piazza nails that, even if it’s a bit of a trek.",
+        "Could live with Burger Cellar if there were more veg options.",
+        "I'll switch to Burger Cellar; I preferred Piazza, but closest and casual."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "D",
+          "has_reason": true,
+          "has_bridge": true
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 10,
+      "last_spoke_turn": 33,
+      "option_ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "reasons_for": {
+        "A": "Corner Ramen gets my vote—Burger Cellar still doesn’t satisfy the dietary requirement well.",
+        "C": "best dietary fit and calm setting"
+      },
+      "reasons_against": {
+        "D": "only one vegetarian burger, may not satisfy dietary preference well"
+      },
+      "commitment_strength": 0.61325,
+      "commitment_min": 0.61325,
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Corner Ramen seems best for quick organization and decent veg options, though it might not feel special enough for everyone.",
+        "Noise at La Piazza could be distracting.",
+        "Better to skip Burger Cellar—vegetarian options too limited.",
+        "Burger Cellar has only one vegetarian burger.",
+        "Going a bit further for Ramen seems worth it—calmer and better veg choices.",
+        "Speed’s good, but one veg burger might leave some hungry.",
+        "Longer travel means less time to unwind after work, even if the menu’s better.",
+        "Hard to ignore Burger Cellar’s closeness, but only one veg option feels tight.",
+        "I vote for Corner Ramen.",
+        "Corner Ramen gets my vote—Burger Cellar still doesn’t satisfy the dietary requirement well."
+      ],
+      "switch_events": []
+    }
+  },
+  "threads": {
+    "t001": {
+      "thread_id": "t001",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "B"
+      ],
+      "issue_key": "travel",
+      "started_by": "p2",
+      "required_respondent": "p3",
+      "participants_involved": [
+        "p2",
+        "p3"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 5,
+      "created_turn": 5,
+      "last_touched_turn": 6,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "group"
+    }
+  },
+  "active_repair": null,
+  "repair_history": [
+    {
+      "repair_reason": "majority_holdout",
+      "candidate_or_pair": [
+        "D"
+      ],
+      "participants_involved": [
+        "p3"
+      ],
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "status": "resolved"
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a restaurant for a mixed-preference group dinner.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Corner Ramen — price: 18 euros; travel: 10 minutes by tram; vegetarian: two vegetarian bowls (+ warm, quick, and easy to organize; − may not feel special enough for everyone)\nB) La Piazza — price: 26 euros; travel: 18 minutes by bus; vegetarian: several pasta and pizza options (+ broad menu and relaxed atmosphere; − can become noisy on Fridays)\nC) Green Table — price: 24 euros; travel: 20 minutes walking; vegetarian: mostly vegetarian menu (+ best dietary fit and calm setting; − some may see it as too niche)\nD) Burger Cellar — price: 21 euros; travel: 8 minutes walking; vegetarian: one vegetarian burger (+ closest and casual; − may not satisfy the dietary requirement well)\nContext: The group wants dinner this Friday after work.; The budget target is around 25 euros per person.; One participant prefers vegetarian-friendly choices.\nLet's discuss which option fits best overall.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Today we're deciding: Choose a restaurant for a mixed-preference group dinner.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Corner Ramen — price: 18 euros; travel: 10 minutes by tram; vegetarian: two vegetarian bowls (+ warm, quick, and easy to organize; − may not feel special enough for everyone)\nB) La Piazza — price: 26 euros; travel: 18 minutes by bus; vegetarian: several pasta and pizza options (+ broad menu and relaxed atmosphere; − can become noisy on Fridays)\nC) Green Table — price: 24 euros; travel: 20 minutes walking; vegetarian: mostly vegetarian menu (+ best dietary fit and calm setting; − some may see it as too niche)\nD) Burger Cellar — price: 21 euros; travel: 8 minutes walking; vegetarian: one vegetarian burger (+ closest and casual; − may not satisfy the dietary requirement well)\nContext: The group wants dinner this Friday after work.; The budget target is around 25 euros per person.; One participant prefers vegetarian-friendly choices.\nLet's discuss which option fits best overall.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 2,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Thinking La Piazza could work with its broad menu, though it might get a bit loud.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Thinking La Piazza could work with its broad menu, though it might get a bit loud.",
+        "act_type": "opening",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 635,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 3,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Corner Ramen seems best for quick organization and decent veg options, though it might not feel special enough for everyone.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Corner Ramen seems best for quick organization and decent veg options, though it might not feel special enough for everyone.",
+        "act_type": "opening",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1229,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Closest spot is Burger Cellar—casual and quick, but veg options might be a stretch.",
+      "phase": "opening",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Closest spot is Burger Cellar—casual and quick, but veg options might be a stretch.",
+        "act_type": "opening",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1216,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "How much does the noise at La Piazza bother everyone compared to travel time?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "How much does the noise at La Piazza bother everyone compared to travel time?",
+        "act_type": "ask",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": "group",
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Burger Cellar, Piazza, Ramen",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 883,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 6,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Noise at La Piazza could be distracting.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Noise at La Piazza could be distracting.",
+        "act_type": "answer",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": "t001",
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 650,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Green Table sounds quieter.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Green Table sounds quieter.",
+        "act_type": "comment",
+        "option_refs": [
+          "C"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
+        "route_source": "coverage",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 527,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Noise is a concern, but 18 minutes.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Noise is a concern, but 18 minutes.",
+        "act_type": "comment",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "react to the answer just given, staying on the same point: say what it settles for you, push back on what it doesn't, or add one consequence — do not open a new topic or ask a new question",
+        "route_source": "thread_cooling",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "thread_id": "t001",
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 728,
+      "tokens_out": 25,
+      "validation_issues": [
+        "THREAD_RESPONSE_MISSES_OPTION"
+      ],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "THREAD_RESPONSE_MISSES_OPTION"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Better to skip Burger Cellar—vegetarian options too limited.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Better to skip Burger Cellar—vegetarian options too limited.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "concern",
+        "reason": "push back on Piazza with one concrete concern — you currently favor Ramen, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1278,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 10,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Burger Cellar has only one vegetarian burger.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Burger Cellar has only one vegetarian burger.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "soften or correct one small thing you just said ('Actually, …') without changing your overall point",
+        "route_source": "continuation",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": true
+      },
+      "tokens_in": 791,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "CONTINUATION_TOPIC_JUMP"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "True, Oscar, the veggie choice.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "True, Oscar, the veggie choice.",
+        "act_type": "comment",
+        "option_refs": [],
+        "addressee_id": "p3",
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Burger Cellar, Piazza, Ramen",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 604,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 12,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Going a bit further for Ramen seems worth it—calmer and better veg choices.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Going a bit further for Ramen seems worth it—calmer and better veg choices.",
+        "act_type": "comment",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a new grounded reason about Burger Cellar, Ramen, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 553,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Does the extra travel time to Piazza feel worth it for the vibe and menu?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Does the extra travel time to Piazza feel worth it for the vibe and menu?",
+        "act_type": "comment",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Ramen, Piazza, Burger Cellar",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 591,
+      "tokens_out": 16,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "The quick walk to Burger Cellar means we’d get there sooner and relax more after work.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The quick walk to Burger Cellar means we’d get there sooner and relax more after work.",
+        "act_type": "support",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Green Table, Burger Cellar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1108,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Speed’s good, but one veg burger might leave some hungry.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Speed’s good, but one veg burger might leave some hungry.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a new grounded reason about Burger Cellar, Ramen, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1148,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Getting there quicker means more time to chill and less hassle overall.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Getting there quicker means more time to chill and less hassle overall.",
+        "act_type": "comment",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Burger Cellar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1061,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Noted—veg options definitely shape how relaxed the night can be.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Noted—veg options definitely shape how relaxed the night can be.",
+        "act_type": "comment",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "comment",
+        "reason": "add one light observation about where the discussion stands — no support, objection, or question required",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 523,
+      "tokens_out": 14,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "True, but Burger Cellar’s just a quick walk away.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "True, but Burger Cellar’s just a quick walk away.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Ramen, Burger Cellar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1102,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 19,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Longer travel means less time to unwind after work, even if the menu’s better.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Longer travel means less time to unwind after work, even if the menu’s better.",
+        "act_type": "comment",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration about Piazza, Ramen that has not come up yet",
+        "route_source": "normal",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1123,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Ramen’s veg choices are solid.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Ramen’s veg choices are solid.",
+        "act_type": "comment",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Ramen, Piazza, Burger Cellar with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 590,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 21,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "What’s the biggest worry about Burger Cellar before we wrap up?",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "What’s the biggest worry about Burger Cellar before we wrap up?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Hard to ignore Burger Cellar’s closeness, but only one veg option feels tight.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Hard to ignore Burger Cellar’s closeness, but only one veg option feels tight.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Ramen, Burger Cellar with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 566,
+      "tokens_out": 18,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Good point, one veg burger could leave someone wanting more.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Good point, one veg burger could leave someone wanting more.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "comment",
+        "reason": "briefly acknowledge or interpret the point just made — one light beat, no new argument needed",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 527,
+      "tokens_out": 12,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "A lively spot with plenty of veg options matters most—Piazza nails that, even if it’s a bit of a trek.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p2",
+        "text": "A lively spot with plenty of veg options matters most—Piazza nails that, even if it’s a bit of a trek.",
+        "act_type": "comment",
+        "option_refs": [
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how Burger Cellar, Piazza fits that",
+        "route_source": "normal",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 23,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 565,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "The walk back after a long day counts too—Burger Cellar saves us time and hassle.",
+      "phase": "discussion",
+      "act": {
+        "speaker_id": "p1",
+        "text": "The walk back after a long day counts too—Burger Cellar saves us time and hassle.",
+        "act_type": "support",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "add a new grounded reason about Burger Cellar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 22,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 533,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like Burger Cellar’s leading—any specific concerns still holding us back before we close in?",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like Burger Cellar’s leading—any specific concerns still holding us back before we close in?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "Could live with Burger Cellar if there were more veg options.",
+      "phase": "narrowing",
+      "act": {
+        "speaker_id": "p2",
+        "text": "Could live with Burger Cellar if there were more veg options.",
+        "act_type": "comment",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "the group is testing Burger Cellar: say honestly whether you could live with it, or name the one concrete thing that still blocks it — this is not a final vote",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1052,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "How about everyone shares their final pick now, just name the one option you’re definitely going with?",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "How about everyone shares their final pick now, just name the one option you’re definitely going with?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 29,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Count me in for Burger Cellar—closest spot and right on budget.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p1",
+        "text": "Count me in for Burger Cellar—closest spot and right on budget.",
+        "act_type": "vote",
+        "option_refs": [
+          "D"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "make a clear visible commitment to the option you have been backing; use this grounded reason: closest and casual, fits budget well",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "D",
+        "old_preference": null,
+        "allowed_reason": "closest and casual, fits budget well",
+        "continuation": false
+      },
+      "tokens_in": 641,
+      "tokens_out": 15,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 30,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "I vote for Corner Ramen.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p3",
+        "text": "I vote for Corner Ramen.",
+        "act_type": "vote",
+        "option_refs": [
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 909,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT",
+        "REQUIRED_VOTE_MISMATCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 31,
+      "speaker_id": "p2",
+      "speaker_name": "Yara",
+      "text": "I'll switch to Burger Cellar; I preferred Piazza, but closest and casual.",
+      "phase": "voting",
+      "act": {
+        "speaker_id": "p2",
+        "text": "I'll switch to Burger Cellar; I preferred Piazza, but closest and casual.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "D",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "others have visibly backed this option; commit to it clearly and use this grounded reason: closest and casual",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "count me in for",
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "D",
+        "old_preference": "B",
+        "allowed_reason": "closest and casual",
+        "continuation": false
+      },
+      "tokens_in": 953,
+      "tokens_out": 31,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNBRIDGED_SWITCH"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true
+    },
+    {
+      "index": 32,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like Burger Cellar is the front-runner—Oscar, can you live with that or is there something still holding you back?",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like Burger Cellar is the front-runner—Oscar, can you live with that or is there something still holding you back?",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 33,
+      "speaker_id": "p3",
+      "speaker_name": "Oscar",
+      "text": "Corner Ramen gets my vote—Burger Cellar still doesn’t satisfy the dietary requirement well.",
+      "phase": "compromise_repair",
+      "act": {
+        "speaker_id": "p3",
+        "text": "Corner Ramen gets my vote—Burger Cellar still doesn’t satisfy the dietary requirement well.",
+        "act_type": "vote",
+        "option_refs": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": "A",
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "final decision: controller outcome is staying with Ramen; Burger Cellar still does not solve the concern. Use exactly this grounded reason, in your own words: listed concern remains: may not satisfy the dietary requirement well. Do not accept Burger Cellar",
+        "route_source": "majority_holdout_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": true,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "listed concern remains: may not satisfy the dietary requirement well",
+        "continuation": false
+      },
+      "tokens_in": 686,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    },
+    {
+      "index": 34,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re going with Burger Cellar, even though Oscar had a different pick this time.",
+      "phase": "closing",
+      "act": {
+        "speaker_id": "moderator",
+        "text": "Looks like we’re going with Burger Cellar, even though Oscar had a different pick this time.",
+        "act_type": "support",
+        "option_refs": [],
+        "addressee_id": null,
+        "question_scope": null,
+        "question_target_id": null,
+        "explicit_vote": null,
+        "accepts": [],
+        "soft_rejects": {},
+        "hard_rejects": {},
+        "resolves_blocker": null,
+        "conditional_support": null,
+        "offers_compromise": null,
+        "softens_toward": null
+      },
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "reason": "2/3 participants visibly committed to the winning option.",
+    "turns": 28,
+    "metadata": {
+      "visible_votes": {
+        "p1": "D",
+        "p3": "A",
+        "p2": "D"
+      },
+      "latent_preferences": {
+        "p1": "D",
+        "p2": "D",
+        "p3": "A"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 3,
+          "B": 3,
+          "C": 3,
+          "D": 5
+        },
+        "p2": {
+          "A": 3,
+          "B": 4,
+          "C": 4,
+          "D": 5
+        },
+        "p3": {
+          "A": 5,
+          "B": 3,
+          "C": 4,
+          "D": 2
+        }
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.59",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 25: narrowing — hard cap reached; forcing narrowing instead of closing early",
+        "turn 27: voting — narrowing complete; collecting formal votes",
+        "turn 31: compromise_repair — running majority_holdout repair",
+        "turn 33: closing — majority stands after bounded repair"
+      ],
+      "candidate_option": "D",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.59",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 25: narrowing — hard cap reached; forcing narrowing instead of closing early",
+    "turn 27: voting — narrowing complete; collecting formal votes",
+    "turn 31: compromise_repair — running majority_holdout repair",
+    "turn 33: closing — majority stands after bounded repair",
+    "turn 34: closing — closed as majority"
+  ],
+  "controller_trace": [
+    {
+      "type": "moderator_turn",
+      "turn_index": 1,
+      "phase": "opening"
+    },
+    {
+      "type": "turn",
+      "turn_index": 2,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 635,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 3,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1229,
+        "tokens_out": 33
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 4,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "opening",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1216,
+        "tokens_out": 30
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 4,
+      "from_phase": "opening",
+      "to_phase": "discussion",
+      "reason": "all participants gave an opening view"
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "ask",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [
+          "C"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 883,
+        "tokens_out": 15
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 6,
+      "pre": {
+        "routed_thread_id": "t001",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [
+          "C"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": "t001",
+        "required_respondent_id": "p3",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 650,
+        "tokens_out": 29
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 7,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "coverage",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "C"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": true,
+        "tokens_in": 527,
+        "tokens_out": 21
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 8,
+      "pre": {
+        "routed_thread_id": "t001",
+        "routed_thread_type": "question",
+        "routed_thread_status": "cooling",
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_cooling",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 6,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "THREAD_RESPONSE_MISSES_OPTION"
+        ],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "THREAD_RESPONSE_MISSES_OPTION"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 728,
+        "tokens_out": 25
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 9,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1278,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 10,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "continuation",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "CONTINUATION_TOPIC_JUMP"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 791,
+        "tokens_out": 21
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "ask",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "D",
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 10,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": "p3",
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 604,
+        "tokens_out": 31
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 12,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 553,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "ask",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "respond_to_turn": 12,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 5
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 591,
+        "tokens_out": 16
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 14,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "D"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 6
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1108,
+        "tokens_out": 29
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 15,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A"
+        ],
+        "respond_to_turn": 14,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 7
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1148,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 16,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 8
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1061,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 17,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "comment",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "B"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 9
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 523,
+        "tokens_out": 14
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 18,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 12,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 10
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1102,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 19,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "support",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 11
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1123,
+        "tokens_out": 28
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 20,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "compare",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "A",
+          "B",
+          "D"
+        ],
+        "respond_to_turn": 12,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 12
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 590,
+        "tokens_out": 26
+      }
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 21,
+      "phase": "discussion"
+    },
+    {
+      "type": "turn",
+      "turn_index": 22,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 20,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 566,
+        "tokens_out": 18
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 23,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "comment",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": 15,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 527,
+        "tokens_out": 12
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 24,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "support",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "D",
+          "B"
+        ],
+        "respond_to_turn": 23,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 565,
+        "tokens_out": 27
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 25,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": 22,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 533,
+        "tokens_out": 19
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 25,
+      "from_phase": "discussion",
+      "to_phase": "narrowing",
+      "reason": "hard cap reached; forcing narrowing instead of closing early"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 26,
+      "phase": "narrowing"
+    },
+    {
+      "type": "turn",
+      "turn_index": 27,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "D",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 1052,
+        "tokens_out": 23
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 27,
+      "from_phase": "narrowing",
+      "to_phase": "voting",
+      "reason": "narrowing complete; collecting formal votes"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 28,
+      "phase": "voting"
+    },
+    {
+      "type": "turn",
+      "turn_index": 29,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "D",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "D",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 641,
+        "tokens_out": 15
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 30,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "D",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNCLEAR_VISIBLE_COMMITMENT",
+          "REQUIRED_VOTE_MISMATCH"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 909,
+        "tokens_out": 21
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 31,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p2",
+        "speaker_name": "Yara",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "D",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNBRIDGED_SWITCH"
+        ],
+        "fallback_used": true,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "D",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 953,
+        "tokens_out": 31
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 31,
+      "from_phase": "voting",
+      "to_phase": "compromise_repair",
+      "reason": "running majority_holdout repair"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 32,
+      "phase": "compromise_repair"
+    },
+    {
+      "type": "turn",
+      "turn_index": 33,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "majority_holdout",
+        "phase": "compromise_repair",
+        "route_source": "majority_holdout_repair",
+        "speaker_id": "p3",
+        "speaker_name": "Oscar",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "D",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "tokens_in": 686,
+        "tokens_out": 19
+      }
+    },
+    {
+      "type": "repair",
+      "turn_index": 33,
+      "repair_reason": "majority_holdout",
+      "candidate_or_pair": [
+        "D"
+      ],
+      "attempt_count": 1,
+      "status": "resolved"
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 33,
+      "from_phase": "compromise_repair",
+      "to_phase": "closing",
+      "reason": "majority stands after bounded repair"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 34,
+      "phase": "closing"
+    }
+  ],
+  "metrics": {
+    "participant_turns": 28,
+    "moderator_turns": 6,
+    "moderator_ratio": 0.176,
+    "turn_counts": {
+      "Marco": 8,
+      "Yara": 10,
+      "Oscar": 10
+    },
+    "top_speaker_share": 0.357,
+    "avg_words_by_persona": {
+      "Marco": 11.8,
+      "Yara": 11.2,
+      "Oscar": 11.0
+    },
+    "avg_words_by_act": {
+      "answer": 7.0,
+      "ask": 11.3,
+      "comment": 10.0,
+      "compare": 7.3,
+      "concern": 8.0,
+      "opening": 16.7,
+      "support": 12.2,
+      "vote": 10.2
+    },
+    "short_turn_rate": 0.429,
+    "tiny_turn_rate": 0.143,
+    "question_density": 0.071,
+    "tail_question_rate": 0.0,
+    "avg_words_per_turn": 11.3,
+    "repaired_turns": 4,
+    "repair_rate": 0.143,
+    "flagged_turns": 1,
+    "fallback_turns": 1,
+    "invalid_printed_turn_count": 0,
+    "visible_vote_count": 3,
+    "visible_votes": {
+      "Marco": "D",
+      "Yara": "D",
+      "Oscar": "A"
+    },
+    "unanswered_direct_questions": 0,
+    "question_threads": 1,
+    "concern_threads": 0,
+    "concern_response_rate": null,
+    "thread_count_by_type": {
+      "question": 1,
+      "concern": 0,
+      "blocker": 0,
+      "comparison": 0
+    },
+    "thread_count_by_status": {
+      "hot": 0,
+      "cooling": 0,
+      "resolved": 1,
+      "stale": 0
+    },
+    "participation_gini": 0.048,
+    "direct_response_rate": 1.0,
+    "question_answer_completion": null,
+    "open_questions_at_end": 0,
+    "settled_issue_keys": [],
+    "repetition_score": 0.138,
+    "compromise_success_rate": null,
+    "repairs_run": [
+      "majority_holdout"
+    ],
+    "repair_statuses": {
+      "majority_holdout": "resolved"
+    },
+    "unclear_vote_repairs": 0,
+    "reservation_exchange": false,
+    "participant_procedural_moves": 1,
+    "two_person_deadlock_attempted": false,
+    "split_reservation_exchanges": 0,
+    "continuation_turns": 1,
+    "switch_event_count": 1,
+    "switch_explanation_rate": 1.0,
+    "switch_bridge_rate": 1.0,
+    "discussion_lean_shifts": 0,
+    "name_prefix_rate": 0.0,
+    "option_opening_rate": 0.107,
+    "i_opening_rate": 0.071,
+    "we_opening_rate": 0.0,
+    "name_or_option_opening_rate": 0.107,
+    "repeated_opening_patterns": 2,
+    "unsupported_fact_flags": 0,
+    "unsupported_printed_turns": 0,
+    "final_blocker_violations": 0,
+    "final_support_fraction": 0.667,
+    "stance_rank_distribution": {
+      "1": 0,
+      "2": 1,
+      "3": 5,
+      "4": 3,
+      "5": 3
+    },
+    "runtime_preferred_by_rank": {
+      "Marco": "D",
+      "Yara": "D",
+      "Oscar": "A"
+    },
+    "option_coverage": {
+      "A": {
+        "mentions": 5,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "B": {
+        "mentions": 6,
+        "reasons": 1,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "C": {
+        "mentions": 1,
+        "reasons": 0,
+        "objections": 0,
+        "acceptances": 0
+      },
+      "D": {
+        "mentions": 13,
+        "reasons": 3,
+        "objections": 0,
+        "acceptances": 0
+      }
+    },
+    "coverage_routes_selected": 1,
+    "coverage_turns_realized": 1,
+    "route_source_distribution": {
+      "answer_required": 1,
+      "continuation": 1,
+      "coverage": 1,
+      "majority_holdout_repair": 1,
+      "normal": 16,
+      "opening": 3,
+      "participant_narrowing": 1,
+      "thread_cooling": 1,
+      "vote": 3
+    },
+    "act_mismatch_rate": 0.536,
+    "expected_engagement": {
+      "Marco": 0.362,
+      "Yara": 0.438,
+      "Oscar": 0.362
+    },
+    "expected_switch_resistance": {
+      "Marco": 0.388,
+      "Yara": 0.463,
+      "Oscar": 0.512
+    },
+    "expected_turn_share": {
+      "Marco": 0.321,
+      "Yara": 0.358,
+      "Oscar": 0.321
+    },
+    "realized_turn_share": {
+      "Marco": 0.286,
+      "Yara": 0.357,
+      "Oscar": 0.357
+    },
+    "outcome_status": "majority",
+    "final_option": "D",
+    "corpus_preset": "",
+    "min_discussion_turns": 15,
+    "force_narrow_turns": 20,
+    "hard_max_turns": 23,
+    "phase_history": [
+      "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.59",
+      "turn 4: discussion — all participants gave an opening view",
+      "turn 25: narrowing — hard cap reached; forcing narrowing instead of closing early",
+      "turn 27: voting — narrowing complete; collecting formal votes",
+      "turn 31: compromise_repair — running majority_holdout repair",
+      "turn 33: closing — majority stands after bounded repair",
+      "turn 34: closing — closed as majority"
+    ],
+    "engagement_realization_error": 0.024,
+    "verbosity_realization_error": 0.128,
+    "engagement_error_by_persona": {
+      "Marco": 0.035,
+      "Yara": 0.0,
+      "Oscar": 0.036
+    },
+    "verbosity_error_by_persona": {
+      "Marco": 0.147,
+      "Yara": 0.077,
+      "Oscar": 0.159
+    },
+    "engagement_behavior_correlation": 0.5,
+    "verbosity_behavior_correlation": 0.587,
+    "free_discussion_share": {
+      "Marco": 0.286,
+      "Yara": 0.381,
+      "Oscar": 0.333
+    },
+    "top_free_discussion_share": 0.381,
+    "free_discussion_engagement_correlation": 0.869,
+    "setup_tokens_in": 1491,
+    "setup_tokens_out": 761,
+    "dialogue_tokens_in": 24207,
+    "dialogue_tokens_out": 732,
+    "total_tokens_in": 25698,
+    "total_tokens_out": 1493,
+    "tokens_setup_in": 1491,
+    "tokens_setup_out": 761,
+    "calls_setup": 1,
+    "tokens_utterance_in": 16642,
+    "tokens_utterance_out": 500,
+    "calls_utterance": 28,
+    "tokens_grounding_in": 5147,
+    "tokens_grounding_out": 90,
+    "calls_grounding": 9,
+    "tokens_repair_in": 983,
+    "tokens_repair_out": 41,
+    "calls_repair": 4,
+    "tokens_grounding_repair_in": 0,
+    "tokens_grounding_repair_out": 0,
+    "calls_grounding_repair": 0,
+    "tokens_moderator_in": 1435,
+    "tokens_moderator_out": 101,
+    "calls_moderator": 5,
+    "tokens_moderator_repair_in": 0,
+    "tokens_moderator_repair_out": 0,
+    "calls_moderator_repair": 0
+  },
+  "tokens": {
+    "setup_tokens_in": 1491,
+    "setup_tokens_out": 761,
+    "dialogue_tokens_in": 24207,
+    "dialogue_tokens_out": 732,
+    "total_tokens_in": 25698,
+    "total_tokens_out": 1493
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 1491,
+      "out": 761,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 16642,
+      "out": 500,
+      "calls": 28
+    },
+    "grounding": {
+      "in": 5147,
+      "out": 90,
+      "calls": 9
+    },
+    "repair": {
+      "in": 983,
+      "out": 41,
+      "calls": 4
+    },
+    "moderator": {
+      "in": 1435,
+      "out": 101,
+      "calls": 5
+    }
+  }
+}

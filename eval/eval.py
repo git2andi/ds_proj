@@ -28,7 +28,7 @@ if str(_SRC) not in sys.path:
 from aliases import short_alias_map
 from config_loader import cfg
 from consensus import visible_votes_from_transcript
-from models import DialogueState, Persona, RunOutcome, TurnRecord, _DISCUSSION_ACTS
+from models import DialogueState, Persona, RunOutcome, ThreadStatus, ThreadType, TurnRecord, _DISCUSSION_ACTS
 from simulator import expected_turn_share
 from style import leading_first_person, leading_name, leading_option, leading_we, surface_pattern
 
@@ -91,33 +91,64 @@ def _directed_questions(state: DialogueState) -> list[TurnRecord]:
     ]
 
 
-def _direct_response_rate(state: DialogueState) -> float | None:
-    """Share of response obligations that did not lapse unanswered.
+def _question_threads(state: DialogueState) -> list:
+    return [t for t in state.threads.values() if t.thread_type is ThreadType.QUESTION]
 
-    Denominator is every obligation the router created; an obligation
-    overwritten by a newer one before lapsing counts as handled, matching the
-    single-slot obligation semantics.
+
+def _direct_response_rate(state: DialogueState) -> float | None:
+    """Share of question threads that received a valid answer.
+
+    A question thread only leaves HOT through a valid response (cooling, then
+    resolved) — staleness or a still-hot thread at run end means unanswered.
     """
-    created = int(state.obligations_created)
-    if created == 0:
+    questions = _question_threads(state)
+    if not questions:
         return None
-    unanswered = int(state.unanswered_obligations)
-    ob = state.response_obligation
-    if ob is not None and not any(
-        t.speaker_id == ob.target_id and t.index > ob.created_turn for t in state.turns
-    ):
-        unanswered += 1  # still open at run end and never answered
-    return round(max(0, created - unanswered) / created, 3)
+    answered = sum(
+        1 for t in questions if t.status in (ThreadStatus.COOLING, ThreadStatus.RESOLVED)
+    )
+    return round(answered / len(questions), 3)
+
+
+def _unanswered_question_threads(state: DialogueState) -> int:
+    return sum(
+        1 for t in _question_threads(state)
+        if t.status in (ThreadStatus.HOT, ThreadStatus.STALE)
+    )
+
+
+def _concern_threads(state: DialogueState) -> list:
+    return [
+        t for t in state.threads.values()
+        if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
+    ]
+
+
+def _concern_response_rate(state: DialogueState) -> float | None:
+    """Share of concern/blocker threads that ever received a relevant response.
+
+    End-of-run status alone undercounts: a concern that cooled mid-run and then
+    aged to stale WAS responded. Anyone in participants_involved beyond the
+    raiser only gets there through a relevant response or reinforcement.
+    """
+    threads = _concern_threads(state)
+    if not threads:
+        return None
+    responded = sum(
+        1 for t in threads
+        if t.status in (ThreadStatus.COOLING, ThreadStatus.RESOLVED)
+        or any(pid != t.started_by for pid in t.participants_involved)
+    )
+    return round(responded / len(threads), 3)
 
 
 def _question_answer_completion(state: DialogueState) -> float | None:
     """Adjacency-pair completion: directed questions answered by the addressee
-    within the obligation window (2 x response_obligation_turns, as in the
-    router's lapse rule)."""
+    within the analysis window (2 x question_answer_window_turns)."""
     questions = _directed_questions(state)
     if not questions:
         return None
-    window = 2 * max(1, int(cfg.conversation.get("response_obligation_turns", 2)))
+    window = 2 * max(1, int(cfg.conversation.get("question_answer_window_turns", 2)))
     answered = sum(1 for q in questions if _answered_by_target(state, q, within=window))
     return round(answered / len(questions), 3)
 
@@ -148,11 +179,15 @@ def _repetition_score(state: DialogueState) -> float | None:
     return round(sum(scores) / len(scores), 3)
 
 
+def _repair_reasons(state: DialogueState) -> list[str]:
+    return [r.repair_reason for r in state.repair_history]
+
+
 def _compromise_success(state: DialogueState, outcome: RunOutcome) -> float | None:
-    """1.0/0.0 when a split-vote compromise step ran and the run did/did not
-    resolve; None when no compromise was attempted. Averages to a success
-    share across the runs CSV."""
-    if not state.compromise_attempted:
+    """1.0/0.0 when a split/deadlock repair ran and the run did/did not
+    resolve; None when no compromise repair was attempted. Averages to a
+    success share across the runs CSV."""
+    if not {"split_vote", "two_person_deadlock"} & set(_repair_reasons(state)):
         return None
     return 1.0 if outcome.status in ("successful", "majority") else 0.0
 
@@ -182,6 +217,30 @@ def _expected_words(persona: Persona) -> float:
     # often for terse sims); fold that expectation into the average target.
     short_beat_prob = 0.22 + 0.28 * (1.0 - p.verbosity)
     return expected * (1.0 - 0.48 * short_beat_prob)
+
+
+def _route_source_distribution(state: DialogueState) -> dict[str, int]:
+    """How often each route source produced a participant turn."""
+    counts: dict[str, int] = {}
+    for turn in state.turns:
+        if turn.speaker_id == "moderator" or turn.intent is None:
+            continue
+        counts[turn.intent.route_source] = counts.get(turn.intent.route_source, 0) + 1
+    return dict(sorted(counts.items()))
+
+
+def _act_mismatch_rate(state: DialogueState) -> float | None:
+    """Share of routed turns whose final parsed act differs from the selected act.
+
+    A mismatch is not automatically an error (a support turn may realize as a
+    parsed acceptance), but a high rate means routing intent and visible text
+    have drifted apart.
+    """
+    routed = [t for t in state.turns if t.speaker_id != "moderator" and t.intent is not None]
+    if not routed:
+        return None
+    mismatched = sum(1 for t in routed if t.act.act_type != t.intent.act)
+    return round(mismatched / len(routed), 3)
 
 
 def parameter_realization(state: DialogueState) -> dict[str, Any]:
@@ -345,31 +404,44 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "invalid_printed_turn_count": int(state.invalid_printed_turn_count),
         "visible_vote_count": len(visible_votes),
         "visible_votes": visible_votes,
-        "unanswered_direct_questions": int(state.unanswered_obligations),
-        # Concern-thread completion (issue 2): how many visible objections opened
-        # a thread and what share got a visible reaction before aging out.
-        "concern_threads": int(state.concerns_raised_total),
-        "concern_response_rate": (
-            round(state.concerns_addressed_total / state.concerns_raised_total, 3)
-            if state.concerns_raised_total
-            else None
-        ),
+        "unanswered_direct_questions": _unanswered_question_threads(state),
+        "question_threads": len(_question_threads(state)),
+        # Concern/blocker-thread completion (6.2/6.3): how many visible
+        # objections opened a thread and what share got a relevant response
+        # (cooling/resolved) before aging out.
+        "concern_threads": len(_concern_threads(state)),
+        "concern_response_rate": _concern_response_rate(state),
+        "thread_count_by_type": {
+            kind.value: sum(1 for t in state.threads.values() if t.thread_type is kind)
+            for kind in ThreadType
+        },
+        "thread_count_by_status": {
+            status.value: sum(1 for t in state.threads.values() if t.status is status)
+            for status in ThreadStatus
+        },
         "participation_gini": _gini(list(turn_counts.values())),
         "direct_response_rate": _direct_response_rate(state),
         "question_answer_completion": _question_answer_completion(state),
         "open_questions_at_end": _open_questions_at_end(state),
-        # P7: mentions of a practical unknown beyond its allowed raise+answer
-        # pair — the "we still don't know about parking" loop signal.
-        "repeated_unknown_mentions": sum(
-            max(0, int(v.get("mentions", 0)) - 2) for v in state.issue_ledger.values()
-        ),
-        "issue_ledger": {k: dict(v) for k, v in sorted(state.issue_ledger.items())},
+        # P7: issue keys whose concern/blocker thread already played out — the
+        # thread engine suppresses re-raises of these (single owner of issue
+        # repetition; the old issue_ledger is gone).
+        "settled_issue_keys": sorted({
+            t.issue_key for t in state.threads.values()
+            if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
+            and t.status in (ThreadStatus.RESOLVED, ThreadStatus.STALE)
+            and t.issue_key
+        }),
         "repetition_score": _repetition_score(state),
         "compromise_success_rate": _compromise_success(state, outcome),
-        "reservation_exchange": bool(state.reservation_exchange_done),
+        # Repair state machine (13.7): which objectives ran and how they ended.
+        "repairs_run": _repair_reasons(state),
+        "repair_statuses": {r.repair_reason: r.status for r in state.repair_history},
+        "unclear_vote_repairs": _repair_reasons(state).count("unclear_vote"),
+        "reservation_exchange": state.reservation_exchanges > 0,
         "participant_procedural_moves": int(state.procedural_move_count),
-        "two_person_deadlock_attempted": bool(state.two_person_deadlock_attempted),
-        "split_reservation_exchanges": int(state.split_reservation_exchanges),
+        "two_person_deadlock_attempted": "two_person_deadlock" in _repair_reasons(state),
+        "split_reservation_exchanges": int(state.reservation_exchanges),
         # Same-speaker follow-up turns (issue 6) — rare by design.
         "continuation_turns": sum(
             1 for t in participant_turns if t.intent is not None and t.intent.continuation
@@ -404,9 +476,11 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             and visible_vote_ids.get(p.id) == outcome.final_option
         ),
         "final_support_fraction": _final_support_fraction(state, outcome),
+        # Ranks are 1 (rejected) .. 5 (preferred); the earlier range(5) silently
+        # dropped rank 5 and reported a meaningless rank 0.
         "stance_rank_distribution": {
             str(rank): sum(1 for rt in state.runtimes.values() for value in rt.option_ranks.values() if value == rank)
-            for rank in range(5)
+            for rank in range(1, 6)
         },
         "runtime_preferred_by_rank": {
             p.name: state.runtimes[p.id].top_option() for p in state.personas
@@ -420,14 +494,24 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             }
             for opt, c in state.coverage.items()
         },
+        # Selected vs realized coverage (16.3): routing a coverage turn is not
+        # the same as the final text visibly processing the option.
+        "coverage_routes_selected": sum(c.coverage_attempts for c in state.coverage.values()),
+        "coverage_turns_realized": _coverage_turns_realized(state),
+        # Controller-trace metrics (16.2): why turns were routed and whether the
+        # final text realized the selected act.
+        "route_source_distribution": _route_source_distribution(state),
+        "act_mismatch_rate": _act_mismatch_rate(state),
         "expected_engagement": expected_engagement,
+        "expected_switch_resistance": {
+            p.name: round(p.sim_params.switch_resistance, 3) for p in state.personas
+        },
         "expected_turn_share": {
             p.name: round(expected_turn_share(state.personas)[p.id], 3) for p in state.personas
         },
         "realized_turn_share": {
             p.name: round(state.runtimes[p.id].turn_count / n_turns, 3) for p in state.personas
         },
-        "agenda_status": _agenda_status_counts(state),
         "outcome_status": outcome.status,
         "final_option": outcome.final_option,
         "corpus_preset": (getattr(cfg, "corpus_active", None) or {}).get("name", ""),
@@ -456,13 +540,22 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
     }
 
 
-def _agenda_status_counts(state: DialogueState) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    for persona in state.personas:
-        for item in persona.agenda:
-            key = item.status.value if hasattr(item.status, "value") else str(item.status)
-            counts[key] = counts.get(key, 0) + 1
-    return counts
+def _coverage_turns_realized(state: DialogueState) -> int:
+    """Coverage-routed turns whose final accepted text visibly names the option.
+
+    Distinct from coverage routes selected: a routed coverage intent whose
+    generated turn was blocked, dropped, or never mentioned the target option
+    did not realize coverage.
+    """
+    realized = 0
+    for turn in state.turns:
+        if turn.speaker_id == "moderator" or turn.state_mutation_blocked or turn.intent is None:
+            continue
+        if turn.intent.route_source != "coverage" or not turn.intent.option_focus:
+            continue
+        if turn.intent.option_focus[0] in turn.act.option_refs and turn.text.strip():
+            realized += 1
+    return realized
 
 
 def _final_support_fraction(state: DialogueState, outcome: RunOutcome) -> float:

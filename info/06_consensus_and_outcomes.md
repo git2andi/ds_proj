@@ -8,7 +8,7 @@ The simulator has exactly three outcome labels:
 
 ## Visible evidence rule
 
-The final outcome is computed from visible transcript evidence. Public votes, acceptances, and parser-recognized commitments count. Private option ranks guide routing, but do not directly decide the outcome.
+The final outcome is computed from visible transcript evidence, gated by phase: only clear commitments made during the formal `voting` and `compromise_repair` phases count. A repair-phase concession replaces an earlier formal vote; opening leans and discussion-phase acceptances update public stance but never silently become final votes. Private option ranks guide routing, but do not directly decide the outcome. Blocked (dropped) turns contribute no evidence.
 
 ## Rank-aware compromise rule
 

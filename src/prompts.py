@@ -13,7 +13,7 @@ from collections.abc import Iterable
 
 from aliases import short_alias_map
 from config_loader import cfg
-from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED
+from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED, ThreadStatus, ThreadType
 from parsing import unused_commitment_phrases
 from utils import compact_words
 
@@ -321,7 +321,7 @@ def sim_utterance(
         # P9: steer vote lines into the parser's own commitment vocabulary — a
         # rotating menu of families not yet used this round, instead of pushing
         # later voters into unparseable "variety". Order the phrase menu by
-        # trait fit so vote wording reflects stubbornness/directness/compromise
+        # trait fit so vote wording reflects switch_resistance/directness
         # without adding a separate personality subsystem.
         pool = unused_commitment_phrases(intent.avoid_phrases or [], limit=99)
         staying = not intent.option_focus or intent.option_focus[0] == current
@@ -362,8 +362,8 @@ def sim_utterance(
             )
     elif intent.act == ActType.ANSWER:
         decision_instruction = "\nActually answer the question asked. If it asks for information that is not in the option cards or shared context (forecasts, headcounts, outside facts), say plainly that we don't know that here — then give your take. Do not ignore the question."
-    elif intent.act == ActType.SOFTEN_TOWARD:
-        decision_instruction = "\nThis is not a final vote. Say that another option is becoming more convincing, name what moved you, and also mention what you still give up from your earlier lean."
+    elif intent.act == ActType.COMMENT:
+        decision_instruction = "\nThis is a light comment, not an argument: acknowledge, interpret, or name a priority in one beat. You do not have to support, reject, compare, or ask anything."
     elif intent.act == ActType.COMPROMISE:
         decision_instruction = "\nPropose exactly ONE of the existing options as the possible common ground; a visible condition on it is fine. Do not invent blends, split plans, or two-venue combinations."
     elif intent.act == ActType.PROCESS:
@@ -379,19 +379,23 @@ def sim_utterance(
             "said, do not re-ask the same question, and do not address the same person with the same "
             "request again."
         )
-    agenda = ""
-    if intent.agenda_key:
-        item = next((entry for entry in state.discussion_agenda if entry.key == intent.agenda_key), None)
-        if item is not None:
-            agenda = f"\nCurrent group agenda item: {item.act.value} about {item.option or 'the decision'} — {item.reason}"
     settled_unknowns = ""
-    # An issue earns suppression after its raise->"we don't know" pair played
-    # out (mentions >= 2); the first raise is useful and gets answered normally.
-    settled_issues = sorted(k for k, v in state.issue_ledger.items() if v.get("mentions", 0) >= 2)
+    # Settled-issue suppression derives from thread history (threads are the
+    # single owner of issue repetition): a concern/blocker thread that ended
+    # resolved or stale had its raise/response arc play out already.
+    settled_issues = sorted({
+        thread.issue_key.replace("_", " ")
+        for thread in state.threads.values()
+        if thread.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
+        and thread.status in (ThreadStatus.RESOLVED, ThreadStatus.STALE)
+        and thread.issue_key
+        and thread.issue_key != "general"
+        and not thread.issue_key.startswith("sig:")
+    })
     if settled_issues:
         settled_unknowns = (
-            f"\nAlready settled as unknown here (nobody can answer them): {', '.join(settled_issues[:5])}. "
-            "Do not ask about or re-raise these; argue from the listed facts instead."
+            f"\nAlready raised and settled in this chat: {', '.join(settled_issues[:5])}. "
+            "Do not re-raise these as new concerns or questions; argue from the listed facts instead."
         )
     # Verbosity reaches the prompt only as this numeric word range; the range
     # itself (not a persona parameter) picks the phrasing of the length rule.
@@ -428,7 +432,7 @@ Topic: {state.scenario.topic}
 Context: {context}
 Speaker: age={persona.age}; background={compact_words(persona.background, 14)}; goal={compact_words(persona.private_goal, 14)}; initial={initial_name}; current={current_name}; stance={stance}{blocked}
 Speech style: {persona.speech_style}. Directness: {_scale_1_5(params.directness)}/5. Stubbornness: {_scale_1_5(params.stubbornness)}/5.
-Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{agenda}{target_block}{address}{decision_instruction}
+Move: {intent.act.value}. Purpose: {intent.reason}{continuation_note}{target_block}{address}{decision_instruction}
 
 Allowed facts:
 {cards}
@@ -464,16 +468,20 @@ _COMMIT_FORM_EXAMPLES = {
 
 
 def _trait_phrase_preferences(persona: Persona, staying: bool) -> list[str]:
-    """Commitment phrase families that fit the current stance and traits."""
+    """Commitment phrase families that fit the current stance and traits.
+
+    These run only on formal decision turns, so movement-related wording keys
+    off switch_resistance (final movement), not discussion stubbornness.
+    """
     p = persona.sim_params
     prefs: list[str] = []
     if staying:
-        if p.stubbornness >= 0.60:
+        if p.switch_resistance >= 0.60:
             prefs += ["I'm still on", "I'll stay with"]
         if p.directness >= 0.65:
             prefs += ["I vote for", "gets my vote"]
     else:
-        if p.stubbornness <= 0.40:
+        if p.switch_resistance <= 0.40:
             prefs += ["I can live with", "I'll back"]
         if persona.traits.agreeableness >= 4 or p.directness <= 0.35:
             prefs += ["I'd be happy with"]
@@ -650,7 +658,16 @@ def _public_state_summary(state: DialogueState) -> str:
         if vote:
             votes.append(f"{persona.name}->{aliases.get(vote, vote)}")
     untouched = [oid for oid, cov in state.coverage.items() if cov.mentions == 0]
-    open_q = [f"{state.name_for(q.target_id)} owes answer" for q in state.open_questions[-2:]]
+    owed = sorted(
+        (
+            t for t in state.threads.values()
+            if t.thread_type is ThreadType.QUESTION
+            and t.status is ThreadStatus.HOT
+            and t.required_respondent in state.runtimes
+        ),
+        key=lambda t: t.created_turn,
+    )
+    open_q = [f"{state.name_for(t.required_respondent)} owes answer" for t in owed[-2:]]
     parts = []
     parts.append("votes: " + (", ".join(votes) if votes else "none"))
     if untouched:

@@ -2,7 +2,7 @@
 
 The project simulates several user simulators in a shared decision environment.
 LLMs render utterances, but the environment owns the option board, simulator
-parameters, global agenda items, routing state, visible commitments, and outcome logic.
+parameters, thread state, routing state, visible commitments, and outcome logic.
 """
 
 from __future__ import annotations
@@ -11,12 +11,22 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Literal
 
+# Controller runtime state lives in controller/state.py; re-exported here so
+# every module keeps one stable import surface for the typed objects.
+from controller.state import (
+    BlockingStrength,
+    Phase,
+    QuestionScope,
+    RepairState,
+    ThreadState,
+    ThreadStatus,
+    ThreadType,
+)
 
-class Phase(str, Enum):
-    OPENING = "opening"
-    DISCUSSION = "discussion"
-    NARROWING = "narrowing"
-    CLOSURE = "closure"
+# Intentional re-exports (stable import surface): the controller enums below
+# are unused inside this module but imported from `models` across src/tests.
+# Declared so static tools count them as used; nothing star-imports models.
+__all__ = ["BlockingStrength", "ThreadStatus", "ThreadType"]
 
 
 class ActType(str, Enum):
@@ -26,11 +36,11 @@ class ActType(str, Enum):
     SUPPORT = "support"
     CONCERN = "concern"
     ASK = "ask"
-    ANSWER = "answer"
+    ANSWER = "answer"      # route-driven by an active question thread, never sampled
     COMPARE = "compare"
-    SOFTEN_TOWARD = "soften_toward"
-    COMPROMISE = "compromise"
-    PROCESS = "process"
+    COMMENT = "comment"    # light contribution: acknowledge/interpret/state a priority
+    COMPROMISE = "compromise"  # narrowing/repair prompts only, not sampled
+    PROCESS = "process"        # participant-led narrowing/procedure only, not sampled
     VOTE = "vote"
     CLOSING = "closing"
 
@@ -43,18 +53,10 @@ _DISCUSSION_ACTS = {
     ActType.ASK,
     ActType.ANSWER,
     ActType.COMPARE,
-    ActType.SOFTEN_TOWARD,
+    ActType.COMMENT,
     ActType.COMPROMISE,
     ActType.PROCESS,
 }
-
-
-class AgendaStatus(str, Enum):
-    PENDING = "pending"
-    DONE = "done"
-    SKIPPED = "skipped"
-    BLOCKED = "blocked"
-    OBSOLETE = "obsolete"
 
 
 LengthHint = Literal["short", "medium", "long"]
@@ -146,16 +148,19 @@ class SimulatorParameters:
     parameters (and plausible persona content). Routing and prompts read the
     parameters, never the traits.
 
-    engagement    -> expected speaker frequency / turn share
-    verbosity     -> average utterance length via numeric word budgets
-    directness    -> blunt vs soft wording
-    stubbornness  -> resistance to changing stance, strength of stance defense
+    engagement        -> expected speaker frequency / turn share
+    verbosity         -> average utterance length via numeric word budgets
+    directness        -> blunt vs soft wording
+    stubbornness      -> strength of stance defense during discussion
+    switch_resistance -> resistance to final switching, compromise acceptance,
+                         holdout concession, and vote/repair movement
     """
 
     engagement: float
     verbosity: float
     directness: float
     stubbornness: float
+    switch_resistance: float = 0.5
 
     def clipped(self) -> "SimulatorParameters":
         return SimulatorParameters(**{name: _clip01(getattr(self, name)) for name in self.__dataclass_fields__})
@@ -163,23 +168,6 @@ class SimulatorParameters:
 
 def _clip01(value: float) -> float:
     return max(0.0, min(1.0, float(value)))
-
-
-@dataclass(slots=True)
-class DiscussionAgendaItem:
-    """One chat-level item the controller should cover before narrowing.
-
-    This is a global discussion checklist, not a per-simulator script. It keeps
-    required decision work explicit while persona-specific reasons stay inside
-    OptionStance.reason_for / reason_against.
-    """
-
-    key: str
-    act: ActType
-    reason: str
-    option: str | None = None
-    required: bool = True
-    status: AgendaStatus = AgendaStatus.PENDING
 
 
 STANCE_REJECTED = 1
@@ -232,28 +220,22 @@ class Persona:
     def preferred_option(self) -> str:
         return self.preferred_options[0]
 
-    @property
-    def agenda(self) -> list[object]:
-        """Compatibility shim for older run/eval code paths.
-
-        Per-person scripted agendas were removed in favor of the chat-level
-        DialogueState.discussion_agenda checklist. Returning an empty list keeps
-        stale readers from crashing while ensuring no per-sim agenda can steer
-        the dialogue.
-        """
-        return []
-
 
 @dataclass(slots=True)
 class MoveIntent:
     speaker_id: str
     act: ActType
     reason: str
+    # Why the controller selected this turn (trace metadata, no routing effect).
+    # Values: opening, answer_required, thread_hot, thread_cooling, coverage,
+    # continuation, normal, participant_narrowing, vote, vote_clarification,
+    # majority_holdout_repair, split_vote_repair, two_person_deadlock_repair.
+    route_source: str = "normal"
     addressee_id: str | None = None
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
     respond_to_turn: int | None = None
-    agenda_key: str | None = None
+    thread_id: str | None = None       # thread that routed this turn (trace metadata)
     suppress_name_prefix: bool = False
     suppress_option_opening: bool = False
     suppress_i_opening: bool = False
@@ -267,7 +249,6 @@ class MoveIntent:
     required_vote: str | None = None   # controller-selected decision target; validation blocks drift
     old_preference: str | None = None  # controller-visible previous pick for sanctioned switches
     allowed_reason: str | None = None  # grounded reason fragment the LLM may use for a vote/switch
-    soften_toward: str | None = None  # routed softening beat's attractor (issue 3)
     continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
 
 
@@ -278,60 +259,19 @@ class DialogueAct:
     act_type: ActType
     option_refs: list[str] = field(default_factory=list)
     addressee_id: str | None = None
+    # Question semantics from visible text only (5.5): a direct question names
+    # its target (question_target_id set); a group question has scope "group"
+    # and no target — the CONTROLLER assigns the respondent, never the parser.
+    question_scope: QuestionScope | None = None
     question_target_id: str | None = None
     explicit_vote: str | None = None
     accepts: list[str] = field(default_factory=list)
     soft_rejects: dict[str, str] = field(default_factory=dict)
     hard_rejects: dict[str, str] = field(default_factory=dict)
-    proposes_option: str | None = None
     resolves_blocker: str | None = None    # option whose earlier blocker this line resolves
     conditional_support: str | None = None  # option supported only conditionally
     offers_compromise: str | None = None    # option visibly proposed as common ground
     softens_toward: str | None = None       # option the line visibly warms to without committing (issue 3)
-
-
-@dataclass(slots=True)
-class Concern:
-    """A visible objection about an option, kept alive as a short thread (issue 2).
-
-    The router tries to get a reaction from an advocate of the option within a
-    turn or two, so the discussion does not jump away from a raised concern.
-    A thread expires unaddressed after a few participant turns.
-    """
-
-    turn_id: int
-    raised_by: str
-    option_id: str
-    text: str
-    addressed_by: str | None = None
-    age: int = 0                # participant turns since the concern was raised
-
-
-@dataclass(slots=True)
-class OpenQuestion:
-    turn_id: int
-    asked_by: str
-    target_id: str
-    text: str
-    option_focus: list[str] = field(default_factory=list)
-
-
-@dataclass(slots=True)
-class ResponseObligation:
-    """A pending duty for one participant to respond to a direct address.
-
-    Created when the moderator or another participant directs a question at a
-    named participant. The router consumes it before normal speaker selection so
-    the addressed participant answers within the next turn or two.
-    """
-
-    target_id: str
-    source_id: str            # "moderator" or a persona id
-    question_text: str
-    expected_act: ActType
-    created_turn: int
-    expires_after: int        # turn_index after which the obligation lapses
-    option_focus: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -380,9 +320,6 @@ class ParticipantRuntime:
         if reason_against:
             self.reasons_against[option_id] = reason_against.strip()
 
-    def adjust_rank(self, option_id: str, delta: int, *, reason_for: str = "", reason_against: str = "") -> None:
-        self.set_rank(option_id, self.rank(option_id) + int(delta), reason_for=reason_for, reason_against=reason_against)
-
     def top_option(self, *, fallback: str | None = None) -> str | None:
         if not self.option_ranks:
             return fallback
@@ -392,9 +329,6 @@ class ParticipantRuntime:
             return fallback
         return sorted(candidates)[0] if candidates else fallback
 
-    def options_at_rank(self, rank: int) -> set[str]:
-        return {oid for oid, value in self.option_ranks.items() if value == rank}
-
     def acceptable_options(self) -> set[str]:
         top = self.top_option()
         return {
@@ -402,23 +336,11 @@ class ParticipantRuntime:
             if value >= STANCE_ACCEPTABLE and oid != top
         }
 
-    def liked_options(self) -> set[str]:
-        return {oid for oid, value in self.option_ranks.items() if value >= STANCE_ACCEPTABLE}
-
     def disliked_options(self) -> set[str]:
         return {oid for oid, value in self.option_ranks.items() if value == STANCE_DISLIKED}
 
     def rejected_options(self) -> set[str]:
         return {oid for oid, value in self.option_ranks.items() if value == STANCE_REJECTED}
-
-    def is_acceptable(self, option_id: str | None) -> bool:
-        return self.rank(option_id) >= STANCE_ACCEPTABLE
-
-    def is_disliked(self, option_id: str | None) -> bool:
-        return self.rank(option_id) == STANCE_DISLIKED
-
-    def is_rejected(self, option_id: str | None) -> bool:
-        return self.rank(option_id) == STANCE_REJECTED
 
     def promote_to_preferred(self, option_id: str, *, reason_for: str = "") -> None:
         old = self.top_option()
@@ -472,35 +394,30 @@ class DialogueState:
     turns: list[TurnRecord] = field(default_factory=list)
     runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
-    discussion_agenda: list[DiscussionAgendaItem] = field(default_factory=list)
-    open_questions: list[OpenQuestion] = field(default_factory=list)
-    open_concerns: list[Concern] = field(default_factory=list)
-    concerns_raised_total: int = 0
-    concerns_addressed_total: int = 0
-    response_obligation: "ResponseObligation | None" = None
-    obligations_created: int = 0
-    unanswered_obligations: int = 0
+    # Thread-based local interaction state: questions, concerns, blockers, and
+    # comparisons are thread-driven; there is no content agenda.
+    threads: dict[str, ThreadState] = field(default_factory=dict)
+    thread_counter: int = 0
+    active_repair: "RepairState | None" = None
     candidate_option: str | None = None
-    compromise_attempted: bool = False
-    two_person_deadlock_attempted: bool = False
-    minority_check_attempted: bool = False
-    reservation_exchange_done: bool = False  # the bounded holdout/supporter exchange ran (issue 4)
-    split_reservation_exchanges: int = 0     # reservation/supporter pairs during split/tie narrowing
+    narrowing_returned: bool = False       # the one allowed narrowing -> discussion fallback was used
+    top_pair_history: list[tuple] = field(default_factory=list)  # visible top pair per turn (stability trigger)
+    # One bounded repair objective at a time (13.7); completed objectives are
+    # appended to repair_history (each reason runs at most once per run).
+    repair_history: list["RepairState"] = field(default_factory=list)
+    reservation_exchanges: int = 0           # holdout/supporter reservation pairs run inside repairs
     procedural_move_count: int = 0           # participant-owned structure beats taken (split summaries/probes)
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0
     fallback_turn_count: int = 0
     invalid_printed_turn_count: int = 0
-    blocker_probes: set[str] = field(default_factory=set)  # options whose blocker was already probed
-    # Lightweight issue ledger (P7): practical unknowns (parking, booking, …)
-    # that were already raised as not-decidable-from-the-board, so the
-    # discussion stops reopening them. issue -> {"mentions": int, "options": [ids]}
-    issue_ledger: dict[str, dict] = field(default_factory=dict)
-    stagnation_break_done: bool = False  # the one bounded circling-rescue beat was used (I20)
-    softened_sims: set[str] = field(default_factory=set)  # sims already routed to a visible softening beat (issue 3)
     discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)
     phase_history: list[str] = field(default_factory=list)
+    # Immutable per-turn controller trace: why each turn was selected (pre) and
+    # what the final accepted text actually realized (result). Entries are plain
+    # dicts with copied values; nothing routes from this list.
+    controller_trace: list[dict] = field(default_factory=list)
     min_discussion_turns: int = 0
     force_narrow_turns: int = 0
     hard_max_turns: int = 0
@@ -509,9 +426,6 @@ class DialogueState:
     dialogue_tokens_in: int = 0
     dialogue_tokens_out: int = 0
     token_usage_by_call_type: dict[str, dict[str, int]] = field(default_factory=dict)
-
-    def participant_ids(self) -> list[str]:
-        return [p.id for p in self.personas]
 
     def persona_by_id(self, persona_id: str) -> Persona:
         for persona in self.personas:
