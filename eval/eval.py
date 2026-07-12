@@ -1,12 +1,8 @@
-"""Evaluation of simulator runs.
+"""Concise deterministic evaluation of one simulator run.
 
-Beyond basic counters, this module answers the framework question "do the
-simulators behave according to their configured parameters?" with per-run
-numbers: participation inequality, realization errors (configured engagement/
-verbosity vs realized turn share/length), obligation and question-answer
-completion, lexical repetition, compromise success, and visible preference-
-switch explanation rates. Everything is computed from state already collected
-during the run; no LLM calls.
+The summary keeps only defensible structural, participation, trait, interaction,
+decision, validation, grounding-intervention, and token metrics. Detailed turn
+and issue diagnostics remain in ``run.json``. No evaluation LLM is used.
 """
 
 from __future__ import annotations
@@ -25,12 +21,9 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from aliases import short_alias_map
-from config_loader import cfg
 from consensus import visible_votes_from_transcript
-from models import DialogueState, Persona, RunOutcome, ThreadStatus, ThreadType, TurnRecord, _DISCUSSION_ACTS
+from models import ActType, DialogueState, RunOutcome, ThreadStatus, ThreadType
 from simulator import expected_turn_share
-from style import leading_first_person, leading_name, leading_option, leading_we, surface_pattern
 
 _WORD = re.compile(r"[a-z0-9'-]+")
 # Function words excluded from repetition comparison so it measures repeated
@@ -75,30 +68,6 @@ def _pearson(xs: list[float], ys: list[float]) -> float | None:
     return round(cov / (var_x ** 0.5 * var_y ** 0.5), 3)
 
 
-def _answered_by_target(state: DialogueState, question_turn: TurnRecord, within: int | None = None) -> bool:
-    """Whether the addressee spoke after the question (optionally within a window).
-
-    Turn indices are 1-based while list positions are 0-based, so eligibility
-    is by ``turn.index > question_turn.index`` — slicing by index skipped the
-    immediately following turn (closeout 6).
-    """
-    target = question_turn.question_target()
-    for turn in state.turns:
-        if turn.index <= question_turn.index:
-            continue
-        if turn.speaker_id == target:
-            return within is None or (turn.index - question_turn.index) <= within
-    return False
-
-
-def _directed_questions(state: DialogueState) -> list[TurnRecord]:
-    return [
-        t for t in state.turns
-        if t.question_target() and t.question_target() != t.speaker_id
-        and t.question_target() in state.runtimes
-    ]
-
-
 def _question_threads(state: DialogueState) -> list:
     return [t for t in state.threads.values() if t.thread_type is ThreadType.QUESTION]
 
@@ -116,13 +85,6 @@ def _direct_response_rate(state: DialogueState) -> float | None:
         1 for t in questions if t.status in (ThreadStatus.COOLING, ThreadStatus.RESOLVED)
     )
     return round(answered / len(questions), 3)
-
-
-def _unanswered_question_threads(state: DialogueState) -> int:
-    return sum(
-        1 for t in _question_threads(state)
-        if t.status in (ThreadStatus.HOT, ThreadStatus.STALE)
-    )
 
 
 def _concern_threads(state: DialogueState) -> list:
@@ -150,21 +112,6 @@ def _concern_response_rate(state: DialogueState) -> float | None:
     return round(responded / len(threads), 3)
 
 
-def _question_answer_completion(state: DialogueState) -> float | None:
-    """Adjacency-pair completion: directed questions answered by the addressee
-    within the analysis window (2 x question_answer_window_turns)."""
-    questions = _directed_questions(state)
-    if not questions:
-        return None
-    window = 2 * max(1, int(cfg.conversation.get("question_answer_window_turns", 2)))
-    answered = sum(1 for q in questions if _answered_by_target(state, q, within=window))
-    return round(answered / len(questions), 3)
-
-
-def _open_questions_at_end(state: DialogueState) -> int:
-    return sum(1 for q in _directed_questions(state) if not _answered_by_target(state, q))
-
-
 def _repetition_score(state: DialogueState) -> float | None:
     """Lexical repetition across each persona's own turns.
 
@@ -187,19 +134,6 @@ def _repetition_score(state: DialogueState) -> float | None:
     return round(sum(scores) / len(scores), 3)
 
 
-def _repair_reasons(state: DialogueState) -> list[str]:
-    return [r.repair_reason for r in state.repair_history]
-
-
-def _compromise_success(state: DialogueState, outcome: RunOutcome) -> float | None:
-    """1.0/0.0 when a split/deadlock repair ran and the run did/did not
-    resolve; None when no compromise repair was attempted. Averages to a
-    success share across the runs CSV."""
-    if not {"split_vote", "two_person_deadlock"} & set(_repair_reasons(state)):
-        return None
-    return 1.0 if outcome.status in ("successful", "majority") else 0.0
-
-
 def _switch_stats(state: DialogueState) -> tuple[int, float | None, float | None]:
     """(#switches, reason rate, bridge rate). `bridge` is the issue-5 signal:
     the switch visibly links the old stance to the new pick, not just carries a
@@ -212,71 +146,6 @@ def _switch_stats(state: DialogueState) -> tuple[int, float | None, float | None
     return len(events), round(explained / len(events), 3), round(bridged / len(events), 3)
 
 
-def _expected_words(persona: Persona) -> float:
-    """The controller's own length target for a discussion turn (midpoint of
-    the jitter band in policy._word_bounds), used as the verbosity
-    expectation. Verbosity is the only persona parameter affecting length.
-    Openings/votes use other budgets, so treat deviations as a band, not an
-    exact target."""
-    base = int(cfg.utterances.word_budgets.discussion)
-    p = persona.sim_params
-    expected = base * (0.45 + 0.85 * p.verbosity)
-    # policy._word_bounds mixes in occasional short beats (factor ~0.52, more
-    # often for terse sims); fold that expectation into the average target.
-    short_beat_prob = 0.22 + 0.28 * (1.0 - p.verbosity)
-    return expected * (1.0 - 0.48 * short_beat_prob)
-
-
-def _route_source_distribution(state: DialogueState) -> dict[str, int]:
-    """How often each route source produced a participant turn."""
-    counts: dict[str, int] = {}
-    for turn in state.turns:
-        if turn.speaker_id == "moderator" or turn.intent is None:
-            continue
-        counts[turn.intent.route_source] = counts.get(turn.intent.route_source, 0) + 1
-    return dict(sorted(counts.items()))
-
-
-def _act_mismatch_rate(state: DialogueState) -> float | None:
-    """DIAGNOSTIC ONLY: share of routed turns whose derived primary label
-    differs from the selected act. A label difference is NOT a semantic
-    failure (a comparative question realizes a requested comparison) —
-    intended_function_realized_rate and evidence alignment are the
-    correctness signals; this only flags drift worth eyeballing.
-    """
-    routed = [t for t in state.turns if t.speaker_id != "moderator" and t.intent is not None]
-    if not routed:
-        return None
-    mismatched = sum(1 for t in routed if t.realized_act() != t.intent.act)
-    return round(mismatched / len(routed), 3)
-
-
-def _validation_path_stats(state: DialogueState) -> dict[str, Any]:
-    """Per-run validation-path summary from the controller trace (item 14)."""
-    turn_entries = [e for e in state.controller_trace if e.get("type") == "turn"]
-    finals = [e["result"] for e in turn_entries if e["result"].get("validator_llm_used") is not None]
-    fast = sum(1 for r in finals if r.get("validator_llm_used") is False)
-    # Logical validation checks: turns that actually consulted the validator
-    # role (not fast-pathed). API calls include the ≤1 bounded structured-output
-    # retry, so they can exceed logical checks — item 10 keeps them separate.
-    logical_checks = len(finals) - fast
-    validator = state.token_usage_by_call_type.get("validator", {})
-    api_calls = int(validator.get("calls", 0))
-    accepted = sum(1 for t in state.turns if t.speaker_id != "moderator" and t.text.strip())
-    total_in = int(state.setup_tokens_in + state.dialogue_tokens_in + validator.get("in", 0))
-    return {
-        # API calls (endpoint hits, retries included) — kept as the historical
-        # `validator_calls` name for baseline comparability.
-        "validator_calls": api_calls,
-        "validator_logical_checks": logical_checks,
-        "validator_api_retries": max(0, api_calls - logical_checks),
-        "validator_calls_per_accepted_turn": round(api_calls / accepted, 3) if accepted else None,
-        "validator_logical_checks_per_turn": round(logical_checks / accepted, 3) if accepted else None,
-        "validation_fast_path_rate": round(fast / len(finals), 3) if finals else None,
-        "validator_input_share": round(int(validator.get("in", 0)) / total_in, 3) if total_in else None,
-    }
-
-
 def _vote_state_consistency_failures(state: DialogueState) -> int:
     """Participants whose runtime vote disagrees with the transcript-derived
     formal vote — public evidence and observer state must never diverge."""
@@ -285,66 +154,6 @@ def _vote_state_consistency_failures(state: DialogueState) -> int:
         1 for pid, vote in formal.items()
         if state.runtimes[pid].explicit_vote != vote
     )
-
-
-def parameter_realization(state: DialogueState) -> dict[str, Any]:
-    """Configured-parameter vs realized-behavior comparison for this run."""
-    participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
-    total_turns = max(1, len(participant_turns))
-    # The router's own engagement-derived share targets (simulator.expected_turn_share),
-    # so realization error measures deviation from what the controller aimed for.
-    expected_shares = expected_turn_share(state.personas)
-
-    engagement_errors: dict[str, float] = {}
-    verbosity_errors: dict[str, float] = {}
-    engagement_cfg: list[float] = []
-    turn_shares: list[float] = []
-    verbosity_cfg: list[float] = []
-    realized_words: list[float] = []
-    for persona in state.personas:
-        share = state.runtimes[persona.id].turn_count / total_turns
-        engagement_errors[persona.name] = round(abs(expected_shares[persona.id] - share), 3)
-        own = [t for t in participant_turns if t.speaker_id == persona.id]
-        avg_words = sum(len(t.text.split()) for t in own) / max(1, len(own))
-        expected = _expected_words(persona)
-        verbosity_errors[persona.name] = round(abs(avg_words - expected) / expected, 3)
-        engagement_cfg.append(persona.sim_params.engagement)
-        turn_shares.append(share)
-        verbosity_cfg.append(persona.sim_params.verbosity)
-        realized_words.append(avg_words)
-
-    def _mean(values: dict[str, float]) -> float:
-        return round(sum(values.values()) / max(1, len(values)), 3)
-
-    # Trait-shaped dominance should be judged on free discussion turns only
-    # (P4): opening and vote rounds are intentionally near-uniform, so they
-    # dilute the trait signal the router is actually allowed to express.
-    free_turns = [
-        t for t in participant_turns
-        if t.intent is not None and t.intent.act in _DISCUSSION_ACTS
-    ]
-    free_total = max(1, len(free_turns))
-    free_share_by_persona = {
-        p.name: round(sum(1 for t in free_turns if t.speaker_id == p.id) / free_total, 3)
-        for p in state.personas
-    }
-    free_shares = [free_share_by_persona[p.name] for p in state.personas]
-    top_free_share = round(max(free_shares, default=0.0), 3)
-
-    return {
-        "engagement_realization_error": _mean(engagement_errors),
-        "verbosity_realization_error": _mean(verbosity_errors),
-        "engagement_error_by_persona": engagement_errors,
-        "verbosity_error_by_persona": verbosity_errors,
-        # Per-run trait->behavior coupling signal: positive = configured
-        # parameter visibly shapes behavior in this run (None = too few sims
-        # or no variance to judge).
-        "engagement_behavior_correlation": _pearson(engagement_cfg, turn_shares),
-        "verbosity_behavior_correlation": _pearson(verbosity_cfg, realized_words),
-        "free_discussion_share": free_share_by_persona,
-        "top_free_discussion_share": top_free_share,
-        "free_discussion_engagement_correlation": _pearson(engagement_cfg, free_shares),
-    }
 
 
 def token_summary_for(state: DialogueState) -> dict[str, int]:
@@ -366,337 +175,268 @@ def token_summary_for(state: DialogueState) -> dict[str, int]:
     }
 
 
-def _token_usage_flat(state: DialogueState) -> dict[str, int]:
-    """Token/call diagnostics by call type for cost regression checks."""
-    out: dict[str, int] = {}
-    kinds = [
-        "setup",
-        "utterance",
-        "validator",
-        "repair",
-        "moderator",
-        "moderator_repair",
-    ]
-    for kind in kinds:
-        usage = state.token_usage_by_call_type.get(kind, {})
-        out[f"tokens_{kind}_in"] = int(usage.get("in", 0))
-        out[f"tokens_{kind}_out"] = int(usage.get("out", 0))
-        out[f"calls_{kind}"] = int(usage.get("calls", 0))
-    return out
-
-
-def _assessment_rate(turns: list[TurnRecord], selector) -> float | None:
-    """Share of assessed turns where ``selector(assessment)`` is True, over
-    turns where it is not None (no contract for that act/turn = excluded)."""
-    values = [
-        selector(t.assessment) for t in turns
-        if t.assessment is not None and selector(t.assessment) is not None
-    ]
-    if not values:
-        return None
-    return round(sum(1 for v in values if v) / len(values), 3)
-
-
-def _repair_success_rate(turns: list[TurnRecord]) -> float | None:
-    """Share of semantically-repaired turns whose final line is issue-free.
-    Operational validator retries are not repairs and never count here."""
-    repaired = [t for t in turns if t.repaired]
-    if not repaired:
-        return None
-    return round(sum(1 for t in repaired if not t.validation_issues) / len(repaired), 3)
-
-
-def _fallback_by_family(turns: list[TurnRecord]) -> dict[str, int]:
-    families: dict[str, int] = {}
-    for t in turns:
-        if t.used_fallback:
-            families[t.fallback_family or "unknown"] = families.get(t.fallback_family or "unknown", 0) + 1
-    return families
-
-
-def _assessment_action_counts(turns: list[TurnRecord]) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    for t in turns:
-        if t.assessment is not None:
-            counts[t.assessment.action.value] = counts.get(t.assessment.action.value, 0) + 1
-    return counts
-
-
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-    switch_count, switch_explained, switch_bridged = _switch_stats(state)
-    participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
-    moderator_turns = [t for t in state.turns if t.speaker_id == "moderator"]
-    n_turns = max(1, len(participant_turns))
-    turn_counts = {p.name: state.runtimes[p.id].turn_count for p in state.personas}
-    avg_words_by_persona = {
-        p.name: round(
-            sum(len(t.text.split()) for t in participant_turns if t.speaker_id == p.id)
-            / max(1, state.runtimes[p.id].turn_count),
-            1,
+    """Concise, defensible run metrics.
+
+    Detailed evidence, issue codes, and controller decisions remain in run.json.
+    Rates are None when their denominator is zero.
+    """
+    participant_turns = [t for t in state.turns if t.speaker_id != "moderator" and t.text.strip()]
+    moderator_turns = [t for t in state.turns if t.speaker_id == "moderator" and t.text.strip()]
+    n_participant = len(participant_turns)
+    n_all = n_participant + len(moderator_turns)
+    expected_shares = expected_turn_share(state.personas)
+
+    turns_by = {p.name: sum(1 for t in participant_turns if t.speaker_id == p.id) for p in state.personas}
+    words_by = {}
+    expected_engagement = {}
+    expected_turn_share_by = {}
+    realized_share = {}
+    expected_verbosity = {}
+    assigned_avg_word_budget = {}
+    realized_words = {}
+    word_budget_adherence = {}
+    switch_resistance = {}
+    switch_opportunities = {p.name: 0 for p in state.personas}
+    for p in state.personas:
+        own = [t for t in participant_turns if t.speaker_id == p.id]
+        avg = sum(len(t.text.split()) for t in own) / len(own) if own else 0.0
+        words_by[p.name] = round(avg, 3)
+        expected_engagement[p.name] = round(p.sim_params.engagement, 3)
+        expected_turn_share_by[p.name] = round(expected_shares[p.id], 3)
+        realized_share[p.name] = round(len(own) / n_participant, 3) if n_participant else None
+        expected_verbosity[p.name] = round(p.sim_params.verbosity, 3)
+        budgeted = [t for t in own if t.assigned_max_words > 0]
+        assigned = (
+            sum((t.assigned_min_words + t.assigned_max_words) / 2 for t in budgeted) / len(budgeted)
+            if budgeted else None
         )
-        for p in state.personas
-    }
-    words_by_act: dict[str, list[int]] = {}
-    for t in participant_turns:
-        act_name = t.intent.act.value if t.intent else "unknown"
-        words_by_act.setdefault(act_name, []).append(len(t.text.split()))
-    avg_words_by_act = {
-        act_name: round(sum(counts) / len(counts), 1)
-        for act_name, counts in sorted(words_by_act.items())
-    }
-    short_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 10)
-    tiny_turn_count = sum(1 for t in participant_turns if len(t.text.split()) <= 5)
-    # P2 diagnostic: questions appearing on statement-type turns (the chaining
-    # pattern), as opposed to intentional ask/invite acts.
-    question_acts = {"ask", "process"}
-    statement_turns = [
-        t for t in participant_turns
-        if t.intent and t.intent.act.value not in question_acts
-    ]
-    tail_question_count = sum(1 for t in statement_turns if t.text.rstrip().endswith("?"))
-    visible_vote_ids = visible_votes_from_transcript(state)
-    visible_votes = {
-        p.name: visible_vote_ids[p.id]
-        for p in state.personas
-        if p.id in visible_vote_ids
-    }
-    top_turn_share = round(max(turn_counts.values(), default=0) / max(1, len(participant_turns)), 3)
-    expected_engagement = {p.name: round(p.sim_params.engagement, 3) for p in state.personas}
-    names = [p.name for p in state.personas]
-    alias_values = list(short_alias_map(state.scenario.options).values())
-    name_prefixed = sum(1 for t in participant_turns if leading_name(t.text, names))
-    option_opened = sum(1 for t in participant_turns if leading_option(t.text, alias_values))
-    patterns = [surface_pattern(t.text) for t in participant_turns]
-    templated = {"concede_but", "worry_but", "tradeoff_but"}
-    repeated_openings = sum(
-        1 for i in range(1, len(patterns))
-        if patterns[i] == patterns[i - 1] and patterns[i] in templated
-    )
-    return {
-        "participant_turns": len(participant_turns),
-        "moderator_turns": len(moderator_turns),
-        "moderator_ratio": round(len(moderator_turns) / max(1, len(state.turns)), 3),
-        "turn_counts": turn_counts,
-        "top_speaker_share": top_turn_share,
-        "avg_words_by_persona": avg_words_by_persona,
-        "avg_words_by_act": avg_words_by_act,
-        "short_turn_rate": round(short_turn_count / n_turns, 3),
-        "tiny_turn_rate": round(tiny_turn_count / n_turns, 3),
-        "question_density": round(sum(1 for t in participant_turns if "?" in t.text) / n_turns, 3),
-        "tail_question_rate": round(tail_question_count / max(1, len(statement_turns)), 3),
-        "avg_words_per_turn": round(sum(len(t.text.split()) for t in participant_turns) / n_turns, 1),
-        "repaired_turns": sum(1 for t in participant_turns if t.repaired),
-        "repair_rate": round(sum(1 for t in participant_turns if t.repaired) / n_turns, 3),
-        "flagged_turns": sum(1 for t in participant_turns if t.validation_issues),
-        "fallback_turns": int(state.fallback_turn_count),
-        "invalid_printed_turn_count": int(state.invalid_printed_turn_count),
-        "visible_vote_count": len(visible_votes),
-        "visible_votes": visible_votes,
-        "unanswered_direct_questions": _unanswered_question_threads(state),
-        "question_threads": len(_question_threads(state)),
-        # Concern/blocker-thread completion (6.2/6.3): how many visible
-        # objections opened a thread and what share got a relevant response
-        # (cooling/resolved) before aging out.
-        "concern_threads": len(_concern_threads(state)),
-        "concern_response_rate": _concern_response_rate(state),
-        "thread_count_by_type": {
-            kind.value: sum(1 for t in state.threads.values() if t.thread_type is kind)
-            for kind in ThreadType
-        },
-        "thread_count_by_status": {
-            status.value: sum(1 for t in state.threads.values() if t.status is status)
-            for status in ThreadStatus
-        },
-        "participation_gini": _gini(list(turn_counts.values())),
-        "direct_response_rate": _direct_response_rate(state),
-        "question_answer_completion": _question_answer_completion(state),
-        "open_questions_at_end": _open_questions_at_end(state),
-        # P7: issue keys whose concern/blocker thread already played out — the
-        # thread engine suppresses re-raises of these (single owner of issue
-        # repetition; the old issue_ledger is gone).
-        "settled_issue_keys": sorted({
-            t.issue_key for t in state.threads.values()
-            if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
-            and t.status in (ThreadStatus.RESOLVED, ThreadStatus.STALE)
-            and t.issue_key
-        }),
-        "repetition_score": _repetition_score(state),
-        "compromise_success_rate": _compromise_success(state, outcome),
-        # Repair state machine (13.7): which objectives ran and how they ended.
-        "repairs_run": _repair_reasons(state),
-        "repair_statuses": {r.repair_reason: r.status for r in state.repair_history},
-        "unclear_vote_repairs": _repair_reasons(state).count("unclear_vote"),
-        "reservation_exchange": state.reservation_exchanges > 0,
-        "participant_procedural_moves": int(state.procedural_move_count),
-        "two_person_deadlock_attempted": "two_person_deadlock" in _repair_reasons(state),
-        "split_reservation_exchanges": int(state.reservation_exchanges),
-        # Same-speaker follow-up turns (issue 6) — rare by design.
-        "continuation_turns": sum(
-            1 for t in participant_turns if t.intent is not None and t.intent.continuation
-        ),
-        "switch_event_count": switch_count,
-        "switch_explanation_rate": switch_explained,
-        "switch_bridge_rate": switch_bridged,
-        # Latent-favorite movements during the discussion phase (issue 3) —
-        # visible softening or compromise signals, distinct from final votes.
-        "discussion_lean_shifts": int(state.discussion_lean_shifts),
-        "discussion_lean_shift_turns": list(state.discussion_lean_shift_turns),
-        # Public evidence and observer state must agree on every formal vote.
-        "vote_state_consistency_failures": _vote_state_consistency_failures(state),
-        "name_prefix_rate": round(name_prefixed / n_turns, 3),
-        "option_opening_rate": round(option_opened / n_turns, 3),
-        "i_opening_rate": round(sum(1 for t in participant_turns if leading_first_person(t.text)) / n_turns, 3),
-        "we_opening_rate": round(sum(1 for t in participant_turns if leading_we(t.text)) / n_turns, 3),
-        "name_or_option_opening_rate": round((name_prefixed + option_opened) / n_turns, 3),
-        "repeated_opening_patterns": repeated_openings,
-        "unsupported_fact_flags": sum(
-            1 for t in participant_turns
-            if any(
-                code.startswith("UNSUPPORTED_CLAIM")
-                for code in list(t.validation_issues) + list(t.repair_trigger_codes)
+        assigned_avg_word_budget[p.name] = round(assigned, 3) if assigned is not None else None
+        realized_words[p.name] = round(avg, 3)
+        word_budget_adherence[p.name] = (
+            round(
+                sum(
+                    1 for t in budgeted
+                    if t.assigned_min_words <= len(t.text.split()) <= t.assigned_max_words + 2
+                ) / len(budgeted),
+                3,
             )
-        ),
-        # Printed turns whose FINAL ACCEPTED claims are unsupported (item 15):
-        # zero here means the accepted claims were actually verified against
-        # the fact table, not merely that no issue code happened to remain.
-        "unsupported_printed_turns": sum(
-            1 for t in participant_turns
-            if t.evidence is not None and any(c.supported is False for c in t.evidence.claims)
-        ),
-        # --- semantic-correctness metrics for the evidence contract (item 15) ---
-        # Realized-function rate vs exact-label agreement: a comparative
-        # question realizing a requested COMPARE counts as realized even though
-        # its primary label is ASK.
-        "intended_function_realized_rate": _assessment_rate(
-            participant_turns, lambda a: a.intended_act_realized
-        ),
-        "intended_focus_agreement_rate": _assessment_rate(
-            participant_turns, lambda a: a.intended_focus_realized
-        ),
-        "ambiguous_reference_rate": round(
-            sum(
-                1 for t in participant_turns
-                if t.evidence is not None and t.evidence.ambiguous_references
-            ) / n_turns, 3,
-        ),
-        "validator_failure_turns": sum(
-            1 for t in participant_turns
-            if "VALIDATOR_UNAVAILABLE" in (list(t.validation_issues) + list(t.repair_trigger_codes))
-        ),
-        "repair_success_rate": _repair_success_rate(participant_turns),
-        "fallback_by_family": _fallback_by_family(participant_turns),
-        "dropped_turn_count": sum(
-            1 for e in state.controller_trace
-            if e.get("type") == "turn" and not e.get("result", {}).get("appended", True)
-        ),
-        "vote_clarity_failures": sum(
-            1 for t in participant_turns
-            if "UNCLEAR_VISIBLE_COMMITMENT" in (list(t.validation_issues) + list(t.repair_trigger_codes))
-        ),
-        "assessment_action_counts": _assessment_action_counts(participant_turns),
-        # P11: a hard blocker visibly counted as supporting their rejected
-        # option in the final tally — must always be 0.
-        "final_blocker_violations": sum(
-            1 for p in state.personas
-            if outcome.final_option in state.runtimes[p.id].rejected_options()
-            and visible_vote_ids.get(p.id) == outcome.final_option
-        ),
-        "final_support_fraction": _final_support_fraction(state, outcome),
-        # Ranks are 1 (rejected) .. 5 (preferred); the earlier range(5) silently
-        # dropped rank 5 and reported a meaningless rank 0.
-        "stance_rank_distribution": {
-            str(rank): sum(1 for rt in state.runtimes.values() for value in rt.option_ranks.values() if value == rank)
-            for rank in range(1, 6)
+            if budgeted else None
+        )
+        switch_resistance[p.name] = round(p.sim_params.switch_resistance, 3)
+    for turn in participant_turns:
+        if turn.intent and turn.intent.route_source in {
+            "majority_holdout_repair", "split_vote_repair", "two_person_deadlock_repair"
+        } and turn.intent.act is ActType.VOTE:
+            switch_opportunities[state.name_for(turn.speaker_id)] += 1
+
+    question_turns = [t for t in participant_turns if t.evidence and t.evidence.questions]
+    q_threads = _question_threads(state)
+    c_threads = _concern_threads(state)
+    thread_status = {status.value: 0 for status in ThreadStatus}
+    for thread in state.threads.values():
+        thread_status[thread.status.value] = thread_status.get(thread.status.value, 0) + 1
+
+    repaired = sum(1 for t in participant_turns if t.repaired)
+    fallback = sum(1 for t in participant_turns if t.used_fallback)
+    dropped = sum(
+        1 for e in state.controller_trace
+        if e.get("type") == "turn" and not e.get("result", {}).get("appended", True)
+    )
+    attempts = n_participant + dropped
+    visible_votes = visible_votes_from_transcript(state)
+    switch_count, _, _ = _switch_stats(state)
+    compromise_attempts = sum(1 for r in state.repair_history if r.repair_reason == "split_vote")
+    split_repair_switch = any(
+        event.get("route_source") == "split_vote_repair"
+        for rt in state.runtimes.values()
+        for event in rt.switch_events
+    )
+    # A compromise succeeds only when the no-majority repair caused at least
+    # one visible formal switch and the resulting tally resolved. Merely
+    # running repair logic or ending with the same votes is not success.
+    compromise_successes = int(
+        compromise_attempts > 0
+        and split_repair_switch
+        and outcome.status in {"successful", "majority"}
+    )
+    active_blockers = {
+        p.name: sorted(state.runtimes[p.id].rejected_options())
+        for p in state.personas if state.runtimes[p.id].rejected_options()
+    }
+    grounding_codes = {
+        "NUMERIC_CONTRADICTION", "ATTRIBUTE_CONTRADICTION",
+        "CROSS_OPTION_VALUE", "UNLISTED_NUMERIC_DETAIL",
+        "UNLISTED_FEATURE_DETAIL",
+    }
+    turn_traces = [
+        entry for entry in state.controller_trace if entry.get("type") == "turn"
+    ]
+    if turn_traces:
+        critical_grounding_interventions = sum(
+            1 for entry in turn_traces
+            if grounding_codes & set(
+                (entry.get("result", {}) or {}).get("validation_repair_trigger_codes", [])
+            )
+        )
+    else:
+        # Synthetic/unit states may not carry controller traces.
+        critical_grounding_interventions = sum(
+            1 for turn in participant_turns
+            if grounding_codes & set(list(turn.validation_issues) + list(turn.repair_trigger_codes))
+        )
+
+    token_usage = {}
+    mapping = {
+        "setup": ("setup",),
+        "participant_generation": ("utterance",),
+        "moderator_generation": ("moderator", "moderator_repair"),
+        "repair_generation": ("repair",),
+        "runtime_validation": ("validator",),
+    }
+    for label, kinds in mapping.items():
+        token_usage[label] = {
+            "input_tokens": sum(int(state.token_usage_by_call_type.get(k, {}).get("in", 0)) for k in kinds),
+            "output_tokens": sum(int(state.token_usage_by_call_type.get(k, {}).get("out", 0)) for k in kinds),
+            "api_calls": sum(int(state.token_usage_by_call_type.get(k, {}).get("calls", 0)) for k in kinds),
+        }
+    token_usage["total"] = {
+        "input_tokens": sum(v["input_tokens"] for v in token_usage.values()),
+        "output_tokens": sum(v["output_tokens"] for v in token_usage.values()),
+        "api_calls": sum(v["api_calls"] for v in token_usage.values()),
+    }
+
+    return {
+        "metric_schema_version": "2.1",
+        "run_structure": {
+            "participant_turn_count": n_participant,
+            "participant_turn_count_by_persona": turns_by,
+            "moderator_turns": len(moderator_turns),
+            "moderator_ratio": round(len(moderator_turns) / n_all, 3) if n_all else None,
+            "avg_words_per_participant_turn": round(
+                sum(len(t.text.split()) for t in participant_turns) / n_participant, 3
+            ) if n_participant else None,
+            "avg_words_by_persona": words_by,
+            "question_density": round(len(question_turns) / n_participant, 3) if n_participant else None,
         },
-        "runtime_preferred_by_rank": {
-            p.name: state.runtimes[p.id].top_option() for p in state.personas
+        "participation": {
+            "expected_engagement": expected_engagement,
+            "expected_turn_share": expected_turn_share_by,
+            "realized_turn_count": turns_by,
+            "realized_turn_share": realized_share,
+            "participation_gini": _gini(list(turns_by.values())),
+            "engagement_behavior_correlation": _pearson(
+                [p.sim_params.engagement for p in state.personas],
+                [realized_share[p.name] or 0.0 for p in state.personas],
+            ),
         },
-        "option_coverage": {
-            opt: {
-                "mentions": c.mentions,
-                "reasons": c.reasons,
-                "objections": c.objections,
-                "acceptances": c.acceptances,
-            }
-            for opt, c in state.coverage.items()
+        "traits": {
+            "expected_verbosity": expected_verbosity,
+            "assigned_avg_word_budget": assigned_avg_word_budget,
+            "realized_avg_words_per_turn": realized_words,
+            "word_budget_adherence": word_budget_adherence,
+            "verbosity_budget_correlation": _pearson(
+                [p.sim_params.verbosity for p in state.personas],
+                [assigned_avg_word_budget[p.name] or 0.0 for p in state.personas],
+            ),
+            "verbosity_behavior_correlation": _pearson(
+                [assigned_avg_word_budget[p.name] or 0.0 for p in state.personas],
+                [realized_words[p.name] for p in state.personas],
+            ),
+            "expected_switch_resistance": switch_resistance,
+            "switch_opportunities": switch_opportunities,
+            "visible_switches_by_persona": {
+                p.name: len(state.runtimes[p.id].switch_events) for p in state.personas
+            },
         },
-        # Selected vs realized coverage (16.3): routing a coverage turn is not
-        # the same as the final text visibly processing the option.
-        "coverage_routes_selected": sum(c.coverage_attempts for c in state.coverage.values()),
-        "coverage_turns_realized": _coverage_turns_realized(state),
-        # Controller-trace metrics (16.2): why turns were routed and whether the
-        # final text realized the selected act. act_mismatch_rate is a
-        # diagnostic label-drift signal only — never a semantic failure count.
-        "route_source_distribution": _route_source_distribution(state),
-        "act_mismatch_rate": _act_mismatch_rate(state),
-        "expected_engagement": expected_engagement,
-        "expected_switch_resistance": {
-            p.name: round(p.sim_params.switch_resistance, 3) for p in state.personas
+        "interaction": {
+            "question_threads": len(q_threads),
+            "concern_threads": len(c_threads),
+            "thread_count_by_status": thread_status,
+            "question_completion_rate": _direct_response_rate(state),
+            "concern_response_rate": _concern_response_rate(state),
+            "repetition_score": _repetition_score(state),
         },
-        "expected_turn_share": {
-            p.name: round(expected_turn_share(state.personas)[p.id], 3) for p in state.personas
+        "decision_behavior": {
+            "visible_votes": visible_votes,
+            "outcome_status": outcome.status,
+            "final_option": outcome.final_option,
+            "switch_event_count": switch_count,
+            "discussion_lean_shifts": int(state.discussion_lean_shifts),
+            "runtime_preferred_by_rank": {
+                p.name: state.runtimes[p.id].top_option() for p in state.personas
+            },
+            "option_coverage": {
+                oid: {
+                    "mentions": c.mentions,
+                    "reasons": c.reasons,
+                    "objections": c.objections,
+                    "acceptances": c.acceptances,
+                } for oid, c in state.coverage.items()
+            },
+            "compromise_attempt_count": compromise_attempts,
+            "compromise_success_count": compromise_successes,
+            "compromise_success_rate": (
+                round(compromise_successes / compromise_attempts, 3)
+                if compromise_attempts else None
+            ),
+            "vote_state_consistency_failures": _vote_state_consistency_failures(state),
+            "active_blockers_at_close": active_blockers,
         },
-        "realized_turn_share": {
-            p.name: round(state.runtimes[p.id].turn_count / n_turns, 3) for p in state.personas
+        "validation_grounding": {
+            "repaired_turns": repaired,
+            "repair_rate": round(repaired / attempts, 3) if attempts else None,
+            "fallback_turns": fallback,
+            "fallback_rate": round(fallback / attempts, 3) if attempts else None,
+            "dropped_turns": dropped,
+            "drop_rate": round(dropped / attempts, 3) if attempts else None,
+            "critical_grounding_interventions": critical_grounding_interventions,
+            "runtime_validator_calls": token_usage["runtime_validation"]["api_calls"],
         },
-        "outcome_status": outcome.status,
-        "final_option": outcome.final_option,
-        "corpus_preset": (getattr(cfg, "corpus_active", None) or {}).get("name", ""),
-        "min_discussion_turns": state.min_discussion_turns,
-        "force_narrow_turns": state.force_narrow_turns,
-        "hard_max_turns": state.hard_max_turns,
-        "phase_history": list(state.phase_history),
-    } | parameter_realization(state) | token_summary_for(state) | _token_usage_flat(state) \
-        | _validation_path_stats(state)
+        "token_usage": token_usage,
+    }
 
 
 def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-    metrics = metrics_for(state, outcome)
-    scalar = {k: v for k, v in metrics.items() if not isinstance(v, dict) and not isinstance(v, list)}
-    dialogue_provider = str(cfg.llm.get("dialogue", "")).lower()
-    validator_provider = str(cfg.llm.get("validator", "")).lower()
+    m = metrics_for(state, outcome)
+    rs = m["run_structure"]
+    inter = m["interaction"]
+    dec = m["decision_behavior"]
+    val = m["validation_grounding"]
+    tok = m["token_usage"]["total"]
     return {
+        "metric_schema_version": m["metric_schema_version"],
         "run_id": run_id,
         "topic": state.scenario.topic,
-        "environment_type": state.scenario.environment_type,
-        # Provider/model per role per row so runs from different backends can
-        # be compared in the CSV (issue 9). llm_provider/llm_model keep their
-        # historical column names and describe the dialogue role.
-        "llm_provider": dialogue_provider,
-        "llm_model": str(cfg.llm.models.get(dialogue_provider, "unknown")),
-        "llm_validator_provider": validator_provider,
-        "llm_validator_model": str(cfg.llm.models.get(validator_provider, "unknown")),
         "num_participants": len(state.personas),
-        "hard_blocker_present": any(state.runtimes[p.id].rejected_options() for p in state.personas),
-        **scalar,
+        "participant_turn_count": rs["participant_turn_count"],
+        "moderator_turns": rs["moderator_turns"],
+        "moderator_ratio": rs["moderator_ratio"],
+        "avg_words_per_participant_turn": rs["avg_words_per_participant_turn"],
+        "question_density": rs["question_density"],
+        "question_threads": inter["question_threads"],
+        "concern_threads": inter["concern_threads"],
+        "question_completion_rate": inter["question_completion_rate"],
+        "concern_response_rate": inter["concern_response_rate"],
+        "repetition_score": inter["repetition_score"],
+        "outcome_status": dec["outcome_status"],
+        "final_option": dec["final_option"],
+        "visible_vote_count": len(dec["visible_votes"]),
+        "switch_event_count": dec["switch_event_count"],
+        "compromise_attempt_count": dec["compromise_attempt_count"],
+        "compromise_success_rate": dec["compromise_success_rate"],
+        "vote_state_consistency_failures": dec["vote_state_consistency_failures"],
+        "repaired_turns": val["repaired_turns"],
+        "repair_rate": val["repair_rate"],
+        "fallback_turns": val["fallback_turns"],
+        "fallback_rate": val["fallback_rate"],
+        "dropped_turns": val["dropped_turns"],
+        "drop_rate": val["drop_rate"],
+        "critical_grounding_interventions": val["critical_grounding_interventions"],
+        "runtime_validator_calls": val["runtime_validator_calls"],
+        "total_input_tokens": tok["input_tokens"],
+        "total_output_tokens": tok["output_tokens"],
+        "total_api_calls": tok["api_calls"],
     }
 
 
-def _coverage_turns_realized(state: DialogueState) -> int:
-    """Coverage-routed turns whose final accepted text visibly names the option.
-
-    Distinct from coverage routes selected: a routed coverage intent whose
-    generated turn was blocked, dropped, or never mentioned the target option
-    did not realize coverage.
-    """
-    realized = 0
-    for turn in state.turns:
-        if turn.speaker_id == "moderator" or turn.state_mutation_blocked or turn.intent is None:
-            continue
-        if turn.intent.route_source != "coverage" or not turn.intent.option_focus:
-            continue
-        if turn.intent.option_focus[0] in turn.mentioned_options() and turn.text.strip():
-            realized += 1
-    return realized
-
-
-def _final_support_fraction(state: DialogueState, outcome: RunOutcome) -> float:
-    if not outcome.final_option:
-        return 0.0
-    final = outcome.final_option
-    backers = sum(
-        1
-        for p in state.personas
-        if state.runtimes[p.id].explicit_vote == final or final in state.runtimes[p.id].acceptable_options()
-    )
-    return round(backers / max(1, len(state.personas)), 3)

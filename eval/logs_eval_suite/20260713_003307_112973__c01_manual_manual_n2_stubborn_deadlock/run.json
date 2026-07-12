@@ -1,0 +1,4514 @@
+{
+  "run_id": "20260713_003307_112973",
+  "case_id": "c01_manual_manual_n2_stubborn_deadlock",
+  "suite_version": "critical-validation-consensus-v8",
+  "case_fingerprint": "23f30171434564bf",
+  "topic": "Choose whether two roommates should upgrade cleaning at home",
+  "llm": {
+    "dialogue": {
+      "provider": "gpt",
+      "model": "gpt-4.1-mini"
+    },
+    "runtime_validation": {
+      "mode": "critical",
+      "llm_used": false
+    }
+  },
+  "participants_mode": "manual",
+  "environment_mode": "manual",
+  "validation_mode": "critical",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose whether two roommates should upgrade cleaning at home",
+    "options": [
+      {
+        "id": "A",
+        "name": "Eufy Robot Vacuum",
+        "attrs": {
+          "cost": "260 euros",
+          "task": "daily floor cleaning",
+          "space": "needs clear floor paths"
+        },
+        "upside": "reduces visible dust without manual effort",
+        "concern": "does not help with dishes or kitchen cleanup",
+        "short_name": "Robot Vacuum"
+      },
+      {
+        "id": "B",
+        "name": "Bosch Compact Dishwasher",
+        "attrs": {
+          "cost": "430 euros",
+          "task": "daily dishes",
+          "space": "uses counter space"
+        },
+        "upside": "removes the most common kitchen chore",
+        "concern": "does not help with dust or floors",
+        "short_name": "Dishwasher"
+      },
+      {
+        "id": "C",
+        "name": "Monthly Cleaning Service Trial",
+        "attrs": {
+          "cost": "80 euros per month",
+          "task": "general cleaning",
+          "duration": "three-month trial"
+        },
+        "upside": "covers several chores without buying equipment",
+        "concern": "depends on scheduling someone to come in",
+        "short_name": "Cleaning Trial"
+      },
+      {
+        "id": "D",
+        "name": "Shared Cleaning Supplies Kit",
+        "attrs": {
+          "cost": "70 euros",
+          "task": "manual cleaning",
+          "storage": "small closet box"
+        },
+        "upside": "cheap and easy to start immediately",
+        "concern": "may not change habits enough",
+        "short_name": "Supplies Kit"
+      }
+    ],
+    "shared_context": [
+      "Two roommates share the apartment costs equally.",
+      "The maximum budget is 450 euros.",
+      "Both want less weekly cleaning friction."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maja",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 1,
+        "neuroticism": 4
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.45,
+        "directness": 0.8,
+        "stubbornness": 0.95,
+        "switch_resistance": 0.95
+      },
+      "background": "stubborn graduate student in a shared apartment who thinks floors are the visible problem",
+      "private_goal": "wants the robot vacuum and does not want a counter-space appliance",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 23,
+      "speech_style": "young casual wording",
+      "rejection": "B",
+      "rejection_reason": "it is near the budget limit and uses counter space",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "reduces visible dust without manual effort",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "it is near the budget limit and uses counter space"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Felix",
+      "traits": {
+        "openness": 2,
+        "conscientiousness": 4,
+        "extraversion": 3,
+        "agreeableness": 1,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.6,
+        "verbosity": 0.5,
+        "directness": 0.85,
+        "stubbornness": 0.95,
+        "switch_resistance": 0.95
+      },
+      "background": "stubborn long-time tenant who thinks dishes cause most conflict and distrusts partial floor-only fixes",
+      "private_goal": "wants the dishwasher and does not want a device that ignores the kitchen mess",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 58,
+      "speech_style": "direct workplace wording",
+      "rejection": "A",
+      "rejection_reason": "it does not help with dishes or kitchen cleanup",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "it does not help with dishes or kitchen cleanup"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "removes the most common kitchen chore",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 12,
+      "last_spoke_turn": 25,
+      "option_ranks": {
+        "A": 5,
+        "B": 1,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "I vote Robot Vacuum—better daily dust control, no counter hassle."
+      },
+      "reasons_against": {
+        "B": "it is near the budget limit and uses counter space"
+      },
+      "challenges_received": 1,
+      "concessions_made": 0,
+      "current_acceptance": "A",
+      "public_lean": "A",
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Hey, I’m leaning towards the Eufy Robot Vacuum since it actually cuts down visible dust without extra work.",
+        "Robot Vacuum’s 260 euros leaves room for other stuff, dishwasher maxes out our 450 budget.",
+        "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling.",
+        "Supplies Kit only helps manual cleaning, but Dishwasher wastes budget and counter space.",
+        "Robot Vacuum costs way less and actually cuts down the visible dust daily—Dishwasher just clutters counters.",
+        "We don’t know how much counter space Bosch Dishwasher really needs—that’s a big risk.",
+        "Robot Vacuum still beats Dishwasher since it cuts dust daily without any extra effort.",
+        "But Bosch Dishwasher costs 430 euros—near our full budget, no room left for anything else.",
+        "What matters most to me is actually seeing less dust and mess on the floors every day.",
+        "Robot Vacuum needs clear paths but that’s manageable; dishwasher wastes counter space and budget.",
+        "I vote Robot Vacuum—better daily dust control, no counter hassle.",
+        "I think we're genuinely stuck between Robot Vacuum and Dishwasher."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 10,
+      "last_spoke_turn": 24,
+      "option_ranks": {
+        "A": 1,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "Dishwasher gets my vote."
+      },
+      "reasons_against": {
+        "A": "it does not help with dishes or kitchen cleanup"
+      },
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "current_acceptance": "B",
+      "public_lean": "B",
+      "explicit_vote": "B",
+      "vote_stance": "vote",
+      "already_said": [
+        "The Bosch Compact Dishwasher at 430 euros removes daily dishes, which cause most cleaning fights here.",
+        "The Cleaning Trial covers multiple chores for 80 euros monthly, but scheduling is uncertain—dishwasher removes daily dishes directly for 430 euros.",
+        "Supplies Kit costs 70 euros but only aids manual cleaning, unlike dishwasher removing daily dishes.",
+        "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does.",
+        "Kitchen counters matter, but dishes causing friction is the real priority here.",
+        "We don’t know if Eufy Robot Vacuum handles kitchen crumbs well—dust isn’t our main problem.",
+        "We still don’t know if Bosch Dishwasher fits our kitchen layout without losing too much counter space.",
+        "The Bosch Dishwasher saves us time every day—no scheduling hassles, unlike the Cleaning Trial.",
+        "The Robot Vacuum’s need for clear floor paths isn’t detailed—how tight are those requirements?",
+        "Dishwasher gets my vote."
+      ],
+      "switch_events": []
+    }
+  },
+  "threads": {
+    "t001": {
+      "thread_id": "t001",
+      "thread_type": "comparison",
+      "status": "stale",
+      "focus_options": [
+        "B",
+        "C"
+      ],
+      "issue_key": "pair",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 5,
+      "created_turn": 5,
+      "last_touched_turn": 6,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t002": {
+      "thread_id": "t002",
+      "thread_type": "comparison",
+      "status": "stale",
+      "focus_options": [
+        "B",
+        "D"
+      ],
+      "issue_key": "pair",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 7,
+      "created_turn": 7,
+      "last_touched_turn": 8,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t003": {
+      "thread_id": "t003",
+      "thread_type": "comparison",
+      "status": "hot",
+      "focus_options": [
+        "A",
+        "B"
+      ],
+      "issue_key": "pair",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 3,
+      "probe_count": 0,
+      "source_turn_index": 9,
+      "created_turn": 9,
+      "last_touched_turn": 21,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t004": {
+      "thread_id": "t004",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "A"
+      ],
+      "issue_key": "concern:cleanup-dishes-does",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 13,
+      "created_turn": 13,
+      "last_touched_turn": 14,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t005": {
+      "thread_id": "t005",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "A"
+      ],
+      "issue_key": "sig:are-clear-detailed",
+      "started_by": "p2",
+      "required_respondent": "p1",
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 20,
+      "created_turn": 20,
+      "last_touched_turn": 21,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "group"
+    }
+  },
+  "active_repair": null,
+  "repair_history": [],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose whether two roommates should upgrade cleaning at home.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Eufy Robot Vacuum — cost: 260 euros; task: daily floor cleaning; space: needs clear floor paths (+ reduces visible dust without manual effort; − does not help with dishes or kitchen cleanup)\nB) Bosch Compact Dishwasher — cost: 430 euros; task: daily dishes; space: uses counter space (+ removes the most common kitchen chore; − does not help with dust or floors)\nC) Monthly Cleaning Service Trial — cost: 80 euros per month; task: general cleaning; duration: three-month trial (+ covers several chores without buying equipment; − depends on scheduling someone to come in)\nD) Shared Cleaning Supplies Kit — cost: 70 euros; task: manual cleaning; storage: small closet box (+ cheap and easy to start immediately; − may not change habits enough)\nContext: Two roommates share the apartment costs equally.; The maximum budget is 450 euros.; Both want less weekly cleaning friction.\nLet's discuss which option fits best overall.",
+      "phase": "opening",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 2,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Hey, I’m leaning towards the Eufy Robot Vacuum since it actually cuts down visible dust without extra work.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 609,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Hey, I’m leaning towards the Eufy Robot Vacuum since it actually cuts down visible dust without extra work.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Eufy Robot Vacuum",
+              "start": 29
+            },
+            "order": 0,
+            "alias_form": "Eufy Robot Vacuum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "A",
+            "strength": "firm",
+            "span": {
+              "text": "Hey, I’m leaning towards the Eufy Robot Vacuum since it actually cuts down visible dust without extra work.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [
+          {
+            "span": {
+              "text": "Hey, I’m leaning towards the Eufy Robot Vacuum since it actually cuts down visible dust without extra work.",
+              "start": 0
+            },
+            "option_id": "A",
+            "concession": false
+          }
+        ],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 16
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "The Bosch Compact Dishwasher at 430 euros removes daily dishes, which cause most cleaning fights here.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 654,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Bosch Compact Dishwasher at 430 euros removes daily dishes, which cause most cleaning fights here.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch Compact Dishwasher",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Bosch Compact Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 17
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Robot Vacuum’s 260 euros leaves room for other stuff, dishwasher maxes out our 450 budget.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration that favors Robot Vacuum and has not come up yet",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 3,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 773,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Robot Vacuum’s 260 euros leaves room for other stuff, dishwasher maxes out our 450 budget.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "dishwasher",
+              "start": 54
+            },
+            "order": 1,
+            "alias_form": "dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 4,
+      "assigned_max_words": 7
+    },
+    {
+      "index": 5,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "The Cleaning Trial covers multiple chores for 80 euros monthly, but scheduling is uncertain—dishwasher removes daily dishes directly for 430 euros.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "bring Cleaning Trial into the discussion — it has not really come up yet — and compare it with your current lean",
+        "route_source": "coverage",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 790,
+      "tokens_out": 34,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Cleaning Trial covers multiple chores for 80 euros monthly, but scheduling is uncertain—dishwasher removes daily dishes directly for 430 euros.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Cleaning Trial",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Cleaning Trial",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "dishwasher",
+              "start": 92
+            },
+            "order": 1,
+            "alias_form": "dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "C",
+              "B"
+            ],
+            "span": {
+              "text": "The Cleaning Trial covers multiple chores for 80 euros monthly, but scheduling is uncertain—dishwasher removes daily dishes directly for 430 euros.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "someone just weighed Dishwasher against Cleaning Trial — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": "t001",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1378,
+      "tokens_out": 52,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 10
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Cleaning Trial",
+              "start": 65
+            },
+            "order": 2,
+            "alias_form": "Cleaning Trial",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "B",
+              "C"
+            ],
+            "span": {
+              "text": "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Supplies Kit costs 70 euros but only aids manual cleaning, unlike dishwasher removing daily dishes.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "bring Supplies Kit into the discussion — it has not really come up yet — and compare it with your current lean",
+        "route_source": "coverage",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 815,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Supplies Kit costs 70 euros but only aids manual cleaning, unlike dishwasher removing daily dishes.",
+        "mentions": [
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Supplies Kit",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Supplies Kit",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "dishwasher",
+              "start": 66
+            },
+            "order": 1,
+            "alias_form": "dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "D",
+              "B"
+            ],
+            "span": {
+              "text": "Supplies Kit costs 70 euros but only aids manual cleaning, unlike dishwasher removing daily dishes.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Supplies Kit only helps manual cleaning, but Dishwasher wastes budget and counter space.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "someone just weighed Dishwasher against Supplies Kit — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": "t002",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 834,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Supplies Kit only helps manual cleaning, but Dishwasher wastes budget and counter space.",
+        "mentions": [
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Supplies Kit",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Supplies Kit",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 45
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "D",
+              "B"
+            ],
+            "span": {
+              "text": "Supplies Kit only helps manual cleaning, but Dishwasher wastes budget and counter space.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 9,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "compare Dishwasher, Robot Vacuum with one clear trade-off",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1377,
+      "tokens_out": 45,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "MISSING_REQUIRED_OPTION_FOCUS"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 61
+            },
+            "order": 1,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 67
+            },
+            "order": 2,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "A",
+              "B"
+            ],
+            "span": {
+              "text": "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Robot Vacuum costs way less and actually cuts down the visible dust daily—Dishwasher just clutters counters.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "someone just weighed Robot Vacuum against Dishwasher — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": "t003",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 821,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Robot Vacuum costs way less and actually cuts down the visible dust daily—Dishwasher just clutters counters.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 74
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "A",
+              "B"
+            ],
+            "span": {
+              "text": "Robot Vacuum costs way less and actually cuts down the visible dust daily—Dishwasher just clutters counters.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 11,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Kitchen counters matter, but dishes causing friction is the real priority here.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "comment",
+        "reason": "briefly acknowledge or interpret the point just made — one light beat, no new argument needed",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 816,
+      "tokens_out": 21,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Kitchen counters matter, but dishes causing friction is the real priority here.",
+        "mentions": [],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": false,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 12,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "We don’t know how much counter space Bosch Dishwasher really needs—that’s a big risk.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "push back on Dishwasher with one concrete concern — you currently favor Robot Vacuum, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 811,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "We don’t know how much counter space Bosch Dishwasher really needs—that’s a big risk.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 37
+            },
+            "order": 0,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 43
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 13,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "We don’t know if Eufy Robot Vacuum handles kitchen crumbs well—dust isn’t our main problem.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "push back on Robot Vacuum with one concrete concern — you currently favor Dishwasher, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 2,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 829,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "We don’t know if Eufy Robot Vacuum handles kitchen crumbs well—dust isn’t our main problem.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Eufy Robot Vacuum",
+              "start": 17
+            },
+            "order": 0,
+            "alias_form": "Eufy Robot Vacuum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [
+          {
+            "option_id": "A",
+            "severity": "ordinary",
+            "span": {
+              "text": "We don’t know if Eufy Robot Vacuum handles kitchen crumbs well—dust isn’t our main problem.",
+              "start": 0
+            }
+          }
+        ],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "concern"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Robot Vacuum still beats Dishwasher since it cuts dust daily without any extra effort.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "a concern was raised about Robot Vacuum, which you back — respond to the issue directly and defend it with one grounded reason",
+        "route_source": "thread_hot",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 763,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Robot Vacuum still beats Dishwasher since it cuts dust daily without any extra effort.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 25
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 15,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "We still don’t know if Bosch Dishwasher fits our kitchen layout without losing too much counter space.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "someone responded to your point about Robot Vacuum — it does not fully settle it for you: push back once with the one thing that still bothers you; do not restate the original wording",
+        "route_source": "thread_cooling",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 14,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 786,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "We still don’t know if Bosch Dishwasher fits our kitchen layout without losing too much counter space.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 23
+            },
+            "order": 0,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 29
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": false,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "But Bosch Dishwasher costs 430 euros—near our full budget, no room left for anything else.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "push back on Dishwasher with one concrete concern — you currently favor Robot Vacuum, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 818,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "But Bosch Dishwasher costs 430 euros—near our full budget, no room left for anything else.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 10
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 4,
+      "assigned_max_words": 7
+    },
+    {
+      "index": 17,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "The Bosch Dishwasher saves us time every day—no scheduling hassles, unlike the Cleaning Trial.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "bring up a practical, everyday consideration that favors Dishwasher and has not come up yet",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 808,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Bosch Dishwasher saves us time every day—no scheduling hassles, unlike the Cleaning Trial.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bosch",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Bosch",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 10
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Cleaning Trial",
+              "start": 79
+            },
+            "order": 2,
+            "alias_form": "Cleaning Trial",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "What matters most to me is actually seeing less dust and mess on the floors every day.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "comment",
+        "reason": "say in one casual line what matters most to you in this choice, without pushing Dishwasher, Cleaning Trial, Robot Vacuum",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 849,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "What matters most to me is actually seeing less dust and mess on the floors every day.",
+        "mentions": [],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": false,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Looks like we’re leaning toward one option—does anyone see any major reasons to hold off on deciding?",
+      "phase": "narrowing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "The Robot Vacuum’s need for clear floor paths isn’t detailed—how tight are those requirements?",
+      "phase": "narrowing",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "concern",
+        "reason": "answer the narrowing question by naming the one concrete thing that still blocks Robot Vacuum for you; this is not a final vote",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 777,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Robot Vacuum’s need for clear floor paths isn’t detailed—how tight are those requirements?",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "group",
+            "span": {
+              "text": "The Robot Vacuum’s need for clear floor paths isn’t detailed—how tight are those requirements?",
+              "start": 0
+            },
+            "addressee_id": null,
+            "option_ids": [
+              "A"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "Robot Vacuum needs clear paths but that’s manageable; dishwasher wastes counter space and budget.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p2",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 20,
+        "thread_id": "t005",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 768,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Robot Vacuum needs clear paths but that’s manageable; dishwasher wastes counter space and budget.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "dishwasher",
+              "start": 54
+            },
+            "order": 1,
+            "alias_form": "dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "A",
+              "B"
+            ],
+            "span": {
+              "text": "Robot Vacuum needs clear paths but that’s manageable; dishwasher wastes counter space and budget.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "Robot Vacuum needs clear paths but that’s manageable; dishwasher wastes counter space and budget.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 12
+    },
+    {
+      "index": 22,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright everyone, please share your final choice by naming the single option you’re going with.",
+      "phase": "voting",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 23,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "I vote Robot Vacuum—better daily dust control, no counter hassle.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 853,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I vote Robot Vacuum—better daily dust control, no counter hassle.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "A",
+            "span": {
+              "text": "I vote Robot Vacuum—better daily dust control, no counter hassle.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 3,
+      "assigned_max_words": 6
+    },
+    {
+      "index": 24,
+      "speaker_id": "p2",
+      "speaker_name": "Felix",
+      "text": "Dishwasher gets my vote.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible vote for the best acceptable alternative and briefly mention why the candidate is blocked",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "B",
+        "old_preference": "B",
+        "allowed_reason": "the tested candidate is blocked, so this is the best acceptable option",
+        "continuation": false
+      },
+      "tokens_in": 1445,
+      "tokens_out": 43,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNCLEAR_VISIBLE_COMMITMENT"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true,
+      "fallback_family": "vote",
+      "evidence": {
+        "utterance": "Dishwasher gets my vote.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher gets my vote.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 12
+    },
+    {
+      "index": 25,
+      "speaker_id": "p1",
+      "speaker_name": "Maja",
+      "text": "I think we're genuinely stuck between Robot Vacuum and Dishwasher.",
+      "phase": "closing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I think we're genuinely stuck between Robot Vacuum and Dishwasher.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Robot Vacuum",
+              "start": 38
+            },
+            "order": 0,
+            "alias_form": "Robot Vacuum",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Dishwasher",
+              "start": 55
+            },
+            "order": 1,
+            "alias_form": "Dishwasher",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 26,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We haven't reached a majority, so we'll leave this unresolved for now.",
+      "phase": "closing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    }
+  ],
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "reason": "Visible commitments did not produce a unique majority.",
+    "turns": 21,
+    "metadata": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "B"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "B"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 5,
+          "B": 1,
+          "C": 3,
+          "D": 3
+        },
+        "p2": {
+          "A": 1,
+          "B": 5,
+          "C": 3,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=10, force=15, hard=17, distinct_initial_prefs=2, avg_flexibility=0.05",
+        "turn 3: discussion — all participants gave an opening view",
+        "turn 18: narrowing — hard cap reached; forcing narrowing instead of closing early",
+        "turn 20: voting — narrowing complete; collecting formal votes",
+        "turn 24: closing — no visible majority after bounded repair; unresolved"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 10,
+      "force_narrow_turns": 15,
+      "hard_max_turns": 17
+    }
+  },
+  "phase_history": [
+    "pacing: min=10, force=15, hard=17, distinct_initial_prefs=2, avg_flexibility=0.05",
+    "turn 3: discussion — all participants gave an opening view",
+    "turn 18: narrowing — hard cap reached; forcing narrowing instead of closing early",
+    "turn 20: voting — narrowing complete; collecting formal votes",
+    "turn 24: closing — no visible majority after bounded repair; unresolved",
+    "turn 26: closing — closed as unresolved"
+  ],
+  "controller_trace": [
+    {
+      "type": "moderator_turn",
+      "turn_index": 1,
+      "phase": "opening"
+    },
+    {
+      "type": "turn",
+      "turn_index": 2,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "softening",
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 609,
+        "tokens_out": 30,
+        "assigned_word_bounds": [
+          8,
+          16
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 3,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 654,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          9,
+          17
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (0, 0, 0, 0) -> (1, 0, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 3,
+      "from_phase": "opening",
+      "to_phase": "discussion",
+      "reason": "all participants gave an opening view"
+    },
+    {
+      "type": "turn",
+      "turn_index": 4,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 3,
+        "coverage_gaps": [
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 773,
+        "tokens_out": 28,
+        "assigned_word_bounds": [
+          4,
+          7
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (1, 1, 0, 0) -> (2, 1, 0, 0)",
+          "coverage:B: (1, 0, 0, 0) -> (2, 0, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "coverage",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": true,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 790,
+        "tokens_out": 34,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (2, 0, 0, 0) -> (3, 1, 0, 0)",
+          "coverage:C: (0, 0, 0, 0) -> (1, 1, 0, 0)",
+          "thread:t001: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 6,
+      "pre": {
+        "routed_thread_id": "t001",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "MISSING_REQUIRED_OPTION_FOCUS"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1378,
+        "tokens_out": 52,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {
+          "initial": "The dishwasher maxes our budget and clutters counter space—robot vacuum keeps floors clean easier.",
+          "repairs": [
+            "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling."
+          ],
+          "fallback": "",
+          "accepted": "The Bosch Dishwasher uses counter space and costs 430 euros; the Cleaning Trial is cheaper but needs scheduling."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (3, 1, 0, 0) -> (4, 2, 0, 0)",
+          "coverage:C: (1, 1, 0, 0) -> (2, 2, 0, 0)",
+          "thread:t001: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 7,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "coverage",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": true,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "D"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 815,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (4, 2, 0, 0) -> (5, 3, 0, 0)",
+          "coverage:D: (0, 0, 0, 0) -> (1, 1, 0, 0)",
+          "thread:t002: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 8,
+      "pre": {
+        "routed_thread_id": "t002",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "D"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "D"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 834,
+        "tokens_out": 23,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (5, 3, 0, 0) -> (6, 4, 0, 0)",
+          "coverage:D: (1, 1, 0, 0) -> (2, 2, 0, 0)",
+          "thread:t002: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 9,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "MISSING_REQUIRED_OPTION_FOCUS"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "A",
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1377,
+        "tokens_out": 45,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {
+          "initial": "Robot Vacuum costs less but doesn’t solve dishes, which cause most conflict here.",
+          "repairs": [
+            "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does."
+          ],
+          "fallback": "",
+          "accepted": "Robot Vacuum costs less but doesn’t remove daily dishes like Bosch Dishwasher does."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (2, 1, 0, 0) -> (3, 2, 0, 0)",
+          "coverage:B: (6, 4, 0, 0) -> (7, 5, 0, 0)",
+          "thread:t003: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 10,
+      "pre": {
+        "routed_thread_id": "t003",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "A",
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 821,
+        "tokens_out": 28,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (3, 2, 0, 0) -> (4, 3, 0, 0)",
+          "coverage:B: (7, 5, 0, 0) -> (8, 6, 0, 0)",
+          "thread:t001: 'cooling' -> 'stale'",
+          "thread:t003: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "comment",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": false,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 816,
+        "tokens_out": 21,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [],
+        "state_changed": false
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 12,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 811,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (8, 6, 0, 0) -> (9, 6, 0, 0)",
+          "thread:t002: 'cooling' -> 'stale'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": 2,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "concern"
+        ],
+        "evidence_bindings": {
+          "concern": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 829,
+        "tokens_out": 29,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (4, 3, 0, 0) -> (5, 3, 1, 0)",
+          "thread:t004: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 14,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "support",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 763,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (5, 3, 1, 0) -> (6, 3, 1, 0)",
+          "coverage:B: (9, 6, 0, 0) -> (10, 6, 0, 0)",
+          "thread:t003: 'cooling' -> 'stale'",
+          "thread:t004: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 15,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "cooling",
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_cooling",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": 14,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": false,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 786,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          5,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (10, 6, 0, 0) -> (11, 6, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 16,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 15,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 818,
+        "tokens_out": 27,
+        "assigned_word_bounds": [
+          4,
+          7
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (11, 6, 0, 0) -> (12, 6, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 17,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 6,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 808,
+        "tokens_out": 24,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (12, 6, 0, 0) -> (13, 6, 0, 0)",
+          "coverage:C: (2, 2, 0, 0) -> (3, 2, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 18,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "comment",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C",
+          "A"
+        ],
+        "respond_to_turn": 17,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": false,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 849,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          7,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "thread:t004: 'cooling' -> 'stale'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 18,
+      "from_phase": "discussion",
+      "to_phase": "narrowing",
+      "reason": "hard cap reached; forcing narrowing instead of closing early"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 19,
+      "phase": "narrowing"
+    },
+    {
+      "type": "turn",
+      "turn_index": 20,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 777,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          5,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (6, 3, 1, 0) -> (7, 3, 1, 0)",
+          "thread:t005: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 20,
+      "from_phase": "narrowing",
+      "to_phase": "voting",
+      "reason": "narrowing complete; collecting formal votes"
+    },
+    {
+      "type": "turn",
+      "turn_index": 21,
+      "pre": {
+        "routed_thread_id": "t005",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "answer_required",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": 20,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": "t005",
+        "required_respondent_id": "p1",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer",
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "A",
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 768,
+        "tokens_out": 24,
+        "assigned_word_bounds": [
+          6,
+          12
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (7, 3, 1, 0) -> (8, 4, 1, 0)",
+          "coverage:B: (13, 6, 0, 0) -> (14, 7, 0, 0)",
+          "thread:t003: 'stale' -> 'hot'",
+          "thread:t005: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 22,
+      "phase": "voting"
+    },
+    {
+      "type": "turn",
+      "turn_index": 23,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p1",
+        "speaker_name": "Maja",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 853,
+        "tokens_out": 20,
+        "assigned_word_bounds": [
+          3,
+          6
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (8, 4, 1, 0) -> (9, 5, 1, 0)",
+          "vote:p1: None -> 'A'",
+          "vote_stance:p1: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 24,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p2",
+        "speaker_name": "Felix",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNCLEAR_VISIBLE_COMMITMENT"
+        ],
+        "fallback_used": true,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "vote",
+        "tokens_in": 1445,
+        "tokens_out": 43,
+        "assigned_word_bounds": [
+          6,
+          12
+        ],
+        "candidate_texts": {
+          "initial": "I commit to Bosch Compact Dishwasher because only it handles the main kitchen chore; Robot Vacuum is blocked.",
+          "repairs": [
+            "I vote Bosch Compact Dishwasher since Robot Vacuum is blocked."
+          ],
+          "fallback": "Dishwasher gets my vote.",
+          "accepted": "Dishwasher gets my vote."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "deterministic fallback: evidence known from construction",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (14, 7, 0, 0) -> (15, 8, 0, 0)",
+          "thread:t005: 'cooling' -> 'resolved'",
+          "vote:p2: None -> 'B'",
+          "vote_stance:p2: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 24,
+      "from_phase": "voting",
+      "to_phase": "closing",
+      "reason": "no visible majority after bounded repair; unresolved"
+    },
+    {
+      "type": "peer_procedure",
+      "turn_index": 25,
+      "phase": "closing",
+      "speaker_id": "p1",
+      "act": "support",
+      "option_focus": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 26,
+      "phase": "closing"
+    }
+  ],
+  "metrics": {
+    "metric_schema_version": "2.1",
+    "run_structure": {
+      "participant_turn_count": 22,
+      "participant_turn_count_by_persona": {
+        "Maja": 12,
+        "Felix": 10
+      },
+      "moderator_turns": 4,
+      "moderator_ratio": 0.154,
+      "avg_words_per_participant_turn": 14.318,
+      "avg_words_by_persona": {
+        "Maja": 14.5,
+        "Felix": 14.1
+      },
+      "question_density": 0.045
+    },
+    "participation": {
+      "expected_engagement": {
+        "Maja": 0.55,
+        "Felix": 0.6
+      },
+      "expected_turn_share": {
+        "Maja": 0.486,
+        "Felix": 0.514
+      },
+      "realized_turn_count": {
+        "Maja": 12,
+        "Felix": 10
+      },
+      "realized_turn_share": {
+        "Maja": 0.545,
+        "Felix": 0.455
+      },
+      "participation_gini": 0.045,
+      "engagement_behavior_correlation": null
+    },
+    "traits": {
+      "expected_verbosity": {
+        "Maja": 0.45,
+        "Felix": 0.5
+      },
+      "assigned_avg_word_budget": {
+        "Maja": 8.818,
+        "Felix": 10.3
+      },
+      "realized_avg_words_per_turn": {
+        "Maja": 14.5,
+        "Felix": 14.1
+      },
+      "word_budget_adherence": {
+        "Maja": 0.455,
+        "Felix": 0.6
+      },
+      "verbosity_budget_correlation": null,
+      "verbosity_behavior_correlation": null,
+      "expected_switch_resistance": {
+        "Maja": 0.95,
+        "Felix": 0.95
+      },
+      "switch_opportunities": {
+        "Maja": 0,
+        "Felix": 0
+      },
+      "visible_switches_by_persona": {
+        "Maja": 0,
+        "Felix": 0
+      }
+    },
+    "interaction": {
+      "question_threads": 1,
+      "concern_threads": 1,
+      "thread_count_by_status": {
+        "hot": 1,
+        "cooling": 0,
+        "resolved": 1,
+        "stale": 3
+      },
+      "question_completion_rate": 1.0,
+      "concern_response_rate": 1.0,
+      "repetition_score": 0.194
+    },
+    "decision_behavior": {
+      "visible_votes": {
+        "p1": "A",
+        "p2": "B"
+      },
+      "outcome_status": "unresolved",
+      "final_option": null,
+      "switch_event_count": 0,
+      "discussion_lean_shifts": 0,
+      "runtime_preferred_by_rank": {
+        "Maja": "A",
+        "Felix": "B"
+      },
+      "option_coverage": {
+        "A": {
+          "mentions": 9,
+          "reasons": 5,
+          "objections": 1,
+          "acceptances": 0
+        },
+        "B": {
+          "mentions": 15,
+          "reasons": 8,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "C": {
+          "mentions": 3,
+          "reasons": 2,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "D": {
+          "mentions": 2,
+          "reasons": 2,
+          "objections": 0,
+          "acceptances": 0
+        }
+      },
+      "compromise_attempt_count": 0,
+      "compromise_success_count": 0,
+      "compromise_success_rate": null,
+      "vote_state_consistency_failures": 0,
+      "active_blockers_at_close": {
+        "Maja": [
+          "B"
+        ],
+        "Felix": [
+          "A"
+        ]
+      }
+    },
+    "validation_grounding": {
+      "repaired_turns": 3,
+      "repair_rate": 0.136,
+      "fallback_turns": 1,
+      "fallback_rate": 0.045,
+      "dropped_turns": 0,
+      "drop_rate": 0.0,
+      "critical_grounding_interventions": 0,
+      "runtime_validator_calls": 0
+    },
+    "token_usage": {
+      "setup": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_calls": 0
+      },
+      "participant_generation": {
+        "input_tokens": 16776,
+        "output_tokens": 536,
+        "api_calls": 21
+      },
+      "moderator_generation": {
+        "input_tokens": 595,
+        "output_tokens": 39,
+        "api_calls": 2
+      },
+      "repair_generation": {
+        "input_tokens": 1598,
+        "output_tokens": 66,
+        "api_calls": 3
+      },
+      "runtime_validation": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_calls": 0
+      },
+      "total": {
+        "input_tokens": 18969,
+        "output_tokens": 641,
+        "api_calls": 26
+      }
+    }
+  },
+  "tokens": {
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 18969,
+    "dialogue_tokens_out": 641,
+    "validator_tokens_in": 0,
+    "validator_tokens_out": 0,
+    "total_tokens_in": 18969,
+    "total_tokens_out": 641
+  },
+  "token_usage_by_call_type": {
+    "utterance": {
+      "in": 16776,
+      "out": 536,
+      "calls": 21
+    },
+    "repair": {
+      "in": 1598,
+      "out": 66,
+      "calls": 3
+    },
+    "moderator": {
+      "in": 595,
+      "out": 39,
+      "calls": 2
+    }
+  },
+  "validation_stats": {
+    "logical_checks": 0,
+    "fast_paths": 25,
+    "api_retries": 0,
+    "retry_failures": {}
+  }
+}

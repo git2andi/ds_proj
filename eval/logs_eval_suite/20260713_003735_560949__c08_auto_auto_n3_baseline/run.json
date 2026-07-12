@@ -1,0 +1,5012 @@
+{
+  "run_id": "20260713_003735_560949",
+  "case_id": "c08_auto_auto_n3_baseline",
+  "suite_version": "critical-validation-consensus-v8",
+  "case_fingerprint": "c8b4f495f3617c62",
+  "topic": "Choose a shared scheduling method for a volunteer group",
+  "llm": {
+    "dialogue": {
+      "provider": "gpt",
+      "model": "gpt-4.1-mini"
+    },
+    "runtime_validation": {
+      "mode": "critical",
+      "llm_used": false
+    }
+  },
+  "participants_mode": "auto",
+  "environment_mode": "auto",
+  "validation_mode": "critical",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a shared scheduling method for a volunteer group",
+    "options": [
+      {
+        "id": "A",
+        "name": "Google Calendar Shared Group Calendar",
+        "attrs": {
+          "cost": "free",
+          "notification_type": "email and app alerts",
+          "setup_complexity": "medium"
+        },
+        "upside": "Easy to see everyone's availability and get automatic reminders.",
+        "concern": "Requires all participants to have Google accounts and be comfortable with calendar apps.",
+        "short_name": "Google Calendar"
+      },
+      {
+        "id": "B",
+        "name": "Weekly Doodle Poll Scheduling",
+        "attrs": {
+          "cost": "free",
+          "response_time": "up to 48 hours",
+          "flexibility": "high"
+        },
+        "upside": "Allows flexible input on preferred times without needing accounts.",
+        "concern": "Takes extra time to collect responses and finalize the schedule.",
+        "short_name": "Doodle Poll"
+      },
+      {
+        "id": "C",
+        "name": "WhatsApp Group Chat Coordination",
+        "attrs": {
+          "cost": "free",
+          "real_time_updates": "instant",
+          "record_of_agreement": "informal"
+        },
+        "upside": "Fast, informal communication with instant feedback from all members.",
+        "concern": "Scheduling details can get lost in chat history and cause confusion.",
+        "short_name": "WhatsApp Chat"
+      },
+      {
+        "id": "D",
+        "name": "Monthly Fixed Meeting Time Agreement",
+        "attrs": {
+          "flexibility": "low",
+          "consistency": "high",
+          "rescheduling_frequency": "rare"
+        },
+        "upside": "Simplifies planning by having a predictable, recurring meeting time.",
+        "concern": "May not accommodate occasional schedule conflicts or changing availability.",
+        "short_name": "Fixed Time"
+      }
+    ],
+    "shared_context": [
+      "The volunteer group has exactly 3 participants.",
+      "All participants have smartphones and basic internet access.",
+      "The group meets irregularly, roughly once every 1-2 weeks."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Marco",
+      "traits": {
+        "openness": 4,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7000000000000001,
+        "verbosity": 0.6625000000000001,
+        "directness": 0.725,
+        "stubbornness": 0.275,
+        "switch_resistance": 0.375
+      },
+      "background": "Marco is an early-career professional who values flexibility and does not want to be tied down by rigid scheduling.",
+      "private_goal": "He prefers a scheduling method that allows everyone to express their availability easily without requiring account setups.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Good for visibility and reminders",
+          "reason_against": "Requires Google accounts which some may find inconvenient"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Allows flexible input on preferred times without needing accounts",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Scheduling details can get lost in chat history"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Low flexibility may not suit irregular meeting times"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Daria",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 2,
+        "agreeableness": 3,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.47500000000000003,
+        "verbosity": 0.5875,
+        "directness": 0.5625,
+        "stubbornness": 0.39999999999999997,
+        "switch_resistance": 0.4
+      },
+      "background": "Daria is a mid-career professional who values structure and reliable reminders to manage her busy schedule.",
+      "private_goal": "She prefers a method that integrates well with existing tools and provides automatic notifications.",
+      "preferred_options": [
+        "A",
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Easy to see everyone's availability and get automatic reminders",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Takes extra time to collect responses"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Scheduling details can get lost in chat history"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Simplifies planning by having a predictable, recurring meeting time",
+          "reason_against": "May not accommodate occasional schedule conflicts"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Leo",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 5,
+        "neuroticism": 3
+      },
+      "sim_params": {
+        "engagement": 0.7000000000000001,
+        "verbosity": 0.6000000000000001,
+        "directness": 0.725,
+        "stubbornness": 0.325,
+        "switch_resistance": 0.425
+      },
+      "background": "Leo is an established professional who values quick, informal communication and immediate responses.",
+      "private_goal": "He prefers a scheduling method that allows instant feedback and fast coordination without formal setups.",
+      "preferred_options": [
+        "C",
+        "B"
+      ],
+      "age": 45,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Requires Google accounts and calendar familiarity"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Allows flexible input without needing accounts",
+          "reason_against": "Takes extra time to finalize"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Fast, informal communication with instant feedback",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": "Low flexibility may not suit irregular meetings"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 9,
+      "last_spoke_turn": 26,
+      "option_ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "reasons_for": {
+        "A": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+        "B": "I commit to Doodle Poll since it offers the most flexibility."
+      },
+      "reasons_against": {
+        "A": "Requires Google accounts which some may find inconvenient",
+        "C": "Scheduling details can get lost in chat history",
+        "D": "Fixed Time’s low flexibility won’t fit our irregular schedule, and Google Calendar needs everyone on Google accounts."
+      },
+      "challenges_received": 0,
+      "concessions_made": 1,
+      "current_acceptance": "A",
+      "public_lean": "A",
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "What I like about a Doodle Poll is that it lets us all easily put in preferred times without needing accounts. It might take up to 48 hours for responses, but that flexibility feels worth it for our irregular meetups.",
+        "WhatsApp’s instant feedback is nice, but with just three of us, Doodle’s flexibility without accounts still wins for me.",
+        "Fixed Time’s low flexibility won’t fit our irregular schedule, and Google Calendar needs everyone on Google accounts.",
+        "Leo, how often do you think instant feedback beats Doodle’s 48-hour response window?",
+        "Google Calendar needs everyone to have Google accounts—do we know if that’s a given for all three of us?",
+        "I could live with Google Calendar since its automatic reminders help keep us on track.",
+        "I commit to Doodle Poll since it offers the most flexibility.",
+        "What still bugs me is everyone needing Google accounts and app comfort.",
+        "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "A",
+          "has_reason": true,
+          "has_bridge": true,
+          "turn_index": 26,
+          "route_source": "split_vote_repair",
+          "phase": "compromise_repair"
+        }
+      ]
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 7,
+      "last_spoke_turn": 25,
+      "option_ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 4
+      },
+      "reasons_for": {
+        "A": "I vote Google Calendar for clear availability and reliable reminders.",
+        "D": "Simplifies planning by having a predictable, recurring meeting time"
+      },
+      "reasons_against": {
+        "B": "Takes extra time to collect responses",
+        "C": "Scheduling details can get lost in chat history",
+        "D": "May not accommodate occasional schedule conflicts"
+      },
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "current_acceptance": "A",
+      "public_lean": "A",
+      "explicit_vote": "A",
+      "vote_stance": "vote",
+      "already_said": [
+        "Google Calendar works well for me because it shows everyone's availability clearly and sends automatic reminders. It might take some getting used to, but the notifications help keep things on track.",
+        "Fixed Time simplifies planning with a consistent slot, but Google Calendar's automatic reminders and availability view fit better here.",
+        "Even if setting up Google Calendar takes some effort, its automatic reminders really keep us on track.",
+        "Google Calendar also helps us spot overlaps quickly, which Fixed Time can’t do as easily.",
+        "We don’t know about Google accounts here, but Google Calendar’s automatic reminders really help reduce no-shows.",
+        "I vote Google Calendar for clear availability and reliable reminders.",
+        "We can’t change the Google account need, but the free automatic reminders make it worth trying."
+      ],
+      "switch_events": []
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 7,
+      "last_spoke_turn": 22,
+      "option_ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "Allows flexible input without needing accounts",
+        "C": "I pick WhatsApp Chat because instant feedback keeps us aligned quickly."
+      },
+      "reasons_against": {
+        "A": "Requires Google accounts and calendar familiarity",
+        "B": "Takes extra time to finalize",
+        "D": "Low flexibility may not suit irregular meetings"
+      },
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "current_acceptance": "C",
+      "public_lean": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "already_said": [
+        "WhatsApp Group Chat is my current favorite since it offers instant feedback from all three of us. It keeps coordination fast, though details might get buried in chat history.",
+        "Doodle’s fine, but WhatsApp’s instant feedback matters most to me.",
+        "Fixed Time’s consistency is clear, but it’s a trade-off with flexibility we’ll have to weigh.",
+        "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours.",
+        "WhatsApp chat keeps everyone in the loop instantly, which really suits our irregular 1-2 week meetings.",
+        "Since it’s down to Google Calendar versus Doodle Poll, let’s settle on one now.",
+        "I pick WhatsApp Chat because instant feedback keeps us aligned quickly."
+      ],
+      "switch_events": []
+    }
+  },
+  "threads": {
+    "t001": {
+      "thread_id": "t001",
+      "thread_type": "comparison",
+      "status": "stale",
+      "focus_options": [
+        "B",
+        "C"
+      ],
+      "issue_key": "pair",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 5,
+      "created_turn": 5,
+      "last_touched_turn": 6,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t002": {
+      "thread_id": "t002",
+      "thread_type": "comparison",
+      "status": "stale",
+      "focus_options": [
+        "A",
+        "D"
+      ],
+      "issue_key": "pair",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 7,
+      "created_turn": 7,
+      "last_touched_turn": 8,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t003": {
+      "thread_id": "t003",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "D"
+      ],
+      "issue_key": "flexibility",
+      "started_by": "p1",
+      "required_respondent": null,
+      "participants_involved": [
+        "p1",
+        "p3"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 8,
+      "created_turn": 8,
+      "last_touched_turn": 9,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t004": {
+      "thread_id": "t004",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "B"
+      ],
+      "issue_key": "timing",
+      "started_by": "p1",
+      "required_respondent": "p3",
+      "participants_involved": [
+        "p1",
+        "p3"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 10,
+      "created_turn": 10,
+      "last_touched_turn": 11,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "direct"
+    },
+    "t005": {
+      "thread_id": "t005",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "A"
+      ],
+      "issue_key": "concern:accounts-all-apps",
+      "started_by": "p1",
+      "required_respondent": "p2",
+      "participants_involved": [
+        "p1",
+        "p2"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 15,
+      "created_turn": 15,
+      "last_touched_turn": 16,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "direct"
+    },
+    "t006": {
+      "thread_id": "t006",
+      "thread_type": "comparison",
+      "status": "hot",
+      "focus_options": [
+        "A",
+        "B"
+      ],
+      "issue_key": "pair",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 17,
+      "created_turn": 17,
+      "last_touched_turn": 26,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    }
+  },
+  "active_repair": null,
+  "repair_history": [
+    {
+      "repair_reason": "split_vote",
+      "candidate_or_pair": [
+        "A"
+      ],
+      "participants_involved": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "status": "resolved"
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a shared scheduling method for a volunteer group.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Google Calendar Shared Group Calendar — cost: free; notification type: email and app alerts; setup complexity: medium (+ Easy to see everyone's availability and get automatic reminders; − Requires all participants to have Google accounts and be comfortable with calendar apps)\nB) Weekly Doodle Poll Scheduling — cost: free; response time: up to 48 hours; flexibility: high (+ Allows flexible input on preferred times without needing accounts; − Takes extra time to collect responses and finalize the schedule)\nC) WhatsApp Group Chat Coordination — cost: free; real time updates: instant; record of agreement: informal (+ Fast, informal communication with instant feedback from all members; − Scheduling details can get lost in chat history and cause confusion)\nD) Monthly Fixed Meeting Time Agreement — flexibility: low; consistency: high; rescheduling frequency: rare (+ Simplifies planning by having a predictable, recurring meeting time; − May not accommodate occasional schedule conflicts or changing availability)\nContext: The volunteer group has exactly 3 participants.; All participants have smartphones and basic internet access.; The group meets irregularly, roughly once every 1-2 weeks.\nLet's discuss which option fits best overall.",
+      "phase": "opening",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "WhatsApp Group Chat is my current favorite since it offers instant feedback from all three of us. It keeps coordination fast, though details might get buried in chat history.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 639,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "WhatsApp Group Chat is my current favorite since it offers instant feedback from all three of us. It keeps coordination fast, though details might get buried in chat history.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "WhatsApp",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "WhatsApp",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Chat",
+              "start": 15
+            },
+            "order": 1,
+            "alias_form": "Chat",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "coordination",
+              "start": 107
+            },
+            "order": 2,
+            "alias_form": "coordination",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "chat",
+              "start": 161
+            },
+            "order": 3,
+            "alias_form": "chat",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 11,
+      "assigned_max_words": 19
+    },
+    {
+      "index": 3,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Google Calendar works well for me because it shows everyone's availability clearly and sends automatic reminders. It might take some getting used to, but the notifications help keep things on track.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 698,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Google Calendar works well for me because it shows everyone's availability clearly and sends automatic reminders. It might take some getting used to, but the notifications help keep things on track.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "A",
+            "strength": "firm",
+            "span": {
+              "text": "Google Calendar works well for me because it shows everyone's availability clearly and sends automatic reminders. It might take some getting used to, but the notifications help keep things on track.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 11,
+      "assigned_max_words": 19
+    },
+    {
+      "index": 4,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "What I like about a Doodle Poll is that it lets us all easily put in preferred times without needing accounts. It might take up to 48 hours for responses, but that flexibility feels worth it for our irregular meetups.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded reason without making a final vote",
+        "route_source": "opening",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 733,
+      "tokens_out": 53,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "What I like about a Doodle Poll is that it lets us all easily put in preferred times without needing accounts. It might take up to 48 hours for responses, but that flexibility feels worth it for our irregular meetups.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle Poll",
+              "start": 20
+            },
+            "order": 0,
+            "alias_form": "Doodle Poll",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "B",
+            "strength": "firm",
+            "span": {
+              "text": "What I like about a Doodle Poll is that it lets us all easily put in preferred times without needing accounts. It might take up to 48 hours for responses, but that flexibility feels worth it for our irregular meetups.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 12,
+      "assigned_max_words": 20
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Doodle’s fine, but WhatsApp’s instant feedback matters most to me.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "say plainly what matters most to you personally in this choice and how WhatsApp Chat fits it",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 4,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 844,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Doodle’s fine, but WhatsApp’s instant feedback matters most to me.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Doodle",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "WhatsApp",
+              "start": 19
+            },
+            "order": 1,
+            "alias_form": "WhatsApp",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "B",
+              "C"
+            ],
+            "span": {
+              "text": "Doodle’s fine, but WhatsApp’s instant feedback matters most to me.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 4,
+      "assigned_max_words": 7
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "WhatsApp’s instant feedback is nice, but with just three of us, Doodle’s flexibility without accounts still wins for me.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "someone just weighed Doodle Poll against WhatsApp Chat — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": "t001",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 872,
+      "tokens_out": 33,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "WhatsApp’s instant feedback is nice, but with just three of us, Doodle’s flexibility without accounts still wins for me.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "WhatsApp",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "WhatsApp",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle",
+              "start": 64
+            },
+            "order": 1,
+            "alias_form": "Doodle",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "C",
+              "B"
+            ],
+            "span": {
+              "text": "WhatsApp’s instant feedback is nice, but with just three of us, Doodle’s flexibility without accounts still wins for me.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 10,
+      "assigned_max_words": 17
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Fixed Time simplifies planning with a consistent slot, but Google Calendar's automatic reminders and availability view fit better here.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "compare",
+        "reason": "bring Fixed Time into the discussion — it has not really come up yet — and compare it with your current lean",
+        "route_source": "coverage",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 861,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Fixed Time simplifies planning with a consistent slot, but Google Calendar's automatic reminders and availability view fit better here.",
+        "mentions": [
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Fixed Time",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Fixed Time",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 59
+            },
+            "order": 1,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "D",
+              "A"
+            ],
+            "span": {
+              "text": "Fixed Time simplifies planning with a consistent slot, but Google Calendar's automatic reminders and availability view fit better here.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 8,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Fixed Time’s low flexibility won’t fit our irregular schedule, and Google Calendar needs everyone on Google accounts.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "someone just weighed Google Calendar against Fixed Time — engage that same trade-off with your own view of it; do not open a different topic",
+        "route_source": "thread_hot",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": "t002",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": "tradeoff_but",
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 876,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Fixed Time’s low flexibility won’t fit our irregular schedule, and Google Calendar needs everyone on Google accounts.",
+        "mentions": [
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Fixed Time",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Fixed Time",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 67
+            },
+            "order": 1,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google",
+              "start": 101
+            },
+            "order": 2,
+            "alias_form": "Google",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [
+          {
+            "option_id": "D",
+            "severity": "ordinary",
+            "span": {
+              "text": "Fixed Time’s low flexibility won’t fit our irregular schedule, and Google Calendar needs everyone on Google accounts.",
+              "start": 0
+            }
+          }
+        ],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "concern"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 10,
+      "assigned_max_words": 17
+    },
+    {
+      "index": 9,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Fixed Time’s consistency is clear, but it’s a trade-off with flexibility we’ll have to weigh.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "comment",
+        "reason": "a concern was raised about Fixed Time — say in one beat what the listed facts actually settle about that issue, without taking a side",
+        "route_source": "thread_hot",
+        "addressee_id": "p1",
+        "option_focus": [
+          "D"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 8,
+        "thread_id": "t003",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 754,
+      "tokens_out": 28,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Fixed Time’s consistency is clear, but it’s a trade-off with flexibility we’ll have to weigh.",
+        "mentions": [
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Fixed Time",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Fixed Time",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 16
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Leo, how often do you think instant feedback beats Doodle’s 48-hour response window?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask one concrete question that helps compare Doodle Poll, WhatsApp Chat, Google Calendar",
+        "route_source": "normal",
+        "addressee_id": "p3",
+        "option_focus": [
+          "B",
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 870,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Leo, how often do you think instant feedback beats Doodle’s 48-hour response window?",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle",
+              "start": 51
+            },
+            "order": 0,
+            "alias_form": "Doodle",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "direct",
+            "span": {
+              "text": "Leo, how often do you think instant feedback beats Doodle’s 48-hour response window?",
+              "start": 0
+            },
+            "addressee_id": "p3",
+            "option_ids": [
+              "B"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p1",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "thread_id": "t004",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 1223,
+      "tokens_out": 55,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNLISTED_FEATURE_DETAIL"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle",
+              "start": 23
+            },
+            "order": 0,
+            "alias_form": "Doodle",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle",
+              "start": 60
+            },
+            "order": 1,
+            "alias_form": "Doodle",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Even if setting up Google Calendar takes some effort, its automatic reminders really keep us on track.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a new grounded reason for Google Calendar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 795,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Even if setting up Google Calendar takes some effort, its automatic reminders really keep us on track.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 19
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "WhatsApp chat keeps everyone in the loop instantly, which really suits our irregular 1-2 week meetings.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "add a new grounded reason for WhatsApp Chat, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 865,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "WhatsApp chat keeps everyone in the loop instantly, which really suits our irregular 1-2 week meetings.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "WhatsApp chat",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "WhatsApp chat",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "firm",
+            "span": {
+              "text": "WhatsApp chat keeps everyone in the loop instantly, which really suits our irregular 1-2 week meetings.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 14,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "Google Calendar also helps us spot overlaps quickly, which Fixed Time can’t do as easily.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "support",
+        "reason": "add a new grounded reason for Google Calendar, connected to the current discussion",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 9,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 856,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Google Calendar also helps us spot overlaps quickly, which Fixed Time can’t do as easily.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "D",
+            "span": {
+              "text": "Fixed Time",
+              "start": 59
+            },
+            "order": 1,
+            "alias_form": "Fixed Time",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 15,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "Google Calendar needs everyone to have Google accounts—do we know if that’s a given for all three of us?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "push back on Google Calendar with one concrete concern — you currently favor Doodle Poll, so aim at the rival, not your own pick",
+        "route_source": "normal",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "D",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 916,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Google Calendar needs everyone to have Google accounts—do we know if that’s a given for all three of us?",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google",
+              "start": 39
+            },
+            "order": 1,
+            "alias_form": "Google",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "direct",
+            "span": {
+              "text": "Google Calendar needs everyone to have Google accounts—do we know if that’s a given for all three of us?",
+              "start": 0
+            },
+            "addressee_id": "p2",
+            "option_ids": [
+              "A"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 9,
+      "assigned_max_words": 16
+    },
+    {
+      "index": 16,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "We don’t know about Google accounts here, but Google Calendar’s automatic reminders really help reduce no-shows.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "answer_required",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "thread_id": "t005",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 755,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "We don’t know about Google accounts here, but Google Calendar’s automatic reminders really help reduce no-shows.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google",
+              "start": 20
+            },
+            "order": 0,
+            "alias_form": "Google",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 46
+            },
+            "order": 1,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "A",
+            "strength": "firm",
+            "span": {
+              "text": "We don’t know about Google accounts here, but Google Calendar’s automatic reminders really help reduce no-shows.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "We don’t know about Google accounts here, but Google Calendar’s automatic reminders really help reduce no-shows.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "Since it’s down to Google Calendar versus Doodle Poll, let’s settle on one now.",
+      "phase": "narrowing",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "process",
+        "reason": "sum up that it has come down to Google Calendar versus Doodle Poll, and suggest the group settle that trade-off now instead of circling",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 800,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Since it’s down to Google Calendar versus Doodle Poll, let’s settle on one now.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 19
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle Poll",
+              "start": 42
+            },
+            "order": 1,
+            "alias_form": "Doodle Poll",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "A",
+              "B"
+            ],
+            "span": {
+              "text": "Since it’s down to Google Calendar versus Doodle Poll, let’s settle on one now.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 11
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "I could live with Google Calendar since its automatic reminders help keep us on track.",
+      "phase": "narrowing",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "support",
+        "reason": "answer the narrowing question: say honestly that you could live with Google Calendar and name the one listed fact that makes it workable; this is not a final vote",
+        "route_source": "participant_narrowing",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 790,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I could live with Google Calendar since its automatic reminders help keep us on track.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 18
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "A",
+            "strength": "conditional",
+            "span": {
+              "text": "I could live with Google Calendar since its automatic reminders help keep us on track.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 12
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear everyone’s final choice now—please share which option you’re going with.",
+      "phase": "voting",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 20,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "I vote Google Calendar for clear availability and reliable reminders.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "A",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 833,
+      "tokens_out": 17,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I vote Google Calendar for clear availability and reliable reminders.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "A",
+            "span": {
+              "text": "I vote Google Calendar for clear availability and reliable reminders.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 8
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "I commit to Doodle Poll since it offers the most flexibility.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I vote for"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 815,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I commit to Doodle Poll since it offers the most flexibility.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle Poll",
+              "start": 12
+            },
+            "order": 0,
+            "alias_form": "Doodle Poll",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "B",
+            "span": {
+              "text": "I commit to Doodle Poll since it offers the most flexibility.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 9
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Leo",
+      "text": "I pick WhatsApp Chat because instant feedback keeps us aligned quickly.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm committing to",
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "since it offers the most flexibility"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "C",
+        "old_preference": null,
+        "allowed_reason": "this remains your most defensible choice from the visible discussion",
+        "continuation": false
+      },
+      "tokens_in": 863,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I pick WhatsApp Chat because instant feedback keeps us aligned quickly.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "WhatsApp Chat",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "WhatsApp Chat",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "C",
+            "span": {
+              "text": "I pick WhatsApp Chat because instant feedback keeps us aligned quickly.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 8
+    },
+    {
+      "index": 23,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We are split: Google Calendar (1), Doodle Poll (1), WhatsApp Chat (1). Let's test Google Calendar as the compromise; Marco, what would still block that for you? It is tied for the lead and had the most positive discussion support, so we test it once.",
+      "phase": "compromise_repair",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 24,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "What still bugs me is everyone needing Google accounts and app comfort.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the split prompt: name the single strongest reservation or condition that still makes Google Calendar hard for you. Refer only to this candidate's own listed facts or to unknowns; do not vote yet, do not borrow tradeoffs from another option, and do not invent facts",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 792,
+      "tokens_out": 20,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "What still bugs me is everyone needing Google accounts and app comfort.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google",
+              "start": 39
+            },
+            "order": 0,
+            "alias_form": "Google",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 11
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Daria",
+      "text": "We can’t change the Google account need, but the free automatic reminders make it worth trying.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "respond directly to Marco's reservation about Google Calendar; concede what the option board cannot prove, then point to the candidate's listed fact or trade-off that still makes it workable — no pressure, and do not import facts from any other option",
+        "route_source": "split_vote_repair",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 24,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": true,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false
+      },
+      "tokens_in": 808,
+      "tokens_out": 26,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "We can’t change the Google account need, but the free automatic reminders make it worth trying.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google",
+              "start": 20
+            },
+            "order": 0,
+            "alias_form": "Google",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "We can’t change the Google account need, but the free automatic reminders make it worth trying.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Marco",
+      "text": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "final decision: the controller outcome is a compromise switch; do not add new facts or pressure language",
+        "route_source": "split_vote_repair",
+        "addressee_id": null,
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm committing to"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "A",
+        "old_preference": "B",
+        "allowed_reason": "good for visibility and reminders",
+        "continuation": false
+      },
+      "tokens_in": 956,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Google Calendar",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Google Calendar",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Doodle Poll",
+              "start": 34
+            },
+            "order": 1,
+            "alias_form": "Doodle Poll",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "A",
+              "B"
+            ],
+            "span": {
+              "text": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "A",
+            "span": {
+              "text": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [
+          {
+            "target": "A",
+            "span": {
+              "text": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+              "start": 0
+            },
+            "source": "B",
+            "reason_span": {
+              "text": "I vote Google Calendar instead of Doodle Poll because of better visibility and reminders.",
+              "start": 0
+            }
+          }
+        ],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 14
+    },
+    {
+      "index": 27,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Google Calendar Shared Group Calendar has the majority; Leo still preferred another option.",
+      "phase": "closing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    }
+  ],
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "reason": "2/3 participants visibly committed to the winning option.",
+    "turns": 23,
+    "metadata": {
+      "visible_votes": {
+        "p2": "A",
+        "p1": "A",
+        "p3": "C"
+      },
+      "latent_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "C"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 5,
+          "B": 4,
+          "C": 3,
+          "D": 2
+        },
+        "p2": {
+          "A": 5,
+          "B": 3,
+          "C": 3,
+          "D": 4
+        },
+        "p3": {
+          "A": 3,
+          "B": 4,
+          "C": 5,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.67",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 16: narrowing — stable visible top pair persisted",
+        "turn 18: voting — narrowing complete; collecting formal votes",
+        "turn 22: compromise_repair — running split_vote repair",
+        "turn 26: closing — majority stands after bounded repair"
+      ],
+      "candidate_option": "A",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.67",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 16: narrowing — stable visible top pair persisted",
+    "turn 18: voting — narrowing complete; collecting formal votes",
+    "turn 22: compromise_repair — running split_vote repair",
+    "turn 26: closing — majority stands after bounded repair",
+    "turn 27: closing — closed as majority"
+  ],
+  "controller_trace": [
+    {
+      "type": "moderator_turn",
+      "turn_index": 1,
+      "phase": "opening"
+    },
+    {
+      "type": "turn",
+      "turn_index": 2,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 639,
+        "tokens_out": 40,
+        "assigned_word_bounds": [
+          11,
+          19
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (0, 0, 0, 0) -> (1, 0, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 3,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 698,
+        "tokens_out": 41,
+        "assigned_word_bounds": [
+          11,
+          19
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 4,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "B",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 733,
+        "tokens_out": 53,
+        "assigned_word_bounds": [
+          12,
+          20
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 4,
+      "from_phase": "opening",
+      "to_phase": "discussion",
+      "reason": "all participants gave an opening view"
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 4,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 844,
+        "tokens_out": 23,
+        "assigned_word_bounds": [
+          4,
+          7
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (1, 1, 0, 0) -> (2, 2, 0, 0)",
+          "coverage:C: (1, 0, 0, 0) -> (2, 1, 0, 0)",
+          "thread:t001: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 6,
+      "pre": {
+        "routed_thread_id": "t001",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 872,
+        "tokens_out": 33,
+        "assigned_word_bounds": [
+          10,
+          17
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (2, 2, 0, 0) -> (3, 3, 0, 0)",
+          "coverage:C: (2, 1, 0, 0) -> (3, 2, 0, 0)",
+          "thread:t001: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 7,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "coverage",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": true,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "A",
+            "D"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 861,
+        "tokens_out": 29,
+        "assigned_word_bounds": [
+          9,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (1, 1, 0, 0) -> (2, 2, 0, 0)",
+          "coverage:D: (0, 0, 0, 0) -> (1, 1, 0, 0)",
+          "thread:t002: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 8,
+      "pre": {
+        "routed_thread_id": "t002",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D",
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "concern"
+        ],
+        "evidence_bindings": {
+          "concern": [
+            "D"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 876,
+        "tokens_out": 28,
+        "assigned_word_bounds": [
+          10,
+          17
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (2, 2, 0, 0) -> (3, 2, 0, 0)",
+          "coverage:D: (1, 1, 0, 0) -> (2, 1, 1, 0)",
+          "thread:t002: 'hot' -> 'cooling'",
+          "thread:t003: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 9,
+      "pre": {
+        "routed_thread_id": "t003",
+        "routed_thread_type": "concern",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "thread_hot",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "comment",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "D"
+        ],
+        "respond_to_turn": 8,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 754,
+        "tokens_out": 28,
+        "assigned_word_bounds": [
+          9,
+          16
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:D: (2, 1, 1, 0) -> (3, 1, 1, 0)",
+          "thread:t003: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 10,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "ask",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "B",
+          "C",
+          "A"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": "p3",
+        "question_target_id": "p3",
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 870,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (3, 3, 0, 0) -> (4, 3, 0, 0)",
+          "thread:t001: 'cooling' -> 'stale'",
+          "thread:t004: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "routed_thread_id": "t004",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "answer",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 10,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t004",
+        "required_respondent_id": "p3",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNLISTED_FEATURE_DETAIL"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1223,
+        "tokens_out": 55,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {
+          "initial": "Instant feedback wins when decisions need quick clarity; Doodle’s 48-hour delay slows that down.",
+          "repairs": [
+            "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours."
+          ],
+          "fallback": "",
+          "accepted": "Instant feedback beats Doodle when quick clarity is needed; Doodle can take up to 48 hours."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (4, 3, 0, 0) -> (5, 3, 0, 0)",
+          "thread:t004: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 12,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "A"
+        ],
+        "respond_to_turn": 11,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 795,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          9,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (3, 2, 0, 0) -> (4, 2, 0, 0)",
+          "thread:t002: 'cooling' -> 'stale'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A",
+          "C"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 865,
+        "tokens_out": 29,
+        "assigned_word_bounds": [
+          9,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (3, 2, 0, 0) -> (4, 3, 0, 0)",
+          "thread:t003: 'cooling' -> 'stale'",
+          "thread:t004: 'cooling' -> 'resolved'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 14,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "D",
+          "A"
+        ],
+        "respond_to_turn": 9,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "D"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 856,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          9,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (4, 2, 0, 0) -> (5, 2, 0, 0)",
+          "coverage:D: (3, 1, 1, 0) -> (4, 1, 1, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 15,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "normal",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "concern",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "D",
+          "B"
+        ],
+        "respond_to_turn": 14,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": "p2",
+        "question_target_id": "p2",
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 916,
+        "tokens_out": 30,
+        "assigned_word_bounds": [
+          9,
+          16
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (5, 2, 0, 0) -> (6, 2, 0, 0)",
+          "thread:t005: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 16,
+      "pre": {
+        "routed_thread_id": "t005",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "answer_required",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "answer",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": 15,
+        "coverage_gaps": [],
+        "candidate_option": null,
+        "required_answer_thread_id": "t005",
+        "required_respondent_id": "p2",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer",
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 755,
+        "tokens_out": 29,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (6, 2, 0, 0) -> (7, 3, 0, 0)",
+          "thread:t005: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 16,
+      "from_phase": "discussion",
+      "to_phase": "narrowing",
+      "reason": "stable visible top pair persisted"
+    },
+    {
+      "type": "turn",
+      "turn_index": 17,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "process",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": null,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "A",
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 800,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          6,
+          11
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (7, 3, 0, 0) -> (8, 4, 0, 0)",
+          "coverage:B: (5, 3, 0, 0) -> (6, 4, 0, 0)",
+          "thread:t006: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 18,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "narrowing",
+        "route_source": "participant_narrowing",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 790,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          7,
+          12
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (8, 4, 0, 0) -> (9, 5, 0, 0)",
+          "thread:t005: 'cooling' -> 'resolved'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 18,
+      "from_phase": "narrowing",
+      "to_phase": "voting",
+      "reason": "narrowing complete; collecting formal votes"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 19,
+      "phase": "voting"
+    },
+    {
+      "type": "turn",
+      "turn_index": 20,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 833,
+        "tokens_out": 17,
+        "assigned_word_bounds": [
+          5,
+          8
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (9, 5, 0, 0) -> (10, 6, 0, 0)",
+          "vote:p2: None -> 'A'",
+          "vote_stance:p2: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 21,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 815,
+        "tokens_out": 19,
+        "assigned_word_bounds": [
+          5,
+          9
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (6, 4, 0, 0) -> (7, 5, 0, 0)",
+          "vote:p1: None -> 'B'",
+          "vote_stance:p1: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 22,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote",
+        "speaker_id": "p3",
+        "speaker_name": "Leo",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "C",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 863,
+        "tokens_out": 19,
+        "assigned_word_bounds": [
+          5,
+          8
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (4, 3, 0, 0) -> (5, 4, 0, 0)",
+          "thread:t006: 'hot' -> 'stale'",
+          "vote:p3: None -> 'C'",
+          "vote_stance:p3: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 22,
+      "from_phase": "voting",
+      "to_phase": "compromise_repair",
+      "reason": "running split_vote repair"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 23,
+      "phase": "compromise_repair"
+    },
+    {
+      "type": "turn",
+      "turn_index": 24,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "answer",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 792,
+        "tokens_out": 20,
+        "assigned_word_bounds": [
+          7,
+          11
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (10, 6, 0, 0) -> (11, 6, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 25,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p2",
+        "speaker_name": "Daria",
+        "selected_act": "answer",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": 24,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 808,
+        "tokens_out": 26,
+        "assigned_word_bounds": [
+          6,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (11, 6, 0, 0) -> (12, 6, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 26,
+      "pre": {
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "split_vote",
+        "phase": "compromise_repair",
+        "route_source": "split_vote_repair",
+        "speaker_id": "p1",
+        "speaker_name": "Marco",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [],
+        "candidate_option": "A",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "A",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment",
+          "comparison",
+          "switch"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "A"
+          ],
+          "comparison": [
+            "A",
+            "B"
+          ],
+          "switch": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 956,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          8,
+          14
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (12, 6, 0, 0) -> (13, 7, 0, 0)",
+          "coverage:B: (7, 5, 0, 0) -> (8, 6, 0, 0)",
+          "lean:p1: 'B' -> 'A'",
+          "rank:p1:A: 4 -> 5",
+          "rank:p1:B: 5 -> 4",
+          "thread:t006: 'stale' -> 'hot'",
+          "vote:p1: 'B' -> 'A'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "repair",
+      "turn_index": 26,
+      "repair_reason": "split_vote",
+      "candidate_or_pair": [
+        "A"
+      ],
+      "attempt_count": 1,
+      "status": "resolved"
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 26,
+      "from_phase": "compromise_repair",
+      "to_phase": "closing",
+      "reason": "majority stands after bounded repair"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 27,
+      "phase": "closing"
+    }
+  ],
+  "metrics": {
+    "metric_schema_version": "2.1",
+    "run_structure": {
+      "participant_turn_count": 23,
+      "participant_turn_count_by_persona": {
+        "Marco": 9,
+        "Daria": 7,
+        "Leo": 7
+      },
+      "moderator_turns": 4,
+      "moderator_ratio": 0.148,
+      "avg_words_per_participant_turn": 17.174,
+      "avg_words_by_persona": {
+        "Marco": 17.778,
+        "Daria": 17.714,
+        "Leo": 15.857
+      },
+      "question_density": 0.087
+    },
+    "participation": {
+      "expected_engagement": {
+        "Marco": 0.7,
+        "Daria": 0.475,
+        "Leo": 0.7
+      },
+      "expected_turn_share": {
+        "Marco": 0.36,
+        "Daria": 0.279,
+        "Leo": 0.36
+      },
+      "realized_turn_count": {
+        "Marco": 9,
+        "Daria": 7,
+        "Leo": 7
+      },
+      "realized_turn_share": {
+        "Marco": 0.391,
+        "Daria": 0.304,
+        "Leo": 0.304
+      },
+      "participation_gini": 0.058,
+      "engagement_behavior_correlation": 0.5
+    },
+    "traits": {
+      "expected_verbosity": {
+        "Marco": 0.663,
+        "Daria": 0.588,
+        "Leo": 0.6
+      },
+      "assigned_avg_word_budget": {
+        "Marco": 11.444,
+        "Daria": 10.929,
+        "Leo": 10.0
+      },
+      "realized_avg_words_per_turn": {
+        "Marco": 17.778,
+        "Daria": 17.714,
+        "Leo": 15.857
+      },
+      "word_budget_adherence": {
+        "Marco": 0.667,
+        "Daria": 0.571,
+        "Leo": 0.286
+      },
+      "verbosity_budget_correlation": 0.665,
+      "verbosity_behavior_correlation": 0.946,
+      "expected_switch_resistance": {
+        "Marco": 0.375,
+        "Daria": 0.4,
+        "Leo": 0.425
+      },
+      "switch_opportunities": {
+        "Marco": 1,
+        "Daria": 0,
+        "Leo": 0
+      },
+      "visible_switches_by_persona": {
+        "Marco": 1,
+        "Daria": 0,
+        "Leo": 0
+      }
+    },
+    "interaction": {
+      "question_threads": 2,
+      "concern_threads": 1,
+      "thread_count_by_status": {
+        "hot": 1,
+        "cooling": 0,
+        "resolved": 2,
+        "stale": 3
+      },
+      "question_completion_rate": 1.0,
+      "concern_response_rate": 1.0,
+      "repetition_score": 0.158
+    },
+    "decision_behavior": {
+      "visible_votes": {
+        "p2": "A",
+        "p1": "A",
+        "p3": "C"
+      },
+      "outcome_status": "majority",
+      "final_option": "A",
+      "switch_event_count": 1,
+      "discussion_lean_shifts": 0,
+      "runtime_preferred_by_rank": {
+        "Marco": "A",
+        "Daria": "A",
+        "Leo": "C"
+      },
+      "option_coverage": {
+        "A": {
+          "mentions": 13,
+          "reasons": 7,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "B": {
+          "mentions": 8,
+          "reasons": 6,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "C": {
+          "mentions": 5,
+          "reasons": 4,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "D": {
+          "mentions": 4,
+          "reasons": 1,
+          "objections": 1,
+          "acceptances": 0
+        }
+      },
+      "compromise_attempt_count": 1,
+      "compromise_success_count": 1,
+      "compromise_success_rate": 1.0,
+      "vote_state_consistency_failures": 0,
+      "active_blockers_at_close": {}
+    },
+    "validation_grounding": {
+      "repaired_turns": 1,
+      "repair_rate": 0.043,
+      "fallback_turns": 0,
+      "fallback_rate": 0.0,
+      "dropped_turns": 0,
+      "drop_rate": 0.0,
+      "critical_grounding_interventions": 1,
+      "runtime_validator_calls": 0
+    },
+    "token_usage": {
+      "setup": {
+        "input_tokens": 2190,
+        "output_tokens": 1300,
+        "api_calls": 1
+      },
+      "participant_generation": {
+        "input_tokens": 18729,
+        "output_tokens": 638,
+        "api_calls": 23
+      },
+      "moderator_generation": {
+        "input_tokens": 299,
+        "output_tokens": 18,
+        "api_calls": 1
+      },
+      "repair_generation": {
+        "input_tokens": 485,
+        "output_tokens": 28,
+        "api_calls": 1
+      },
+      "runtime_validation": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_calls": 0
+      },
+      "total": {
+        "input_tokens": 21703,
+        "output_tokens": 1984,
+        "api_calls": 26
+      }
+    }
+  },
+  "tokens": {
+    "setup_tokens_in": 2190,
+    "setup_tokens_out": 1300,
+    "dialogue_tokens_in": 19513,
+    "dialogue_tokens_out": 684,
+    "validator_tokens_in": 0,
+    "validator_tokens_out": 0,
+    "total_tokens_in": 21703,
+    "total_tokens_out": 1984
+  },
+  "token_usage_by_call_type": {
+    "setup": {
+      "in": 2190,
+      "out": 1300,
+      "calls": 1
+    },
+    "utterance": {
+      "in": 18729,
+      "out": 638,
+      "calls": 23
+    },
+    "repair": {
+      "in": 485,
+      "out": 28,
+      "calls": 1
+    },
+    "moderator": {
+      "in": 299,
+      "out": 18,
+      "calls": 1
+    }
+  },
+  "validation_stats": {
+    "logical_checks": 0,
+    "fast_paths": 24,
+    "api_retries": 0,
+    "retry_failures": {}
+  }
+}

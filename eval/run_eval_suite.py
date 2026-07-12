@@ -15,8 +15,10 @@ normal interactive runs and kept with the evaluation scripts.
 
 from __future__ import annotations
 
+import argparse
 import copy
 import csv
+import hashlib
 import json
 import shutil
 import subprocess
@@ -47,6 +49,7 @@ CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 MAIN_PATH = PROJECT_ROOT / "main.py"
 SUITE_LOG_DIR = PROJECT_ROOT / "eval" / "logs_eval_suite"
 SUMMARY_CSV = SUITE_LOG_DIR / "eval_suite_runs.csv"
+SUITE_VERSION = "critical-validation-consensus-v8"
 
 
 def deep_merge(base: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
@@ -79,10 +82,8 @@ def base_patch(
     moderator: dict[str, bool] | None = None,
     max_turns_per_participant: float | None = None,
 ) -> dict[str, Any]:
-    # Validation/grounding is no longer configurable (todo_validation item 9):
-    # semantic interpretation and claim-level grounding always run through the
-    # validator LLM role, so the old validation: patch section is gone. The
-    # token warning threshold accounts for the validator role's calls.
+    # The evaluation suite exercises the normal deterministic critical path.
+    # Runtime validator LLM calls should normally remain zero.
     patch: dict[str, Any] = {
         "simulation": {
             "num_participants": n,
@@ -103,8 +104,9 @@ def base_patch(
             "log_dir": "eval/logs_eval_suite",
             "write_prompts": False,
         },
+        "validation": {"mode": "critical"},
         "limits": {
-            "warn_total_input_tokens": 80000,
+            "warn_total_input_tokens": 50000,
         },
     }
     if env_mode == "auto":
@@ -566,6 +568,28 @@ def profiles_trait_spread_4() -> list[dict[str, Any]]:
     ]
 
 
+
+def profiles_compromise_5() -> list[dict[str, Any]]:
+    """Controlled 2-1-1-1 split with flexible movers for one bounded repair."""
+    profiles = profiles_trait_spread_4()
+    profiles.append(persona_profile(
+        name="Lena",
+        age=42,
+        speech_style=STYLE_RELAXED,
+        description="practical community organizer who values reliable equipment but can accept a workable group choice",
+        private_goal="wants beginners to receive enough hands-on help without exceeding the budget",
+        preferred_option="A",
+        traits={"openness": 4, "conscientiousness": 4, "extraversion": 3, "agreeableness": 5, "neuroticism": 2},
+        parameters={
+            "engagement": 0.60,
+            "verbosity": 0.55,
+            "directness": 0.45,
+            "stubbornness": 0.20,
+            "switch_resistance": 0.15,
+        },
+    ))
+    return profiles
+
 def profiles_hard_holdout_4() -> list[dict[str, Any]]:
     """One stubborn minority, useful for bounded reservation/compromise testing."""
     return [
@@ -707,9 +731,8 @@ CASES: list[dict[str, Any]] = [
     # 1. Manual/manual, n=2, stubborn deadlock (shared-home upgrade regression).
     {
         "id": "c01_manual_manual_n2_stubborn_deadlock",
-        "why": "Two-person opposing-preference deadlock; must attempt the deadlock protocol, not a false unanimity.",
+        "why": "Two opposing hard blockers should close as a defensible unresolved result without a pointless repair loop.",
         "topic": "",
-        "expect": {"two_person_deadlock_attempted": True},
         "patch": deep_merge(
             base_patch(seed=201, n=2, env_mode="manual", participants_mode="manual",
                        forced_shape="1-1", moderator=MOD_FULL),
@@ -773,15 +796,19 @@ CASES: list[dict[str, Any]] = [
             },
         ),
     },
-    # 6. Manual environment / automatic participants, n=5 (community workshop).
+    # 6. Controlled compromise/voting-heavy n=5 case.
     {
-        "id": "c06_manual_env_auto_participants_n5",
-        "why": "Fixed option board with a larger generated cast over fixed facts.",
+        "id": "c06_manual_manual_n5_compromise",
+        "why": "Controlled 2-1-1-1 starting preferences test one existing-option compromise attempt and bounded revoting.",
         "topic": "",
         "patch": deep_merge(
-            base_patch(seed=206, n=5, env_mode="manual", participants_mode="auto",
-                       forced_shape="2-1-1-1", moderator=MOD_FULL),
-            {"environment": {"manual": WORKSHOP_ENV}},
+            base_patch(seed=206, n=5, env_mode="manual", participants_mode="manual",
+                       forced_shape="2-1-1-1", moderator=MOD_FULL,
+                       max_turns_per_participant=3.5),
+            {
+                "environment": {"manual": WORKSHOP_ENV},
+                "participants": {"profiles": profiles_compromise_5()},
+            },
         ),
     },
     # 7. Automatic environment / manual participants, n=3 (alias-repair regression).
@@ -822,6 +849,63 @@ CASES: list[dict[str, Any]] = [
 ]
 
 
+def case_fingerprint(case: dict[str, Any]) -> str:
+    payload = {
+        "suite_version": SUITE_VERSION,
+        "id": case["id"],
+        "topic": case.get("topic", ""),
+        "patch": case.get("patch", {}),
+        "expect": case.get("expect", {}),
+    }
+    encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
+
+
+def _read_summary_rows() -> list[dict[str, str]]:
+    if not SUMMARY_CSV.exists():
+        return []
+    with SUMMARY_CSV.open("r", newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def _completed_row(case: dict[str, Any], rows: list[dict[str, str]]) -> dict[str, str] | None:
+    expected = case_fingerprint(case)
+    for row in reversed(rows):
+        if row.get("case_id") != case["id"] or row.get("case_fingerprint") != expected:
+            continue
+        if row.get("suite_version") != SUITE_VERSION or str(row.get("returncode")) != "0":
+            continue
+        log_dir = Path(row.get("log_dir") or "")
+        run_json = log_dir / "run.json"
+        if not run_json.exists():
+            continue
+        try:
+            data = json.loads(run_json.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if (
+            data.get("case_id") == case["id"]
+            and data.get("suite_version") == SUITE_VERSION
+            and data.get("case_fingerprint") == expected
+        ):
+            return row
+    return None
+
+
+def _rewrite_summary(rows: list[dict[str, Any]]) -> None:
+    if not rows:
+        if SUMMARY_CSV.exists():
+            SUMMARY_CSV.unlink()
+        return
+    SUMMARY_CSV.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = list(rows[0].keys())
+    with SUMMARY_CSV.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({key: row.get(key, "") for key in fieldnames})
+
+
 def selected_cases() -> list[dict[str, Any]]:
     """Return the full suite. The eval script intentionally has no quick/list modes."""
     return CASES
@@ -860,44 +944,72 @@ def _leak_hits(run_data: dict[str, Any]) -> list[str]:
     return hits
 
 
+def _metric(metrics: dict[str, Any], section: str, key: str, default: Any = None) -> Any:
+    values = metrics.get(section, {})
+    return values.get(key, default) if isinstance(values, dict) else default
+
+
 def case_flags(case: dict[str, Any], metrics: dict[str, Any], run_data: dict[str, Any]) -> list[str]:
-    """Per-case acceptance checks — a case is more than returncode == 0 (item 9).
-
-    Returns a list of human-readable flags for manual transcript review; an
-    empty list means the case cleared every automatic check.
-    """
+    """Concise behavioral and efficiency health checks for one completed case."""
     flags: list[str] = []
-    pt = int(metrics.get("participant_turns", 0) or 0)
+    participant_turns = int(_metric(metrics, "run_structure", "participant_turn_count", 0) or 0)
+    n = max(1, len(run_data.get("personas", [])))
+    validation = metrics.get("validation_grounding", {}) or {}
+    decision = metrics.get("decision_behavior", {}) or {}
+    interaction = metrics.get("interaction", {}) or {}
+    tokens = _metric(metrics, "token_usage", "total", {}) or {}
 
-    def rate(key: str) -> float:
-        return (int(metrics.get(key, 0) or 0) / pt) if pt else 0.0
+    if participant_turns > max(35, 8 * n):
+        flags.append(f"excessive_participant_turns={participant_turns}")
+    post_vote = sum(
+        1 for turn in run_data.get("turns", [])
+        if turn.get("speaker_id") != "moderator"
+        and turn.get("phase") in {"compromise_repair", "voting"}
+    )
+    if post_vote > 2 * n + 4:
+        flags.append(f"excessive_post_vote_turns={post_vote}")
 
-    if int(metrics.get("invalid_printed_turn_count", 0) or 0) > 0:
-        flags.append(f"invalid_printed_turns={metrics.get('invalid_printed_turn_count')}")
-    if int(metrics.get("unsupported_printed_turns", 0) or 0) > 0:
-        flags.append(f"unsupported_printed_turns={metrics.get('unsupported_printed_turns')}")
-    if int(metrics.get("final_blocker_violations", 0) or 0) > 0:
-        flags.append(f"blocker_violations={metrics.get('final_blocker_violations')}")
-    if int(metrics.get("vote_state_consistency_failures", 0) or 0) > 0:
-        flags.append(f"vote_state_consistency_failures={metrics.get('vote_state_consistency_failures')}")
-    rr = float(metrics.get("repair_rate", 0.0) or 0.0)
-    if rr > 0.25:
-        flags.append(f"repair_rate={rr:.2f}>0.25")
-    dr = rate("dropped_turn_count")
-    if dr > 0.02:
-        flags.append(f"drop_rate={dr:.2f}>0.02")
+    repair_rate = validation.get("repair_rate")
+    if repair_rate is not None and float(repair_rate) > 0.10:
+        flags.append(f"repair_rate={float(repair_rate):.2f}>0.10")
+    fallback_rate = validation.get("fallback_rate")
+    if fallback_rate is not None and float(fallback_rate) > 0.05:
+        flags.append(f"fallback_rate={float(fallback_rate):.2f}>0.05")
+    if int(validation.get("dropped_turns", 0) or 0) > 0:
+        flags.append(f"dropped_turns={validation.get('dropped_turns')}")
+    if int(validation.get("runtime_validator_calls", 0) or 0) > 0:
+        flags.append(f"runtime_validator_calls={validation.get('runtime_validator_calls')}")
+    if int(decision.get("vote_state_consistency_failures", 0) or 0) > 0:
+        flags.append(f"vote_state_consistency_failures={decision.get('vote_state_consistency_failures')}")
+    if len(decision.get("visible_votes", {}) or {}) < n:
+        flags.append("missing_visible_votes")
+    if decision.get("outcome_status") == "successful" and decision.get("active_blockers_at_close"):
+        final = decision.get("final_option")
+        blockers = decision.get("active_blockers_at_close") or {}
+        if any(final in blocked for blocked in blockers.values()):
+            flags.append("consensus_with_active_final_blocker")
+    q_rate = interaction.get("question_completion_rate")
+    if q_rate is not None and float(q_rate) < 0.65:
+        flags.append(f"question_completion_rate={float(q_rate):.2f}<0.65")
+    c_rate = interaction.get("concern_response_rate")
+    if c_rate is not None and float(c_rate) < 0.50:
+        flags.append(f"concern_response_rate={float(c_rate):.2f}<0.50")
+    repetition = interaction.get("repetition_score")
+    if repetition is not None and float(repetition) > 0.40:
+        flags.append(f"repetition_score={float(repetition):.2f}>0.40")
+    total_in = int(tokens.get("input_tokens", 0) or 0)
+    threshold = 40000 if n <= 3 else (70000 if n <= 5 else 100000)
+    if total_in > threshold:
+        flags.append(f"input_tokens={total_in}>{threshold}")
+    if int(validation.get("critical_grounding_interventions", 0) or 0) > 0:
+        flags.append(f"critical_grounding_interventions={validation.get('critical_grounding_interventions')}")
+    if case.get("id") == "c06_manual_manual_n5_compromise" and int(
+        decision.get("compromise_attempt_count", 0) or 0
+    ) == 0:
+        flags.append("expected_compromise_not_exercised")
     leaks = _leak_hits(run_data)
     if leaks:
         flags.append(f"controller_language_leak x{len(leaks)}")
-
-    # Case-specific expectations declared on the case.
-    expect = case.get("expect", {}) or {}
-    if expect.get("two_person_deadlock_attempted") and not metrics.get("two_person_deadlock_attempted"):
-        flags.append("expected two_person_deadlock_attempted but none")
-    if expect.get("peer_process") and int(metrics.get("participant_procedural_moves", 0) or 0) == 0:
-        flags.append("expected peer procedural moves but none")
-    if expect.get("zero_unsupported_printed") and int(metrics.get("unsupported_printed_turns", 0) or 0) > 0:
-        flags.append("grounding case printed unsupported claims")
     return flags
 
 
@@ -907,7 +1019,10 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
     deep_merge(cfg, case["patch"])
     # Persist the suite case id so run.json/transcript metadata and the log
     # directory name all tie back to this case (item 9).
-    cfg.setdefault("output", {})["case_id"] = case["id"]
+    output = cfg.setdefault("output", {})
+    output["case_id"] = case["id"]
+    output["suite_version"] = SUITE_VERSION
+    output["case_fingerprint"] = case_fingerprint(case)
 
     # Keep case logs separate inside the suite folder by using run metadata in stdout;
     # the simulator itself creates timestamped subdirs under eval/logs_eval_suite/.
@@ -975,8 +1090,18 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         for p in run_data.get("personas", [])
     )
 
+    run_structure = metrics.get("run_structure", {}) or {}
+    participation = metrics.get("participation", {}) or {}
+    traits = metrics.get("traits", {}) or {}
+    interaction = metrics.get("interaction", {}) or {}
+    decision = metrics.get("decision_behavior", {}) or {}
+    validation = metrics.get("validation_grounding", {}) or {}
+    total_tokens = _metric(metrics, "token_usage", "total", {}) or {}
     row = {
         "case_id": case["id"],
+        "suite_version": SUITE_VERSION,
+        "metric_schema_version": metrics.get("metric_schema_version"),
+        "case_fingerprint": case_fingerprint(case),
         "started": started,
         "returncode": proc.returncode,
         "flags": "; ".join(flags),
@@ -985,56 +1110,51 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "environment_mode": cfg.get("environment", {}).get("mode"),
         "participants_mode": cfg.get("participants", {}).get("mode"),
         "moderator_enabled": cfg.get("moderator", {}).get("enabled"),
-        "final_vote_call": cfg.get("moderator", {}).get("final_vote_call"),
         "n": cfg.get("simulation", {}).get("num_participants"),
         "forced_shape": cfg.get("personas", {}).get("preference_distribution", {}).get("forced_shape"),
         "persona_age_style": persona_age_style,
-        "outcome": metrics.get("outcome_status") or metrics.get("outcome"),
-        "final_option": metrics.get("final_option"),
-        "engagement_behavior_correlation": metrics.get("engagement_behavior_correlation"),
-        "discussion_lean_shifts": metrics.get("discussion_lean_shifts"),
-        "participant_procedural_moves": metrics.get("participant_procedural_moves"),
-        "peer_vote_call": metrics.get("peer_vote_call"),
-        "split_reservation_exchanges": metrics.get("split_reservation_exchanges"),
-        "two_person_deadlock_attempted": metrics.get("two_person_deadlock_attempted"),
-        "unsupported_printed_turns": metrics.get("unsupported_printed_turns"),
-        "invalid_printed_turn_count": metrics.get("invalid_printed_turn_count"),
-        "repaired_turns": metrics.get("repaired_turns"),
-        "fallback_turns": metrics.get("fallback_turns"),
-        # Evidence-contract health (todo_validation item 15).
-        "intended_function_realized_rate": metrics.get("intended_function_realized_rate"),
-        "repair_success_rate": metrics.get("repair_success_rate"),
-        "dropped_turn_count": metrics.get("dropped_turn_count"),
-        "validator_failure_turns": metrics.get("validator_failure_turns"),
-        # Validator-cost surface (items 6/10): logical checks, API calls, the
-        # per-accepted-turn ratio, token share, and fast-path rate.
-        "participant_turns": metrics.get("participant_turns"),
-        "validator_calls": metrics.get("validator_calls"),
-        "validator_logical_checks": metrics.get("validator_logical_checks"),
-        "validator_api_retries": metrics.get("validator_api_retries"),
-        "validator_calls_per_accepted_turn": metrics.get("validator_calls_per_accepted_turn"),
-        "validator_logical_checks_per_turn": metrics.get("validator_logical_checks_per_turn"),
-        "validator_input_share": metrics.get("validator_input_share"),
-        "validation_fast_path_rate": metrics.get("validation_fast_path_rate"),
-        "accepted_metric_only": (metrics.get("assessment_action_counts") or {}).get("accept_with_metric"),
-        "repair_rate": metrics.get("repair_rate"),
-        "validator_tokens_in": metrics.get("validator_tokens_in"),
-        "visible_vote_count": metrics.get("visible_vote_count"),
-        "final_support_fraction": metrics.get("final_support_fraction"),
-        "final_blocker_violations": metrics.get("final_blocker_violations"),
-        "direct_response_rate": metrics.get("direct_response_rate"),
-        "concern_response_rate": metrics.get("concern_response_rate"),
-        # Cleanup-pass surfaces: thread-owned issue history and the actual
-        # route-source mix (threads driving local moves vs coverage/normal).
-        "settled_issue_keys": "; ".join(metrics.get("settled_issue_keys") or []),
-        "route_source_distribution": json.dumps(metrics.get("route_source_distribution") or {}, sort_keys=True),
-        "participation_gini": metrics.get("participation_gini"),
-        "repetition_score": metrics.get("repetition_score"),
-        "avg_words_per_turn": metrics.get("avg_words_per_turn"),
-        "short_turn_rate": metrics.get("short_turn_rate"),
-        "tiny_turn_rate": metrics.get("tiny_turn_rate"),
-        "total_tokens_in": metrics.get("total_tokens_in"),
-        "total_tokens_out": metrics.get("total_tokens_out"),
+        "outcome_status": decision.get("outcome_status"),
+        "final_option": decision.get("final_option"),
+        "participant_turn_count": run_structure.get("participant_turn_count"),
+        "moderator_turns": run_structure.get("moderator_turns"),
+        "moderator_ratio": run_structure.get("moderator_ratio"),
+        "avg_words_per_participant_turn": run_structure.get("avg_words_per_participant_turn"),
+        "question_density": run_structure.get("question_density"),
+        "participation_gini": participation.get("participation_gini"),
+        "engagement_behavior_correlation": participation.get("engagement_behavior_correlation"),
+        "verbosity_budget_correlation": traits.get("verbosity_budget_correlation"),
+        "verbosity_behavior_correlation": traits.get("verbosity_behavior_correlation"),
+        "mean_word_budget_adherence": (
+            round(
+                sum(v for v in (traits.get("word_budget_adherence", {}) or {}).values() if v is not None)
+                / len([v for v in (traits.get("word_budget_adherence", {}) or {}).values() if v is not None]),
+                3,
+            )
+            if any(v is not None for v in (traits.get("word_budget_adherence", {}) or {}).values())
+            else None
+        ),
+        "question_threads": interaction.get("question_threads"),
+        "concern_threads": interaction.get("concern_threads"),
+        "question_completion_rate": interaction.get("question_completion_rate"),
+        "concern_response_rate": interaction.get("concern_response_rate"),
+        "repetition_score": interaction.get("repetition_score"),
+        "visible_vote_count": len(decision.get("visible_votes", {}) or {}),
+        "switch_event_count": decision.get("switch_event_count"),
+        "discussion_lean_shifts": decision.get("discussion_lean_shifts"),
+        "compromise_attempt_count": decision.get("compromise_attempt_count"),
+        "compromise_success_rate": decision.get("compromise_success_rate"),
+        "vote_state_consistency_failures": decision.get("vote_state_consistency_failures"),
+        "repaired_turns": validation.get("repaired_turns"),
+        "repair_rate": validation.get("repair_rate"),
+        "fallback_turns": validation.get("fallback_turns"),
+        "fallback_rate": validation.get("fallback_rate"),
+        "dropped_turns": validation.get("dropped_turns"),
+        "drop_rate": validation.get("drop_rate"),
+        "critical_grounding_interventions": validation.get("critical_grounding_interventions"),
+        "runtime_validator_calls": validation.get("runtime_validator_calls"),
+        "total_input_tokens": total_tokens.get("input_tokens"),
+        "total_output_tokens": total_tokens.get("output_tokens"),
+        "total_api_calls": total_tokens.get("api_calls"),
     }
     append_summary(row)
     return row
@@ -1042,11 +1162,17 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
 
 def append_summary(row: dict[str, Any]) -> None:
     SUITE_LOG_DIR.mkdir(exist_ok=True)
-    write_header = not SUMMARY_CSV.exists()
-    with SUMMARY_CSV.open("a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(row.keys()))
-        if write_header:
-            writer.writeheader()
+    fieldnames = list(row.keys())
+    existing: list[dict[str, Any]] = []
+    if SUMMARY_CSV.exists():
+        with SUMMARY_CSV.open("r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            if reader.fieldnames == fieldnames:
+                existing = list(reader)
+    with SUMMARY_CSV.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(existing)
         writer.writerow(row)
 
 
@@ -1077,7 +1203,25 @@ def zip_suite_log_dir() -> Path:
     return Path(archive_path)
 
 
-def main() -> int:
+def format_summary_row(row: dict[str, Any]) -> str:
+    """Render one suite row using the current grouped-metric column names."""
+    flags = row.get("flags") or ""
+    return (
+        f"- {row['case_id']}: rc={row['returncode']}, "
+        f"outcome={row.get('outcome_status')}, final={row.get('final_option')}, "
+        f"turns={row.get('participant_turn_count')}, "
+        f"validator_calls={row.get('runtime_validator_calls')}, "
+        f"repair={row.get('repair_rate')}, drops={row.get('dropped_turns')}, "
+        f"critical_grounding={row.get('critical_grounding_interventions')}, "
+        f"tokens_in={row.get('total_input_tokens')}"
+        + (f"  ⚑ {flags}" if flags else "")
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run or resume the 10-case dialogue evaluation suite.")
+    parser.add_argument("--clean", action="store_true", help="delete prior suite runs and start from zero")
+    args = parser.parse_args(argv)
     if not CONFIG_PATH.exists() or not MAIN_PATH.exists():
         print("Run this script from the project root, next to config.yaml and main.py.", file=sys.stderr)
         return 2
@@ -1091,24 +1235,35 @@ def main() -> int:
     base_config = yaml.safe_load(original_text) or {}
 
     SUITE_LOG_DIR.mkdir(exist_ok=True)
-    # Restart-safety (item 9): a fresh full run clears the previous summary AND
-    # every prior per-run directory in one step, so an interrupted earlier run
-    # never leaves orphaned run folders behind an up-to-date CSV. The suite
-    # always runs all cases, so the end state is exactly len(cases) rows and
-    # exactly len(cases) run directories.
-    if SUMMARY_CSV.exists():
-        SUMMARY_CSV.unlink()
-    for child in SUITE_LOG_DIR.iterdir():
-        if child.is_dir():
-            shutil.rmtree(child, ignore_errors=True)
+    if args.clean:
+        if SUMMARY_CSV.exists():
+            SUMMARY_CSV.unlink()
+        for child in SUITE_LOG_DIR.iterdir():
+            if child.is_dir():
+                shutil.rmtree(child, ignore_errors=True)
+    existing_rows = _read_summary_rows()
+    completed: dict[str, dict[str, str]] = {}
+    for case in cases:
+        row = _completed_row(case, existing_rows)
+        if row is not None:
+            completed[case["id"]] = row
+    # Rewrite away stale/duplicate rows while preserving valid completed cases.
+    _rewrite_summary([completed[c["id"]] for c in cases if c["id"] in completed])
 
-    print(f"Running {len(cases)} full eval cases. Logs: {SUITE_LOG_DIR}")
+    print(f"Running/resuming {len(cases)} eval cases. Logs: {SUITE_LOG_DIR}")
+    print(f"Completed cases reused: {len(completed)}")
     print(f"Original config backup: {backup_path}")
 
     rows: list[dict[str, Any]] = []
     return_code = 0
     try:
         for case in cases:
+            if case["id"] in completed:
+                row = completed[case["id"]]
+                rows.append(row)
+                print(f"\n=== {case['id']} ===")
+                print("Reusing completed matching run:", row.get("log_dir", ""))
+                continue
             row = run_case(case, base_config)
             rows.append(row)
             if row["returncode"] != 0:
@@ -1128,16 +1283,7 @@ def main() -> int:
         flags = row.get("flags") or ""
         if flags:
             flagged += 1
-        print(
-            f"- {row['case_id']}: rc={row['returncode']}, "
-            f"outcome={row.get('outcome')}, final={row.get('final_option')}, "
-            f"v/turn={row.get('validator_calls_per_accepted_turn')}, "
-            f"v_share={row.get('validator_input_share')}, "
-            f"repair={row.get('repair_rate')}, drops={row.get('dropped_turn_count')}, "
-            f"unsupported={row.get('unsupported_printed_turns')}, "
-            f"tokens_in={row.get('total_tokens_in')}"
-            + (f"  ⚑ {flags}" if flags else "")
-        )
+        print(format_summary_row(row))
     print(f"\n{flagged}/{len(rows)} cases flagged for manual review.")
     print(f"Suite CSV: {SUMMARY_CSV}")
     print(f"Suite ZIP: {zip_path}")
