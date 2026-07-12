@@ -35,14 +35,32 @@ Other participants' turns never rewrite someone else's private ranks. Public sup
 
 ```text
 1. controller selects the speaker and a MoveIntent (act, objective, focus, target)
-2. the prompt realizes exactly that move (voice, act requirement, turn objective, focus facts)
-3. generated text is cleaned — labels/quotes/metadata only, never cut to the word budget
-4. the text is parsed into a DialogueAct from visible wording alone
-5. validation may trigger one focused repair, then a deterministic fallback for blocking issues
-6. only the final accepted visible text updates ranks, votes, threads, coverage
+2. the dialogue LLM realizes exactly that move inside an <utterance> envelope
+3. conservative extraction (structural only — never cut, never de-tailed)
+4. deterministic critical layer: option/alias/addressee/pronoun resolution,
+   strict commitments with post-checks, explicit blockers, genuine questions
+5. selective validation (validation.mode, default selective): AT MOST one
+   validator-LLM call, made only when soft natural-language meaning can change
+   state, requesting just the semantic categories the intended move needs plus
+   grounding claims. Simple fully-verifiable turns (direct votes, sanctioned
+   switches, blocker restatements, process/closing lines, mention-free light
+   comments) skip the call via explicit fast paths, each traced with a reason.
+   Deterministic verification checks every span, id, critical commitment, and
+   grounding claim (fact table) before anything counts.
+6. assessment decides: ACCEPT / ACCEPT_WITH_METRIC / REPAIR / FALLBACK / DROP;
+   repair triggers only on blocking failures — an unrealized soft function is
+   telemetry, not a repair
+7. at most one targeted repair, then a TRUTHFUL deterministic fallback (vote/
+   switch, blocker restatement, coverage request, factual comparison, listed or
+   does-not-say answer) or a dropped turn — every candidate goes through the
+   same complete path
+8. only the final accepted evidence object updates ranks, votes, threads,
+   coverage — and consensus/public support read the SAME object
 ```
 
-Concrete example: the controller routes Jonas a CONCERN about the Museum ("name the one concrete thing that still blocks Museum for you"). The LLM returns "Jonas: The Museum's 24 euros is steep for a quiet afternoon, honestly." Cleanup strips the `Jonas:` prefix; the parser reads a soft objection bound to the Museum; validation finds no issues; the observer opens a `concern` thread on the Museum with issue key `cost`, counts an objection for coverage, and leaves every rank unchanged — Jonas objected, he didn't move.
+Concrete example: the controller routes Jonas a CONCERN about the Museum ("name the one concrete thing that still blocks Museum for you"). The dialogue LLM returns `<utterance>The Museum's 24 euros is steep for a quiet afternoon, honestly.</utterance>`. Extraction unwraps the envelope; the validator reports one ordinary concern bound to the Museum with span "24 euros is steep for a quiet afternoon" and one listed-fact claim ("24 euros", verified against `A.cost`); assessment accepts; the observer opens a `concern` thread on the Museum with issue key `cost`, counts an objection for coverage, and leaves every rank unchanged — Jonas objected, he didn't move.
+
+Multi-function turns keep all their evidence: "I still dislike the Museum's price, but I'm switching to the Bike Ride because it's cheaper. Would that work for everyone?" carries a concern about A, a vote commitment to B, a switch with a visible reason, and a group question — none erases another, and the trailing check-in question does not void the commitment.
 
 ## Narrowing readiness
 

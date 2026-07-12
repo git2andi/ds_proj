@@ -9,8 +9,11 @@ from __future__ import annotations
 from typing import Any
 
 from dialogue import DialogueRunner
+from interpreter import InterpretationResult
 from models import DialogueState
 from parsing import OptionResolver
+
+from tests.evidence_adapter import derive_evidence
 
 
 class FakeLLM:
@@ -49,12 +52,36 @@ class NullLogger:
         return ""
 
 
+class StubInterpreter:
+    """Offline validator stand-in: derives evidence deterministically through
+    the test adapter (tests/evidence_adapter.py), so scripted-response tests
+    exercise the real candidate pipeline without a validator endpoint. Its
+    recall equals the old conservative parser's — natural-language variants
+    need a scripted validator payload (see tests/test_interpreter.py)."""
+
+    def __init__(self, resolver: OptionResolver, participant_names: dict[str, str]) -> None:
+        self._resolver = resolver
+        self._names = dict(participant_names)
+
+    def interpret(self, *, text: str, speaker_id: str, intent=None, **_context) -> InterpretationResult:
+        return InterpretationResult(evidence=derive_evidence(
+            text, self._resolver,
+            speaker_id=speaker_id, participant_names=self._names, intent=intent,
+        ))
+
+
 def make_runner(state: DialogueState, responses: list[str] | None = None) -> DialogueRunner:
     """A DialogueRunner wired to fakes, without running setup/LLM __init__."""
     runner = DialogueRunner.__new__(DialogueRunner)
     runner.topic = state.scenario.topic
     runner._llm = FakeLLM(responses)
+    # Separate fake for the validator role, mirroring the real runner's
+    # role-split wiring (independent instance and token counters).
+    runner._validator_llm = FakeLLM()
     runner._resolver = OptionResolver(state.scenario.options)
+    runner._interpreter = StubInterpreter(
+        runner._resolver, {p.id: p.name for p in state.personas}
+    )
     runner._intervention_count = 0
     runner._last_intervention_turn = -999
     runner.logger = NullLogger()

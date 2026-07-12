@@ -90,7 +90,7 @@ class CoverageEvidenceTests(unittest.TestCase):
         record = self._apply(
             "p2", "Back to the Museum versus the Bike Ride: which actually fits a tired group?", intent
         )
-        self.assertEqual(record.act.act_type, ActType.ASK)  # question wins the label
+        self.assertEqual(record.realized_act(), ActType.ASK)  # question wins the label
         self.assertEqual(self.state.coverage["A"].reasons, 1)
         self.assertEqual(self.state.coverage["B"].reasons, 1)
 

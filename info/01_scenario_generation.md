@@ -8,13 +8,14 @@ The environment defines the factual decision space. It should provide enough sha
 
 - the CLI topic is sent to the setup LLM;
 - the setup LLM creates the shared context and option cards (nothing else — there is no generated opening question or decision-kind category);
-- generated options are validated before the discussion starts; an invalid attempt (including a missing/unusable/duplicate `short_name`) is rejected and retried.
+- generated options are validated before the discussion starts; a substantive failure (missing fields, too few attributes, cap violations) rejects the attempt and retries;
+- an invalid or duplicate generated `short_name` alone does NOT discard the scenario: the affected aliases get one small alias-only repair call (dialogue LLM role, small retry limit, deterministic re-validation), and the setup notes record `invalid_alias`/`duplicate_alias`/`alias_repaired` diagnostics. Only a failed alias repair rejects the attempt, with a precise error.
 
 `environment.mode = manual`:
 
 - `environment.manual` in `config.yaml` defines the topic, shared context, and options;
-- the CLI topic is ignored;
-- the scenario setup LLM call is skipped;
+- the scenario setup LLM call is skipped; an invalid manual `short_name` is a config error (no repair);
+- an explicit CLI/piped topic still wins over manual mode and requests automatic generation for that topic (see 08);
 - this is the preferred mode for controlled tests.
 
 ## Scenario schema

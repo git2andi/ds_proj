@@ -26,6 +26,44 @@ _PROFILE_FIELDS = frozenset({
 _MANUAL_ENV_FIELDS = frozenset({"topic", "shared_context", "options"})
 _MANUAL_OPTION_FIELDS = frozenset({"id", "name", "short_name", "attrs", "upside", "concern"})
 
+# LLM roles and the providers the client layer implements.
+LLM_ROLES = ("dialogue", "validator")
+KNOWN_LLM_PROVIDERS = frozenset({"uni", "groq", "gemini", "gpt"})
+
+
+def validate_llm_roles(llm: Any) -> None:
+    """Validate the role-based LLM selection (llm.dialogue / llm.validator).
+
+    Both roles must name a known provider with a model mapping; the same
+    provider for both roles is valid. The legacy single `llm.provider` key is
+    an explicit migration error rather than a silently supported alias.
+    """
+    if not isinstance(llm, dict):
+        raise ValueError("llm must be a mapping.")
+    if "provider" in llm:
+        raise ValueError(
+            "llm.provider was replaced by the role selectors llm.dialogue and "
+            "llm.validator; set both (they may name the same provider)."
+        )
+    models = llm.get("models")
+    if not isinstance(models, dict) or not models:
+        raise ValueError("llm.models must be a non-empty mapping.")
+    for role in LLM_ROLES:
+        provider = str(llm.get(role) or "").strip().lower()
+        if not provider:
+            raise ValueError(f"Missing required config key: llm.{role}")
+        if provider not in KNOWN_LLM_PROVIDERS:
+            raise ValueError(
+                f"llm.{role} must be one of {sorted(KNOWN_LLM_PROVIDERS)}, got {provider!r}."
+            )
+        if provider not in models:
+            raise ValueError(f"llm.{role} = {provider!r} has no entry under llm.models.")
+        if provider == "uni" and not str((llm.get("endpoints") or {}).get("uni") or "").strip():
+            raise ValueError(f"llm.{role} = 'uni' requires llm.endpoints.uni.")
+    sampling = llm.get("sampling")
+    if not isinstance(sampling, dict) or "validator" not in sampling:
+        raise ValueError("llm.sampling.validator must define the cold validator profile.")
+
 
 def parse_preference_shape(value: Any) -> tuple[int, ...]:
     """Parse a preference partition from ``"2-1"`` or ``[2, 1]``."""
@@ -174,8 +212,6 @@ class Config(Section):
 
     def _validate(self) -> None:
         required = [
-            "llm.provider",
-            "llm.models",
             "simulation.num_participants",
             "simulation.min_participants",
             "simulation.max_participants",
@@ -185,6 +221,8 @@ class Config(Section):
         ]
         for key in required:
             self._require(key)
+
+        validate_llm_roles(self._raw.get("llm"))
 
         n = int(self.simulation.num_participants)
         min_n = int(self.simulation.min_participants)
@@ -205,6 +243,17 @@ class Config(Section):
         self._validate_participants(min_n, max_n, labels)
         self._validate_environment(labels)
         self._validate_moderator()
+        self._validate_validation()
+
+    def _validate_validation(self) -> None:
+        validation = self._raw.get("validation")
+        if validation is None:
+            return  # absent section = selective default
+        if not isinstance(validation, dict):
+            raise ValueError("validation must be a mapping.")
+        mode = str(validation.get("mode", "selective"))
+        if mode not in ("selective", "full"):
+            raise ValueError("validation.mode must be 'selective' or 'full'.")
 
     def _validate_moderator(self) -> None:
         moderator = self._raw.get("moderator")

@@ -179,7 +179,7 @@ class FailedTurnTests(unittest.TestCase):
         record = runner._generate_and_append(state, intent)
         self.assertTrue(record.used_fallback)
         self.assertEqual(state.coverage["C"].coverage_attempts, 1)
-        self.assertIn("C", record.act.option_refs)
+        self.assertIn("C", record.mentioned_options())
         trace = [e for e in state.controller_trace if e["type"] == "turn"][-1]
         self.assertTrue(trace["result"]["coverage_realized"])
 
@@ -197,7 +197,7 @@ class ReparseTests(unittest.TestCase):
         )
         record = runner._generate_and_append(state, intent)
         self.assertTrue(record.repaired)
-        self.assertEqual(record.act.explicit_vote, "A")
+        self.assertEqual(record.visible_vote(), "A")
         self.assertEqual(state.runtimes["p1"].explicit_vote, "A")
 
     def test_fallback_text_is_reparsed_before_observation(self):
@@ -212,7 +212,7 @@ class ReparseTests(unittest.TestCase):
         )
         record = runner._generate_and_append(state, intent)
         self.assertTrue(record.used_fallback)
-        self.assertEqual(record.act.explicit_vote, "A")
+        self.assertEqual(record.visible_vote(), "A")
         self.assertEqual(state.runtimes["p1"].explicit_vote, "A")
 
 

@@ -654,7 +654,7 @@ class PolicyMixin:
         # A continuation inherits its own previous focus (P3): it deepens the
         # point just made instead of jumping to another option or issue. When
         # the text named no option, the routed intent still knows the topic.
-        focus = [oid for oid in last.act.option_refs if oid in state.scenario.option_ids][:2]
+        focus = [oid for oid in last.mentioned_options() if oid in state.scenario.option_ids][:2]
         if not focus and last.intent:
             focus = [oid for oid in last.intent.option_focus if oid in state.scenario.option_ids][:2]
         return MoveIntent(
@@ -751,7 +751,7 @@ class PolicyMixin:
         participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
         if participant_turns:
             last_turn = participant_turns[-1]
-            last_act = last_turn.intent.act if last_turn.intent else last_turn.act.act_type
+            last_act = last_turn.intent.act if last_turn.intent else last_turn.realized_act()
             if last_act == ActType.ANSWER:
                 raw["ask"] = raw.get("ask", 0.0) * 0.3
                 raw["support"] = raw.get("support", 0.0) * 1.2
@@ -825,11 +825,12 @@ class PolicyMixin:
                 score += 2.0
             elif "?" in turn.text:
                 score += 0.5
-            if turn.act.soft_rejects or turn.act.hard_rejects:
+            mentioned = turn.mentioned_options()
+            if turn.objected_options():
                 score += 1.0
-            if leading and leading in turn.act.option_refs:
+            if leading and leading in mentioned:
                 score += 0.6
-            if under and under in turn.act.option_refs:
+            if under and under in mentioned:
                 score += 0.4
             rt = state.runtimes.get(turn.speaker_id)
             if leading and rt and rt.top_option() and rt.top_option() != leading:
@@ -847,7 +848,7 @@ class PolicyMixin:
     def _focus_options(self, state: DialogueState, speaker: Persona, act: ActType, target_turn: TurnRecord | None) -> list[str]:
         ids: list[str] = []
         if target_turn:
-            ids.extend(target_turn.act.option_refs)
+            ids.extend(target_turn.mentioned_options())
         current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
         if current and current not in ids:
             ids.append(current)

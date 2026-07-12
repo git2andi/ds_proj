@@ -78,8 +78,11 @@ def base_patch(
     forced_shape: str | None = None,
     moderator: dict[str, bool] | None = None,
     max_turns_per_participant: float | None = None,
-    grounding_mode: str = "tripwire",
 ) -> dict[str, Any]:
+    # Validation/grounding is no longer configurable (todo_validation item 9):
+    # semantic interpretation and claim-level grounding always run through the
+    # validator LLM role, so the old validation: patch section is gone. The
+    # token warning threshold accounts for the validator role's calls.
     patch: dict[str, Any] = {
         "simulation": {
             "num_participants": n,
@@ -96,16 +99,12 @@ def base_patch(
                 "forced_shape": forced_shape,
             }
         },
-        "validation": {
-            "grounding_check": True,
-            "grounding_mode": grounding_mode,
-        },
         "output": {
             "log_dir": "eval/logs_eval_suite",
             "write_prompts": False,
         },
         "limits": {
-            "warn_total_input_tokens": 25000,
+            "warn_total_input_tokens": 80000,
         },
     }
     if env_mode == "auto":
@@ -309,6 +308,93 @@ ROOMMATE_ENV = {
             "cheap and easy to start immediately",
             "may not change habits enough",
             "Supplies Kit",
+        ),
+    ],
+}
+
+
+DEMO_ENV = {
+    "topic": "Choose how a student software project should present its final demo",
+    "shared_context": [
+        "The demo slot is 15 minutes in front of the course staff and peers.",
+        "The team has one week left before the presentation.",
+        "A projector and reliable campus wifi are available in the room.",
+    ],
+    "options": [
+        option(
+            "A",
+            "Live Coding Walkthrough",
+            {"prep_time": "low", "risk": "high", "audience_engagement": "high"},
+            "shows the app working in real time and feels authentic",
+            "a live failure in front of staff is hard to recover from",
+            "Live Coding",
+        ),
+        option(
+            "B",
+            "Recorded Screencast",
+            {"prep_time": "medium", "risk": "low", "audience_engagement": "medium"},
+            "safe and rehearsed, nothing can break on stage",
+            "feels less lively and cannot answer follow-ups mid-play",
+            "Screencast",
+        ),
+        option(
+            "C",
+            "Slide Deck With Screenshots",
+            {"prep_time": "low", "risk": "low", "audience_engagement": "low"},
+            "quickest to prepare and easy to keep on time",
+            "least convincing that the software actually runs",
+            "Slides",
+        ),
+        option(
+            "D",
+            "Interactive Audience Try-Out",
+            {"prep_time": "high", "risk": "medium", "audience_engagement": "high"},
+            "most memorable and lets the audience use the app",
+            "needs the most setup and depends on wifi holding up",
+            "Try-Out",
+        ),
+    ],
+}
+
+WORKSHOP_ENV = {
+    "topic": "Choose a format and venue for a weekend community coding workshop",
+    "shared_context": [
+        "About thirty people from mixed skill levels have signed up.",
+        "The organizing budget is 500 euros for the day.",
+        "The workshop must fit into a single Saturday.",
+    ],
+    "options": [
+        option(
+            "A",
+            "University Lab Hands-On Day",
+            {"cost": "150 euros", "capacity": "40 seats", "setup": "computers provided"},
+            "everyone gets a workstation and stable setup",
+            "the campus location is farther for most attendees",
+            "University Lab",
+        ),
+        option(
+            "B",
+            "Community Center Talks",
+            {"cost": "200 euros", "capacity": "60 seats", "setup": "bring your own laptop"},
+            "central and roomy with space for talks",
+            "less hands-on and depends on attendees' own laptops",
+            "Community Center",
+        ),
+        option(
+            "C",
+            "Online Live Sessions",
+            {"cost": "40 euros", "capacity": "no seat limit", "setup": "video platform"},
+            "cheapest and open to anyone regardless of travel",
+            "harder to help beginners who get stuck at home",
+            "Online",
+        ),
+        option(
+            "D",
+            "Cafe Meetup Workshop",
+            {"cost": "120 euros", "capacity": "25 seats", "setup": "informal, limited power outlets"},
+            "relaxed, social atmosphere that lowers the barrier",
+            "tight on space and power for a full hands-on day",
+            "Cafe Meetup",
         ),
     ],
 }
@@ -618,137 +704,120 @@ MOD_LIGHT = {
 
 
 CASES: list[dict[str, Any]] = [
+    # 1. Manual/manual, n=2, stubborn deadlock (shared-home upgrade regression).
     {
-        "id": "q01_manual_manual_three_way_split",
-        "suite": "quick",
-        "why": "Catches the problem where A/B/C final votes close immediately without narrowing.",
+        "id": "c01_manual_manual_n2_stubborn_deadlock",
+        "why": "Two-person opposing-preference deadlock; must attempt the deadlock protocol, not a false unanimity.",
         "topic": "",
+        "expect": {"two_person_deadlock_attempted": True},
         "patch": deep_merge(
-            base_patch(seed=101, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
-            {
-                "environment": {"manual": WEEKEND_ENV},
-                "participants": {"profiles": profiles_three_way()},
-            },
-        ),
-    },
-    {
-        "id": "q02_manual_manual_no_moderator_peer_process",
-        "suite": "quick",
-        "why": "Checks whether no-moderator mode can still narrow with participant probes/summaries and visible votes.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=102, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_NONE),
-            {
-                "environment": {"manual": RESTAURANT_ENV},
-                "participants": {"profiles": profiles_hard_holdout_4()},
-            },
-        ),
-    },
-    {
-        "id": "q03_manual_manual_trait_spread",
-        "suite": "quick",
-        "why": "Checks whether high/low engagement changes turn share and word length visibly.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=103, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
-            {
-                "environment": {"manual": COFFEE_ENV},
-                "participants": {"profiles": profiles_trait_spread_4()},
-            },
-        ),
-    },
-    {
-        "id": "q04_manual_env_auto_participants_three_way",
-        "suite": "quick",
-        "why": "Manual option board with auto sims; tests controlled environment plus generated users.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=104, n=3, env_mode="manual", participants_mode="auto", forced_shape="1-1-1", moderator=MOD_FULL),
-            {"environment": {"manual": RESTAURANT_ENV}},
-        ),
-    },
-    {
-        "id": "q05_auto_env_manual_participants",
-        "suite": "quick",
-        "why": "Auto option board with fixed sim traits; tests generated environment plus controlled users.",
-        "topic": "Choose a team-building activity for a small software team with mixed energy levels",
-        "patch": deep_merge(
-            base_patch(seed=105, n=3, env_mode="auto", participants_mode="manual", moderator=MOD_FULL),
-            {"participants": {"profiles": profiles_three_way()}},
-        ),
-    },
-    {
-        "id": "q06_auto_auto_baseline_n3",
-        "suite": "quick",
-        "why": "Normal default-style auto/auto run for regression comparison.",
-        "topic": "Choose a birthday gift for a friend who likes practical things but already owns a lot",
-        "patch": base_patch(seed=106, n=3, env_mode="auto", participants_mode="auto", forced_shape="1-1-1", moderator=MOD_FULL),
-    },
-    {
-        "id": "f01_manual_manual_n2_stubborn_deadlock",
-        "suite": "full",
-        "why": "Forced two-person 1-1 split with stubborn manual participants; should trigger deadlock protocol.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=201, n=2, env_mode="manual", participants_mode="manual", forced_shape="1-1", moderator=MOD_FULL),
+            base_patch(seed=201, n=2, env_mode="manual", participants_mode="manual",
+                       forced_shape="1-1", moderator=MOD_FULL),
             {
                 "environment": {"manual": ROOMMATE_ENV},
                 "participants": {"profiles": profiles_stubborn_deadlock_2()},
             },
         ),
     },
+    # 2. Manual/manual, n=3, three-way split and narrowing (Saturday plan).
     {
-        "id": "f02_auto_auto_n5_trait_distribution",
-        "suite": "full",
-        "why": "Five-person auto/auto run; checks whether routing scales beyond n=3/4.",
-        "topic": "Choose a venue for a student project celebration with different budgets and travel times",
-        "patch": base_patch(seed=202, n=5, env_mode="auto", participants_mode="auto", forced_shape="2-1-1-1", moderator=MOD_FULL),
-    },
-    {
-        "id": "f03_manual_manual_light_moderator",
-        "suite": "full",
-        "why": "Moderator opens/closes, but participants should handle final narrowing.",
+        "id": "c02_manual_manual_n3_three_way_split",
+        "why": "A/B/C split must narrow before closing, not vote through immediately.",
         "topic": "",
         "patch": deep_merge(
-            base_patch(seed=203, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_LIGHT),
-            {
-                "environment": {"manual": RESTAURANT_ENV},
-                "participants": {"profiles": profiles_trait_spread_4()},
-            },
-        ),
-    },
-    {
-        "id": "f04_manual_manual_grounding_tripwire",
-        "suite": "full",
-        "why": "Manual option board with limited facts; catches invented parking/weather/distance claims.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=204, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
+            base_patch(seed=202, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
             {
                 "environment": {"manual": WEEKEND_ENV},
                 "participants": {"profiles": profiles_three_way()},
             },
         ),
     },
+    # 3. Manual/manual, n=4, strong trait spread, light moderator (student demo).
     {
-        "id": "f05_manual_env_auto_participants_n5",
-        "suite": "full",
-        "why": "Manual environment plus auto cast at n=5; checks bigger generated group over fixed facts.",
+        "id": "c03_manual_manual_n4_trait_spread_light_mod",
+        "why": "High/low engagement should visibly change turn share and word length; light moderator only opens/closes.",
         "topic": "",
         "patch": deep_merge(
-            base_patch(seed=205, n=5, env_mode="manual", participants_mode="auto", forced_shape="2-1-1-1", moderator=MOD_FULL),
-            {"environment": {"manual": COFFEE_ENV}},
+            base_patch(seed=203, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_LIGHT),
+            {
+                "environment": {"manual": DEMO_ENV},
+                "participants": {"profiles": profiles_trait_spread_4()},
+            },
         ),
     },
+    # 4. Manual/manual, n=4, no moderator (group dinner with dietary/travel).
     {
-        "id": "f06_auto_env_manual_participants_no_moderator",
-        "suite": "full",
-        "why": "Auto environment plus fixed participants without moderator; participant probes/summaries and visible votes should still work.",
-        "topic": "Choose a weekend trip for friends where one person wants quiet and one wants something active",
+        "id": "c04_manual_manual_n4_no_moderator",
+        "why": "No-moderator mode must still narrow via participant probes/summaries and visible votes.",
+        "topic": "",
+        "expect": {"peer_process": True},
         "patch": deep_merge(
-            base_patch(seed=206, n=4, env_mode="auto", participants_mode="manual", moderator=MOD_NONE),
-            {"participants": {"profiles": profiles_trait_spread_4()}},
+            base_patch(seed=204, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_NONE),
+            {
+                "environment": {"manual": RESTAURANT_ENV},
+                "participants": {"profiles": profiles_hard_holdout_4()},
+            },
         ),
+    },
+    # 5. Manual/manual, n=3, grounding stress case (coffee machine).
+    {
+        "id": "c05_manual_manual_n3_grounding_coffee",
+        "why": "Exposes invented product capabilities, inference over-rejection, and grounding/token cost.",
+        "topic": "",
+        "expect": {"zero_unsupported_printed": True},
+        "patch": deep_merge(
+            base_patch(seed=205, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
+            {
+                "environment": {"manual": COFFEE_ENV},
+                "participants": {"profiles": profiles_three_way()},
+            },
+        ),
+    },
+    # 6. Manual environment / automatic participants, n=5 (community workshop).
+    {
+        "id": "c06_manual_env_auto_participants_n5",
+        "why": "Fixed option board with a larger generated cast over fixed facts.",
+        "topic": "",
+        "patch": deep_merge(
+            base_patch(seed=206, n=5, env_mode="manual", participants_mode="auto",
+                       forced_shape="2-1-1-1", moderator=MOD_FULL),
+            {"environment": {"manual": WORKSHOP_ENV}},
+        ),
+    },
+    # 7. Automatic environment / manual participants, n=3 (alias-repair regression).
+    {
+        "id": "c07_auto_env_manual_participants_n3",
+        "why": "Retains the automatic setup and alias-repair regression with controlled personas.",
+        "topic": "Book a flight from Miami to Stockholm",
+        "patch": deep_merge(
+            base_patch(seed=207, n=3, env_mode="auto", participants_mode="manual", moderator=MOD_FULL),
+            {"participants": {"profiles": profiles_three_way()}},
+        ),
+    },
+    # 8. Automatic/automatic, n=3 baseline (volunteer scheduling).
+    {
+        "id": "c08_auto_auto_n3_baseline",
+        "why": "Normal default-style auto/auto run for regression comparison.",
+        "topic": "Choose a shared scheduling method for a volunteer group",
+        "patch": base_patch(seed=208, n=3, env_mode="auto", participants_mode="auto",
+                            forced_shape="1-1-1", moderator=MOD_FULL),
+    },
+    # 9. Automatic/automatic, n=5 scaling (one-day team retreat).
+    {
+        "id": "c09_auto_auto_n5_scaling",
+        "why": "Checks routing/pacing scale beyond n=3/4 with mixed budgets and energy.",
+        "topic": "Choose a one-day team retreat format with mixed budgets and energy levels",
+        "patch": base_patch(seed=209, n=5, env_mode="auto", participants_mode="auto",
+                            forced_shape="2-1-1-1", moderator=MOD_FULL),
+    },
+    # 10. Automatic/automatic, n=7 maximum size (student showcase), bounded turns.
+    {
+        "id": "c10_auto_auto_n7_max_size",
+        "why": "Maximum group size; a bounded turn budget tests scale without dominating total cost.",
+        "topic": "Choose a format for a student hackathon project showcase",
+        "patch": base_patch(seed=210, n=7, env_mode="auto", participants_mode="auto",
+                            forced_shape="3-2-1-1", moderator=MOD_FULL,
+                            max_turns_per_participant=4.0),
     },
 ]
 
@@ -758,10 +827,87 @@ def selected_cases() -> list[dict[str, Any]]:
     return CASES
 
 
+# Controller-facing phrasing that must never appear in a PRINTED participant
+# line (item 10 leak detector). These are internal rationale/trace terms.
+_LEAK_PHRASES = (
+    "most defensible choice",
+    "clearest visible support",
+    "visible discussion",
+    "route_source",
+    "intended_move",
+    "primary_act",
+    "allowed_reason",
+    "thread_id",
+    "controller",
+    "fallback",
+    "required_vote",
+    "option_focus",
+    "coverage",
+)
+
+
+def _leak_hits(run_data: dict[str, Any]) -> list[str]:
+    """Printed participant lines carrying controller-facing wording (item 10)."""
+    hits: list[str] = []
+    for turn in run_data.get("turns", []):
+        if turn.get("speaker_id") == "moderator":
+            continue
+        text = (turn.get("text") or "")
+        low = text.lower()
+        for phrase in _LEAK_PHRASES:
+            if phrase in low:
+                hits.append(f"turn {turn.get('index')}: '{phrase}' in {text[:60]!r}")
+    return hits
+
+
+def case_flags(case: dict[str, Any], metrics: dict[str, Any], run_data: dict[str, Any]) -> list[str]:
+    """Per-case acceptance checks — a case is more than returncode == 0 (item 9).
+
+    Returns a list of human-readable flags for manual transcript review; an
+    empty list means the case cleared every automatic check.
+    """
+    flags: list[str] = []
+    pt = int(metrics.get("participant_turns", 0) or 0)
+
+    def rate(key: str) -> float:
+        return (int(metrics.get(key, 0) or 0) / pt) if pt else 0.0
+
+    if int(metrics.get("invalid_printed_turn_count", 0) or 0) > 0:
+        flags.append(f"invalid_printed_turns={metrics.get('invalid_printed_turn_count')}")
+    if int(metrics.get("unsupported_printed_turns", 0) or 0) > 0:
+        flags.append(f"unsupported_printed_turns={metrics.get('unsupported_printed_turns')}")
+    if int(metrics.get("final_blocker_violations", 0) or 0) > 0:
+        flags.append(f"blocker_violations={metrics.get('final_blocker_violations')}")
+    if int(metrics.get("vote_state_consistency_failures", 0) or 0) > 0:
+        flags.append(f"vote_state_consistency_failures={metrics.get('vote_state_consistency_failures')}")
+    rr = float(metrics.get("repair_rate", 0.0) or 0.0)
+    if rr > 0.25:
+        flags.append(f"repair_rate={rr:.2f}>0.25")
+    dr = rate("dropped_turn_count")
+    if dr > 0.02:
+        flags.append(f"drop_rate={dr:.2f}>0.02")
+    leaks = _leak_hits(run_data)
+    if leaks:
+        flags.append(f"controller_language_leak x{len(leaks)}")
+
+    # Case-specific expectations declared on the case.
+    expect = case.get("expect", {}) or {}
+    if expect.get("two_person_deadlock_attempted") and not metrics.get("two_person_deadlock_attempted"):
+        flags.append("expected two_person_deadlock_attempted but none")
+    if expect.get("peer_process") and int(metrics.get("participant_procedural_moves", 0) or 0) == 0:
+        flags.append("expected peer procedural moves but none")
+    if expect.get("zero_unsupported_printed") and int(metrics.get("unsupported_printed_turns", 0) or 0) > 0:
+        flags.append("grounding case printed unsupported claims")
+    return flags
+
+
 
 def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any]:
     cfg = copy.deepcopy(base_config)
     deep_merge(cfg, case["patch"])
+    # Persist the suite case id so run.json/transcript metadata and the log
+    # directory name all tie back to this case (item 9).
+    cfg.setdefault("output", {})["case_id"] = case["id"]
 
     # Keep case logs separate inside the suite folder by using run metadata in stdout;
     # the simulator itself creates timestamped subdirs under eval/logs_eval_suite/.
@@ -808,6 +954,22 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
             except Exception as exc:  # noqa: BLE001 - diagnostic only
                 metrics = {"metrics_read_error": str(exc)}
 
+    # Tag the log directory with the case id (item 9) so the folder itself
+    # identifies its case, not only run.json/CSV.
+    if log_dir:
+        src = Path(log_dir)
+        if src.exists() and case["id"] not in src.name:
+            dest = src.with_name(f"{src.name}__{case['id']}")
+            try:
+                src.rename(dest)
+                log_dir = str(dest)
+            except OSError:
+                pass
+
+    flags = case_flags(case, metrics, run_data)
+    if flags:
+        print("FLAGS:", "; ".join(flags))
+
     persona_age_style = "; ".join(
         f"{p.get('name', '?')}:{p.get('age', '?')}:{p.get('speech_style', '')}"
         for p in run_data.get("personas", [])
@@ -817,8 +979,8 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "case_id": case["id"],
         "started": started,
         "returncode": proc.returncode,
+        "flags": "; ".join(flags),
         "log_dir": log_dir,
-        "suite": case["suite"],
         "why": case["why"],
         "environment_mode": cfg.get("environment", {}).get("mode"),
         "participants_mode": cfg.get("participants", {}).get("mode"),
@@ -839,6 +1001,24 @@ def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any
         "invalid_printed_turn_count": metrics.get("invalid_printed_turn_count"),
         "repaired_turns": metrics.get("repaired_turns"),
         "fallback_turns": metrics.get("fallback_turns"),
+        # Evidence-contract health (todo_validation item 15).
+        "intended_function_realized_rate": metrics.get("intended_function_realized_rate"),
+        "repair_success_rate": metrics.get("repair_success_rate"),
+        "dropped_turn_count": metrics.get("dropped_turn_count"),
+        "validator_failure_turns": metrics.get("validator_failure_turns"),
+        # Validator-cost surface (items 6/10): logical checks, API calls, the
+        # per-accepted-turn ratio, token share, and fast-path rate.
+        "participant_turns": metrics.get("participant_turns"),
+        "validator_calls": metrics.get("validator_calls"),
+        "validator_logical_checks": metrics.get("validator_logical_checks"),
+        "validator_api_retries": metrics.get("validator_api_retries"),
+        "validator_calls_per_accepted_turn": metrics.get("validator_calls_per_accepted_turn"),
+        "validator_logical_checks_per_turn": metrics.get("validator_logical_checks_per_turn"),
+        "validator_input_share": metrics.get("validator_input_share"),
+        "validation_fast_path_rate": metrics.get("validation_fast_path_rate"),
+        "accepted_metric_only": (metrics.get("assessment_action_counts") or {}).get("accept_with_metric"),
+        "repair_rate": metrics.get("repair_rate"),
+        "validator_tokens_in": metrics.get("validator_tokens_in"),
         "visible_vote_count": metrics.get("visible_vote_count"),
         "final_support_fraction": metrics.get("final_support_fraction"),
         "final_blocker_violations": metrics.get("final_blocker_violations"),
@@ -911,8 +1091,16 @@ def main() -> int:
     base_config = yaml.safe_load(original_text) or {}
 
     SUITE_LOG_DIR.mkdir(exist_ok=True)
+    # Restart-safety (item 9): a fresh full run clears the previous summary AND
+    # every prior per-run directory in one step, so an interrupted earlier run
+    # never leaves orphaned run folders behind an up-to-date CSV. The suite
+    # always runs all cases, so the end state is exactly len(cases) rows and
+    # exactly len(cases) run directories.
     if SUMMARY_CSV.exists():
         SUMMARY_CSV.unlink()
+    for child in SUITE_LOG_DIR.iterdir():
+        if child.is_dir():
+            shutil.rmtree(child, ignore_errors=True)
 
     print(f"Running {len(cases)} full eval cases. Logs: {SUITE_LOG_DIR}")
     print(f"Original config backup: {backup_path}")
@@ -934,19 +1122,24 @@ def main() -> int:
     remove_extra_metrics_csv()
     zip_path = zip_suite_log_dir()
 
-    print("\nSummary:")
+    print(f"\nSummary ({len(rows)} rows):")
+    flagged = 0
     for row in rows:
+        flags = row.get("flags") or ""
+        if flags:
+            flagged += 1
         print(
             f"- {row['case_id']}: rc={row['returncode']}, "
             f"outcome={row.get('outcome')}, final={row.get('final_option')}, "
-            f"lean_shifts={row.get('discussion_lean_shifts')}, "
-            f"peer_proc={row.get('participant_procedural_moves')}, "
-            f"split_pairs={row.get('split_reservation_exchanges')}, "
-            f"n2_deadlock={row.get('two_person_deadlock_attempted')}, "
+            f"v/turn={row.get('validator_calls_per_accepted_turn')}, "
+            f"v_share={row.get('validator_input_share')}, "
+            f"repair={row.get('repair_rate')}, drops={row.get('dropped_turn_count')}, "
             f"unsupported={row.get('unsupported_printed_turns')}, "
             f"tokens_in={row.get('total_tokens_in')}"
+            + (f"  ⚑ {flags}" if flags else "")
         )
-    print(f"\nSuite CSV: {SUMMARY_CSV}")
+    print(f"\n{flagged}/{len(rows)} cases flagged for manual review.")
+    print(f"Suite CSV: {SUMMARY_CSV}")
     print(f"Suite ZIP: {zip_path}")
     return return_code
 

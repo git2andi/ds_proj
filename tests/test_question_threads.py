@@ -213,17 +213,30 @@ class QuestionResolutionTests(unittest.TestCase):
         _observe(self.runner, self.state, "p1", "Good, that settles my worry.")
         self.assertEqual(self.thread.status, ThreadStatus.RESOLVED)
 
-    def test_routed_answer_with_unrelated_text_does_not_resolve(self):
-        # Closeout 2: the routed act alone never cools a question — an accepted
-        # but unrelated line from the required respondent leaves it hot.
+    def test_routed_answer_with_unrelated_evidence_does_not_resolve(self):
+        # Closeout 2 / item 5: the routed act alone never cools a question.
+        # Whether the answer addressed its target is the VALIDATOR's judgment,
+        # carried in the accepted evidence — an accepted line whose answer
+        # evidence says "unrelated" (and that names no focus option) leaves
+        # the thread hot.
+        from models import AnswerEvidence, EvidenceSpan, VisibleEvidence
+
         answer_intent = self.runner._answer_intent_for_thread(self.state, self.thread)
-        answer_intent.option_focus = []  # drop the prompt hint so the text can miss
-        _observe(self.runner, self.state, "p2", "Weekends always fill up fast around here.", intent=answer_intent)
+        text = "Weekends always fill up fast around here."
+        record = append_turn(self.state, "p2", text, intent=answer_intent)
+        record.evidence = VisibleEvidence(
+            utterance=text,
+            answers=[AnswerEvidence(
+                completeness="unrelated", span=EvidenceSpan(text=text, start=0),
+                addresses_target=False,
+            )],
+        )
+        self.runner._apply_semantics(self.state, record)
         self.assertEqual(self.thread.status, ThreadStatus.HOT)
 
-    def test_issue_key_relation_resolves_focusless_question(self):
-        # A group question with no parseable option focus is still answerable
-        # through its normalized issue key (cost here).
+    def test_addressed_answer_resolves_focusless_question(self):
+        # A group question with no parseable option focus is still answerable:
+        # the routed reply's accepted answer evidence addresses the target.
         random.seed(24)
         state = make_state()
         runner = make_runner(state)

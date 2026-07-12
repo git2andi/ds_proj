@@ -14,7 +14,7 @@ import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
 from controller.policy import PolicyMixin
 from models import ActType, MoveIntent
-from utils import clean_generated
+from utils import clean_generated, extract_utterance
 
 from tests.fixtures import make_persona
 
@@ -53,23 +53,102 @@ class CleanupStillNormalizes(unittest.TestCase):
         self.assertEqual(clean_generated("Mira: fine by me.", "Mira"), "fine by me.")
         self.assertEqual(clean_generated("Mira: Mira: fine by me.", "Mira"), "fine by me.")
 
-    def test_surrounding_quotes_and_metadata_trailer_are_removed(self):
-        self.assertEqual(
-            clean_generated('"The museum works for me. [act=support]"', "Mira"),
-            "The museum works for me.",
-        )
-
-    def test_generic_filler_tail_is_removed(self):
-        self.assertEqual(
-            clean_generated("The museum keeps the day easy. What do you think?", "Mira"),
-            "The museum keeps the day easy.",
-        )
+    def test_generic_filler_tail_is_preserved(self):
+        # Item 4: cleanup is structural only — natural tails are semantic
+        # content ("What do you think?" opens a genuine group question).
+        text = "The museum keeps the day easy. What do you think?"
+        self.assertEqual(clean_generated(text, "Mira"), text)
 
     def test_newlines_collapse_to_one_line(self):
         self.assertEqual(
             clean_generated("The museum\nworks for me.", "Mira"),
             "The museum works for me.",
         )
+
+
+class EnvelopeExtraction(unittest.TestCase):
+    """Item 4: the explicit <utterance> envelope and its structural flags."""
+
+    def test_envelope_content_is_extracted(self):
+        text, flags = extract_utterance(
+            "<utterance>The Museum is safer, but the Bike Ride is cheaper—what do you think?</utterance>",
+            "Mira",
+        )
+        self.assertEqual(text, "The Museum is safer, but the Bike Ride is cheaper—what do you think?")
+        self.assertEqual(flags, [])
+
+    def test_metadata_outside_envelope_is_excluded(self):
+        text, flags = extract_utterance(
+            "Here is the message:\n<utterance>Fine by me.</utterance>\n[act=support]", "Mira"
+        )
+        self.assertEqual(text, "Fine by me.")
+        self.assertEqual(flags, [])
+
+    def test_missing_envelope_preserves_complete_response(self):
+        raw = "I'm hesitant about the Escape Room cost — what do you all think?"
+        text, flags = extract_utterance(raw, "Mira")
+        self.assertEqual(text, raw)
+        self.assertEqual(flags, ["MISSING_ENVELOPE"])
+
+    def test_duplicate_envelopes_flag_multi_turn_output(self):
+        text, flags = extract_utterance(
+            "<utterance>First point.</utterance><utterance>Second point.</utterance>", "Mira"
+        )
+        self.assertEqual(text, "First point.")
+        self.assertIn("MULTI_TURN_OUTPUT", flags)
+
+    def test_stray_tag_is_flagged_malformed_and_content_kept(self):
+        text, flags = extract_utterance("<utterance>The Bike Ride works for me.", "Mira")
+        self.assertEqual(text, "The Bike Ride works for me.")
+        self.assertIn("MALFORMED_ENVELOPE", flags)
+
+    def test_empty_envelope_is_flagged(self):
+        text, flags = extract_utterance("<utterance>  </utterance>", "Mira")
+        self.assertEqual(text, "")
+        self.assertIn("EMPTY_ENVELOPE", flags)
+
+    def test_leaked_metadata_inside_envelope_is_flagged_not_deleted(self):
+        text, flags = extract_utterance(
+            "<utterance>The museum works for me. [act=support]</utterance>", "Mira"
+        )
+        self.assertEqual(text, "The museum works for me. [act=support]")
+        self.assertIn("LEAKED_METADATA", flags)
+
+    def test_speaker_prefix_inside_envelope_is_removed(self):
+        text, flags = extract_utterance("<utterance>Mira: fine by me.</utterance>", "Mira")
+        self.assertEqual(text, "fine by me.")
+        self.assertEqual(flags, [])
+
+    def test_quoted_utterance_is_unwrapped_once(self):
+        text, _ = extract_utterance('<utterance>"The museum works for me."</utterance>', "Mira")
+        self.assertEqual(text, "The museum works for me.")
+
+    def test_inner_quotes_survive(self):
+        raw = '<utterance>Jonas said "too pricey", and I agree.</utterance>'
+        text, _ = extract_utterance(raw, "Mira")
+        self.assertEqual(text, 'Jonas said "too pricey", and I agree.')
+
+    def test_dash_semicolon_colon_clauses_are_preserved(self):
+        for raw in (
+            "The Museum is calm — the Bike Ride is cheap.",
+            "The Museum is calm; the Bike Ride is cheap.",
+            "One thing matters: the budget.",
+            "The plan is simple - museum first.",
+        ):
+            text, _ = extract_utterance(f"<utterance>{raw}</utterance>", "Mira")
+            self.assertEqual(text, raw)
+
+    def test_natural_tails_are_preserved(self):
+        for tail in ("What do you think?", "Thoughts?", "Right?", "What about you?"):
+            raw = f"The museum keeps the day easy. {tail}"
+            text, _ = extract_utterance(f"<utterance>{raw}</utterance>", "Mira")
+            self.assertEqual(text, raw)
+
+    def test_newline_normalization_keeps_all_words(self):
+        text, _ = extract_utterance(
+            "<utterance>The museum\nworks for me,\nhonestly.</utterance>", "Mira"
+        )
+        self.assertEqual(text, "The museum works for me, honestly.")
 
 
 class WordBudgetsStaySoft(unittest.TestCase):

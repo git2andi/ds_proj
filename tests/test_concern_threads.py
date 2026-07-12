@@ -179,7 +179,13 @@ class ConcernResolutionTests(unittest.TestCase):
             "Fair enough, I can live with the Escape Room since the cost fits after all.",
         )
         self.assertEqual(self.thread.status, ThreadStatus.RESOLVED)
-        _observe(self.runner, self.state, "p1", "Anything else we should weigh?")
+        # A light probe beat: COMMENT has no realization contract, so the last
+        # prompt is the utterance prompt (a SUPPORT intent without visible
+        # support would now trigger the universal realization repair, item 9).
+        _observe(
+            self.runner, self.state, "p1", "Anything else we should weigh?",
+            intent=MoveIntent(speaker_id="p1", act=ActType.COMMENT, reason="light probe"),
+        )
         prompt = self.runner._llm.prompts[-1]
         self.assertIn("Already raised and settled in this chat: cost", prompt)
 

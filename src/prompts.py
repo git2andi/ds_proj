@@ -85,6 +85,38 @@ Return JSON only:
 {_schema(schema)}"""
 
 
+def alias_repair(
+    options_needing: list[tuple[str, str, str]],
+    used_aliases: list[str],
+) -> str:
+    """Small alias-only repair call (todo_validation item 3).
+
+    Receives only the affected options (id, full name, rejected alias) and the
+    aliases already taken by other options. The original option board is never
+    regenerated; only concise replacement aliases are requested.
+    """
+    rows = "\n".join(
+        f"- {oid}: name \"{name}\"" + (f" (rejected alias: \"{rejected}\")" if rejected else "")
+        for oid, name, rejected in options_needing
+    )
+    taken = ", ".join(f'"{a}"' for a in used_aliases) or "none"
+    example = {"aliases": {oid: "words copied from that option's name" for oid, _n, _r in options_needing}}
+    return f"""Provide a concise short alias for each option below.
+
+Options needing an alias:
+{rows}
+Aliases already taken by other options: {taken}
+
+Rules:
+- Each alias uses 1-{cfg.scenario.short_alias_max_words} words COPIED from that option's own name (trivial singular/plural is fine). Never invent new words, never abbreviate.
+- At least {cfg.scenario.short_alias_min_chars} characters; pick the most recognizable words, not simply the first ones.
+- Aliases must be unique and must differ from the taken aliases above.
+- Do not reuse a rejected alias.
+
+Return JSON only:
+{_schema(example)}"""
+
+
 def setup_personas(
     topic: str,
     n: int,
@@ -531,7 +563,7 @@ Allowed facts:
 Recent chat:
 {recent}
 
-Output: one message only, no speaker prefix, no bullets/metadata. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Output: exactly one message wrapped in <utterance></utterance> tags, like <utterance>your message</utterance>. Nothing outside the tags. No speaker prefix, no bullets/metadata inside. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
 
 
 def _scale_1_5(value: float) -> int:
@@ -556,13 +588,21 @@ _COMMIT_FORM_EXAMPLES = {
 def repair_utterance(
     *,
     original_text: str,
-    issue_codes: list[str],
+    issues: list,
     persona: Persona,
     state: DialogueState,
     recent_lines: list[str],
     intent: MoveIntent,
     max_words: int,
 ) -> str:
+    """Targeted, meaning-preserving repair request (todo_validation item 10).
+
+    ``issues`` are ValidationIssue objects: the prompt receives the exact
+    explanations and offending spans, not opaque codes. Everything the
+    assessment did not flag must be preserved — intended move, option focus,
+    target, stance, style, and commitment target.
+    """
+    issue_codes = [issue.code for issue in issues]
     focus = [state.scenario.option(o) for o in intent.option_focus if o in state.scenario.option_ids]
     cards = _option_cards(focus or state.scenario.options)
     recent = "\n".join(recent_lines[-3:]) if recent_lines else "(no recent turns)"
@@ -606,21 +646,25 @@ def repair_utterance(
         required_focus += f" Your previous line committed to the wrong option; commit to {required_name} instead."
     if "ANSWER_DOES_NOT_ADDRESS_QUESTION" in issue_codes:
         required_focus += " The line dodged the question it was asked; answer that question first, directly."
-    if "COMPARISON_MISSES_OPTIONS" in issue_codes and len(intent.option_focus) >= 2:
-        pair = ", ".join(aliases.get(o, o) for o in intent.option_focus[:2])
-        required_focus += f" The comparison must make BOTH options identifiable: {pair}."
-    if "THREAD_RESPONSE_MISSES_OPTION" in issue_codes and intent.option_focus:
-        required_focus += f" Address {aliases.get(intent.option_focus[0], intent.option_focus[0])} — the option this exchange is about."
     if "CONTINUATION_REPEATS" in issue_codes:
         required_focus += " The follow-up repeated your previous message; add one genuinely new thought instead."
-    if "SUPPORT_NOT_REALIZED" in issue_codes:
-        focus_name = aliases.get(intent.option_focus[0], intent.option_focus[0]) if intent.option_focus else "the focused option"
-        required_focus += f" The line reads as a neutral aside; make the support visible — one clear positive reason why {focus_name} works."
-    if "CONCERN_NOT_REALIZED" in issue_codes:
-        required_focus += " The line contains no actual objection; state the concrete downside, risk, or unknown plainly."
+    if "WRONG_OPTION_FOCUS" in issue_codes and intent.option_focus:
+        focus_name = aliases.get(intent.option_focus[0], intent.option_focus[0])
+        required_focus += f" The line was about the wrong option; keep the same move but make it about {focus_name}."
     grounding = ""
-    if "UNSUPPORTED_FACT" in issue_codes:
-        grounding = " The line invented a fact not in the option cards/context; remove any invented service, fee, policy, location, time, or number and keep only what the cards state (uncertainty like 'we don't know if…' is fine)."
+    unsupported = [
+        issue for issue in issues if issue.code.startswith("UNSUPPORTED_CLAIM")
+    ]
+    if unsupported:
+        details = "; ".join(
+            (f"\"{issue.span}\" — {issue.explanation}" if issue.span else (issue.explanation or issue.code))
+            for issue in unsupported
+        )
+        grounding = (
+            f" The line stated something unsupported: {details}. Remove or replace exactly those "
+            "words; keep every other point unchanged. Use only the listed facts — do not add a new "
+            "fact in their place (explicit uncertainty like 'we don't know if…' is fine)."
+        )
     malformed = ""
     if "MALFORMED_UTTERANCE" in issue_codes:
         malformed = (
@@ -654,59 +698,129 @@ def repair_utterance(
     params = persona.sim_params
     target_block = _target_block(state, intent, len(recent_lines[-3:]))
     requirement = _ACT_REQUIREMENTS.get(intent.act, "")
+    problem_lines = "\n".join(
+        f"- {issue.code}"
+        + (f": {issue.explanation}" if issue.explanation else "")
+        + (f" (offending words: \"{issue.span}\")" if issue.span else "")
+        for issue in issues
+    ) or "- (none listed)"
     return f"""Repair this generated chat line — keep its intended move, fix only the problems.
+Preserve everything not flagged below: the option you are talking about, whom you address,
+your stance and commitment target, and your speaking style.
 
 Speaker: {persona.name} — {persona.speech_style}; directness {_scale_1_5(params.directness)}/5, stubbornness {_scale_1_5(params.stubbornness)}/5.
 Move: {intent.act.value}. {requirement}{target_block}
 Original line: {original_text}
-Problems: {', '.join(issue_codes)}
+Problems:
+{problem_lines}
 Allowed option facts:
 {cards}
 Recent chat:
 {recent}
 
-Write one natural chat line, around {max_words} words (a complete sentence somewhat over is fine). No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, tags, JSON, or bracketed labels."""
+Write one natural chat line, around {max_words} words (a complete sentence somewhat over is fine), wrapped in <utterance></utterance> tags with nothing outside them. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, JSON, or bracketed labels inside the tags."""
 
 
-def grounding_check(*, utterance: str, state: DialogueState, focus_options: list[OptionCard]) -> str:
-    """Prompt a strict fact-checker: does the line invent facts beyond the board?"""
-    cards = _grounding_cards(focus_options or state.scenario.options)
-    context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) or "none"
-    return f"""You are a strict fact-checker for a simulated group decision.
-The ONLY facts that exist in this world are in the option cards and shared context.
+# Intent-specific validator schema fragments and their annotation rules
+# (item 7): only the categories relevant to the requested move are sent.
+_VALIDATOR_SCHEMAS: dict[str, object] = {
+    "supports": [{"option": "A", "strength": "weak|conditional|firm", "span": "exact words"}],
+    "concerns": [{"option": "A", "severity": "ordinary|hard", "span": "exact words"}],
+    "comparisons": [{"options": ["A", "B"], "favored": "A or null", "dimension": "visible dimension or null", "span": "exact words"}],
+    "answers": [{"completeness": "full|partial|evasive|unrelated", "addresses_target": True, "span": "exact words"}],
+    "softenings": [{"option": "A or null", "concession": True, "span": "exact words"}],
+    "proposals": [{"option": "A or null", "span": "exact words"}],
+    "commitments": [{"kind": "vote|accept", "option": "A", "span": "exact words"}],
+    "switches": [{"source": "A or null", "target": "B", "reason_span": "exact words or null", "span": "exact words"}],
+}
 
-Option cards:
+_VALIDATOR_RULES: dict[str, str] = {
+    "supports": "- supports: only a visibly positive case for that specific option; mere mention is not support.",
+    "concerns": "- concerns severity \"hard\" only for veto-strength rejection (dealbreaker, can't support, hard no).",
+    "comparisons": "- comparisons: only when the message visibly contrasts the named options.",
+    "answers": "- answers: only when the message responds to the shown prior turn; completeness \"unrelated\" when it ignores the question.",
+    "softenings": "- softenings: visible warming toward an option or an explicit concession, without a commitment.",
+    "proposals": "- proposals: one existing option visibly offered as common ground (question form counts).",
+    "commitments": (
+        "- commitments: only real public commitment (a vote, pick, works-for-me, can-live-with). "
+        "Mere preference (\"B is worth considering\", \"I lean toward…\") is NOT a commitment. "
+        "A commitment stated as a question, or conditional on something unresolved, is NOT a commitment. "
+        "A trailing check-in question after a real commitment does not cancel it."
+    ),
+    "switches": "- switches: only when the commitment visibly moves away from an earlier pick; copy the reason clause into reason_span when present.",
+}
+
+
+def validator_interpret(
+    *,
+    utterance: str,
+    speaker_name: str,
+    options: list[OptionCard],
+    shared_context: list[str],
+    resolved_mentions: list[str],
+    categories: tuple[str, ...],
+    target_turn_text: str | None,
+    target_turn_speaker: str | None,
+    thread_summary: str | None,
+    previous_vote: str | None,
+) -> str:
+    """One structured semantic interpretation of a visible utterance.
+
+    The validator sees only public context: the final utterance, the option
+    facts, resolved references, the targeted prior turn, the active public
+    thread, and (on commitment turns) the speaker's previous public vote.
+    Controller intent selects WHICH categories are requested but is never
+    shown as content — hidden intent cannot become evidence. Commitments,
+    blockers, and questions are additionally checked deterministically.
+    """
+    cards = _grounding_cards(options)
+    context = "; ".join(compact_words(item, 16) for item in shared_context) or "none"
+    mentions = ", ".join(resolved_mentions) or "none"
+    target_line = (
+        f"\nThe message responds to {target_turn_speaker}: \"{compact_words(target_turn_text, 24)}\""
+        if target_turn_text
+        else ""
+    )
+    thread_line = f"\nActive public thread: {thread_summary}" if thread_summary else ""
+    vote_line = f"\nSpeaker's previous public vote: option {previous_vote}" if previous_vote else ""
+    schema: dict[str, object] = {
+        key: _VALIDATOR_SCHEMAS[key] for key in categories if key in _VALIDATOR_SCHEMAS
+    }
+    schema["claims"] = [{
+        "span": "exact words",
+        "kind": "listed_fact|arithmetic|opinion|inference|uncertainty|invented_detail|cross_option_transfer|ungrounded_inference|contradiction",
+        "option": "A or null", "attribute": "attribute name or null",
+        "value": "claimed value or null", "sources": ["A.cost"],
+    }]
+    schema["ambiguous_references"] = ["exact words of any reference with several plausible options"]
+    if thread_summary:
+        schema["thread_relevant"] = "true/false"
+    category_rules = "\n".join(
+        _VALIDATOR_RULES[key] for key in categories if key in _VALIDATOR_RULES
+    )
+    if category_rules:
+        category_rules += "\n"
+    return f"""You are a precise semantic annotator for a group-decision chat. Interpret ONE message: report only what it VISIBLY says — never what anyone might have intended.
+
+Options (the only facts that exist):
 {cards}
 Shared context: {context}
 
-Message to check:
+Message by {speaker_name}:
 "{utterance}"
 
-A message is UNSUPPORTED if it states a NEW concrete fact that is not in, and
-not directly implied by, the cards/context: e.g. an invented service, included or
-excluded feature, fee, policy, location, exact time/number, or operational detail.
-A message is ALSO unsupported if it attributes a real card fact to the WRONG
-option (claiming option X has a feature that only option Y's card lists), if it
-misstates what an option is about, or if it compares values of different kinds as
-if they measured the same thing (e.g. an object count against a storage size).
-Opinions, priorities, trade-off reasoning, questions, and uncertainty are ALWAYS allowed.
-Reasoning that follows from a listed attribute is allowed.
-Paraphrasing or summarizing a card's wording is allowed for any option, as long as
-each fact stays tied to the option whose card lists it. Comparing options through
-their listed attributes is allowed and grounded (e.g. "X costs more and takes
-longer than Y" when the cards list those costs/durations). Commonsense risk that
-follows from an attribute is allowed (an outdoor activity depending on weather; a
-long session being tiring), and statements of uncertainty are ALWAYS allowed ("we
-don't know the forecast", "it might get canceled").
-STRICT RULE for specifics: any number, range, count, fee, schedule, menu item,
-feature name, or measurement that does not appear in the cards/context is
-UNSUPPORTED — even if the rest of the message expresses uncertainty, and even if
-it sounds plausible. The only allowed new numbers are simple arithmetic on listed
-numbers (a group total, a difference, a per-person split). If every concrete
-claim traces back to the right option's attribute, upside, or concern —
-or is such reasoning, arithmetic, or uncertainty — reply false.
+Options already resolved in this message: {mentions}{target_line}{thread_line}{vote_line}
 
-    Reply with JSON only: {{"unsupported": true or false, "snippet": "the offending phrase, or empty"}}"""
+Annotation rules:
+- Multi-label: one message can carry several evidence types at once. Report each; never let one erase another.
+- Bind evidence to the specific option it is about, never to every option mentioned.
+- Every span must be copied EXACTLY, word for word, from the message.
+{category_rules}- claims: split the message into ATOMIC checkable statements, separating each concrete factual premise from the subjective conclusion it supports. Kinds: "listed_fact" only when the exact option-attribute-value relation is in the cards; "arithmetic" = simple math over listed numbers; "cross_option_transfer" = another option's value applied to this option; "invented_detail" = a concrete detail (number, capability, facility, event, guarantee, attribute) not in the cards; "contradiction" = a concrete claim that conflicts with a listed card value; "inference" = a QUALIFIED/hedged conclusion reasonably drawn from listed facts (cite sources when you can, but a hedged conclusion needs no exact card wording); "ungrounded_inference" = a conclusion stated as a NEW concrete fact with no listed support; "opinion"/"uncertainty" = judgments and unknowns. A judgment embedding a concrete capability/event/logistical premise is TWO claims: the premise (listed_fact/invented_detail/contradiction) plus the opinion — never fold an unlisted concrete premise into an opinion. For a factual/contradiction claim, fill attribute and value. sources: "OPTION.attribute" or "context:INDEX".
+- ambiguous_references: pronouns/references with more than one plausible option; do NOT guess a binding.
+- Omit empty lists. Do not invent options, participants, or text.
+
+Return JSON only:
+{_schema(schema)}"""
 
 
 def _grounding_cards(options: Iterable[OptionCard]) -> str:

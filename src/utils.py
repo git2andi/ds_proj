@@ -173,30 +173,78 @@ def compact_words(text: str, max_words: int) -> str:
     return " ".join(trimmed).rstrip(" ,;:") + "."
 
 
-def clean_generated(text: str, speaker_name: str) -> str:
-    """Normalize a raw model utterance: drop speaker prefixes, surrounding
-    quotes, metadata trailers, and generic filler tails.
+# Matched surrounding quote pairs cleanup may unwrap (exactly one pair).
+_QUOTE_PAIRS = {('"', '"'), ("“", "”"), ("'", "'"), ("‘", "’"), ("„", "“")}
 
-    Length is a prompt-side generation target only: the returned utterance is
-    never cut at a word boundary to satisfy a budget, so a complete sentence
-    over target stays complete.
+
+def _unwrap_quote_pair(text: str) -> str:
+    """Remove ONE matching surrounding quote pair; inner quotes stay intact."""
+    if len(text) >= 2 and (text[0], text[-1]) in _QUOTE_PAIRS:
+        return text[1:-1].strip()
+    return text
+
+
+def clean_generated(text: str, speaker_name: str) -> str:
+    """Structural normalization for non-envelope outputs (moderator lines):
+    drop speaker prefixes, unwrap one surrounding quote pair, collapse
+    whitespace, and cut a bracketed metadata trailer.
+
+    Never deletes semantic content: no filler-tail removal, no word-budget
+    clipping — a complete sentence over target stays complete.
     """
     text = strip_speaker_prefix(text, speaker_name)
     text = normalise_ws(text.replace("\n", " "))
-    text = text.strip('"“”')
-    text = re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
-    return _remove_generic_filler_tail(text)
+    text = _unwrap_quote_pair(text)
+    return re.sub(r"\s*\[\s*(?:act|opt|stance)\s*=.*$", "", text, flags=re.I).strip()
 
 
-def _remove_generic_filler_tail(text: str) -> str:
-    patterns = [
-        r"\s*(?:what do you think|thoughts|any thoughts)\??$",
-        r"\s*(?:what about you|does that help|does that work)\??$",
-        r"\s*(?:right|yeah)\??$",
-    ]
-    out = text
-    for pattern in patterns:
-        out = re.sub(pattern, "", out, flags=re.I).rstrip(" ,;:")
-    return out.strip()
+# Explicit output envelope requested from participant generation and repair.
+_ENVELOPE = re.compile(r"<utterance>(.*?)</utterance>", re.I | re.S)
+_STRAY_ENVELOPE_TAG = re.compile(r"</?utterance\b[^>]*>", re.I)
+
+# Structural flags extract_utterance can report (raw-output stage findings).
+FLAG_MISSING_ENVELOPE = "MISSING_ENVELOPE"        # telemetry: full response kept
+FLAG_MALFORMED_ENVELOPE = "MALFORMED_ENVELOPE"    # stray/unbalanced tags
+FLAG_EMPTY_ENVELOPE = "EMPTY_ENVELOPE"            # envelope present, no content
+FLAG_MULTI_TURN_OUTPUT = "MULTI_TURN_OUTPUT"      # several envelopes returned
+FLAG_LEAKED_METADATA = "LEAKED_METADATA"          # bracketed metadata inside the utterance
+
+
+def extract_utterance(raw: str, speaker_name: str) -> tuple[str, list[str]]:
+    """Extract exactly one visible utterance from a raw model response.
+
+    Conservative and non-destructive (todo_validation item 4). May only:
+    take the text inside the explicit ``<utterance>`` envelope, remove an
+    accidental speaker prefix, unwrap one surrounding quote pair, and
+    normalize whitespace. It must never remove natural tails ("What do you
+    think?"), clauses after dashes/semicolons/colons, or anything resembling
+    filler, and never clips to a word budget.
+
+    When the envelope is missing, the complete response is preserved after
+    minimal normalization and flagged — validation assesses it; cleanup never
+    guesses where the utterance ends. Returned flags are raw-output structure
+    findings for validation/trace.
+    """
+    flags: list[str] = []
+    text = str(raw or "").strip()
+    matches = [m.strip() for m in _ENVELOPE.findall(text)]
+    if matches:
+        if len(matches) > 1:
+            flags.append(FLAG_MULTI_TURN_OUTPUT)
+        body = matches[0]
+        if not body:
+            flags.append(FLAG_EMPTY_ENVELOPE)
+    elif _STRAY_ENVELOPE_TAG.search(text):
+        flags.append(FLAG_MALFORMED_ENVELOPE)
+        body = _STRAY_ENVELOPE_TAG.sub(" ", text)
+    else:
+        flags.append(FLAG_MISSING_ENVELOPE)
+        body = text
+    body = strip_speaker_prefix(body, speaker_name)
+    body = normalise_ws(body.replace("\n", " "))
+    body = _unwrap_quote_pair(body)
+    if re.search(r"\[\s*(?:act|opt|stance)\s*=", body, re.I):
+        flags.append(FLAG_LEAKED_METADATA)
+    return body, flags
 
 

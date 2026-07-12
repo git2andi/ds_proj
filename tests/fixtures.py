@@ -7,10 +7,11 @@ the runner (dialogue.initialise_state) so tests exercise production state.
 
 from __future__ import annotations
 
+from typing import NamedTuple
+
 from dialogue import initialise_state
 from models import (
     ActType,
-    DialogueAct,
     DialogueState,
     MoveIntent,
     OptionCard,
@@ -21,7 +22,31 @@ from models import (
     TraitProfile,
     TurnRecord,
 )
-from parsing import OptionResolver, parse_dialogue_act
+from parsing import (
+    OptionResolver,
+    active_blocker_option,
+    resolve_addressee,
+    visible_commitment,
+    visible_question,
+)
+
+# Acts whose display label comes from the routed intent, not visible text.
+_CONTEXTUAL_ACTS = {
+    ActType.OPENING, ActType.ANSWER, ActType.PROCESS,
+    ActType.COMPROMISE, ActType.VOTE, ActType.CLOSING,
+}
+
+
+class ParsedAct(NamedTuple):
+    """Test-only display/trace parse: the fields the old DialogueAct exposed,
+    recomputed from the canonical deterministic helpers (production no longer
+    keeps a DialogueAct — evidence is the sole semantic authority, item 7)."""
+
+    act_type: ActType
+    option_refs: list[str]
+    addressee_id: str | None
+    question_scope: str | None
+    question_target_id: str | None
 
 
 def make_scenario() -> Scenario:
@@ -115,18 +140,32 @@ def parse_text(
     intent: MoveIntent | None = None,
     resolver: OptionResolver | None = None,
     previous_speaker_id: str | None = None,
-) -> DialogueAct:
+) -> ParsedAct:
     resolver = resolver or make_resolver(state.scenario)
-    persona = state.persona_by_id(speaker_id)
-    return parse_dialogue_act(
-        speaker_id=speaker_id,
-        speaker_name=persona.name,
-        text=text,
-        resolver=resolver,
-        participant_names={p.id: p.name for p in state.personas},
-        intent=intent,
+    names = {p.id: p.name for p in state.personas}
+    check = text.replace("’", "'").replace("‘", "'")
+    option_refs = resolver.ids_in_text(check)
+    question = visible_question(
+        text, speaker_id=speaker_id, participant_names=names,
         previous_speaker_id=previous_speaker_id,
     )
+    scope = question[0] if question else None
+    target = question[1] if question else None
+    addressee = resolve_addressee(text, speaker_id, names) or target
+    commit = visible_commitment(
+        text, resolver, sanctioned_switch=bool(intent and intent.allow_vote_change)
+    )
+    if commit and commit[0] in {"vote", "accept"}:
+        act_type = ActType.VOTE
+    elif (commit and commit[0] == "reject") or active_blocker_option(check, resolver):
+        act_type = ActType.CONCERN
+    elif scope:
+        act_type = ActType.ASK
+    elif intent is not None and intent.act in _CONTEXTUAL_ACTS:
+        act_type = intent.act
+    else:
+        act_type = ActType.COMMENT
+    return ParsedAct(act_type, option_refs, addressee, scope, target)
 
 
 def append_turn(
@@ -135,36 +174,41 @@ def append_turn(
     text: str,
     *,
     intent: MoveIntent | None = None,
-    act: DialogueAct | None = None,
     phase: Phase = Phase.DISCUSSION,
     resolver: OptionResolver | None = None,
     blocked: bool = False,
 ) -> TurnRecord:
-    """Append one participant turn the way the runner does (parse + record).
+    """Append one participant turn the way the runner does (record + evidence).
 
-    The act is parsed from the visible text unless an explicit act is given.
     This mutates only the turn list and speaker bookkeeping — semantic state
     updates (votes, coverage, threads) stay with the observer under test.
     """
     previous = next((t.speaker_id for t in reversed(state.turns) if t.speaker_id != "moderator"), None)
-    if act is None:
-        act = parse_text(
-            state, speaker_id, text, intent=intent, resolver=resolver, previous_speaker_id=previous
-        )
+    resolver = resolver or make_resolver(state.scenario)
     state.turn_index += 1
     rt = state.runtimes[speaker_id]
     rt.turn_count += 1
     rt.last_spoke_turn = state.turn_index
     rt.already_said.append(text)
+    from tests.evidence_adapter import derive_evidence
+
     record = TurnRecord(
         index=state.turn_index,
         speaker_id=speaker_id,
         speaker_name=state.name_for(speaker_id),
         text=text,
         phase=phase,
-        act=act,
         intent=intent,
         state_mutation_blocked=blocked,
+        # Every appended turn carries the typed evidence contract, mirroring
+        # the runtime pipeline (deterministic test-adapter semantics).
+        evidence=derive_evidence(
+            text, resolver,
+            speaker_id=speaker_id,
+            participant_names={p.id: p.name for p in state.personas},
+            intent=intent,
+            previous_speaker_id=previous,
+        ),
     )
     state.turns.append(record)
     return record

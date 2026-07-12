@@ -257,26 +257,247 @@ class MoveIntent:
     continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
 
 
+# ---------------------------------------------------------------------------
+# Visible-evidence contract (todo_validation item 3)
+#
+# The typed multi-label representation of what ONE final visible utterance
+# publicly says. Populated by the interpretation pipeline (deterministic
+# critical parser + validator LLM), verified against the raw text, and — once
+# migration completes — the only semantic evidence allowed to update dialogue
+# state. Controller intent is never encoded here: this is visible text only.
+# ---------------------------------------------------------------------------
+
+# Controlled vocabularies shared with the validator schema and test fixtures.
+SUPPORT_STRENGTHS = ("weak", "conditional", "firm")
+CONCERN_SEVERITIES = ("ordinary", "hard")
+QUESTION_SCOPES = ("direct", "group", "rhetorical")
+ANSWER_COMPLETENESS = ("full", "partial", "evasive", "unrelated")
+COMMITMENT_KINDS = ("vote", "accept")
+BLOCKER_ACTIONS = ("raised", "resolved")
+CLAIM_KINDS = (
+    "listed_fact",            # exact option-attribute-value or shared-context fact
+    "arithmetic",             # simple reproducible arithmetic over listed values
+    "opinion",                # subjective judgment, never a scenario fact
+    "inference",              # qualified conclusion drawn from listed facts
+    "uncertainty",            # explicit uncertainty or a question about missing info
+    "invented_detail",        # concrete detail not present in the scenario
+    "cross_option_transfer",  # another option's value applied to this option
+    "ungrounded_inference",   # concrete conclusion asserted with no listed support
+    "contradiction",          # directly conflicts with a listed option fact
+)
+
+
 @dataclass(slots=True)
-class DialogueAct:
-    speaker_id: str
+class EvidenceSpan:
+    """Exact substring of the visible utterance backing one piece of evidence.
+
+    ``start`` is the character offset in the final utterance; -1 means the
+    span text was reported without a located offset (verification then only
+    checks substring membership).
+    """
+
     text: str
-    act_type: ActType
-    option_refs: list[str] = field(default_factory=list)
-    addressee_id: str | None = None
-    # Question semantics from visible text only (5.5): a direct question names
-    # its target (question_target_id set); a group question has scope "group"
-    # and no target — the CONTROLLER assigns the respondent, never the parser.
-    question_scope: QuestionScope | None = None
-    question_target_id: str | None = None
-    explicit_vote: str | None = None
-    accepts: list[str] = field(default_factory=list)
-    soft_rejects: dict[str, str] = field(default_factory=dict)
-    hard_rejects: dict[str, str] = field(default_factory=dict)
-    resolves_blocker: str | None = None    # option whose earlier blocker this line resolves
-    conditional_support: str | None = None  # option supported only conditionally
-    offers_compromise: str | None = None    # option visibly proposed as common ground
-    softens_toward: str | None = None       # option the line visibly warms to without committing (issue 3)
+    start: int = -1
+
+
+@dataclass(slots=True)
+class OptionMention:
+    option_id: str
+    span: EvidenceSpan
+    order: int = 0                  # textual order among mentions, 0-based
+    alias_form: str = ""            # surface form used ("Museum", "Option B", ...)
+    resolution: str = "explicit"    # explicit | context (pronoun/thread resolved)
+
+
+@dataclass(slots=True)
+class SupportEvidence:
+    option_id: str
+    strength: str                   # SUPPORT_STRENGTHS
+    span: EvidenceSpan
+
+
+@dataclass(slots=True)
+class ConcernEvidence:
+    option_id: str
+    severity: str                   # CONCERN_SEVERITIES ("hard" = rejection-strength)
+    span: EvidenceSpan
+
+
+@dataclass(slots=True)
+class ComparisonEvidence:
+    option_ids: list[str]
+    span: EvidenceSpan
+    favored: str | None = None      # only when the text visibly favors one side
+    dimension: str | None = None    # only when visible in the text
+
+
+@dataclass(slots=True)
+class QuestionEvidence:
+    """Visible question, detected deterministically (scope + addressee)."""
+
+    scope: str                      # QUESTION_SCOPES
+    span: EvidenceSpan
+    addressee_id: str | None = None  # participant id for direct questions
+    option_ids: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class AnswerEvidence:
+    completeness: str               # ANSWER_COMPLETENESS
+    span: EvidenceSpan
+    addresses_target: bool = True
+
+
+@dataclass(slots=True)
+class SofteningEvidence:
+    """Visible stance movement short of a commitment: warming toward an
+    option and/or explicitly conceding a point / moving off an earlier stance."""
+
+    span: EvidenceSpan
+    option_id: str | None = None    # option warmed toward, when visible
+    concession: bool = False        # explicitly yields a prior position
+
+
+@dataclass(slots=True)
+class ProposalEvidence:
+    """Visible compromise/common-ground proposal, including question forms."""
+
+    option_id: str | None
+    span: EvidenceSpan
+
+
+@dataclass(slots=True)
+class CommitmentEvidence:
+    kind: str                       # COMMITMENT_KINDS: vote | accept
+    option_id: str
+    span: EvidenceSpan
+
+
+@dataclass(slots=True)
+class SwitchEvidence:
+    target: str
+    span: EvidenceSpan
+    source: str | None = None       # None when the old pick is not visible
+    reason_span: EvidenceSpan | None = None  # visible reason, when present
+
+
+@dataclass(slots=True)
+class BlockerEvidence:
+    option_id: str
+    action: str                     # BLOCKER_ACTIONS: raised | resolved
+    span: EvidenceSpan
+
+
+@dataclass(slots=True)
+class GroundingClaim:
+    """One atomic checkable statement extracted from the utterance."""
+
+    span: EvidenceSpan
+    kind: str                        # CLAIM_KINDS
+    option_id: str | None = None     # subject option when applicable
+    attribute: str | None = None     # attempted attribute for factual claims
+    value: str | None = None         # attempted value for factual claims
+    source_facts: list[str] = field(default_factory=list)  # e.g. "A.cost=24 euros", "context:0"
+    supported: bool | None = None    # deterministic verification outcome (None = not yet checked)
+    reason: str = ""                 # why unsupported, when supported is False
+
+
+@dataclass(slots=True)
+class VisibleEvidence:
+    """Multi-label visible semantics of one final utterance.
+
+    One utterance may carry several evidence types simultaneously (e.g. a
+    concern, a switch commitment with a reason, and a group question); earlier
+    evidence never erases later evidence. Every entry binds to its specific
+    option(s) — nothing applies globally to all mentioned options.
+    """
+
+    utterance: str = ""
+    mentions: list[OptionMention] = field(default_factory=list)
+    supports: list[SupportEvidence] = field(default_factory=list)
+    concerns: list[ConcernEvidence] = field(default_factory=list)
+    comparisons: list[ComparisonEvidence] = field(default_factory=list)
+    questions: list[QuestionEvidence] = field(default_factory=list)
+    answers: list[AnswerEvidence] = field(default_factory=list)
+    softenings: list[SofteningEvidence] = field(default_factory=list)
+    proposals: list[ProposalEvidence] = field(default_factory=list)
+    commitments: list[CommitmentEvidence] = field(default_factory=list)
+    switches: list[SwitchEvidence] = field(default_factory=list)
+    blockers: list[BlockerEvidence] = field(default_factory=list)
+    claims: list[GroundingClaim] = field(default_factory=list)
+    # References that could not be resolved to exactly one public referent.
+    ambiguous_references: list[EvidenceSpan] = field(default_factory=list)
+    # Whether the utterance addressed the routed public thread (None = no thread).
+    thread_relevant: bool | None = None
+    # Derived primary label for compatibility, logs, and summary metrics only —
+    # never the sole semantic authority over the multi-label evidence above.
+    primary_act: ActType | None = None
+
+    def sole_commitment(self) -> CommitmentEvidence | None:
+        """The single visible commitment, or None when absent or conflicting."""
+        targets = {c.option_id for c in self.commitments}
+        if len(self.commitments) >= 1 and len(targets) == 1:
+            return self.commitments[0]
+        return None
+
+    def evidence_kinds(self) -> set[str]:
+        kinds: set[str] = set()
+        for name, entries in (
+            ("support", self.supports),
+            ("concern", self.concerns),
+            ("comparison", self.comparisons),
+            ("question", self.questions),
+            ("answer", self.answers),
+            ("proposal", self.proposals),
+            ("commitment", self.commitments),
+            ("switch", self.switches),
+        ):
+            if entries:
+                kinds.add(name)
+        # A softening warms toward a specific option; a pure concession (no
+        # target option) is movement off a stance without a visible direction.
+        if any(s.option_id for s in self.softenings):
+            kinds.add("softening")
+        if any(b.action == "raised" for b in self.blockers):
+            kinds.add("blocker")
+        if any(b.action == "resolved" for b in self.blockers):
+            kinds.add("blocker_resolution")
+        if any(s.concession for s in self.softenings):
+            kinds.add("concession")
+        return kinds
+
+
+class AssessmentAction(str, Enum):
+    """Explicit action decided by validation (replaces issue-count logic)."""
+
+    ACCEPT = "accept"
+    ACCEPT_WITH_METRIC = "accept_with_metric"  # safe deviation, telemetry only
+    REPAIR = "repair"
+    FALLBACK = "fallback"
+    DROP = "drop"
+
+
+@dataclass(slots=True)
+class ValidationIssue:
+    code: str
+    explanation: str = ""
+    span: str = ""                  # offending exact span when applicable
+    option_id: str | None = None
+    # Blocking issues must never reach the transcript as state evidence; a
+    # candidate that keeps one after repair is replaced or dropped. Non-blocking
+    # issues are worth one repair but may print if repair cannot improve them.
+    blocking: bool = False
+
+
+@dataclass(slots=True)
+class TurnAssessment:
+    """Validation outcome for one candidate utterance: what to do and why."""
+
+    action: AssessmentAction = AssessmentAction.ACCEPT
+    issues: list[ValidationIssue] = field(default_factory=list)
+    intended_act_realized: bool | None = None    # requested function visibly realized
+    intended_focus_realized: bool | None = None  # requested option focus visibly present
+    notes: str = ""
 
 
 @dataclass(slots=True)
@@ -369,7 +590,6 @@ class TurnRecord:
     speaker_name: str
     text: str
     phase: Phase
-    act: DialogueAct
     intent: MoveIntent | None = None
     tokens_in: int = 0
     tokens_out: int = 0
@@ -378,6 +598,56 @@ class TurnRecord:
     repair_trigger_codes: list[str] = field(default_factory=list)
     state_mutation_blocked: bool = False
     used_fallback: bool = False
+    fallback_family: str = ""  # which act-specific fallback produced the text
+    # Final accepted visible evidence and its validation assessment: the ONE
+    # semantic authority for this turn. Every appended participant turn
+    # carries evidence (pipeline, peer procedure, and test fixtures alike);
+    # a record without evidence (moderator lines) carries no public semantic
+    # signal at all.
+    evidence: "VisibleEvidence | None" = None
+    assessment: "TurnAssessment | None" = None
+
+    def mentioned_options(self) -> list[str]:
+        if self.evidence is None:
+            return []
+        seen: list[str] = []
+        for mention in self.evidence.mentions:
+            if mention.option_id not in seen:
+                seen.append(mention.option_id)
+        return seen
+
+    def visible_vote(self) -> str | None:
+        if self.evidence is None:
+            return None
+        commitment = self.evidence.sole_commitment()
+        return commitment.option_id if commitment else None
+
+    def visible_accepts(self) -> list[str]:
+        if self.evidence is None:
+            return []
+        return [c.option_id for c in self.evidence.commitments if c.kind == "accept"]
+
+    def objected_options(self) -> set[str]:
+        if self.evidence is None:
+            return set()
+        return {c.option_id for c in self.evidence.concerns} | {
+            b.option_id for b in self.evidence.blockers if b.action == "raised"
+        }
+
+    def question_target(self) -> str | None:
+        if self.evidence is None:
+            return None
+        return next(
+            (q.addressee_id for q in self.evidence.questions if q.scope == "direct"), None
+        )
+
+    def realized_act(self) -> ActType:
+        """Display/trace label only — never a state authority. Derived from the
+        accepted visible evidence; falls back to the routed intent act for
+        records without evidence (e.g. moderator lines)."""
+        if self.evidence is not None and self.evidence.primary_act is not None:
+            return self.evidence.primary_act
+        return self.intent.act if self.intent is not None else ActType.COMMENT
 
 
 @dataclass(slots=True)
@@ -416,6 +686,7 @@ class DialogueState:
     fallback_turn_count: int = 0
     invalid_printed_turn_count: int = 0
     discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)
+    discussion_lean_shift_turns: list[int] = field(default_factory=list)  # source turn per shift (item 14)
     phase_history: list[str] = field(default_factory=list)
     # Immutable per-turn controller trace: why each turn was selected (pre) and
     # what the final accepted text actually realized (result). Entries are plain

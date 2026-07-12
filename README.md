@@ -15,10 +15,24 @@ It is not a generic chatbot, full society simulation, or full Generative-Agents-
 The simulator uses a hybrid dialogue-system design:
 
 ```text
-symbolic controller + LLM utterance renderer + parser/validator feedback loop
+symbolic controller + dialogue-LLM utterance renderer + validator-LLM semantic interpreter
 ```
 
-The controller owns phase logic, speaker choice, macro-act choice, option focus, narrowing, and outcome rules. The LLM only renders one natural utterance for the controller's current intent.
+The controller owns phase logic, speaker choice, macro-act choice, option focus, narrowing, and outcome rules. Two independently configurable LLM roles exist (`llm.dialogue` and `llm.validator` in config.yaml; the same provider for both is fine, and no third checker exists):
+
+- the **dialogue role** owns every generative call — scenario/persona setup, participant utterances, moderator lines, and repair rewrites;
+- the **validator role** owns structured semantic interpretation of visible utterances, claim classification for grounding, and intended-move alignment; it never generates public dialogue text.
+
+The governing authority order is:
+
+```text
+scenario/shared-context facts   authoritative for grounding
+controller intent               authoritative for what the turn was asked to realize
+visible utterance               authoritative for what was publicly said
+validated visible evidence      authoritative for state updates
+```
+
+No generator self-report metadata exists and hidden controller intent never overrides contradictory visible text. Each candidate utterance is emitted inside an explicit `<utterance>` envelope, extracted conservatively (structural cleanup only — natural tails and clauses are never deleted), deterministically resolved (options, aliases, addressees, unambiguous public pronoun referents), interpreted by ONE validator call into a typed multi-label evidence object (support, concern, comparison, question, answer, softening, proposal, commitment, switch, blocker, atomic grounding claims — several may coexist in one line), verified deterministically (spans must occur in the utterance, critical votes/blockers must pass the conservative critical parser, claims are checked against a normalized option-attribute-value fact table), and then assessed into one explicit action: `ACCEPT`, `ACCEPT_WITH_METRIC`, `REPAIR`, `FALLBACK`, or `DROP`. Repair is one targeted dialogue-LLM rewrite fed with exact issue explanations and offending spans; fallback is a narrow act-specific deterministic family built only from known truthful information, revalidated through the same complete path; anything else is dropped rather than printed. Validator failures never fail open.
 
 ## Scenario schema
 
@@ -87,7 +101,7 @@ The controller owns the intended move (`MoveIntent`):
 speaker + macro act + route source + target/addressee + option focus + reason
 ```
 
-The LLM renders one natural message against a compact realization contract: voice (age/register/directness/stubbornness cues), one act-specific semantic requirement, one turn objective, focus-only option facts, and a soft word range. Cleanup strips speaker labels, quotes, and metadata only — it never cuts an utterance to its word budget. Validation checks whether the line visibly matches the intended move and stays grounded; routing is read-only, and only the final accepted, parsed turn changes dialogue state (observer). A routed answer, concern response, coverage turn, or vote counts only when the final text visibly realizes it.
+The dialogue LLM renders one natural message against a compact realization contract: voice (age/register/directness/stubbornness cues), one act-specific semantic requirement, one turn objective, focus-only option facts, and a soft word range — returned inside an `<utterance>` envelope. Cleanup is structural only (envelope extraction, one speaker prefix, one quote pair, whitespace) and never deletes semantic content or clips to a word budget. Every intended move has the same visible-realization check on every route: what matters is whether the requested FUNCTION was realized, not whether the primary label matches (a comparative question realizes a requested comparison). Routing is read-only, and only the final accepted evidence object changes dialogue state (observer) — the observer never reparses text, updates are option-specific, and only a speaker's own accepted utterance can move that speaker's private ranks or vote.
 
 The compact macro-act vocabulary is:
 
@@ -114,25 +128,32 @@ Outcomes are derived from visible transcript evidence only: explicit votes, acce
 ## High-level pipeline
 
 ```text
-CLI topic or manual environment
-  -> scenario / option board
+CLI topic (always wins) or configured manual environment
+  -> scenario / option board (invalid generated aliases get a small alias-only repair call)
   -> automatic or manual simulated participants
   -> age/profile/speech-style plausibility checks
   -> initial per-sim option ranks
   -> controller routes: required answer > hot thread > cooling thread > coverage > continuation > normal act
-  -> LLM renders one utterance
-  -> parse -> validate -> repair/fallback -> append final turn
-  -> observer updates threads, coverage, rank table, and progress signature
+  -> dialogue LLM renders one enveloped utterance
+  -> conservative extraction -> deterministic critical layer (mentions, strict
+     commitments + post-checks, explicit blockers, genuine questions)
+  -> selective validator LLM call ONLY when soft meaning can change state,
+     requesting just the categories the intended move needs (+ grounding claims);
+     simple fully-verifiable turns skip it via explicit deterministic fast paths
+  -> deterministic verification of every span/id/binding + fact-table grounding
+  -> assessment: ACCEPT / ACCEPT_WITH_METRIC / REPAIR / FALLBACK / DROP
+     (repair only for blocking failures; truthful state-safe fallback families only)
+  -> observer consumes the accepted evidence object: threads, coverage, rank table, progress
+  -> consensus/public support consume the SAME accepted evidence (single semantic authority)
   -> flow: explicit phases, bounded narrowing, formal votes, one repair state machine
-  -> consensus manager computes successful / majority / unresolved from formal commitments
-  -> transcript.md, run.json (incl. controller trace), metrics.csv are written
+  -> transcript.md, run.json (incl. controller trace + validation telemetry), metrics.csv
 ```
 
 ## Main modules
 
 - `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
 - `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases. Manual eval personas include age/speech-style/profile variation.
-- `config.yaml`: provider, environment, participant, pacing, threads, narrowing, routing, validation, and output settings.
+- `config.yaml`: LLM roles (`llm.dialogue` / `llm.validator`), environment, participant, pacing, threads, narrowing, routing, validation mode (`validation.mode: selective | full`), and output settings. Safety-critical deterministic checks (commitments, blockers, grounding of accepted claims) are always active in both modes.
 - `src/builders.py`: builds automatic/manual scenarios and participants, including age/speech-style/profile validation and initial option-rank compatibility.
 - `src/models.py`: stable domain dataclasses (scenario, personas, acts, turns, DialogueState) plus re-exports of the controller state types.
 - `src/simulator.py`: converts hidden OCEAN traits into the five simulator parameters and the engagement-based expected turn share.
@@ -141,10 +162,11 @@ CLI topic or manual environment
 - `src/controller/threads.py`: deterministic issue keys, thread lifecycle transitions, primary-thread selection.
 - `src/controller/policy.py`: read-only route/speaker/act/option/addressee selection returning `MoveIntent`.
 - `src/controller/flow.py`: phase transition graph, narrowing readiness/behavior, formal voting, and the repair state machine.
-- `src/observer.py`: the single post-turn semantic state-update entry point (threads via the engine, coverage, ranks, progress).
-- `src/parsing.py`: pure visible-semantics layer — option references, commitments, question scope, blockers, softening.
-- `src/validation.py`: side-effect-free turn validation, thread-aware realization checks, grounding, deterministic fallback.
-- `src/prompts.py`: setup, utterance, moderator, repair, and grounding prompts.
+- `src/observer.py`: the single post-turn state-update entry point, consuming the accepted evidence object (threads via the engine, coverage, ranks, progress).
+- `src/interpreter.py`: the deterministic critical layer, the selective validator-LLM call (intent-specific payload, explicit fast paths), deterministic verification of validator output, and the normalized fact table for claim-level grounding.
+- `src/parsing.py`: deterministic critical parser/resolver — options, aliases, addressees, public pronoun referents, strict commitments with post-checks, strict blockers, genuine questions. Soft semantics belong to the validator role only.
+- `src/validation.py`: evidence-based candidate assessment (repair only for blocking failures) and the truthful state-safe fallback families (vote/switch, blocker restatement, coverage request, factual comparison, listed/does-not-say answer).
+- `src/prompts.py`: setup, utterance, moderator, repair, and validator-interpretation prompts.
 - `src/consensus.py`: final outcome from formal visible commitments (voting/compromise_repair phases only).
 - `src/logger.py` / `eval/eval.py`: transcripts, structured traces (controller trace, threads, repair history), metrics, and token diagnostics.
 - `tests/`: deterministic controller tests (`py -m unittest discover -s tests`).
@@ -154,10 +176,20 @@ CLI topic or manual environment
 Activate the existing project environment, then run:
 
 ```powershell
-py .\main.py "Choose a restaurant for a group dinner"
+py .\main.py                                          # interactive prompt (auto) / configured environment (manual)
+py .\main.py "Choose a restaurant for a group dinner" # explicit topic
+py .\main.py topics.txt                               # batch file (# comments and blank lines skipped)
+"Choose a restaurant" | py .\main.py                  # piped topic(s)
 ```
 
-For eval cases (the suite always runs all cases):
+An explicit CLI/piped topic always requests automatic scenario generation for
+that topic, even when `environment.mode` is `manual`; explicit input is never
+silently discarded. Without an explicit topic, manual mode runs the configured
+environment once and auto mode prompts interactively. `participants.mode` is
+independent: manual profiles combine freely with a CLI-generated scenario.
+
+The full eval suite is a costly, explicitly approved operation (it runs every
+case against the live LLM endpoints) — do not run it casually:
 
 ```powershell
 py .\eval\run_eval_suite.py

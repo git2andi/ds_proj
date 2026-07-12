@@ -460,16 +460,18 @@ def _normalise_initial_stances(
 
 
 class SetupBuilder:
-    def __init__(self, topic: str) -> None:
+    def __init__(self, topic: str, *, force_auto_scenario: bool = False) -> None:
         self.topic = topic.strip()
         seed = cfg.simulation.get("random_seed", None)
         if seed is not None:
             random.seed(int(seed))
+        # participants.mode stays independent: manual profiles combine freely
+        # with an automatically generated scenario (explicit CLI topic).
         self._profiles = manual_participant_profiles()
-        self._manual_env = manual_environment()
+        self._manual_env = None if force_auto_scenario else manual_environment()
         if self._manual_env:
             self.topic = str(self._manual_env["topic"]).strip()
-        self._llm = get_llm_client()
+        self._llm = get_llm_client("dialogue")  # setup is a generative call: dialogue role
         self._hard_blocker_id: str | None = None
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
@@ -835,17 +837,88 @@ class SetupBuilder:
         if not isinstance(options_raw, list):
             raise ValueError("scenario.options must be a list")
         labels = [str(x) for x in cfg.scenario.option_labels]
-        options = [self._parse_option(item, labels[i]) for i, item in enumerate(options_raw[: len(labels)])]
-        if len(options) != len(labels):
+        parsed = [self._parse_option(item, labels[i]) for i, item in enumerate(options_raw[: len(labels)])]
+        if len(parsed) != len(labels):
             raise ValueError("wrong number of options")
-        self._require_unique_short_names(options)
+        options = [card for card, _proposed in parsed]
+        # Alias problems never discard a substantively valid board: they get a
+        # small alias-only repair call instead (todo_validation item 3).
+        alias_notes = self._ensure_valid_aliases(options, {card.id: prop for card, prop in parsed})
         ctx_raw = raw.get("shared_context", [])
         shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
         self._validate_participant_references(shared_context, n)
-        return Scenario(
+        scenario = Scenario(
             topic=self.topic,
             options=options,
             shared_context=shared_context,
+        )
+        scenario.setup_notes.extend(alias_notes)
+        return scenario
+
+    def _alias_problems(self, options: list[OptionCard], proposed: dict[str, str]) -> tuple[dict[str, str], dict[str, str]]:
+        """(invalid, duplicate) alias diagnostics: option id -> offending alias."""
+        invalid = {o.id: proposed.get(o.id, "") for o in options if not o.short_name}
+        duplicates: dict[str, str] = {}
+        seen: dict[str, str] = {}
+        for option in options:
+            if not option.short_name:
+                continue
+            key = option.short_name.casefold()
+            if key in seen:
+                duplicates[option.id] = option.short_name
+            else:
+                seen[key] = option.id
+        return invalid, duplicates
+
+    def _ensure_valid_aliases(self, options: list[OptionCard], proposed: dict[str, str]) -> list[str]:
+        """Repair invalid/duplicate short aliases with a small alias-only LLM
+        call; the option board itself is preserved. Returns setup notes.
+
+        Repaired aliases pass the same deterministic validation as generated
+        ones (words from the option name, length bounds, uniqueness); repair
+        has a small explicit retry limit and a precise final error.
+        """
+        invalid, duplicates = self._alias_problems(options, proposed)
+        if not invalid and not duplicates:
+            return []
+        notes = [
+            *(f"invalid_alias: option {oid} short_name {alias!r} rejected" for oid, alias in sorted(invalid.items())),
+            *(f"duplicate_alias: option {oid} short_name {alias!r} collides" for oid, alias in sorted(duplicates.items())),
+        ]
+        by_id = {o.id: o for o in options}
+        rejected: dict[str, set[str]] = {oid: {alias} for oid, alias in {**invalid, **duplicates}.items()}
+        for _attempt in range(2):  # explicit alias-repair retry limit
+            need = sorted(set(invalid) | set(duplicates))
+            used = [o.short_name for o in options if o.short_name and o.id not in need]
+            prompt = prompts.alias_repair(
+                [(oid, by_id[oid].name, ", ".join(sorted(rejected.get(oid, ())))) for oid in need],
+                used,
+            )
+            try:
+                data = self._llm.generate_json(prompt, profile="setup")
+            except Exception:
+                data = {}
+            raw_aliases = data.get("aliases", data) if isinstance(data, dict) else {}
+            taken = {alias.casefold() for alias in used}
+            for oid in need:
+                candidate = str((raw_aliases or {}).get(oid) or "").strip()
+                validated = validated_short_alias(by_id[oid].name, candidate)
+                if validated and validated.casefold() not in taken:
+                    by_id[oid].short_name = validated
+                    taken.add(validated.casefold())
+                    notes.append(f"alias_repaired: option {oid} short_name set to {validated!r}")
+                elif candidate:
+                    rejected.setdefault(oid, set()).add(candidate)
+            invalid, duplicates = self._alias_problems(options, proposed)
+            if not invalid and not duplicates:
+                return notes
+        remaining = {**invalid, **duplicates}
+        raise ValueError(
+            "alias_repair_failed: could not obtain valid unique short aliases for "
+            + ", ".join(
+                f"option {oid} (name {by_id[oid].name!r}; rejected: {sorted(rejected.get(oid, {alias}))})"
+                for oid, alias in sorted(remaining.items())
+            )
         )
 
     @staticmethod
@@ -883,7 +956,14 @@ class SetupBuilder:
                 if count != n:
                     raise ValueError(f"shared_context participant count {count} does not match requested {n}")
 
-    def _parse_option(self, raw: Any, expected_id: str) -> OptionCard:
+    def _parse_option(self, raw: Any, expected_id: str) -> tuple[OptionCard, str]:
+        """Parse one option; returns (card, proposed_alias).
+
+        Substantive option-field failures (missing name/upside/concern, too few
+        attributes) still reject the scenario attempt. An unusable short_name
+        leaves the card's short_name empty for the alias-only repair step — it
+        is never silently derived by clipping words from the full name.
+        """
         if not isinstance(raw, dict):
             raise ValueError("each option must be an object")
         attrs = raw.get("attrs", {})
@@ -894,23 +974,18 @@ class SetupBuilder:
         attr_max = int(cfg.scenario.public_attr_max)
         clean_attrs = dict(list(clean_attrs.items())[:attr_max])
         if len(clean_attrs) < attr_min:
-            raise ValueError("option has too few attributes")
+            raise ValueError(f"option_field_failure: option {expected_id} has too few attributes")
         name = self._clean_name(_require(raw.get("name"), f"option {expected_id} name"))
-        # A missing/unusable short_name rejects this scenario attempt (setup
-        # retries); it is never repaired by clipping words from the full name.
-        short_name = validated_short_alias(name, str(raw.get("short_name") or ""))
-        if not short_name:
-            raise ValueError(
-                f"option {expected_id} short_name is missing or unusable: {raw.get('short_name')!r}"
-            )
-        return OptionCard(
+        proposed = str(raw.get("short_name") or "").strip()
+        card = OptionCard(
             id=str(raw.get("id") or expected_id).strip().upper(),
             name=name,
-            short_name=short_name,
+            short_name=validated_short_alias(name, proposed),
             attrs=clean_attrs,
             upside=_require(raw.get("upside"), f"option {expected_id} upside"),
             concern=_require(raw.get("concern"), f"option {expected_id} concern"),
         )
+        return card, proposed
 
     def _parse_personas(self, rows: Any, trait_rows: list[dict[str, Any]], scenario: Scenario,
                         required_preferences: dict[str, str] | None = None) -> list[Persona]:

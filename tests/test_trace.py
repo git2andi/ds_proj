@@ -52,6 +52,25 @@ class ControllerTraceTests(unittest.TestCase):
         self.assertEqual(entry["result"]["realized_act"], "vote")
         self.assertTrue(entry["result"]["act_mismatch"])
 
+    def test_state_changes_recorded_for_accepted_turn(self):
+        # Item 14: the trace shows exactly which speaker-local/public fields
+        # the observer changed for this turn.
+        runner = make_runner(self.state, ["The Museum works for me."])
+        runner._generate_and_append(self.state, _support_intent("p1", "A"))
+        result = [e for e in self.state.controller_trace if e["type"] == "turn"][0]["result"]
+        self.assertTrue(result["state_changed"])
+        self.assertTrue(any(change.startswith("vote:p1") for change in result["state_changes"]))
+        self.assertTrue(any(change.startswith("coverage:A") for change in result["state_changes"]))
+
+    def test_validation_path_telemetry_in_trace(self):
+        runner = make_runner(self.state, ["The Museum keeps the day easy to adjust."])
+        runner._generate_and_append(self.state, _support_intent("p1", "A"))
+        result = [e for e in self.state.controller_trace if e["type"] == "turn"][0]["result"]
+        self.assertIn("validator_llm_used", result)
+        self.assertIn("validation_fast_path_reason", result)
+        self.assertIn("validator_categories", result)
+        self.assertIn("validator_tokens_in", result)
+
     def test_pre_snapshot_is_immutable(self):
         runner = make_runner(self.state, ["The Museum keeps the day easy to adjust."])
         runner._generate_and_append(self.state, _support_intent("p1", "A"))
@@ -74,6 +93,31 @@ class ControllerTraceTests(unittest.TestCase):
         entry = [e for e in self.state.controller_trace if e["type"] == "turn"][0]
         self.assertEqual(entry["pre"]["route_source"], "coverage")
         self.assertTrue(entry["result"]["coverage_realized"])
+
+    def test_assessment_and_evidence_diagnostics_traced(self):
+        # Item 15: assessment action, realization flags, evidence bindings,
+        # and grounding diagnostics are in the per-turn trace.
+        runner = make_runner(self.state, ["The Museum keeps the day easy to adjust."])
+        runner._generate_and_append(self.state, _support_intent("p1", "A"))
+        result = [e for e in self.state.controller_trace if e["type"] == "turn"][0]["result"]
+        self.assertEqual(result["assessment_action"], "accept")
+        self.assertTrue(result["intended_act_realized"])
+        self.assertTrue(result["intended_focus_realized"])
+        self.assertIn("support", result["evidence_kinds"])
+        self.assertEqual(result["evidence_bindings"]["support"], ["A"])
+        self.assertEqual(result["unsupported_claims"], [])
+        self.assertEqual(result["fallback_family"], "")
+
+    def test_fallback_family_reaches_the_trace(self):
+        runner = make_runner(self.state, ["Just to be clear.", "Just to be clear."])
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.COMPARE, reason="compare",
+            route_source="thread_hot", option_focus=["A", "B"],
+        )
+        runner._generate_and_append(self.state, intent)
+        result = [e for e in self.state.controller_trace if e["type"] == "turn"][0]["result"]
+        self.assertTrue(result["fallback_used"])
+        self.assertEqual(result["fallback_family"], "comparison")
 
     def test_phase_transition_traced(self):
         runner = make_runner(self.state)

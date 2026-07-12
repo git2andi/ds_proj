@@ -63,7 +63,8 @@ class DialogueLogger:
         return path
 
     def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
-        provider, model = _active_provider_model()
+        dialogue_provider, dialogue_model = _active_provider_model("dialogue")
+        validator_provider, validator_model = _active_provider_model("validator")
         env_mode = str((cfg.get("environment", None) or {}).get("mode", "auto"))
         participants_mode = str((cfg.get("participants", None) or {}).get("mode", "auto"))
         seed = cfg.simulation.get("random_seed", None)
@@ -74,11 +75,13 @@ class DialogueLogger:
             f"Topic: {state.scenario.topic}",
             f"Environment: {state.scenario.environment_type}",
             # Provider differences change style, grounding, and failure patterns
-            # (issue 9) — a transcript must say which backend wrote it.
-            f"Provider: {provider}",
-            f"Model: {model}",
+            # (issue 9) — a transcript must say which backend wrote it and which
+            # backend judged it (the two roles are independently configurable).
+            f"Dialogue LLM: {dialogue_provider} ({dialogue_model})",
+            f"Validator LLM: {validator_provider} ({validator_model})",
             f"Environment mode: {env_mode}",
             f"Participants mode: {participants_mode}",
+            f"Validation mode: {str((cfg.get('validation', None) or {}).get('mode', 'selective'))}",
             f"Moderator: enabled={moderator['enabled']} opening={moderator['opening']} mid_nudges={moderator['mid_discussion_nudges']} final_vote_call={moderator['final_vote_call']} closing={moderator['closing']}",
             f"Random seed: {seed if seed is not None else 'null'}",
             f"Pacing: min={state.min_discussion_turns} force={state.force_narrow_turns} hard={state.hard_max_turns}",
@@ -142,18 +145,28 @@ class DialogueLogger:
             "",
             f"--- Tokens: setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']} "
             f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} "
+            f"validator={tokens['validator_tokens_in']}/{tokens['validator_tokens_out']} "
             f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out) ---",
         ]
         return lines
 
     def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-        provider, model = _active_provider_model()
+        dialogue_provider, dialogue_model = _active_provider_model("dialogue")
+        validator_provider, validator_model = _active_provider_model("validator")
         return {
             "run_id": self.run_id,
+            # Suite case identifier (eval item 9): present when the eval harness
+            # sets output.case_id, empty for ad-hoc runs. Ties this run.json,
+            # its transcript, and the summary row to one suite case.
+            "case_id": str((cfg.get("output", None) or {}).get("case_id", "")),
             "topic": self.topic,
-            "llm": {"provider": provider, "model": model},
+            "llm": {
+                "dialogue": {"provider": dialogue_provider, "model": dialogue_model},
+                "validator": {"provider": validator_provider, "model": validator_model},
+            },
             "participants_mode": str((cfg.get("participants", None) or {}).get("mode", "auto")),
             "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
+            "validation_mode": str((cfg.get("validation", None) or {}).get("mode", "selective")),
             "moderator_config": _resolved_moderator_config(),
             "scenario": _to_jsonable(state.scenario),
             "personas": [_to_jsonable(p) for p in state.personas],
@@ -182,9 +195,9 @@ class DialogueLogger:
         }
 
 
-def _active_provider_model() -> tuple[str, str]:
-    """The LLM backend this run used, read from config (issue 9)."""
-    provider = str(cfg.llm.provider).lower()
+def _active_provider_model(role: str) -> tuple[str, str]:
+    """The LLM backend a role used this run, read from config (issue 9)."""
+    provider = str(cfg.llm.get(role, "")).lower()
     model = str(cfg.llm.models.get(provider, "unknown"))
     return provider, model
 

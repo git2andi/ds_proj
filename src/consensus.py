@@ -12,7 +12,7 @@ from collections import Counter
 from dataclasses import dataclass
 
 from config_loader import cfg
-from models import ActType, DialogueState, Phase, RunOutcome
+from models import DialogueState, Phase, RunOutcome
 
 # Only these phases produce outcome-relevant commitments (13.1): formal votes
 # and repair-phase final acceptances/switches. Opening leans and discussion
@@ -42,9 +42,9 @@ def visible_votes_from_transcript(state: DialogueState) -> dict[str, str]:
             continue
         if turn.phase not in _COMMITMENT_PHASES:
             continue
-        vote = turn.act.explicit_vote
-        if vote not in option_ids and turn.act.accepts:
-            accepted = [oid for oid in turn.act.accepts if oid in option_ids]
+        vote = turn.visible_vote()
+        if vote not in option_ids:
+            accepted = [oid for oid in turn.visible_accepts() if oid in option_ids]
             if len(accepted) == 1:
                 vote = accepted[0]
         if vote in option_ids:
@@ -58,12 +58,13 @@ def public_support(
     phase: Phase | None = None,
     include_support_acts: bool = False,
 ) -> dict[str, set[str]]:
-    """Who visibly backed each option, from accepted transcript turns only.
+    """Who visibly backed each option, from accepted evidence only.
 
-    A parsed vote or acceptance always counts; with ``include_support_acts`` a
-    realized SUPPORT act counts for its first named option (used by the
-    narrowing gate). Private ranks never count — this is the public layer.
-    A participant's later visible hard rejection withdraws their backing.
+    A validated vote or acceptance commitment always counts; with
+    ``include_support_acts`` validated option-bound support evidence counts
+    too (used by the narrowing gate). Private ranks never count — this is the
+    public layer. A participant's later visible hard rejection withdraws
+    their backing.
     """
     option_ids = set(state.scenario.option_ids)
     support: dict[str, set[str]] = {oid: set() for oid in state.scenario.option_ids}
@@ -74,12 +75,12 @@ def public_support(
             continue
         if phase is not None and turn.phase is not phase:
             continue
-        act = turn.act
-        backed = {oid for oid in act.accepts if oid in option_ids}
-        if act.explicit_vote in option_ids:
-            backed.add(str(act.explicit_vote))
-        if include_support_acts and act.act_type is ActType.SUPPORT:
-            backed.update(oid for oid in act.option_refs[:1] if oid in option_ids)
+        evidence = turn.evidence
+        if evidence is None:
+            continue  # no accepted evidence = no public semantic signal
+        backed = {c.option_id for c in evidence.commitments if c.option_id in option_ids}
+        if include_support_acts:
+            backed.update(s.option_id for s in evidence.supports if s.option_id in option_ids)
         for oid in backed:
             support[oid].add(turn.speaker_id)
     for oid in support:
@@ -123,8 +124,11 @@ def public_evidence(state: DialogueState) -> PublicEvidence:
     for turn in state.turns:
         if turn.speaker_id == "moderator" or turn.state_mutation_blocked:
             continue
-        if turn.act.offers_compromise in option_ids:
-            proposal_counts[turn.act.offers_compromise] += 1
+        if turn.evidence is None:
+            continue
+        for proposal in turn.evidence.proposals:
+            if proposal.option_id in option_ids:
+                proposal_counts[proposal.option_id] += 1
     commitments = Counter(
         rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in option_ids
     )

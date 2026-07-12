@@ -16,8 +16,21 @@ load_dotenv()
 
 
 class LLMClient:
-    def __init__(self) -> None:
-        self.provider = str(cfg.llm.provider).lower()
+    """One backend bound to an LLM role.
+
+    Roles are independently configurable (llm.dialogue / llm.validator in
+    config.yaml). The dialogue role owns every generative call (setup,
+    utterances, moderator, repair); the validator role owns structured
+    semantic interpretation and never generates public dialogue text. Each
+    role keeps its own client instance and token counters.
+    """
+
+    def __init__(self, role: str = "dialogue") -> None:
+        self.role = str(role)
+        provider = cfg.llm.get(self.role)
+        if not provider:
+            raise ValueError(f"No provider configured for LLM role {self.role!r} (set llm.{self.role}).")
+        self.provider = str(provider).lower()
         self.model_id = getattr(cfg.llm.models, self.provider)
         self._client: Any = self._build_client()
         self.last_tokens_in = 0
@@ -68,6 +81,9 @@ class LLMClient:
             "temperature": float(section.temperature),
             "top_k": int(section.top_k),
             "top_p": float(section.top_p),
+            # 0 = provider default; the validator profile caps output tightly
+            # (structured JSON only), independent of provider (item 9).
+            "max_output_tokens": int(section.get("max_output_tokens", 0)),
         }
 
     def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
@@ -89,12 +105,15 @@ class LLMClient:
             return text
 
         if self.provider in {"groq", "gpt"}:
-            response = self._client.chat.completions.create(
-                model=self.model_id,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=sampling["temperature"],
-                top_p=sampling["top_p"],
-            )
+            request: dict[str, Any] = {
+                "model": self.model_id,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": sampling["temperature"],
+                "top_p": sampling["top_p"],
+            }
+            if sampling["max_output_tokens"]:
+                request["max_tokens"] = sampling["max_output_tokens"]
+            response = self._client.chat.completions.create(**request)
             text = (response.choices[0].message.content or "").strip()
             usage = getattr(response, "usage", None)
             self._record_tokens(
@@ -106,6 +125,9 @@ class LLMClient:
             return text
 
         if self.provider == "uni":
+            options = {k: v for k, v in sampling.items() if k != "max_output_tokens"}
+            if sampling["max_output_tokens"]:
+                options["num_predict"] = sampling["max_output_tokens"]
             payload = {
                 "model": self.model_id,
                 "prompt": prompt,
@@ -113,7 +135,7 @@ class LLMClient:
                 "temperature": sampling["temperature"],
                 "top_k": sampling["top_k"],
                 "top_p": sampling["top_p"],
-                "options": sampling,
+                "options": options,
             }
             response = requests.post(
                 str(cfg.llm.endpoints.uni),
@@ -137,11 +159,12 @@ class LLMClient:
         return extract_json_object(self.generate(prompt, profile=profile))
 
 
-_CLIENT: LLMClient | None = None
+_CLIENTS: dict[str, LLMClient] = {}
 
 
-def get_llm_client() -> LLMClient:
-    global _CLIENT
-    if _CLIENT is None:
-        _CLIENT = LLMClient()
-    return _CLIENT
+def get_llm_client(role: str = "dialogue") -> LLMClient:
+    """Role-aware client lookup: one cached instance (and token counter) per role."""
+    client = _CLIENTS.get(role)
+    if client is None:
+        client = _CLIENTS[role] = LLMClient(role)
+    return client

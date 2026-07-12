@@ -21,9 +21,23 @@ class ThreadAwareValidationTests(unittest.TestCase):
         self.runner = make_runner(self.state)
 
     def _report(self, speaker_id, text, intent):
-        act = parse_text(self.state, speaker_id, text, intent=intent)
+        from tests.evidence_adapter import derive_evidence
         persona = self.state.persona_by_id(speaker_id)
-        return self.runner._validate_turn_text(text, self.state, persona, intent, act)
+        assessment = self.runner._assess_candidate(
+            text=text, state=self.state, persona=persona, intent=intent,
+            evidence=derive_evidence(
+                text, self.runner._resolver,
+                speaker_id=speaker_id,
+                participant_names={p.id: p.name for p in self.state.personas},
+                intent=intent,
+            ),
+        )
+
+        class _Report:
+            issues = [i.code for i in assessment.issues]
+            block_state_mutation = any(i.blocking for i in assessment.issues)
+
+        return _Report()
 
     def test_evasive_routed_answer_is_flagged(self):
         intent = MoveIntent(
@@ -73,7 +87,11 @@ class ThreadAwareValidationTests(unittest.TestCase):
 
 
 class FallbackAnswerTests(unittest.TestCase):
-    def test_fallback_answer_does_not_resolve_question_thread(self):
+    def test_unanswerable_question_drops_instead_of_faking_an_answer(self):
+        # The question thread points at a turn that does not exist, so no
+        # truthful deterministic answer can be built: the turn is dropped
+        # (item 11) and the question stays hot — never resolved by a
+        # fabricated line (item 12).
         random.seed(102)
         state = make_state()
         thread = open_thread(
@@ -83,14 +101,40 @@ class FallbackAnswerTests(unittest.TestCase):
         runner = make_runner(state)
         answer_intent = runner._answer_intent_for_thread(state, thread)
         # Both generation attempts evade the question entirely; validation
-        # flags them and the deterministic fallback replaces the line.
+        # flags them and no truthful fallback exists.
+        runner._llm.responses.extend([
+            "Well, what does everyone else think about all this?",
+            "Honestly, who can say anything about any of this?",
+        ])
+        record = runner._generate_and_append(state, answer_intent)
+        self.assertFalse(record.used_fallback)
+        self.assertEqual(record.text, "")
+        self.assertTrue(record.state_mutation_blocked)
+        self.assertEqual(thread.status, ThreadStatus.HOT)  # never resolved by a dropped turn
+
+    def test_listed_answer_fallback_resolves_the_question(self):
+        # When the asked attribute IS on the card, the deterministic answer
+        # fallback is a genuine answer and may resolve the thread (item 11/12).
+        random.seed(103)
+        state = make_state()
+        runner = make_runner(state)
+        from tests.fixtures import append_turn
+        question = append_turn(state, "p1", "Jonas, how much does the Escape Room cost?")
+        thread = open_thread(
+            state, thread_type=ThreadType.QUESTION, focus_options=["C"], issue_key="cost",
+            started_by="p1", source_turn_index=question.index,
+            required_respondent="p2", question_scope="direct",
+        )
+        answer_intent = runner._answer_intent_for_thread(state, thread)
         runner._llm.responses.extend([
             "Well, what does everyone else think about all this?",
             "Honestly, who can say anything about any of this?",
         ])
         record = runner._generate_and_append(state, answer_intent)
         self.assertTrue(record.used_fallback)
-        self.assertEqual(thread.status, ThreadStatus.HOT)  # not resolved by fallback
+        self.assertEqual(record.fallback_family, "answer_listed")
+        self.assertIn("32 euros", record.text)
+        self.assertEqual(thread.status, ThreadStatus.COOLING)
 
 
 class ParserPurityTests(unittest.TestCase):

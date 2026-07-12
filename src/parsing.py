@@ -1,19 +1,22 @@
-"""Pure visible-semantics layer: text in, DialogueAct out (contract 4.4).
+"""Deterministic critical parser and resolver — never a semantic interpreter.
 
-Final outcomes must be based on what the transcript visibly says. This parser
-is therefore conservative: it only records a vote/acceptance when one option is
-mentioned unambiguously and the utterance contains a clear commitment phrase.
-It never mutates dialogue state and never makes controller decisions — a group
-question gets a scope, not a respondent.
+Retained responsibilities: option/alias/letter resolution with exact spans,
+participant/addressee resolution, public-context reference resolution, strict
+visible commitment/vote detection with post-checks, strict hard-blocker
+detection, genuine-question detection, and the structural helpers grounding
+relies on. Soft natural-language semantics (support, ordinary concerns,
+comparisons, softening, proposals) belong exclusively to the validator role.
+This module never mutates dialogue state and never makes controller
+decisions — a group question gets a scope, not a respondent.
 """
 
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 
 from aliases import _GENERIC, _STOPWORDS, short_alias_map
-from models import ActType, DialogueAct, MoveIntent, OptionCard
-from utils import normalise_ws
+from models import EvidenceSpan, OptionCard, OptionMention
 
 # Common words that must never become a standalone option alias: they appear in
 # ordinary sentences and would cause false option matches (e.g. "with", "data").
@@ -31,12 +34,45 @@ _ALIAS_STOPWORDS = _STOPWORDS | _GENERIC | {
 }
 
 _QUESTION = re.compile(r"\?")
-_RHETORICAL_TAIL = re.compile(r",\s*(?:right|yeah|no|huh|eh|you know|don't you think)\s*\?\s*$", re.I)
-_GENUINE_QUESTION = re.compile(
-    r"\b(?:how\s+(?:many|much|long|far|about)|what(?:'s|\s+is|\s+are|\s+do|\s+does|\s+about|\s+if)"
-    r"|where|when|which|who|can\s+(?:we|it|they|you|anyone)|do\s+(?:we|they|you|i)|does\s+(?:it|that|this|anyone)"
-    r"|is\s+(?:it|there|that|anyone)|are\s+(?:there|they|we|you|any)|could\s+(?:we|it|you|anyone)|would\s+(?:it|that|we|you|anyone)"
-    r"|should\s+(?:we|i|you|they)|shall\s+we|will\s+(?:we|it|that)|has\s+anyone|any\s+of\s+us)\b",
+# Rhetorical / tag check-ins that end a statement without opening a real
+# question thread: ", right?", ", isn't it?", ", don't we?", ", you know?".
+_RHETORICAL_TAIL = re.compile(
+    r",\s*(?:right|yeah|yep|no|huh|eh|ok|okay|you\s+know|don'?t\s+you\s+think"
+    r"|(?:is|are|was|were|do|does|did|can|could|would|will|won|has|have|should)(?:n'?t)?"
+    r"\s+(?:it|they|we|you|that|this|he|she))\s*\?\s*$",
+    re.I,
+)
+# Small grammatical question detector (item 2): a WH word or an auxiliary verb
+# opening a clause — at the string start or right after a clause boundary or
+# short discourse lead-in. Combined with the `?` gate this recognises ordinary
+# aux-led and WH questions with no option- or endpoint-specific phrasing.
+_WH_LEAD = r"how|what'?s?|whats|where|when|which|who(?:m|se)?|why"
+_AUX_LEAD = (
+    r"do|does|did|is|are|am|was|were|can|could|would|will|won'?t|shall|should"
+    r"|has|have|had|may|might|must|ain'?t"
+    r"|isn'?t|aren'?t|wasn'?t|weren'?t|can'?t|couldn'?t|wouldn'?t|shouldn'?t"
+    r"|don'?t|doesn'?t|didn'?t|hasn'?t|haven'?t|hadn'?t"
+)
+_QUESTION_CLAUSE = re.compile(
+    r"(?:^|[.;:!?—–]\s*|,\s+|\b(?:so|and|but|or|well|hey|ok|okay|now|then|hmm|wait)\s+)"
+    r"(?:" + _WH_LEAD + r"|(?:" + _AUX_LEAD + r"))\b",
+    re.I,
+)
+# Short "A or B?" style option-choice question.
+_CHOICE_QUESTION = re.compile(r"^[^?]{0,70}\bor\b[^?]{0,40}\?", re.I)
+# Basic comparison signals (item 3). A relational connective explicitly ties two
+# spans ("than", "versus", "compared to/with"); a contrast connective separates
+# two clauses; a comparative adjective/adverb marks a comparative claim. These
+# are grammatical, not option- or endpoint-specific.
+_RELATIONAL = re.compile(r"\b(?:than|versus|vs\.?|compared\s+(?:to|with))\b", re.I)
+_CONTRAST = re.compile(
+    r"\b(?:while|whereas|but|however|though|although|on\s+the\s+other\s+hand)\b", re.I
+)
+_COMPARATIVE_ADJ = re.compile(
+    r"\b(?:more|less|cheaper|pricier|costlier|dearer|faster|slower|bigger|larger|"
+    r"smaller|closer|nearer|farther|further|longer|shorter|easier|harder|simpler|"
+    r"higher|lower|stronger|weaker|safer|riskier|nicer|better|worse|"
+    r"double|triple|twice|half)\b",
     re.I,
 )
 _HEDGE = re.compile(
@@ -102,14 +138,6 @@ _REJECT = re.compile(
     r"dealbreaker|blocked|hard\s+no|no\s+for\s+me|i'?m\s+against)\b",
     re.I,
 )
-_SOFT_OBJECT = re.compile(
-    r"\b(?:concern(?:s|ed)?|worr(?:y|ies|ied)|bother(?:s|ed)?\s+me|problems?|issues?|downsides?|"
-    r"too\s+expensive|too\s+far|too\s+late|too\s+(?:pricey|costly)|risky|"
-    r"(?:a\s+bit|too|rather|quite|pretty)\s+steep|"
-    r"(?:seems?|looks?|feels?)\s+(?:too\s+|quite\s+|pretty\s+|a\s+bit\s+)?(?:high|expensive|pricey|risky|steep)|"
-    r"not\s+ideal|doesn'?t\s+fit|would\s+be\s+hard)\b",
-    re.I,
-)
 
 # --- I3 vocabulary: active blockers, resolutions, compromise offers, reasons ---
 
@@ -159,39 +187,6 @@ _RESOLUTION = re.compile(
     rf"{_RESOLUTION_HEAD.pattern}|\bi\s+can\s+live\s+with\b",
     re.I,
 )
-# Visible compromise proposals, including question forms ("could we all live with X?").
-_COMPROMISE_OFFER = re.compile(
-    r"\b(?:could|can|would)\s+(?:we|everyone|you\s+all|y'?all)\s+(?:all\s+)?live\s+with\b|"
-    r"\bwhat\s+if\s+we\s+(?:went|go|all\s+went|all\s+go)\s+with\b|"
-    r"\bmeet\s+in\s+the\s+middle\s+(?:on|with|at)\b|"
-    r"\bwould\s+(?:that|this|it)\s+work\s+for\s+everyone\b|"
-    r"\bas\s+a\s+(?:compromise|middle\s+ground)\b",
-    re.I,
-)
-# Visible softening: the speaker says another option is winning them over
-# without committing ("B is starting to make more sense to me"). Moves the
-# latent lean (issue 3) but is hedged wording — it never parses as a vote.
-_SOFTENING = re.compile(
-    r"\b(?:starting\s+to\s+(?:make\s+(?:more|a\s+lot\s+of)\s+sense|look\s+(?:better|safer|stronger|smarter|more\s+\w+)|win\s+me\s+over)|"
-    r"beginning\s+to\s+(?:make\s+sense|look\s+better)|"
-    r"(?:coming|come)\s+around\s+(?:to|on)|warming\s+(?:up\s+)?to|"
-    r"makes\s+more\s+sense\s+(?:to\s+me\s+)?(?:now|after)|"
-    r"growing\s+on\s+me|is\s+winning\s+me\s+over|(?:has|is)\s+won\s+me\s+over|"
-    r"clicks\s+with\s+me\s+now|speaks\s+to\s+me\s+now|sounds\s+better\s+(?:to\s+me\s+)?now|"
-    r"i\s+(?:see|get)\s+the\s+appeal\s+(?:of|now)|makes\s+a\s+strong(?:er)?\s+case|"
-    r"more\s+tempting\s+now|i'?m\s+starting\s+to\s+(?:see|like|favor|lean\s+toward))\b",
-    re.I,
-)
-
-
-def softening_option(check_text: str, resolver: OptionResolver) -> str | None:
-    """Option the line visibly softens toward, if any (issue 3)."""
-    match = _SOFTENING.search(check_text)
-    if not match:
-        return None
-    return _nearest_option(check_text, match.start(), match.end(), resolver)
-
-
 # Does a commitment carry a visible reason clause? (Consumed by I4: a switch
 # away from the initial preference needs a stated reason.)
 _REASON_MARKER = re.compile(
@@ -250,26 +245,17 @@ def blocker_resolution_option(check_text: str, resolver: OptionResolver) -> str 
     return _nearest_option(check_text, match.start(), match.end(), resolver)
 
 
-def conditional_support_option(check_text: str, resolver: OptionResolver) -> str | None:
-    """Option supported only conditionally ('I can support A, but only if…')."""
-    match = _COMMIT.search(check_text)
-    if not match or _REJECT.search(check_text):
-        return None
-    if not (_HARD_CONDITIONAL.search(check_text) or _HEDGE.search(check_text) or _CONDITIONAL_AFTER_COMMIT.search(check_text)):
-        return None
-    ids = resolver.ids_in_text(check_text)
-    if len(ids) > 1:
-        near = _commitment_object(check_text, resolver)
-        ids = [near] if near else ids
-    return ids[0] if len(ids) == 1 else None
+def has_commitment_phrase(text: str) -> bool:
+    """Whether any commitment-family wording occurs at all — a cheap guard
+    used by the selective fast paths (a line with commitment wording is never
+    'non-state-changing')."""
+    return bool(_COMMIT.search(text.replace("’", "'")))
 
 
-def compromise_offer_option(check_text: str, resolver: OptionResolver) -> str | None:
-    """Option visibly proposed as common ground, including in question form."""
-    match = _COMPROMISE_OFFER.search(check_text)
-    if not match:
-        return None
-    return _nearest_option(check_text, match.start(), match.end(), resolver)
+def has_implicit_reference(text: str) -> bool:
+    """Whether the line contains an implicit option reference shape ("it is",
+    "that works", "the former") that could bind through public context."""
+    return bool(_IMPLICIT_REF.search(text))
 
 
 def commitment_has_reason(text: str) -> bool:
@@ -345,40 +331,104 @@ class OptionResolver:
                 owners.setdefault(alias, set()).add(option_id)
         return {alias: next(iter(ids)) for alias, ids in owners.items() if len(ids) == 1}
 
-    def ids_in_text(self, text: str) -> list[str]:
+    def mentions(self, text: str) -> list[OptionMention]:
+        """Every explicit option mention in ``text``, in visible text order.
+
+        The one canonical resolver result (todo_validation item 5): each
+        mention carries the option id, its exact span, the alias form used,
+        and its textual order. Overlapping matches keep the longest span.
+        Bare single-letter labels resolve case-sensitively and only for
+        letters that are not ordinary English words ("B has my vote" resolves;
+        the article in "A museum day" never does — "A" needs "Option A"/"A)").
+        """
         lower = text.lower()
-        found: list[str] = []
+        raw: list[tuple[int, int, str, str]] = []  # start, end, option_id, alias_form
         for option_id in self.by_id:
-            patterns = [
-                rf"\boption\s+{re.escape(option_id.lower())}\b",
-                rf"\b{re.escape(option_id.lower())}\)\b",
-            ]
-            if any(re.search(pattern, lower) for pattern in patterns) and option_id not in found:
-                found.append(option_id)
-        for alias, option_id in sorted(self.alias_to_id.items(), key=lambda x: len(x[0]), reverse=True):
-            if option_id in found:
+            escaped = re.escape(option_id.lower())
+            for pattern in (rf"\boption\s+{escaped}\b", rf"\b{escaped}\)"):
+                for m in re.finditer(pattern, lower):
+                    raw.append((m.start(), m.end(), option_id, text[m.start():m.end()]))
+            if len(option_id) == 1 and option_id.upper() not in {"A", "I"}:
+                for m in re.finditer(rf"\b{re.escape(option_id.upper())}\b", text):
+                    raw.append((m.start(), m.end(), option_id, m.group(0)))
+        for alias, option_id in self.alias_to_id.items():
+            for m in re.finditer(rf"\b{re.escape(alias)}\b", lower):
+                raw.append((m.start(), m.end(), option_id, text[m.start():m.end()]))
+        raw.sort(key=lambda s: (s[0], -(s[1] - s[0])))
+        found: list[OptionMention] = []
+        occupied_until = -1
+        for start, end, option_id, form in raw:
+            if start < occupied_until:
                 continue
-            if re.search(rf"\b{re.escape(alias)}\b", lower):
-                found.append(option_id)
+            occupied_until = end
+            found.append(OptionMention(
+                option_id=option_id,
+                span=EvidenceSpan(text=form, start=start),
+                order=len(found),
+                alias_form=form,
+                resolution="explicit",
+            ))
         return found
+
+    def ids_in_text(self, text: str) -> list[str]:
+        """Unique option ids mentioned, in visible text order (item 5)."""
+        found: list[str] = []
+        for mention in self.mentions(text):
+            if mention.option_id not in found:
+                found.append(mention.option_id)
+        return found
+
+    def resolve_reference(self, text: str, *, context_candidates: Sequence[str] = ()) -> tuple[str | None, bool]:
+        """Resolve an implicit option reference ("it", "that one", "the
+        former/latter") to one unambiguous PUBLIC referent, or report ambiguity.
+
+        Returns ``(option_id, ambiguous)``. Resolution sources, in order:
+        an explicit mention earlier in the same utterance; "the former/latter"
+        against an ordered two-candidate public context; exactly one public
+        context candidate (targeted prior turn / active visible thread).
+        Several plausible candidates stay unresolved with ``ambiguous=True``.
+        Hidden intent is never a source: callers must pass only public context.
+        """
+        match = _IMPLICIT_REF.search(text)
+        if match is None:
+            return None, False
+        preceding = [m for m in self.mentions(text) if m.span.start < match.start()]
+        if preceding:
+            return preceding[-1].option_id, False
+        candidates = [c for c in dict.fromkeys(context_candidates) if c in self.by_id]
+        phrase = " ".join(match.group(0).lower().split())
+        if phrase.startswith("the former") and len(candidates) == 2:
+            return candidates[0], False
+        if phrase.startswith("the latter") and len(candidates) == 2:
+            return candidates[1], False
+        if len(candidates) == 1:
+            return candidates[0], False
+        return None, len(candidates) > 1
 
     def invalid_option_refs(self, text: str) -> list[str]:
         valid = set(self.by_id)
         refs = re.findall(r"\bOption\s+([A-Za-z])\b", text)
         return sorted({r.upper() for r in refs if r.upper() not in valid})
 
+
+# Implicit-reference shapes eligible for context resolution: pronoun + verb
+# ("it is", "that works", "it's"), demonstrative one-phrases ("that one"), and
+# ordered references ("the former", "the latter"). A bare "that" as a
+# conjunction ("I think that ...") never matches.
+_IMPLICIT_REF = re.compile(
+    r"\b(?:it|that|this)(?:'s|\s+(?:is|was|would|will|might|could|can|does|"
+    r"seems?|feels?|looks?|sounds?|works?|costs?|takes?|has|gets?|keeps?|leaves?|beats?|fits?))\b"
+    r"|\b(?:that|this)\s+one\b|\bthe\s+former\b|\bthe\s+latter\b",
+    re.I,
+)
+
+
 def _option_positions(segment: str, resolver: OptionResolver) -> list[tuple[int, str]]:
     """Earliest match position per option in ``segment``, sorted by position."""
-    lower = segment.lower()
     hits: dict[str, int] = {}
-    for option_id in resolver.by_id:
-        m = re.search(rf"\boption\s+{re.escape(option_id.lower())}\b", lower)
-        if m:
-            hits[option_id] = min(hits.get(option_id, 1 << 30), m.start())
-    for alias, option_id in resolver.alias_to_id.items():
-        m = re.search(rf"\b{re.escape(alias)}\b", lower)
-        if m:
-            hits[option_id] = min(hits.get(option_id, 1 << 30), m.start())
+    for mention in resolver.mentions(segment):
+        if mention.option_id not in hits:
+            hits[mention.option_id] = mention.span.start
     return sorted((pos, oid) for oid, pos in hits.items())
 
 
@@ -398,15 +448,12 @@ def hybrid_blend_detected(text: str, resolver: OptionResolver) -> bool:
     (P6): "Pine Ridge and also Willow Creek", "the class combined with the
     escape room". Used only on compromise-type turns, where a coordinated
     pair is exactly the implicit-new-option failure."""
-    lower = text.replace("’", "'").lower()
-    spans: list[tuple[int, int, str]] = []
-    for option_id in resolver.by_id:
-        for m in re.finditer(rf"\boption\s+{re.escape(option_id.lower())}\b", lower):
-            spans.append((m.start(), m.end(), option_id))
-    for alias, option_id in resolver.alias_to_id.items():
-        for m in re.finditer(rf"\b{re.escape(alias)}\b", lower):
-            spans.append((m.start(), m.end(), option_id))
-    spans.sort()
+    normalised = text.replace("’", "'")
+    lower = normalised.lower()
+    spans = [
+        (m.span.start, m.span.start + len(m.span.text), m.option_id)
+        for m in resolver.mentions(normalised)
+    ]
     for (_s1, e1, id1), (s2, _e2, id2) in zip(spans, spans[1:]):
         if id1 == id2 or s2 <= e1:
             continue
@@ -585,181 +632,158 @@ def visible_commitment(
     return (stance, option_id)
 
 
-def parse_dialogue_act(
+# ---------------------------------------------------------------------------
+# Critical-parser post-checks (todo_validation item 6)
+#
+# The deterministic commitment layer stays conservative and narrow: strict
+# public votes/acceptances, blocker safety, and required-target protection.
+# Natural menu-less vote wording is recognised by the validator LLM (item 7),
+# but EVERY claimed commitment — regex-found or validator-proposed — must pass
+# these checks before it can count. A hidden required_vote never counts
+# without a visible, unambiguous public commitment.
+# ---------------------------------------------------------------------------
+
+# Prerequisite wording that voids a final commitment wherever it appears.
+_PREREQUISITE = re.compile(
+    r"\bonly\s+if\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|\bdepends\b|"
+    r"\bare\s+we\s+okay\b|\bas\s+long\s+as\b|\bprovided\s+that\b|\bif\s+(?:we|it|they|you)\b",
+    re.I,
+)
+# On sanctioned switches, concessive riders ("as long as", "if we…") are the
+# requested bridge shape; only genuine prerequisites still void.
+_SANCTION_PREREQUISITE = re.compile(
+    r"\bonly\s+if\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|\bdepends\b|\bare\s+we\s+okay\b",
+    re.I,
+)
+
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+
+
+def commitment_post_checks(
+    text: str,
+    option_id: str,
+    resolver: OptionResolver,
+    *,
+    kind: str = "vote",
+    required_vote: str | None = None,
+    rejected_options: Sequence[str] = (),
+    resolves_blocker: str | None = None,
+    sanctioned_switch: bool = False,
+) -> list[str]:
+    """Deterministic post-checks for one claimed public commitment.
+
+    Returns issue codes (empty = pass). Enforced regardless of how the
+    commitment was found:
+
+    - the vote target must be visibly named (``COMMITMENT_TARGET_NOT_NAMED``);
+    - no unresolved prerequisite anywhere (``CONDITIONAL_COMMITMENT``);
+    - no question masquerading as the vote — the committing sentence itself
+      must not be a question (``QUESTION_NOT_COMMITMENT``); a trailing
+      check-in question in another sentence does not void the commitment;
+    - no conflicting commitment to a different option (``CONFLICTING_COMMITMENT``);
+    - required controller target alignment (``REQUIRED_VOTE_MISMATCH``);
+    - rejected-option protection with the one same-line resolution exception
+      (``BLOCKED_OPTION_ACCEPTED``).
+    """
+    issues: list[str] = []
+    check = text.replace("’", "'").replace("‘", "'")
+    sentences = [s.strip() for s in _SENTENCE_SPLIT.split(check) if s.strip()]
+    commit_sentences = [s for s in sentences if option_id in resolver.ids_in_text(s)]
+    if kind == "vote" and option_id not in resolver.ids_in_text(check):
+        issues.append("COMMITMENT_TARGET_NOT_NAMED")
+    prerequisite = _SANCTION_PREREQUISITE if sanctioned_switch else _PREREQUISITE
+    if prerequisite.search(check):
+        issues.append("CONDITIONAL_COMMITMENT")
+    if commit_sentences and all(s.endswith("?") for s in commit_sentences):
+        issues.append("QUESTION_NOT_COMMITMENT")
+    for sentence in sentences:
+        other = visible_commitment(sentence, resolver, sanctioned_switch=sanctioned_switch)
+        if other and other[0] in {"vote", "accept"} and other[1] != option_id:
+            issues.append("CONFLICTING_COMMITMENT")
+            break
+    if required_vote and option_id != required_vote:
+        issues.append("REQUIRED_VOTE_MISMATCH")
+    if option_id in set(rejected_options) and resolves_blocker != option_id:
+        issues.append("BLOCKED_OPTION_ACCEPTED")
+    return issues
+
+
+def visible_question(
+    text: str,
     *,
     speaker_id: str,
-    speaker_name: str,
-    text: str,
-    resolver: OptionResolver,
     participant_names: dict[str, str],
-    intent: MoveIntent | None = None,
     previous_speaker_id: str | None = None,
-) -> DialogueAct:
-    text = normalise_ws(text)
-    check_text = text.replace("’", "'").replace("‘", "'")
-    option_refs = resolver.ids_in_text(check_text)
-    addressee_id = _extract_addressee(text, speaker_id, participant_names)
-    if addressee_id is None and _QUESTION.search(text) and previous_speaker_id and previous_speaker_id != speaker_id:
-        if re.search(r"\b(?:you|your|that|what\s+about|how\s+about)\b", text, re.I):
-            addressee_id = previous_speaker_id
-    # Question scope from visible text only (4.4/5.5): a named or "you"-directed
-    # question is direct; a genuine question without an addressee is a group
-    # question with NO target — the controller assigns the respondent later.
-    question_scope: str | None = None
-    question_target = None
-    if _QUESTION.search(text):
-        if addressee_id:
-            question_scope = "direct"
-            question_target = addressee_id
-        elif _is_genuine_question(text):
-            question_scope = "group"
+) -> tuple[str, str | None] | None:
+    """(scope, addressee) of a genuine visible question, else None.
 
-    commitment = visible_commitment(
-        text, resolver, sanctioned_switch=bool(intent and intent.allow_vote_change)
-    )
-    explicit_vote: str | None = None
-    accepts: list[str] = []
-    soft_rejects: dict[str, str] = {}
-    hard_rejects: dict[str, str] = {}
-
-    if commitment:
-        stance, option_id = commitment
-        if stance in {"vote", "accept"}:
-            explicit_vote = option_id
-            if stance == "accept":
-                accepts.append(option_id)
-        elif stance == "reject":
-            soft_rejects[option_id] = text
-    elif option_refs:
-        objection = _REJECT.search(check_text) or _SOFT_OBJECT.search(check_text)
-        if objection:
-            # The objection binds to the option named nearest the objection
-            # phrase ("A seems too expensive, while B fits better" objects to
-            # A) — option_refs order is alias-match order, not textual order.
-            target = _nearest_option(check_text, objection.start(), objection.end(), resolver)
-            soft_rejects[target or option_refs[0]] = text
-
-    blocker = active_blocker_option(check_text, resolver)
-    if blocker and blocker != explicit_vote:
-        hard_rejects[blocker] = text
-    resolves_blocker = blocker_resolution_option(check_text, resolver)
-    if resolves_blocker in hard_rejects:
-        resolves_blocker = None  # one line cannot both raise and resolve a blocker
-    conditional_support = None if commitment else conditional_support_option(check_text, resolver)
-    offers_compromise = compromise_offer_option(check_text, resolver)
-    softens_toward = None if commitment else softening_option(check_text, resolver)
-
-    act_type = _realized_act_type(
-        intent=intent,
-        commitment=commitment,
-        soft_rejects=soft_rejects,
-        hard_rejects=hard_rejects,
-        question_scope=question_scope,
-        option_refs=option_refs,
-        check_text=check_text,
-    )
-
-    return DialogueAct(
-        speaker_id=speaker_id,
-        text=text,
-        act_type=act_type,
-        option_refs=option_refs,
-        addressee_id=addressee_id,
-        question_scope=question_scope,  # type: ignore[arg-type]
-        question_target_id=question_target,
-        explicit_vote=explicit_vote,
-        accepts=accepts,
-        soft_rejects=soft_rejects,
-        hard_rejects=hard_rejects,
-        resolves_blocker=resolves_blocker,
-        conditional_support=conditional_support,
-        offers_compromise=offers_compromise,
-        softens_toward=softens_toward,
-    )
-
-
-# Contextual acts keep their routed label: visible text alone cannot tell an
-# answer, opening, procedure beat, compromise test, vote turn, or closing line
-# apart from a plain statement — the surrounding controller context defines
-# them. Ordinary acts must earn their label from text.
-_CONTEXTUAL_ACTS = {
-    ActType.OPENING,
-    ActType.ANSWER,
-    ActType.PROCESS,
-    ActType.COMPROMISE,
-    ActType.VOTE,
-    ActType.CLOSING,
-}
-
-# Comparative wording that marks a genuine head-to-head, not two mentions.
-_COMPARATIVE = re.compile(
-    r"\b(?:than|versus|vs\.?|compared?\s+(?:to|with)|instead\s+of|over\b|"
-    r"rather\s+than|beats?|wins?\s+(?:over|against)|side\s+by\s+side|trade-?off)\b",
-    re.I,
-)
-
-# A statement realizes SUPPORT only when it visibly claims a benefit of a named
-# option ("the Museum keeps the day easy"); a mere mention stays a comment.
-_PRO_CLAIM = re.compile(
-    r"\b(?:solves|fixes|keeps|gives|covers|fits|means|delivers|works|saves|hits|"
-    r"offers|helps|suits)\b|\bi\s+(?:really\s+)?(?:like|love|prefer)\b",
-    re.I,
-)
-
-
-def realized_comparison(text: str, resolver: OptionResolver) -> bool:
-    """True when the line visibly contrasts two named options — the single
-    textual authority for comparison threads, independent of the act label
-    (a comparative question realizes ASK *and* a comparison)."""
-    check = text.replace("’", "'").replace("‘", "'")
-    return len(set(resolver.ids_in_text(check))) >= 2 and bool(_COMPARATIVE.search(check))
-
-
-def has_support_claim(text: str) -> bool:
-    """Visible benefit-claim wording (the realized-SUPPORT signal), usable as
-    independent evidence when another act won the realized-act precedence."""
-    return bool(_PRO_CLAIM.search(text.replace("’", "'")))
-
-
-def _realized_act_type(
-    *,
-    intent: MoveIntent | None,
-    commitment: tuple[str, str] | None,
-    soft_rejects: dict[str, str],
-    hard_rejects: dict[str, str],
-    question_scope: str | None,
-    option_refs: list[str],
-    check_text: str,
-) -> ActType:
-    """Realized act from visible text: what the final line actually did.
-
-    Precedence: commitment > objection > question > comparison > benefit
-    claim. A routed ordinary act (support/concern/ask/compare/comment) that
-    shows none of these signals degrades to comment — the routed intent never
-    labels state on its own.
+    Question scope from visible text only (4.4/5.5): a named or "you"-directed
+    question is direct; a genuine question without an addressee is a group
+    question with NO target — the controller assigns the respondent later.
+    The single deterministic owner of question detection (item 7): both the
+    display parse and the evidence contract consume it.
     """
-    if commitment and commitment[0] in {"vote", "accept"}:
-        return ActType.VOTE
-    if commitment or hard_rejects or soft_rejects:
-        return ActType.CONCERN
-    if question_scope:
-        return ActType.ASK
-    if len(set(option_refs)) >= 2 and _COMPARATIVE.search(check_text):
-        return ActType.COMPARE
-    if intent is not None and intent.act in _CONTEXTUAL_ACTS:
-        return intent.act
-    if option_refs and _PRO_CLAIM.search(check_text):
-        return ActType.SUPPORT
-    return ActType.COMMENT
+    if not _QUESTION.search(text):
+        return None
+    addressee = resolve_addressee(text, speaker_id, participant_names)
+    if addressee is None and previous_speaker_id and previous_speaker_id != speaker_id:
+        if re.search(r"\b(?:you|your|that|what\s+about|how\s+about)\b", text, re.I):
+            addressee = previous_speaker_id
+    if addressee:
+        return "direct", addressee
+    if _is_genuine_question(text):
+        return "group", None
+    return None
+
+
+def visible_comparison(text: str, resolver: "OptionResolver") -> list[str] | None:
+    """The two option ids in a basic visible comparison, or None (item 3).
+
+    Deterministic when two distinct options are visibly present and connected by
+    a comparative construction: a relational/contrast connective straddling two
+    option spans, or a comparative adjective anywhere alongside two options.
+    Subtle direction/dimension stays the validator's job; this only asserts that
+    a two-option comparison is visibly present so COMPARISON_MISSES_OPTIONS is
+    reserved for real failures.
+    """
+    distinct: list[tuple[str, int]] = []
+    seen: set[str] = set()
+    for m in resolver.mentions(text):
+        if m.option_id not in seen:
+            seen.add(m.option_id)
+            distinct.append((m.option_id, m.span.start))
+    if len(distinct) < 2:
+        return None
+    check = text.replace("’", "'").replace("‘", "'")
+    # A connective that actually separates two different option spans.
+    for rx in (_RELATIONAL, _CONTRAST):
+        for m in rx.finditer(check):
+            before = [oid for oid, p in distinct if p < m.start()]
+            after = [oid for oid, p in distinct if p >= m.end() and oid not in before]
+            if before and after:
+                return [before[-1], after[0]]
+    # A comparative adjective with two options present but no straddling
+    # connective (e.g. possessive juxtaposition "A's cost is double B's").
+    if _COMPARATIVE_ADJ.search(check):
+        return [distinct[0][0], distinct[1][0]]
+    return None
 
 
 def _is_genuine_question(text: str) -> bool:
+    """A group question with no visible addressee: genuine interrogative
+    structure (WH/aux clause or a short A-or-B choice), never a tag check-in.
+    The `?` gate is applied by the caller."""
     if _RHETORICAL_TAIL.search(text):
         return False
-    return bool(_GENUINE_QUESTION.search(text))
+    if _QUESTION_CLAUSE.search(text):
+        return True
+    return bool(_CHOICE_QUESTION.search(text)) and len(text.split()) <= 12
 
 
-def _extract_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> str | None:
+def resolve_addressee(text: str, speaker_id: str, participant_names: dict[str, str]) -> str | None:
+    """The participant visibly named in the text, if any — the single owner of
+    addressee resolution (item 5). Never invents an addressee from intent:
+    controller target vs. visible addressee is compared during validation."""
     lower = text.lower()
     for pid, name in participant_names.items():
         if pid == speaker_id:

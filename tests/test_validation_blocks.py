@@ -1,6 +1,6 @@
 """Focused tests: every semantic block reason yields one validation code and
-one block decision through `_validate_turn_text` (cleanup 8 — `_semantic_block`
-is gone; `report.block_state_mutation` is the single mutation-blocking path).
+one block decision through the evidence-based `_assess_candidate` path (a
+blocking issue is the single mutation-blocking signal).
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
 from models import ActType, MoveIntent
 
+from tests.evidence_adapter import derive_evidence
 from tests.fixtures import make_state, parse_text
 from tests.stubs import make_runner
 
@@ -22,8 +23,21 @@ class BlockReasonTests(unittest.TestCase):
 
     def _report(self, pid, text, intent):
         persona = self.state.persona_by_id(pid)
-        act = parse_text(self.state, pid, text, intent=intent)
-        return self.runner._validate_turn_text(text, self.state, persona, intent, act)
+        assessment = self.runner._assess_candidate(
+            text=text, state=self.state, persona=persona, intent=intent,
+            evidence=derive_evidence(
+                text, self.runner._resolver,
+                speaker_id=pid,
+                participant_names={p.id: p.name for p in self.state.personas},
+                intent=intent,
+            ),
+        )
+
+        class _Report:
+            issues = [i.code for i in assessment.issues]
+            block_state_mutation = any(i.blocking for i in assessment.issues)
+
+        return _Report()
 
     def _assert_blocks(self, code, pid, text, intent):
         report = self._report(pid, text, intent)
@@ -103,21 +117,26 @@ class BlockReasonTests(unittest.TestCase):
             allow_vote_change=True,
             allowed_reason="the Museum works for me too, doesn't it?",
         )
-        from validation import ValidationReport
-        report = ValidationReport(["UNBRIDGED_SWITCH"], True)
         persona = self.state.persona_by_id("p1")
-        text = self.runner._safe_fallback_text(self.state, persona, intent, report)
+        text, family = self.runner._fallback_candidate(
+            self.state, persona, intent, ["UNBRIDGED_SWITCH"]
+        )
+        self.assertEqual(family, "vote")
         commit = visible_commitment(text, self.runner._resolver, sanctioned_switch=True)
         self.assertIsNotNone(commit)
         self.assertEqual(commit[1], "B")
 
-    def test_normal_route_support_comment_is_not_flagged(self):
+    def test_normal_route_support_gets_the_same_realization_check(self):
+        # Item 9: the intended-move realization contract is universal — a
+        # SUPPORT intent without visible support is flagged on EVERY route,
+        # not only thread/narrowing routes.
         intent = MoveIntent(
             speaker_id="p1", act=ActType.SUPPORT, reason="add a reason",
             route_source="normal", option_focus=["A"],
         )
         report = self._report("p1", "The Museum has been discussed a lot today.", intent)
-        self.assertNotIn("SUPPORT_NOT_REALIZED", report.issues)
+        self.assertIn("SUPPORT_NOT_REALIZED", report.issues)
+        self.assertFalse(report.block_state_mutation)
 
     def test_unclear_visible_commitment_blocks(self):
         intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["A"])
@@ -129,16 +148,32 @@ class BlockReasonTests(unittest.TestCase):
         )
         self._assert_blocks("REQUIRED_VOTE_MISMATCH", "p1", "I vote for the Museum.", intent)
 
-    def test_hard_blocker_accepted_rejected_option_blocks(self):
+    def test_accepting_a_rejected_option_blocks(self):
+        # ONE coherent rejected-option rule (item 6): setup rejections and
+        # observed blockers share the same check and issue code.
         self.state.runtimes["p1"].mark_rejected("C", reason_against="booked out")
         intent = MoveIntent(
             speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["C"],
             allow_vote_change=True,
         )
         report = self._assert_blocks(
-            "HARD_BLOCKER_ACCEPTED_REJECTED_OPTION", "p1", "I vote for the Escape Room.", intent
+            "BLOCKED_OPTION_ACCEPTED", "p1", "I vote for the Escape Room.", intent
         )
-        self.assertIn("BLOCKED_OPTION_ACCEPTED", report.issues)
+        self.assertNotIn("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION", report.issues)
+
+    def test_same_line_resolution_plus_acceptance_is_not_blocked(self):
+        # Visible semantics that genuinely resolve the blocker may accept the
+        # option in the same line (item 6) — no contradictory second check.
+        self.state.runtimes["p1"].mark_rejected("C", reason_against="booked out")
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["C"],
+            allow_vote_change=True,
+        )
+        report = self._report(
+            "p1", "That fixes my concern; I can live with the Escape Room.", intent
+        )
+        self.assertNotIn("BLOCKED_OPTION_ACCEPTED", report.issues)
+        self.assertFalse(report.block_state_mutation)
 
     def test_hybrid_compromise_blocks(self):
         intent = MoveIntent(speaker_id="p1", act=ActType.COMPROMISE, reason="middle ground")
@@ -189,25 +224,18 @@ class BlockReasonTests(unittest.TestCase):
         intent = MoveIntent(speaker_id="p2", act=ActType.VOTE, reason="vote", option_focus=["A"])
         self._assert_blocks("UNBRIDGED_SWITCH", "p2", "I vote for the Museum.", intent)
 
-    def test_unsupported_fact_blocks_via_deterministic_grounding(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it", option_focus=["A"])
-        persona = self.state.persona_by_id("p1")
-        text = "The Museum tour covers 3 miles of exhibits."
-        act = parse_text(self.state, "p1", text, intent=intent)
-        report, _ti, _to = self.runner._collect_report(text, self.state, persona, intent, act, [])
-        self.assertIn("UNSUPPORTED_FACT", report.issues)
-        self.assertTrue(report.block_state_mutation)
-
-    def test_thread_realization_misses_are_reported_without_blocking(self):
-        # THREAD_RESPONSE_MISSES_OPTION / COMPARISON_MISSES_OPTIONS stay
-        # telemetry: one repair chance, but no mutation block by themselves.
+    def test_wrong_option_support_on_a_thread_is_a_blocking_mismatch(self):
+        # The line visibly supports A while the thread (and intent) is about C:
+        # a blocking option mismatch (item 9), alongside the thread-relevance
+        # telemetry code.
         intent = MoveIntent(
             speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
             route_source="thread_hot", option_focus=["C"],
         )
         report = self._report("p1", "The Museum keeps the day easy to adjust.", intent)
         self.assertIn("THREAD_RESPONSE_MISSES_OPTION", report.issues)
-        self.assertFalse(report.block_state_mutation)
+        self.assertIn("WRONG_OPTION_FOCUS", report.issues)
+        self.assertTrue(report.block_state_mutation)
 
 
 if __name__ == "__main__":

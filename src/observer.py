@@ -12,12 +12,10 @@ dialogue.py, and phase/repair flow transitions owned by the flow code.
 from __future__ import annotations
 
 import random
-import re
 
 from models import (
     ActType,
     BlockingStrength,
-    DialogueAct,
     DialogueState,
     MoveIntent,
     ParticipantRuntime,
@@ -30,44 +28,24 @@ from models import (
     ThreadStatus,
     ThreadType,
     TurnRecord,
+    VisibleEvidence,
 )
 from controller import threads as threads_engine
-from parsing import (
-    commitment_has_reason,
-    has_support_claim,
-    parse_dialogue_act,
-    realized_comparison,
-    switch_bridge_ok,
-)
 from simulator import expected_turn_share
 from utils import weighted_choice
 
-_VOTE_CHANGE = re.compile(
-    r"\b(?:i\s+changed\s+my\s+mind|change\s+my\s+vote|switch(?:ing)?\s+(?:to|my\s+vote)|"
-    r"actually\s+i\s+(?:vote|choose|support|pick|prefer)|on\s+second\s+thought|"
-    r"i'?ll\s+switch|then\s+i\s+switch|let'?s\s+switch)\b",
-    re.I,
-)
 
 class ObserverMixin:
-    def _parse_act(self, state: DialogueState, persona: Persona, text: str, intent: MoveIntent) -> DialogueAct:
-        assert self._resolver is not None
-        previous = self._last_participant_id(state)
-        names = {p.id: p.name for p in state.personas}
-        return parse_dialogue_act(
-            speaker_id=persona.id,
-            speaker_name=persona.name,
-            text=text,
-            resolver=self._resolver,
-            participant_names=names,
-            intent=intent,
-            previous_speaker_id=previous,
-        )
-
     def _apply_semantics(self, state: DialogueState, record: TurnRecord) -> None:
+        # The observer consumes the accepted evidence contract and controller
+        # metadata only — it never reinterprets natural language (item 5).
+        if record.evidence is None:
+            raise ValueError(
+                f"turn {record.index} reached the observer without accepted evidence"
+            )
         rt = state.runtimes[record.speaker_id]
         persona = state.persona_by_id(record.speaker_id)
-        act = record.act
+        evidence = record.evidence
         before = self._snapshot_progress(state)
         prior_vote = rt.explicit_vote
         prior_pref = rt.top_option() or persona.preferred_option
@@ -78,95 +56,112 @@ class ObserverMixin:
         # voting/repair/closing belong to the bounded decision flow that asked
         # them — they never open ordinary discussion question threads, so a
         # finished repair exchange cannot leave a false hot question behind.
-        self._observe_question_answers(state, record)
-        if act.question_scope and record.phase in (Phase.OPENING, Phase.DISCUSSION, Phase.NARROWING):
-            self._register_question_thread(state, record)
+        self._observe_question_answers(state, record, evidence)
+        genuine_questions = [q for q in evidence.questions if q.scope in ("direct", "group")]
+        if genuine_questions and record.phase in (Phase.OPENING, Phase.DISCUSSION, Phase.NARROWING):
+            self._register_question_thread(state, record, genuine_questions[0], evidence)
 
-        # Coverage from independent per-option semantic evidence (closeout 5):
-        # a multi-function line can carry mentions, positive support, objection,
-        # and comparison evidence at once — the dominant act label stays for
-        # routing/reporting but is not the only coverage signal. An objected
-        # option gets an objection, not a reason; a positively engaged option
-        # in a supportive/comparative/committing line gets a reason.
-        challenged = set(act.soft_rejects) | set(act.hard_rejects)
-        committed = set(act.accepts) | ({act.explicit_vote} if act.explicit_vote else set())
-        compared = self._resolver is not None and realized_comparison(record.text, self._resolver)
-        supportive_line = (
-            compared
-            or act.act_type in {ActType.SUPPORT, ActType.COMPROMISE, ActType.OPENING}
-            or has_support_claim(record.text)
-        )
-        for option_id in act.option_refs:
+        # Coverage from option-SPECIFIC accepted evidence (item 12): support
+        # for A gives no reason credit to other mentioned options, a concern
+        # about A never attaches to B, and a comparison credits exactly its
+        # pair. A bare mention counts only as a mention.
+        mentioned = [
+            m.option_id for m in evidence.mentions if m.option_id in state.scenario.option_ids
+        ]
+        soft_concerns = {
+            c.option_id: (c.span.text or record.text)
+            for c in evidence.concerns if c.severity == "ordinary"
+        }
+        hard_concerns = {
+            c.option_id: (c.span.text or record.text)
+            for c in evidence.concerns if c.severity == "hard"
+        }
+        for blocker in evidence.blockers:
+            if blocker.action == "raised":
+                hard_concerns.setdefault(blocker.option_id, blocker.span.text or record.text)
+        challenged = set(soft_concerns) | set(hard_concerns)
+        accepts = [c.option_id for c in evidence.commitments if c.kind == "accept"]
+        commitment = evidence.sole_commitment()
+        committed = {c.option_id for c in evidence.commitments}
+        supported = {s.option_id for s in evidence.supports}
+        compared_ids = {oid for comp in evidence.comparisons for oid in comp.option_ids}
+        proposal_ids = {p.option_id for p in evidence.proposals if p.option_id}
+        for option_id in dict.fromkeys(mentioned):
             cov = state.coverage[option_id]
             cov.mentions += 1
             if option_id in challenged:
                 cov.objections += 1
-            elif option_id in committed or supportive_line:
+            elif option_id in (committed | supported | compared_ids | proposal_ids):
                 cov.reasons += 1
 
         # Concern/blocker threads (6.2/6.3): first fold this turn into open
         # threads (a semantically relevant reply moves hot -> cooling; a
         # raiser's visible acceptance resolves), then open option-specific
         # threads for objections raised here.
-        self._observe_concern_responses(state, record)
+        self._observe_concern_responses(state, record, evidence)
         # Comparison threads (6.4): a realized head-to-head gets one normalized
         # pair thread; a relevant pair response cools it. Short-lived by design.
-        self._observe_comparison_responses(state, record)
-        self._register_comparison_thread(state, record)
-        # Concern/blocker threads open only from parsed objections in the final
-        # accepted text — a routed CONCERN intent whose line shows no visible
-        # objection registers nothing (accepted text is the semantic authority).
-        for option_id in challenged:
-            self._register_concern_thread(state, record, option_id)
+        self._observe_comparison_responses(state, record, evidence)
+        self._register_comparison_thread(state, record, evidence)
+        # Concern/blocker threads open only from accepted visible objections —
+        # a routed CONCERN intent whose line shows no visible objection
+        # registers nothing (accepted evidence is the semantic authority).
+        for option_id, reason in {**soft_concerns, **hard_concerns}.items():
+            self._register_concern_thread(
+                state, record, option_id, hard=option_id in hard_concerns, reason=reason
+            )
 
-        # A visible resolution can reopen a parsed blocker for THIS sim only, and it
+        # A visible resolution can reopen a blocker for THIS sim only, and it
         # must run before votes so "that fixes my concern; I can live with X" counts.
-        if act.resolves_blocker:
-            # Re-open a previously blocked option only when the speaker visibly
-            # resolves their own blocker; rank moves back to neutral/acceptable later.
-            if rt.rank(act.resolves_blocker) == STANCE_REJECTED:
-                rt.set_rank(act.resolves_blocker, STANCE_NEUTRAL)
+        resolved_blockers = {b.option_id for b in evidence.blockers if b.action == "resolved"}
+        for option_id in resolved_blockers:
+            if rt.rank(option_id) == STANCE_REJECTED:
+                rt.set_rank(option_id, STANCE_NEUTRAL)
 
         allow_change = bool(record.intent and record.intent.allow_vote_change)
-        if act.explicit_vote and act.explicit_vote not in rt.rejected_options():
-            vote_stance = "accept" if act.explicit_vote in act.accepts else "vote"
-            self._set_vote(rt, act.explicit_vote, act.text, force=allow_change, stance=vote_stance)
-        for option_id in act.accepts:
+        switch_targets = {s.target for s in evidence.switches}
+        if commitment and commitment.option_id not in rt.rejected_options():
+            self._set_vote(
+                rt, commitment.option_id, record.text,
+                force=allow_change,
+                stance=commitment.kind,
+                visible_switch=commitment.option_id in switch_targets,
+            )
+        for option_id in accepts:
             if option_id in rt.rejected_options():
                 continue  # an actively blocked option needs a visible resolution first
-            rt.mark_acceptable(option_id, reason_for=act.text)
-            self._set_vote(rt, option_id, act.text, force=allow_change, stance="accept")
+            rt.mark_acceptable(option_id, reason_for=record.text)
             state.coverage[option_id].acceptances += 1
-        for option_id, reason in act.soft_rejects.items():
+        for option_id, reason in soft_concerns.items():
             rt.mark_disliked(option_id, reason_against=reason)
-        for option_id, reason in act.hard_rejects.items():
-            # A parse artifact must not turn the speaker's own current favorite into a hard blocker.
+        for option_id, reason in hard_concerns.items():
+            # An artifact must not turn the speaker's own current favorite into a hard blocker.
             if option_id == (rt.top_option() or persona.preferred_option):
                 continue
             rt.mark_rejected(option_id, reason_against=reason)
 
         # Record visible vote movement (first vote away from the initial
-        # preference, or a change of an earlier vote). `has_reason` is the weak
-        # signal (any reason clause); `has_bridge` is the issue-5 signal — the
-        # switch visibly links the sim's pre-turn lean to the new pick with a
-        # reason, which is what the validator enforces on a switch away from lean.
+        # preference, or a change of an earlier vote) from the accepted switch
+        # evidence only: reason/bridge signals come from the validated switch
+        # entry, never from reparsing the text.
         if rt.explicit_vote and rt.explicit_vote != prior_vote:
             baseline = prior_vote or persona.preferred_option
             if rt.explicit_vote != baseline:
+                switch = next((s for s in evidence.switches if s.target == rt.explicit_vote), None)
                 bridged = (
                     prior_pref == rt.explicit_vote
-                    or (self._resolver is not None
-                        and switch_bridge_ok(act.text, prior_pref, self._resolver))
+                    or (switch is not None and (switch.reason_span or switch.source))
                 )
+                has_reason = switch is not None and switch.reason_span is not None
                 rt.switch_events.append({
                     "from": baseline,
                     "to": rt.explicit_vote,
-                    "has_reason": commitment_has_reason(act.text),
+                    "has_reason": bool(has_reason),
                     "has_bridge": bool(bridged),
                 })
                 rt.concessions_made += 1
 
-        self._apply_lean_movement(state, record, rt, persona)
+        self._apply_lean_movement(state, record, rt, persona, evidence)
 
         # One counting point for genuine discussion-phase lean movement
         # (todo_prompt item 5): ANY visible evidence path that changed this
@@ -175,6 +170,7 @@ class ObserverMixin:
         # (blocked/dropped turns skip _apply_semantics entirely).
         if record.phase is Phase.DISCUSSION and rt.top_option() != prior_pref:
             state.discussion_lean_shifts += 1
+            state.discussion_lean_shift_turns.append(record.index)
 
         # Track the visible top pair per accepted turn for the stability
         # trigger (12.2). Tuples, so equality comparison is exact.
@@ -192,37 +188,48 @@ class ObserverMixin:
     # ------------------------------------------------------------------
 
     def _apply_lean_movement(
-        self, state: DialogueState, record: TurnRecord, rt: ParticipantRuntime, persona: Persona
+        self,
+        state: DialogueState,
+        record: TurnRecord,
+        rt: ParticipantRuntime,
+        persona: Persona,
+        evidence: VisibleEvidence,
     ) -> None:
-        """Move the latent lean only on a visible signal in the parsed text:
-        an opening that names an option, visible softening wording, a visible
-        compromise offer, or explicit conditional support. Never from routing
-        intent alone (votes/acceptances are handled by ``_set_vote``)."""
-        act = record.act
+        """Move the latent lean only on the speaker's own accepted visible
+        evidence: an opening that backs an option, visible softening, a
+        visible compromise proposal, or explicit conditional support. Never
+        from routing intent alone (votes/acceptances go through ``_set_vote``)."""
+        mentioned = [
+            m.option_id for m in evidence.mentions if m.option_id in state.scenario.option_ids
+        ]
+        challenged = {c.option_id for c in evidence.concerns} | {
+            b.option_id for b in evidence.blockers if b.action == "raised"
+        }
+        softened = next((s.option_id for s in evidence.softenings if s.option_id), None)
         if record.intent and record.intent.act == ActType.OPENING:
             # The opening lean follows the option the line visibly BACKS: an
-            # option the same line soft/hard-rejects is never promoted, even
-            # when it was the routed favorite ("A seems too expensive, while B
-            # fits us much better" leans B). Preference order: the routed
-            # favorite when named positively, else a unique positively named
-            # option; ambiguous or all-negative naming moves nothing.
-            challenged = set(act.soft_rejects) | set(act.hard_rejects)
-            positive = [
-                oid for oid in act.option_refs
-                if oid in state.scenario.option_ids and oid not in challenged
-            ]
+            # option the same line objects to is never promoted, even when it
+            # was the routed favorite ("A seems too expensive, while B fits us
+            # much better" leans B). Preference order: the routed favorite when
+            # named positively, else a unique positively named option;
+            # ambiguous or all-negative naming moves nothing.
+            positive = [oid for oid in dict.fromkeys(mentioned) if oid not in challenged]
             focus = record.intent.option_focus[0] if record.intent.option_focus else None
-            target = focus if focus in positive else (positive[0] if len(set(positive)) == 1 else None)
+            target = focus if focus in positive else (positive[0] if len(positive) == 1 else None)
             if target:
                 rt.promote_to_preferred(target)
-        elif (softened := act.softens_toward) and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
+        elif softened and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
             # Explicit visible softening ("B is starting to make more sense to
             # me", issue 3): the internal lean follows the sim's own words —
             # withholding the shift would make the state dishonest.
-            rt.promote_to_preferred(softened, reason_for=act.text)
+            rt.promote_to_preferred(softened, reason_for=record.text)
             rt.concessions_made += 1
         else:
-            signal = act.offers_compromise or act.conditional_support
+            proposal = next((p.option_id for p in evidence.proposals if p.option_id), None)
+            conditional = next(
+                (s.option_id for s in evidence.supports if s.strength == "conditional"), None
+            )
+            signal = proposal or conditional
             if signal and signal != rt.top_option() and self._can_shift_to(state, persona, signal):
                 # The sim visibly floated this option itself; whether the
                 # internal lean follows is discussion-phase concession
@@ -233,11 +240,14 @@ class ObserverMixin:
                     0.5 if rt.rank(signal) >= STANCE_ACCEPTABLE else 0.8
                 )
                 if random.random() > resist:
-                    rt.promote_to_preferred(signal, reason_for=act.text)
+                    rt.promote_to_preferred(signal, reason_for=record.text)
                     rt.concessions_made += 1
 
-    def _register_concern_thread(self, state: DialogueState, record: TurnRecord, option_id: str) -> None:
-        """Open an option-specific concern/blocker thread from a final turn (6.2/6.3).
+    def _register_concern_thread(
+        self, state: DialogueState, record: TurnRecord, option_id: str, *, hard: bool, reason: str = ""
+    ) -> None:
+        """Open an option-specific concern/blocker thread from accepted
+        concern/blocker evidence (6.2/6.3).
 
         Repeats of a resolved issue are suppressed by the thread engine, so
         repeated generic objections open nothing while a fresh issue still
@@ -245,7 +255,7 @@ class ObserverMixin:
         """
         if option_id not in state.scenario.option_ids:
             return
-        is_hard = option_id in record.act.hard_rejects
+        is_hard = hard
         issue_key = threads_engine.normalize_issue_key(
             record.text,
             state.scenario,
@@ -268,7 +278,9 @@ class ObserverMixin:
             if persona.id != record.speaker_id and rt.top_option() == option_id:
                 rt.challenges_received += 1
 
-    def _observe_concern_responses(self, state: DialogueState, record: TurnRecord) -> None:
+    def _observe_concern_responses(
+        self, state: DialogueState, record: TurnRecord, evidence: VisibleEvidence
+    ) -> None:
         """Fold this final turn into open concern/blocker threads (6.2/6.3).
 
         Merely mentioning the concerned option is not enough: a response counts
@@ -277,23 +289,21 @@ class ObserverMixin:
         resolving the blocker, or visibly accepting the option. The raiser's
         own visible acceptance/softening/resolution resolves the thread.
         """
-        act = record.act
-        refs = set(act.option_refs)
+        refs = {m.option_id for m in evidence.mentions}
+        committed = {c.option_id for c in evidence.commitments}
+        accepted_ids = {c.option_id for c in evidence.commitments if c.kind == "accept"}
+        softened_ids = {s.option_id for s in evidence.softenings if s.option_id}
+        resolved_ids = {b.option_id for b in evidence.blockers if b.action == "resolved"}
         for thread in list(state.threads.values()):
             if thread.thread_type not in (ThreadType.CONCERN, ThreadType.BLOCKER):
                 continue
             if thread.status in (ThreadStatus.RESOLVED, ThreadStatus.STALE):
                 continue
             focus = set(thread.focus_options)
-            if not focus & refs and act.resolves_blocker not in focus:
+            if not focus & refs and not focus & resolved_ids:
                 continue
             if record.speaker_id == thread.started_by:
-                accepted = bool(
-                    focus & set(act.accepts)
-                    or (act.explicit_vote in focus)
-                    or (act.softens_toward in focus)
-                    or (act.resolves_blocker in focus)
-                )
+                accepted = bool(focus & (committed | softened_ids | resolved_ids))
                 if accepted:
                     threads_engine.resolve_thread(
                         state, thread, reason="raiser visibly accepted/softened/resolved"
@@ -304,14 +314,23 @@ class ObserverMixin:
                         state, thread, turn_index=record.index, participant_id=record.speaker_id
                     )
                 continue
+            # Relevance from controller metadata and accepted evidence only:
+            # a routed reply to this thread (unless the validator judged it
+            # off-topic), a visible resolution/acceptance of the focus option,
+            # or semantic engagement with the focus option in the evidence.
             routed_reply = bool(
-                record.intent and record.intent.respond_to_turn == thread.source_turn_index
+                record.intent
+                and (
+                    record.intent.respond_to_turn == thread.source_turn_index
+                    or record.intent.thread_id == thread.thread_id
+                )
+                and evidence.thread_relevant is not False
             )
             relevant = (
                 routed_reply
-                or (act.resolves_blocker in focus)
-                or bool(focus & set(act.accepts))
-                or self._issue_relevant(state, record.text, thread)
+                or bool(focus & resolved_ids)
+                or bool(focus & accepted_ids)
+                or self._evidence_engages(evidence, focus)
             )
             if relevant and thread.status is ThreadStatus.HOT:
                 threads_engine.mark_response(
@@ -322,22 +341,27 @@ class ObserverMixin:
                     state, thread, turn_index=record.index, participant_id=record.speaker_id
                 )
 
-    def _register_comparison_thread(self, state: DialogueState, record: TurnRecord) -> None:
-        """Open/update one normalized option-pair thread for a realized comparison.
+    def _register_comparison_thread(
+        self, state: DialogueState, record: TurnRecord, evidence: VisibleEvidence
+    ) -> None:
+        """Open/update one normalized option-pair thread for realized
+        comparison evidence.
 
-        A comparison is realized when the final text names at least two valid
-        options with visibly comparative wording — the parsed text is the
-        single authority; a routed compare whose line never contrasts anything
-        registers nothing, while a comparative question realizes ASK *and* a
-        comparison. Pair identity ignores the issue key: one pair, one thread
-        ("one normalized option-pair thread", 6.4).
+        The accepted comparison evidence is the single authority; a routed
+        compare whose line never contrasts anything registers nothing, while a
+        comparative question realizes ASK *and* a comparison (multi-label).
+        Pair identity ignores the issue key: one pair, one thread (6.4).
         """
-        assert self._resolver is not None
-        if not realized_comparison(record.text, self._resolver):
+        comparison = next(
+            (
+                c for c in evidence.comparisons
+                if len({o for o in c.option_ids if o in state.scenario.option_ids}) >= 2
+            ),
+            None,
+        )
+        if comparison is None:
             return
-        refs = [oid for oid in record.act.option_refs if oid in state.scenario.option_ids]
-        if len(set(refs)) < 2:
-            return
+        refs = [oid for oid in comparison.option_ids if oid in state.scenario.option_ids]
         pair = threads_engine.normalize_pair(refs)[:2]
         threads_engine.open_thread(
             state,
@@ -348,11 +372,13 @@ class ObserverMixin:
             source_turn_index=record.index,
         )
 
-    def _observe_comparison_responses(self, state: DialogueState, record: TurnRecord) -> None:
+    def _observe_comparison_responses(
+        self, state: DialogueState, record: TurnRecord, evidence: VisibleEvidence
+    ) -> None:
         """Move a comparison thread hot -> cooling on a relevant pair response:
         another participant engaging the same pair (both options named) or
         replying directly to the comparison turn."""
-        refs = set(record.act.option_refs)
+        refs = {m.option_id for m in evidence.mentions}
         for thread in state.threads.values():
             if thread.thread_type is not ThreadType.COMPARISON:
                 continue
@@ -373,36 +399,49 @@ class ObserverMixin:
                 )
 
     @staticmethod
-    def _issue_relevant(state: DialogueState, text: str, thread) -> bool:
-        """Deterministic issue-level relevance between a response and a thread."""
-        key = threads_engine.normalize_issue_key(
-            text,
-            state.scenario,
-            [p.name for p in state.personas],
-            focus_options=list(thread.focus_options),
+    def _evidence_engages(evidence: VisibleEvidence, focus: set[str]) -> bool:
+        """Semantic engagement with a focus option in the accepted evidence —
+        support, concern, comparison, proposal, blocker, commitment, or
+        softening bound to it. A bare mention is not engagement."""
+        if not focus:
+            return False
+        bound = (
+            {s.option_id for s in evidence.supports}
+            | {c.option_id for c in evidence.concerns}
+            | {oid for comp in evidence.comparisons for oid in comp.option_ids}
+            | {p.option_id for p in evidence.proposals if p.option_id}
+            | {b.option_id for b in evidence.blockers}
+            | {c.option_id for c in evidence.commitments}
+            | {s.option_id for s in evidence.softenings if s.option_id}
         )
-        if key == thread.issue_key:
-            return True
-        if thread.issue_key.startswith("sig:") and key.startswith("sig:"):
-            thread_tokens = set(thread.issue_key[4:].split("-"))
-            response_tokens = set(key[4:].split("-"))
-            return bool(thread_tokens & response_tokens)
-        return False
+        return bool(focus & bound)
 
     @staticmethod
-    def _set_vote(rt: ParticipantRuntime, option_id: str, text: str, *, force: bool = False, stance: str = "vote") -> None:
+    def _set_vote(
+        rt: ParticipantRuntime,
+        option_id: str,
+        text: str,
+        *,
+        force: bool = False,
+        stance: str = "vote",
+        visible_switch: bool = False,
+    ) -> None:
         """Record a clear vote, protecting an existing one from silent overwrite.
 
-        A participant who already cast a clear vote keeps it unless their visible
-        text explicitly signals a change (e.g. 'actually I vote for', 'switch to'),
-        or ``force`` is set (used in the explicit split-vote compromise step).
-        Exception (issue #23): a formal direct vote replaces a commitment that
-        was only an acceptance earlier in discussion — otherwise a casual
-        "X works for me" locks out the actual vote round and manufactures a
-        phantom split. A direct vote never silently replaces another direct
-        vote (issue #5).
+        A participant who already cast a clear vote keeps it unless their turn
+        carries visible switch evidence (``visible_switch``) or ``force`` is
+        set (the explicit split-vote compromise step). Exception (issue #23):
+        a formal direct vote replaces a commitment that was only an acceptance
+        earlier in discussion — otherwise a casual "X works for me" locks out
+        the actual vote round and manufactures a phantom split. A direct vote
+        never silently replaces another direct vote (issue #5).
         """
-        if rt.explicit_vote and rt.explicit_vote != option_id and not force and not _VOTE_CHANGE.search(text or ""):
+        if (
+            rt.explicit_vote
+            and rt.explicit_vote != option_id
+            and not force
+            and not visible_switch
+        ):
             if not (stance == "vote" and rt.vote_stance == "accept"):
                 return
         rt.explicit_vote = option_id
@@ -416,24 +455,31 @@ class ObserverMixin:
     # Utilities
     # ------------------------------------------------------------------
 
-    def _register_question_thread(self, state: DialogueState, record: TurnRecord) -> None:
-        """Open/update a question thread from a final public question (6.1).
+    def _register_question_thread(
+        self, state: DialogueState, record: TurnRecord, question, evidence: VisibleEvidence
+    ) -> None:
+        """Open/update a question thread from accepted question evidence (6.1).
 
-        Scope comes from the parser's visible-text reading; the respondent for
-        a group question is a controller decision made here, using relevance
-        and turn balance — never the parser's.
+        Scope comes from the validated visible evidence; the respondent for a
+        group question is a controller decision made here, using relevance and
+        turn balance — never the interpreter's.
         """
-        act = record.act
-        scope = act.question_scope
+        mentioned = [
+            m.option_id for m in evidence.mentions if m.option_id in state.scenario.option_ids
+        ]
+        scope = question.scope
+        question_focus = [o for o in question.option_ids if o in state.scenario.option_ids]
         if scope == "direct":
-            respondent = act.question_target_id
+            respondent = question.addressee_id
             if not respondent or respondent == record.speaker_id or respondent not in state.runtimes:
                 return
         else:
-            respondent = self._pick_group_respondent(state, record.speaker_id, act.option_refs[:2])
+            respondent = self._pick_group_respondent(
+                state, record.speaker_id, (question_focus or mentioned)[:2]
+            )
             if respondent is None:
                 return
-        focus = [oid for oid in act.option_refs[:2] if oid in state.scenario.option_ids]
+        focus = (question_focus or mentioned)[:2]
         issue_key = threads_engine.normalize_issue_key(
             record.text,
             state.scenario,
@@ -451,15 +497,20 @@ class ObserverMixin:
             question_scope=scope,
         )
 
-    def _observe_question_answers(self, state: DialogueState, record: TurnRecord) -> None:
+    def _observe_question_answers(
+        self, state: DialogueState, record: TurnRecord, evidence: VisibleEvidence
+    ) -> None:
         """Move question threads hot -> cooling when this final turn answers them.
 
         A response counts only when the required respondent speaks AND the
-        accepted text visibly relates to the question — its focused option or
-        its normalized issue key. The routed act alone is never sufficient
+        accepted evidence visibly relates to the question — its focused option
+        or its normalized issue key. The routed act alone is never sufficient
         (closeout 2): an accepted but unrelated statement closes nothing, and
-        a deterministic fallback line never realizes an answer (Section 15).
+        a fallback line resolves a question only when its accepted answer
+        evidence says it addressed the target (item 12).
         """
+        answered_target = any(a.addresses_target for a in evidence.answers)
+        mentioned = {m.option_id for m in evidence.mentions}
         for thread in list(state.threads.values()):
             if thread.thread_type is not ThreadType.QUESTION or thread.status is not ThreadStatus.HOT:
                 continue
@@ -467,11 +518,14 @@ class ObserverMixin:
                 continue
             if record.index <= thread.source_turn_index:
                 continue
-            if record.used_fallback:
+            if record.used_fallback and not answered_target:
                 continue
+            routed_reply = bool(
+                record.intent and record.intent.respond_to_turn == thread.source_turn_index
+            )
             relevant = (
-                bool(set(thread.focus_options) & set(record.act.option_refs))
-                or self._issue_relevant(state, record.text, thread)
+                bool(set(thread.focus_options) & mentioned)
+                or (routed_reply and answered_target)
             )
             if relevant:
                 threads_engine.mark_response(
@@ -537,8 +591,9 @@ class ObserverMixin:
     @staticmethod
     def _focus_from_recent(state: DialogueState) -> list[str]:
         for turn in reversed(state.turns):
-            if turn.act.option_refs:
-                return turn.act.option_refs[:2]
+            mentioned = turn.mentioned_options()
+            if mentioned:
+                return mentioned[:2]
         return []
 
     def _snapshot_progress(self, state: DialogueState) -> tuple:

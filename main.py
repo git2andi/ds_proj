@@ -20,7 +20,9 @@ from config_loader import cfg  # noqa: E402
 from dialogue import DialogueRunner  # noqa: E402
 
 
-def _topics_from_args(argv: list[str]) -> list[str]:
+def _explicit_topics(argv: list[str]) -> list[str]:
+    """Topics the user explicitly provided: CLI words, a topic file, or piped
+    lines. Empty when nothing explicit was given (interactive/manual fallback)."""
     if len(argv) >= 2:
         path = Path(argv[1])
         if path.exists():
@@ -36,34 +38,45 @@ def _topics_from_args(argv: list[str]) -> list[str]:
         piped = sys.stdin.read().lstrip("﻿").strip()
         if piped:
             return [line.strip() for line in piped.splitlines() if line.strip()]
+    return []
+
+
+def _topics_from_args(argv: list[str]) -> list[str]:
+    """Explicit topics, else one interactively prompted topic."""
+    topics = _explicit_topics(argv)
+    if topics:
+        return topics
     topic = input("Topic: ").strip()
     return [topic] if topic else []
 
 
 def main() -> int:
     environment = cfg.get("environment", None) or {}
-    if str(environment.get("mode", "auto")) == "manual":
-        # The configured environment carries its own topic; run once with it.
-        if len(sys.argv) >= 2:
-            print(
-                "environment.mode=manual: CLI topic ignored; using the configured environment.",
-                file=sys.stderr,
-            )
-        topics = [""]
-    else:
-        topics = _topics_from_args(sys.argv)
+    manual_mode = str(environment.get("mode", "auto")) == "manual"
+    # Precedence: an explicit CLI/piped topic always requests automatic scenario
+    # generation for that topic, even when environment.mode is manual. Only
+    # with no explicit topic does manual mode run the configured environment.
+    topics = _explicit_topics(sys.argv)
+    force_auto_scenario = bool(topics)
+    if not topics:
+        if manual_mode:
+            topics = [""]
+        else:
+            topic = input("Topic: ").strip()
+            topics = [topic] if topic else []
     if not topics:
         print("No topic provided.", file=sys.stderr)
         return 2
     for topic in topics:
         try:
-            result = DialogueRunner(topic).run()
+            result = DialogueRunner(topic, force_auto_scenario=force_auto_scenario).run()
             print(f"\nOutcome: {result.outcome.status} ({result.outcome.final_option})")
             tokens = result.token_summary
             print(
                 "Tokens: "
                 f"setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']} "
                 f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} "
+                f"validator={tokens['validator_tokens_in']}/{tokens['validator_tokens_out']} "
                 f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out)"
             )
             warn_threshold = int(cfg.limits.get("warn_total_input_tokens", 0)) if "limits" in cfg else 0

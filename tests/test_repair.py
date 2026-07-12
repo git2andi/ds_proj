@@ -7,11 +7,20 @@ import unittest
 
 import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
+import prompts
 from consensus import ConsensusManager
-from models import Phase, RepairState
+from models import ActType, MoveIntent, Phase, RepairState, ValidationIssue
 
 from tests.fixtures import append_turn, make_persona, make_state, vote_intent
 from tests.stubs import make_runner
+
+
+def _repair_prompt(state, intent, issues, original="The Museum tour includes free lunch."):
+    return prompts.repair_utterance(
+        original_text=original, issues=issues,
+        persona=state.persona_by_id(intent.speaker_id),
+        state=state, recent_lines=[], intent=intent, max_words=15,
+    )
 
 
 def _formal_vote(state, pid, option, text=None):
@@ -150,6 +159,74 @@ class DeadlockEndToEndTests(unittest.TestCase):
         # Hard rejections survived the repair.
         self.assertIn("B", state.runtimes["p1"].rejected_options())
         self.assertIn("A", state.runtimes["p2"].rejected_options())
+
+
+# Merged from test_repair_prompting.py (item 8): repair-prompt content and
+# severity-based selection belong with the repair state machine.
+class RepairPromptCarriesActionableEvidence(unittest.TestCase):
+    def setUp(self) -> None:
+        self.state = make_state()
+
+    def test_unsupported_claim_span_and_reason_reach_the_prompt(self) -> None:
+        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it", option_focus=["A"])
+        issues = [ValidationIssue(
+            code="UNSUPPORTED_CLAIM:invented_detail",
+            explanation="concrete detail not present in the scenario",
+            span="includes free lunch", option_id="A", blocking=True,
+        )]
+        text = _repair_prompt(self.state, intent, issues)
+        self.assertIn('"includes free lunch"', text)
+        self.assertIn("not present in the scenario", text)
+        self.assertIn("Remove or replace exactly those words", text)
+
+    def test_issue_explanations_are_itemized_not_just_codes(self) -> None:
+        intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="vote",
+                            option_focus=["B"], required_vote="B")
+        issues = [ValidationIssue(
+            code="REQUIRED_VOTE_MISMATCH", explanation="committed to A, required B",
+            option_id="B", blocking=True,
+        )]
+        text = _repair_prompt(self.state, intent, issues, original="I vote for the Museum.")
+        self.assertIn("- REQUIRED_VOTE_MISMATCH: committed to A, required B", text)
+
+    def test_preservation_instruction_is_explicit(self) -> None:
+        intent = MoveIntent(speaker_id="p1", act=ActType.CONCERN, reason="push back", option_focus=["C"])
+        text = _repair_prompt(self.state, intent, [ValidationIssue(code="CONCERN_NOT_REALIZED")])
+        self.assertIn("Preserve everything not flagged below", text)
+        self.assertIn("stance and commitment target", text)
+
+    def test_wrong_option_focus_names_the_intended_option(self) -> None:
+        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="defend", option_focus=["A"])
+        text = _repair_prompt(self.state, intent, [ValidationIssue(code="WRONG_OPTION_FOCUS", option_id="A")])
+        self.assertIn("make it about Museum", text)
+
+
+class RepairSelectionBySeverity(unittest.TestCase):
+    def test_worse_repair_never_replaces_the_original(self) -> None:
+        state = make_state()
+        runner = make_runner(state, [
+            "The Museum has been discussed a lot today.",
+            "Just to be clear.",
+        ])
+        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="defend", option_focus=["A"])
+        record = runner._generate_and_append(state, intent)
+        self.assertEqual(record.text, "The Museum has been discussed a lot today.")
+        self.assertFalse(record.state_mutation_blocked)
+
+    def test_strictly_better_repair_is_taken(self) -> None:
+        state = make_state()
+        runner = make_runner(state, [
+            "The Museum has been discussed a lot today.",
+            "The Escape Room is pricier than the Museum, worth noting.",
+        ])
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.COMPARE, reason="cover it",
+            route_source="coverage", option_focus=["C", "A"],
+        )
+        record = runner._generate_and_append(state, intent)
+        self.assertTrue(record.repaired)
+        self.assertEqual(record.text, "The Escape Room is pricier than the Museum, worth noting.")
+        self.assertNotIn("MISSING_REQUIRED_OPTION_FOCUS", record.validation_issues)
 
 
 if __name__ == "__main__":

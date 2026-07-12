@@ -7,14 +7,16 @@ single-stance move, no re-quoted target that is already in the recent chat.
 
 from __future__ import annotations
 
+import random
 import unittest
 
 import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
 import prompts
-from models import ActType, DialogueAct, MoveIntent, Phase, TurnRecord
+from models import ActType, MoveIntent, Phase, TurnRecord, ValidationIssue
 
 from tests.fixtures import append_turn, make_persona, make_state
+from tests.stubs import make_runner
 
 
 def _prompt(state, intent, *, recent=None, focus=None, addressee=None):
@@ -107,7 +109,6 @@ class PromptContract(unittest.TestCase):
                 speaker_name="Moderator",
                 text=board_text,
                 phase=Phase.OPENING,
-                act=DialogueAct(speaker_id="moderator", text=board_text, act_type=ActType.SUPPORT),
             )
         )
         append_turn(state, "p2", "The Bike Ride sounds like the easy pick to me.")
@@ -124,6 +125,25 @@ class PromptContract(unittest.TestCase):
         text = _prompt(state, intent)
         positions = [text.index(marker) for marker in ("Voice:", "Move:", "Allowed facts:", "Recent chat:", "Output:")]
         self.assertEqual(positions, sorted(positions))
+
+    def test_generation_requests_the_utterance_envelope(self):
+        state = make_state()
+        intent = MoveIntent(speaker_id="p1", act=ActType.COMMENT, reason="light beat")
+        self.assertIn("<utterance></utterance>", _prompt(state, intent))
+
+    def test_repair_requests_the_utterance_envelope(self):
+        state = make_state()
+        intent = MoveIntent(speaker_id="p1", act=ActType.COMMENT, reason="light beat")
+        text = prompts.repair_utterance(
+            original_text="Something broken.",
+            issues=[ValidationIssue(code="MALFORMED_UTTERANCE")],
+            persona=state.persona_by_id("p1"),
+            state=state,
+            recent_lines=[],
+            intent=intent,
+            max_words=15,
+        )
+        self.assertIn("<utterance></utterance>", text)
 
 
 class ActRequirements(unittest.TestCase):
@@ -281,7 +301,7 @@ class ModeratorVoteRepairPrompts(unittest.TestCase):
         )
         text = prompts.repair_utterance(
             original_text="Interesting point about the weekend.",
-            issue_codes=["ANSWER_DOES_NOT_ADDRESS_QUESTION"],
+            issues=[ValidationIssue(code="ANSWER_DOES_NOT_ADDRESS_QUESTION")],
             persona=state.persona_by_id("p1"),
             state=state,
             recent_lines=["Jonas: How does the Museum handle a rainy day?"],
@@ -362,6 +382,77 @@ class ClauseFragments(unittest.TestCase):
             ),
             "",
         )
+
+
+# Merged from test_style_flags.py (item 8): lexical variation flags are part of
+# the prompt-realization surface (they shape the generated line's wording).
+def _lexical_flags(intent: MoveIntent) -> list[str]:
+    flags = []
+    if intent.avoid_pattern:
+        flags.append("avoid_pattern")
+    for name in ("vary_opening", "suppress_option_opening", "suppress_name_prefix",
+                 "suppress_i_opening", "suppress_we_opening"):
+        if getattr(intent, name):
+            flags.append(name)
+    return flags
+
+
+class StyleFlagTests(unittest.TestCase):
+    def setUp(self):
+        random.seed(3)
+        self.state = make_state()
+        self.runner = make_runner(self.state)
+
+    def _intent(self, act=ActType.SUPPORT, **kwargs) -> MoveIntent:
+        return MoveIntent(speaker_id="p1", act=act, reason="say it", **kwargs)
+
+    def test_fresh_conversation_sets_no_variation_flags(self):
+        for _ in range(50):
+            intent = self._intent()
+            self.runner._apply_style_flags(self.state, intent)
+            self.assertEqual(_lexical_flags(intent), [])
+            self.assertFalse(intent.suppress_name_prefix)
+
+    def test_multiple_tripwires_yield_exactly_one_note(self):
+        for speaker in ("p1", "p2", "p3", "p1"):
+            append_turn(self.state, speaker,
+                        "I worry the Escape Room is pricey, but the vibe is great.")
+        intent = self._intent()
+        self.runner._apply_style_flags(self.state, intent)
+        self.assertEqual(_lexical_flags(intent), ["avoid_pattern"])
+
+    def test_repeated_opening_word_gets_the_vary_opening_note(self):
+        for speaker, text in (
+            ("p1", "Honestly the Museum day is fine."),
+            ("p2", "Honestly the cost matters more."),
+            ("p3", "Honestly we should just decide."),
+        ):
+            append_turn(self.state, speaker, text)
+        intent = self._intent(act=ActType.COMMENT)
+        self.runner._apply_style_flags(self.state, intent)
+        self.assertEqual(_lexical_flags(intent), ["vary_opening"])
+
+    def test_functional_naming_is_never_suppressed(self):
+        for speaker, text in (
+            ("p1", "Lea, the Museum keeps it easy."),
+            ("p2", "Mira, the cost matters."),
+            ("p3", "Jonas, what do you prefer here."),
+            ("p1", "Lea, that works."),
+        ):
+            append_turn(self.state, speaker, text)
+        intent = self._intent(act=ActType.ASK, addressee_id="p2")
+        self.runner._apply_style_flags(self.state, intent)
+        self.assertFalse(intent.suppress_name_prefix)
+
+    def test_tail_question_flag_is_independent_flow_control(self):
+        for speaker, text in (
+            ("p1", "Is the Museum too quiet for us?"),
+            ("p2", "Would the Bike Ride tire anyone out?"),
+        ):
+            append_turn(self.state, speaker, text)
+        intent = self._intent(act=ActType.COMMENT)
+        self.runner._apply_style_flags(self.state, intent)
+        self.assertTrue(intent.suppress_tail_question)
 
 
 if __name__ == "__main__":

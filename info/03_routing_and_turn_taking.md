@@ -1,6 +1,6 @@
 # 03 — Routing and turn-taking
 
-The router decides who speaks next, which macro act they perform, who they address, and which option/thread they focus on. Routing is read-only over dialogue state: it returns a `MoveIntent` and never mutates persistent state; effects only count after the final accepted utterance is parsed and observed.
+The router decides who speaks next, which macro act they perform, who they address, and which option/thread they focus on. Routing is read-only over dialogue state: it returns a `MoveIntent` and never mutates persistent state; effects only count after the final accepted utterance's validated visible evidence is observed (the observer consumes exactly the evidence object that passed validation — it never reparses text).
 
 ## Routing order
 
@@ -39,7 +39,7 @@ Thread turns use relevance, not engagement alone: stance/option relevance domina
 
 ## Questions
 
-The parser assigns question *scope* from visible text only: a named or "you"-directed question is direct; a genuine question without an addressee is a group question with no target. The controller (never the parser) assigns the group respondent by relevance, engagement, and turn-share deficit. The required respondent answers on the next turn; an unrelated turn by that respondent does not close the question, and a fallback line never resolves it.
+Question *scope* comes from validated visible evidence only: a named or "you"-directed question is direct; a genuine question without an addressee is a group question with no target (rhetorical tags open nothing). The controller (never the interpreter) assigns the group respondent by relevance, engagement, and turn-share deficit. The required respondent answers on the next turn; an unrelated turn by that respondent does not close the question, and a fallback line resolves it only when its accepted answer evidence says it addressed the target (the deterministic listed-fact answer families do; nothing else does).
 
 ## Macro acts
 

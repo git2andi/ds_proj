@@ -105,5 +105,71 @@ class QuestionAnswerCompletionTests(unittest.TestCase):
         self.assertEqual(metrics["open_questions_at_end"], 0)         # but answered
 
 
+class SemanticContractMetricsTests(unittest.TestCase):
+    """Item 15: metrics measure semantic correctness of the evidence contract."""
+
+    def test_realized_function_and_action_metrics_from_pipeline_turns(self):
+        from tests.stubs import make_runner
+        state = make_state()
+        runner = make_runner(state, [
+            "The Museum keeps the day easy for everyone.",   # realized support
+            "Which is calmer, the Museum or the Bike Ride?",  # ask realizing compare? (ask intent)
+        ])
+        runner._generate_and_append(state, MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="say it", option_focus=["A"]))
+        runner._generate_and_append(state, MoveIntent(
+            speaker_id="p2", act=ActType.ASK, reason="ask", option_focus=["A", "B"]))
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["intended_function_realized_rate"], 1.0)
+        self.assertEqual(metrics["intended_focus_agreement_rate"], 1.0)
+        self.assertGreaterEqual(metrics["assessment_action_counts"].get("accept", 0), 1)
+        self.assertEqual(metrics["validator_failure_turns"], 0)
+        self.assertEqual(metrics["dropped_turn_count"], 0)
+        self.assertEqual(metrics["unsupported_printed_turns"], 0)
+
+    def test_validation_path_summary_metrics(self):
+        # Item 14: per-run validator call/skip accounting and the public-
+        # evidence/observer consistency check are first-class metrics.
+        from tests.stubs import make_runner
+        state = make_state()
+        runner = make_runner(state, ["The Museum keeps the day easy for everyone."])
+        runner._generate_and_append(state, MoveIntent(
+            speaker_id="p1", act=ActType.SUPPORT, reason="say it", option_focus=["A"]))
+        metrics = metrics_for(state, _outcome(state))
+        self.assertIn("validator_calls", metrics)
+        self.assertIn("validator_calls_per_accepted_turn", metrics)
+        self.assertIn("validation_fast_path_rate", metrics)
+        self.assertIn("validator_input_share", metrics)
+        self.assertEqual(metrics["vote_state_consistency_failures"], 0)
+        self.assertEqual(metrics["discussion_lean_shift_turns"], [])
+
+    def test_fallback_family_and_drop_metrics(self):
+        from tests.stubs import make_runner
+        state = make_state()
+        runner = make_runner(state, [
+            "Just to be clear.", "Just to be clear.",   # -> comparison fallback
+            "Just to be clear.", "Just to be clear.",   # comment intent -> drop
+        ])
+        runner._generate_and_append(state, MoveIntent(
+            speaker_id="p1", act=ActType.COMPARE, reason="compare", option_focus=["A", "B"],
+            route_source="thread_hot"))
+        runner._generate_and_append(state, MoveIntent(
+            speaker_id="p2", act=ActType.COMMENT, reason="beat"))
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["fallback_by_family"], {"comparison": 1})
+        self.assertEqual(metrics["dropped_turn_count"], 1)
+
+    def test_unsupported_printed_turns_checks_final_accepted_claims(self):
+        from models import EvidenceSpan, GroundingClaim
+        state = make_state()
+        record = append_turn(state, "p1", "The Museum has free entry on Saturdays.")
+        record.evidence.claims.append(GroundingClaim(
+            span=EvidenceSpan("free entry on Saturdays", 15), kind="invented_detail",
+            option_id="A", supported=False, reason="not in the scenario",
+        ))
+        metrics = metrics_for(state, _outcome(state))
+        self.assertEqual(metrics["unsupported_printed_turns"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

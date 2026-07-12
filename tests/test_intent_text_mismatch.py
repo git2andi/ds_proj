@@ -37,7 +37,7 @@ class IntentTextMismatchTests(unittest.TestCase):
         intent = MoveIntent(speaker_id="p2", act=ActType.CONCERN, reason="push back", option_focus=["A"])
         record = self._apply("p2", "The Museum is on everyone's list already anyway.", intent)
         self.assertEqual(_threads_of(self.state, ThreadType.CONCERN, ThreadType.BLOCKER), [])
-        self.assertNotEqual(record.act.act_type, ActType.CONCERN)
+        self.assertNotEqual(record.realized_act(), ActType.CONCERN)
         self.assertEqual(self.state.coverage["A"].objections, 0)
 
     def test_routed_support_with_visible_objection_opens_concern(self):
@@ -46,18 +46,18 @@ class IntentTextMismatchTests(unittest.TestCase):
         threads = _threads_of(self.state, ThreadType.CONCERN)
         self.assertEqual(len(threads), 1)
         self.assertEqual(threads[0].focus_options, ["C"])
-        self.assertEqual(record.act.act_type, ActType.CONCERN)
+        self.assertEqual(record.realized_act(), ActType.CONCERN)
 
     def test_routed_compare_without_visible_contrast_opens_no_pair_thread(self):
         intent = MoveIntent(speaker_id="p2", act=ActType.COMPARE, reason="weigh", option_focus=["A", "B"])
         record = self._apply("p2", "The Museum would be a calm start to the day.", intent)
         self.assertEqual(_threads_of(self.state, ThreadType.COMPARISON), [])
-        self.assertNotEqual(record.act.act_type, ActType.COMPARE)
+        self.assertNotEqual(record.realized_act(), ActType.COMPARE)
 
     def test_plain_mention_without_benefit_claim_stays_comment(self):
         intent = MoveIntent(speaker_id="p2", act=ActType.SUPPORT, reason="back it", option_focus=["A"])
         record = self._apply("p2", "The Museum is on the list, sure.", intent)
-        self.assertEqual(record.act.act_type, ActType.COMMENT)
+        self.assertEqual(record.realized_act(), ActType.COMMENT)
         self.assertEqual(self.state.coverage["A"].reasons, 0)
 
     def test_opening_lean_follows_named_option_not_routed_focus(self):
@@ -77,7 +77,7 @@ class IntentTextMismatchTests(unittest.TestCase):
         record = self._apply(
             "p1", "The Museum seems too expensive for what it offers, while the Bike Ride fits us much better.", intent
         )
-        self.assertIn("A", record.act.soft_rejects)
+        self.assertIn("A", {c.option_id for c in record.evidence.concerns})
         self.assertEqual(self.state.runtimes["p1"].top_option(), "B")
 
     def test_opening_supporting_the_routed_option_promotes_it(self):
@@ -114,7 +114,7 @@ class IntentTextMismatchTests(unittest.TestCase):
         runner = make_runner(state)
         intent = MoveIntent(speaker_id="p2", act=ActType.SUPPORT, reason="react")
         record = append_turn(state, "p2", "I can support the Museum if we keep the day short.", intent=intent)
-        self.assertEqual(record.act.conditional_support, "A")
+        self.assertIn(("A", "conditional"), [(s.option_id, s.strength) for s in record.evidence.supports])
         runner._apply_semantics(state, record)
         self.assertEqual(state.runtimes["p2"].top_option(), "A")
         self.assertEqual(state.discussion_lean_shifts, 1)
