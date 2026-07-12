@@ -72,7 +72,7 @@ class ClassificationTests(unittest.TestCase):
         _formal_vote(self.state, "p3", "C", _vote_text("Escape Room"))
         repair = self._classify()
         self.assertEqual(repair.repair_reason, "split_vote")
-        self.assertEqual(repair.max_attempts, 2)
+        self.assertEqual(repair.max_attempts, 1)
 
     def test_each_reason_runs_at_most_once(self):
         _formal_vote(self.state, "p1", "A", _vote_text("Museum"))
@@ -154,8 +154,7 @@ class DeadlockEndToEndTests(unittest.TestCase):
         self.assertIsNotNone(state.outcome)
         self.assertEqual(state.outcome.status, "unresolved")
         reasons = [r.repair_reason for r in state.repair_history]
-        self.assertIn("two_person_deadlock", reasons)
-        self.assertEqual(reasons.count("two_person_deadlock"), 1)
+        self.assertNotIn("two_person_deadlock", reasons)
         # Hard rejections survived the repair.
         self.assertIn("B", state.runtimes["p1"].rejected_options())
         self.assertIn("A", state.runtimes["p2"].rejected_options())
@@ -166,18 +165,6 @@ class DeadlockEndToEndTests(unittest.TestCase):
 class RepairPromptCarriesActionableEvidence(unittest.TestCase):
     def setUp(self) -> None:
         self.state = make_state()
-
-    def test_unsupported_claim_span_and_reason_reach_the_prompt(self) -> None:
-        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it", option_focus=["A"])
-        issues = [ValidationIssue(
-            code="UNSUPPORTED_CLAIM:invented_detail",
-            explanation="concrete detail not present in the scenario",
-            span="includes free lunch", option_id="A", blocking=True,
-        )]
-        text = _repair_prompt(self.state, intent, issues)
-        self.assertIn('"includes free lunch"', text)
-        self.assertIn("not present in the scenario", text)
-        self.assertIn("Remove or replace exactly those words", text)
 
     def test_issue_explanations_are_itemized_not_just_codes(self) -> None:
         intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="vote",

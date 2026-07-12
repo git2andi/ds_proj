@@ -26,7 +26,10 @@ from controller.state import (
 # Intentional re-exports (stable import surface): the controller enums below
 # are unused inside this module but imported from `models` across src/tests.
 # Declared so static tools count them as used; nothing star-imports models.
-__all__ = ["BlockingStrength", "ThreadStatus", "ThreadType"]
+__all__ = [
+    "BlockingStrength", "Phase", "QuestionScope", "RepairState",
+    "ThreadState", "ThreadStatus", "ThreadType",
+]
 
 
 class ActType(str, Enum):
@@ -71,17 +74,23 @@ class OptionCard:
     concern: str = ""
     short_name: str = ""
 
-    def public_line(self, max_attrs: int = 3, note_words: int = 9) -> str:
+    def public_line(self) -> str:
+        """Complete public option card shown to both participants and readers.
+
+        Runtime generation must never receive option facts that are hidden from
+        the visible board. Therefore attributes and the stable upside/concern
+        are not truncated here.
+        """
         attr_bits = [
             f"{key.replace('_', ' ')}: {value}"
-            for key, value in ordered_attrs(self.attrs)[: max(0, max_attrs)]
+            for key, value in ordered_attrs(self.attrs)
         ]
         details = "; ".join(attr_bits)
         suffix_bits: list[str] = []
         if self.upside:
-            suffix_bits.append(f"+ {_clip_words(self.upside, note_words)}")
+            suffix_bits.append(f"+ {self.upside.strip().rstrip(' .;:')}")
         if self.concern:
-            suffix_bits.append(f"− {_clip_words(self.concern, note_words)}")
+            suffix_bits.append(f"− {self.concern.strip().rstrip(' .;:')}")
         suffix = f" ({'; '.join(suffix_bits)})" if suffix_bits else ""
         return f"{self.id}) {self.name}" + (f" — {details}" if details else "") + suffix
 
@@ -95,12 +104,6 @@ class OptionCard:
         ]
         return "; ".join(p for p in pieces if p)
 
-
-def _clip_words(text: str, limit: int) -> str:
-    words = str(text).split()
-    if len(words) <= limit:
-        return str(text).strip().rstrip(" .;:")
-    return " ".join(words[:limit]).rstrip(" ,.;:") + "…"
 
 
 def ordered_attrs(attrs: dict[str, str]) -> list[tuple[str, str]]:
@@ -261,13 +264,13 @@ class MoveIntent:
 # Visible-evidence contract (todo_validation item 3)
 #
 # The typed multi-label representation of what ONE final visible utterance
-# publicly says. Populated by the interpretation pipeline (deterministic
-# critical parser + validator LLM), verified against the raw text, and — once
-# migration completes — the only semantic evidence allowed to update dialogue
+# publicly says. Populated by the deterministic critical interpretation
+# pipeline, verified against the raw text, and used as the only semantic
+# evidence allowed to update dialogue
 # state. Controller intent is never encoded here: this is visible text only.
 # ---------------------------------------------------------------------------
 
-# Controlled vocabularies shared with the validator schema and test fixtures.
+# Controlled vocabularies shared by deterministic evidence and test fixtures.
 SUPPORT_STRENGTHS = ("weak", "conditional", "firm")
 CONCERN_SEVERITIES = ("ordinary", "hard")
 QUESTION_SCOPES = ("direct", "group", "rhetorical")
@@ -389,20 +392,6 @@ class BlockerEvidence:
 
 
 @dataclass(slots=True)
-class GroundingClaim:
-    """One atomic checkable statement extracted from the utterance."""
-
-    span: EvidenceSpan
-    kind: str                        # CLAIM_KINDS
-    option_id: str | None = None     # subject option when applicable
-    attribute: str | None = None     # attempted attribute for factual claims
-    value: str | None = None         # attempted value for factual claims
-    source_facts: list[str] = field(default_factory=list)  # e.g. "A.cost=24 euros", "context:0"
-    supported: bool | None = None    # deterministic verification outcome (None = not yet checked)
-    reason: str = ""                 # why unsupported, when supported is False
-
-
-@dataclass(slots=True)
 class VisibleEvidence:
     """Multi-label visible semantics of one final utterance.
 
@@ -424,7 +413,6 @@ class VisibleEvidence:
     commitments: list[CommitmentEvidence] = field(default_factory=list)
     switches: list[SwitchEvidence] = field(default_factory=list)
     blockers: list[BlockerEvidence] = field(default_factory=list)
-    claims: list[GroundingClaim] = field(default_factory=list)
     # References that could not be resolved to exactly one public referent.
     ambiguous_references: list[EvidenceSpan] = field(default_factory=list)
     # Whether the utterance addressed the routed public thread (None = no thread).
@@ -521,6 +509,9 @@ class ParticipantRuntime:
     reasons_against: dict[str, str] = field(default_factory=dict)
     challenges_received: int = 0
     concessions_made: int = 0
+    # Current visible discussion stance is separate from the formal vote.
+    current_acceptance: str | None = None
+    public_lean: str | None = None
     explicit_vote: str | None = None
     vote_stance: str | None = None
     already_said: list[str] = field(default_factory=list)
@@ -606,6 +597,8 @@ class TurnRecord:
     # signal at all.
     evidence: "VisibleEvidence | None" = None
     assessment: "TurnAssessment | None" = None
+    assigned_min_words: int = 0
+    assigned_max_words: int = 0
 
     def mentioned_options(self) -> list[str]:
         if self.evidence is None:
@@ -615,6 +608,21 @@ class TurnRecord:
             if mention.option_id not in seen:
                 seen.append(mention.option_id)
         return seen
+
+    def is_formal_commitment_turn(self) -> bool:
+        """Whether this accepted participant turn belongs to the formal tally.
+
+        A formal phase alone is insufficient: concern/answer turns inside the
+        bounded repair phase must never become votes merely because they contain
+        tentative acceptance language. The controller must have requested a
+        formal vote, and the visible evidence must still contain the commitment.
+        """
+        return (
+            self.speaker_id != "moderator"
+            and self.phase in {Phase.VOTING, Phase.COMPROMISE_REPAIR}
+            and self.intent is not None
+            and self.intent.act is ActType.VOTE
+        )
 
     def visible_vote(self) -> str | None:
         if self.evidence is None:
@@ -700,6 +708,14 @@ class DialogueState:
     dialogue_tokens_in: int = 0
     dialogue_tokens_out: int = 0
     token_usage_by_call_type: dict[str, dict[str, int]] = field(default_factory=dict)
+    failed_route_counts: dict[str, int] = field(default_factory=dict)
+    failed_route_group_counts: dict[str, int] = field(default_factory=dict)
+    validation_stats: dict[str, Any] = field(default_factory=lambda: {
+        "logical_checks": 0,
+        "fast_paths": 0,
+        "api_retries": 0,
+        "retry_failures": {},
+    })
 
     def persona_by_id(self, persona_id: str) -> Persona:
         for persona in self.personas:

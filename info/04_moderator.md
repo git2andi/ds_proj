@@ -22,7 +22,7 @@ If a participant voices a split summary, the first reservation response should n
 
 ## Closure
 
-Unresolved outcomes get a short participant or moderator acknowledgement before closure. This makes unresolved endings feel socially earned without changing the outcome after it has already been computed.
+Unresolved outcomes get a short participant or moderator acknowledgement before closure. The final moderator closing line is deterministic and status-aware: it cannot describe a majority as unanimity or announce a winner for an unresolved result. This makes endings socially clear without changing the already computed outcome.
 
 ## Style interaction
 

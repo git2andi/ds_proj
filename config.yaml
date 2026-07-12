@@ -2,12 +2,10 @@
 # Keep this file small: only parameters that are useful to tune live here.
 
 llm:
-  # Independently configurable LLM roles (same provider for both is fine):
-  #   dialogue  = every generative call: scenario/persona setup, participant
-  #               utterances, moderator lines, repair rewrites.
-  #   validator = structured semantic interpretation of visible utterances,
-  #               claim classification for grounding, intended-move alignment.
-  #               Never generates public dialogue text.
+  # Dialogue owns every live generative call: scenario/persona setup,
+  # participant utterances, moderator lines, and repair rewrites.
+  # `validator` remains as a compatibility role for older tooling, but the
+  # normal `validation.mode: critical` runtime does not construct or call it.
   dialogue: "gpt"                     # uni | groq | gemini | gpt
   validator: "gpt"                    # uni | groq | gemini | gpt
   models:                             # model name used per provider
@@ -35,8 +33,7 @@ llm:
       temperature: 0.20
       top_k: 25
       top_p: 0.80
-    # The validator role runs cold: deterministic structured interpretation.
-    # max_output_tokens caps the structured JSON response tightly (item 9).
+    # Compatibility profile only; unused by the normal critical runtime.
     validator:
       temperature: 0.0
       top_k: 1
@@ -119,9 +116,6 @@ scenario:
   option_labels: ["A", "B", "C", "D"] # option IDs -> four options per scenario
   public_attr_min: 3                  # attributes per option card (min..max)
   public_attr_max: 5
-  option_prompt_max_words: 34         # word cap on card text as shown inside sim prompts
-  option_board_attr_max: 3            # attrs shown in transcript/moderator opening; full facts remain available to prompts
-  option_board_note_max_words: 9      # length of the +/- notes in the shown board
   shared_context_max_items: 3         # shared facts like "budget is $500" (count / words each)
   shared_context_max_words: 18
   short_alias_min_chars: 4            # constraints for the short option nickname used in dialogue ("Snap Peas")
@@ -268,7 +262,6 @@ utterances:
     answer: 13
     vote: 11
     moderator: 20
-    closure: 14
 
 corpus:
   # Optional corpus-inspired presets. With preset null everything under presets:
@@ -290,20 +283,13 @@ corpus:
       imbalance_tolerance: 0.15       # deviation from fair share before rebalancing kicks in
 
 validation:
-  # selective = the normal runtime mode: the validator LLM is called only when
-  #             soft natural-language meaning can change state; deterministic
-  #             fast paths (direct votes, sanctioned switches, blocker
-  #             restatements, process/closing lines, mention-free light
-  #             comments, plain questions) skip it. Every skip is recorded in
-  #             the trace with its reason. Safety-critical deterministic
-  #             checks (commitments, blockers, grounding of accepted claims)
-  #             are ALWAYS active in both modes.
-  # full      = the validator LLM interprets every candidate (debug/eval).
-  mode: selective   # selective | full
+  # critical = deterministic runtime correctness checks only. The validator
+  # LLM is not created or called during ordinary dialogue.
+  mode: critical   # critical
 
 limits:
-  # Total includes the validator role's selective structured-interpretation
-  # calls (at most one per candidate; fast paths skip many entirely).
+  # Total covers setup, participant dialogue, moderator generation, and repair.
+  # Critical validation is deterministic and makes no validator-LLM calls.
   warn_total_input_tokens: 80000   # print a warning if a run's total input tokens exceed this (nothing is stopped)
 
 consensus:

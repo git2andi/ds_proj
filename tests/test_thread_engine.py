@@ -22,13 +22,11 @@ from models import (
 from tests.stubs import make_runner
 from controller.threads import (
     age_threads,
-    find_thread,
     hot_blocking_thread_against,
     mark_response,
     normalize_issue_key,
     normalize_pair,
     open_thread,
-    reactivate_thread,
     resolve_thread,
     select_primary_thread,
 )

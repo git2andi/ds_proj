@@ -28,15 +28,13 @@ def _schema(obj: object) -> str:
 
 
 def _option_brief(option: OptionCard) -> str:
-    return option.public_line(
-        max_attrs=int(cfg.scenario.option_board_attr_max),
-        note_words=int(cfg.scenario.option_board_note_max_words),
-    )
+    return option.public_line()
 
 
 def _option_cards(options: Iterable[OptionCard]) -> str:
-    limit = int(cfg.scenario.option_prompt_max_words)
-    return "\n".join(f"- {compact_words(option.prompt_card(), limit)}" for option in options)
+    # The prompt receives exactly the complete facts printed on the public
+    # board. No hidden fourth attribute or clipped concern may influence a sim.
+    return "\n".join(f"- {option.prompt_card()}" for option in options)
 
 
 def setup_scenario(topic: str, n: int) -> str:
@@ -267,41 +265,29 @@ the chat, not a script: never dictate a quoted reply template, and vary your
 phrasing between interventions. No speaker prefix. One sentence only."""
 
 
-def moderator_closure_prompt(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
-    """Status-aware closing line. A majority close must acknowledge holdouts —
-    a wrap-up that sounds like full agreement is socially dishonest (I17)."""
-    final = scenario.option(outcome.final_option).name if outcome.final_option else "no option"
-    budget = int(cfg.utterances.word_budgets.closure)
-    if outcome.status == "majority":
-        holdouts = [
-            p.name for p in state.personas
-            if state.runtimes[p.id].explicit_vote != outcome.final_option
-        ]
-        names = ", ".join(holdouts) if holdouts else "some of the group"
-        instruction = (
-            f"The group did NOT fully agree: {names} did not back {final}. "
-            f"Say the group goes ahead with {final} as the majority choice and briefly "
-            f"acknowledge that {names} preferred something else. Never word it as if "
-            "everyone agreed."
-        )
-        budget += 8
-    elif outcome.status == "successful":
-        instruction = f"Everyone visibly agreed on {final}; wrap up warmly in plain words."
-    else:
-        instruction = (
-            "No agreement was reached. Say plainly that the group leaves this undecided "
-            "for now, and do not present any option as chosen."
-        )
-    return f"""You are the neutral moderator closing a casual group decision chat.
+def moderator_closure_line(outcome: RunOutcome, scenario: Scenario, state: DialogueState) -> str:
+    """Deterministic status-correct social closure.
 
-Outcome status: {outcome.status}
-Final option: {final}
-Reason: {outcome.reason}
+    The outcome is already final. A generated paraphrase can accidentally turn
+    a majority into apparent unanimity or announce a winner for an unresolved
+    result, so closing wording is kept deterministic and participant-facing.
+    """
+    if outcome.status == "unresolved" or not outcome.final_option:
+        return "We haven't reached a majority, so we'll leave this unresolved for now."
 
-{instruction}
-Write one short closing line under {budget} words.
-Sound conversational, like a person wrapping up a chat, not a formal announcement.
-Do not add new reasons or facts. No farewell. No speaker prefix."""
+    final = scenario.option(outcome.final_option).name
+    if outcome.status == "successful":
+        return f"We've all agreed on {final}, so that's the group decision."
+
+    votes = outcome.metadata.get("visible_votes", {}) if outcome.metadata else {}
+    holdouts = [
+        persona.name for persona in state.personas
+        if votes.get(persona.id, state.runtimes[persona.id].explicit_vote) != outcome.final_option
+    ]
+    if holdouts:
+        names = ", ".join(holdouts)
+        return f"{final} has the majority; {names} still preferred another option."
+    return f"{final} has the majority, so that's the group decision."
 
 
 def _stance_summary(
@@ -352,11 +338,12 @@ _ACT_REQUIREMENTS = {
     ActType.SUPPORT: (
         "Give real support: one clearly positive reason or consequence for the focused "
         "option. You may briefly acknowledge a concern first, but your supportive "
-        "position must stay clear — acknowledgment alone is not support."
+        "position must stay clear. Do not add a new factual feature to justify it."
     ),
     ActType.CONCERN: (
         "Raise one concrete downside, risk, unknown, or unmet need — an actual "
-        "objection, not a vague cautious remark."
+        "objection, not a vague cautious remark. A missing detail must be described "
+        "as unknown, not filled in with a plausible external fact."
     ),
     ActType.ASK: (
         "Ask exactly one genuine, answerable question about the intended issue. Do not "
@@ -370,8 +357,9 @@ _ACT_REQUIREMENTS = {
     ),
     ActType.COMPARE: (
         "Make both options identifiable (short names or clear references are fine, "
-        "anywhere in the message) and state at least one real difference or trade-off "
-        "between them."
+        "anywhere in the message) and base the trade-off on facts explicitly listed on "
+        "their cards. Reasonable consequences are fine when phrased as judgments, not "
+        "as invented factual features. If a needed detail is missing, say it is unknown."
     ),
     ActType.COMMENT: (
         "This is a light comment, not an argument: acknowledge, interpret, or name a "
@@ -390,6 +378,31 @@ _ACT_REQUIREMENTS = {
     ),
     ActType.VOTE: "Make your chosen option and your commitment unambiguous.",
 }
+
+
+def _length_instruction(min_words: int, max_words: int, act: ActType) -> str:
+    """Turn a numeric budget into a clear surface-length instruction.
+
+    Verbosity still reaches generation only through the assigned range.  The
+    wording is stronger at the extremes so the trait becomes visible in the
+    actual chat instead of only in logged budgets.
+    """
+    if max_words <= 10 and act is not ActType.VOTE:
+        return (
+            f"Keep it to one brief chat-style sentence of about {min_words}-{max_words} words. "
+            "Make one point only; do not add a second explanation."
+        )
+    if max_words >= 18 and act not in {ActType.VOTE, ActType.ASK}:
+        return (
+            f"Develop the point in about {min_words}-{max_words} words. Use enough detail to reach "
+            f"roughly {min_words} words: give the main reason and one useful consequence, contrast, "
+            f"or qualification. Two natural sentences are fine; do not exceed {max_words + 2} words "
+            "and do not collapse it into a terse one-liner."
+        )
+    return (
+        f"Aim for {min_words}-{max_words} words in one natural chat message; do not exceed "
+        f"{max_words + 2} words."
+    )
 
 
 def sim_utterance(
@@ -452,8 +465,9 @@ def sim_utterance(
             target_clause = "commit clearly to exactly ONE option"
         decision_instruction = (
             f"\nFor this decision turn, {target_clause}, in plain words of your own that state the "
-            "commitment directly (a clear vote, pick, or works-for-me statement) with the option name "
-            "right next to it. The sentence may otherwise take any shape. One short reason may follow. "
+            "commitment directly with an explicit first-person commitment verb (vote, choose, pick, "
+            "back, commit, or settle) and the option name right next to it. Do not merely say the option "
+            "seems best. The sentence may otherwise take any shape. One short reason may follow. "
             "No hedging, no 'leaning', no conditions, no question after it."
         )
         if intent.avoid_phrases:
@@ -508,18 +522,8 @@ def sim_utterance(
             "Do not re-raise these as new concerns or questions; argue from the listed facts instead."
         )
     # Verbosity reaches the prompt only as this numeric word range; the range
-    # itself (not a persona parameter) picks the phrasing of the length rule.
-    if max_words <= 8 and intent.act != ActType.VOTE:
-        # A short-beat draw (P4): one genuine quick reaction, not a compressed argument.
-        length_note = (
-            f"Reply with ONE quick chat-style reaction of at most {max_words} words — a quick agreement, "
-            "brief objection, short answer, or one small condition. Do NOT summarize or argue; one beat, "
-            "then stop. A complete short sentence or natural fragment is fine."
-        )
-    elif max_words >= 20:
-        length_note = f"Two short clauses or sentences are okay ({min_words}-{max_words} words)."
-    else:
-        length_note = f"Aim for {min_words}-{max_words} words, one casual message; a sentence fragment is fine."
+    # itself (not a persona label) controls how much the turn develops.
+    length_note = _length_instruction(min_words, max_words, intent.act)
     # At most one lexical variation note reaches a turn (policy picks the most
     # relevant pattern, item 8); the tail-question note is separate flow control.
     style_notes = ""
@@ -557,13 +561,14 @@ This turn: {intent.reason}{continuation_note}{target_block}{address}{decision_in
 
 Topic: {state.scenario.topic}
 Shared context: {context}
+Closed-world grounding rule: the shared context and option cards below are the complete factual world for this chat. You may naturally repeat exact listed values such as prices, durations, capacities, or distances when they help the point. Never alter those values or add exact times, locations, amenities, capacities, schedules, availability, guarantees, reliability claims, service features, or outside conditions unless they are explicitly written below. Do not use general knowledge to complete a plausible detail. If a needed detail is unlisted, omit it or say naturally that we do not know it here.
 Allowed facts:
 {cards}
 
 Recent chat:
 {recent}
 
-Output: exactly one message wrapped in <utterance></utterance> tags, like <utterance>your message</utterance>. Nothing outside the tags. No speaker prefix, no bullets/metadata inside. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the allowed facts; never state a practical detail that isn't listed as if it were fact.{settled_unknowns}{style_notes}"""
+Output: exactly one message wrapped in <utterance></utterance> tags, like <utterance>your message</utterance>. Nothing outside the tags. No speaker prefix, no bullets/metadata inside. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the listed option facts and shared context. Exact values printed on a card may be repeated naturally when relevant. Treat them as closed-world facts: when information is not explicitly given, omit it, say naturally that it is unknown here, or ask about it. Never alter a listed value or invent a plausible exact time, place, capacity, amenity, availability, guarantee, product/service capability, or external condition.{settled_unknowns}{style_notes}"""
 
 
 def _scale_1_5(value: float) -> int:
@@ -594,6 +599,7 @@ def repair_utterance(
     recent_lines: list[str],
     intent: MoveIntent,
     max_words: int,
+    min_words: int = 1,
 ) -> str:
     """Targeted, meaning-preserving repair request (todo_validation item 10).
 
@@ -651,20 +657,6 @@ def repair_utterance(
     if "WRONG_OPTION_FOCUS" in issue_codes and intent.option_focus:
         focus_name = aliases.get(intent.option_focus[0], intent.option_focus[0])
         required_focus += f" The line was about the wrong option; keep the same move but make it about {focus_name}."
-    grounding = ""
-    unsupported = [
-        issue for issue in issues if issue.code.startswith("UNSUPPORTED_CLAIM")
-    ]
-    if unsupported:
-        details = "; ".join(
-            (f"\"{issue.span}\" — {issue.explanation}" if issue.span else (issue.explanation or issue.code))
-            for issue in unsupported
-        )
-        grounding = (
-            f" The line stated something unsupported: {details}. Remove or replace exactly those "
-            "words; keep every other point unchanged. Use only the listed facts — do not add a new "
-            "fact in their place (explicit uncertainty like 'we don't know if…' is fine)."
-        )
     malformed = ""
     if "MALFORMED_UTTERANCE" in issue_codes:
         malformed = (
@@ -704,6 +696,7 @@ def repair_utterance(
         + (f" (offending words: \"{issue.span}\")" if issue.span else "")
         for issue in issues
     ) or "- (none listed)"
+    length_note = _length_instruction(min_words, max_words, intent.act)
     return f"""Repair this generated chat line — keep its intended move, fix only the problems.
 Preserve everything not flagged below: the option you are talking about, whom you address,
 your stance and commitment target, and your speaking style.
@@ -713,132 +706,14 @@ Move: {intent.act.value}. {requirement}{target_block}
 Original line: {original_text}
 Problems:
 {problem_lines}
+Closed-world rule: only the option facts below and the shared context are factual. Preserve and naturally reuse exact listed values when useful. Do not alter them or add exact times, places, capacities, amenities, availability, guarantees, capabilities, or outside conditions that are not listed. Remove an unsupported detail, or replace it with a natural phrase such as “we don't know that here”; do not append a robotic disclaimer to an otherwise complete sentence.
 Allowed option facts:
 {cards}
 Recent chat:
 {recent}
 
-Write one natural chat line, around {max_words} words (a complete sentence somewhat over is fine), wrapped in <utterance></utterance> tags with nothing outside them. No speaker prefix. Do not invent facts. Avoid generic filler.{clear_commit}{required_focus}{grounding}{malformed}{bridge} Do not append metadata, JSON, or bracketed labels inside the tags."""
+{length_note} Wrap exactly one natural chat line in <utterance></utterance> tags with nothing outside them. No speaker prefix. Preserve only listed facts; replace any unlisted factual detail with an explicit unknown. Avoid generic filler.{clear_commit}{required_focus}{malformed}{bridge} Do not append metadata, JSON, or bracketed labels inside the tags."""
 
-
-# Intent-specific validator schema fragments and their annotation rules
-# (item 7): only the categories relevant to the requested move are sent.
-_VALIDATOR_SCHEMAS: dict[str, object] = {
-    "supports": [{"option": "A", "strength": "weak|conditional|firm", "span": "exact words"}],
-    "concerns": [{"option": "A", "severity": "ordinary|hard", "span": "exact words"}],
-    "comparisons": [{"options": ["A", "B"], "favored": "A or null", "dimension": "visible dimension or null", "span": "exact words"}],
-    "answers": [{"completeness": "full|partial|evasive|unrelated", "addresses_target": True, "span": "exact words"}],
-    "softenings": [{"option": "A or null", "concession": True, "span": "exact words"}],
-    "proposals": [{"option": "A or null", "span": "exact words"}],
-    "commitments": [{"kind": "vote|accept", "option": "A", "span": "exact words"}],
-    "switches": [{"source": "A or null", "target": "B", "reason_span": "exact words or null", "span": "exact words"}],
-}
-
-_VALIDATOR_RULES: dict[str, str] = {
-    "supports": "- supports: only a visibly positive case for that specific option; mere mention is not support.",
-    "concerns": "- concerns severity \"hard\" only for veto-strength rejection (dealbreaker, can't support, hard no).",
-    "comparisons": "- comparisons: only when the message visibly contrasts the named options.",
-    "answers": "- answers: only when the message responds to the shown prior turn; completeness \"unrelated\" when it ignores the question.",
-    "softenings": "- softenings: visible warming toward an option or an explicit concession, without a commitment.",
-    "proposals": "- proposals: one existing option visibly offered as common ground (question form counts).",
-    "commitments": (
-        "- commitments: only real public commitment (a vote, pick, works-for-me, can-live-with). "
-        "Mere preference (\"B is worth considering\", \"I lean toward…\") is NOT a commitment. "
-        "A commitment stated as a question, or conditional on something unresolved, is NOT a commitment. "
-        "A trailing check-in question after a real commitment does not cancel it."
-    ),
-    "switches": "- switches: only when the commitment visibly moves away from an earlier pick; copy the reason clause into reason_span when present.",
-}
-
-
-def validator_interpret(
-    *,
-    utterance: str,
-    speaker_name: str,
-    options: list[OptionCard],
-    shared_context: list[str],
-    resolved_mentions: list[str],
-    categories: tuple[str, ...],
-    target_turn_text: str | None,
-    target_turn_speaker: str | None,
-    thread_summary: str | None,
-    previous_vote: str | None,
-) -> str:
-    """One structured semantic interpretation of a visible utterance.
-
-    The validator sees only public context: the final utterance, the option
-    facts, resolved references, the targeted prior turn, the active public
-    thread, and (on commitment turns) the speaker's previous public vote.
-    Controller intent selects WHICH categories are requested but is never
-    shown as content — hidden intent cannot become evidence. Commitments,
-    blockers, and questions are additionally checked deterministically.
-    """
-    cards = _grounding_cards(options)
-    context = "; ".join(compact_words(item, 16) for item in shared_context) or "none"
-    mentions = ", ".join(resolved_mentions) or "none"
-    target_line = (
-        f"\nThe message responds to {target_turn_speaker}: \"{compact_words(target_turn_text, 24)}\""
-        if target_turn_text
-        else ""
-    )
-    thread_line = f"\nActive public thread: {thread_summary}" if thread_summary else ""
-    vote_line = f"\nSpeaker's previous public vote: option {previous_vote}" if previous_vote else ""
-    schema: dict[str, object] = {
-        key: _VALIDATOR_SCHEMAS[key] for key in categories if key in _VALIDATOR_SCHEMAS
-    }
-    schema["claims"] = [{
-        "span": "exact words",
-        "kind": "listed_fact|arithmetic|opinion|inference|uncertainty|invented_detail|cross_option_transfer|ungrounded_inference|contradiction",
-        "option": "A or null", "attribute": "attribute name or null",
-        "value": "claimed value or null", "sources": ["A.cost"],
-    }]
-    schema["ambiguous_references"] = ["exact words of any reference with several plausible options"]
-    if thread_summary:
-        schema["thread_relevant"] = "true/false"
-    category_rules = "\n".join(
-        _VALIDATOR_RULES[key] for key in categories if key in _VALIDATOR_RULES
-    )
-    if category_rules:
-        category_rules += "\n"
-    return f"""You are a precise semantic annotator for a group-decision chat. Interpret ONE message: report only what it VISIBLY says — never what anyone might have intended.
-
-Options (the only facts that exist):
-{cards}
-Shared context: {context}
-
-Message by {speaker_name}:
-"{utterance}"
-
-Options already resolved in this message: {mentions}{target_line}{thread_line}{vote_line}
-
-Annotation rules:
-- Multi-label: one message can carry several evidence types at once. Report each; never let one erase another.
-- Bind evidence to the specific option it is about, never to every option mentioned.
-- Every span must be copied EXACTLY, word for word, from the message.
-{category_rules}- claims: split the message into ATOMIC checkable statements, separating each concrete factual premise from the subjective conclusion it supports. Kinds: "listed_fact" only when the exact option-attribute-value relation is in the cards; "arithmetic" = simple math over listed numbers; "cross_option_transfer" = another option's value applied to this option; "invented_detail" = a concrete detail (number, capability, facility, event, guarantee, attribute) not in the cards; "contradiction" = a concrete claim that conflicts with a listed card value; "inference" = a QUALIFIED/hedged conclusion reasonably drawn from listed facts (cite sources when you can, but a hedged conclusion needs no exact card wording); "ungrounded_inference" = a conclusion stated as a NEW concrete fact with no listed support; "opinion"/"uncertainty" = judgments and unknowns. A judgment embedding a concrete capability/event/logistical premise is TWO claims: the premise (listed_fact/invented_detail/contradiction) plus the opinion — never fold an unlisted concrete premise into an opinion. For a factual/contradiction claim, fill attribute and value. sources: "OPTION.attribute" or "context:INDEX".
-- ambiguous_references: pronouns/references with more than one plausible option; do NOT guess a binding.
-- Omit empty lists. Do not invent options, participants, or text.
-
-Return JSON only:
-{_schema(schema)}"""
-
-
-def _grounding_cards(options: Iterable[OptionCard]) -> str:
-    """Compact fact base for the grounding judge.
-
-    The participant prompt needs rich cards for fluent generation, but the judge
-    only needs stable facts. Keeping this compact reduces validation-token cost
-    without weakening the source-of-truth boundary.
-    """
-    rows: list[str] = []
-    for option in options:
-        facts = [f"{k.replace('_', ' ')}={v}" for k, v in option.attrs.items()]
-        if option.upside:
-            facts.append(f"upside={option.upside}")
-        if option.concern:
-            facts.append(f"concern={option.concern}")
-        rows.append(f"- {option.id}) {option.name}: " + compact_words("; ".join(facts), 46))
-    return "\n".join(rows)
 
 
 def _option_names(state: DialogueState, ids: list[str]) -> str:

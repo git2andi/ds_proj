@@ -110,5 +110,29 @@ class RoleAwareClientLookup(unittest.TestCase):
         self.assertGreater(client._sampling("dialogue")["temperature"], 0.5)
 
 
+class NativeJsonMode(unittest.TestCase):
+    def test_openai_compatible_validator_uses_json_object_mode(self) -> None:
+        response = mock.Mock()
+        response.choices = [mock.Mock(message=mock.Mock(content='{"ok": true}'))]
+        response.usage = mock.Mock(prompt_tokens=7, completion_tokens=4)
+        backend = mock.Mock()
+        backend.chat.completions.create.return_value = response
+
+        client = LLMClient.__new__(LLMClient)
+        client.role = "validator"
+        client.provider = "gpt"
+        client.model_id = "gpt-4.1-mini"
+        client._client = backend
+        client.last_tokens_in = client.last_tokens_out = 0
+        client.session_tokens_in = client.session_tokens_out = 0
+
+        data = client.generate_json("Return JSON", profile="validator")
+        self.assertEqual(data, {"ok": True})
+        request = backend.chat.completions.create.call_args.kwargs
+        self.assertEqual(request["response_format"], {"type": "json_object"})
+        self.assertEqual(client.last_tokens_in, 7)
+        self.assertEqual(client.last_tokens_out, 4)
+
+
 if __name__ == "__main__":
     unittest.main()

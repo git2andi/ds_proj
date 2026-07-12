@@ -36,11 +36,9 @@ def visible_votes_from_transcript(state: DialogueState) -> dict[str, str]:
     option_ids = set(state.scenario.option_ids)
     votes: dict[str, str] = {}
     for turn in state.turns:
-        if turn.speaker_id == "moderator" or turn.state_mutation_blocked:
+        if turn.state_mutation_blocked or not turn.is_formal_commitment_turn():
             continue
         if turn.speaker_id not in state.runtimes:
-            continue
-        if turn.phase not in _COMMITMENT_PHASES:
             continue
         vote = turn.visible_vote()
         if vote not in option_ids:
@@ -58,36 +56,95 @@ def public_support(
     phase: Phase | None = None,
     include_support_acts: bool = False,
 ) -> dict[str, set[str]]:
-    """Who visibly backed each option, from accepted evidence only.
+    """Current visible backing only; superseded positions never remain active."""
+    support: dict[str, set[str]] = {oid: set() for oid in state.scenario.option_ids}
+    option_ids = set(state.scenario.option_ids)
+    if phase is not None:
+        # Phase-scoped diagnostics use the last visible option-bound signal in
+        # that phase per participant.
+        current: dict[str, str] = {}
+        for turn in state.turns:
+            if turn.phase is not phase or turn.speaker_id not in state.runtimes or turn.state_mutation_blocked:
+                continue
+            if turn.evidence is None:
+                continue
+            commitment = turn.evidence.sole_commitment()
+            if commitment and commitment.option_id in option_ids:
+                current[turn.speaker_id] = commitment.option_id
+            elif include_support_acts and turn.evidence.supports:
+                oid = turn.evidence.supports[-1].option_id
+                if oid in option_ids:
+                    current[turn.speaker_id] = oid
+        for pid, oid in current.items():
+            if oid not in state.runtimes[pid].rejected_options():
+                support[oid].add(pid)
+        return support
 
-    A validated vote or acceptance commitment always counts; with
-    ``include_support_acts`` validated option-bound support evidence counts
-    too (used by the narrowing gate). Private ranks never count — this is the
-    public layer. A participant's later visible hard rejection withdraws
-    their backing.
+    current: dict[str, str] = {}
+    for turn in state.turns:
+        if turn.speaker_id not in state.runtimes or turn.state_mutation_blocked or turn.evidence is None:
+            continue
+        commitment = turn.evidence.sole_commitment()
+        if commitment and commitment.option_id in option_ids:
+            current[turn.speaker_id] = commitment.option_id
+            continue
+        softened = [x.option_id for x in turn.evidence.softenings if x.option_id in option_ids]
+        if softened:
+            current[turn.speaker_id] = softened[-1]
+            continue
+        if include_support_acts and turn.evidence.supports:
+            oid = turn.evidence.supports[-1].option_id
+            if oid in option_ids:
+                current[turn.speaker_id] = oid
+    # Runtime values cover synthetic/current states whose trace was not built by
+    # the normal observer, but transcript-visible evidence wins when present.
+    for pid, rt in state.runtimes.items():
+        current.setdefault(pid, rt.explicit_vote or rt.current_acceptance or rt.public_lean)
+    for pid, oid in current.items():
+        if oid in option_ids and oid not in state.runtimes[pid].rejected_options():
+            support[oid].add(pid)
+    return support
+
+
+def discussion_positive_mentions(state: DialogueState) -> Counter:
+    """Count visible positive option references before formal voting.
+
+    Each accepted participant turn contributes at most once per option. Pure
+    mentions and concerns do not count. The signal is historical by design: it
+    is used only to choose which equally voted option should be tested as the
+    single compromise candidate after a tie.
     """
     option_ids = set(state.scenario.option_ids)
-    support: dict[str, set[str]] = {oid: set() for oid in state.scenario.option_ids}
+    counts: Counter = Counter()
     for turn in state.turns:
-        if turn.speaker_id == "moderator" or turn.state_mutation_blocked:
+        if (
+            turn.speaker_id == "moderator"
+            or turn.state_mutation_blocked
+            or turn.phase in _COMMITMENT_PHASES
+            or turn.evidence is None
+        ):
             continue
-        if turn.speaker_id not in state.runtimes:
-            continue
-        if phase is not None and turn.phase is not phase:
-            continue
-        evidence = turn.evidence
-        if evidence is None:
-            continue  # no accepted evidence = no public semantic signal
-        backed = {c.option_id for c in evidence.commitments if c.option_id in option_ids}
-        if include_support_acts:
-            backed.update(s.option_id for s in evidence.supports if s.option_id in option_ids)
-        for oid in backed:
-            support[oid].add(turn.speaker_id)
-    for oid in support:
-        support[oid] = {
-            pid for pid in support[oid] if oid not in state.runtimes[pid].rejected_options()
-        }
-    return support
+        positive: set[str] = set()
+        positive.update(s.option_id for s in turn.evidence.supports if s.option_id in option_ids)
+        positive.update(
+            c.favored for c in turn.evidence.comparisons
+            if c.favored in option_ids
+        )
+        positive.update(
+            s.option_id for s in turn.evidence.softenings
+            if s.option_id in option_ids
+        )
+        positive.update(
+            c.option_id for c in turn.evidence.commitments
+            if c.option_id in option_ids
+        )
+        positive.update(
+            p.option_id for p in turn.evidence.proposals
+            if p.option_id in option_ids
+        )
+        for option_id in positive:
+            counts[option_id] += 1
+    return counts
 
 
 @dataclass(frozen=True)
@@ -120,24 +177,13 @@ def public_evidence(state: DialogueState) -> PublicEvidence:
     option_ids = set(state.scenario.option_ids)
     backing = public_support(state)
     formal = visible_votes_from_transcript(state)
-    proposal_counts: Counter = Counter()
-    for turn in state.turns:
-        if turn.speaker_id == "moderator" or turn.state_mutation_blocked:
-            continue
-        if turn.evidence is None:
-            continue
-        for proposal in turn.evidence.proposals:
-            if proposal.option_id in option_ids:
-                proposal_counts[proposal.option_id] += 1
     commitments = Counter(
         rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in option_ids
     )
     scores: dict[str, int] = {}
     for oid in state.scenario.option_ids:
-        other_backing = sum(
-            1 for pid in backing[oid] if state.runtimes[pid].explicit_vote != oid
-        )
-        score = 2 * commitments.get(oid, 0) + other_backing + proposal_counts.get(oid, 0)
+        current_backing = len(backing[oid])
+        score = current_backing + commitments.get(oid, 0)
         if score:
             scores[oid] = score
     best = max(scores.values(), default=0)
@@ -151,7 +197,7 @@ def public_evidence(state: DialogueState) -> PublicEvidence:
         backing=backing,
         formal_votes=formal,
         formal_counts=Counter(formal.values()),
-        proposals=set(proposal_counts),
+        proposals=set(),
         candidate_scores=scores,
         candidate_leaders=leaders,
         top_pair=top_pair,
@@ -178,6 +224,10 @@ class ConsensusManager:
             return RunOutcome("unresolved", None, "No visible votes or acceptances were produced.", turns, metadata)
         winner, support = counts.most_common(1)[0]
         if support == len(state.personas):
+            active_blockers = [pid for pid, rt in state.runtimes.items() if winner in rt.rejected_options()]
+            if active_blockers:
+                metadata["active_blockers_on_winner"] = active_blockers
+                return RunOutcome("unresolved", None, "A unanimous tally conflicts with an active blocker.", turns, metadata)
             return RunOutcome("successful", winner, "All participants visibly committed to the same option.", turns, metadata)
         threshold = math.ceil(float(cfg.consensus.majority_fraction) * len(state.personas))
         if support >= threshold and list(counts.values()).count(support) == 1:

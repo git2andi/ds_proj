@@ -238,6 +238,12 @@ def resolve_thread(state: DialogueState, thread: ThreadState, *, reason: str) ->
     thread.resolution_reason = reason
 
 
+def stale_thread(thread: ThreadState, *, reason: str) -> None:
+    """Stop routing a thread that repeatedly failed to produce usable text."""
+    thread.status = ThreadStatus.STALE
+    thread.resolution_reason = reason
+
+
 def reactivate_thread(state: DialogueState, thread: ThreadState, *, turn_index: int, by: str) -> None:
     """stale/resolved -> hot on a visible reopen."""
     thread.status = ThreadStatus.HOT

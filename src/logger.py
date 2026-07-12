@@ -48,14 +48,18 @@ class DialogueLogger:
         path = self.log_root / str(cfg.output.metrics_csv)
         row = flat_metrics_for(self.run_id, state, outcome)
         fieldnames = list(row.keys())
-        write_header = True
+        write_header = not path.exists()
+        mode = "a"
         if path.exists():
             try:
                 existing_header = path.read_text(encoding="utf-8").splitlines()[0].split(",")
-                write_header = existing_header != fieldnames
             except IndexError:
+                existing_header = []
+            if existing_header != fieldnames:
+                # Never append a second incompatible header into one CSV.
+                mode = "w"
                 write_header = True
-        with path.open("a", encoding="utf-8", newline="") as f:
+        with path.open(mode, encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             if write_header:
                 writer.writeheader()
@@ -64,7 +68,6 @@ class DialogueLogger:
 
     def _transcript_lines(self, state: DialogueState, outcome: RunOutcome) -> list[str]:
         dialogue_provider, dialogue_model = _active_provider_model("dialogue")
-        validator_provider, validator_model = _active_provider_model("validator")
         env_mode = str((cfg.get("environment", None) or {}).get("mode", "auto"))
         participants_mode = str((cfg.get("participants", None) or {}).get("mode", "auto"))
         seed = cfg.simulation.get("random_seed", None)
@@ -78,10 +81,10 @@ class DialogueLogger:
             # (issue 9) — a transcript must say which backend wrote it and which
             # backend judged it (the two roles are independently configurable).
             f"Dialogue LLM: {dialogue_provider} ({dialogue_model})",
-            f"Validator LLM: {validator_provider} ({validator_model})",
+            "Runtime validation: deterministic critical checks (LLM disabled)",
             f"Environment mode: {env_mode}",
             f"Participants mode: {participants_mode}",
-            f"Validation mode: {str((cfg.get('validation', None) or {}).get('mode', 'selective'))}",
+            f"Validation mode: {str((cfg.get('validation', None) or {}).get('mode', 'critical'))}",
             f"Moderator: enabled={moderator['enabled']} opening={moderator['opening']} mid_nudges={moderator['mid_discussion_nudges']} final_vote_call={moderator['final_vote_call']} closing={moderator['closing']}",
             f"Random seed: {seed if seed is not None else 'null'}",
             f"Pacing: min={state.min_discussion_turns} force={state.force_narrow_turns} hard={state.hard_max_turns}",
@@ -138,35 +141,40 @@ class DialogueLogger:
             "## Metrics",
             "",
         ]
-        for key, value in metrics_for(state, outcome).items():
-            lines.append(f"- {key}: {value}")
-        tokens = token_summary_for(state)
+        metrics = metrics_for(state, outcome)
+        for section, values in metrics.items():
+            if section == "metric_schema_version":
+                lines.append(f"- metric_schema_version: {values}")
+                continue
+            lines.append(f"- {section}:")
+            for key, value in values.items():
+                lines.append(f"  - {key}: {value}")
+        totals = metrics["token_usage"]["total"]
         lines += [
             "",
-            f"--- Tokens: setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']} "
-            f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} "
-            f"validator={tokens['validator_tokens_in']}/{tokens['validator_tokens_out']} "
-            f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out) ---",
+            f"--- Tokens: total={totals['input_tokens']}/{totals['output_tokens']} "
+            f"across {totals['api_calls']} API calls (in/out) ---",
         ]
         return lines
 
     def _json_payload(self, state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         dialogue_provider, dialogue_model = _active_provider_model("dialogue")
-        validator_provider, validator_model = _active_provider_model("validator")
         return {
             "run_id": self.run_id,
             # Suite case identifier (eval item 9): present when the eval harness
             # sets output.case_id, empty for ad-hoc runs. Ties this run.json,
             # its transcript, and the summary row to one suite case.
             "case_id": str((cfg.get("output", None) or {}).get("case_id", "")),
+            "suite_version": str((cfg.get("output", None) or {}).get("suite_version", "")),
+            "case_fingerprint": str((cfg.get("output", None) or {}).get("case_fingerprint", "")),
             "topic": self.topic,
             "llm": {
                 "dialogue": {"provider": dialogue_provider, "model": dialogue_model},
-                "validator": {"provider": validator_provider, "model": validator_model},
+                "runtime_validation": {"mode": "critical", "llm_used": False},
             },
             "participants_mode": str((cfg.get("participants", None) or {}).get("mode", "auto")),
             "environment_mode": str((cfg.get("environment", None) or {}).get("mode", "auto")),
-            "validation_mode": str((cfg.get("validation", None) or {}).get("mode", "selective")),
+            "validation_mode": str((cfg.get("validation", None) or {}).get("mode", "critical")),
             "moderator_config": _resolved_moderator_config(),
             "scenario": _to_jsonable(state.scenario),
             "personas": [_to_jsonable(p) for p in state.personas],
@@ -192,6 +200,7 @@ class DialogueLogger:
             "metrics": metrics_for(state, outcome),
             "tokens": token_summary_for(state),
             "token_usage_by_call_type": _to_jsonable(state.token_usage_by_call_type),
+            "validation_stats": _to_jsonable(state.validation_stats),
         }
 
 

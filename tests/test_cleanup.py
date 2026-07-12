@@ -14,6 +14,7 @@ import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
 from controller.policy import PolicyMixin
 from models import ActType, MoveIntent
+from prompts import _length_instruction
 from utils import clean_generated, extract_utterance
 
 from tests.fixtures import make_persona
@@ -160,15 +161,28 @@ class WordBudgetsStaySoft(unittest.TestCase):
         random.seed(11)
         return [PolicyMixin._word_bounds(intent, persona)[1] for _ in range(n)]
 
-    def test_high_verbosity_still_draws_occasional_short_budgets(self):
+    def test_high_verbosity_gets_consistently_longer_budgets(self):
         budgets = self._budgets(0.9)
-        self.assertTrue(any(b <= 9 for b in budgets))
-        self.assertGreater(sum(budgets) / len(budgets), 12)
+        self.assertGreaterEqual(min(budgets), 10)
+        self.assertGreater(sum(budgets) / len(budgets), 18)
+
+    def test_length_prompt_makes_trait_extremes_visibly_different(self):
+        terse = _length_instruction(3, 8, ActType.SUPPORT)
+        verbose = _length_instruction(13, 20, ActType.SUPPORT)
+        self.assertIn("one brief chat-style sentence", terse)
+        self.assertIn("one point only", terse)
+        self.assertIn("Develop the point", verbose)
+        self.assertIn("consequence, contrast", verbose)
+        self.assertIn("do not collapse it into a terse one-liner", verbose)
 
     def test_low_verbosity_budgets_are_shorter_on_average_but_never_enforced(self):
         low = self._budgets(0.1)
         high = self._budgets(0.9)
         self.assertLess(sum(low) / len(low), sum(high) / len(high))
+        self.assertGreater(
+            (sum(high) / len(high)) - (sum(low) / len(low)),
+            10,
+        )
         # The budget is only ever a prompt target: cleanup keeps a complete
         # sentence far above any drawn budget.
         long_line = (

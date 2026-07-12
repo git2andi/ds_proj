@@ -25,3 +25,12 @@ This should allow consensus when earned, preserve majority outcomes when a holdo
 ## What does not decide the outcome
 
 Age, speech_style, and background do not directly compute the outcome. They can influence the wording of visible commitments, but the outcome parser still relies on explicit transcript evidence.
+
+## Current commitment and split-candidate rules
+
+Each participant has one active formal vote. A visible switch replaces the previous active vote; old votes remain trace history only and cannot continue backing the old option. Runtime state and the transcript-derived last-vote map are checked for consistency.
+
+After equal formal vote counts, the compromise candidate is selected from visible discussion history: the tied option with the most positive accepted discussion mentions is tested. Positive mentions include visible support, favored comparisons, explicit softening/acceptance, and existing-option proposals; pure mentions and concerns do not count. Only the minimum number of plausible movers needed for a majority are asked to reconsider.
+ A mover's final repair commitment is restricted to the tested candidate or the mover's current vote, so the repair cannot manufacture a new third-option split. Plausibility uses private resistance only for routing and is improved by accepted visible openness toward the candidate; it never counts as a public vote.
+
+A compromise success is recorded only when a no-majority split repair produces at least one visible formal switch and the resulting tally becomes majority or unanimous. Merely running repair logic is not a successful compromise.

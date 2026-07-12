@@ -76,11 +76,13 @@ class _Candidate:
     assessment: TurnAssessment
     tokens_in: int = 0
     tokens_out: int = 0
-    # Validation-path telemetry (items 8/14): whether the validator LLM ran
-    # for this candidate, and why it was skipped when it did not.
+    # Compatibility telemetry. In critical mode these remain false/zero; they
+    # make old trace readers tolerate the simplified deterministic path.
     validator_llm_used: bool = False
     fast_path_reason: str = ""
     requested_categories: tuple[str, ...] = ()
+    validator_retries: int = 0
+    validator_retry_failures: tuple[str, ...] = ()
 
 
 class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
@@ -95,11 +97,11 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         seed = cfg.simulation.get("random_seed", None)
         if seed is not None:
             random.seed(int(seed))
-        # Generative role for setup/utterances/moderator/repair. The validator
-        # role is resolved eagerly so a misconfigured validator provider fails
-        # at startup, not at the first structured-interpretation call.
+        # The dialogue model is always required. Critical validation is fully
+        # deterministic, so no validator client is constructed during normal
+        # runtime.
         self._llm = get_llm_client("dialogue")
-        self._validator_llm = get_llm_client("validator")
+        self._validator_llm = None
         self._resolver: OptionResolver | None = None
         self._intervention_count = 0
         self._last_intervention_turn = -999
@@ -132,7 +134,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         state.setup_tokens_out = setup_tokens_out
         self._record_token_usage(state, "setup", setup_tokens_in, setup_tokens_out)
         self._resolver = OptionResolver(scenario.options)
-        validation_mode = str((cfg.get("validation", None) or {}).get("mode", "selective"))
+        validation_mode = str((cfg.get("validation", None) or {}).get("mode", "critical"))
         self._interpreter = TurnInterpreter(
             self._validator_llm, self._resolver, scenario,
             {p.id: p.name for p in personas},
@@ -161,7 +163,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         if outcome.status == "unresolved":
             self._emit_unresolved_acknowledgement(state, outcome)
         if self._mod("closing"):
-            closing = self._moderator_say(prompts.moderator_closure_prompt(outcome, scenario, state), state)
+            closing = prompts.moderator_closure_line(outcome, scenario, state)
             self._emit(self._append_moderator(state, closing, Phase.CLOSING))
         else:
             self._emit_peer_closing(state, outcome)
@@ -226,6 +228,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         used_fallback: bool,
         intent: MoveIntent,
         candidate: "_Candidate | None" = None,
+        candidate_texts: dict | None = None,
     ) -> None:
         mentioned = record.mentioned_options()
         coverage_realized = bool(
@@ -238,7 +241,6 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         assessment = record.assessment
         evidence = record.evidence
         evidence_bindings: dict[str, list[str]] = {}
-        unsupported_spans: list[dict] = []
         if evidence is not None:
             for kind, options in (
                 ("support", [s.option_id for s in evidence.supports]),
@@ -251,10 +253,6 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             ):
                 if options:
                     evidence_bindings[kind] = options
-            unsupported_spans = [
-                {"span": c.span.text, "kind": c.kind, "option": c.option_id, "reason": c.reason}
-                for c in evidence.claims if c.supported is False
-            ]
         state.controller_trace.append({
             "type": "turn",
             "turn_index": record.index,
@@ -282,20 +280,21 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                 "assessment_notes": assessment.notes if assessment else "",
                 "evidence_kinds": sorted(evidence.evidence_kinds()) if evidence else [],
                 "evidence_bindings": evidence_bindings,
-                "grounding_claims": len(evidence.claims) if evidence else 0,
-                "unsupported_claims": unsupported_spans,
                 "ambiguous_references": [s.text for s in evidence.ambiguous_references] if evidence else [],
                 "fallback_family": record.fallback_family,
                 "tokens_in": record.tokens_in,
                 "tokens_out": record.tokens_out,
-                # Validation-path telemetry for the FINAL candidate (item 8):
-                # whether the validator LLM ran, why it was skipped, and which
-                # payload categories were requested when it did run.
+                "assigned_word_bounds": [record.assigned_min_words, record.assigned_max_words],
+                "candidate_texts": candidate_texts or {},
+                # Compatibility validation telemetry. Critical mode is fully
+                # deterministic, so validator usage/tokens remain zero.
                 "validator_llm_used": candidate.validator_llm_used if candidate else None,
                 "validation_fast_path_reason": candidate.fast_path_reason if candidate else "",
                 "validator_categories": list(candidate.requested_categories) if candidate else [],
                 "validator_tokens_in": candidate.tokens_in if candidate else 0,
                 "validator_tokens_out": candidate.tokens_out if candidate else 0,
+                "validator_api_retries": candidate.validator_retries if candidate else 0,
+                "validator_retry_failures": list(candidate.validator_retry_failures) if candidate else [],
             },
         })
 
@@ -334,15 +333,12 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         structure_flags: list[str],
         constructed_evidence: VisibleEvidence | None = None,
     ) -> "_Candidate":
-        """The one candidate-processing path: parse references, interpret
-        through the validator role, and assess. Used identically for initial
-        generation, repaired generation, and deterministic fallback — no
-        candidate bypasses semantic or grounding checks.
+        """The one deterministic candidate-processing path.
 
-        ``constructed_evidence`` is the item-8 fast path for deterministic
-        fallback lines whose complete evidence is known from construction: it
-        replaces the validator call, but assessment still runs every
-        deterministic check on it.
+        Initial generations, repaired generations, and safe fallbacks all pass
+        through the same visible-evidence interpretation and critical checks.
+        ``constructed_evidence`` is allowed only for deterministic fallback text
+        whose evidence is re-derived from the visible line itself.
         """
         if constructed_evidence is not None:
             interp = InterpretationResult(
@@ -351,6 +347,15 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             )
         else:
             interp = self._interpret_candidate(state, persona, intent, text)
+        stats = state.validation_stats
+        if interp.fast_path:
+            stats["fast_paths"] = int(stats.get("fast_paths", 0)) + 1
+        else:
+            stats["logical_checks"] = int(stats.get("logical_checks", 0)) + 1
+        stats["api_retries"] = int(stats.get("api_retries", 0)) + interp.operational_retries
+        failure_counts = stats.setdefault("retry_failures", {})
+        for failure in interp.retry_failures:
+            failure_counts[failure] = int(failure_counts.get(failure, 0)) + 1
         if interp.tokens_in or interp.tokens_out:
             self._record_token_usage(state, "validator", interp.tokens_in, interp.tokens_out)
         assessment = self._assess_candidate(
@@ -366,6 +371,8 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             validator_llm_used=not interp.fast_path,
             fast_path_reason=interp.fast_path_reason,
             requested_categories=interp.requested_categories,
+            validator_retries=interp.operational_retries,
+            validator_retry_failures=interp.retry_failures,
         )
 
     def _constructed_fallback_evidence(
@@ -494,12 +501,15 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         if intent.suppress_name_prefix:
             text = strip_leading_name(text, [p.name for p in state.personas])
         candidate = self._process_candidate(state, persona, intent, text, structure_flags)
+        initial_candidate_text = text
+        repair_candidate_texts: list[str] = []
+        fallback_candidate_text = ""
         tokens_in += candidate.tokens_in
         tokens_out += candidate.tokens_out
 
         repaired = False
         trigger_codes = [issue.code for issue in candidate.assessment.issues]
-        attempts = int(cfg.simulation.max_repairs_per_turn)
+        attempts = min(1, int(cfg.simulation.max_repairs_per_turn))
         validation_repair_attempts = 0
         while candidate.assessment.action is AssessmentAction.REPAIR and attempts > 0:
             attempts -= 1
@@ -513,9 +523,11 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                 recent_lines=recent_lines,
                 intent=intent,
                 max_words=max_words,
+                min_words=min_words,
             )
             self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{persona.id}_repair")
             repair_text, ti, to, repair_flags = self._call_participant(repair_prompt, persona.name)
+            repair_candidate_texts.append(repair_text)
             self._record_token_usage(state, "repair", ti, to)
             tokens_in += ti
             tokens_out += to
@@ -540,6 +552,7 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                 state, persona, intent, [i.code for i in candidate.assessment.issues]
             )
             if fallback_text is not None:
+                fallback_candidate_text = fallback_text
                 constructed = self._constructed_fallback_evidence(
                     state, intent, fallback_text, fallback_family
                 )
@@ -577,6 +590,8 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                     fallback_family=fallback_family if used_fallback else "",
                     evidence=candidate.evidence,
                     assessment=candidate.assessment,
+                    assigned_min_words=min_words,
+                    assigned_max_words=max_words,
                 )
                 self._trace_result(
                     state,
@@ -588,7 +603,14 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                     used_fallback=used_fallback,
                     intent=intent,
                     candidate=candidate,
+                    candidate_texts={
+                        "initial": initial_candidate_text,
+                        "repairs": repair_candidate_texts,
+                        "fallback": fallback_candidate_text,
+                        "final_rejected": candidate.text,
+                    },
                 )
+                self._record_failed_route(state, intent)
                 self._post_turn_route_accounting(state, intent)
                 return dropped
         record = self._append_participant(
@@ -602,6 +624,8 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             repaired,
             trigger_codes,
             block,
+            min_words,
+            max_words,
         )
         record.used_fallback = used_fallback
         record.fallback_family = fallback_family if used_fallback else ""
@@ -617,6 +641,15 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             used_fallback=used_fallback,
             intent=intent,
             candidate=candidate,
+            candidate_texts=(
+                {
+                    "initial": initial_candidate_text,
+                    "repairs": repair_candidate_texts,
+                    "fallback": fallback_candidate_text,
+                    "accepted": candidate.text,
+                }
+                if repaired or used_fallback else {}
+            ),
         )
         turn_entry = state.controller_trace[-1]
         self._post_turn_route_accounting(state, intent)
@@ -686,6 +719,8 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         repaired: bool,
         trigger_codes: list[str],
         block: bool,
+        assigned_min_words: int,
+        assigned_max_words: int,
     ) -> TurnRecord:
         state.turn_index += 1
         rt = state.runtimes[persona.id]
@@ -705,6 +740,8 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             repaired=repaired,
             repair_trigger_codes=trigger_codes,
             state_mutation_blocked=block,
+            assigned_min_words=assigned_min_words,
+            assigned_max_words=assigned_max_words,
         )
         state.turns.append(record)
         return record

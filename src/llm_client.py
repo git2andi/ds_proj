@@ -18,11 +18,10 @@ load_dotenv()
 class LLMClient:
     """One backend bound to an LLM role.
 
-    Roles are independently configurable (llm.dialogue / llm.validator in
-    config.yaml). The dialogue role owns every generative call (setup,
-    utterances, moderator, repair); the validator role owns structured
-    semantic interpretation and never generates public dialogue text. Each
-    role keeps its own client instance and token counters.
+    Roles are independently configurable for compatibility. The live runner
+    constructs only the dialogue role, which owns setup, utterance, moderator,
+    and repair generation. Critical interpretation is deterministic and does
+    not instantiate a validator client.
     """
 
     def __init__(self, role: str = "dialogue") -> None:
@@ -156,6 +155,35 @@ class LLMClient:
         raise RuntimeError(f"Unsupported provider: {self.provider}")
 
     def generate_json(self, prompt: str, *, profile: str = "setup") -> dict[str, Any]:
+        """Generate one JSON object.
+
+        OpenAI-compatible providers use native JSON mode so structured
+        validation does not spend a second API call recovering from prose or
+        fenced output. Other providers keep the common text parser.
+        """
+        if self.provider in {"gpt", "groq"}:
+            self.last_tokens_in = 0
+            self.last_tokens_out = 0
+            sampling = self._sampling(profile)
+            request: dict[str, Any] = {
+                "model": self.model_id,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": sampling["temperature"],
+                "top_p": sampling["top_p"],
+                "response_format": {"type": "json_object"},
+            }
+            if sampling["max_output_tokens"]:
+                request["max_tokens"] = sampling["max_output_tokens"]
+            response = self._client.chat.completions.create(**request)
+            text = (response.choices[0].message.content or "").strip()
+            usage = getattr(response, "usage", None)
+            self._record_tokens(
+                prompt,
+                text,
+                getattr(usage, "prompt_tokens", None) if usage else None,
+                getattr(usage, "completion_tokens", None) if usage else None,
+            )
+            return extract_json_object(text)
         return extract_json_object(self.generate(prompt, profile=profile))
 
 

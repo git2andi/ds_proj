@@ -72,12 +72,10 @@ class FallbackFamilies(unittest.TestCase):
         self.assertIn("doesn't work for me", text)
         self.assertIn("booking cannot move", text)
 
-    def test_comparison_fallback_uses_exact_listed_attributes(self) -> None:
+    def test_comparison_fallback_is_gone(self) -> None:
         text, family = self.fallback(_intent(ActType.COMPARE, option_focus=["A", "B"]))
-        self.assertEqual(family, "comparison")
-        self.assertIn("24 euros", text)
-        self.assertIn("12 euros", text)
-        self.assertIn("versus", text)
+        self.assertIsNone(text)
+        self.assertEqual(family, "")
 
     def test_answer_fallback_answers_listed_attribute(self) -> None:
         from tests.fixtures import append_turn
@@ -158,24 +156,15 @@ class FallbackFamilies(unittest.TestCase):
 
 
 class FallbackIsFullyValidated(unittest.TestCase):
-    def test_fallback_goes_through_the_complete_pipeline(self) -> None:
-        # Both generation and repair return malformed fragments; the factual
-        # comparison fallback replaces them and is itself interpreted and
-        # assessed like any generated candidate.
+    def test_unsafe_comparison_drops_without_robotic_fallback(self) -> None:
         state = make_state()
         runner = make_runner(state, ["Just to be clear.", "Just to be clear."])
         intent = _intent(ActType.COMPARE, option_focus=["A", "B"], route_source="thread_hot")
         record = runner._generate_and_append(state, intent)
-        self.assertTrue(record.used_fallback)
-        self.assertEqual(record.fallback_family, "comparison")
-        self.assertIsNotNone(record.evidence)
-        self.assertIn(record.assessment.action,
-                      {AssessmentAction.ACCEPT, AssessmentAction.ACCEPT_WITH_METRIC})
-        self.assertEqual(
-            [set(c.option_ids) for c in record.evidence.comparisons], [{"A", "B"}]
-        )
-        self.assertEqual(record.evidence.commitments, [])
-        self.assertFalse(record.state_mutation_blocked)
+        self.assertEqual(record.text, "")
+        self.assertTrue(record.state_mutation_blocked)
+        self.assertFalse(record.used_fallback)
+        self.assertIs(record.assessment.action, AssessmentAction.DROP)
 
     def test_unsafe_case_drops_instead_of_printing(self) -> None:
         # A COMMENT intent has no truthful act-specific fallback: after a

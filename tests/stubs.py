@@ -10,10 +10,10 @@ from typing import Any
 
 from dialogue import DialogueRunner
 from interpreter import InterpretationResult
-from models import DialogueState
+from models import DialogueState, VisibleEvidence
 from parsing import OptionResolver
 
-from tests.evidence_adapter import derive_evidence
+from tests.fixtures import critical_evidence
 
 
 class FakeLLM:
@@ -53,24 +53,36 @@ class NullLogger:
 
 
 class StubInterpreter:
-    """Offline validator stand-in: derives evidence deterministically through
-    the test adapter (tests/evidence_adapter.py), so scripted-response tests
-    exercise the real candidate pipeline without a validator endpoint. Its
-    recall equals the old conservative parser's — natural-language variants
-    need a scripted validator payload (see tests/test_interpreter.py)."""
+    """Offline stand-in that emits deterministic critical evidence only.
 
-    def __init__(self, resolver: OptionResolver, participant_names: dict[str, str]) -> None:
+    Tests needing soft semantic evidence use explicit validator payloads or
+    construct ``VisibleEvidence`` directly.
+    """
+
+    def __init__(
+        self, resolver: OptionResolver, participant_names: dict[str, str],
+        evidences: list[VisibleEvidence] | None = None,
+    ) -> None:
         self._resolver = resolver
         self._names = dict(participant_names)
+        self._evidences = list(evidences or [])
 
     def interpret(self, *, text: str, speaker_id: str, intent=None, **_context) -> InterpretationResult:
-        return InterpretationResult(evidence=derive_evidence(
-            text, self._resolver,
-            speaker_id=speaker_id, participant_names=self._names, intent=intent,
+        if self._evidences:
+            evidence = self._evidences.pop(0)
+            evidence.utterance = text
+            return InterpretationResult(evidence=evidence)
+        return InterpretationResult(evidence=critical_evidence(
+            text, self._resolver, speaker_id=speaker_id,
+            participant_names=self._names,
+            sanctioned_switch=bool(intent and intent.allow_vote_change),
         ))
 
 
-def make_runner(state: DialogueState, responses: list[str] | None = None) -> DialogueRunner:
+def make_runner(
+    state: DialogueState, responses: list[str] | None = None,
+    evidences: list[VisibleEvidence] | None = None,
+) -> DialogueRunner:
     """A DialogueRunner wired to fakes, without running setup/LLM __init__."""
     runner = DialogueRunner.__new__(DialogueRunner)
     runner.topic = state.scenario.topic
@@ -80,7 +92,7 @@ def make_runner(state: DialogueState, responses: list[str] | None = None) -> Dia
     runner._validator_llm = FakeLLM()
     runner._resolver = OptionResolver(state.scenario.options)
     runner._interpreter = StubInterpreter(
-        runner._resolver, {p.id: p.name for p in state.personas}
+        runner._resolver, {p.id: p.name for p in state.personas}, evidences
     )
     runner._intervention_count = 0
     runner._last_intervention_turn = -999

@@ -12,7 +12,10 @@ from typing import NamedTuple
 from dialogue import initialise_state
 from models import (
     ActType,
+    BlockerEvidence,
+    CommitmentEvidence,
     DialogueState,
+    EvidenceSpan,
     MoveIntent,
     OptionCard,
     Persona,
@@ -21,6 +24,8 @@ from models import (
     SimulatorParameters,
     TraitProfile,
     TurnRecord,
+    VisibleEvidence,
+    QuestionEvidence,
 )
 from parsing import (
     OptionResolver,
@@ -168,6 +173,45 @@ def parse_text(
     return ParsedAct(act_type, option_refs, addressee, scope, target)
 
 
+def critical_evidence(
+    text: str,
+    resolver: OptionResolver,
+    *,
+    speaker_id: str,
+    participant_names: dict[str, str],
+    previous_speaker_id: str | None = None,
+    sanctioned_switch: bool = False,
+) -> VisibleEvidence:
+    """Build only deterministic public evidence for test fixtures.
+
+    Soft support, concern, comparison, answer, and proposal evidence must be
+    supplied explicitly by the test.  This avoids a second test-only semantic
+    parser while preserving exact vote, blocker, option, and question behavior.
+    """
+    evidence = VisibleEvidence(utterance=text, mentions=resolver.mentions(text))
+    commitment = visible_commitment(text, resolver, sanctioned_switch=sanctioned_switch)
+    if commitment and commitment[0] in {"vote", "accept"}:
+        evidence.commitments.append(CommitmentEvidence(
+            kind=commitment[0], option_id=commitment[1], span=EvidenceSpan(text=text, start=0)
+        ))
+    blocker = active_blocker_option(text, resolver)
+    if blocker:
+        evidence.blockers.append(BlockerEvidence(
+            option_id=blocker, action="raised", span=EvidenceSpan(text=text, start=0)
+        ))
+    question = visible_question(
+        text, speaker_id=speaker_id, participant_names=participant_names,
+        previous_speaker_id=previous_speaker_id,
+    )
+    if question:
+        scope, target = question
+        evidence.questions.append(QuestionEvidence(
+            scope=scope, addressee_id=target,
+            option_ids=resolver.ids_in_text(text), span=EvidenceSpan(text=text, start=0),
+        ))
+    return evidence
+
+
 def append_turn(
     state: DialogueState,
     speaker_id: str,
@@ -177,6 +221,7 @@ def append_turn(
     phase: Phase = Phase.DISCUSSION,
     resolver: OptionResolver | None = None,
     blocked: bool = False,
+    evidence: VisibleEvidence | None = None,
 ) -> TurnRecord:
     """Append one participant turn the way the runner does (record + evidence).
 
@@ -190,8 +235,6 @@ def append_turn(
     rt.turn_count += 1
     rt.last_spoke_turn = state.turn_index
     rt.already_said.append(text)
-    from tests.evidence_adapter import derive_evidence
-
     record = TurnRecord(
         index=state.turn_index,
         speaker_id=speaker_id,
@@ -200,14 +243,11 @@ def append_turn(
         phase=phase,
         intent=intent,
         state_mutation_blocked=blocked,
-        # Every appended turn carries the typed evidence contract, mirroring
-        # the runtime pipeline (deterministic test-adapter semantics).
-        evidence=derive_evidence(
-            text, resolver,
-            speaker_id=speaker_id,
+        evidence=evidence or critical_evidence(
+            text, resolver, speaker_id=speaker_id,
             participant_names={p.id: p.name for p in state.personas},
-            intent=intent,
             previous_speaker_id=previous,
+            sanctioned_switch=bool(intent and intent.allow_vote_change),
         ),
     )
     state.turns.append(record)

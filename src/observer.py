@@ -11,7 +11,6 @@ dialogue.py, and phase/repair flow transitions owned by the flow code.
 
 from __future__ import annotations
 
-import random
 
 from models import (
     ActType,
@@ -21,10 +20,8 @@ from models import (
     ParticipantRuntime,
     Persona,
     Phase,
-    STANCE_ACCEPTABLE,
     STANCE_NEUTRAL,
     STANCE_REJECTED,
-    ThreadState,
     ThreadStatus,
     ThreadType,
     TurnRecord,
@@ -121,10 +118,11 @@ class ObserverMixin:
         allow_change = bool(record.intent and record.intent.allow_vote_change)
         switch_targets = {s.target for s in evidence.switches}
         if commitment and commitment.option_id not in rt.rejected_options():
+            stance = "vote" if record.is_formal_commitment_turn() else commitment.kind
             self._set_vote(
                 rt, commitment.option_id, record.text,
                 force=allow_change,
-                stance=commitment.kind,
+                stance=stance,
                 visible_switch=commitment.option_id in switch_targets,
             )
         for option_id in accepts:
@@ -144,22 +142,20 @@ class ObserverMixin:
         # preference, or a change of an earlier vote) from the accepted switch
         # evidence only: reason/bridge signals come from the validated switch
         # entry, never from reparsing the text.
-        if rt.explicit_vote and rt.explicit_vote != prior_vote:
-            baseline = prior_vote or persona.preferred_option
-            if rt.explicit_vote != baseline:
-                switch = next((s for s in evidence.switches if s.target == rt.explicit_vote), None)
-                bridged = (
-                    prior_pref == rt.explicit_vote
-                    or (switch is not None and (switch.reason_span or switch.source))
-                )
-                has_reason = switch is not None and switch.reason_span is not None
-                rt.switch_events.append({
-                    "from": baseline,
-                    "to": rt.explicit_vote,
-                    "has_reason": bool(has_reason),
-                    "has_bridge": bool(bridged),
-                })
-                rt.concessions_made += 1
+        if prior_vote and rt.explicit_vote and rt.explicit_vote != prior_vote:
+            switch = next((s for s in evidence.switches if s.target == rt.explicit_vote), None)
+            bridged = bool(switch is not None and (switch.reason_span or switch.source))
+            has_reason = switch is not None and switch.reason_span is not None
+            rt.switch_events.append({
+                "from": prior_vote,
+                "to": rt.explicit_vote,
+                "has_reason": bool(has_reason),
+                "has_bridge": bool(bridged),
+                "turn_index": record.index,
+                "route_source": record.intent.route_source if record.intent else None,
+                "phase": record.phase.value,
+            })
+            rt.concessions_made += 1
 
         self._apply_lean_movement(state, record, rt, persona, evidence)
 
@@ -218,30 +214,20 @@ class ObserverMixin:
             target = focus if focus in positive else (positive[0] if len(positive) == 1 else None)
             if target:
                 rt.promote_to_preferred(target)
-        elif softened and softened != rt.top_option() and self._can_shift_to(state, persona, softened):
-            # Explicit visible softening ("B is starting to make more sense to
-            # me", issue 3): the internal lean follows the sim's own words —
-            # withholding the shift would make the state dishonest.
-            rt.promote_to_preferred(softened, reason_for=record.text)
-            rt.concessions_made += 1
-        else:
-            proposal = next((p.option_id for p in evidence.proposals if p.option_id), None)
-            conditional = next(
-                (s.option_id for s in evidence.supports if s.strength == "conditional"), None
-            )
-            signal = proposal or conditional
-            if signal and signal != rt.top_option() and self._can_shift_to(state, persona, signal):
-                # The sim visibly floated this option itself; whether the
-                # internal lean follows is discussion-phase concession
-                # territory: stubbornness gates it, and an already-acceptable
-                # target moves more easily than an untested one (no hidden
-                # commitment float — ranks and traits only).
-                resist = persona.sim_params.stubbornness * (
-                    0.5 if rt.rank(signal) >= STANCE_ACCEPTABLE else 0.8
-                )
-                if random.random() > resist:
-                    rt.promote_to_preferred(signal, reason_for=record.text)
-                    rt.concessions_made += 1
+                rt.public_lean = target
+        elif softened:
+            # An explicit lean is public even when it confirms the current top
+            # option.  Only an actual move to a different legal option changes
+            # ranks / counts as a concession.
+            if softened == rt.top_option():
+                rt.public_lean = softened
+            elif self._can_shift_to(state, persona, softened):
+                # Explicit visible softening ("B is starting to make more sense
+                # to me"): the internal lean follows the sim's own words —
+                # withholding the shift would make the state dishonest.
+                rt.promote_to_preferred(softened, reason_for=record.text)
+                rt.public_lean = softened
+                rt.concessions_made += 1
 
     def _register_concern_thread(
         self, state: DialogueState, record: TurnRecord, option_id: str, *, hard: bool, reason: str = ""
@@ -426,30 +412,24 @@ class ObserverMixin:
         stance: str = "vote",
         visible_switch: bool = False,
     ) -> None:
-        """Record a clear vote, protecting an existing one from silent overwrite.
-
-        A participant who already cast a clear vote keeps it unless their turn
-        carries visible switch evidence (``visible_switch``) or ``force`` is
-        set (the explicit split-vote compromise step). Exception (issue #23):
-        a formal direct vote replaces a commitment that was only an acceptance
-        earlier in discussion — otherwise a casual "X works for me" locks out
-        the actual vote round and manufactures a phantom split. A direct vote
-        never silently replaces another direct vote (issue #5).
-        """
+        """Update one current visible stance without conflating acceptance and vote."""
+        if stance == "accept":
+            rt.current_acceptance = option_id
+            rt.public_lean = option_id
+            rt.mark_acceptable(option_id, reason_for=text)
+            return
         if (
             rt.explicit_vote
             and rt.explicit_vote != option_id
             and not force
             and not visible_switch
         ):
-            if not (stance == "vote" and rt.vote_stance == "accept"):
-                return
+            return
         rt.explicit_vote = option_id
-        rt.vote_stance = stance
-        if stance == "accept":
-            rt.mark_acceptable(option_id, reason_for=text)
-        else:
-            rt.promote_to_preferred(option_id, reason_for=text)
+        rt.vote_stance = "vote"
+        rt.current_acceptance = option_id
+        rt.public_lean = option_id
+        rt.promote_to_preferred(option_id, reason_for=text)
 
     # ------------------------------------------------------------------
     # Utilities

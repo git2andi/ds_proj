@@ -5,8 +5,9 @@ participant/addressee resolution, public-context reference resolution, strict
 visible commitment/vote detection with post-checks, strict hard-blocker
 detection, genuine-question detection, and the structural helpers grounding
 relies on. Soft natural-language semantics (support, ordinary concerns,
-comparisons, softening, proposals) belong exclusively to the validator role.
-This module never mutates dialogue state and never makes controller
+comparisons, softening, proposals) are extracted conservatively by the
+deterministic interpreter when needed for routing/state. This module never
+mutates dialogue state and never makes controller
 decisions — a group question gets a scope, not a respondent.
 """
 
@@ -31,6 +32,11 @@ _ALIAS_STOPWORDS = _STOPWORDS | _GENERIC | {
     "neighborhood", "community", "local", "event", "center", "food", "project",
     "class", "course", "workshop", "session", "activity", "group", "program",
     "assistance", "weekly", "monthly", "morning", "evening", "weekend",
+    # Generic time-of-day / calendar words occur constantly in normal chat.
+    # Treating a capitalized token from an option name such as "Home Cooking
+    # Night" as the standalone alias "night" made "Saturday night" resolve
+    # to that option and then poisoned grounding attribution.
+    "day", "days", "night", "nights", "afternoon", "afternoons",
 }
 
 _QUESTION = re.compile(r"\?")
@@ -83,33 +89,33 @@ _HEDGE = re.compile(
     re.I,
 )
 _COMMIT = re.compile(
-    r"\b(?:i\s+vote\s+for|i'?m\s+voting(?:\s+for)?|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
-    r"i'?m\s+choosing|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"\b(?:i\s+vote(?!\s+(?:against|no\b))(?:\s+for)?|i'?m\s+voting(?:\s+for)?|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"i(?:'?m|\s+am)\s+(?:choosing|picking)|i\s+(?:choose|pick)|i(?:'?m|\s+am)\s+(?:opting\s+for|settling\s+on|landing\s+on|committing\s+to|set\s+on)|i\s+(?:land\s+on|commit\s+to)|i'?ll\s+(?:take|pick|choose)\b|i'?ll\s+back\s+(?!down|off|out|up)|i'?ll\s+commit\s+to|i\s+back\s+(?!down|off|out|up)|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+(?:final\s+)?(?:pick|choice)\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
     r"i'?m\s+still\s+on\s+(?!the\s+fence)|i'?ll\s+stay\s+(?:with|on)|i'?ll\s+back\s+(?!down|off|out|up)|"
-    r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
-    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
+    r"(?:gets?|has)\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
+    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|is\s+where\s+i\s+land|"
     r"is\s+the\s+(?:right|clear|best|obvious)\s+choice|i'?m\s+(?:firmly|fully|totally)\s+with|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|go\s+with|settle\s+on|pick|choose|"
     r"i'?(?:d|ll|m)\s+switch(?:ing)?\s+to|switch(?:ing)?\s+from\s+[^.;,!?]{0,40}?\s+to\b|"
     r"i\s+can\s+live\s+with|i'?d\s+be\s+happy\s+with|"
     r"i\s+support|i\s+accept|i\s+can\s+support|i'?m\s+fine\s+with|fine\s+with|"
-    r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
+    r"works\s+(?:best\s+)?for\s+me|that\s+works|that\s+settles\s+it\s+for\s+me|i'?m\s+on\s+board\s+with|i'?m\s+okay\s+with|okay\s+with|agree\s+on|final\s+choice)\b",
     re.I,
 )
 _SOFT_COMMIT = re.compile(
     r"\b(?:i\s+can\s+support|i\s+support|i\s+accept|i'?m\s+fine\s+with|fine\s+with|"
     r"i\s+can\s+live\s+with|i'?d\s+be\s+happy\s+with|"
-    r"works\s+(?:best\s+)?for\s+me|that\s+works|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
+    r"works\s+(?:best\s+)?for\s+me|that\s+works|that\s+settles\s+it\s+for\s+me|i'?m\s+on\s+board\s+with|i'?m\s+okay\s+with|okay\s+with|agree\s+on)\b",
     re.I,
 )
 _DIRECT_VOTE = re.compile(
-    r"\b(?:i\s+vote\s+for|i'?m\s+voting(?:\s+for)?|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
-    r"i'?m\s+choosing|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+pick\s+is|"
+    r"\b(?:i\s+vote(?!\s+(?:against|no\b))(?:\s+for)?|i'?m\s+voting(?:\s+for)?|my\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to|\s+stays\s+(?:with|on))|i\s+choose|i'd\s+choose|i\s+would\s+choose|"
+    r"i(?:'?m|\s+am)\s+(?:choosing|picking)|i\s+(?:choose|pick)|i(?:'?m|\s+am)\s+(?:opting\s+for|settling\s+on|landing\s+on|committing\s+to|set\s+on)|i\s+(?:land\s+on|commit\s+to)|i'?ll\s+(?:take|pick|choose)\b|i'?ll\s+back\s+(?!down|off|out|up)|i'?ll\s+commit\s+to|i\s+back\s+(?!down|off|out|up)|i'?d\s+go\s+with|i'?ll\s+go\s+with|i'?m\s+going\s+with|my\s+(?:final\s+)?(?:pick|choice)\s+is|"
     r"i'?m\s+(?:all\s+)?in\s+for|count\s+me\s+in\s+for|"
     r"i'?m\s+still\s+on\s+(?!the\s+fence)|i'?ll\s+stay\s+(?:with|on)|i'?ll\s+back\s+(?!down|off|out|up)|"
-    r"gets?\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
-    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|"
+    r"(?:gets?|has)\s+my\s+vote|my\s+top\s+(?:choice|pick)\s+is|i'?m\s+sold\s+on|i'?m\s+(?:all\s+)?for\b|let'?s\s+(?:do|book|get)\b|"
+    r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick)|is\s+where\s+i\s+land|"
     r"is\s+the\s+(?:right|clear|best|obvious)\s+choice|"
     r"i'?(?:d|ll|m)\s+switch(?:ing)?\s+to|switch(?:ing)?\s+from\s+[^.;,!?]{0,40}?\s+to\b|"
     r"let'?s\s+go\s+with|we\s+should\s+go\s+with|settle\s+on|final\s+choice)\b",
@@ -121,7 +127,7 @@ _CONDITIONAL_AFTER_COMMIT = re.compile(
     re.I,
 )
 _HARD_CONDITIONAL = re.compile(
-    r"(?:\?|\bonly\s+if\b|\bif\s+(?:we|it|they|you)\b|\bas\s+long\s+as\b|"
+    r"(?:\?|\bonly\s+if\b|\bif\b|\bas\s+long\s+as\b|"
     r"\bprovided\s+that\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|"
     r"\bdepends\b|\bare\s+we\s+okay\b)",
     re.I,
@@ -468,14 +474,18 @@ def hybrid_blend_detected(text: str, resolver: OptionResolver) -> bool:
 _PHRASE_FAMILIES: list[tuple[str, re.Pattern]] = [
     ("count me in for", re.compile(r"\bcount\s+me\s+in\s+for\b", re.I)),
     ("I'm all in for", re.compile(r"\bi'?m\s+(?:all\s+)?in\s+for\b", re.I)),
-    ("gets my vote", re.compile(r"\bgets?\s+my\s+vote\b", re.I)),
+    ("gets my vote", re.compile(r"\b(?:gets?|has)\s+my\s+vote\b", re.I)),
     ("my vote is", re.compile(r"\bmy\s+vote(?:\s+is|'?s\s+(?:on|for)|\s+goes\s+to)\b", re.I)),
     ("I'd go with", re.compile(r"\bi'?(?:d|ll)\s+go\s+with\b", re.I)),
     ("I'm going with", re.compile(r"\bi'?m\s+going\s+with\b", re.I)),
-    ("I'm choosing", re.compile(r"\bi'?m\s+choosing\b|\bi\s+choose\b", re.I)),
-    ("my pick is", re.compile(r"\bmy\s+pick\s+is\b|\bis\s+my\s+pick\b|\bthat'?s\s+my\s+pick\b", re.I)),
+    ("I'm choosing", re.compile(r"\bi(?:'?m|\s+am)\s+(?:choosing|picking)\b|\bi\s+(?:choose|pick)\b", re.I)),
+    ("I'm opting for", re.compile(r"\bi'?m\s+opting\s+for\b", re.I)),
+    ("I'm settling on", re.compile(r"\bi'?m\s+(?:settling|landing)\s+on\b|\bi\s+land\s+on\b", re.I)),
+    ("I'm committing to", re.compile(r"\bi(?:'?m|\s+am)\s+committing\s+to\b|\bi\s+commit\s+to\b|\bi'?ll\s+commit\s+to\b", re.I)),
+    ("I'll take", re.compile(r"\bi'?ll\s+(?:take|pick|choose)\b|\bi'?ll\s+back\s+(?!down|off|out|up)|\bi\s+back\s+(?!down|off|out|up)", re.I)),
+    ("my pick is", re.compile(r"\bmy\s+(?:final\s+)?(?:pick|choice)\s+is\b|\bis\s+my\s+pick\b|\bthat'?s\s+my\s+pick\b|\bis\s+where\s+i\s+land\b", re.I)),
     ("my choice is", re.compile(r"\b(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+choice\b|\bmy\s+top\s+choice\s+is\b", re.I)),
-    ("I vote for", re.compile(r"\bi\s+vote\s+for\b|\bi'?m\s+voting\b", re.I)),
+    ("I vote for", re.compile(r"\bi\s+vote(?!\s+(?:against|no\b))(?:\s+for)?\b|\bi'?m\s+voting\b", re.I)),
     ("I'm switching to", re.compile(r"\bswitch(?:ing)?\s+(?:from\s+[^.;,!?]{0,40}?\s+)?to\b", re.I)),
     ("I'm still on", re.compile(r"\bi'?m\s+still\s+on\b|\bmy\s+vote\s+stays\b", re.I)),
     ("I'll stay with", re.compile(r"\bi'?ll\s+stay\s+(?:with|on)\b", re.I)),
@@ -496,7 +506,7 @@ def used_commitment_phrases(texts: list[str]) -> list[str]:
 # Commitment phrases whose grammatical object comes before the phrase
 # ("X gets my vote", "X works for me", "X is my pick").
 _SUBJECT_FORM_COMMIT = re.compile(
-    r"(?:gets?\s+my\s+vote|works\s+(?:best\s+)?for\s+me|"
+    r"(?:(?:gets?|has)\s+my\s+vote|works\s+(?:best\s+)?for\s+me|is\s+where\s+i\s+land|"
     r"(?:is|makes\s+it)\s+(?:definitely\s+|clearly\s+|easily\s+)?my\s+(?:choice|pick))",
     re.I,
 )
@@ -637,16 +647,16 @@ def visible_commitment(
 #
 # The deterministic commitment layer stays conservative and narrow: strict
 # public votes/acceptances, blocker safety, and required-target protection.
-# Natural menu-less vote wording is recognised by the validator LLM (item 7),
-# but EVERY claimed commitment — regex-found or validator-proposed — must pass
-# these checks before it can count. A hidden required_vote never counts
+# Natural menu-less vote wording is recognized by the deterministic commitment
+# parser. Every claimed commitment must pass these checks before it can count.
+# A hidden required_vote never counts
 # without a visible, unambiguous public commitment.
 # ---------------------------------------------------------------------------
 
 # Prerequisite wording that voids a final commitment wherever it appears.
 _PREREQUISITE = re.compile(
     r"\bonly\s+if\b|\bunless\b|\bwould\s+need\b|\bneed\s+to\s+know\b|\bdepends\b|"
-    r"\bare\s+we\s+okay\b|\bas\s+long\s+as\b|\bprovided\s+that\b|\bif\s+(?:we|it|they|you)\b",
+    r"\bare\s+we\s+okay\b|\bas\s+long\s+as\b|\bprovided\s+that\b|\bif\b",
     re.I,
 )
 # On sanctioned switches, concessive riders ("as long as", "if we…") are the

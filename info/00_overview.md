@@ -8,11 +8,11 @@ The target is not arbitrary chat. The target is an explainable simulator:
 topic/manual environment
   -> option board
   -> simulated users with hidden traits, age, speech_style, profile, and initial option ranks
-  -> chat-level discussion agenda
+  -> explicit phases, option coverage, and local interaction threads
   -> controller routes speaker / macro act / target / focus
   -> LLM renders one utterance
-  -> validation checks intent and grounding
-  -> observer updates visible state, option ranks, and agenda progress
+  -> deterministic critical interpretation and grounding checks
+  -> observer updates visible state, option ranks, threads, and coverage
   -> consensus manager computes outcome from visible evidence
 ```
 
@@ -32,26 +32,28 @@ Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_option
 
 ## Current participant model
 
-A sim has hidden OCEAN traits that derive four simulator parameters (engagement, verbosity, directness, stubbornness) for behavior. Age, speech_style, and profile are descriptive metadata for plausibility and surface wording.
+A sim has hidden OCEAN traits that derive five simulator parameters (engagement, verbosity, directness, stubbornness, switch_resistance) for behavior. Age, speech_style, and profile are descriptive metadata for plausibility and surface wording.
 
 Core rule:
 
 ```text
-the four parameters decide behavior; speech_style changes wording only
+the five parameters decide behavior; speech_style changes wording only
 ```
 
 Age/profile plausibility is checked during setup so generated personas do not contain obvious contradictions.
 
-## Current agenda model
+## Current progress model
 
-The project uses a chat-level `DialogueState.discussion_agenda`. It tracks global work the group still needs before narrowing, such as option coverage. Per-sim scripted agendas were removed. Personal reasons remain attached to option stances.
+There is no content agenda. Global progress is represented by explicit phases,
+per-option visible coverage, and local question/concern/blocker/comparison
+threads. Persona-specific reasons remain attached to option stances.
 
 ## Current act model
 
 The controller uses a compact macro-act vocabulary:
 
 ```text
-opening, support, concern, ask, answer, compare, soften_toward, compromise, process, vote, closing
+opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
 ```
 
 Only the macro set is used so routing, prompts, and logs remain aligned.

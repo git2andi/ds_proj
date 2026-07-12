@@ -15,12 +15,13 @@ from collections import Counter
 
 from aliases import short_alias_map
 from config_loader import cfg
-from consensus import participant_turn_count, public_evidence
+from consensus import discussion_positive_mentions, participant_turn_count, public_evidence
 from models import (
     ActType,
     DialogueState,
     MoveIntent,
     Persona,
+    Phase,
     ThreadStatus,
     ThreadType,
     TurnRecord,
@@ -44,7 +45,7 @@ from style import (
     surface_pattern,
     we_opening_fraction,
 )
-from utils import clause_fragment, preset_dominance_weight, usable_reason_fragment, weighted_choice
+from utils import preset_dominance_weight, weighted_choice
 
 # The only acts the NORMAL sampler may select (7.1). answer/process/compromise/
 # softening are route- or phase-driven and never sampled.
@@ -78,8 +79,10 @@ class PolicyMixin:
         counts = Counter(v for v in votes_by_id.values() if v in state.scenario.option_ids)
         if not counts:
             return []
+        positive_mentions = discussion_positive_mentions(state)
+        majority_threshold = math.ceil(float(cfg.consensus.majority_fraction) * len(state.personas))
 
-        ranked: list[tuple[tuple[float, float, float, float, str], str, list[Persona], list[Persona], dict]] = []
+        ranked: list[tuple[tuple[float, float, float, float, float, str], str, list[Persona], list[Persona], dict]] = []
         for candidate, count in counts.items():
             if candidate in exclude:
                 continue
@@ -90,28 +93,45 @@ class PolicyMixin:
                 # Testing this first would be a performative dead end.
                 continue
             movable = [p for p in dissenters if p not in hard_blockers and not self._valid_holdout_against(state, p, candidate)]
-            resistance = [self._candidate_resistance(state, p, candidate) for p in movable]
+            required_movers = max(0, majority_threshold - count)
+            if required_movers == 0:
+                required_movers = 1
+            if len(movable) < required_movers:
+                continue
+            movable.sort(key=lambda p: (self._candidate_resistance(state, p, candidate), p.id))
+            selected_movers = movable[:required_movers]
+            resistance = [self._candidate_resistance(state, p, candidate) for p in selected_movers]
             avg_resistance = sum(resistance) / max(1, len(resistance))
-            compromise_fit = sum(1.0 - p.sim_params.switch_resistance for p in movable) / max(1, len(movable))
+            compromise_fit = sum(1.0 - p.sim_params.switch_resistance for p in selected_movers) / max(1, len(selected_movers))
+            positive_count = int(positive_mentions.get(candidate, 0))
             support_quality = 0.25 * state.coverage[candidate].reasons + 0.10 * state.coverage[candidate].mentions
             meta = {
                 "votes": count,
+                "positive_mentions": positive_count,
+                "required_movers": required_movers,
+                "selected_mover_ids": [p.id for p in selected_movers],
                 "hard_blockers": len(hard_blockers),
                 "avg_resistance": round(avg_resistance, 3),
                 "compromise_fit": round(compromise_fit, 3),
             }
-            # Sort key is inverted later. Vote count dominates; blockers and
-            # resistance only break ties / select among equal leaders.
+            # Formal vote count dominates. When formal counts tie (for example
+            # 1-1-1), the option with the most positive visible discussion
+            # mentions is tested. Remaining signals only break further ties.
             key = (
                 float(count),
+                float(positive_count),
                 -float(len(hard_blockers)),
                 -avg_resistance,
                 compromise_fit + support_quality,
                 candidate,
             )
-            ranked.append((key, candidate, dissenters, movable, meta))
+            ranked.append((key, candidate, dissenters, selected_movers, meta))
 
-        ranked.sort(key=lambda item: (-item[0][0], -item[0][1], -item[0][2], -item[0][3], item[1]))
+        ranked.sort(
+            key=lambda item: (
+                -item[0][0], -item[0][1], -item[0][2], -item[0][3], -item[0][4], item[1]
+            )
+        )
         return [(candidate, dissenters, movers, meta) for _key, candidate, dissenters, movers, meta in ranked]
 
     @staticmethod
@@ -164,19 +184,69 @@ class PolicyMixin:
         ``_hard_blocks_candidate``.
         """
         rt = state.runtimes[persona.id]
-        current = rt.explicit_vote or rt.top_option() or persona.preferred_option
+        current = rt.explicit_vote or rt.current_acceptance or rt.public_lean or rt.top_option() or persona.preferred_option
         if candidate not in state.scenario.option_ids or current == candidate:
             return False
-        if rt.rank(candidate) <= STANCE_DISLIKED:
+        if rt.rank(candidate) <= STANCE_REJECTED:
             return True
-        if PolicyMixin._live_own_concerns(state, persona.id, candidate):
+        unanswered = PolicyMixin._unanswered_own_concerns(state, persona.id, candidate)
+        # An ordinary reservation is not a permanent veto: repair explicitly
+        # asks a participant to state a concern before deciding. Only strong
+        # resistance plus a clearly negative current stance protects the
+        # holdout. Hard blockers remain immovable through the rejected rank.
+        if (
+            persona.sim_params.switch_resistance >= 0.82
+            and rt.rank(candidate) < STANCE_ACCEPTABLE
+        ):
             return True
-        # Final-decision holdout protection is switch_resistance territory;
-        # stubbornness only governs discussion-phase defense. A high-resistance
-        # sim holds out unless the candidate is already acceptable to them.
-        if persona.sim_params.switch_resistance >= 0.72 and rt.rank(candidate) < STANCE_ACCEPTABLE:
+        if (
+            unanswered >= 2
+            and persona.sim_params.switch_resistance >= 0.65
+            and rt.rank(candidate) <= STANCE_DISLIKED
+        ):
             return True
         return False
+
+    @staticmethod
+    def _visible_candidate_openness(
+        state: DialogueState, persona_id: str, candidate: str
+    ) -> float:
+        """Visible pre-vote openness used only to choose plausible movers.
+
+        This never counts as a vote and never changes public candidate scores.
+        It simply prevents the repair controller from ignoring that a person
+        already warmed to, accepted, supported, or objected to the tested
+        candidate in the transcript.
+        """
+        score = 0.0
+        for turn in state.turns:
+            if (
+                turn.speaker_id != persona_id
+                or turn.state_mutation_blocked
+                or turn.evidence is None
+                or turn.phase in {Phase.VOTING, Phase.COMPROMISE_REPAIR, Phase.CLOSING}
+            ):
+                continue
+            evidence = turn.evidence
+            if any(s.option_id == candidate for s in evidence.softenings):
+                score += 2.0
+            if any(
+                c.option_id == candidate and c.kind == "accept"
+                for c in evidence.commitments
+            ):
+                score += 2.0
+            if any(s.option_id == candidate for s in evidence.supports):
+                score += 1.0
+            if any(p.option_id == candidate for p in evidence.proposals):
+                score += 1.0
+            if any(c.option_id == candidate for c in evidence.concerns):
+                score -= 1.0
+            if any(
+                b.option_id == candidate and b.action == "raised"
+                for b in evidence.blockers
+            ):
+                score -= 3.0
+        return max(-4.0, min(4.0, score))
 
     @staticmethod
     def _candidate_resistance(state: DialogueState, persona: Persona, candidate: str) -> float:
@@ -195,6 +265,10 @@ class PolicyMixin:
         if rt.rank(candidate) <= STANCE_DISLIKED:
             resistance += 0.25
         resistance += 0.30 * PolicyMixin._unanswered_own_concerns(state, persona.id, candidate)
+        openness = PolicyMixin._visible_candidate_openness(state, persona.id, candidate)
+        resistance -= 0.10 * openness
+        if rt.current_acceptance == candidate or rt.public_lean == candidate:
+            resistance -= 0.25
         if candidate in persona.preferred_options:
             resistance -= 0.25
         if rt.rank(candidate) >= STANCE_ACCEPTABLE:
@@ -846,10 +920,31 @@ class PolicyMixin:
         return pairs[0][0] if pairs else None
 
     def _focus_options(self, state: DialogueState, speaker: Persona, act: ActType, target_turn: TurnRecord | None) -> list[str]:
+        current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
+        if act is ActType.COMPARE:
+            # A natural comparison has exactly two required sides.  Earlier
+            # normal routing could collect two options from the target turn,
+            # then append the speaker's current lean and ask the LLM to cover
+            # all three.  That produced confused prompts and avoidable drops.
+            targets = [
+                oid for oid in (target_turn.mentioned_options() if target_turn else [])
+                if oid in state.scenario.option_ids and oid != current
+            ]
+            rival = targets[0] if targets else self._rival_option(
+                state, speaker, exclude={current} if current else set()
+            )
+            pair = [oid for oid in (current, rival) if oid in state.scenario.option_ids]
+            if len(pair) < 2 and target_turn:
+                for oid in target_turn.mentioned_options():
+                    if oid in state.scenario.option_ids and oid not in pair:
+                        pair.append(oid)
+                    if len(pair) == 2:
+                        break
+            return pair[:2]
+
         ids: list[str] = []
         if target_turn:
             ids.extend(target_turn.mentioned_options())
-        current = state.runtimes[speaker.id].top_option() or speaker.preferred_option
         if current and current not in ids:
             ids.append(current)
         if act in {ActType.COMPARE, ActType.CONCERN, ActType.ASK}:
@@ -924,25 +1019,6 @@ class PolicyMixin:
                 old_preference=current,
                 allowed_reason="the tested candidate is blocked, so this is the best acceptable option",
             )
-        if self._should_compromise_to_candidate(state, persona, candidate):
-            switching = current != candidate
-            allowed_reason = self._allowed_vote_reason(state, persona, candidate, current=current, switching=switching)
-            return MoveIntent(
-                speaker_id=persona.id,
-                act=ActType.VOTE,
-                reason=(
-                    f"others have visibly backed this option; commit to it clearly and use this grounded reason: {allowed_reason}"
-                    if switching
-                    else f"make a clear visible commitment to the option you have been backing; use this grounded reason: {allowed_reason}"
-                ),
-                route_source="vote",
-                option_focus=[candidate],
-                length_hint="short",
-                allow_vote_change=switching,
-                required_vote=candidate,
-                old_preference=(current if switching else None),
-                allowed_reason=allowed_reason,
-            )
         return MoveIntent(
             speaker_id=persona.id,
             act=ActType.VOTE,
@@ -974,6 +1050,8 @@ class PolicyMixin:
             return bool(oid and oid in state.scenario.option_ids and oid not in rejected)
         candidates: list[str | None] = [
             rt.explicit_vote,
+            rt.current_acceptance,
+            rt.public_lean,
             rt.top_option(),
             *list(rt.acceptable_options()),
             *persona.preferred_options,
@@ -1007,8 +1085,9 @@ class PolicyMixin:
         leaders = public_evidence(state).candidate_leaders
         if not leaders:
             return None
-        latent = self._latent_leading_option(state)
-        return latent if latent in leaders else leaders[0]
+        # Public ties are resolved deterministically; private ranks never break
+        # a public-support tie.
+        return leaders[0]
 
     def _candidate_for_vote(self, state: DialogueState) -> str:
         """Vote candidate: the public candidate, falling back to the latent
@@ -1020,54 +1099,9 @@ class PolicyMixin:
             or state.personas[0].preferred_option
         )
 
-    def _should_compromise_to_candidate(self, state: DialogueState, persona: Persona, candidate: str) -> bool:
-        """Whether this sim's vote turn asks them to commit to the candidate.
-
-        Requires *visible* pressure: at least one other participant has visibly
-        voted for / accepted the candidate, or someone visibly proposed it as
-        common ground. Latent lean concentration is not evidence (issue I4).
-        """
-        if not self._can_shift_to(state, persona, candidate, final_decision=True) or self._valid_holdout_against(state, persona, candidate):
-            return False
-        rt = state.runtimes[persona.id]
-        unresolved_self_concern = self._unanswered_own_concerns(state, persona.id, candidate) > 0
-        if candidate in rt.disliked_options() or unresolved_self_concern:
-            return False
-        if rt.top_option() == candidate:
-            return True
-        support = self._visible_support_count(state, candidate, exclude=persona.id)
-        if support == 0 and not self._visibly_proposed(state, candidate):
-            return False
-        pressure = support / max(1, len(state.personas) - 1)
-        # Formal-vote movement is governed by switch_resistance (Section 14);
-        # the candidate's current rank is the sim's explicit stance signal
-        # (disliked candidates already returned False above).
-        probability = 0.05 + 0.50 * (1.0 - persona.sim_params.switch_resistance) + 0.25 * pressure
-        if rt.rank(candidate) >= STANCE_ACCEPTABLE:
-            probability += 0.15
-        if candidate in persona.preferred_options:
-            probability += 0.15
-        return random.random() < min(0.82, probability)
-
-    def _allowed_vote_reason(self, state: DialogueState, persona: Persona, target: str, *, current: str | None, switching: bool) -> str:
-        if target in state.scenario.option_ids:
-            rt = state.runtimes[persona.id]
-            card = state.scenario.option(target)
-            # Stored reasons may be whole earlier utterances; only a short,
-            # hedge-free fragment may be embedded in a decision line.
-            personal = usable_reason_fragment(rt.reason_for(target), card.name)
-            if personal:
-                return personal
-            if card.upside:
-                return clause_fragment(card.upside, card.name)
-            if card.attrs:
-                key, value = next(iter(card.attrs.items()))
-                return f"{key.replace('_', ' ')}: {value}"
-        return "it has the clearest visible support" if switching else "it is still your strongest option"
-
     @staticmethod
     def _visible_support_count(state: DialogueState, option_id: str, exclude: str | None = None) -> int:
-        """Publicly expressed backers of the option (never private ranks)."""
+        """Publicly expressed current backers of the option, never private ranks."""
         backers = public_evidence(state).backing.get(option_id, set())
         return len(backers - {exclude} if exclude else backers)
 
@@ -1302,7 +1336,10 @@ class PolicyMixin:
         p = persona.sim_params
         # A real spread, not a +/-4 nudge: terse sims stay short, chatty ones
         # longer. Verbosity is the only persona parameter affecting length.
-        factor = 0.45 + 0.85 * p.verbosity   # ~0.45..1.30
+        # Keep the range wide enough to be visible in transcripts, not merely
+        # in diagnostics: a terse participant receives roughly half the base
+        # budget, while a highly verbose one receives about one-and-a-half.
+        factor = 0.42 + 1.03 * p.verbosity   # 0.42..1.45, monotonic by trait
         # Verbosity is an average, not a per-turn template: every sim sometimes
         # drops a genuinely short beat (quick agreement, one-line answer), with
         # terse sims doing it more often. Openings, split summaries, and
@@ -1312,12 +1349,13 @@ class PolicyMixin:
             and not (intent.act in _DECISION_ACTS and intent.allow_vote_change)
             and not intent.continuation
         )
-        if short_beat_ok and random.random() < 0.22 + 0.28 * (1.0 - p.verbosity):
-            factor *= random.uniform(0.42, 0.62)
+        short_probability = 0.02 + 0.36 * (1.0 - p.verbosity) ** 2
+        if short_beat_ok and random.random() < short_probability:
+            factor *= random.uniform(0.45, 0.60)
         else:
             # Per-turn jitter around the persona's average so consecutive turns
             # by the same sim vary naturally instead of one fixed length (I12).
-            factor *= random.uniform(0.90, 1.10)
+            factor *= random.uniform(0.97, 1.03)
         max_words = max(6, round(base * factor))
-        min_words = max(3, round(max_words * (0.30 + 0.25 * p.verbosity)))
+        min_words = max(3, round(max_words * (0.38 + 0.32 * p.verbosity)))
         return min_words, max_words

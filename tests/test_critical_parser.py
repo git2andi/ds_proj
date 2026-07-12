@@ -92,6 +92,29 @@ class StrictVotePrecisionUnchanged(unittest.TestCase):
             visible_commitment("I vote for the Bike Ride.", self.resolver), ("vote", "B")
         )
 
+    def test_additional_natural_direct_vote_forms_parse(self) -> None:
+        examples = {
+            "I'm settling on the Museum.": ("vote", "A"),
+            "The Bike Ride has my vote.": ("vote", "B"),
+            "I'm opting for the Escape Room.": ("vote", "C"),
+            "The Museum is where I land.": ("vote", "A"),
+            "I'll back the Bike Ride.": ("vote", "B"),
+            "I vote Museum because it is low effort.": ("vote", "A"),
+            "I commit to the Museum because it is flexible.": ("vote", "A"),
+            "I'm picking the Museum because it is simple.": ("vote", "A"),
+            "I am picking the Museum because it is simple.": ("vote", "A"),
+            "I am committing to the Museum.": ("vote", "A"),
+        }
+        for text, expected in examples.items():
+            with self.subTest(text=text):
+                self.assertEqual(visible_commitment(text, self.resolver), expected)
+
+
+    def test_vote_against_is_not_a_positive_vote(self) -> None:
+        self.assertIsNone(
+            visible_commitment("I vote against the Museum.", self.resolver)
+        )
+
     def test_hedged_support_still_refuses(self) -> None:
         self.assertIsNone(
             visible_commitment("Maybe I could live with the Museum.", self.resolver)

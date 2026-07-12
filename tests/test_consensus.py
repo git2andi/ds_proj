@@ -71,6 +71,18 @@ class ConsensusTests(unittest.TestCase):
         votes = visible_votes_from_transcript(state)
         self.assertEqual(votes["p1"], "B")
 
+    def test_repair_concern_turn_cannot_accidentally_become_formal_vote(self):
+        state = make_state()
+        append_turn(
+            state, "p1", "The Museum works for me, but my concern is the quiet pace.",
+            intent=MoveIntent(
+                speaker_id="p1", act=ActType.CONCERN, reason="state concern",
+                option_focus=["A"], route_source="majority_holdout_repair",
+            ),
+            phase=Phase.COMPROMISE_REPAIR,
+        )
+        self.assertEqual(visible_votes_from_transcript(state), {})
+
 
 class PublicEvidenceTests(unittest.TestCase):
     """Cleanup 3: private stance, public support, and formal votes stay distinct."""

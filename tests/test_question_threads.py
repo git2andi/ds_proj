@@ -250,7 +250,16 @@ class QuestionResolutionTests(unittest.TestCase):
         respondent = thread.required_respondent
         answer_intent = runner._answer_intent_for_thread(state, thread)
         answer_intent.option_focus = []
-        _observe(runner, state, respondent, "Cost-wise everything here stays under the sixty euro budget.", intent=answer_intent)
+        from models import AnswerEvidence, EvidenceSpan, VisibleEvidence
+        answer = VisibleEvidence(answers=[AnswerEvidence(
+            completeness="full", addresses_target=True,
+            span=EvidenceSpan(text="everything here stays under the sixty euro budget", start=10),
+        )])
+        record = append_turn(
+            state, respondent, "Cost-wise everything here stays under the sixty euro budget.",
+            intent=answer_intent, evidence=answer,
+        )
+        runner._apply_semantics(state, record)
         self.assertEqual(thread.status, ThreadStatus.COOLING)
 
 

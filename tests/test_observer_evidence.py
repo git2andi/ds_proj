@@ -17,6 +17,7 @@ from models import (
     EvidenceSpan,
     MoveIntent,
     SupportEvidence,
+    SwitchEvidence,
     VisibleEvidence,
 )
 from tests.fixtures import append_turn, make_state
@@ -97,6 +98,36 @@ class SpeakerLocalMutation(unittest.TestCase):
         self.assertEqual(state.runtimes["p3"].option_ranks, before_p3)
         self.assertIsNone(state.runtimes["p2"].explicit_vote)
         self.assertIsNone(state.runtimes["p3"].explicit_vote)
+
+    def test_first_public_vote_is_not_recorded_as_switch(self) -> None:
+        state = make_state()
+        runner = make_runner(state)
+        text = "I vote for the Museum."
+        record = append_turn(state, "p2", text)
+        record.evidence = VisibleEvidence(
+            utterance=text, mentions=runner._resolver.mentions(text),
+            commitments=[CommitmentEvidence("vote", "A", _span(text))],
+            primary_act=ActType.VOTE,
+        )
+        runner._apply_semantics(state, record)
+        self.assertEqual(state.runtimes["p2"].explicit_vote, "A")
+        self.assertEqual(state.runtimes["p2"].switch_events, [])
+
+    def test_change_from_previous_public_vote_records_switch(self) -> None:
+        state = make_state()
+        runner = make_runner(state)
+        state.runtimes["p2"].explicit_vote = "B"
+        text = "I'm switching from the Bike Ride to the Museum."
+        record = append_turn(state, "p2", text)
+        record.evidence = VisibleEvidence(
+            utterance=text, mentions=runner._resolver.mentions(text),
+            commitments=[CommitmentEvidence("vote", "A", _span(text))],
+            switches=[SwitchEvidence("A", _span(text), source="B")],
+            primary_act=ActType.VOTE,
+        )
+        runner._apply_semantics(state, record)
+        self.assertEqual(state.runtimes["p2"].switch_events[-1]["from"], "B")
+        self.assertEqual(state.runtimes["p2"].switch_events[-1]["to"], "A")
 
     def test_dropped_turn_mutates_nothing(self) -> None:
         state = make_state()

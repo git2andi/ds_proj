@@ -1,241 +1,449 @@
-"""Focused tests: every semantic block reason yields one validation code and
-one block decision through the evidence-based `_assess_candidate` path (a
-blocking issue is the single mutation-blocking signal).
-"""
-
 from __future__ import annotations
 
 import unittest
 
-import tests  # noqa: F401  # puts src/ on sys.path before src imports
-
+import tests  # noqa: F401
 from models import ActType, MoveIntent
-
+from models import OptionCard, Scenario
 from tests.evidence_adapter import derive_evidence
-from tests.fixtures import make_state, parse_text
+from tests.fixtures import make_state
 from tests.stubs import make_runner
 
 
-class BlockReasonTests(unittest.TestCase):
+class CriticalValidationTests(unittest.TestCase):
     def setUp(self):
         self.state = make_state()
         self.runner = make_runner(self.state)
 
-    def _report(self, pid, text, intent):
-        persona = self.state.persona_by_id(pid)
-        assessment = self.runner._assess_candidate(
-            text=text, state=self.state, persona=persona, intent=intent,
-            evidence=derive_evidence(
-                text, self.runner._resolver,
-                speaker_id=pid,
-                participant_names={p.id: p.name for p in self.state.personas},
-                intent=intent,
-            ),
+    def assess(self, pid: str, text: str, intent: MoveIntent):
+        evidence = derive_evidence(
+            text, self.runner._resolver, speaker_id=pid,
+            participant_names={p.id: p.name for p in self.state.personas}, intent=intent,
+        )
+        return self.runner._assess_candidate(
+            text=text, state=self.state, persona=self.state.persona_by_id(pid),
+            intent=intent, evidence=evidence,
         )
 
-        class _Report:
-            issues = [i.code for i in assessment.issues]
-            block_state_mutation = any(i.blocking for i in assessment.issues)
+    def codes(self, pid: str, text: str, intent: MoveIntent) -> set[str]:
+        return {issue.code for issue in self.assess(pid, text, intent).issues}
 
-        return _Report()
+    def test_empty_and_malformed_output_block(self):
+        intent = MoveIntent("p1", ActType.SUPPORT, "support")
+        self.assertIn("EMPTY_UTTERANCE", self.codes("p1", "", intent))
+        self.assertIn("MALFORMED_UTTERANCE", self.codes("p1", "Just to be clear.", intent))
 
-    def _assert_blocks(self, code, pid, text, intent):
-        report = self._report(pid, text, intent)
-        self.assertIn(code, report.issues)
-        self.assertTrue(report.block_state_mutation, f"{code} must block state mutation")
-        return report
+    def test_invalid_option_and_missing_required_focus_block(self):
+        intent = MoveIntent("p1", ActType.SUPPORT, "support")
+        self.assertIn("INVALID_OPTION_REFERENCE", self.codes("p1", "Option D looks best.", intent))
+        coverage = MoveIntent("p1", ActType.COMPARE, "compare", route_source="coverage", option_focus=["C"])
+        self.assertIn("MISSING_REQUIRED_OPTION_FOCUS", self.codes("p1", "The Museum is simple.", coverage))
 
-    def test_empty_blocks(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it")
-        self._assert_blocks("EMPTY", "p1", "", intent)
+    def test_required_question_and_comparison_focus(self):
+        ask = MoveIntent("p1", ActType.ASK, "ask")
+        self.assertIn("QUESTION_REQUIRED", self.codes("p1", "The Museum is calm.", ask))
+        compare = MoveIntent("p1", ActType.COMPARE, "compare", option_focus=["A", "B"])
+        self.assertIn("MISSING_REQUIRED_OPTION_FOCUS", self.codes("p1", "The Museum is calm.", compare))
 
-    def test_malformed_utterance_blocks(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it")
-        self._assert_blocks("MALFORMED_UTTERANCE", "p1", "Just to be clear.", intent)
+    def test_vote_must_be_clear_and_targeted(self):
+        vote = MoveIntent("p1", ActType.VOTE, "vote", option_focus=["B"], required_vote="B")
+        self.assertIn("UNCLEAR_VISIBLE_COMMITMENT", self.codes("p1", "I'm torn.", vote))
+        self.assertIn("REQUIRED_VOTE_MISMATCH", self.codes("p1", "I vote for the Museum.", vote))
 
-    def test_invalid_option_reference_blocks(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say it")
-        self._assert_blocks("INVALID_OPTION_REFERENCE", "p1", "Option D looks best to me.", intent)
-
-    def test_missing_required_coverage_focus_blocks(self):
-        # The coverage ROUTE requires the focus option, not a magic reason string.
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.COMPARE,
-            reason="bring Escape Room into the discussion and compare it with your current lean",
-            route_source="coverage",
-            option_focus=["C"],
+    def test_blocked_acceptance_and_same_turn_resolution(self):
+        self.state.runtimes["p1"].mark_rejected("C", reason_against="unavailable")
+        vote = MoveIntent("p1", ActType.VOTE, "vote", option_focus=["C"], allow_vote_change=True)
+        self.assertIn("BLOCKED_OPTION_ACCEPTED", self.codes("p1", "I vote for the Escape Room.", vote))
+        self.assertNotIn(
+            "BLOCKED_OPTION_ACCEPTED",
+            self.codes("p1", "That fixes my concern; I can live with the Escape Room.", vote),
         )
-        self._assert_blocks("MISSING_REQUIRED_OPTION_FOCUS", "p1", "The Museum keeps things simple.", intent)
-
-    def test_implicit_thread_reply_without_any_option_name_is_not_flagged(self):
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
-            route_source="thread_hot", option_focus=["A"],
-        )
-        report = self._report("p1", "That cost is fair for what we get, honestly.", intent)
-        self.assertNotIn("THREAD_RESPONSE_MISSES_OPTION", report.issues)
-
-    def test_thread_support_realized_as_comment_gets_one_repair_flag(self):
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
-            route_source="thread_hot", option_focus=["A"],
-        )
-        # Mentions the option but neither supports nor objects: a neutral aside.
-        report = self._report("p1", "The Museum has been discussed a lot today.", intent)
-        self.assertIn("SUPPORT_NOT_REALIZED", report.issues)
-        self.assertFalse(report.block_state_mutation)
-
-    def test_thread_concern_without_objection_gets_one_repair_flag(self):
-        intent = MoveIntent(
-            speaker_id="p2", act=ActType.CONCERN, reason="push back",
-            route_source="participant_narrowing", option_focus=["A"],
-        )
-        report = self._report("p2", "The Museum keeps the day easy to adjust.", intent)
-        self.assertIn("CONCERN_NOT_REALIZED", report.issues)
-        self.assertFalse(report.block_state_mutation)
-
-    def test_concession_first_support_is_not_flagged(self):
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
-            route_source="thread_hot", option_focus=["A"],
-        )
-        # Acknowledges the worry, then supports: realizes CONCERN via the
-        # soft-objection wording but is a legitimate concession-first defense.
-        report = self._report(
-            "p1", "I get the cost worry, but the Museum keeps the day easy for everyone.", intent
-        )
-        self.assertNotIn("SUPPORT_NOT_REALIZED", report.issues)
-
-    def test_decision_fallback_always_parses_to_the_target(self):
-        # A stored reason can smuggle in a second commitment phrase, another
-        # option, or a question that voids the composed line's parse; the
-        # self-check must then emit the minimal guaranteed-parseable form.
-        from parsing import visible_commitment
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.VOTE, reason="final decision",
-            option_focus=["B"], required_vote="B", old_preference="A",
-            allow_vote_change=True,
-            allowed_reason="the Museum works for me too, doesn't it?",
-        )
-        persona = self.state.persona_by_id("p1")
-        text, family = self.runner._fallback_candidate(
-            self.state, persona, intent, ["UNBRIDGED_SWITCH"]
-        )
-        self.assertEqual(family, "vote")
-        commit = visible_commitment(text, self.runner._resolver, sanctioned_switch=True)
-        self.assertIsNotNone(commit)
-        self.assertEqual(commit[1], "B")
-
-    def test_normal_route_support_gets_the_same_realization_check(self):
-        # Item 9: the intended-move realization contract is universal — a
-        # SUPPORT intent without visible support is flagged on EVERY route,
-        # not only thread/narrowing routes.
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="add a reason",
-            route_source="normal", option_focus=["A"],
-        )
-        report = self._report("p1", "The Museum has been discussed a lot today.", intent)
-        self.assertIn("SUPPORT_NOT_REALIZED", report.issues)
-        self.assertFalse(report.block_state_mutation)
-
-    def test_unclear_visible_commitment_blocks(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["A"])
-        self._assert_blocks("UNCLEAR_VISIBLE_COMMITMENT", "p1", "I'm honestly torn on this.", intent)
-
-    def test_required_vote_mismatch_blocks(self):
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["B"], required_vote="B",
-        )
-        self._assert_blocks("REQUIRED_VOTE_MISMATCH", "p1", "I vote for the Museum.", intent)
-
-    def test_accepting_a_rejected_option_blocks(self):
-        # ONE coherent rejected-option rule (item 6): setup rejections and
-        # observed blockers share the same check and issue code.
-        self.state.runtimes["p1"].mark_rejected("C", reason_against="booked out")
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["C"],
-            allow_vote_change=True,
-        )
-        report = self._assert_blocks(
-            "BLOCKED_OPTION_ACCEPTED", "p1", "I vote for the Escape Room.", intent
-        )
-        self.assertNotIn("HARD_BLOCKER_ACCEPTED_REJECTED_OPTION", report.issues)
-
-    def test_same_line_resolution_plus_acceptance_is_not_blocked(self):
-        # Visible semantics that genuinely resolve the blocker may accept the
-        # option in the same line (item 6) — no contradictory second check.
-        self.state.runtimes["p1"].mark_rejected("C", reason_against="booked out")
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.VOTE, reason="vote", option_focus=["C"],
-            allow_vote_change=True,
-        )
-        report = self._report(
-            "p1", "That fixes my concern; I can live with the Escape Room.", intent
-        )
-        self.assertNotIn("BLOCKED_OPTION_ACCEPTED", report.issues)
-        self.assertFalse(report.block_state_mutation)
 
     def test_hybrid_compromise_blocks(self):
-        intent = MoveIntent(speaker_id="p1", act=ActType.COMPROMISE, reason="middle ground")
-        self._assert_blocks(
-            "HYBRID_COMPROMISE", "p1",
-            "What if we go with the Museum and also the Bike Ride?", intent,
+        intent = MoveIntent("p1", ActType.COMPROMISE, "compromise")
+        self.assertIn(
+            "HYBRID_COMPROMISE",
+            self.codes("p1", "Let's combine the Museum and the Bike Ride.", intent),
         )
 
-    def test_continuation_repeat_blocks(self):
-        self.state.runtimes["p1"].already_said.append("The Museum keeps the day easy to adjust.")
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="add on",
-            option_focus=["A"], continuation=True,
+
+
+    def test_public_board_exposes_every_fact_available_to_generation(self):
+        option = self.state.scenario.option("A")
+        option.attrs["booking_window"] = "2h 15m"
+        option.upside = "all details remain public and adjustable"
+        line = option.public_line()
+        card = option.prompt_card()
+        self.assertIn("booking window: 2h 15m", line)
+        self.assertIn("booking window=2h 15m", card)
+        self.assertIn(option.upside, line)
+
+    def test_unlisted_exact_numeric_detail_blocks_but_listed_value_passes(self):
+        intent = MoveIntent("p1", ActType.SUPPORT, "support", option_focus=["A"])
+        self.assertIn(
+            "UNLISTED_NUMERIC_DETAIL",
+            self.codes("p1", "The Museum has a 2h15m visit window.", intent),
         )
-        self._assert_blocks(
-            "CONTINUATION_REPEATS", "p1", "The Museum keeps the day easy to adjust.", intent
+        self.assertNotIn(
+            "UNLISTED_NUMERIC_DETAIL",
+            self.codes("p1", "The Museum lasts 4 hours.", intent),
         )
 
-    def test_continuation_topic_jump_blocks(self):
-        self.state.runtimes["p1"].already_said.append("The Museum keeps the day easy to adjust.")
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="add on",
-            option_focus=["A"], continuation=True,
+    def test_natural_exact_card_values_are_allowed_and_unlisted_variants_block(self):
+        option = self.state.scenario.option("A")
+        option.attrs["cost"] = "500€"
+        option.attrs["duration"] = "2h"
+        intent = MoveIntent("p1", ActType.SUPPORT, "support", option_focus=["A"])
+        safe = self.codes(
+            "p1", "The Museum costs 500€ and takes 2h, so it still fits the plan.", intent
         )
-        self._assert_blocks(
-            "CONTINUATION_TOPIC_JUMP", "p1", "Oh, and the Bike Ride is cheap too.", intent
+        self.assertNotIn("UNLISTED_NUMERIC_DETAIL", safe)
+        self.assertNotIn("ATTRIBUTE_CONTRADICTION", safe)
+        unsafe = self.codes(
+            "p1", "The Museum costs 650€ and takes 3h.", intent
         )
-
-    def test_evasive_required_answer_blocks(self):
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.ANSWER, reason="answer the question",
-            route_source="answer_required", option_focus=["A"],
-        )
-        self._assert_blocks(
-            "ANSWER_DOES_NOT_ADDRESS_QUESTION", "p1", "What do you all think, though?", intent
+        self.assertTrue(
+            {"UNLISTED_NUMERIC_DETAIL", "ATTRIBUTE_CONTRADICTION"} & unsafe
         )
 
-    def test_off_target_switch_blocks(self):
-        # p2 prefers B; the sanctioned switch offers A, but the line lands on C.
-        intent = MoveIntent(
-            speaker_id="p2", act=ActType.VOTE, reason="switch or stay",
-            option_focus=["A"], allow_vote_change=True,
+    def test_listed_values_pass_with_singular_units_hyphens_and_public_focus(self):
+        scenario = Scenario(
+            topic="Choose an activity",
+            shared_context=["Saturday evening should remain free."],
+            options=[
+                OptionCard(
+                    id="A", name="Museum and Cafe Day", short_name="Museum",
+                    attrs={"cost": "24 euros", "duration": "4 hours"},
+                    upside="low effort", concern="may feel quiet",
+                ),
+                OptionCard(
+                    id="B", name="Lake Bike Ride", short_name="Bike Ride",
+                    attrs={"cost": "12 euros", "duration": "6 hours"},
+                    upside="active", concern="bad fit when tired",
+                ),
+                OptionCard(
+                    id="C", name="Home Cooking Night", short_name="Cooking",
+                    attrs={"cost": "18 euros", "duration": "5 hours"},
+                    upside="flexible", concern="may feel ordinary",
+                ),
+            ],
         )
-        self._assert_blocks("OFF_TARGET_SWITCH", "p2", "Actually I choose the Escape Room.", intent)
-
-    def test_unbridged_switch_blocks(self):
-        # p2 prefers B and votes A without linking the old stance to the new pick.
-        intent = MoveIntent(speaker_id="p2", act=ActType.VOTE, reason="vote", option_focus=["A"])
-        self._assert_blocks("UNBRIDGED_SWITCH", "p2", "I vote for the Museum.", intent)
-
-    def test_wrong_option_support_on_a_thread_is_a_blocking_mismatch(self):
-        # The line visibly supports A while the thread (and intent) is about C:
-        # a blocking option mismatch (item 9), alongside the thread-relevance
-        # telemetry code.
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.SUPPORT, reason="defend it",
-            route_source="thread_hot", option_focus=["C"],
+        state = make_state(scenario=scenario)
+        runner = make_runner(state)
+        intent = MoveIntent("p1", ActType.CONCERN, "respond", option_focus=["B"])
+        evidence = derive_evidence(
+            "True, 6 hours is long, but the 12 euro cost helps.",
+            runner._resolver, speaker_id="p1",
+            participant_names={p.id: p.name for p in state.personas}, intent=intent,
         )
-        report = self._report("p1", "The Museum keeps the day easy to adjust.", intent)
-        self.assertIn("THREAD_RESPONSE_MISSES_OPTION", report.issues)
-        self.assertIn("WRONG_OPTION_FOCUS", report.issues)
-        self.assertTrue(report.block_state_mutation)
+        assessment = runner._assess_candidate(
+            text="True, 6 hours is long, but the 12 euro cost helps.",
+            state=state, persona=state.persona_by_id("p1"), intent=intent,
+            evidence=evidence,
+        )
+        self.assertFalse(any(issue.blocking for issue in assessment.issues))
+        self.assertEqual(runner._resolver.ids_in_text("Saturday night should stay free."), [])
+
+    def test_categorical_values_bind_to_their_own_attribute(self):
+        scenario = Scenario(
+            topic="Choose a presentation format",
+            shared_context=[],
+            options=[
+                OptionCard(
+                    id="A", name="Live Coding Walkthrough", short_name="Live Coding",
+                    attrs={"prep_time": "low", "risk": "high"},
+                    upside="authentic", concern="may fail live",
+                ),
+                OptionCard(
+                    id="B", name="Recorded Screencast", short_name="Screencast",
+                    attrs={"prep_time": "medium", "risk": "low"},
+                    upside="safe", concern="less lively",
+                ),
+                OptionCard(
+                    id="C", name="Slide Deck", short_name="Slides",
+                    attrs={"prep_time": "low", "risk": "low"},
+                    upside="quick", concern="less convincing",
+                ),
+            ],
+        )
+        state = make_state(scenario=scenario)
+        runner = make_runner(state)
+        issues = runner._deterministic_fact_issues(
+            "The low risk and medium prep time with Screencast mean fewer surprises.",
+            state,
+        )
+        self.assertNotIn("CROSS_OPTION_VALUE", {code for code, _option, _why in issues})
+        bad = runner._deterministic_fact_issues(
+            "Screencast has low prep time and low risk.", state
+        )
+        self.assertIn("CROSS_OPTION_VALUE", {code for code, _option, _why in bad})
+
+    def test_travel_time_does_not_bind_to_duration_attribute(self):
+        scenario = Scenario(
+            topic="Choose a retreat",
+            shared_context=[],
+            options=[
+                OptionCard(
+                    id="A", name="Nature Hike", short_name="Nature Hike",
+                    attrs={"duration_hours": "5", "travel_time_minutes": "45"},
+                    upside="outdoors", concern="physically demanding",
+                ),
+                OptionCard(
+                    id="B", name="Cooking Class", short_name="Cooking Class",
+                    attrs={"duration_hours": "4", "travel_time_minutes": "20"},
+                    upside="shared meal", concern="higher cost",
+                ),
+                OptionCard(
+                    id="C", name="Park Picnic", short_name="Park Picnic",
+                    attrs={"duration_hours": "6", "travel_time_minutes": "15"},
+                    upside="relaxed", concern="weather dependent",
+                ),
+            ],
+        )
+        state = make_state(scenario=scenario)
+        runner = make_runner(state)
+        for text in (
+            "The high activity level and 45-minute travel time make Nature Hike tough.",
+            "The high activity level and 5-hour duration make Nature Hike tough.",
+        ):
+            with self.subTest(text=text):
+                issues = runner._deterministic_fact_issues(text, state)
+                self.assertNotIn(
+                    "ATTRIBUTE_CONTRADICTION",
+                    {code for code, _option, _why in issues},
+                )
+        bad = runner._deterministic_fact_issues(
+            "Nature Hike has a 50-minute travel time.", state
+        )
+        self.assertIn("ATTRIBUTE_CONTRADICTION", {code for code, _option, _why in bad})
+
+    def test_soft_realization_mismatches_do_not_block(self):
+        support = MoveIntent("p1", ActType.SUPPORT, "support", option_focus=["A"])
+        assessment = self.assess("p1", "The Museum has been discussed already.", support)
+        self.assertFalse(any(issue.blocking for issue in assessment.issues))
+        self.assertNotIn("SUPPORT_NOT_REALIZED", {i.code for i in assessment.issues})
+
+    def test_unlisted_asserted_feature_and_location_are_blocked(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum has airport lounges.", self.state
+        )
+        self.assertIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum is downtown.", self.state
+        )
+        self.assertIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+
+
+
+
+
+    def test_unlisted_group_seating_claim_is_blocked(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum has easy group seating.", self.state
+        )
+        self.assertIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+
+    def test_listed_group_seating_claim_is_allowed(self):
+        self.state.scenario.option("A").attrs["seating"] = "easy group seating"
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum has easy group seating.", self.state
+        )
+        self.assertNotIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+
+    def test_total_duration_does_not_bind_to_separate_layover_attribute(self):
+        option = self.state.scenario.option("A")
+        option.attrs["duration"] = "15 hours"
+        option.attrs["layover_durations"] = "1h 20m + 1h 10m"
+        for text in (
+            "The Museum is 15 hours plus two layovers.",
+            "The Museum's 15 hour total duration is the longest.",
+        ):
+            with self.subTest(text=text):
+                issues = self.runner._deterministic_fact_issues(text, self.state)
+                self.assertNotIn(
+                    "ATTRIBUTE_CONTRADICTION",
+                    {code for code, _option, _why in issues},
+                )
+
+    def test_textual_time_contradiction_against_listed_duration_is_blocked(self):
+        option = self.state.scenario.option("A")
+        option.attrs["layover_duration"] = "1h 40m"
+        bad = self.runner._deterministic_fact_issues(
+            "The Museum's layover is under an hour.", self.state
+        )
+        self.assertIn(
+            "ATTRIBUTE_CONTRADICTION", {code for code, _option, _why in bad}
+        )
+        good = self.runner._deterministic_fact_issues(
+            "The Museum's layover is over an hour.", self.state
+        )
+        self.assertNotIn(
+            "ATTRIBUTE_CONTRADICTION", {code for code, _option, _why in good}
+        )
+
+    def test_explicit_attribute_value_contradiction_is_blocked(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum costs 60 euros.", self.state
+        )
+        self.assertIn(
+            ("ATTRIBUTE_CONTRADICTION", "A"),
+            {(code, option) for code, option, _why in issues},
+        )
+
+    def test_correct_attribute_value_with_other_context_number_passes(self):
+        issues = self.runner._deterministic_fact_issues(
+            "With our 60 euro budget, the Museum costs 24 euros.", self.state
+        )
+        self.assertNotIn(
+            "ATTRIBUTE_CONTRADICTION", {code for code, _option, _why in issues}
+        )
+
+    def test_multi_option_comparison_checks_each_unambiguous_local_clause(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum takes 2h15m while the Bike Ride lasts 6 hours.", self.state
+        )
+        numeric_targets = {
+            option for code, option, _why in issues if code == "UNLISTED_NUMERIC_DETAIL"
+        }
+        self.assertEqual(numeric_targets, {"A"})
+
+    def test_multi_option_comparison_still_catches_transferred_card_value(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum costs 12 euros while the Bike Ride costs 12 euros.", self.state
+        )
+        transferred = {
+            option for code, option, _why in issues if code == "CROSS_OPTION_VALUE"
+        }
+        self.assertIn("A", transferred)
+        self.assertNotIn("B", transferred)
+
+    def test_ambiguous_shared_multi_option_predicate_is_not_guessed(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum and Bike Ride both have airport lounges.", self.state
+        )
+        self.assertEqual(issues, [])
+
+
+
+    def test_listed_feature_with_subjective_adjective_is_not_blocked(self):
+        option = self.state.scenario.option("A")
+        option.attrs["layover_duration"] = "2h 15m"
+        option.upside = "a well-timed short layover"
+        for text in (
+            "The Museum has a quick layover.",
+            "The Museum's layover is solid for a break.",
+            "The Museum's connection tightness is still a question.",
+        ):
+            with self.subTest(text=text):
+                issues = self.runner._deterministic_fact_issues(text, self.state)
+                self.assertNotIn(
+                    "UNLISTED_FEATURE_DETAIL",
+                    {code for code, _option, _why in issues},
+                )
+
+    def test_reproducible_multi_option_arithmetic_is_not_blocked(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum costs over 10 euros more than the Bike Ride.", self.state
+        )
+        self.assertNotIn(
+            "UNLISTED_NUMERIC_DETAIL", {code for code, _option, _why in issues}
+        )
+
+    def test_explicit_unlisted_capability_and_fit_claims_are_blocked(self):
+        for text in (
+            "The Museum can send real-time alerts.",
+            "The Museum fits on a small counter.",
+            "The Museum fits the small counter.",
+            "The Museum's quick brew might help in the morning.",
+            "The Museum's schedule is guaranteed reliable.",
+        ):
+            with self.subTest(text=text):
+                issues = self.runner._deterministic_fact_issues(text, self.state)
+                self.assertIn(
+                    "UNLISTED_FEATURE_DETAIL",
+                    {code for code, _option, _why in issues},
+                )
+
+
+
+    def test_listed_compactness_can_ground_counter_fit(self):
+        option = self.state.scenario.option("A")
+        option.upside = "compact footprint and easy setup"
+        self.state.scenario.shared_context.append("The counter is small.")
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum fits the small counter.", self.state
+        )
+        self.assertNotIn(
+            "UNLISTED_FEATURE_DETAIL",
+            {code for code, _option, _why in issues},
+        )
+
+    def test_possessive_unknown_scope_is_respected(self):
+        direct_unknown = self.runner._deterministic_fact_issues(
+            "We don't know about the Museum's Wi-Fi reliability here.", self.state
+        )
+        self.assertNotIn(
+            "UNLISTED_FEATURE_DETAIL",
+            {code for code, _option, _why in direct_unknown},
+        )
+        contrast_assertion = self.runner._deterministic_fact_issues(
+            "We don't know exact timing here, but the Museum's quick brew might help.",
+            self.state,
+        )
+        self.assertIn(
+            "UNLISTED_FEATURE_DETAIL",
+            {code for code, _option, _why in contrast_assertion},
+        )
+
+    def test_listed_possessive_feature_is_not_blocked(self):
+        option = self.state.scenario.option("A")
+        option.attrs["brew_time"] = "quick brew"
+        option.attrs["live_updates"] = "real-time alerts"
+        for text in (
+            "The Museum's quick brew might help in the morning.",
+            "The Museum's real-time updates would be useful.",
+        ):
+            with self.subTest(text=text):
+                issues = self.runner._deterministic_fact_issues(text, self.state)
+                self.assertNotIn(
+                    "UNLISTED_FEATURE_DETAIL",
+                    {code for code, _option, _why in issues},
+                )
+
+    def test_listed_delay_concern_is_not_blocked_but_external_delay_magnitude_is(self):
+        option = self.state.scenario.option("A")
+        option.concern = "possible layover delays"
+        safe = self.runner._deterministic_fact_issues(
+            "The Museum could face layover delays.", self.state
+        )
+        self.assertNotIn(
+            "UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in safe}
+        )
+        unsafe = self.runner._deterministic_fact_issues(
+            "The Museum delays could add 3 hours.", self.state
+        )
+        self.assertIn(
+            "UNLISTED_NUMERIC_DETAIL", {code for code, _option, _why in unsafe}
+        )
+
+    def test_generic_workability_language_is_not_a_feature_claim(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum can work for our group.", self.state
+        )
+        self.assertNotIn(
+            "UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues}
+        )
+
+    def test_opinion_and_reasonable_implication_are_not_feature_claims(self):
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum leaves more room in the budget and feels easier.", self.state
+        )
+        self.assertNotIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+        issues = self.runner._deterministic_fact_issues(
+            "The Museum has a better overall fit for our group.", self.state
+        )
+        self.assertNotIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
 
 
 if __name__ == "__main__":

@@ -157,6 +157,27 @@ class FailedTurnTests(unittest.TestCase):
         self.assertEqual(state.coverage["C"].mentions, 0)
         trace = [e for e in state.controller_trace if e["type"] == "turn"][-1]
         self.assertFalse(trace["result"]["appended"])
+        self.assertEqual(trace["result"]["candidate_texts"]["initial"], "I vote for the Escape Room.")
+        self.assertEqual(trace["result"]["candidate_texts"]["repairs"], ["I vote for the Escape Room."])
+        self.assertTrue(trace["result"]["candidate_texts"]["final_rejected"])
+        self.assertTrue(state.failed_route_counts)
+
+    def test_repeated_failed_route_changes_speaker_then_simplifies(self):
+        state = make_state()
+        runner = make_runner(state)
+        intent = MoveIntent(
+            speaker_id="p1", act=ActType.COMPARE, reason="compare",
+            route_source="thread_hot", option_focus=["A", "B"], thread_id="t001",
+        )
+        runner._record_failed_route(state, intent)
+        adapted = runner._adapt_failed_route(state, intent)
+        self.assertNotEqual(adapted.speaker_id, "p1")
+        self.assertEqual(adapted.act, ActType.COMPARE)
+
+        runner._record_failed_route(state, adapted)
+        simplified = runner._adapt_failed_route(state, intent)
+        self.assertEqual(simplified.act, ActType.COMMENT)
+        self.assertEqual(simplified.route_source, "failed_route_recovery")
 
     def test_coverage_attempt_charged_once_post_turn(self):
         state = make_state()

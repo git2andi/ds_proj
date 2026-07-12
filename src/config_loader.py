@@ -248,12 +248,12 @@ class Config(Section):
     def _validate_validation(self) -> None:
         validation = self._raw.get("validation")
         if validation is None:
-            return  # absent section = selective default
+            return  # absent section = critical default
         if not isinstance(validation, dict):
             raise ValueError("validation must be a mapping.")
-        mode = str(validation.get("mode", "selective"))
-        if mode not in ("selective", "full"):
-            raise ValueError("validation.mode must be 'selective' or 'full'.")
+        mode = str(validation.get("mode", "critical"))
+        if mode != "critical":
+            raise ValueError("validation.mode must be 'critical'.")
 
     def _validate_moderator(self) -> None:
         moderator = self._raw.get("moderator")

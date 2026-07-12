@@ -23,7 +23,7 @@ Only accepted visible text moves ranks:
 - visible softening ("B is starting to make more sense to me") promotes the softened-to option;
 - a visible acceptance ("B works for me too") makes that option acceptable (rank 4) without moving the lean;
 - a visible bridged vote or sanctioned switch promotes the committed option; the former preferred option drops to acceptable;
-- a visible compromise offer or conditional support by the speaker may move their own lean, gated by stubbornness (an already-acceptable target moves more easily);
+- an explicit visible lean statement (for example, "I’m warming to B") may move the public and private lean; an ordinary support, concern, proposal, or conditional remark does not silently change ranks;
 - a hard rejection (rank 1) is never silently removed — only the speaker's own visible resolution reopens it;
 - controller intent alone never changes a rank, and repaired-away, fallback-blocked, or dropped text moves nothing.
 
@@ -36,31 +36,23 @@ Other participants' turns never rewrite someone else's private ranks. Public sup
 ```text
 1. controller selects the speaker and a MoveIntent (act, objective, focus, target)
 2. the dialogue LLM realizes exactly that move inside an <utterance> envelope
-3. conservative extraction (structural only — never cut, never de-tailed)
-4. deterministic critical layer: option/alias/addressee/pronoun resolution,
-   strict commitments with post-checks, explicit blockers, genuine questions
-5. selective validation (validation.mode, default selective): AT MOST one
-   validator-LLM call, made only when soft natural-language meaning can change
-   state, requesting just the semantic categories the intended move needs plus
-   grounding claims. Simple fully-verifiable turns (direct votes, sanctioned
-   switches, blocker restatements, process/closing lines, mention-free light
-   comments) skip the call via explicit fast paths, each traced with a reason.
-   Deterministic verification checks every span, id, critical commitment, and
-   grounding claim (fact table) before anything counts.
-6. assessment decides: ACCEPT / ACCEPT_WITH_METRIC / REPAIR / FALLBACK / DROP;
-   repair triggers only on blocking failures — an unrealized soft function is
-   telemetry, not a repair
-7. at most one targeted repair, then a TRUTHFUL deterministic fallback (vote/
-   switch, blocker restatement, coverage request, factual comparison, listed or
-   does-not-say answer) or a dropped turn — every candidate goes through the
-   same complete path
-8. only the final accepted evidence object updates ranks, votes, threads,
-   coverage — and consensus/public support read the SAME object
+3. conservative extraction removes only response wrappers/labels
+4. the deterministic critical parser extracts option mentions, questions,
+   commitments, switches, blockers, and explicit lean movement
+5. deterministic validation checks only correctness-critical properties:
+   structure, aliases, required focus/questions, formal votes, switches,
+   blocked-option acceptance, existing-option compromise, transferred exact
+   values, unlisted exact quantities, and explicit unlisted feature/location claims
+6. at most one targeted repair runs for a blocking critical failure
+7. a minimal truthful fallback is available only for formal votes/switches and
+   known-unknown answers; otherwise the attempt is dropped
+8. only the final accepted visible text updates ranks, votes, threads, coverage,
+   commitments, and blockers
 ```
 
-Concrete example: the controller routes Jonas a CONCERN about the Museum ("name the one concrete thing that still blocks Museum for you"). The dialogue LLM returns `<utterance>The Museum's 24 euros is steep for a quiet afternoon, honestly.</utterance>`. Extraction unwraps the envelope; the validator reports one ordinary concern bound to the Museum with span "24 euros is steep for a quiet afternoon" and one listed-fact claim ("24 euros", verified against `A.cost`); assessment accepts; the observer opens a `concern` thread on the Museum with issue key `cost`, counts an objection for coverage, and leaves every rank unchanged — Jonas objected, he didn't move.
+Normal support, concern, comparison, opinion, implication, and answer quality are not sent to a validator LLM. The default critical runtime constructs no validator client and normally makes zero validator calls. A failed route is recorded with original/repair/fallback candidate text; repeating the same failed route first changes speaker and then simplifies or retires that route instead of issuing the same request indefinitely.
 
-Multi-function turns keep all their evidence: "I still dislike the Museum's price, but I'm switching to the Bike Ride because it's cheaper. Would that work for everyone?" carries a concern about A, a vote commitment to B, a switch with a visible reason, and a group question — none erases another, and the trailing check-in question does not void the commitment.
+Concrete example: the controller routes Jonas a concern about the Museum. If the accepted line says that the listed 24-euro cost feels high, the observer opens a concern thread but leaves his rank unchanged. If he explicitly says “I’m warming to the Bike Ride,” the parser records a visible lean shift and both his public lean and private top rank follow his own words. Neither controller intent nor another participant’s pressure can move his stance silently.
 
 ## Narrowing readiness
 
@@ -72,19 +64,38 @@ Narrowing is bounded: one summary beat (participant-led when possible; moderator
 
 ## Voting and the repair state machine
 
-During `voting`, every participant produces one formal visible commitment. After tallying, at most one repair objective runs at a time, classified in priority order and each at most once per run:
+During `voting`, every participant produces one clear first formal commitment. First-round votes reveal the participant’s current accepted/public/private stance; they do not probabilistically jump to the group candidate merely because others support it.
+
+After the complete first round:
 
 ```text
-1. unclear_vote          -> bounded clarification round for unclear voters only
-2. (hard blockers        -> handled inside the flows: blocked voters vote an
-                            acceptable alternative; holdouts with valid blocks
-                            are never pressured)
-3. majority_holdout      -> one reservation exchange + visible stay/switch beats
-4. split_vote            -> summary, bounded exchanges, visible re-vote (max 2 candidates)
-5. two_person_deadlock   -> each side names blocker + condition, then final commitments
+1. unclear_vote
+   -> one bounded clarification/fallback for voters without a valid commitment
+2. unanimous
+   -> close successful after the active-blocker invariant passes
+3. clear majority (more than a one-vote margin over all dissenters combined)
+   -> close majority immediately
+4. bare majority (winner has exactly one more vote than all dissenters combined)
+   -> one moderator concern/willingness question to all dissenters,
+      one or two relevant answers in total, one final switch-or-stay commitment
+      per dissenter when needed, one retally, then close
+5. no-majority split
+   -> test one existing option once, target only the minimum number of legally
+      movable participants needed for a majority, allow one or two answers,
+      collect only candidate-or-current-vote commitments from those movers,
+      retally once, close
+6. two-person deadlock
+   -> one bounded movement opportunity only when movement is plausible;
+      otherwise close unresolved
 ```
 
-`switch_resistance` governs all final movement (switching, compromise acceptance, holdout concession); `stubbornness` only governs discussion-phase defense. If no majority remains after repair, the run closes `unresolved` — honestly earned, never abrupt.
+For a tied split such as `1-1-1`, formal vote counts are equal, so the single compromise candidate is the tied option with the most positive visible discussion mentions. Further ties are resolved deterministically. For a `2-1-1` split, the plurality option remains primary and only one mover is targeted because one switch is enough for a majority.
+
+A moderator narrowing question is never followed directly by the formal vote call: one relevant participant answers first. During split repair, a targeted participant may only switch to the tested candidate or retain the current vote; selecting an unrelated third option would create a new split and is not a valid repair response.
+
+A hard blocker remains internal. In a bare-majority concern round the moderator treats that participant like any other dissenter and does not reveal the fixed blocker value; the internal rank-1 rule simply prevents an illegal switch. In split-candidate selection, participants who legally cannot move to the candidate are not counted as plausible movers.
+
+The controller never runs a second candidate test or another repair round without a meaningful visible state change. Repeated identical votes are idempotent. Majority is a valid outcome and is not prolonged merely to force unanimity.
 
 ## Stubbornness, switch_resistance, and rejection
 

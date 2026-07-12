@@ -9,17 +9,18 @@ This is a university project for an option-grounded multi-user decision simulato
 The architecture should stay explainable:
 
 ```text
-state -> route speaker/macro-act/target/focus -> dialogue LLM generates one enveloped utterance
-      -> conservative extraction -> deterministic critical layer
-         (mentions, strict commitments + post-checks, explicit blockers, genuine questions)
-      -> selective validator LLM call only when soft meaning can change state
-         (intent-specific payload + grounding claims; explicit deterministic fast paths skip it)
-      -> deterministic verification + claim-level grounding -> assessment action
-      -> at most one targeted repair (blocking failures only), else truthful fallback or drop
-      -> observer AND consensus consume the same accepted evidence -> continue/narrow/vote/close
+state -> route speaker/move/target/focus -> dialogue LLM generates one visible utterance
+      -> conservative extraction -> deterministic critical interpretation/validation
+      -> at most one critical repair, else minimal safe fallback or drop
+      -> observer updates state only from the final accepted visible text
+      -> narrow -> one complete vote round -> bounded one-round repair -> close
 ```
 
-The dialogue LLM renders utterances; the validator LLM (independently configurable role, never a public voice, no third checker) interprets them selectively (`validation.mode: selective | full`); validated visible evidence is the only semantic source for state mutation — the deterministic `DialogueAct` is display/trace metadata only — and hidden controller intent never overrides contradictory visible text. The controller owns phase logic, routing, narrowing, and final outcome rules. The full eval suite (`py .\eval\run_eval_suite.py`) is a costly operation requiring explicit user approval.
+The dialogue LLM renders utterances. Runtime validation is deterministic and normally makes zero
+validator-LLM calls (`validation.mode: critical`). Hidden controller intent never becomes public
+support, acceptance, a vote, a switch, or a blocker. Ordinary conversational quality is tolerated;
+formal commitments, blockers, option identity, and final outcome invariants are strict. The full
+eval suite (`py .\eval\run_eval_suite.py`) uses live endpoints and is costly.
 
 ## Scenario model
 
@@ -43,7 +44,7 @@ Participant setup may provide short `reason_for` / `reason_against` fields for e
 
 ## Personas, hidden traits, age, and speech style
 
-OCEAN traits are hidden setup traits. They only derive the four simulator parameters and plausible persona content; they are never passed into participant utterance prompts or routing.
+OCEAN traits are hidden setup traits. They only derive the five simulator parameters and plausible persona content; they are never passed into participant utterance prompts or routing.
 
 The simulator parameters are the only numeric behavior controls:
 
@@ -60,7 +61,7 @@ Age and `speech_style` are surface-realization metadata. `speech_style` is deriv
 
 Profiles/backgrounds should be plausible for the generated or manually configured age. The builder performs deterministic checks for obvious contradictions such as a very young participant being described as a senior executive, long-term homeowner, married parent, or having decades of experience.
 
-Manual participant profiles may include `age` and `speech_style`. If omitted, age/speech_style are filled by the builder. Manual `parameters` accept only `engagement`, `verbosity`, `directness`, and `stubbornness`.
+Manual participant profiles may include `age` and `speech_style`. If omitted, age/speech_style are filled by the builder. Manual `parameters` accept only `engagement`, `verbosity`, `directness`, `stubbornness`, and `switch_resistance`.
 
 ## Phases, threads, and no content agenda
 

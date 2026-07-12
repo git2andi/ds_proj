@@ -15,30 +15,39 @@ It is not a generic chatbot, full society simulation, or full Generative-Agents-
 The simulator uses a hybrid dialogue-system design:
 
 ```text
-symbolic controller + dialogue-LLM utterance renderer + validator-LLM semantic interpreter
+symbolic controller + dialogue-LLM utterance renderer + deterministic critical interpretation
 ```
 
-The controller owns phase logic, speaker choice, macro-act choice, option focus, narrowing, and outcome rules. Two independently configurable LLM roles exist (`llm.dialogue` and `llm.validator` in config.yaml; the same provider for both is fine, and no third checker exists):
-
-- the **dialogue role** owns every generative call — scenario/persona setup, participant utterances, moderator lines, and repair rewrites;
-- the **validator role** owns structured semantic interpretation of visible utterances, claim classification for grounding, and intended-move alignment; it never generates public dialogue text.
+The controller owns phase logic, speaker choice, macro-act choice, option focus,
+narrowing, voting, and outcome rules. The dialogue LLM owns all generative calls:
+scenario/persona setup, participant utterances, moderator lines, and the single
+bounded repair rewrite. Normal runtime validation is deterministic; the runner
+never constructs or calls a validator LLM in `validation.mode: critical`.
 
 The governing authority order is:
 
 ```text
-scenario/shared-context facts   authoritative for grounding
-controller intent               authoritative for what the turn was asked to realize
+scenario/shared-context facts   authoritative for listed facts
+controller intent               authoritative only for the requested function
 visible utterance               authoritative for what was publicly said
-validated visible evidence      authoritative for state updates
+accepted deterministic evidence authoritative for state updates
 ```
 
-No generator self-report metadata exists and hidden controller intent never overrides contradictory visible text. Each candidate utterance is emitted inside an explicit `<utterance>` envelope, extracted conservatively (structural cleanup only — natural tails and clauses are never deleted), deterministically resolved (options, aliases, addressees, unambiguous public pronoun referents), interpreted by ONE validator call into a typed multi-label evidence object (support, concern, comparison, question, answer, softening, proposal, commitment, switch, blocker, atomic grounding claims — several may coexist in one line), verified deterministically (spans must occur in the utterance, critical votes/blockers must pass the conservative critical parser, claims are checked against a normalized option-attribute-value fact table), and then assessed into one explicit action: `ACCEPT`, `ACCEPT_WITH_METRIC`, `REPAIR`, `FALLBACK`, or `DROP`. Repair is one targeted dialogue-LLM rewrite fed with exact issue explanations and offending spans; fallback is a narrow act-specific deterministic family built only from known truthful information, revalidated through the same complete path; anything else is dropped rather than printed. Validator failures never fail open.
+Hidden controller intent never creates public support, a vote, a switch, or a
+blocker. Each candidate utterance is extracted conservatively, resolved against
+known option aliases, interpreted into the small visible-evidence model, and
+checked only for correctness-critical failures: malformed output, invalid option
+references, missing required question/focus, ambiguous formal commitment,
+invalid switch, blocked-option acceptance, hybrid compromise, or exact
+cross-option value contradictions. Ordinary opinions, support, concerns,
+comparisons, and reasonable implications are not sent through a second semantic
+model. At most one repair is attempted; only narrow truthful fallbacks remain.
 
 ## Scenario schema
 
 A scenario is exactly `topic` + `shared_context` + `options`. Shared context is the public source of truth: facts every participant knows (group constraints, hard caps, timing). Each option card has `id`, `name`, `short_name`, `attrs`, `upside`, and `concern` — no `decision_kind`, generated `opening_question`, `tradeoff`, or `best_for` fields exist.
 
-Attributes are topic-specific and chosen by the setup LLM; the prompt gives no example dimensions and the code hard-codes no preferred ones. `short_name` is a required concise natural alias (unique, copied from the name, never derived by clipping). The moderator opening is fixed and neutral: board + context, then "Let's discuss which option fits best overall."
+Attributes are topic-specific and chosen by the setup LLM; the prompt gives no example dimensions and the code hard-codes no preferred ones. `short_name` is a required concise natural alias (unique, copied from the name, never derived by clipping). Every option attribute, upside, and concern available to participant generation is printed on the public board; no hidden fourth attribute or clipped card fact may influence a turn. The moderator opening is fixed and neutral: board + context, then "Let's discuss which option fits best overall."
 
 ## Stance model
 
@@ -113,7 +122,7 @@ Normal discussion sampling is limited to `support, concern, ask, compare, commen
 
 ## Voting and repair
 
-Only formal commitments made during `voting`/`compromise_repair` count toward the outcome; opening leans and discussion support move public stance but never silently become final votes. After vote collection, one bounded repair state machine handles (in priority order) unclear votes, majority holdouts, split votes, and two-person deadlocks — each reason at most once per run, with `switch_resistance` governing final movement and hard blockers never pressured into fake agreement.
+Only formal commitments made during `voting`/`compromise_repair` count toward the outcome; opening leans and discussion support never silently become final votes. A moderator narrowing question always receives one participant response before voting begins. After one complete vote round, unanimity and clear majorities close immediately. A bare one-vote majority receives one bounded concern/response/switch round. A no-majority split tests one existing option once and targets only the minimum number of legally movable participants required for a majority. In an equal vote tie such as `1-1-1`, the tied option with the most positive visible discussion mentions is tested. A targeted mover may either switch to that tested candidate or keep the current vote; repair cannot introduce a third option. Hard blockers remain private and can never switch to a nonpreferred option.
 
 ## Outcomes
 
@@ -128,48 +137,48 @@ Outcomes are derived from visible transcript evidence only: explicit votes, acce
 ## High-level pipeline
 
 ```text
-CLI topic (always wins) or configured manual environment
-  -> scenario / option board (invalid generated aliases get a small alias-only repair call)
-  -> automatic or manual simulated participants
-  -> age/profile/speech-style plausibility checks
-  -> initial per-sim option ranks
-  -> controller routes: required answer > hot thread > cooling thread > coverage > continuation > normal act
-  -> dialogue LLM renders one enveloped utterance
-  -> conservative extraction -> deterministic critical layer (mentions, strict
-     commitments + post-checks, explicit blockers, genuine questions)
-  -> selective validator LLM call ONLY when soft meaning can change state,
-     requesting just the categories the intended move needs (+ grounding claims);
-     simple fully-verifiable turns skip it via explicit deterministic fast paths
-  -> deterministic verification of every span/id/binding + fact-table grounding
-  -> assessment: ACCEPT / ACCEPT_WITH_METRIC / REPAIR / FALLBACK / DROP
-     (repair only for blocking failures; truthful state-safe fallback families only)
-  -> observer consumes the accepted evidence object: threads, coverage, rank table, progress
-  -> consensus/public support consume the SAME accepted evidence (single semantic authority)
-  -> flow: explicit phases, bounded narrowing, formal votes, one repair state machine
-  -> transcript.md, run.json (incl. controller trace + validation telemetry), metrics.csv
+CLI topic or configured manual environment
+  -> scenario and participant setup
+  -> deterministic controller selects speaker, move, target, and option focus
+  -> dialogue LLM renders one visible utterance
+  -> conservative extraction
+  -> deterministic critical interpretation and validation
+  -> at most one repair for a correctness-critical failure
+  -> minimal vote/switch/unknown-information fallback when safe
+  -> observer updates threads, coverage, visible stance, ranks, commitments, and blockers
+  -> bounded narrowing and one complete formal vote round
+  -> immediate closure for unanimity or a clear majority
+  -> one bounded repair round for a bare majority or unresolved split
+  -> deterministic status-correct closure
+  -> transcript.md, run.json, and concise metrics.csv
 ```
+
+Hidden controller intent never counts as public evidence. Ordinary support, concerns, opinions,
+and reasonable inferences are not sent through a runtime validator LLM. Runtime validation is
+strict only for malformed output, option references, required questions/focus, formal votes,
+public switches, blockers, existing-option compromise, transferred exact values, unlisted exact quantities,
+and explicit unlisted feature/location claims.
 
 ## Main modules
 
-- `main.py`: CLI entrypoint for one topic, a topic file, piped topics, or configured manual environment.
-- `eval/run_eval_suite.py`: sequential regression suite for important mode combinations and edge cases. Manual eval personas include age/speech-style/profile variation.
-- `config.yaml`: LLM roles (`llm.dialogue` / `llm.validator`), environment, participant, pacing, threads, narrowing, routing, validation mode (`validation.mode: selective | full`), and output settings. Safety-critical deterministic checks (commitments, blockers, grounding of accepted claims) are always active in both modes.
-- `src/builders.py`: builds automatic/manual scenarios and participants, including age/speech-style/profile validation and initial option-rank compatibility.
-- `src/models.py`: stable domain dataclasses (scenario, personas, acts, turns, DialogueState) plus re-exports of the controller state types.
-- `src/simulator.py`: converts hidden OCEAN traits into the five simulator parameters and the engagement-based expected turn share.
-- `src/dialogue.py`: run orchestration and the generate→parse→validate→repair→append pipeline, turn/trace appends, logging.
-- `src/controller/state.py`: controller runtime dataclasses — phases, thread state, repair state.
-- `src/controller/threads.py`: deterministic issue keys, thread lifecycle transitions, primary-thread selection.
-- `src/controller/policy.py`: read-only route/speaker/act/option/addressee selection returning `MoveIntent`.
-- `src/controller/flow.py`: phase transition graph, narrowing readiness/behavior, formal voting, and the repair state machine.
-- `src/observer.py`: the single post-turn state-update entry point, consuming the accepted evidence object (threads via the engine, coverage, ranks, progress).
-- `src/interpreter.py`: the deterministic critical layer, the selective validator-LLM call (intent-specific payload, explicit fast paths), deterministic verification of validator output, and the normalized fact table for claim-level grounding.
-- `src/parsing.py`: deterministic critical parser/resolver — options, aliases, addressees, public pronoun referents, strict commitments with post-checks, strict blockers, genuine questions. Soft semantics belong to the validator role only.
-- `src/validation.py`: evidence-based candidate assessment (repair only for blocking failures) and the truthful state-safe fallback families (vote/switch, blocker restatement, coverage request, factual comparison, listed/does-not-say answer).
-- `src/prompts.py`: setup, utterance, moderator, repair, and validator-interpretation prompts.
-- `src/consensus.py`: final outcome from formal visible commitments (voting/compromise_repair phases only).
-- `src/logger.py` / `eval/eval.py`: transcripts, structured traces (controller trace, threads, repair history), metrics, and token diagnostics.
-- `tests/`: deterministic controller tests (`py -m unittest discover -s tests`).
+- `main.py`: CLI entrypoint.
+- `eval/run_eval_suite.py`: ten-case live regression suite with behavioral and efficiency flags.
+- `config.yaml`: dialogue LLM, environment, participants, pacing, threads, routing, critical validation, and output settings.
+- `src/builders.py`: scenario and participant construction.
+- `src/models.py`: domain and runtime dataclasses.
+- `src/dialogue.py`: orchestration and bounded generate→validate→repair→append lifecycle.
+- `src/controller/state.py`: phases, threads, and repair state.
+- `src/controller/threads.py`: deterministic thread lifecycle.
+- `src/controller/policy.py`: read-only speaker/move/focus selection.
+- `src/controller/flow.py`: narrowing, voting, one-round majority/split repair, and closure.
+- `src/interpreter.py`: deterministic visible-evidence interpretation; no LLM calls.
+- `src/parsing.py`: option/alias, commitment, blocker, switch, and question parsing.
+- `src/validation.py`: correctness-critical assessment and minimal safe fallbacks.
+- `src/observer.py`: the single accepted-turn state mutation path.
+- `src/consensus.py`: current public backing and transcript-derived formal tally.
+- `src/prompts.py`: setup, moderator, utterance, and critical repair prompts.
+- `src/logger.py` / `eval/eval.py`: trace artifacts and concise grouped metrics.
+- `tests/`: deterministic regression tests (`py -m pytest -q`).
 
 ## Running
 
