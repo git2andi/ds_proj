@@ -1,0 +1,6193 @@
+{
+  "run_id": "20260713_175026_446514",
+  "case_id": "c02_manual_manual_n3_three_way_split",
+  "suite_version": "critical-validation-consensus-v8",
+  "case_fingerprint": "0532e434caba6a0f",
+  "topic": "Choose a weekend activity for three friends with different energy levels",
+  "llm": {
+    "dialogue": {
+      "provider": "gpt",
+      "model": "gpt-4.1-mini"
+    },
+    "runtime_validation": {
+      "mode": "critical",
+      "llm_used": false
+    }
+  },
+  "participants_mode": "manual",
+  "environment_mode": "manual",
+  "validation_mode": "critical",
+  "moderator_config": {
+    "enabled": true,
+    "opening": true,
+    "mid_discussion_nudges": true,
+    "final_vote_call": true,
+    "closing": true
+  },
+  "scenario": {
+    "topic": "Choose a weekend activity for three friends with different energy levels",
+    "options": [
+      {
+        "id": "A",
+        "name": "Museum and Cafe Day",
+        "attrs": {
+          "cost": "24 euros",
+          "travel": "15 minutes by subway",
+          "duration": "4 hours"
+        },
+        "upside": "low effort and easy to adjust",
+        "concern": "may feel too quiet",
+        "short_name": "Museum"
+      },
+      {
+        "id": "B",
+        "name": "Lake Bike Ride",
+        "attrs": {
+          "cost": "12 euros",
+          "travel": "25 minutes by train",
+          "duration": "6 hours"
+        },
+        "upside": "active and inexpensive",
+        "concern": "bad fit for someone tired",
+        "short_name": "Bike Ride"
+      },
+      {
+        "id": "C",
+        "name": "Escape Room",
+        "attrs": {
+          "cost": "32 euros",
+          "travel": "20 minutes by tram",
+          "duration": "2 hours"
+        },
+        "upside": "interactive and memorable",
+        "concern": "less flexible once booked",
+        "short_name": "Escape Room"
+      },
+      {
+        "id": "D",
+        "name": "Home Cooking Night",
+        "attrs": {
+          "cost": "18 euros",
+          "travel": "none",
+          "duration": "5 hours"
+        },
+        "upside": "cheapest and most flexible",
+        "concern": "may feel too ordinary",
+        "short_name": "Cooking"
+      }
+    ],
+    "shared_context": [
+      "The group only has Saturday available.",
+      "Nobody wants to spend more than 60 euros.",
+      "The plan should leave time to rest in the evening."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Mira",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 5,
+        "extraversion": 3,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.55,
+        "verbosity": 0.55,
+        "directness": 0.5,
+        "stubbornness": 0.45,
+        "switch_resistance": 0.4
+      },
+      "background": "organized project coordinator who cares about broad fit and avoiding awkward logistics",
+      "private_goal": "wants the option that works for most people without needing extra coordination",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "low effort and easy to adjust",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Jonas",
+      "traits": {
+        "openness": 3,
+        "conscientiousness": 4,
+        "extraversion": 2,
+        "agreeableness": 4,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.35,
+        "verbosity": 0.35,
+        "directness": 0.45,
+        "stubbornness": 0.35,
+        "switch_resistance": 0.3
+      },
+      "background": "early-career budget-watcher who rents a shared flat and avoids unnecessary spending",
+      "private_goal": "wants the group to avoid overspending but can accept a better compromise",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 24,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "active and inexpensive",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Lea",
+      "traits": {
+        "openness": 5,
+        "conscientiousness": 3,
+        "extraversion": 5,
+        "agreeableness": 3,
+        "neuroticism": 2
+      },
+      "sim_params": {
+        "engagement": 0.9,
+        "verbosity": 0.8,
+        "directness": 0.7,
+        "stubbornness": 0.55,
+        "switch_resistance": 0.5
+      },
+      "background": "high-energy event planner who likes memorable choices and often drives the conversation forward",
+      "private_goal": "wants the group to choose something that feels worth the effort",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "interactive and memorable",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "turn_count": 8,
+      "last_spoke_turn": 26,
+      "option_ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "reasons_for": {
+        "A": "low effort and easy to adjust",
+        "C": "I pick Escape Room because it’s interactive and fits our budget."
+      },
+      "reasons_against": {
+        "B": "The bike ride’s 6-hour duration might be too long if anyone’s feeling tired Saturday."
+      },
+      "challenges_received": 1,
+      "concessions_made": 1,
+      "current_acceptance": "C",
+      "public_lean": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "already_said": [
+        "Museum is where I'm leaning — low effort and easy to adjust.",
+        "The bike ride’s 6-hour duration might be too long if anyone’s feeling tired Saturday.",
+        "Escape Room works if we commit upfront, given its fixed timing and travel constraints.",
+        "Given the 6-hour bike ride, the Escape Room’s 2-hour duration better fits rest needs Saturday.",
+        "Lea, what’s the most important trade-off for you between cost and flexibility in Escape Room?",
+        "The Escape Room’s interactive vibe is good, but its fixed booking reduces flexibility.",
+        "I pick Escape Room because it’s interactive and fits our budget.",
+        "The Escape Room's fixed 2-hour slot is true, but at 32 euros, it fits our budget and keeps the afternoon free for rest."
+      ],
+      "switch_events": []
+    },
+    "p2": {
+      "persona_id": "p2",
+      "turn_count": 6,
+      "last_spoke_turn": 27,
+      "option_ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "reasons_for": {
+        "B": "I commit to Bike Ride because 12 euros is way easier on the wallet.",
+        "C": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable."
+      },
+      "reasons_against": {},
+      "challenges_received": 1,
+      "concessions_made": 1,
+      "current_acceptance": "C",
+      "public_lean": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "already_said": [
+        "Bike Ride is where I'm leaning — active and inexpensive.",
+        "How strict is the 60-euro limit for the Escape Room’s 32-euro cost?",
+        "Lea, what’s the biggest trade-off for you between Escape Room’s cost and the bike ride’s length?",
+        "I commit to Bike Ride because 12 euros is way easier on the wallet.",
+        "The Escape Room’s 2-hour lock-in makes it less flexible for us.",
+        "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable."
+      ],
+      "switch_events": [
+        {
+          "from": "B",
+          "to": "C",
+          "has_reason": true,
+          "has_bridge": true,
+          "turn_index": 27,
+          "route_source": "repair_protocol",
+          "phase": "compromise_repair"
+        }
+      ]
+    },
+    "p3": {
+      "persona_id": "p3",
+      "turn_count": 8,
+      "last_spoke_turn": 22,
+      "option_ranks": {
+        "A": 2,
+        "B": 3,
+        "C": 5,
+        "D": 3
+      },
+      "reasons_for": {
+        "C": "I vote Escape Room since it keeps Saturday evening free to relax."
+      },
+      "reasons_against": {
+        "A": "The museum might feel too quiet for Saturday, which could make it harder to keep energy up all afternoon. That’s important since we want something memorable, not just easy."
+      },
+      "challenges_received": 0,
+      "concessions_made": 0,
+      "current_acceptance": "C",
+      "public_lean": "C",
+      "explicit_vote": "C",
+      "vote_stance": "vote",
+      "already_said": [
+        "Escape Room is where I'm leaning — interactive and memorable.",
+        "The museum might feel too quiet for Saturday, which could make it harder to keep energy up all afternoon. That’s important since we want something memorable, not just easy.",
+        "32 euros fits well under our 60-euro limit, and the 2-hour Escape Room leaves plenty of evening rest.",
+        "Escape Room costs more but only takes 2 hours, leaving us plenty of evening time. The bike ride is cheaper but 6 hours might be too draining for some.",
+        "The trade-off is that the Escape Room fits better with our need to rest Saturday evening.",
+        "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward.",
+        "Mira, does the Escape Room’s interactive vibe outweigh the price and fixed booking for you?",
+        "I vote Escape Room since it keeps Saturday evening free to relax."
+      ],
+      "switch_events": []
+    }
+  },
+  "threads": {
+    "t001": {
+      "thread_id": "t001",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "A"
+      ],
+      "issue_key": "concern:may-quiet-too",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3"
+      ],
+      "contribution_count": 1,
+      "probe_count": 0,
+      "source_turn_index": 5,
+      "created_turn": 5,
+      "last_touched_turn": 5,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t002": {
+      "thread_id": "t002",
+      "thread_type": "concern",
+      "status": "stale",
+      "focus_options": [
+        "B"
+      ],
+      "issue_key": "duration",
+      "started_by": "p1",
+      "required_respondent": null,
+      "participants_involved": [
+        "p1",
+        "p3"
+      ],
+      "contribution_count": 3,
+      "probe_count": 0,
+      "source_turn_index": 6,
+      "created_turn": 6,
+      "last_touched_turn": 14,
+      "blocking_strength": "soft",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t003": {
+      "thread_id": "t003",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "C"
+      ],
+      "issue_key": "cost",
+      "started_by": "p2",
+      "required_respondent": null,
+      "participants_involved": [
+        "p2",
+        "p3"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 7,
+      "created_turn": 7,
+      "last_touched_turn": 8,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "group"
+    },
+    "t004": {
+      "thread_id": "t004",
+      "thread_type": "question",
+      "status": "stale",
+      "focus_options": [
+        "D"
+      ],
+      "issue_key": "sig:guide-key-list",
+      "started_by": "moderator",
+      "required_respondent": null,
+      "participants_involved": [
+        "moderator"
+      ],
+      "contribution_count": 1,
+      "probe_count": 0,
+      "source_turn_index": 9,
+      "created_turn": 9,
+      "last_touched_turn": 9,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": "group"
+    },
+    "t005": {
+      "thread_id": "t005",
+      "thread_type": "comparison",
+      "status": "hot",
+      "focus_options": [
+        "B",
+        "C"
+      ],
+      "issue_key": "pair",
+      "started_by": "p3",
+      "required_respondent": null,
+      "participants_involved": [
+        "p3",
+        "p2",
+        "p1"
+      ],
+      "contribution_count": 4,
+      "probe_count": 0,
+      "source_turn_index": 11,
+      "created_turn": 11,
+      "last_touched_turn": 27,
+      "blocking_strength": "none",
+      "resolution_reason": null,
+      "question_scope": null
+    },
+    "t006": {
+      "thread_id": "t006",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "B",
+        "C"
+      ],
+      "issue_key": "cost",
+      "started_by": "p2",
+      "required_respondent": "p3",
+      "participants_involved": [
+        "p2",
+        "p3"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 12,
+      "created_turn": 12,
+      "last_touched_turn": 13,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "direct"
+    },
+    "t007": {
+      "thread_id": "t007",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "C"
+      ],
+      "issue_key": "upside:interactive-memorable",
+      "started_by": "p3",
+      "required_respondent": "p1",
+      "participants_involved": [
+        "p3",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 17,
+      "created_turn": 17,
+      "last_touched_turn": 18,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "direct"
+    },
+    "t008": {
+      "thread_id": "t008",
+      "thread_type": "question",
+      "status": "resolved",
+      "focus_options": [
+        "C"
+      ],
+      "issue_key": "sig:about-any-anyone",
+      "started_by": "moderator",
+      "required_respondent": null,
+      "participants_involved": [
+        "moderator",
+        "p1"
+      ],
+      "contribution_count": 2,
+      "probe_count": 0,
+      "source_turn_index": 19,
+      "created_turn": 19,
+      "last_touched_turn": 21,
+      "blocking_strength": "none",
+      "resolution_reason": "answered; no follow-up in cooling window",
+      "question_scope": "group"
+    }
+  },
+  "active_repair": null,
+  "repair_history": [
+    {
+      "repair_reason": "majority_holdout",
+      "candidate_or_pair": [
+        "C"
+      ],
+      "participants_involved": [
+        "p2"
+      ],
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "status": "resolved"
+    }
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a weekend activity for three friends with different energy levels.\nFor this simulated decision, I’ll treat the following setup as the shared facts.\nOptions:\nA) Museum and Cafe Day — cost: 24 euros; travel: 15 minutes by subway; duration: 4 hours (+ low effort and easy to adjust; − may feel too quiet)\nB) Lake Bike Ride — cost: 12 euros; travel: 25 minutes by train; duration: 6 hours (+ active and inexpensive; − bad fit for someone tired)\nC) Escape Room — cost: 32 euros; travel: 20 minutes by tram; duration: 2 hours (+ interactive and memorable; − less flexible once booked)\nD) Home Cooking Night — cost: 18 euros; travel: none; duration: 5 hours (+ cheapest and most flexible; − may feel too ordinary)\nContext: The group only has Saturday available.; Nobody wants to spend more than 60 euros.; The plan should leave time to rest in the evening.\nLet's discuss which option fits best overall.",
+      "phase": "opening",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 2,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "Escape Room is where I'm leaning — interactive and memorable.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded personal decision criterion; optionally add one genuine uncertainty or concern, without making a final vote",
+        "route_source": "opening_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 1072,
+      "tokens_out": 108,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "UNLISTED_NUMERIC_DETAIL",
+        "OPENING_POSITION_NOT_REALIZED"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true,
+      "fallback_family": "opening_lean",
+      "evidence": {
+        "utterance": "Escape Room is where I'm leaning — interactive and memorable.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "firm",
+            "span": {
+              "text": "Escape Room is where I'm leaning — interactive and memorable.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 25,
+      "assigned_max_words": 38
+    },
+    {
+      "index": 3,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Museum is where I'm leaning — low effort and easy to adjust.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded personal decision criterion; optionally add one genuine uncertainty or concern, without making a final vote",
+        "route_source": "opening_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 1097,
+      "tokens_out": 92,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "OPENING_POSITION_NOT_REALIZED"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true,
+      "fallback_family": "opening_lean",
+      "evidence": {
+        "utterance": "Museum is where I'm leaning — low effort and easy to adjust.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "Museum",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Museum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "A",
+            "strength": "firm",
+            "span": {
+              "text": "Museum is where I'm leaning — low effort and easy to adjust.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 18,
+      "assigned_max_words": 28
+    },
+    {
+      "index": 4,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Bike Ride is where I'm leaning — active and inexpensive.",
+      "phase": "opening",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "opening",
+        "reason": "state the current favorite and one grounded personal decision criterion; optionally add one genuine uncertainty or concern, without making a final vote",
+        "route_source": "opening_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 1127,
+      "tokens_out": 96,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "OPENING_POSITION_NOT_REALIZED"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": true,
+      "fallback_family": "opening_lean",
+      "evidence": {
+        "utterance": "Bike Ride is where I'm leaning — active and inexpensive.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bike Ride",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Bike Ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "B",
+            "strength": "firm",
+            "span": {
+              "text": "Bike Ride is where I'm leaning — active and inexpensive.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 18,
+      "assigned_max_words": 28
+    },
+    {
+      "index": 5,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The museum might feel too quiet for Saturday, which could make it harder to keep energy up all afternoon. That’s important since we want something memorable, not just easy.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "concern",
+        "reason": "raise one clear concern about Museum using its listed drawback (may feel too quiet); explain why that matters to your decision",
+        "route_source": "self_selection",
+        "addressee_id": "p1",
+        "option_focus": [
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "concern:A:listed_drawback"
+      },
+      "tokens_in": 727,
+      "tokens_out": 40,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The museum might feel too quiet for Saturday, which could make it harder to keep energy up all afternoon. That’s important since we want something memorable, not just easy.",
+        "mentions": [
+          {
+            "option_id": "A",
+            "span": {
+              "text": "museum",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "museum",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [
+          {
+            "option_id": "A",
+            "severity": "ordinary",
+            "span": {
+              "text": "The museum might feel too quiet for Saturday, which could make it harder to keep energy up all afternoon. That’s important since we want something memorable, not just easy.",
+              "start": 0
+            }
+          }
+        ],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "concern"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 12,
+      "assigned_max_words": 19
+    },
+    {
+      "index": 6,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "The bike ride’s 6-hour duration might be too long if anyone’s feeling tired Saturday.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "concern",
+        "reason": "raise one clear concern about Bike Ride using its listed drawback (bad fit for someone tired); explain why that matters to your decision",
+        "route_source": "self_selection",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 5,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "concern:B:listed_drawback"
+      },
+      "tokens_in": 727,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The bike ride’s 6-hour duration might be too long if anyone’s feeling tired Saturday.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "bike ride",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "bike ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [
+          {
+            "option_id": "B",
+            "severity": "ordinary",
+            "span": {
+              "text": "The bike ride’s 6-hour duration might be too long if anyone’s feeling tired Saturday.",
+              "start": 0
+            }
+          }
+        ],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "concern"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 7,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "How strict is the 60-euro limit for the Escape Room’s 32-euro cost?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask one concrete group question that helps settle the trade-off between Escape Room, Museum",
+        "route_source": "self_selection",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 6,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "ask:A:C:group_tradeoff"
+      },
+      "tokens_in": 752,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "How strict is the 60-euro limit for the Escape Room’s 32-euro cost?",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 40
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "group",
+            "span": {
+              "text": "How strict is the 60-euro limit for the Escape Room’s 32-euro cost?",
+              "start": 0
+            },
+            "addressee_id": null,
+            "option_ids": [
+              "C"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 8,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "32 euros fits well under our 60-euro limit, and the 2-hour Escape Room leaves plenty of evening rest.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the open group question directly from your own current view, then state one decision implication",
+        "route_source": "self_selection",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 7,
+        "thread_id": "t003",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "answer:C:answer:t003"
+      },
+      "tokens_in": 712,
+      "tokens_out": 32,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "32 euros fits well under our 60-euro limit, and the 2-hour Escape Room leaves plenty of evening rest.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 59
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "32 euros fits well under our 60-euro limit, and the 2-hour Escape Room leaves plenty of evening rest.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 10,
+      "assigned_max_words": 16
+    },
+    {
+      "index": 9,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "What’s one key concern or trade-off that should guide whether Cooking stays on our list?",
+      "phase": "discussion",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 10,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Escape Room works if we commit upfront, given its fixed timing and travel constraints.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compromise",
+        "reason": "state visible conditional willingness to move toward Escape Room as common ground and name the condition or trade-off that makes it acceptable; do not cast a final vote",
+        "route_source": "self_selection",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "compromise:A:C:conditional_move"
+      },
+      "tokens_in": 745,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Escape Room works if we commit upfront, given its fixed timing and travel constraints.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "conditional",
+            "span": {
+              "text": "Escape Room works if we commit upfront, given its fixed timing and travel constraints.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room works if we commit upfront, given its fixed timing and travel constraints.",
+              "start": 0
+            }
+          }
+        ],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compromise"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 11,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "Escape Room costs more but only takes 2 hours, leaving us plenty of evening time. The bike ride is cheaper but 6 hours might be too draining for some.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "compare",
+        "reason": "compare Escape Room, Bike Ride explicitly on one grounded trade-off and make your own preference clear",
+        "route_source": "self_selection",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 10,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "compare:B:C:tradeoff"
+      },
+      "tokens_in": 836,
+      "tokens_out": 41,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Escape Room costs more but only takes 2 hours, leaving us plenty of evening time. The bike ride is cheaper but 6 hours might be too draining for some.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 0
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "bike ride",
+              "start": 86
+            },
+            "order": 1,
+            "alias_form": "bike ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "C",
+              "B"
+            ],
+            "span": {
+              "text": "Escape Room costs more but only takes 2 hours, leaving us plenty of evening time. The bike ride is cheaper but 6 hours might be too draining for some.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 12,
+      "assigned_max_words": 19
+    },
+    {
+      "index": 12,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "Lea, what’s the biggest trade-off for you between Escape Room’s cost and the bike ride’s length?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "ask",
+        "reason": "ask why Escape Room works for them or which trade-off matters most; ask one concrete question",
+        "route_source": "self_selection",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 11,
+        "thread_id": "t005",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "ask:B:C:concern:p3"
+      },
+      "tokens_in": 806,
+      "tokens_out": 30,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Lea, what’s the biggest trade-off for you between Escape Room’s cost and the bike ride’s length?",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 50
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "bike ride",
+              "start": 77
+            },
+            "order": 1,
+            "alias_form": "bike ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "direct",
+            "span": {
+              "text": "Lea, what’s the biggest trade-off for you between Escape Room’s cost and the bike ride’s length?",
+              "start": 0
+            },
+            "addressee_id": "p3",
+            "option_ids": [
+              "C",
+              "B"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 13,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The trade-off is that the Escape Room fits better with our need to rest Saturday evening.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "direct_obligation",
+        "addressee_id": "p2",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 12,
+        "thread_id": "t006",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 800,
+      "tokens_out": 24,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The trade-off is that the Escape Room fits better with our need to rest Saturday evening.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 26
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "firm",
+            "span": {
+              "text": "The trade-off is that the Escape Room fits better with our need to rest Saturday evening.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "The trade-off is that the Escape Room fits better with our need to rest Saturday evening.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 8
+    },
+    {
+      "index": 14,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Given the 6-hour bike ride, the Escape Room’s 2-hour duration better fits rest needs Saturday.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "compare",
+        "reason": "compare Escape Room, Bike Ride explicitly on one grounded trade-off and make your own preference clear",
+        "route_source": "self_selection",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 13,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "compare:B:C:tradeoff"
+      },
+      "tokens_in": 855,
+      "tokens_out": 29,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Given the 6-hour bike ride, the Escape Room’s 2-hour duration better fits rest needs Saturday.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "bike ride",
+              "start": 17
+            },
+            "order": 0,
+            "alias_form": "bike ride",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 32
+            },
+            "order": 1,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "B",
+              "C"
+            ],
+            "span": {
+              "text": "Given the 6-hour bike ride, the Escape Room’s 2-hour duration better fits rest needs Saturday.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "compare"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 8,
+      "assigned_max_words": 15
+    },
+    {
+      "index": 15,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "support",
+        "reason": "state unmistakably that Escape Room is a good fit for you and give one grounded personal reason that has not already been contributed",
+        "route_source": "self_selection",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 14,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "support:C:support"
+      },
+      "tokens_in": 1304,
+      "tokens_out": 74,
+      "validation_issues": [],
+      "repaired": true,
+      "repair_trigger_codes": [
+        "SUPPORT_NOT_REALIZED"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "firm",
+            "span": {
+              "text": "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "support"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 12,
+      "assigned_max_words": 19
+    },
+    {
+      "index": 16,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "Lea, what’s the most important trade-off for you between cost and flexibility in Escape Room?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "ask",
+        "reason": "ask why Escape Room works for them or which trade-off matters most; ask one concrete question",
+        "route_source": "self_selection",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 15,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "ask:B:C:concern:p3"
+      },
+      "tokens_in": 813,
+      "tokens_out": 27,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Lea, what’s the most important trade-off for you between cost and flexibility in Escape Room?",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 81
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "direct",
+            "span": {
+              "text": "Lea, what’s the most important trade-off for you between cost and flexibility in Escape Room?",
+              "start": 0
+            },
+            "addressee_id": "p3",
+            "option_ids": [
+              "C"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 17,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "Mira, does the Escape Room’s interactive vibe outweigh the price and fixed booking for you?",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "ask",
+        "reason": "ask why Escape Room works for them or which trade-off matters most; ask one concrete question",
+        "route_source": "self_selection",
+        "addressee_id": "p1",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 16,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "ask:B:C:concern:p1"
+      },
+      "tokens_in": 784,
+      "tokens_out": 25,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "Mira, does the Escape Room’s interactive vibe outweigh the price and fixed booking for you?",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 15
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [
+          {
+            "scope": "direct",
+            "span": {
+              "text": "Mira, does the Escape Room’s interactive vibe outweigh the price and fixed booking for you?",
+              "start": 0
+            },
+            "addressee_id": "p1",
+            "option_ids": [
+              "C"
+            ]
+          }
+        ],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "ask"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 10,
+      "assigned_max_words": 16
+    },
+    {
+      "index": 18,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "The Escape Room’s interactive vibe is good, but its fixed booking reduces flexibility.",
+      "phase": "discussion",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the direct question you were just asked, then add one implication for the decision",
+        "route_source": "direct_obligation",
+        "addressee_id": "p3",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "medium",
+        "respond_to_turn": 17,
+        "thread_id": "t007",
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": true,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 766,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Escape Room’s interactive vibe is good, but its fixed booking reduces flexibility.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [
+          {
+            "option_id": "C",
+            "strength": "firm",
+            "span": {
+              "text": "The Escape Room’s interactive vibe is good, but its fixed booking reduces flexibility.",
+              "start": 0
+            }
+          }
+        ],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "The Escape Room’s interactive vibe is good, but its fixed booking reduces flexibility.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 7,
+      "assigned_max_words": 13
+    },
+    {
+      "index": 19,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Escape Room seems popular—does anyone have any remaining concerns about it before we move forward?",
+      "phase": "narrowing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 20,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Alright everyone, please share the single option you’ve decided on when you’re ready.",
+      "phase": "voting",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 21,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "I pick Escape Room because it’s interactive and fits our budget.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": "C",
+        "old_preference": null,
+        "allowed_reason": "interactive and memorable",
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 814,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I pick Escape Room because it’s interactive and fits our budget.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "C",
+            "span": {
+              "text": "I pick Escape Room because it’s interactive and fits our budget.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 4,
+      "assigned_max_words": 8
+    },
+    {
+      "index": 22,
+      "speaker_id": "p3",
+      "speaker_name": "Lea",
+      "text": "I vote Escape Room since it keeps Saturday evening free to relax.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p3",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm choosing"
+        ],
+        "avoid_reasons": [
+          "because it’s interactive and fits our budget"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "C",
+        "old_preference": null,
+        "allowed_reason": "interactive and memorable",
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 847,
+      "tokens_out": 19,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I vote Escape Room since it keeps Saturday evening free to relax.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "C",
+            "span": {
+              "text": "I vote Escape Room since it keeps Saturday evening free to relax.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 23,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "I commit to Bike Ride because 12 euros is way easier on the wallet.",
+      "phase": "voting",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible final vote for the option you actually choose now; this formal vote may replace an earlier discussion commitment",
+        "route_source": "vote_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm choosing",
+          "I vote for"
+        ],
+        "avoid_reasons": [
+          "since it keeps Saturday evening free to relax",
+          "because it’s interactive and fits our budget"
+        ],
+        "allow_vote_change": false,
+        "required_vote": "B",
+        "old_preference": null,
+        "allowed_reason": "the listed concern remains: less flexible once booked",
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 903,
+      "tokens_out": 22,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I commit to Bike Ride because 12 euros is way easier on the wallet.",
+        "mentions": [
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bike Ride",
+              "start": 12
+            },
+            "order": 0,
+            "alias_form": "Bike Ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "B",
+            "span": {
+              "text": "I commit to Bike Ride because 12 euros is way easier on the wallet.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 3,
+      "assigned_max_words": 6
+    },
+    {
+      "index": 24,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Jonas, could you share your main concern and if you might shift one reason to help the group decide?",
+      "phase": "compromise_repair",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    },
+    {
+      "index": 25,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "The Escape Room’s 2-hour lock-in makes it less flexible for us.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "answer",
+        "reason": "state your single main concern about Escape Room, then say whether you might reasonably move for the group and why; do not cast the final vote yet",
+        "route_source": "repair_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": false,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": true,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 719,
+      "tokens_out": 22,
+      "validation_issues": [
+        "ANSWER_DOES_NOT_ADDRESS_QUESTION"
+      ],
+      "repaired": false,
+      "repair_trigger_codes": [
+        "ANSWER_DOES_NOT_ADDRESS_QUESTION"
+      ],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Escape Room’s 2-hour lock-in makes it less flexible for us.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "comment"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [
+          {
+            "code": "ANSWER_DOES_NOT_ADDRESS_QUESTION",
+            "explanation": "",
+            "span": "",
+            "option_id": null,
+            "blocking": false
+          }
+        ],
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 4,
+      "assigned_max_words": 8
+    },
+    {
+      "index": 26,
+      "speaker_id": "p1",
+      "speaker_name": "Mira",
+      "text": "The Escape Room's fixed 2-hour slot is true, but at 32 euros, it fits our budget and keeps the afternoon free for rest.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p1",
+        "act": "answer",
+        "reason": "answer the public reservation about Escape Room honestly from your own perspective: acknowledge a valid limitation, then explain only what the listed facts support; do not pressure the other person",
+        "route_source": "repair_protocol",
+        "addressee_id": "p2",
+        "option_focus": [
+          "C"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": 25,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [],
+        "avoid_reasons": [],
+        "allow_vote_change": false,
+        "required_vote": null,
+        "old_preference": null,
+        "allowed_reason": null,
+        "continuation": false,
+        "contribution_key": "answer:reservation:25"
+      },
+      "tokens_in": 760,
+      "tokens_out": 36,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "The Escape Room's fixed 2-hour slot is true, but at 32 euros, it fits our budget and keeps the afternoon free for rest.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 4
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [],
+        "questions": [],
+        "answers": [
+          {
+            "completeness": "full",
+            "span": {
+              "text": "The Escape Room's fixed 2-hour slot is true, but at 32 euros, it fits our budget and keeps the afternoon free for rest.",
+              "start": 0
+            },
+            "addresses_target": true
+          }
+        ],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [],
+        "switches": [],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "answer"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 6,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 27,
+      "speaker_id": "p2",
+      "speaker_name": "Jonas",
+      "text": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+      "phase": "compromise_repair",
+      "intent": {
+        "speaker_id": "p2",
+        "act": "vote",
+        "reason": "cast a clear visible final vote; this is a genuine compromise switch, so make the change of mind visible and give your grounded reason",
+        "route_source": "repair_protocol",
+        "addressee_id": null,
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "length_hint": "short",
+        "respond_to_turn": null,
+        "thread_id": null,
+        "suppress_name_prefix": false,
+        "suppress_option_opening": true,
+        "suppress_i_opening": false,
+        "suppress_we_opening": false,
+        "suppress_tail_question": false,
+        "vary_opening": false,
+        "avoid_pattern": null,
+        "avoid_phrases": [
+          "I'm committing to"
+        ],
+        "avoid_reasons": [],
+        "allow_vote_change": true,
+        "required_vote": "C",
+        "old_preference": "B",
+        "allowed_reason": "interactive and memorable",
+        "continuation": false,
+        "contribution_key": null
+      },
+      "tokens_in": 925,
+      "tokens_out": 23,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": {
+        "utterance": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+        "mentions": [
+          {
+            "option_id": "C",
+            "span": {
+              "text": "Escape Room",
+              "start": 7
+            },
+            "order": 0,
+            "alias_form": "Escape Room",
+            "resolution": "explicit"
+          },
+          {
+            "option_id": "B",
+            "span": {
+              "text": "Bike Ride",
+              "start": 30
+            },
+            "order": 1,
+            "alias_form": "Bike Ride",
+            "resolution": "explicit"
+          }
+        ],
+        "supports": [],
+        "concerns": [],
+        "comparisons": [
+          {
+            "option_ids": [
+              "C",
+              "B"
+            ],
+            "span": {
+              "text": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+              "start": 0
+            },
+            "favored": null,
+            "dimension": null
+          }
+        ],
+        "questions": [],
+        "answers": [],
+        "softenings": [],
+        "proposals": [],
+        "commitments": [
+          {
+            "kind": "vote",
+            "option_id": "C",
+            "span": {
+              "text": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+              "start": 0
+            }
+          }
+        ],
+        "switches": [
+          {
+            "target": "C",
+            "span": {
+              "text": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+              "start": 0
+            },
+            "source": "B",
+            "reason_span": {
+              "text": "I vote Escape Room instead of Bike Ride because it’s way more interactive and memorable.",
+              "start": 0
+            }
+          }
+        ],
+        "blockers": [],
+        "ambiguous_references": [],
+        "thread_relevant": null,
+        "primary_act": "vote"
+      },
+      "assessment": {
+        "action": "accept",
+        "issues": [],
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "notes": "critical deterministic validation"
+      },
+      "assigned_min_words": 5,
+      "assigned_max_words": 10
+    },
+    {
+      "index": 28,
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We've all agreed on Escape Room, so that's the group decision.",
+      "phase": "closing",
+      "intent": null,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "validation_issues": [],
+      "repaired": false,
+      "repair_trigger_codes": [],
+      "state_mutation_blocked": false,
+      "used_fallback": false,
+      "fallback_family": "",
+      "evidence": null,
+      "assessment": null,
+      "assigned_min_words": 0,
+      "assigned_max_words": 0
+    }
+  ],
+  "outcome": {
+    "status": "successful",
+    "final_option": "C",
+    "reason": "All participants visibly committed to the same option.",
+    "turns": 22,
+    "metadata": {
+      "visible_votes": {
+        "p1": "C",
+        "p3": "C",
+        "p2": "C"
+      },
+      "latent_preferences": {
+        "p1": "C",
+        "p2": "C",
+        "p3": "C"
+      },
+      "stance_ranks": {
+        "p1": {
+          "A": 4,
+          "B": 2,
+          "C": 5,
+          "D": 3
+        },
+        "p2": {
+          "A": 3,
+          "B": 4,
+          "C": 5,
+          "D": 3
+        },
+        "p3": {
+          "A": 2,
+          "B": 3,
+          "C": 5,
+          "D": 3
+        }
+      },
+      "phase_history": [
+        "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.55",
+        "turn 4: discussion — all participants gave an opening view",
+        "turn 18: narrowing — stable visible top pair persisted",
+        "turn 19: voting — narrowing complete; collecting formal votes",
+        "turn 23: compromise_repair — running majority_holdout repair",
+        "turn 27: closing — successful: all formal votes converged"
+      ],
+      "candidate_option": "C",
+      "min_discussion_turns": 15,
+      "force_narrow_turns": 20,
+      "hard_max_turns": 23
+    }
+  },
+  "phase_history": [
+    "pacing: min=15, force=20, hard=23, distinct_initial_prefs=3, avg_flexibility=0.55",
+    "turn 4: discussion — all participants gave an opening view",
+    "turn 18: narrowing — stable visible top pair persisted",
+    "turn 19: voting — narrowing complete; collecting formal votes",
+    "turn 23: compromise_repair — running majority_holdout repair",
+    "turn 27: closing — successful: all formal votes converged",
+    "turn 28: closing — closed as successful"
+  ],
+  "controller_trace": [
+    {
+      "type": "moderator_turn",
+      "turn_index": 1,
+      "phase": "opening"
+    },
+    {
+      "type": "turn",
+      "turn_index": 2,
+      "pre": {
+        "authority_source": "opening_protocol",
+        "bids": [
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "opening",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "opening protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening_protocol",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "UNLISTED_NUMERIC_DETAIL",
+          "OPENING_POSITION_NOT_REALIZED"
+        ],
+        "fallback_used": true,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "opening_lean",
+        "tokens_in": 1072,
+        "tokens_out": 108,
+        "assigned_word_bounds": [
+          25,
+          38
+        ],
+        "candidate_texts": {
+          "initial": "Hey, I’m leaning toward the Escape Room because it’s really interactive and memorable, which feels worth the 32 euros and 20-minute tram ride. My only hesitation is the less flexible booking—it’s a bit of a commitment for Saturday.",
+          "repairs": [
+            "Hey, I’m leaning toward the Escape Room because it’s really interactive and memorable, which justifies the 32 euros and the tram ride. My only hesitation is that once booked, it’s less flexible for Saturday plans."
+          ],
+          "fallback": "Escape Room is where I'm leaning — interactive and memorable.",
+          "accepted": "Escape Room is where I'm leaning — interactive and memorable."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "deterministic fallback: evidence known from construction",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 3,
+      "pre": {
+        "authority_source": "opening_protocol",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "opening",
+            "option_focus": [
+              "A"
+            ],
+            "trigger": "opening protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening_protocol",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "A",
+          "B",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "OPENING_POSITION_NOT_REALIZED"
+        ],
+        "fallback_used": true,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "opening_lean",
+        "tokens_in": 1097,
+        "tokens_out": 92,
+        "assigned_word_bounds": [
+          18,
+          28
+        ],
+        "candidate_texts": {
+          "initial": "I'm leaning towards the Museum and Cafe Day since it costs only 24 euros and is low effort, which helps everyone relax afterward. Still, I'm a bit unsure if it might feel too quiet for some.",
+          "repairs": [
+            "I'm leaning towards the Museum and Cafe Day because it's low effort and easy to adjust, which should help everyone stay comfortable. Still, I wonder if it might feel too quiet for some."
+          ],
+          "fallback": "Museum is where I'm leaning — low effort and easy to adjust.",
+          "accepted": "Museum is where I'm leaning — low effort and easy to adjust."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "deterministic fallback: evidence known from construction",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 4,
+      "pre": {
+        "authority_source": "opening_protocol",
+        "bids": [
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "opening",
+            "option_focus": [
+              "B"
+            ],
+            "trigger": "opening protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "opening",
+        "route_source": "opening_protocol",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "opening",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "B",
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "OPENING_POSITION_NOT_REALIZED"
+        ],
+        "fallback_used": true,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "opening_lean",
+        "tokens_in": 1127,
+        "tokens_out": 96,
+        "assigned_word_bounds": [
+          18,
+          28
+        ],
+        "candidate_texts": {
+          "initial": "Hey, I’m leaning towards the bike ride since it’s only 12 euros and keeps things active without breaking the budget. But I’m a bit worried it might be too tiring for someone who wants to chill more.",
+          "repairs": [
+            "Hey, I’m leaning towards the Lake Bike Ride because it’s only 12 euros and keeps us active. But it might be too much for anyone feeling tired since it lasts six hours."
+          ],
+          "fallback": "Bike Ride is where I'm leaning — active and inexpensive.",
+          "accepted": "Bike Ride is where I'm leaning — active and inexpensive."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "deterministic fallback: evidence known from construction",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (0, 0, 0, 0) -> (1, 1, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 4,
+      "from_phase": "opening",
+      "to_phase": "discussion",
+      "reason": "all participants gave an opening view"
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": false,
+            "willingness": 0.307,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.0,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.553,
+            "proposed_act": "concern",
+            "option_focus": [
+              "A"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.553,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "concern",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "A"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "concern"
+        ],
+        "evidence_bindings": {
+          "concern": [
+            "A"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 727,
+        "tokens_out": 40,
+        "assigned_word_bounds": [
+          12,
+          19
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:A: (1, 1, 0, 0) -> (2, 1, 1, 0)",
+          "rank:p3:A: 3 -> 2",
+          "thread:t001: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 5,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": false,
+            "willingness": 0.859,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "own option challenged",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.232,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.258,
+            "proposed_act": "compromise",
+            "option_focus": [
+              "B",
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.09,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "compromise",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": false,
+        "realized_act": "support",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "COMPROMISE_NOT_REALIZED"
+        ],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "COMPROMISE_NOT_REALIZED"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": true,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "drop",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1282,
+        "tokens_out": 71,
+        "assigned_word_bounds": [
+          12,
+          19
+        ],
+        "candidate_texts": {
+          "initial": "I could get behind the bike ride if we keep the pace easy—6 hours active but not too intense, so we all stay energized.",
+          "repairs": [
+            "I’m fine with the bike ride if we keep it easy since it lasts six hours. That way, no one gets too tired and we stay energized."
+          ],
+          "fallback": "",
+          "final_rejected": "I could get behind the bike ride if we keep the pace easy—6 hours active but not too intense, so we all stay energized."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": []
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 6,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.859,
+            "proposed_act": "concern",
+            "option_focus": [
+              "B"
+            ],
+            "trigger": "own option challenged",
+            "floor_score": 0.859,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.232,
+            "proposed_act": "compare",
+            "option_focus": [
+              "B",
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.185,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.258,
+            "proposed_act": "concern",
+            "option_focus": [
+              "A"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 3,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "concern",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B"
+        ],
+        "respond_to_turn": 5,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "concern",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "concern"
+        ],
+        "evidence_bindings": {
+          "concern": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 727,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          8,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (1, 1, 0, 0) -> (2, 1, 1, 0)",
+          "rank:p1:B: 3 -> 2",
+          "thread:t002: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 7,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.379,
+            "proposed_act": "compromise",
+            "option_focus": [
+              "C",
+              "A"
+            ],
+            "trigger": "own option challenged",
+            "floor_score": 0.133,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.737,
+            "proposed_act": "ask",
+            "option_focus": [
+              "C",
+              "A"
+            ],
+            "trigger": "own option challenged",
+            "floor_score": 0.737,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.748,
+            "proposed_act": "concern",
+            "option_focus": [
+              "A"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 3,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "ask",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "A"
+        ],
+        "respond_to_turn": 6,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 2,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 752,
+        "tokens_out": 27,
+        "assigned_word_bounds": [
+          5,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (1, 1, 0, 0) -> (2, 1, 0, 0)",
+          "thread:t003: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 8,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.874,
+            "proposed_act": "concern",
+            "option_focus": [
+              "B"
+            ],
+            "trigger": "own option challenged",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.0,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "own option challenged",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "answer",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 1.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": "t003",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 3,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 7,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 2,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 712,
+        "tokens_out": 32,
+        "assigned_word_bounds": [
+          10,
+          16
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (2, 1, 0, 0) -> (3, 1, 0, 0)",
+          "thread:t003: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 9,
+      "phase": "discussion"
+    },
+    {
+      "type": "turn",
+      "turn_index": 10,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.599,
+            "proposed_act": "compromise",
+            "option_focus": [
+              "C",
+              "A"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.599,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.471,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "own option challenged",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.319,
+            "proposed_act": "concern",
+            "option_focus": [
+              "A"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 3,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "compromise",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "A"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 2,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compromise",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "proposal",
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ],
+          "proposal": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 745,
+        "tokens_out": 23,
+        "assigned_word_bounds": [
+          8,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (3, 1, 0, 0) -> (4, 2, 0, 0)",
+          "rank:p1:C: 3 -> 4",
+          "thread:t001: 'hot' -> 'stale'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": false,
+            "willingness": 0.085,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.232,
+            "proposed_act": "compromise",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.232,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.665,
+            "proposed_act": "compare",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.532,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 10,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 1,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 836,
+        "tokens_out": 41,
+        "assigned_word_bounds": [
+          12,
+          19
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (2, 1, 1, 0) -> (3, 2, 1, 0)",
+          "coverage:C: (4, 2, 0, 0) -> (5, 3, 0, 0)",
+          "thread:t002: 'hot' -> 'cooling'",
+          "thread:t003: 'cooling' -> 'resolved'",
+          "thread:t005: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 11,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.827,
+            "proposed_act": "compare",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.662,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.41,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": false,
+            "willingness": 0.068,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": "t005",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 11,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": false,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "MISSING_REQUIRED_OPTION_FOCUS",
+          "COMPARE_NOT_REALIZED"
+        ],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "MISSING_REQUIRED_OPTION_FOCUS",
+          "COMPARE_NOT_REALIZED"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": true,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "drop",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1358,
+        "tokens_out": 56,
+        "assigned_word_bounds": [
+          8,
+          15
+        ],
+        "candidate_texts": {
+          "initial": "Six hours on the bike ride eats most of our Saturday and leaves little rest time.",
+          "repairs": [
+            "Escape Room (C) costs more and is less flexible but takes 2 hours, unlike the 6-hour bike ride."
+          ],
+          "fallback": "",
+          "final_rejected": "Six hours on the bike ride eats most of our Saturday and leaves little rest time."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": []
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 12,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.827,
+            "proposed_act": "concern",
+            "option_focus": [
+              "B"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.41,
+            "proposed_act": "ask",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.41,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": false,
+            "willingness": 0.068,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": "t005",
+        "routed_thread_type": "comparison",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "ask",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 11,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": "p3",
+        "question_target_id": "p3",
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 806,
+        "tokens_out": 30,
+        "assigned_word_bounds": [
+          5,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (3, 2, 1, 0) -> (4, 2, 1, 0)",
+          "coverage:C: (5, 3, 0, 0) -> (6, 3, 0, 0)",
+          "thread:t005: 'hot' -> 'cooling'",
+          "thread:t006: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "authority_source": "direct_obligation",
+        "bids": [
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "answer",
+            "option_focus": [
+              "B",
+              "C"
+            ],
+            "trigger": "direct question obligation",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": "t006",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 2,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "direct_obligation",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": 12,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": "t006",
+        "required_respondent_id": "p3",
+        "open_question_count": 2,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer",
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 800,
+        "tokens_out": 24,
+        "assigned_word_bounds": [
+          5,
+          8
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (6, 3, 0, 0) -> (7, 4, 0, 0)",
+          "thread:t004: 'hot' -> 'stale'",
+          "thread:t006: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 13,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.891,
+            "proposed_act": "concern",
+            "option_focus": [
+              "B"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.194,
+            "proposed_act": "concern",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.155,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": false,
+            "willingness": 0.059,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "concern",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": false,
+        "realized_act": "ask",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "CONCERN_NOT_REALIZED"
+        ],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "CONCERN_NOT_REALIZED"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": true,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "drop",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1219,
+        "tokens_out": 41,
+        "assigned_word_bounds": [
+          6,
+          12
+        ],
+        "candidate_texts": {
+          "initial": "The Escape Room booking is less flexible—do we know cancellation rules?",
+          "repairs": [
+            "The Escape Room booking is less flexible—do we know the cancellation terms?"
+          ],
+          "fallback": "",
+          "final_rejected": "The Escape Room booking is less flexible—do we know cancellation rules?"
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": []
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 14,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.891,
+            "proposed_act": "compare",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.891,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.194,
+            "proposed_act": "comment",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.155,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": false,
+            "willingness": 0.059,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "compare",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 13,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "compare",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B",
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "comparison"
+        ],
+        "evidence_bindings": {
+          "comparison": [
+            "B",
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 855,
+        "tokens_out": 29,
+        "assigned_word_bounds": [
+          8,
+          15
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (4, 2, 1, 0) -> (5, 3, 1, 0)",
+          "coverage:C: (7, 4, 0, 0) -> (8, 5, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 15,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.277,
+            "proposed_act": "compromise",
+            "option_focus": [
+              "C",
+              "A"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.372,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.637,
+            "proposed_act": "support",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.509,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "support",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 14,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 3
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "support",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 1,
+        "validation_repair_trigger_codes": [
+          "SUPPORT_NOT_REALIZED"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 1304,
+        "tokens_out": 74,
+        "assigned_word_bounds": [
+          12,
+          19
+        ],
+        "candidate_texts": {
+          "initial": "I agree with you—Escape Room’s 2-hour length means we get a focused, energetic activity without feeling drained. Plus, it’s easier to coordinate with everyone’s schedules since it’s a fixed time.",
+          "repairs": [
+            "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward."
+          ],
+          "fallback": "",
+          "accepted": "The Escape Room’s 2-hour duration keeps the activity engaging and leaves more time to relax afterward."
+        },
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (8, 5, 0, 0) -> (9, 6, 0, 0)",
+          "thread:t006: 'cooling' -> 'resolved'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 16,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 0.858,
+            "proposed_act": "ask",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.686,
+            "rejected_reason": "",
+            "won": true
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 0.259,
+            "proposed_act": "ask",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "repeats an accepted own contribution",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": false,
+            "willingness": 0.0,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          }
+        ],
+        "eligible_bid_count": 2,
+        "invalid_bid_reasons": [
+          "repeats an accepted own contribution"
+        ],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "ask",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 15,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 4
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": "p3",
+        "question_target_id": "p3",
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 813,
+        "tokens_out": 27,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (9, 6, 0, 0) -> (10, 6, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 17,
+      "pre": {
+        "authority_source": "self_selection",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": false,
+            "willingness": 0.247,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "disliked option gaining support",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p2",
+            "wants_to_speak": false,
+            "willingness": 0.28,
+            "proposed_act": null,
+            "option_focus": [],
+            "trigger": "engagement",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": false
+          },
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 0.529,
+            "proposed_act": "ask",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "engagement",
+            "floor_score": 0.423,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "self_selection",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "ask",
+        "selected_addressee_id": "p1",
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": 16,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 6
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "ask",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": "p1",
+        "question_target_id": "p1",
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "question"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 784,
+        "tokens_out": 25,
+        "assigned_word_bounds": [
+          10,
+          16
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (10, 6, 0, 0) -> (11, 6, 0, 0)",
+          "thread:t007: None -> 'hot'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 18,
+      "pre": {
+        "authority_source": "direct_obligation",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "answer",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "direct question obligation",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": "t007",
+        "routed_thread_type": "question",
+        "routed_thread_status": "hot",
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "discussion",
+        "route_source": "direct_obligation",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "answer",
+        "selected_addressee_id": "p3",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 17,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": null,
+        "required_answer_thread_id": "t007",
+        "required_respondent_id": "p1",
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer",
+          "support"
+        ],
+        "evidence_bindings": {
+          "support": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 766,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          7,
+          13
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (11, 6, 0, 0) -> (12, 7, 0, 0)",
+          "thread:t002: 'cooling' -> 'stale'",
+          "thread:t005: 'cooling' -> 'stale'",
+          "thread:t007: 'hot' -> 'cooling'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 18,
+      "from_phase": "discussion",
+      "to_phase": "narrowing",
+      "reason": "stable visible top pair persisted"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 19,
+      "phase": "narrowing"
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 19,
+      "from_phase": "narrowing",
+      "to_phase": "voting",
+      "reason": "narrowing complete; collecting formal votes"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 20,
+      "phase": "voting"
+    },
+    {
+      "type": "turn",
+      "turn_index": 21,
+      "pre": {
+        "authority_source": "vote_protocol",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "vote",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "vote protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 1,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote_protocol",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 1,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "C",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 814,
+        "tokens_out": 19,
+        "assigned_word_bounds": [
+          4,
+          8
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (12, 7, 0, 0) -> (13, 8, 0, 0)",
+          "lean:p1: 'A' -> 'C'",
+          "rank:p1:A: 5 -> 4",
+          "rank:p1:C: 4 -> 5",
+          "thread:t008: 'hot' -> 'cooling'",
+          "vote:p1: None -> 'C'",
+          "vote_stance:p1: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 22,
+      "pre": {
+        "authority_source": "vote_protocol",
+        "bids": [
+          {
+            "participant_id": "p3",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "vote",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "vote protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote_protocol",
+        "speaker_id": "p3",
+        "speaker_name": "Lea",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "C",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 847,
+        "tokens_out": 19,
+        "assigned_word_bounds": [
+          6,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (13, 8, 0, 0) -> (14, 9, 0, 0)",
+          "thread:t007: 'cooling' -> 'resolved'",
+          "vote:p3: None -> 'C'",
+          "vote_stance:p3: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 23,
+      "pre": {
+        "authority_source": "vote_protocol",
+        "bids": [
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "vote",
+            "option_focus": [
+              "B",
+              "C"
+            ],
+            "trigger": "vote protocol",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": null,
+        "phase": "voting",
+        "route_source": "vote_protocol",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "B",
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "B",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "B"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 903,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          3,
+          6
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (5, 3, 1, 0) -> (6, 4, 1, 0)",
+          "thread:t008: 'cooling' -> 'resolved'",
+          "vote:p2: None -> 'B'",
+          "vote_stance:p2: None -> 'vote'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 23,
+      "from_phase": "voting",
+      "to_phase": "compromise_repair",
+      "reason": "running majority_holdout repair"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 24,
+      "phase": "compromise_repair"
+    },
+    {
+      "type": "turn",
+      "turn_index": 25,
+      "pre": {
+        "authority_source": "repair_protocol",
+        "bids": [
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "answer",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "majority_concern",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "majority_holdout",
+        "phase": "compromise_repair",
+        "route_source": "repair_protocol",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "answer",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 0
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "comment",
+        "act_mismatch": true,
+        "validation_issue_codes": [
+          "ANSWER_DOES_NOT_ADDRESS_QUESTION"
+        ],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [
+          "ANSWER_DOES_NOT_ADDRESS_QUESTION"
+        ],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": false,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 719,
+        "tokens_out": 22,
+        "assigned_word_bounds": [
+          4,
+          8
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (14, 9, 0, 0) -> (15, 9, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 26,
+      "pre": {
+        "authority_source": "repair_protocol",
+        "bids": [
+          {
+            "participant_id": "p1",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "answer",
+            "option_focus": [
+              "C"
+            ],
+            "trigger": "reservation_response",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "majority_holdout",
+        "phase": "compromise_repair",
+        "route_source": "repair_protocol",
+        "speaker_id": "p1",
+        "speaker_name": "Mira",
+        "selected_act": "answer",
+        "selected_addressee_id": "p2",
+        "selected_option_focus": [
+          "C"
+        ],
+        "respond_to_turn": 25,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 1
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "answer",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": null,
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "answer"
+        ],
+        "evidence_bindings": {},
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 760,
+        "tokens_out": 36,
+        "assigned_word_bounds": [
+          6,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:C: (15, 9, 0, 0) -> (16, 9, 0, 0)"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "turn",
+      "turn_index": 27,
+      "pre": {
+        "authority_source": "repair_protocol",
+        "bids": [
+          {
+            "participant_id": "p2",
+            "wants_to_speak": true,
+            "willingness": 1.0,
+            "proposed_act": "vote",
+            "option_focus": [
+              "C",
+              "B"
+            ],
+            "trigger": "repair vote",
+            "floor_score": 0.0,
+            "rejected_reason": "",
+            "won": true
+          }
+        ],
+        "eligible_bid_count": 1,
+        "invalid_bid_reasons": [],
+        "routed_thread_id": null,
+        "routed_thread_type": null,
+        "routed_thread_status": null,
+        "hot_thread_count": 0,
+        "active_repair_reason": "majority_holdout",
+        "phase": "compromise_repair",
+        "route_source": "repair_protocol",
+        "speaker_id": "p2",
+        "speaker_name": "Jonas",
+        "selected_act": "vote",
+        "selected_addressee_id": null,
+        "selected_option_focus": [
+          "C",
+          "B"
+        ],
+        "respond_to_turn": null,
+        "coverage_gaps": [
+          "D"
+        ],
+        "candidate_option": "C",
+        "required_answer_thread_id": null,
+        "required_respondent_id": null,
+        "open_question_count": 0,
+        "unaddressed_concern_count": 0,
+        "no_progress_count": 2
+      },
+      "result": {
+        "appended": true,
+        "realized_act": "vote",
+        "act_mismatch": false,
+        "validation_issue_codes": [],
+        "validation_repair_attempts": 0,
+        "validation_repair_trigger_codes": [],
+        "fallback_used": false,
+        "state_mutation_blocked": false,
+        "final_option_refs": [
+          "C",
+          "B"
+        ],
+        "final_addressee_id": null,
+        "question_target_id": null,
+        "formal_vote_realized": "C",
+        "accepts_realized": [],
+        "coverage_realized": false,
+        "assessment_action": "accept",
+        "intended_act_realized": true,
+        "intended_focus_realized": true,
+        "assessment_notes": "critical deterministic validation",
+        "evidence_kinds": [
+          "commitment",
+          "comparison",
+          "switch"
+        ],
+        "evidence_bindings": {
+          "commitment": [
+            "C"
+          ],
+          "comparison": [
+            "B",
+            "C"
+          ],
+          "switch": [
+            "C"
+          ]
+        },
+        "ambiguous_references": [],
+        "fallback_family": "",
+        "tokens_in": 925,
+        "tokens_out": 23,
+        "assigned_word_bounds": [
+          5,
+          10
+        ],
+        "candidate_texts": {},
+        "validator_llm_used": false,
+        "validation_fast_path_reason": "critical deterministic runtime interpretation",
+        "validator_categories": [],
+        "validator_tokens_in": 0,
+        "validator_tokens_out": 0,
+        "validator_api_retries": 0,
+        "validator_retry_failures": [],
+        "state_changes": [
+          "coverage:B: (6, 4, 1, 0) -> (7, 5, 1, 0)",
+          "coverage:C: (16, 9, 0, 0) -> (17, 10, 0, 0)",
+          "lean:p2: 'B' -> 'C'",
+          "rank:p2:B: 5 -> 4",
+          "rank:p2:C: 3 -> 5",
+          "thread:t005: 'stale' -> 'hot'",
+          "vote:p2: 'B' -> 'C'"
+        ],
+        "state_changed": true
+      }
+    },
+    {
+      "type": "repair",
+      "turn_index": 27,
+      "repair_reason": "majority_holdout",
+      "candidate_or_pair": [
+        "C"
+      ],
+      "attempt_count": 1,
+      "status": "resolved"
+    },
+    {
+      "type": "phase_transition",
+      "turn_index": 27,
+      "from_phase": "compromise_repair",
+      "to_phase": "closing",
+      "reason": "successful: all formal votes converged"
+    },
+    {
+      "type": "moderator_turn",
+      "turn_index": 28,
+      "phase": "closing"
+    }
+  ],
+  "metrics": {
+    "metric_schema_version": "3.1",
+    "floor_autonomy": {
+      "authority_source_distribution": {
+        "opening_protocol": 3,
+        "self_selection": 11,
+        "direct_obligation": 2,
+        "vote_protocol": 3,
+        "repair_protocol": 3
+      },
+      "self_selected_turns": 11,
+      "protocol_forced_turns": 9,
+      "direct_answer_turns": 2,
+      "self_selected_ratio": 0.5,
+      "bid_rounds": 18,
+      "no_bid_rounds": 4,
+      "true_no_claim_rounds": 4,
+      "generation_failure_rounds": 3,
+      "valid_bid_attempts": 25,
+      "final_dropped_intents": 3,
+      "protocol_obligation_failures": 0,
+      "repeated_bid_rejections": 12,
+      "discussion_conditional_acceptances": 1,
+      "accepted_openings": 3,
+      "expected_openings": 3,
+      "accepted_formal_votes": 4,
+      "expected_formal_votes": 3,
+      "claim_rate_by_persona": {
+        "Mira": 0.8,
+        "Jonas": 0.667,
+        "Lea": 0.786
+      },
+      "avg_willingness_by_persona": {
+        "Mira": 0.68,
+        "Jonas": 0.479,
+        "Lea": 0.56
+      },
+      "floor_wins_by_persona": {
+        "Mira": 4,
+        "Jonas": 2,
+        "Lea": 5
+      },
+      "submitted_act_distribution": {
+        "opening": 3,
+        "concern": 7,
+        "compare": 3,
+        "compromise": 4,
+        "ask": 5,
+        "answer": 5,
+        "comment": 1,
+        "support": 1,
+        "vote": 4
+      },
+      "intended_vs_realized_act_match_rate": 1.0,
+      "realization_attempts_by_intended_act": {
+        "opening": 3,
+        "concern": 3,
+        "compromise": 2,
+        "ask": 4,
+        "answer": 5,
+        "compare": 3,
+        "support": 1,
+        "vote": 4
+      },
+      "accepted_realizations_by_intended_act": {
+        "opening": 3,
+        "concern": 2,
+        "ask": 4,
+        "answer": 5,
+        "compromise": 1,
+        "compare": 2,
+        "support": 1,
+        "vote": 4
+      },
+      "realization_rate_by_intended_act": {
+        "opening": 1.0,
+        "concern": 0.667,
+        "compromise": 0.5,
+        "ask": 1.0,
+        "answer": 0.8,
+        "compare": 0.667,
+        "support": 1.0,
+        "vote": 1.0
+      },
+      "acceptance_rate_by_intended_act": {
+        "opening": 1.0,
+        "concern": 0.667,
+        "compromise": 0.5,
+        "ask": 1.0,
+        "answer": 1.0,
+        "compare": 0.667,
+        "support": 1.0,
+        "vote": 1.0
+      },
+      "final_drops_by_intended_act": {
+        "compromise": 1,
+        "compare": 1,
+        "concern": 1
+      },
+      "invalid_bid_count_by_reason": {
+        "repeats an accepted own contribution": 7
+      },
+      "next_best_bid_substitutions": 0,
+      "speaker_chain_max": 2,
+      "engagement_vs_floor_win_correlation": 0.941
+    },
+    "run_structure": {
+      "participant_turn_count": 22,
+      "participant_turn_count_by_persona": {
+        "Mira": 8,
+        "Jonas": 6,
+        "Lea": 8
+      },
+      "moderator_turns": 6,
+      "moderator_ratio": 0.214,
+      "avg_words_per_participant_turn": 15.455,
+      "avg_words_by_persona": {
+        "Mira": 14.625,
+        "Jonas": 13.0,
+        "Lea": 18.125
+      },
+      "question_density": 0.182
+    },
+    "participation": {
+      "expected_engagement": {
+        "Mira": 0.55,
+        "Jonas": 0.35,
+        "Lea": 0.9
+      },
+      "expected_turn_share": {
+        "Mira": 0.315,
+        "Jonas": 0.241,
+        "Lea": 0.444
+      },
+      "realized_turn_count": {
+        "Mira": 8,
+        "Jonas": 6,
+        "Lea": 8
+      },
+      "realized_turn_share": {
+        "Mira": 0.364,
+        "Jonas": 0.273,
+        "Lea": 0.364
+      },
+      "participation_gini": 0.061,
+      "engagement_behavior_correlation": 0.778
+    },
+    "traits": {
+      "expected_verbosity": {
+        "Mira": 0.55,
+        "Jonas": 0.35,
+        "Lea": 0.8
+      },
+      "assigned_avg_word_budget": {
+        "Mira": 11.438,
+        "Jonas": 9.333,
+        "Lea": 14.812
+      },
+      "realized_avg_words_per_turn": {
+        "Mira": 14.625,
+        "Jonas": 13.0,
+        "Lea": 18.125
+      },
+      "word_budget_adherence": {
+        "Mira": 0.625,
+        "Jonas": 0.167,
+        "Lea": 0.5
+      },
+      "verbosity_budget_correlation": 0.998,
+      "verbosity_behavior_correlation": 0.997,
+      "expected_switch_resistance": {
+        "Mira": 0.4,
+        "Jonas": 0.3,
+        "Lea": 0.5
+      },
+      "switch_opportunities": {
+        "Mira": 0,
+        "Jonas": 1,
+        "Lea": 0
+      },
+      "visible_switches_by_persona": {
+        "Mira": 0,
+        "Jonas": 1,
+        "Lea": 0
+      }
+    },
+    "interaction": {
+      "direct_address_turn_count": 3,
+      "direct_address_turn_rate": 0.136,
+      "unique_directed_participant_pairs": 3,
+      "pairwise_interaction_density": 0.5,
+      "direct_question_count": 2,
+      "direct_question_response_success": 1.0,
+      "group_question_count": 3,
+      "group_question_response_success": 0.667,
+      "participant_reference_turn_count": 3,
+      "participant_reference_turn_rate": 0.136,
+      "unique_reference_pairs": 3,
+      "self_selected_act_distribution": {
+        "concern": 2,
+        "ask": 4,
+        "answer": 1,
+        "compromise": 1,
+        "compare": 2,
+        "support": 1
+      },
+      "discussion_phase_compromise_count": 1,
+      "discussion_phase_stance_movement_count": 0,
+      "repair_switch_attempts": 1,
+      "repair_successful_switches": 1,
+      "repair_holdouts": 0,
+      "question_threads": 5,
+      "concern_threads": 2,
+      "thread_count_by_status": {
+        "hot": 1,
+        "cooling": 0,
+        "resolved": 4,
+        "stale": 3
+      },
+      "question_completion_rate": 0.8,
+      "concern_response_rate": 0.5,
+      "repetition_score": 0.163
+    },
+    "decision_behavior": {
+      "visible_votes": {
+        "p1": "C",
+        "p3": "C",
+        "p2": "C"
+      },
+      "outcome_status": "successful",
+      "final_option": "C",
+      "switch_event_count": 1,
+      "discussion_lean_shifts": 0,
+      "runtime_preferred_by_rank": {
+        "Mira": "C",
+        "Jonas": "C",
+        "Lea": "C"
+      },
+      "option_coverage": {
+        "A": {
+          "mentions": 2,
+          "reasons": 1,
+          "objections": 1,
+          "acceptances": 0
+        },
+        "B": {
+          "mentions": 7,
+          "reasons": 5,
+          "objections": 1,
+          "acceptances": 0
+        },
+        "C": {
+          "mentions": 17,
+          "reasons": 10,
+          "objections": 0,
+          "acceptances": 0
+        },
+        "D": {
+          "mentions": 0,
+          "reasons": 0,
+          "objections": 0,
+          "acceptances": 0
+        }
+      },
+      "compromise_attempt_count": 0,
+      "compromise_success_count": 0,
+      "compromise_success_rate": null,
+      "vote_state_consistency_failures": 0,
+      "active_blockers_at_close": {}
+    },
+    "validation_grounding": {
+      "repaired_turns": 4,
+      "repair_rate": 0.16,
+      "fallback_turns": 3,
+      "fallback_rate": 0.12,
+      "dropped_turns": 3,
+      "drop_rate": 0.12,
+      "critical_grounding_interventions": 1,
+      "runtime_validator_calls": 0
+    },
+    "token_usage": {
+      "setup": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_calls": 0
+      },
+      "participant_generation": {
+        "input_tokens": 19451,
+        "output_tokens": 767,
+        "api_calls": 25
+      },
+      "moderator_generation": {
+        "input_tokens": 1204,
+        "output_tokens": 75,
+        "api_calls": 4
+      },
+      "repair_generation": {
+        "input_tokens": 3299,
+        "output_tokens": 257,
+        "api_calls": 7
+      },
+      "runtime_validation": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_calls": 0
+      },
+      "total": {
+        "input_tokens": 23954,
+        "output_tokens": 1099,
+        "api_calls": 36
+      }
+    }
+  },
+  "tokens": {
+    "setup_tokens_in": 0,
+    "setup_tokens_out": 0,
+    "dialogue_tokens_in": 23954,
+    "dialogue_tokens_out": 1099,
+    "validator_tokens_in": 0,
+    "validator_tokens_out": 0,
+    "total_tokens_in": 23954,
+    "total_tokens_out": 1099
+  },
+  "token_usage_by_call_type": {
+    "utterance": {
+      "in": 19451,
+      "out": 767,
+      "calls": 25
+    },
+    "repair": {
+      "in": 3299,
+      "out": 257,
+      "calls": 7
+    },
+    "moderator": {
+      "in": 1204,
+      "out": 75,
+      "calls": 4
+    }
+  },
+  "validation_stats": {
+    "logical_checks": 0,
+    "fast_paths": 35,
+    "api_retries": 0,
+    "retry_failures": {}
+  }
+}
