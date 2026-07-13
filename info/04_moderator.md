@@ -1,6 +1,6 @@
 # 04 — Moderator behavior
 
-The moderator is optional visible scaffolding. The controller still owns the decision policy even when the moderator voice is disabled.
+The moderator is optional visible scaffolding. The framework still owns phase/protocol logic and the simulators still own their behavior even when the moderator voice is disabled.
 
 ## Configurable jobs
 
@@ -12,17 +12,15 @@ The moderator can perform:
 - final vote calls and vote-clarification prompts;
 - closing.
 
-Disabling moderator turns should not disable routing, narrowing, vote logic, or outcome computation. With `mid_discussion_nudges` off, an engaged participant owns the stall beat; with `final_vote_call` off, participants own the narrowing summary, split summary, and holdout probe.
+Disabling moderator turns does not disable open-floor bidding, narrowing, vote logic, repair, or outcome computation. With `mid_discussion_nudges` off, a public `stall`/`coverage` stimulus lets simulators self-select a useful contribution. With `final_vote_call` off, framework vote-count narration and narrowing summaries are omitted rather than attributed to a participant; any visible participant process turn must originate from a simulator bid or obligation.
 
 ## Low-/no-moderator mode
 
-When final vote call or closing is disabled, participants own the procedural move. This should sound like a group member, not like a hidden controller.
-
-If a participant voices a split summary, the first reservation response should not be that same participant answering their own prompt.
+In low-/no-moderator mode the framework may still change phases and schedule formal obligations, but it does not put procedural wording into a participant's mouth. Outcome closure may therefore have no visible closing line.
 
 ## Closure
 
-Unresolved outcomes get a short participant or moderator acknowledgement before closure. The final moderator closing line is deterministic and status-aware: it cannot describe a majority as unanimity or announce a winner for an unresolved result. This makes endings socially clear without changing the already computed outcome.
+When moderator closing is enabled, the final line is deterministic and status-aware: it cannot describe a majority as unanimity or announce a winner for an unresolved result. When disabled, closure is recorded in state/logs without a framework-authored participant acknowledgement.
 
 ## Style interaction
 

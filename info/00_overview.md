@@ -8,13 +8,22 @@ The target is not arbitrary chat. The target is an explainable simulator:
 topic/manual environment
   -> option board
   -> simulated users with hidden traits, age, speech_style, profile, and initial option ranks
-  -> explicit phases, option coverage, and local interaction threads
-  -> controller routes speaker / macro act / target / focus
-  -> LLM renders one utterance
+  -> explicit phases, option coverage, and local interaction threads (public stimuli)
+  -> each simulator decides whether to bid and, if so, one complete intended move
+  -> floor manager validates bids and selects a winner without rewriting it
+     (or the framework imposes a protocol obligation: opening, direct answer, vote)
+  -> LLM renders one utterance for the winning simulator intent
   -> deterministic critical interpretation and grounding checks
   -> observer updates visible state, option ranks, threads, and coverage
   -> consensus manager computes outcome from visible evidence
 ```
+
+Authority split (see `03_routing_and_turn_taking.md`): the simulator policy
+(`src/simulator.py`) owns participant behavior; the floor manager
+(`src/controller/floor.py`) owns turn-access arbitration; the LLM only realizes
+utterances; the observer owns visible-evidence state updates; the flow owns
+phases, protocol obligations, and termination. It is a controlled hybrid
+simulator, not unrestricted autonomous agents.
 
 ## Current stance model
 

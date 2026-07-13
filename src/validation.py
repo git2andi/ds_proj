@@ -400,7 +400,7 @@ class ValidationMixin:
             ):
                 add(code, explanation, option=option_id)
 
-        realized = self._intended_move_realized(intent, evidence, commitment, focus, lambda *a, **k: None)
+        realized = self._intended_move_realized(intent, evidence, commitment, focus, add)
         focus_realized = bool(set(focus) & set(mentioned)) if focus else None
         action = AssessmentAction.REPAIR if any(i.blocking for i in issues) else AssessmentAction.ACCEPT
         return TurnAssessment(
@@ -727,6 +727,31 @@ class ValidationMixin:
         """Universal realization check: was the requested FUNCTION visibly
         performed (not: does the primary label match)? Applies on every route."""
         act = intent.act
+        if act is ActType.OPENING:
+            # A protocol opening is complete only when the participant visibly
+            # establishes an initial option position. Merely mentioning an
+            # option or giving generic process commentary must not satisfy the
+            # mandatory opening round.
+            hit = (
+                commitment is not None
+                and (not focus or commitment.option_id in focus)
+            ) or any(not focus or s.option_id in focus for s in evidence.supports)
+            if hit:
+                return True
+            if focus and (evidence.supports or commitment is not None):
+                visible = (
+                    commitment.option_id if commitment is not None
+                    else evidence.supports[0].option_id
+                )
+                add(
+                    "WRONG_OPTION_FOCUS",
+                    f"opening position names {visible}, intended {focus[0]}",
+                    option=focus[0],
+                    blocking=True,
+                )
+            else:
+                add("OPENING_POSITION_NOT_REALIZED", blocking=True)
+            return False
         if act is ActType.SUPPORT:
             hit = any(not focus or s.option_id in focus for s in evidence.supports) or (
                 commitment is not None and (not focus or commitment.option_id in focus)
@@ -738,7 +763,7 @@ class ValidationMixin:
                     f"supports {evidence.supports[0].option_id}, intended {focus[0]}",
                     option=focus[0], blocking=True)
             else:
-                add("SUPPORT_NOT_REALIZED")
+                add("SUPPORT_NOT_REALIZED", blocking=True)
             return False
         if act is ActType.CONCERN:
             hit = any(not focus or c.option_id in focus for c in evidence.concerns)
@@ -749,7 +774,7 @@ class ValidationMixin:
                     f"concern about {evidence.concerns[0].option_id}, intended {focus[0]}",
                     option=focus[0], blocking=True)
             else:
-                add("CONCERN_NOT_REALIZED")
+                add("CONCERN_NOT_REALIZED", blocking=True)
             return False
         if act is ActType.COMPARE:
             need = set(focus[:2])
@@ -759,33 +784,29 @@ class ValidationMixin:
                 for c in evidence.comparisons
             )
             if not has_comparison:
-                add("COMPARE_NOT_REALIZED")
+                add("COMPARE_NOT_REALIZED", blocking=True)
             elif not hit:
-                strict_focus = intent.route_source in {
-                    "thread_hot", "thread_cooling", "coverage",
-                    "participant_narrowing", "answer_required",
-                }
                 add(
                     "COMPARE_FOCUS_MISMATCH",
                     f"visible comparison does not cover required options {sorted(need)}",
-                    blocking=strict_focus,
+                    blocking=True,
                 )
             return hit
         if act is ActType.ASK:
             hit = any(q.scope in ("direct", "group") for q in evidence.questions)
             if not hit:
-                add("ASK_NOT_REALIZED")
+                add("ASK_NOT_REALIZED", blocking=True)
             return hit
         if act is ActType.ANSWER:
             hit = any(a.addresses_target for a in evidence.answers)
             if not hit:
                 add("ANSWER_DOES_NOT_ADDRESS_QUESTION",
-                    blocking=(intent.route_source == "answer_required"))
+                    blocking=(intent.respond_to_turn is not None))
             return hit
         if act is ActType.COMPROMISE:
             hit = bool(evidence.proposals) or (commitment is not None and commitment.kind == "accept")
             if not hit:
-                add("COMPROMISE_NOT_REALIZED")
+                add("COMPROMISE_NOT_REALIZED", blocking=True)
             return hit
         if act is ActType.VOTE:
             if commitment is None:
@@ -836,6 +857,16 @@ class ValidationMixin:
         ):
             return self._coverage_question_fallback(state, intent, aliases), "coverage_question"
         focus = next((o for o in intent.option_focus if o in state.scenario.option_ids), None)
+        if intent.act is ActType.OPENING:
+            target = focus or rt.top_option() or persona.preferred_option
+            if target not in state.scenario.option_ids:
+                target = next(iter(state.scenario.option_ids), None)
+            if target is None:
+                return None, ""
+            reason = usable_reason_fragment(rt.reason_for(target), aliases[target])
+            if reason:
+                return f"{aliases[target]} is where I'm leaning — {reason}.", "opening_lean"
+            return f"{aliases[target]} is where I'm leaning right now.", "opening_lean"
         if intent.act is ActType.CONCERN and focus is not None and focus in rt.rejected_options():
             reason = usable_reason_fragment(rt.reason_against(focus), aliases[focus])
             if reason:

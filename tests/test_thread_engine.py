@@ -28,7 +28,6 @@ from controller.threads import (
     normalize_pair,
     open_thread,
     resolve_thread,
-    select_primary_thread,
 )
 
 from tests.fixtures import append_turn, make_scenario, make_state
@@ -242,7 +241,7 @@ class LifecycleTests(unittest.TestCase):
         self.assertIn("A", state.runtimes["p1"].rejected_options())
 
 
-class PrimarySelectionTests(unittest.TestCase):
+class BlockingGateTests(unittest.TestCase):
     def _open(self, state, thread_type, focus, key, *, turn, strength=BlockingStrength.NONE,
               scope=None, respondent=None):
         return open_thread(
@@ -250,62 +249,6 @@ class PrimarySelectionTests(unittest.TestCase):
             started_by="p1", source_turn_index=turn, blocking_strength=strength,
             question_scope=scope, required_respondent=respondent,
         )
-
-    def test_priority_order(self):
-        state = make_state()
-        comparison = self._open(state, ThreadType.COMPARISON, ["A", "B"], "cost", turn=1)
-        concern_other = self._open(state, ThreadType.CONCERN, ["C"], "risk", turn=2)
-        concern_candidate = self._open(state, ThreadType.CONCERN, ["A"], "timing", turn=3)
-        hard_blocker = self._open(
-            state, ThreadType.BLOCKER, ["A"], "cost", turn=4, strength=BlockingStrength.HARD
-        )
-        group_q = self._open(state, ThreadType.QUESTION, ["B"], "cost", turn=5, scope="group", respondent="p2")
-        direct_q = self._open(
-            state, ThreadType.QUESTION, ["A"], "capacity", turn=6, scope="direct", respondent="p3"
-        )
-
-        pick = lambda: select_primary_thread(state, candidate_options=["A"])
-        self.assertIs(pick(), direct_q)
-        resolve_thread(state, direct_q, reason="answered")
-        self.assertIs(pick(), group_q)
-        resolve_thread(state, group_q, reason="answered")
-        self.assertIs(pick(), hard_blocker)
-        resolve_thread(state, hard_blocker, reason="mitigated")
-        self.assertIs(pick(), concern_candidate)
-        resolve_thread(state, concern_candidate, reason="accepted")
-        # Remaining hot: the comparison includes candidate A (relevant) and the
-        # off-candidate concern does not, so relevance breaks the tie.
-        self.assertIs(pick(), comparison)
-        resolve_thread(state, comparison, reason="pair settled")
-        self.assertIs(pick(), concern_other)
-
-    def test_tie_break_prefers_candidate_relevance_then_recency(self):
-        state = make_state()
-        off_candidate = self._open(state, ThreadType.CONCERN, ["C"], "risk", turn=9)
-        on_candidate = self._open(state, ThreadType.CONCERN, ["B"], "timing", turn=2)
-        self.assertIs(
-            select_primary_thread(state, candidate_options=["B"]),
-            on_candidate,
-        )
-        # Without candidate relevance, recency decides.
-        self.assertIs(select_primary_thread(state, candidate_options=[]), off_candidate)
-
-    def test_cooling_thread_only_selected_when_caller_allows(self):
-        state = make_state()
-        thread = self._open(state, ThreadType.CONCERN, ["A"], "cost", turn=1)
-        mark_response(state, thread, responder_id="p2", turn_index=2)
-        self.assertIsNone(select_primary_thread(state, candidate_options=["A"]))
-        self.assertIs(
-            select_primary_thread(state, candidate_options=["A"], include_cooling=True),
-            thread,
-        )
-
-    def test_no_random_choice_needed(self):
-        state = make_state()
-        a = self._open(state, ThreadType.CONCERN, ["A"], "cost", turn=3)
-        b = self._open(state, ThreadType.CONCERN, ["B"], "cost", turn=3)
-        picks = {select_primary_thread(state, candidate_options=[]).thread_id for _ in range(20)}
-        self.assertEqual(len(picks), 1)  # earliest creation order breaks the tie
 
     def test_hot_blocking_gate_helper(self):
         state = make_state()
@@ -344,7 +287,11 @@ class ContributionCapTests(unittest.TestCase):
         touch_thread(state, thread, turn_index=1, participant_id="p1")  # same accepted turn
         self.assertEqual(thread.contribution_count, 1)
 
-    def test_hard_cap_stops_a_thread_from_driving_turns(self):
+    def test_hard_cap_removes_thread_from_simulator_stimuli(self):
+        # In the stimulus model a thread influences simulator bids only until its
+        # per-thread contribution cap; past the hard cap it is no longer a live
+        # stimulus in any simulator's decision view (todo 13).
+        import simulator as sim_policy
         from config_loader import cfg
 
         state = make_state()
@@ -352,31 +299,11 @@ class ContributionCapTests(unittest.TestCase):
             state, thread_type=ThreadType.CONCERN, focus_options=["A"], issue_key="cost",
             started_by="p1", source_turn_index=1,
         )
-        self.assertIs(select_primary_thread(state, candidate_options=["A"]), thread)
+        view = sim_policy.build_view(state, "p2")
+        self.assertIn(thread, view.active_threads)
         thread.contribution_count = int(cfg.threads.max_thread_turns_hard)
-        self.assertIsNone(select_primary_thread(state, candidate_options=["A"]))
-        mark_response(state, thread, responder_id="p2", turn_index=2)
-        self.assertIsNone(
-            select_primary_thread(state, candidate_options=["A"], include_cooling=True)
-        )
-
-    def test_soft_cap_blocks_optional_cooling_continuation(self):
-        import random
-
-        from config_loader import cfg
-        from tests.stubs import make_runner
-
-        state = make_state()
-        runner = make_runner(state)
-        thread = open_thread(
-            state, thread_type=ThreadType.BLOCKER, focus_options=["A"], issue_key="cost",
-            started_by="p1", source_turn_index=0, blocking_strength=BlockingStrength.HARD,
-        )
-        mark_response(state, thread, responder_id="p2", turn_index=0)
-        thread.contribution_count = int(cfg.threads.max_thread_turns_soft)
-        for seed in range(30):
-            random.seed(seed)
-            self.assertIsNone(runner._maybe_cooling_continuation(state, thread))
+        view = sim_policy.build_view(state, "p2")
+        self.assertNotIn(thread, view.active_threads)
 
 
 # Merged from test_thread_models.py (item 8): phase enum, thread/repair model

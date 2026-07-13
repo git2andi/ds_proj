@@ -80,6 +80,11 @@ _CONCERN = re.compile(
     r"(?:work|fit|cover|solve|help|support|include|allow|handle|keep|leave|give|provide|offer|meet|reduce|avoid)|"
     r"too\s+(?:expensive|long|far|loud|risky|limited|quiet|slow|small|large|"
     r"tiring|demanding|intense|stressful)|"
+    r"(?:is|feels?|seems?|looks?)\s+(?:too\s+)?(?:long|expensive|far|loud|risky|limited|quiet|slow|small|large|tiring|demanding|intense|stressful|tight|inconvenient)|"
+    r"(?:may|might|could|would)\s+(?:still\s+)?(?:risk\s+)?(?:delay|delaying|cause|causing|limit|limiting|reduce|reducing|leave|stretch|exceed|miss|prevent)|"
+    r"(?:risks?|could\s+risk)\s+(?:delay(?:ing)?|caus(?:e|ing)|limit(?:ing)?|miss(?:ing)?|leav(?:e|ing))|"
+    r"(?:close\s+to|near|over|above|exceeds?)\s+(?:our|the|my)?\s*(?:full\s+)?budget|"
+    r"(?:potentially\s+)?(?:too\s+)?(?:tight|tiring|noisy|inconvenient)|"
     r"(?:risky|(?:high|serious|significant|unacceptable)\s+risk|"
     r"risk\s+(?:of|that|is\s+(?:high|serious|significant|unacceptable))|"
     r"lacks?|missing|unclear|unknown|not\s+given|not\s+listed)|"
@@ -113,8 +118,18 @@ _PERSONAL_CONCERN = re.compile(
     re.I,
 )
 _SUPPORT = re.compile(
-    r"\b(?:prefer|like|good|better|best|works?|fit|suits?|help|benefit|"
-    r"practical|reasonable|appealing|favour|favor|support|easy|useful)\b",
+    r"\b(?:prefer|like|good|better|best|works?|fit|suits?|help(?:s|ed|ing)?|benefit(?:s|ed|ing)?|"
+    r"practical|reasonable|appealing|favour|favor|support|easy|useful|suitable|"
+    r"makes?\s+sense|strong(?:est)?\s+fit|clear(?:ly)?\s+(?:the\s+)?(?:best|strongest|right)\s+(?:fit|choice)|"
+    r"solves?|addresses?|handles?|covers?|meets?|nails?|delivers?|gives?\s+us|"
+    r"removes?|reduces?|cuts?|avoids?|prevents?|saves?|keeps?|improves?|simplifies?|"
+    r"makes?\s+(?:it\s+)?(?:easier|simpler|better|safer|faster|more\s+reliable)|"
+    r"offers?|provides?|expands?|broadens?|"
+    r"exactly\s+what\s+(?:i|we)\s+need|works?\s+well|good\s+match)\b",
+    re.I,
+)
+_NEGATED_SUPPORT = re.compile(
+    r"\b(?:not|never|hardly|doesn(?:'t|\s+not)|isn(?:'t|\s+not)|won't|wouldn't|can't|cannot)\b",
     re.I,
 )
 _CONDITIONAL = re.compile(r"\b(?:if|provided|assuming|as long as|could live with)\b", re.I)
@@ -136,7 +151,12 @@ _LEAN_SETTLED = re.compile(
 )
 _PROPOSAL = re.compile(
     r"\b(?:common ground|compromise|settle on|meet in the middle|"
-    r"could we choose|what about|maybe we (?:choose|go with))\b",
+    r"could we choose|what about|maybe we (?:choose|go with)|"
+    r"could (?:accept|live with|move toward|move to|back|consider)|"
+    r"would be willing to (?:accept|choose|back|consider)|"
+    r"(?:i(?:'m|\s+am)\s+open\s+to|i\s+can\s+(?:go\s+with|back)|i\s+could\s+consider)|"
+    r"(?:could\s+work|works?|is\s+fine)\s+(?:for\s+me\s+)?(?:if|provided|as\s+long\s+as)|"
+    r"as long as .{0,50} (?:i|we) could (?:accept|choose|back|consider))\b",
     re.I,
 )
 
@@ -250,6 +270,36 @@ def _has_visible_concern(text: str, act: ActType | None) -> bool:
         return False
     return True
 
+
+def _visible_support_options(text: str, resolver: OptionResolver) -> list[str]:
+    """Bind positive evaluation to options in the same local clause."""
+    resolved: list[str] = []
+    for match in _SUPPORT.finditer(text):
+        clause = _clause_span(text, match.start(), match.end())
+        clause_text = text[clause[0]:clause[1]]
+        prefix = text[max(clause[0], match.start() - 22):match.start()]
+        if _NEGATED_SUPPORT.search(prefix):
+            continue
+        mentions = _mentions_in_span(text, resolver, clause)
+        before = [m for m in mentions if m.span.start < match.start()]
+        after = [m for m in mentions if m.span.start >= match.end()]
+        target = before[-1] if before else (after[0] if after else None)
+        if target is not None and target.option_id not in resolved:
+            resolved.append(target.option_id)
+    return resolved
+
+
+def _visible_proposal_options(text: str, resolver: OptionResolver) -> list[str]:
+    resolved: list[str] = []
+    for match in _PROPOSAL.finditer(text):
+        clause = _clause_span(text, match.start(), match.end())
+        mentions = _mentions_in_span(text, resolver, clause)
+        after = [m for m in mentions if m.span.start >= match.end()]
+        before = [m for m in mentions if m.span.start < match.start()]
+        target = after[0] if after else (before[-1] if before else None)
+        if target is not None and target.option_id not in resolved:
+            resolved.append(target.option_id)
+    return resolved
 
 def _visible_concern_options(
     text: str,
@@ -408,27 +458,28 @@ class TurnInterpreter:
         concern_options = _visible_concern_options(
             normalized, self._resolver, act=act, focused=focused
         )
-        has_support = bool(_SUPPORT.search(normalized))
+        support_options = _visible_support_options(normalized, self._resolver)
+        proposal_options = _visible_proposal_options(normalized, self._resolver)
         lean_target = _visible_lean_option(normalized, self._resolver)
-        has_proposal = bool(_PROPOSAL.search(normalized))
         conditional = bool(_CONDITIONAL.search(normalized))
 
         for option_id in concern_options:
             if not any(c.option_id == option_id for c in evidence.concerns):
                 evidence.concerns.append(ConcernEvidence(option_id, "ordinary", span))
 
-        for option_id in targets:
-            if has_support and act in {
-                ActType.OPENING,
-                ActType.SUPPORT,
-                ActType.COMMENT,
-                ActType.ANSWER,
-                ActType.COMPROMISE,
-            }:
+        if act in {
+            ActType.OPENING,
+            ActType.SUPPORT,
+            ActType.COMMENT,
+            ActType.ANSWER,
+            ActType.COMPROMISE,
+        }:
+            for option_id in support_options:
                 evidence.supports.append(
                     SupportEvidence(option_id, "conditional" if conditional else "firm", span)
                 )
-            if has_proposal and act is ActType.COMPROMISE:
+        if act is ActType.COMPROMISE:
+            for option_id in proposal_options:
                 evidence.proposals.append(ProposalEvidence(option_id, span))
 
         if lean_target:

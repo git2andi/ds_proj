@@ -66,44 +66,6 @@ def sample_int_range(rng: Sequence[int]) -> int:
     return random.randint(lo, hi)
 
 
-def preset_dominance_weight(
-    base: float,
-    is_dominant: bool,
-    turn_count: int,
-    total_turns: int,
-    n: int,
-    preset: dict,
-    quiet_boost: float,
-) -> float:
-    """Corpus-preset speaker weighting.
-
-    Instead of strict turn-count equalization, keep the designated dominant
-    speaker near the preset's expected top share (never above the dominance
-    band) and rebalance the others only once their turn share drifts past the
-    imbalance tolerance around a fair 1/n split.
-    """
-    fair = 1.0 / max(1, n)
-    share = (turn_count / total_turns) if total_turns > 0 else fair
-    tol = float(preset.get("imbalance_tolerance", 0.15))
-    if is_dominant:
-        dom_lo, dom_hi = preset.get("dominance_range", (fair, 1.0))
-        target = min(float(preset.get("top_speaker_share", fair)), float(dom_hi))
-        # Structural turns (opening/vote rounds) are evenly distributed, so the
-        # free discussion turns must overshoot to reach the corpus-level share.
-        if share < float(dom_lo):
-            return base * (2.0 + 4.0 * (target - share))
-        if share < target:
-            return base * (1.0 + 3.0 * (target - share))
-        if share > float(dom_hi):
-            return base * 0.35
-        return base
-    if share < fair - tol:
-        return base + quiet_boost
-    if share > fair + tol:
-        return base * 0.5
-    return base
-
-
 def extract_json_object(text: str) -> dict[str, Any]:
     text = text.strip()
     if text.startswith("```"):

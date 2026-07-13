@@ -234,16 +234,18 @@ class MoveIntent:
     speaker_id: str
     act: ActType
     reason: str
-    # Why the controller selected this turn (trace metadata, no routing effect).
-    # Values: opening, answer_required, thread_hot, thread_cooling, coverage,
-    # continuation, normal, participant_narrowing, vote, vote_clarification,
-    # majority_holdout_repair, split_vote_repair, two_person_deadlock_repair.
-    route_source: str = "normal"
+    # Authority source that produced this turn (trace metadata, no floor effect).
+    # Values: opening_protocol, direct_obligation, self_selection,
+    # narrowing_protocol, vote_protocol, repair_protocol, moderator, stall.
+    # An open-floor turn always carries a complete simulator-owned intent;
+    # protocol turns constrain only speaker/act while the simulator still
+    # chooses the substance below.
+    route_source: str = "self_selection"
     addressee_id: str | None = None
     option_focus: list[str] = field(default_factory=list)
     length_hint: LengthHint = "medium"
     respond_to_turn: int | None = None
-    thread_id: str | None = None       # thread that routed this turn (trace metadata)
+    thread_id: str | None = None       # thread this turn reacts to (trace metadata)
     suppress_name_prefix: bool = False
     suppress_option_opening: bool = False
     suppress_i_opening: bool = False
@@ -254,10 +256,115 @@ class MoveIntent:
     avoid_phrases: list[str] = field(default_factory=list)
     avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
     allow_vote_change: bool = False
-    required_vote: str | None = None   # controller-selected decision target; validation blocks drift
-    old_preference: str | None = None  # controller-visible previous pick for sanctioned switches
-    allowed_reason: str | None = None  # grounded reason fragment the LLM may use for a vote/switch
+    # The three fields below are chosen by the SIMULATOR policy (its own vote
+    # decision), not by the controller. A protocol obligation only fixes that a
+    # vote is due and its tested candidate; the simulator selects the target,
+    # whether it is a visible switch, and the grounded reason. Validation still
+    # blocks the realized text from drifting off the simulator-selected target.
+    required_vote: str | None = None   # simulator-selected decision target
+    old_preference: str | None = None  # simulator's previous public pick, on a visible switch
+    allowed_reason: str | None = None  # grounded reason the simulator gives for the vote/switch
     continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
+    contribution_key: str | None = None  # stable simulator-local semantic contribution id
+
+
+# ---------------------------------------------------------------------------
+# Simulator-authority contract (authority-split refactor, Part A)
+#
+# The framework arbitrates access to the floor and imposes protocol
+# obligations; the simulator policy decides whether it wants to speak and what
+# it wants to say. A TurnObligation fixes only the protocol frame (speaker +
+# act, sometimes a target); a DiscussionStimulus is public conversational
+# pressure exposed to every eligible simulator. A SimulatorBid is one
+# simulator's complete decision for the current turn.
+# ---------------------------------------------------------------------------
+
+# Obligation kinds: opening | direct_answer | vote | narrowing | repair.
+# Stimulus kinds: normal | stall | narrowing | repair.
+
+
+@dataclass(slots=True)
+class TurnObligation:
+    """A framework-imposed protocol frame for the next turn.
+
+    The framework fixes ``participant_id`` and ``act`` (and any target/thread);
+    the simulator policy still chooses the substance (answer direction, option
+    focus, reason, vote target, compromise direction). The controller must not
+    prescribe accept/reject/defend/concede here.
+    """
+
+    kind: str
+    participant_id: str
+    act: ActType
+    respond_to_turn: int | None = None
+    thread_id: str | None = None
+    addressee_id: str | None = None
+    focus_options: list[str] = field(default_factory=list)
+    candidate: str | None = None       # tested candidate for narrowing/vote/repair
+    top_pair: list[str] = field(default_factory=list)
+    note: str = ""                     # extra public protocol context for the policy
+
+
+@dataclass(slots=True)
+class DiscussionStimulus:
+    """Public conversational pressure exposed to every eligible simulator.
+
+    Carries only public state. Never another simulator's private goal, hidden
+    ranks, or hidden reasons.
+    """
+
+    kind: str = "normal"
+    candidate: str | None = None
+    top_pair: list[str] = field(default_factory=list)
+    coverage_gap: str | None = None
+    group_question_thread_id: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class PublicParticipantState:
+    """Compact public-only view of one participant for social reasoning.
+
+    Every field is derived from accepted visible turns or live public threads.
+    It deliberately contains no hidden ranks, private goals, private reasons, or
+    simulator parameters.
+    """
+
+    participant_id: str
+    name: str
+    public_position: str | None = None
+    supported_options: tuple[str, ...] = ()
+    concerned_options: tuple[str, ...] = ()
+    last_act: ActType | None = None
+    last_turn_index: int | None = None
+    last_focus_options: tuple[str, ...] = ()
+    pending_question_from: str | None = None
+    pending_question_to: str | None = None
+    active_issue_keys: tuple[str, ...] = ()
+
+
+@dataclass(slots=True)
+class SimulatorBid:
+    """One simulator's complete decision when the floor is open or a protocol
+    turn is due.
+
+    Invariants (enforced by the policy and checked in tests):
+    - ``wants_to_speak is False`` implies ``intent is None``;
+    - ``wants_to_speak is True`` implies a complete ``MoveIntent`` whose
+      ``speaker_id`` equals ``participant_id``;
+    - ``0.0 <= willingness <= 1.0``;
+    - the intent already carries the chosen act, target, option focus, and a
+      participant-specific objective — the LLM fills in no behavioral choice.
+    """
+
+    participant_id: str
+    wants_to_speak: bool
+    willingness: float
+    intent: MoveIntent | None = None
+    trigger: str = ""                              # main reason this bid exists
+    action_scores: dict[str, float] = field(default_factory=dict)
+    # Populated by the floor manager during arbitration only.
+    floor_score: float = 0.0
+    rejected_reason: str = ""                      # structural rejection, if any
 
 
 # ---------------------------------------------------------------------------
@@ -688,6 +795,14 @@ class DialogueState:
     repair_history: list["RepairState"] = field(default_factory=list)
     reservation_exchanges: int = 0           # holdout/supporter reservation pairs run inside repairs
     procedural_move_count: int = 0           # participant-owned structure beats taken (split summaries/probes)
+    bid_round_count: int = 0                 # open-floor bid rounds run (todo 22 floor metrics)
+    no_bid_round_count: int = 0              # open-floor rounds where no valid simulator claimed the floor
+    generation_failure_round_count: int = 0   # rounds with valid bids but no accepted realization
+    valid_bid_attempt_count: int = 0          # structurally valid bids attempted for realization
+    final_dropped_intent_count: int = 0       # selected intents that remained invalid after bounded recovery
+    protocol_obligation_failures: int = 0     # required turns that could not be completed
+    repeated_bid_rejections: int = 0          # floor rejections by canonical contribution key
+    accepted_conditional_acceptances: int = 0 # discussion-phase visible conditional willingness
     outcome: RunOutcome | None = None
     turn_index: int = 0
     no_progress_count: int = 0

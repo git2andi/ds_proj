@@ -121,15 +121,15 @@ class PublicEvidenceTests(unittest.TestCase):
         _vote(state, "p2", "The Museum works for me.", "A", phase=Phase.DISCUSSION, blocked=True)
         self.assertEqual(public_support(state)["A"], set())
 
-    def test_later_hard_rejection_withdraws_earlier_backing(self):
+    def test_hidden_rejection_does_not_rewrite_public_backing(self):
         state = make_state()
         append_turn(
             state, "p2", "The Museum works for me.",
             intent=MoveIntent(speaker_id="p2", act=ActType.SUPPORT, reason="accept", option_focus=["A"]),
             phase=Phase.DISCUSSION,
         )
-        state.runtimes["p2"].mark_rejected("A", reason_against="visible dealbreaker")
-        self.assertEqual(public_support(state)["A"], set())
+        state.runtimes["p2"].mark_rejected("A", reason_against="private dealbreaker")
+        self.assertEqual(public_support(state)["A"], {"p2"})
 
     def test_repair_acceptance_replaces_formal_vote_in_counts(self):
         state = make_state()

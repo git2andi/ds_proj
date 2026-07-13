@@ -16,7 +16,7 @@ class MinimalMetricSchemaTests(unittest.TestCase):
     def test_grouped_schema_and_zero_denominators(self):
         state = make_state()
         metrics = metrics_for(state, outcome())
-        self.assertEqual(metrics["metric_schema_version"], "2.1")
+        self.assertEqual(metrics["metric_schema_version"], "3.1")
         self.assertIsNone(metrics["run_structure"]["question_density"])
         self.assertIsNone(metrics["interaction"]["question_completion_rate"])
         self.assertIsNone(metrics["interaction"]["concern_response_rate"])
@@ -57,7 +57,7 @@ class MinimalMetricSchemaTests(unittest.TestCase):
             state, "p1", "I vote for the Museum.",
             intent=MoveIntent(
                 "p1", ActType.VOTE, "final choice",
-                route_source="majority_holdout_repair", option_focus=["A"],
+                route_source="repair_protocol", option_focus=["A"],
                 required_vote="A",
             ),
             phase=Phase.COMPROMISE_REPAIR,
@@ -83,9 +83,25 @@ class MinimalMetricSchemaTests(unittest.TestCase):
     def test_flat_metrics_remain_small_and_stable(self):
         state = make_state()
         row = flat_metrics_for("run", state, outcome())
-        self.assertEqual(row["metric_schema_version"], "2.1")
+        self.assertEqual(row["metric_schema_version"], "3.1")
         self.assertIn("runtime_validator_calls", row)
-        self.assertLess(len(row), 40)
+        self.assertLess(len(row), 55)
+
+
+    def test_social_metrics_separate_functional_address_from_name_mentions(self):
+        state = make_state()
+        append_turn(
+            state, "p1", "Jonas, what worries you about the Bike Ride?",
+            intent=MoveIntent(
+                "p1", ActType.ASK, "ask the public concern owner",
+                addressee_id="p2", option_focus=["B"],
+            ),
+            phase=Phase.DISCUSSION,
+        )
+        interaction = metrics_for(state, outcome())["interaction"]
+        self.assertEqual(interaction["direct_address_turn_count"], 1)
+        self.assertEqual(interaction["participant_reference_turn_count"], 1)
+        self.assertEqual(interaction["unique_directed_participant_pairs"], 1)
 
     def test_compromise_success_requires_visible_split_repair_switch(self):
         state = make_state()
@@ -96,7 +112,7 @@ class MinimalMetricSchemaTests(unittest.TestCase):
         self.assertEqual(without_switch["compromise_success_rate"], 0.0)
 
         state.runtimes["p1"].switch_events.append({
-            "from": "B", "to": "A", "route_source": "split_vote_repair"
+            "from": "B", "to": "A", "route_source": "repair_protocol"
         })
         with_switch = metrics_for(state, outcome("majority", "A"))["decision_behavior"]
         self.assertEqual(with_switch["compromise_success_count"], 1)

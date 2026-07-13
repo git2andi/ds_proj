@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +23,7 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from consensus import visible_votes_from_transcript
-from models import ActType, DialogueState, RunOutcome, ThreadStatus, ThreadType
+from models import ActType, DialogueState, Phase, RunOutcome, ThreadStatus, ThreadType
 from simulator import expected_turn_share
 
 _WORD = re.compile(r"[a-z0-9'-]+")
@@ -175,6 +176,262 @@ def token_summary_for(state: DialogueState) -> dict[str, int]:
     }
 
 
+def _floor_autonomy_metrics(state: DialogueState) -> dict[str, Any]:
+    participants = {p.id for p in state.personas}
+    """Authority-split / floor metrics (todo 22): where each participant turn's
+    authority came from, and how simulator bids competed for the floor."""
+    from collections import Counter
+
+    turn_traces = [
+        e for e in state.controller_trace
+        if e.get("type") == "turn" and e.get("result", {}).get("appended")
+    ]
+    names = {p.id: p.name for p in state.personas}
+    authority_counts: Counter = Counter()
+    submitted_acts: Counter = Counter()
+    invalid_by_reason: Counter = Counter()
+    claims = {p.name: 0 for p in state.personas}
+    bids_seen = {p.name: 0 for p in state.personas}
+    willingness_sum = {p.name: 0.0 for p in state.personas}
+    floor_wins = {p.name: 0 for p in state.personas}
+    act_match = act_total = 0
+    next_best_substitutions = 0
+
+    for entry in turn_traces:
+        pre = entry.get("pre", {})
+        result = entry.get("result", {})
+        authority = pre.get("authority_source", pre.get("route_source", "self_selection"))
+        authority_counts[authority] += 1
+        bids = pre.get("bids", [])
+        winner = pre.get("speaker_id")
+        winner_score = None
+        best_score = None
+        for b in bids:
+            pid = b.get("participant_id")
+            name = names.get(pid, pid)
+            if name in bids_seen:
+                bids_seen[name] += 1
+                willingness_sum[name] += float(b.get("willingness", 0.0))
+                if b.get("wants_to_speak"):
+                    claims[name] += 1
+            if b.get("wants_to_speak"):
+                submitted_acts[b.get("proposed_act")] += 1
+            if b.get("rejected_reason"):
+                invalid_by_reason[b["rejected_reason"]] += 1
+            if b.get("wants_to_speak") and not b.get("rejected_reason"):
+                if best_score is None or float(b.get("floor_score", 0)) > best_score:
+                    best_score = float(b.get("floor_score", 0))
+            if b.get("participant_id") == winner:
+                winner_score = float(b.get("floor_score", 0))
+        if authority == "self_selection" and winner in names:
+            floor_wins[names[winner]] += 1
+        # A next-best substitution: the realized winner was not the top-scoring
+        # valid bid (its bid dropped in generation and the floor used the next).
+        if best_score is not None and winner_score is not None and winner_score < best_score - 1e-9:
+            next_best_substitutions += 1
+        if authority == "self_selection":
+            act_total += 1
+            if not result.get("act_mismatch", False):
+                act_match += 1
+
+    # Speaker-chain maximum (longest run of consecutive participant turns).
+    max_chain = chain = 0
+    last = None
+    for turn in state.turns:
+        if turn.speaker_id == "moderator" or not turn.text.strip():
+            continue
+        chain = chain + 1 if turn.speaker_id == last else 1
+        last = turn.speaker_id
+        max_chain = max(max_chain, chain)
+
+    appended = len(turn_traces)
+    self_selected = authority_counts.get("self_selection", 0)
+    avg_willingness = {
+        name: round(willingness_sum[name] / bids_seen[name], 3) if bids_seen[name] else None
+        for name in claims
+    }
+    claim_rate = {
+        name: round(claims[name] / bids_seen[name], 3) if bids_seen[name] else None
+        for name in claims
+    }
+
+    # Realization telemetry is computed from every generation trace, including
+    # candidates that were repaired or finally dropped. This keeps simulator
+    # policy quality separate from wording/validation reliability.
+    attempts_by_act: Counter[str] = Counter()
+    accepted_by_act: Counter[str] = Counter()
+    realized_by_act: Counter[str] = Counter()
+    dropped_by_act: Counter[str] = Counter()
+    for item in state.controller_trace:
+        if item.get("type") != "turn":
+            continue
+        pre = item.get("pre", {})
+        result = item.get("result", {})
+        act = pre.get("selected_act")
+        if not act:
+            continue
+        attempts_by_act[act] += 1
+        accepted = bool(result.get("appended")) and not bool(result.get("state_mutation_blocked"))
+        if accepted:
+            accepted_by_act[act] += 1
+        if result.get("intended_act_realized") is True:
+            realized_by_act[act] += 1
+        if not accepted:
+            dropped_by_act[act] += 1
+
+    realization_rate_by_act = {
+        act: round(realized_by_act[act] / count, 3) if count else None
+        for act, count in attempts_by_act.items()
+    }
+    acceptance_rate_by_act = {
+        act: round(accepted_by_act[act] / count, 3) if count else None
+        for act, count in attempts_by_act.items()
+    }
+
+    return {
+        "authority_source_distribution": dict(authority_counts),
+        "self_selected_turns": self_selected,
+        "protocol_forced_turns": appended - self_selected - authority_counts.get("direct_obligation", 0),
+        "direct_answer_turns": authority_counts.get("direct_obligation", 0),
+        "self_selected_ratio": round(self_selected / appended, 3) if appended else None,
+        "bid_rounds": state.bid_round_count,
+        "no_bid_rounds": state.no_bid_round_count,
+        "true_no_claim_rounds": state.no_bid_round_count,
+        "generation_failure_rounds": state.generation_failure_round_count,
+        "valid_bid_attempts": state.valid_bid_attempt_count,
+        "final_dropped_intents": state.final_dropped_intent_count,
+        "protocol_obligation_failures": state.protocol_obligation_failures,
+        "repeated_bid_rejections": state.repeated_bid_rejections,
+        "discussion_conditional_acceptances": state.accepted_conditional_acceptances,
+        "accepted_openings": sum(
+            1 for turn in state.turns
+            if turn.speaker_id in participants and turn.phase is Phase.OPENING
+            and turn.text.strip() and not turn.state_mutation_blocked
+        ),
+        "expected_openings": len(state.personas),
+        "accepted_formal_votes": sum(
+            1 for turn in state.turns
+            if turn.speaker_id in participants and turn.is_formal_commitment_turn()
+            and turn.text.strip() and not turn.state_mutation_blocked
+        ),
+        "expected_formal_votes": len(state.personas),
+        "claim_rate_by_persona": claim_rate,
+        "avg_willingness_by_persona": avg_willingness,
+        "floor_wins_by_persona": floor_wins,
+        "submitted_act_distribution": dict(submitted_acts),
+        "intended_vs_realized_act_match_rate": round(act_match / act_total, 3) if act_total else None,
+        "realization_attempts_by_intended_act": dict(attempts_by_act),
+        "accepted_realizations_by_intended_act": dict(accepted_by_act),
+        "realization_rate_by_intended_act": realization_rate_by_act,
+        "acceptance_rate_by_intended_act": acceptance_rate_by_act,
+        "final_drops_by_intended_act": dict(dropped_by_act),
+        "invalid_bid_count_by_reason": dict(invalid_by_reason),
+        "next_best_bid_substitutions": next_best_substitutions,
+        "speaker_chain_max": max_chain,
+        "engagement_vs_floor_win_correlation": _pearson(
+            [p.sim_params.engagement for p in state.personas],
+            [floor_wins[p.name] for p in state.personas],
+        ),
+    }
+
+
+
+def _social_interaction_metrics(state: DialogueState) -> dict[str, Any]:
+    """Public, transcript-derived social interaction signals.
+
+    Name mentions are reported separately from functional directed exchanges so
+    incidental name use is never treated as a quality target.
+    """
+    participants = {p.id: p.name for p in state.personas}
+    accepted = [
+        turn for turn in state.turns
+        if turn.speaker_id in participants and turn.text.strip() and not turn.state_mutation_blocked
+    ]
+    functional_pairs: set[tuple[str, str]] = set()
+    referenced_pairs: set[tuple[str, str]] = set()
+    reference_turns = 0
+    functional_direct_turns = 0
+
+    for turn in accepted:
+        speaker = turn.speaker_id
+        referenced = {
+            pid for pid, name in participants.items()
+            if pid != speaker and re.search(rf"(?<!\w){re.escape(name)}(?!\w)", turn.text, re.IGNORECASE)
+        }
+        if referenced:
+            reference_turns += 1
+            referenced_pairs.update((speaker, pid) for pid in referenced)
+
+        direct_targets = {
+            q.addressee_id for q in (turn.evidence.questions if turn.evidence else [])
+            if q.scope == "direct" and q.addressee_id in participants and q.addressee_id != speaker
+        }
+        functional_targets = set(direct_targets)
+        if turn.realized_act() not in {ActType.OPENING, ActType.VOTE, ActType.PROCESS, ActType.CLOSING}:
+            functional_targets.update(referenced)
+        if functional_targets:
+            functional_direct_turns += 1
+            functional_pairs.update((speaker, pid) for pid in functional_targets)
+
+    questions = _question_threads(state)
+    direct = [thread for thread in questions if thread.question_scope == "direct"]
+    group = [thread for thread in questions if thread.question_scope == "group"]
+
+    def completion(threads: list) -> float | None:
+        if not threads:
+            return None
+        answered = sum(
+            1 for thread in threads
+            if thread.status in (ThreadStatus.COOLING, ThreadStatus.RESOLVED)
+            or any(pid != thread.started_by for pid in thread.participants_involved)
+        )
+        return round(answered / len(threads), 3)
+
+    possible_pairs = len(participants) * max(0, len(participants) - 1)
+    self_selected_acts: Counter = Counter()
+    for turn in accepted:
+        if turn.intent and turn.intent.route_source == "self_selection":
+            self_selected_acts[turn.realized_act().value] += 1
+
+    discussion_compromises = sum(
+        1 for turn in accepted
+        if turn.phase is Phase.DISCUSSION
+        and (turn.realized_act() is ActType.COMPROMISE or bool(turn.evidence and turn.evidence.proposals))
+    )
+    repair_vote_turns = [
+        turn for turn in accepted
+        if turn.phase is Phase.COMPROMISE_REPAIR
+        and turn.intent is not None
+        and turn.intent.act is ActType.VOTE
+        and turn.intent.route_source == "repair_protocol"
+    ]
+    repair_switches = sum(
+        1 for runtime in state.runtimes.values()
+        for event in runtime.switch_events
+        if event.get("route_source") == "repair_protocol"
+    )
+    repair_attempts = len(repair_vote_turns)
+
+    return {
+        "direct_address_turn_count": functional_direct_turns,
+        "direct_address_turn_rate": round(functional_direct_turns / len(accepted), 3) if accepted else None,
+        "unique_directed_participant_pairs": len(functional_pairs),
+        "pairwise_interaction_density": round(len(functional_pairs) / possible_pairs, 3) if possible_pairs else None,
+        "direct_question_count": len(direct),
+        "direct_question_response_success": completion(direct),
+        "group_question_count": len(group),
+        "group_question_response_success": completion(group),
+        "participant_reference_turn_count": reference_turns,
+        "participant_reference_turn_rate": round(reference_turns / len(accepted), 3) if accepted else None,
+        "unique_reference_pairs": len(referenced_pairs),
+        "self_selected_act_distribution": dict(self_selected_acts),
+        "discussion_phase_compromise_count": discussion_compromises,
+        "discussion_phase_stance_movement_count": int(state.discussion_lean_shifts),
+        "repair_switch_attempts": repair_attempts,
+        "repair_successful_switches": repair_switches,
+        "repair_holdouts": max(0, repair_attempts - repair_switches),
+    }
+
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     """Concise, defensible run metrics.
 
@@ -225,9 +482,10 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         )
         switch_resistance[p.name] = round(p.sim_params.switch_resistance, 3)
     for turn in participant_turns:
-        if turn.intent and turn.intent.route_source in {
-            "majority_holdout_repair", "split_vote_repair", "two_person_deadlock_repair"
-        } and turn.intent.act is ActType.VOTE:
+        # A repair-phase vote is a simulator switch opportunity (its target and
+        # any switch are the simulator's own decision under the new authority
+        # split: route_source "repair_protocol").
+        if turn.intent and turn.intent.route_source == "repair_protocol" and turn.intent.act is ActType.VOTE:
             switch_opportunities[state.name_for(turn.speaker_id)] += 1
 
     question_turns = [t for t in participant_turns if t.evidence and t.evidence.questions]
@@ -248,7 +506,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     switch_count, _, _ = _switch_stats(state)
     compromise_attempts = sum(1 for r in state.repair_history if r.repair_reason == "split_vote")
     split_repair_switch = any(
-        event.get("route_source") == "split_vote_repair"
+        event.get("route_source") == "repair_protocol"
         for rt in state.runtimes.values()
         for event in rt.switch_events
     )
@@ -307,7 +565,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     }
 
     return {
-        "metric_schema_version": "2.1",
+        "metric_schema_version": "3.1",
+        "floor_autonomy": _floor_autonomy_metrics(state),
         "run_structure": {
             "participant_turn_count": n_participant,
             "participant_turn_count_by_persona": turns_by,
@@ -350,6 +609,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             },
         },
         "interaction": {
+            **_social_interaction_metrics(state),
             "question_threads": len(q_threads),
             "concern_threads": len(c_threads),
             "thread_count_by_status": thread_status,
@@ -404,11 +664,16 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
     dec = m["decision_behavior"]
     val = m["validation_grounding"]
     tok = m["token_usage"]["total"]
+    floor = m["floor_autonomy"]
     return {
         "metric_schema_version": m["metric_schema_version"],
         "run_id": run_id,
         "topic": state.scenario.topic,
         "num_participants": len(state.personas),
+        "self_selected_ratio": floor["self_selected_ratio"],
+        "no_bid_rounds": floor["no_bid_rounds"],
+        "next_best_bid_substitutions": floor["next_best_bid_substitutions"],
+        "speaker_chain_max": floor["speaker_chain_max"],
         "participant_turn_count": rs["participant_turn_count"],
         "moderator_turns": rs["moderator_turns"],
         "moderator_ratio": rs["moderator_ratio"],
@@ -419,6 +684,16 @@ def flat_metrics_for(run_id: str, state: DialogueState, outcome: RunOutcome) -> 
         "question_completion_rate": inter["question_completion_rate"],
         "concern_response_rate": inter["concern_response_rate"],
         "repetition_score": inter["repetition_score"],
+        "direct_address_turn_rate": inter["direct_address_turn_rate"],
+        "pairwise_interaction_density": inter["pairwise_interaction_density"],
+        "direct_question_response_success": inter["direct_question_response_success"],
+        "group_question_response_success": inter["group_question_response_success"],
+        "participant_reference_turn_rate": inter["participant_reference_turn_rate"],
+        "discussion_phase_compromise_count": inter["discussion_phase_compromise_count"],
+        "discussion_phase_stance_movement_count": inter["discussion_phase_stance_movement_count"],
+        "repair_switch_attempts": inter["repair_switch_attempts"],
+        "repair_successful_switches": inter["repair_successful_switches"],
+        "repair_holdouts": inter["repair_holdouts"],
         "outcome_status": dec["outcome_status"],
         "final_option": dec["final_option"],
         "visible_vote_count": len(dec["visible_votes"]),

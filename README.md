@@ -5,35 +5,53 @@ This repository generates configurable multi-user decision discussions with LLM-
 The project scope is deliberately narrow:
 
 ```text
-fixed option board + simulated participants + controller-routed discussion + visible decision outcome
+fixed option board + simulated participants + simulator-driven discussion + visible decision outcome
 ```
 
 It is not a generic chatbot, full society simulation, or full Generative-Agents-style memory system. The option board is the factual source of truth. Sims may compare options, ask questions, raise concerns, soften, resist, compromise, and vote, but they must not invent concrete facts outside the configured environment.
 
 ## Current architecture
 
-The simulator uses a hybrid dialogue-system design:
+The simulator uses a controlled hybrid design — a Python simulator policy per
+participant, a floor manager, and a dialogue-LLM renderer — **not** unrestricted
+autonomous agents:
 
 ```text
-symbolic controller + dialogue-LLM utterance renderer + deterministic critical interpretation
+simulator policy (per sim) + floor manager + dialogue-LLM utterance renderer + deterministic critical interpretation
 ```
 
-The controller owns phase logic, speaker choice, macro-act choice, option focus,
-narrowing, voting, and outcome rules. The dialogue LLM owns all generative calls:
-scenario/persona setup, participant utterances, moderator lines, and the single
-bounded repair rewrite. Normal runtime validation is deterministic; the runner
-never constructs or calls a validator LLM in `validation.mode: critical`.
+Each simulated user is the behavioral decision maker. Given its own persona,
+private stance, and the public dialogue state, a simulator decides whether it
+wants to speak, computes its own willingness, and — if it claims the floor —
+chooses one complete intended move (act, target, option focus, direction,
+reason, and vote/compromise). The **floor manager** (`controller/floor.py`)
+collects one bid per eligible simulator, validates them structurally, adjusts
+floor access (recent-speaker penalty, anti-monopoly damping, minimum-visibility
+correction — never engagement twice), and selects the highest-scoring valid
+bid **without rewriting its act, focus, target, reason, or vote**. The **flow**
+(`controller/flow.py`) owns phases, protocol obligations, bid-round
+orchestration, narrowing/vote readiness, the bounded repair machine, and
+termination. The dialogue LLM owns all generative calls (scenario/persona setup,
+one utterance per winning bid, moderator lines, one bounded repair rewrite);
+there is exactly one participant LLM call per ordinary turn. Normal runtime
+validation is deterministic; the runner never constructs or calls a validator
+LLM in `validation.mode: critical`.
+
+Opening turns and formal votes are protocol-required and a direct question is a
+mandatory adjacency pair, but the simulator still chooses the substance (opening
+position, answer direction, vote target, compromise). Group questions are
+answered by self-selection. Threads are public stimuli that shape simulator bids, never scripts that dictate who reacts or how. A compact public participant ledger gives each simulator the other participants' visible positions, concerns, recent acts, and question relationships without exposing private ranks, goals, reasons, or parameters.
 
 The governing authority order is:
 
 ```text
 scenario/shared-context facts   authoritative for listed facts
-controller intent               authoritative only for the requested function
+simulator intent                authoritative only for the requested function of the winning bid
 visible utterance               authoritative for what was publicly said
 accepted deterministic evidence authoritative for state updates
 ```
 
-Hidden controller intent never creates public support, a vote, a switch, or a
+A bid or intended move never creates public support, a vote, a switch, or a
 blocker. Each candidate utterance is extracted conservatively, resolved against
 known option aliases, interpreted into the small visible-evidence model, and
 checked only for correctness-critical failures: malformed output, invalid option
@@ -61,7 +79,7 @@ Private stance is stored as one central per-sim/per-option rank table:
 1 = rejected / hard blocked
 ```
 
-Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from ranks. There are no separate runtime preference/rejection containers and no hidden commitment/confidence float: ranks (plus their short stored reasons) are the only persistent private stance state, and only accepted visible utterances move them. Public candidate scores used by narrowing/voting are group-level evidence from the transcript, never private preference values.
+Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from ranks. There are no separate runtime preference/rejection containers and no hidden commitment/confidence float: ranks (plus their short stored reasons) are the only persistent private stance state, and only accepted visible utterances move them. Public candidate scores used by narrowing/voting come only from accepted visible backing, formal votes, positive evidence, existing-option proposals, and objection load; private preference values never fill missing evidence.
 
 The persona setup may also provide a compact compatibility table for each sim and option:
 
@@ -100,17 +118,17 @@ narrowing -> discussion            (at most once, when the candidate collapses)
 voting -> compromise_repair -> voting | closing
 ```
 
-Local interaction is tracked as deterministic threads (`question`, `concern`, `blocker`, `comparison`, `repair`) with statuses `hot / cooling / resolved / stale`, option-specific deterministic issue keys, and one deterministic primary thread driving routing. Coverage ("was each option socially processed once?") runs only when no hot thread needs attention. Persona-specific reasons live in `OptionStance.reason_for` / `reason_against`.
+Local interaction is tracked as deterministic threads (`question`, `concern`, `blocker`, `comparison`) with statuses `hot / cooling / resolved / stale`, option-specific deterministic issue keys, and per-thread contribution caps. Threads are public stimuli: a hot thread raises the relevant participant-local scores inside each simulator's bid, but the thread engine never picks who reacts or which reaction they make. Coverage ("was each option socially processed once?") becomes a relevance bonus to simulators that actually care about the ignored option and, if still uncovered, a moderator group question — never a forced participant turn. Persona-specific reasons live in `OptionStance.reason_for` / `reason_against`. Repeated empty bid rounds cannot bypass the minimum discussion gate: before narrowing, the moderator asks a concise public group question or a stronger public stall/coverage stimulus is offered; only the hard interaction cap can terminate an all-silent discussion early.
 
-## Controller / LLM separation
+## Simulator / floor / LLM separation
 
-The controller owns the intended move (`MoveIntent`):
+Each simulator produces a `SimulatorBid`: whether it wants to speak, a normalized willingness, and — when it claims the floor — one complete `MoveIntent`:
 
 ```text
-speaker + macro act + route source + target/addressee + option focus + reason
+speaker + macro act + authority source + target/addressee + option focus + reason (+ vote/compromise)
 ```
 
-The dialogue LLM renders one natural message against a compact realization contract: voice (age/register/directness/stubbornness cues), one act-specific semantic requirement, one turn objective, focus-only option facts, and a soft word range — returned inside an `<utterance>` envelope. Cleanup is structural only (envelope extraction, one speaker prefix, one quote pair, whitespace) and never deletes semantic content or clips to a word budget. Every intended move has the same visible-realization check on every route: what matters is whether the requested FUNCTION was realized, not whether the primary label matches (a comparative question realizes a requested comparison). Routing is read-only, and only the final accepted evidence object changes dialogue state (observer) — the observer never reparses text, updates are option-specific, and only a speaker's own accepted utterance can move that speaker's private ranks or vote.
+The floor manager selects among complete bids and may reject or reorder them (recent-speaker penalty, anti-monopoly damping, minimum-visibility correction, structural validity), but it never rewrites a bid's act, focus, target, reason, or vote. The dialogue LLM then renders one natural message for the winning intent against a compact realization contract: voice (age/register/directness/stubbornness cues), one act-specific semantic requirement, one turn objective, focus-only option facts, and a soft word range — returned inside an `<utterance>` envelope. Cleanup is structural only (envelope extraction, one speaker prefix, one quote pair, whitespace) and never deletes semantic content or clips to a word budget. Every selected SUPPORT, CONCERN, ASK, targeted ANSWER, COMPARE, COMPROMISE, and VOTE must be visibly realized with its selected focus; otherwise one bounded repair runs and the turn is dropped if still invalid. COMMENT and PROCESS remain semantically flexible but cannot fabricate evidence. Bidding and floor arbitration are read-only, and only the final accepted evidence object changes dialogue state (observer) — the observer never reparses text, updates are option-specific, and only a speaker's own accepted utterance can move that speaker's private ranks or vote.
 
 The compact macro-act vocabulary is:
 
@@ -118,11 +136,11 @@ The compact macro-act vocabulary is:
 opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
 ```
 
-Normal discussion sampling is limited to `support, concern, ask, compare, comment`. `answer` is route-driven by question threads; `process`/`compromise` belong to narrowing and repair; softening is an observed stance effect parsed from visible text, never a routed act.
+Open-floor self-selection samples `answer, support, concern, ask, compare, comment, compromise` when public state provides a concrete contribution; `process` is available only under a stall stimulus. COMMENT has no generic filler baseline, and silence is valid. `opening`, `answer`, and `vote` are obligation/protocol acts whose substance the simulator still owns; softening is an observed stance effect parsed from visible text, never a chosen act.
 
 ## Voting and repair
 
-Only formal commitments made during `voting`/`compromise_repair` count toward the outcome; opening leans and discussion support never silently become final votes. A moderator narrowing question always receives one participant response before voting begins. After one complete vote round, unanimity and clear majorities close immediately. A bare one-vote majority receives one bounded concern/response/switch round. A no-majority split tests one existing option once and targets only the minimum number of legally movable participants required for a majority. In an equal vote tie such as `1-1-1`, the tied option with the most positive visible discussion mentions is tested. A targeted mover may either switch to that tested candidate or keep the current vote; repair cannot introduce a third option. Hard blockers remain private and can never switch to a nonpreferred option.
+Only formal commitments made during `voting`/`compromise_repair` count toward the outcome; opening leans and discussion support never silently become final votes. Narrowing creates one public group stimulus; any relevant simulator may react, but silence does not authorize the framework to invent a response. After one complete vote round, unanimity and clear majorities close immediately. A bare one-vote majority receives one bounded concern/response/re-vote round. A no-majority split tests one existing option once and gives visible dissenters one bounded reservation/re-vote opportunity. Candidate selection uses visible votes, positive discussion evidence, proposals, and objection load with deterministic tie-breaking. Each simulator may stay or switch to the tested candidate; repair cannot introduce a third option, and majority or unresolved outcomes remain valid.
 
 ## Outcomes
 
@@ -132,15 +150,16 @@ A run ends in exactly one of three outcome states:
 - `majority`: a majority visibly supports the winning option.
 - `unresolved`: no sufficient agreement remains after bounded narrowing.
 
-Outcomes are derived from visible transcript evidence only: explicit votes, acceptances, and parsed visible commitments. Private stance ranks guide routing, but they do not directly decide the final result.
+Outcomes are derived from visible transcript evidence only: explicit votes, acceptances, and parsed visible commitments. Private stance ranks guide each simulator's own decisions, but they do not directly decide the final result, and the framework never engineers consensus by choosing a participant's vote — majority and unresolved outcomes remain legitimate.
 
 ## High-level pipeline
 
 ```text
 CLI topic or configured manual environment
   -> scenario and participant setup
-  -> deterministic controller selects speaker, move, target, and option focus
-  -> dialogue LLM renders one visible utterance
+  -> every eligible simulator submits a bid; the floor manager validates and selects a winner
+     (or the framework imposes a protocol obligation: opening, direct answer, vote)
+  -> dialogue LLM renders one visible utterance for the winning simulator intent
   -> conservative extraction
   -> deterministic critical interpretation and validation
   -> at most one repair for a correctness-critical failure
@@ -153,7 +172,7 @@ CLI topic or configured manual environment
   -> transcript.md, run.json, and concise metrics.csv
 ```
 
-Hidden controller intent never counts as public evidence. Ordinary support, concerns, opinions,
+A bid or hidden simulator intent never counts as public evidence. Ordinary support, concerns, opinions,
 and reasonable inferences are not sent through a runtime validator LLM. Runtime validation is
 strict only for malformed output, option references, required questions/focus, formal votes,
 public switches, blockers, existing-option compromise, transferred exact values, unlisted exact quantities,
@@ -163,14 +182,15 @@ and explicit unlisted feature/location claims.
 
 - `main.py`: CLI entrypoint.
 - `eval/run_eval_suite.py`: ten-case live regression suite with behavioral and efficiency flags.
-- `config.yaml`: dialogue LLM, environment, participants, pacing, threads, routing, critical validation, and output settings.
+- `config.yaml`: dialogue LLM, environment, participants, pacing, threads, floor arbitration, critical validation, and output settings.
 - `src/builders.py`: scenario and participant construction.
-- `src/models.py`: domain and runtime dataclasses.
+- `src/models.py`: domain and runtime dataclasses (incl. `SimulatorBid`, `TurnObligation`, `DiscussionStimulus`).
+- `src/simulator.py`: the simulator policy — OCEAN→parameter derivation, per-sim willingness, act scoring, and complete bid selection (owns participant behavior).
 - `src/dialogue.py`: orchestration and bounded generate→validate→repair→append lifecycle.
 - `src/controller/state.py`: phases, threads, and repair state.
-- `src/controller/threads.py`: deterministic thread lifecycle.
-- `src/controller/policy.py`: read-only speaker/move/focus selection.
-- `src/controller/flow.py`: narrowing, voting, one-round majority/split repair, and closure.
+- `src/controller/threads.py`: deterministic thread lifecycle (threads as stimuli).
+- `src/controller/floor.py`: floor arbitration — collect/validate/score/select bids without rewriting them; framework public-evidence readers.
+- `src/controller/flow.py`: phases, protocol obligations, bid-round orchestration, narrowing, voting, one-round majority/split repair, and closure.
 - `src/interpreter.py`: deterministic visible-evidence interpretation; no LLM calls.
 - `src/parsing.py`: option/alias, commitment, blocker, switch, and question parsing.
 - `src/validation.py`: correctness-critical assessment and minimal safe fallbacks.
@@ -210,3 +230,9 @@ Deterministic tests and static check:
 py -m unittest discover -s tests
 py -m compileall -q main.py src eval tests
 ```
+
+### Realization and protocol integrity
+
+Open-floor silence and wording/validation failure are tracked separately. A round with valid simulator bids that cannot be realized does not count as a no-claim round and cannot accelerate silence-based narrowing. Required openings, direct answers, and formal decisions use bounded realization retries and fail explicitly instead of being silently skipped.
+
+Natural support, concern, and conditional-compromise paraphrases are interpreted into option-specific public evidence. Accepted simulator-owned conditional willingness persists as an acceptable runtime option, while stronger explicit movement may change the preferred option. Ordinary contribution keys are enforced across each simulator's complete accepted history to prevent non-consecutive repetition.

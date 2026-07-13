@@ -12,7 +12,7 @@ from collections import Counter
 from dataclasses import dataclass
 
 from config_loader import cfg
-from models import DialogueState, Phase, RunOutcome
+from models import ActType, DialogueState, Phase, PublicParticipantState, RunOutcome, ThreadStatus, ThreadType
 
 # Only these phases produce outcome-relevant commitments (13.1): formal votes
 # and repair-phase final acceptances/switches. Opening leans and discussion
@@ -56,34 +56,27 @@ def public_support(
     phase: Phase | None = None,
     include_support_acts: bool = False,
 ) -> dict[str, set[str]]:
-    """Current visible backing only; superseded positions never remain active."""
+    """Current visible backing derived only from accepted transcript evidence.
+
+    A participant's latest visible option-bound stance supersedes an earlier one.
+    Hidden runtime ranks/preferences never fill missing public evidence.
+    """
     support: dict[str, set[str]] = {oid: set() for oid in state.scenario.option_ids}
     option_ids = set(state.scenario.option_ids)
-    if phase is not None:
-        # Phase-scoped diagnostics use the last visible option-bound signal in
-        # that phase per participant.
-        current: dict[str, str] = {}
-        for turn in state.turns:
-            if turn.phase is not phase or turn.speaker_id not in state.runtimes or turn.state_mutation_blocked:
-                continue
-            if turn.evidence is None:
-                continue
-            commitment = turn.evidence.sole_commitment()
-            if commitment and commitment.option_id in option_ids:
-                current[turn.speaker_id] = commitment.option_id
-            elif include_support_acts and turn.evidence.supports:
-                oid = turn.evidence.supports[-1].option_id
-                if oid in option_ids:
-                    current[turn.speaker_id] = oid
-        for pid, oid in current.items():
-            if oid not in state.runtimes[pid].rejected_options():
-                support[oid].add(pid)
-        return support
-
     current: dict[str, str] = {}
     for turn in state.turns:
-        if turn.speaker_id not in state.runtimes or turn.state_mutation_blocked or turn.evidence is None:
+        if turn.speaker_id not in state.runtimes or turn.state_mutation_blocked:
             continue
+        if phase is not None and turn.phase is not phase:
+            continue
+        if turn.evidence is None:
+            continue
+        raised_blockers = {
+            blocker.option_id for blocker in turn.evidence.blockers
+            if blocker.action == "raised" and blocker.option_id in option_ids
+        }
+        if current.get(turn.speaker_id) in raised_blockers:
+            current.pop(turn.speaker_id, None)
         commitment = turn.evidence.sole_commitment()
         if commitment and commitment.option_id in option_ids:
             current[turn.speaker_id] = commitment.option_id
@@ -93,16 +86,11 @@ def public_support(
             current[turn.speaker_id] = softened[-1]
             continue
         if include_support_acts and turn.evidence.supports:
-            oid = turn.evidence.supports[-1].option_id
-            if oid in option_ids:
-                current[turn.speaker_id] = oid
-    # Runtime values cover synthetic/current states whose trace was not built by
-    # the normal observer, but transcript-visible evidence wins when present.
-    for pid, rt in state.runtimes.items():
-        current.setdefault(pid, rt.explicit_vote or rt.current_acceptance or rt.public_lean)
+            supported = [x.option_id for x in turn.evidence.supports if x.option_id in option_ids]
+            if supported:
+                current[turn.speaker_id] = supported[-1]
     for pid, oid in current.items():
-        if oid in option_ids and oid not in state.runtimes[pid].rejected_options():
-            support[oid].add(pid)
+        support[oid].add(pid)
     return support
 
 
@@ -147,6 +135,128 @@ def discussion_positive_mentions(state: DialogueState) -> Counter:
     return counts
 
 
+
+def discussion_objection_mentions(state: DialogueState) -> Counter:
+    """Count accepted visible objections per option before formal voting."""
+    option_ids = set(state.scenario.option_ids)
+    counts: Counter = Counter()
+    for turn in state.turns:
+        if (
+            turn.speaker_id == "moderator"
+            or turn.state_mutation_blocked
+            or turn.phase in _COMMITMENT_PHASES
+            or turn.evidence is None
+        ):
+            continue
+        objected = {
+            concern.option_id for concern in turn.evidence.concerns
+            if concern.option_id in option_ids
+        }
+        objected.update(
+            blocker.option_id for blocker in turn.evidence.blockers
+            if blocker.action == "raised" and blocker.option_id in option_ids
+        )
+        for option_id in objected:
+            counts[option_id] += 1
+    return counts
+
+def visible_proposals(state: DialogueState) -> set[str]:
+    """Existing options visibly proposed as common ground in accepted turns."""
+    option_ids = set(state.scenario.option_ids)
+    return {
+        proposal.option_id
+        for turn in state.turns
+        if turn.speaker_id in state.runtimes
+        and not turn.state_mutation_blocked
+        and turn.evidence is not None
+        for proposal in turn.evidence.proposals
+        if proposal.option_id in option_ids
+    }
+
+
+def public_participant_ledger(state: DialogueState) -> dict[str, PublicParticipantState]:
+    """Derive one compact social ledger from accepted visible evidence only."""
+    option_ids = set(state.scenario.option_ids)
+    latest_position: dict[str, str | None] = {p.id: None for p in state.personas}
+    supported: dict[str, set[str]] = {p.id: set() for p in state.personas}
+    concerned: dict[str, set[str]] = {p.id: set() for p in state.personas}
+    last_act: dict[str, ActType | None] = {p.id: None for p in state.personas}
+    last_turn: dict[str, int | None] = {p.id: None for p in state.personas}
+    last_focus: dict[str, tuple[str, ...]] = {p.id: () for p in state.personas}
+    pending_from: dict[str, str | None] = {p.id: None for p in state.personas}
+    pending_to: dict[str, str | None] = {p.id: None for p in state.personas}
+    issue_keys: dict[str, set[str]] = {p.id: set() for p in state.personas}
+
+    for turn in state.turns:
+        pid = turn.speaker_id
+        if pid not in latest_position or turn.state_mutation_blocked or turn.evidence is None:
+            continue
+        ev = turn.evidence
+        last_act[pid] = turn.realized_act()
+        last_turn[pid] = turn.index
+        focus = tuple(dict.fromkeys(
+            oid for oid in (turn.intent.option_focus if turn.intent else turn.mentioned_options())
+            if oid in option_ids
+        ))
+        last_focus[pid] = focus
+        for entry in ev.supports:
+            if entry.option_id in option_ids:
+                supported[pid].add(entry.option_id)
+                latest_position[pid] = entry.option_id
+        for entry in ev.softenings:
+            if entry.option_id in option_ids:
+                supported[pid].add(entry.option_id)
+                latest_position[pid] = entry.option_id
+        for entry in ev.commitments:
+            if entry.option_id in option_ids:
+                supported[pid].add(entry.option_id)
+                latest_position[pid] = entry.option_id
+        for entry in ev.proposals:
+            if entry.option_id in option_ids:
+                supported[pid].add(entry.option_id)
+        for entry in ev.concerns:
+            if entry.option_id in option_ids:
+                concerned[pid].add(entry.option_id)
+        for entry in ev.blockers:
+            if entry.option_id not in option_ids:
+                continue
+            if entry.action == "raised":
+                concerned[pid].add(entry.option_id)
+            elif entry.action == "resolved":
+                concerned[pid].discard(entry.option_id)
+
+    for thread in state.threads.values():
+        if thread.status not in (ThreadStatus.HOT, ThreadStatus.COOLING):
+            continue
+        owner = thread.started_by
+        if owner in issue_keys and thread.issue_key:
+            issue_keys[owner].add(thread.issue_key)
+        if thread.thread_type is ThreadType.QUESTION:
+            if thread.required_respondent in pending_from:
+                pending_from[str(thread.required_respondent)] = owner
+                if owner in pending_to:
+                    pending_to[owner] = str(thread.required_respondent)
+        elif thread.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER) and owner in concerned:
+            concerned[owner].update(oid for oid in thread.focus_options if oid in option_ids)
+
+    return {
+        persona.id: PublicParticipantState(
+            participant_id=persona.id,
+            name=persona.name,
+            public_position=latest_position[persona.id],
+            supported_options=tuple(oid for oid in state.scenario.option_ids if oid in supported[persona.id]),
+            concerned_options=tuple(oid for oid in state.scenario.option_ids if oid in concerned[persona.id]),
+            last_act=last_act[persona.id],
+            last_turn_index=last_turn[persona.id],
+            last_focus_options=last_focus[persona.id],
+            pending_question_from=pending_from[persona.id],
+            pending_question_to=pending_to[persona.id],
+            active_issue_keys=tuple(sorted(issue_keys[persona.id])),
+        )
+        for persona in state.personas
+    }
+
+
 @dataclass(frozen=True)
 class PublicEvidence:
     """The single public-evidence snapshot consumed by policy and flow.
@@ -160,48 +270,53 @@ class PublicEvidence:
     formal_votes: dict[str, str]        # participant -> last formal vote (voting/repair phases)
     formal_counts: Counter              # option -> formal vote count
     proposals: set[str]                 # options visibly offered as common ground
-    candidate_scores: dict[str, int]    # weighted public backing per option
+    objection_counts: Counter           # accepted public objections per option
+    candidate_scores: dict[str, int]    # weighted public backing less objection load
     candidate_leaders: tuple[str, ...]  # top-scoring options; empty without public evidence
     top_pair: tuple[str, ...]           # up to two best publicly backed options, sorted
 
 
 def public_evidence(state: DialogueState) -> PublicEvidence:
-    """One centralized public-evidence calculation (discussion support, formal
-    votes/counts, public candidate scores, public top pair).
+    """Centralized public-evidence snapshot used by policy and flow.
 
-    Candidate scoring: a participant's current visible commitment weighs
-    double, their other visible backing once, and each visible compromise
-    proposal once — the same weighting the old vote-candidate helper used,
-    minus the private acceptable-rank leak.
+    Candidate scores are derived solely from accepted visible turns: current
+    backing, formal votes, positive discussion evidence, and visible proposals.
+    Stable scenario option order breaks exact ties.
     """
-    option_ids = set(state.scenario.option_ids)
-    backing = public_support(state)
+    backing = public_support(state, include_support_acts=True)
     formal = visible_votes_from_transcript(state)
-    commitments = Counter(
-        rt.explicit_vote for rt in state.runtimes.values() if rt.explicit_vote in option_ids
-    )
+    formal_counts = Counter(formal.values())
+    positive = discussion_positive_mentions(state)
+    proposals = visible_proposals(state)
+    objections = discussion_objection_mentions(state)
     scores: dict[str, int] = {}
     for oid in state.scenario.option_ids:
-        current_backing = len(backing[oid])
-        score = current_backing + commitments.get(oid, 0)
-        if score:
+        score = (
+            2 * len(backing[oid])
+            + 2 * int(formal_counts.get(oid, 0))
+            + int(positive.get(oid, 0))
+            + (2 if oid in proposals else 0)
+            - int(objections.get(oid, 0))
+        )
+        if score > 0:
             scores[oid] = score
     best = max(scores.values(), default=0)
-    leaders = tuple(sorted(oid for oid, s in scores.items() if s == best)) if best else ()
+    leaders = tuple(oid for oid in state.scenario.option_ids if scores.get(oid) == best) if best else ()
     ranked = sorted(
-        ((len(pids), oid) for oid, pids in backing.items() if pids),
-        key=lambda item: (-item[0], item[1]),
+        (oid for oid in state.scenario.option_ids if oid in scores),
+        key=lambda oid: (-scores[oid], state.scenario.option_ids.index(oid)),
     )
-    top_pair = tuple(sorted(oid for _count, oid in ranked[:2]))
     return PublicEvidence(
         backing=backing,
         formal_votes=formal,
-        formal_counts=Counter(formal.values()),
-        proposals=set(),
+        formal_counts=formal_counts,
+        proposals=proposals,
+        objection_counts=objections,
         candidate_scores=scores,
         candidate_leaders=leaders,
-        top_pair=top_pair,
+        top_pair=tuple(ranked[:2]),
     )
+
 
 
 class ConsensusManager:

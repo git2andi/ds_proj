@@ -132,12 +132,12 @@ class CriticalValidationTests(unittest.TestCase):
         runner = make_runner(state)
         intent = MoveIntent("p1", ActType.CONCERN, "respond", option_focus=["B"])
         evidence = derive_evidence(
-            "True, 6 hours is long, but the 12 euro cost helps.",
+            "The Bike Ride is long at 6 hours, but its 12 euro cost helps.",
             runner._resolver, speaker_id="p1",
             participant_names={p.id: p.name for p in state.personas}, intent=intent,
         )
         assessment = runner._assess_candidate(
-            text="True, 6 hours is long, but the 12 euro cost helps.",
+            text="The Bike Ride is long at 6 hours, but its 12 euro cost helps.",
             state=state, persona=state.persona_by_id("p1"), intent=intent,
             evidence=evidence,
         )
@@ -217,11 +217,11 @@ class CriticalValidationTests(unittest.TestCase):
         )
         self.assertIn("ATTRIBUTE_CONTRADICTION", {code for code, _option, _why in bad})
 
-    def test_soft_realization_mismatches_do_not_block(self):
+    def test_selected_act_realization_mismatches_block(self):
         support = MoveIntent("p1", ActType.SUPPORT, "support", option_focus=["A"])
         assessment = self.assess("p1", "The Museum has been discussed already.", support)
-        self.assertFalse(any(issue.blocking for issue in assessment.issues))
-        self.assertNotIn("SUPPORT_NOT_REALIZED", {i.code for i in assessment.issues})
+        self.assertTrue(any(issue.blocking for issue in assessment.issues))
+        self.assertIn("SUPPORT_NOT_REALIZED", {i.code for i in assessment.issues})
 
     def test_unlisted_asserted_feature_and_location_are_blocked(self):
         issues = self.runner._deterministic_fact_issues(
@@ -444,6 +444,61 @@ class CriticalValidationTests(unittest.TestCase):
             "The Museum has a better overall fit for our group.", self.state
         )
         self.assertNotIn("UNLISTED_FEATURE_DETAIL", {code for code, _option, _why in issues})
+
+    def test_faithful_qualitative_paraphrases_do_not_trigger_fact_grounding(self):
+        scenario = Scenario(
+            topic="Choose an event format",
+            shared_context=[],
+            options=[
+                OptionCard(
+                    id="A", name="Connecting Flight", short_name="Connection",
+                    attrs={"connection_time": "2 hours 15 minutes"},
+                    upside="lower price", concern="potential for a missed connection",
+                ),
+                OptionCard(
+                    id="B", name="Friday Restaurant", short_name="Restaurant",
+                    attrs={"day": "Friday evening"},
+                    upside="central location", concern="may become noisy on Friday evening",
+                ),
+                OptionCard(
+                    id="C", name="Hybrid Booths", short_name="Hybrid Booths",
+                    attrs={"attendance": "remote and in-person"},
+                    upside="allows remote attendance and expands reach",
+                    concern="more setup work",
+                ),
+            ],
+        )
+        state = make_state(scenario=scenario)
+        runner = make_runner(state)
+        examples = (
+            "The Connection could feel tight because there is a missed-connection risk.",
+            "The Restaurant may be noisy on Friday night.",
+            "Hybrid Booths broaden access by allowing remote attendance.",
+        )
+        for text in examples:
+            with self.subTest(text=text):
+                self.assertEqual(runner._deterministic_fact_issues(text, state), [])
+
+    def test_qualitative_grounding_relaxation_does_not_allow_invented_exact_facts(self):
+        scenario = Scenario(
+            topic="Choose a flight", shared_context=[],
+            options=[
+                OptionCard(
+                    id="A", name="Connecting Flight", short_name="Connection",
+                    attrs={"connection_time": "2 hours 15 minutes", "price": "420 euros"},
+                    upside="lower price", concern="potential for a missed connection",
+                ),
+                OptionCard(id="B", name="Direct Flight", short_name="Direct", attrs={"price": "590 euros"}),
+                OptionCard(id="C", name="Train", short_name="Train", attrs={"price": "180 euros"}),
+            ],
+        )
+        state = make_state(scenario=scenario)
+        runner = make_runner(state)
+        issues = runner._deterministic_fact_issues(
+            "The Connection costs 350 euros and has only a 45-minute connection.", state
+        )
+        codes = {code for code, _option, _why in issues}
+        self.assertTrue({"UNLISTED_NUMERIC_DETAIL", "ATTRIBUTE_CONTRADICTION"} & codes)
 
 
 if __name__ == "__main__":

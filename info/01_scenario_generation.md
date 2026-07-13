@@ -53,4 +53,4 @@ They must not state unsupported concrete facts as known. Hypothetical mitigation
 
 ## Current relevance
 
-The option board remains central. The controller may move holdouts only when the tested candidate is plausible according to visible votes, blockers, resistance, rank state, and traits. It does not create new options or blended plans.
+The option board remains central. The framework may test only an existing option justified by accepted public evidence; each simulator independently decides whether to keep its vote or move. Private ranks and traits never select the framework candidate, and no new or blended option is created.

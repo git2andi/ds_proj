@@ -50,12 +50,13 @@ def _controller_fingerprint(runner) -> tuple:
     )
 
 
-class RoutingIsReadOnlyTests(unittest.TestCase):
-    def _routable_state(self):
+class FloorArbitrationReadOnlyTests(unittest.TestCase):
+    """Collecting and arbitrating simulator bids must be read-only over dialogue
+    state and reproducible under a fixed seed (todo 8, 18)."""
+
+    def _bidding_state(self):
         state = make_state()
         runner = make_runner(state)
-        # Enough turns that every reactive branch is reachable, plus an open
-        # concern and a partially covered board.
         append_turn(state, "p1", "I like the Museum for the easy pace.")
         append_turn(state, "p2", "The Bike Ride keeps the cost low.")
         append_turn(state, "p3", "The Escape Room is at least memorable.")
@@ -68,34 +69,34 @@ class RoutingIsReadOnlyTests(unittest.TestCase):
         state.coverage["B"].mentions = 1
         return state, runner
 
-    def test_route_selection_never_mutates_state(self):
-        state, runner = self._routable_state()
+    def test_bid_collection_never_mutates_state(self):
+        state, runner = self._bidding_state()
         before = _fingerprint(state)
         controller_before = _controller_fingerprint(runner)
         for seed in range(40):
             random.seed(seed)
-            intent = runner._route_discussion_turn(state)
-            self.assertIsNotNone(intent)
-            self.assertEqual(_fingerprint(state), before, f"route selection mutated state (seed {seed})")
+            stimulus = runner._discussion_stimulus(state)
+            bids = runner._collect_bids(state, stimulus)
+            runner._ranked_valid_bids(state, bids)
+            self.assertEqual(_fingerprint(state), before, f"bidding mutated state (seed {seed})")
             self.assertEqual(
                 _controller_fingerprint(runner), controller_before,
-                f"route selection mutated controller state (seed {seed})",
+                f"bidding mutated controller state (seed {seed})",
             )
 
-    def test_repeated_route_selection_is_reproducible(self):
-        # The old _last_target_speaker memory made a second identical selection
-        # differ from the first; over identical accepted history the same seed
-        # must now yield the same route every time.
-        state, runner = self._routable_state()
+    def test_bids_reproducible_under_seed(self):
+        state, runner = self._bidding_state()
         for seed in range(20):
             random.seed(seed)
-            first = runner._route_discussion_turn(state)
+            first = runner._collect_bids(state, runner._discussion_stimulus(state))
             random.seed(seed)
-            second = runner._route_discussion_turn(state)
+            second = runner._collect_bids(state, runner._discussion_stimulus(state))
             self.assertEqual(
-                (first.speaker_id, first.act, first.route_source, first.respond_to_turn, first.addressee_id),
-                (second.speaker_id, second.act, second.route_source, second.respond_to_turn, second.addressee_id),
-                f"route selection not reproducible (seed {seed})",
+                [(b.participant_id, b.wants_to_speak, b.intent.act if b.intent else None,
+                  tuple(b.intent.option_focus) if b.intent else ()) for b in first],
+                [(b.participant_id, b.wants_to_speak, b.intent.act if b.intent else None,
+                  tuple(b.intent.option_focus) if b.intent else ()) for b in second],
+                f"bids not reproducible under fixed seed {seed}",
             )
 
     def test_ready_to_narrow_check_is_read_only(self):
@@ -162,47 +163,48 @@ class FailedTurnTests(unittest.TestCase):
         self.assertTrue(trace["result"]["candidate_texts"]["final_rejected"])
         self.assertTrue(state.failed_route_counts)
 
-    def test_repeated_failed_route_changes_speaker_then_simplifies(self):
+    def test_failed_winner_falls_back_to_next_best_bid(self):
+        # The floor tries ranked bids in order; when the top bid's realization
+        # drops after bounded repair, the next-best submitted bid is used
+        # unchanged (todo 10). No bid is rewritten.
+        from models import SimulatorBid
+
         state = make_state()
         runner = make_runner(state)
-        intent = MoveIntent(
-            speaker_id="p1", act=ActType.COMPARE, reason="compare",
-            route_source="thread_hot", option_focus=["A", "B"], thread_id="t001",
+        top = SimulatorBid(
+            "p1", True, 0.9,
+            MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="r", option_focus=["A"]),
         )
-        runner._record_failed_route(state, intent)
-        adapted = runner._adapt_failed_route(state, intent)
-        self.assertNotEqual(adapted.speaker_id, "p1")
-        self.assertEqual(adapted.act, ActType.COMPARE)
-
-        runner._record_failed_route(state, adapted)
-        simplified = runner._adapt_failed_route(state, intent)
-        self.assertEqual(simplified.act, ActType.COMMENT)
-        self.assertEqual(simplified.route_source, "failed_route_recovery")
-
-    def test_coverage_attempt_charged_once_post_turn(self):
-        state = make_state()
-        # Generation ignores the routed option twice; the deterministic fallback
-        # then names it (that is the fallback's job), so coverage is realized by
-        # the final accepted text — and exactly one attempt is charged, after
-        # the turn, not at route selection.
-        runner = make_runner(state, [
-            "I still think my current pick is fine.",
-            "I still think my current pick is fine.",
-        ])
-        random.seed(2)
-        intent = MoveIntent(
-            speaker_id="p1",
-            act=ActType.COMPARE,
-            reason="briefly bring in an option that has not yet been socially processed, then compare it with the current lean",
-            route_source="coverage",
-            option_focus=["C"],
+        nxt = SimulatorBid(
+            "p2", True, 0.5,
+            MoveIntent(speaker_id="p2", act=ActType.SUPPORT, reason="r", option_focus=["B"]),
         )
-        record = runner._generate_and_append(state, intent)
-        self.assertTrue(record.used_fallback)
-        self.assertEqual(state.coverage["C"].coverage_attempts, 1)
-        self.assertIn("C", record.mentioned_options())
-        trace = [e for e in state.controller_trace if e["type"] == "turn"][-1]
-        self.assertTrue(trace["result"]["coverage_realized"])
+        runner._collect_bids = lambda s, stim: [top, nxt]
+        runner._ranked_valid_bids = lambda s, bids: [top, nxt]
+
+        from models import TurnRecord
+        seen: list[str] = []
+
+        def fake_generate(s, intent):
+            seen.append(intent.speaker_id)
+            s.turn_index += 1
+            blocked = intent.speaker_id == "p1"      # top bid always drops
+            rec = TurnRecord(
+                index=s.turn_index, speaker_id=intent.speaker_id,
+                speaker_name=s.name_for(intent.speaker_id),
+                text="" if blocked else "The Bike Ride keeps costs low.",
+                phase=s.phase, intent=intent, state_mutation_blocked=blocked,
+            )
+            if not blocked:
+                s.turns.append(rec)
+            return rec
+
+        runner._generate_and_append = fake_generate
+        record = runner._run_open_floor_turn(state, runner._discussion_stimulus(state))
+        self.assertIsNotNone(record)
+        self.assertEqual(seen, ["p1", "p2"])          # top tried first, then next-best
+        self.assertEqual(record.speaker_id, "p2")
+        self.assertEqual(record.intent.option_focus, ["B"])  # intent preserved unchanged
 
 
 class ReparseTests(unittest.TestCase):

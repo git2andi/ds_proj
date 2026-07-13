@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import re
 
+from interpreter import TurnInterpreter
 from models import (
     ActType,
     AnswerEvidence,
@@ -155,95 +156,19 @@ def derive_evidence(
     intent=None,
     previous_speaker_id: str | None = None,
 ) -> VisibleEvidence:
-    """Deterministic evidence with exactly the legacy parser's recall."""
-    check = text.replace("’", "'").replace("‘", "'")
-    option_refs = resolver.ids_in_text(check)
-    _question = visible_question(
-        text, speaker_id=speaker_id,
-        participant_names=participant_names or {}, previous_speaker_id=previous_speaker_id,
+    """Use the production deterministic interpreter in offline tests."""
+    interpreter = TurnInterpreter(
+        None, resolver, None, participant_names or {}, mode="critical"
     )
-    question_scope = _question[0] if _question else None
-    question_target = _question[1] if _question else None
-    span = EvidenceSpan(text=text, start=0)
-    evidence = VisibleEvidence(utterance=text, mentions=resolver.mentions(text))
-
-    sanctioned = bool(intent is not None and getattr(intent, "allow_vote_change", False))
-    commitment = visible_commitment(text, resolver, sanctioned_switch=sanctioned)
-    explicit_vote: str | None = None
-    soft_rejects: list[str] = []
-    hard_rejects: list[str] = []
-    if commitment:
-        stance, option_id = commitment
-        if stance in {"vote", "accept"}:
-            explicit_vote = option_id
-            evidence.commitments.append(CommitmentEvidence(stance, option_id, span))
-        elif stance == "reject":
-            soft_rejects.append(option_id)
-    elif option_refs:
-        objection = _REJECT.search(check) or _SOFT_OBJECT.search(check)
-        if objection:
-            target = _nearest_option(check, objection.start(), objection.end(), resolver)
-            soft_rejects.append(target or option_refs[0])
-
-    blocker = active_blocker_option(check, resolver)
-    if blocker and blocker != explicit_vote:
-        hard_rejects.append(blocker)
-    resolves = blocker_resolution_option(check, resolver)
-    if resolves in hard_rejects:
-        resolves = None  # one line cannot both raise and resolve a blocker
-
-    for option_id in soft_rejects:
-        if option_id:
-            evidence.concerns.append(ConcernEvidence(option_id, "ordinary", span))
-    for option_id in hard_rejects:
-        evidence.concerns.append(ConcernEvidence(option_id, "hard", span))
-        evidence.blockers.append(BlockerEvidence(option_id, "raised", span))
-    if resolves:
-        evidence.blockers.append(BlockerEvidence(resolves, "resolved", span))
-
-    if question_scope:
-        evidence.questions.append(QuestionEvidence(
-            scope=str(question_scope), span=span,
-            addressee_id=question_target, option_ids=option_refs,
-        ))
-
-    comparative = realized_comparison(text, resolver)
-    if comparative:
-        ids = resolver.ids_in_text(text)
-        if len(ids) >= 2:
-            evidence.comparisons.append(ComparisonEvidence(option_ids=ids[:2], span=span))
-
-    conditional = None if commitment else conditional_support_option(check, resolver)
-    if conditional:
-        evidence.supports.append(SupportEvidence(conditional, "conditional", span))
-    elif has_support_claim(text) and option_refs:
-        target = support_claim_target(text, resolver) or option_refs[0]
-        evidence.supports.append(SupportEvidence(target, "weak", span))
-
-    offered = compromise_offer_option(check, resolver)
-    if offered:
-        evidence.proposals.append(ProposalEvidence(offered, span))
-    softened = None if commitment else softening_option(check, resolver)
-    if softened:
-        evidence.softenings.append(SofteningEvidence(span=span, option_id=softened))
-
-    evidence.primary_act = _legacy_primary_act(
-        commitment=commitment,
-        soft_rejects=soft_rejects,
-        hard_rejects=hard_rejects,
-        question_scope=question_scope,
-        option_refs=option_refs,
-        comparative=comparative,
-        check_text=check,
+    result = interpreter.interpret(
+        text=text,
+        speaker_id=speaker_id,
         intent=intent,
+        previous_speaker_id=previous_speaker_id,
+        target_turn_text="target" if intent is not None and getattr(intent, "respond_to_turn", None) is not None else None,
     )
-    if evidence.primary_act is ActType.ANSWER:
-        # Stub assumption: a routed line that realized as an answer (no
-        # stronger visible signal won the precedence) addresses its target.
-        # Real runs get this judgment from the validator; tests exercising
-        # off-target answers pin explicit AnswerEvidence instead.
-        evidence.answers.append(AnswerEvidence(completeness="full", span=span, addresses_target=True))
-    return evidence
+    assert result.evidence is not None
+    return result.evidence
 
 
 # Contextual acts keep their routed label for the display precedence, exactly

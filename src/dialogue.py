@@ -1,10 +1,16 @@
 """Dialogue runner: top-level orchestration and the generation pipeline.
 
 DialogueRunner composes the concern-specific mixins:
-FlowMixin (controller/flow.py — phases, narrowing, voting, repair machine),
-PolicyMixin (controller/policy.py — route/speaker/act selection),
+FlowMixin (controller/flow.py — phases, protocol obligations, bidding rounds,
+repair machine),
+FloorMixin (controller/floor.py — floor arbitration among simulator bids),
 ObserverMixin (observer.py — post-turn state updates), and
 ValidationMixin (validation.py — accept/repair/reject/fallback).
+
+Participant behavior itself is owned by the simulator policy (simulator.py):
+each simulator decides whether to claim the floor and what act/target/focus/
+reason/vote it intends. The floor manager selects among complete bids without
+rewriting them; the LLM realizes the winning intent as one utterance.
 
 This file itself owns only run orchestration, the generate→parse→validate→
 repair→append pipeline, turn/trace appends, and logging/output.
@@ -57,13 +63,14 @@ from models import (
     ConcernEvidence,
     EvidenceSpan,
     QuestionEvidence,
+    SupportEvidence,
     SwitchEvidence,
 )
 from style import strip_leading_name
 from utils import clean_generated, extract_utterance, normalise_lines
 from observer import ObserverMixin
 from controller.flow import FlowMixin
-from controller.policy import PolicyMixin
+from controller.floor import FloorMixin
 from validation import ValidationMixin, assessment_severity
 
 
@@ -85,7 +92,7 @@ class _Candidate:
     validator_retry_failures: tuple[str, ...] = ()
 
 
-class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
+class DialogueRunner(FlowMixin, FloorMixin, ObserverMixin, ValidationMixin):
     def __init__(self, topic: str, *, force_auto_scenario: bool = False) -> None:
         # A manual environment carries its own topic; an explicit CLI/piped
         # topic overrides it and requests automatic scenario generation.
@@ -105,13 +112,17 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         self._resolver: OptionResolver | None = None
         self._intervention_count = 0
         self._last_intervention_turn = -999
+        # Floor-arbitration trace state for the current turn (authority source
+        # and the eligible simulator bids that competed for it).
+        self._last_floor_bids: list = []
+        self._last_authority = "self_selection"
 
     def _mod(self, part: str) -> bool:
         """Whether the moderator voice performs a given structural job (issue 7).
 
-        The controller policy is independent of these flags; they only gate the
-        moderator's visible turns. An absent `moderator` config section keeps the
-        fully-moderated default (every part on)."""
+        The simulator policy and floor arbitration are independent of these
+        flags; they only gate the moderator's visible turns. An absent
+        `moderator` config section keeps the fully-moderated default (every part on)."""
         mod = getattr(cfg, "moderator", None)
         if mod is None:
             return True
@@ -160,13 +171,9 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
 
         outcome = ConsensusManager.finalize(state)
         state.outcome = outcome
-        if outcome.status == "unresolved":
-            self._emit_unresolved_acknowledgement(state, outcome)
         if self._mod("closing"):
             closing = prompts.moderator_closure_line(outcome, scenario, state)
             self._emit(self._append_moderator(state, closing, Phase.CLOSING))
-        else:
-            self._emit_peer_closing(state, outcome)
         self._mark_phase(state, Phase.CLOSING, f"closed as {outcome.status}")
 
         state.dialogue_tokens_in = self._llm.session_tokens_in
@@ -180,11 +187,31 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
     # ------------------------------------------------------------------
 
     def _pre_turn_trace(self, state: DialogueState, intent: MoveIntent, persona: Persona) -> dict:
-        """Immutable pre-turn snapshot: why this turn was selected (16.1)."""
+        """Immutable pre-turn snapshot: the authority that produced this turn and
+        the eligible simulator bids that competed for the floor (todo 21)."""
         answer_thread = self._required_answer_thread(state)
-        # The thread that actually routed this turn, carried on the intent.
+        # The thread this turn reacts to, carried on the intent.
         routed = state.threads.get(intent.thread_id) if intent.thread_id else None
+        bids = [
+            {
+                "participant_id": b.participant_id,
+                "wants_to_speak": b.wants_to_speak,
+                "willingness": round(b.willingness, 3),
+                "proposed_act": b.intent.act.value if b.intent else None,
+                "option_focus": list(b.intent.option_focus) if b.intent else [],
+                "trigger": b.trigger,
+                "floor_score": round(b.floor_score, 3),
+                "rejected_reason": b.rejected_reason,
+                "won": b.participant_id == persona.id and b.intent is not None
+                and b.intent.act is intent.act and list(b.intent.option_focus) == list(intent.option_focus),
+            }
+            for b in getattr(self, "_last_floor_bids", [])
+        ]
         return {
+            "authority_source": getattr(self, "_last_authority", intent.route_source),
+            "bids": bids,
+            "eligible_bid_count": sum(1 for b in bids if b["wants_to_speak"]),
+            "invalid_bid_reasons": [b["rejected_reason"] for b in bids if b["rejected_reason"]],
             "routed_thread_id": routed.thread_id if routed else None,
             "routed_thread_type": routed.thread_type.value if routed else None,
             "routed_thread_status": routed.status.value if routed else None,
@@ -299,30 +326,11 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         })
 
     @staticmethod
-    def _post_turn_route_accounting(state: DialogueState, intent: MoveIntent) -> None:
-        """Consume bounded-route attempts once the generation pipeline finished.
-
-        Route selection is read-only (contract 4.1): these bounds are charged
-        after the turn completed — appended or dropped — so a failed generation
-        still consumes its attempt and cannot re-route the same move forever,
-        while a mere route selection never mutates state before text exists.
-        Realized effects (coverage mentions, addressed concerns, votes) are
-        observed separately from the final accepted text.
-        """
-        source = intent.route_source
-        if source == "coverage" and intent.option_focus:
-            option_id = intent.option_focus[0]
-            if option_id in state.coverage:
-                state.coverage[option_id].coverage_attempts += 1
-        elif source == "thread_hot" and intent.act == ActType.ASK and intent.thread_id:
-            # A blocker-thread probe: one bounded probe per blocker thread,
-            # shared with the moderator probe, charged only post-turn.
-            thread = state.threads.get(intent.thread_id)
-            if thread is not None:
-                thread.probe_count += 1
-        elif source == "participant_narrowing":
-            state.procedural_move_count += 1
-            state.no_progress_count = 0
+    def _record_failed_route(state: DialogueState, intent: MoveIntent) -> None:
+        """Count a bid whose realization dropped after bounded repair (metrics
+        only). The floor picks the next-best bid; nothing is re-authored."""
+        key = f"{intent.route_source}|{intent.act.value}"
+        state.failed_route_counts[key] = state.failed_route_counts.get(key, 0) + 1
 
     def _process_candidate(
         self,
@@ -443,6 +451,13 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             evidence.blockers.append(BlockerEvidence(target, "raised", span))
             evidence.primary_act = ActType.CONCERN
             return evidence
+        if family == "opening_lean":
+            target = next((o for o in intent.option_focus if o in ids), None) or (ids[0] if ids else None)
+            if target is None:
+                return None
+            evidence.supports.append(SupportEvidence(target, "firm", span))
+            evidence.primary_act = ActType.SUPPORT
+            return evidence
         return None
 
     def _interpret_candidate(self, state: DialogueState, persona: Persona, intent: MoveIntent, text: str):
@@ -481,6 +496,10 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         self._apply_style_flags(state, intent)
         persona = state.persona_by_id(intent.speaker_id)
         pre_trace = self._pre_turn_trace(state, intent, persona)
+        # Consume the floor-bid snapshot so it never leaks into a later turn
+        # whose caller did not set fresh bids (framework-scheduled beats).
+        self._last_floor_bids = []
+        self._last_authority = "self_selection"
         min_words, max_words = self._word_bounds(intent, persona)
         recent_lines = self._recent_lines(state)
         focus_options = [state.scenario.option(i) for i in intent.option_focus if i in state.scenario.option_ids]
@@ -611,7 +630,6 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
                     },
                 )
                 self._record_failed_route(state, intent)
-                self._post_turn_route_accounting(state, intent)
                 return dropped
         record = self._append_participant(
             state,
@@ -652,7 +670,6 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
             ),
         )
         turn_entry = state.controller_trace[-1]
-        self._post_turn_route_accounting(state, intent)
         if not block:
             before = self._observable_state_snapshot(state, persona.id)
             self._apply_semantics(state, record)
@@ -758,61 +775,6 @@ class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
         })
         return record
 
-    def _append_peer_procedure(
-        self,
-        state: DialogueState,
-        persona: Persona,
-        text: str,
-        act_type: ActType,
-        option_focus: list[str],
-        *,
-        phase: Phase | None = None,
-    ) -> TurnRecord:
-        """Append deterministic participant-owned procedure text.
-
-        Split summaries are controller facts: vote counts and the candidate being
-        tested must not drift in an LLM paraphrase. Keeping this line
-        deterministic also removes one utterance+grounding call in no-moderator
-        split cases while still making the procedural move visibly owned by a
-        participant.
-        """
-        if phase is None:
-            phase = state.phase
-        state.turn_index += 1
-        text = normalise_lines(text)
-        rt = state.runtimes[persona.id]
-        rt.turn_count += 1
-        rt.last_spoke_turn = state.turn_index
-        rt.already_said.append(text)
-        # Deterministic controller text: its semantics are known by
-        # construction, so the evidence carries exactly the option mentions
-        # and the procedural label — never fabricated support or commitments.
-        record = TurnRecord(
-            index=state.turn_index,
-            speaker_id=persona.id,
-            speaker_name=persona.name,
-            text=text,
-            phase=phase,
-            evidence=VisibleEvidence(
-                utterance=text,
-                mentions=self._resolver.mentions(text) if self._resolver is not None else [],
-                primary_act=act_type,
-            ),
-        )
-        state.turns.append(record)
-        state.controller_trace.append({
-            "type": "peer_procedure",
-            "turn_index": record.index,
-            "phase": phase.value,
-            "speaker_id": persona.id,
-            "act": act_type.value,
-            "option_focus": [oid for oid in option_focus if oid in state.scenario.option_ids],
-        })
-        return record
-
-    # ------------------------------------------------------------------
-    # Rendering helpers
-    # ------------------------------------------------------------------
 
     def _moderator_say(self, prompt: str, state: DialogueState) -> str:
         raw = self._llm.generate(prompt, profile="dialogue")

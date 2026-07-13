@@ -29,12 +29,14 @@ Only accepted visible text moves ranks:
 
 `discussion_lean_shifts` counts every accepted turn that changed the speaker's top option during the discussion phase, whatever visible path caused it.
 
-Other participants' turns never rewrite someone else's private ranks. Public support, criticism, or pressure works only through routing and opportunity: the controller may make an option more relevant, select it as a candidate, or route the pressured participant to respond — and only that participant's own accepted visible utterance may then update their ranks.
+Other participants' turns never rewrite someone else's private ranks. Public support, criticism, or pressure becomes a public stimulus in that simulator's own policy; only the simulator's own accepted visible utterance may update its ranks. Framework candidate selection uses public evidence only and never reads another simulator's private ranks.
 
 ## One participant turn
 
 ```text
-1. controller selects the speaker and a MoveIntent (act, objective, focus, target)
+1. each eligible simulator submits a bid; the floor manager selects the winning
+   bid's MoveIntent (act, objective, focus, target) — or a protocol obligation
+   fixes speaker+act while the simulator chooses the substance
 2. the dialogue LLM realizes exactly that move inside an <utterance> envelope
 3. conservative extraction removes only response wrappers/labels
 4. the deterministic critical parser extracts option mentions, questions,
@@ -50,9 +52,9 @@ Other participants' turns never rewrite someone else's private ranks. Public sup
    commitments, and blockers
 ```
 
-Normal support, concern, comparison, opinion, implication, and answer quality are not sent to a validator LLM. The default critical runtime constructs no validator client and normally makes zero validator calls. A failed route is recorded with original/repair/fallback candidate text; repeating the same failed route first changes speaker and then simplifies or retires that route instead of issuing the same request indefinitely.
+No ordinary turn is sent to a validator LLM. Deterministic validation nevertheless requires selected SUPPORT, CONCERN, ASK, targeted ANSWER, COMPARE, COMPROMISE, and VOTE functions and their selected focus to be visibly realized. The default critical runtime constructs no validator client and normally makes zero validator calls. A winning bid whose realization fails is recorded with original/repair/fallback candidate text; the floor then uses the next-best submitted valid bid (the losing bid is never rewritten) rather than reissuing the same failed request.
 
-Concrete example: the controller routes Jonas a concern about the Museum. If the accepted line says that the listed 24-euro cost feels high, the observer opens a concern thread but leaves his rank unchanged. If he explicitly says “I’m warming to the Bike Ride,” the parser records a visible lean shift and both his public lean and private top rank follow his own words. Neither controller intent nor another participant’s pressure can move his stance silently.
+Concrete example: a simulator (Jonas) bids a concern about the Museum. If the accepted line says that the listed 24-euro cost feels high, the observer opens a concern thread but leaves his rank unchanged. If he explicitly says “I’m warming to the Bike Ride,” the parser records a visible lean shift and both his public lean and private top rank follow his own words. Neither a bid/intent nor another participant’s pressure can move his stance silently.
 
 ## Narrowing readiness
 
@@ -60,7 +62,7 @@ Normal `discussion -> narrowing` requires all mandatory conditions: no owed answ
 
 ## Narrowing behavior
 
-Narrowing is bounded: one summary beat (participant-led when possible; moderator-led when the discussion was circling or the target length forced it) plus one holdout reaction beat testing the candidate. If the candidate visibly collapses, the flow returns to discussion exactly once while budget remains; otherwise it proceeds to voting.
+Narrowing is bounded. With a visible moderator, it creates one concise public group question about the visible candidate or top-pair trade-off; without one, only the public narrowing stimulus is exposed. Relevant simulators may self-select one response or remain silent. If the candidate visibly collapses, the flow returns to discussion exactly once while budget remains; otherwise it proceeds to voting.
 
 ## Voting and the repair state machine
 
@@ -89,9 +91,9 @@ After the complete first round:
       otherwise close unresolved
 ```
 
-For a tied split such as `1-1-1`, formal vote counts are equal, so the single compromise candidate is the tied option with the most positive visible discussion mentions. Further ties are resolved deterministically. For a `2-1-1` split, the plurality option remains primary and only one mover is targeted because one switch is enough for a majority.
+For a tied split such as `1-1-1`, formal vote counts are equal, so the tested option is selected from visible positive discussion evidence and objection load, with stable option-order tie-breaking. For a `2-1-1` split, the visible plurality remains primary. Visible dissenters receive one bounded reservation/re-vote opportunity, but each simulator independently stays or switches.
 
-A moderator narrowing question is never followed directly by the formal vote call: one relevant participant answers first. During split repair, a targeted participant may only switch to the tested candidate or retain the current vote; selecting an unrelated third option would create a new split and is not a valid repair response.
+A moderator narrowing question gives every relevant simulator a self-selection opportunity before the formal vote call; the framework does not fabricate a response when all remain silent. During split repair, a targeted participant may only switch to the tested candidate or retain the current vote; selecting an unrelated third option would create a new split and is not a valid repair response.
 
 A hard blocker remains internal. In a bare-majority concern round the moderator treats that participant like any other dissenter and does not reveal the fixed blocker value; the internal rank-1 rule simply prevents an illegal switch. In split-candidate selection, participants who legally cannot move to the candidate are not counted as plausible movers.
 
@@ -110,7 +112,7 @@ A hard blocker never comes from traits alone — only `rejection` and option-ran
 
 ## Speech-style boundary
 
-Age/speech_style may change how a participant says a point. It must not change what the controller asks them to do, which option they prefer, or whether a switch is plausible.
+Age/speech_style may change how a participant says a point. It must not change its bid, option preference, or whether a switch is plausible.
 
 ## What must not happen
 

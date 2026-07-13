@@ -281,7 +281,13 @@ def age_threads(state: DialogueState) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Primary-thread selection (5.7)
+# Salience helpers
+#
+# There is no longer a thread-driven "primary thread" that prescribes the next
+# speaker/act (the old routing owner). Threads are public stimuli: each
+# simulator picks which hot thread it reacts to in its own policy. The only
+# framework-level thread query that remains is the hard-blocker narrowing/voting
+# gate below.
 # ---------------------------------------------------------------------------
 
 _BLOCKING_ORDER = {BlockingStrength.HARD: 2, BlockingStrength.SOFT: 1, BlockingStrength.NONE: 0}
@@ -302,66 +308,6 @@ def _pick(threads: list[ThreadState], candidate_options: set[str]) -> ThreadStat
     if not threads:
         return None
     return min(threads, key=lambda t: _tie_break_key(t, candidate_options))
-
-
-def select_primary_thread(
-    state: DialogueState,
-    *,
-    candidate_options: list[str] | None = None,
-    include_cooling: bool = False,
-) -> ThreadState | None:
-    """Deterministic primary-thread selection in the 5.7 priority order.
-
-    ``candidate_options`` is the current candidate/top pair. Cooling threads
-    are only eligible when the caller passes ``include_cooling`` (the router
-    rolls the continuation probability itself; this function stays pure).
-    A thread that has already driven the hard cap of accepted contributions
-    stops driving turns entirely.
-    """
-    candidates = set(candidate_options or [])
-    hard_cap = int(cfg.threads.max_thread_turns_hard)
-    hot = [
-        t for t in state.threads.values()
-        if t.status is ThreadStatus.HOT and t.contribution_count < hard_cap
-    ]
-
-    direct_q = [
-        t for t in hot
-        if t.thread_type is ThreadType.QUESTION and t.question_scope == "direct" and t.required_respondent
-    ]
-    if direct_q:
-        return _pick(direct_q, candidates)
-    group_q = [t for t in hot if t.thread_type is ThreadType.QUESTION and t.question_scope == "group"]
-    if group_q:
-        return _pick(group_q, candidates)
-    hard_blockers = [
-        t for t in hot
-        if t.thread_type is ThreadType.BLOCKER
-        and t.blocking_strength is BlockingStrength.HARD
-        and set(t.focus_options) & candidates
-    ]
-    if hard_blockers:
-        return _pick(hard_blockers, candidates)
-    candidate_concerns = [
-        t for t in hot
-        if t.thread_type is ThreadType.CONCERN and set(t.focus_options) & candidates
-    ]
-    if candidate_concerns:
-        return _pick(candidate_concerns, candidates)
-    other_hot = [
-        t for t in hot
-        if t.thread_type in (ThreadType.BLOCKER, ThreadType.CONCERN, ThreadType.COMPARISON)
-    ]
-    if other_hot:
-        return _pick(other_hot, candidates)
-    if include_cooling:
-        cooling = [
-            t for t in state.threads.values()
-            if t.status is ThreadStatus.COOLING and t.contribution_count < hard_cap
-        ]
-        if cooling:
-            return _pick(cooling, candidates)
-    return None
 
 
 def resolve_comparison_threads(state: DialogueState, *, reason: str) -> None:

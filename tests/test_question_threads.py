@@ -7,7 +7,8 @@ import unittest
 
 import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
-from models import ActType, MoveIntent, Phase, ThreadStatus, ThreadType
+import simulator as sim_policy
+from models import ActType, MoveIntent, Phase, ThreadStatus, ThreadType, TurnObligation
 
 from tests.fixtures import append_turn, make_state
 from tests.stubs import make_runner
@@ -17,10 +18,24 @@ def _question_threads(state):
     return [t for t in state.threads.values() if t.thread_type is ThreadType.QUESTION]
 
 
+def _answer_intent(state, thread, respondent=None):
+    """Build the simulator-owned answer intent for a question thread the way the
+    flow does: a framework obligation fixes speaker/act/target; the simulator
+    policy chooses the answer's option focus and direction."""
+    respondent = respondent or thread.required_respondent
+    ob = TurnObligation(
+        kind="direct_answer", participant_id=respondent, act=ActType.ANSWER,
+        respond_to_turn=thread.source_turn_index, thread_id=thread.thread_id,
+        addressee_id=None if thread.started_by in {"moderator", ""} else thread.started_by,
+        focus_options=list(thread.focus_options),
+    )
+    return sim_policy.decide_simulator_bid(state, respondent, obligation=ob).intent
+
+
 def _observe(runner, state, speaker_id, text, *, intent=None):
     """Run one turn through the real generation pipeline with scripted text."""
     runner._llm.responses.append(text)
-    intent = intent or MoveIntent(speaker_id=speaker_id, act=ActType.SUPPORT, reason="say it")
+    intent = intent or MoveIntent(speaker_id=speaker_id, act=ActType.COMMENT, reason="acknowledge the exchange")
     return runner._generate_and_append(state, intent)
 
 
@@ -47,7 +62,9 @@ class QuestionThreadCreationTests(unittest.TestCase):
         self.assertEqual(thread.required_respondent, "p2")
         self.assertIn("A", thread.focus_options)
 
-    def test_group_question_respondent_assigned_by_controller(self):
+    def test_group_question_has_no_assigned_respondent(self):
+        # Group questions are answered through self-selection: no controller-
+        # assigned required respondent (todo 12).
         _observe(
             self.runner, self.state, "p1",
             "Which option is actually cheapest for all of us?",
@@ -57,7 +74,7 @@ class QuestionThreadCreationTests(unittest.TestCase):
         self.assertEqual(len(threads), 1)
         thread = threads[0]
         self.assertEqual(thread.question_scope, "group")
-        self.assertIn(thread.required_respondent, {"p2", "p3"})  # never the asker
+        self.assertIsNone(thread.required_respondent)
 
     def test_failed_turn_creates_no_thread(self):
         # A dropped decision turn (hard-blocked required vote) must not leave
@@ -125,7 +142,7 @@ class QuestionRoutingTests(unittest.TestCase):
         self.state = make_state()
         self.runner = make_runner(self.state)
 
-    def test_required_respondent_routed_promptly(self):
+    def test_direct_question_creates_mandatory_answer_obligation(self):
         _observe(
             self.runner, self.state, "p1",
             "Jonas, what do you think about the Museum?",
@@ -134,15 +151,17 @@ class QuestionRoutingTests(unittest.TestCase):
                 addressee_id="p2", option_focus=["A"],
             ),
         )
-        intent = self.runner._route_discussion_turn(self.state)
-        self.assertEqual(intent.speaker_id, "p2")
-        self.assertEqual(intent.act, ActType.ANSWER)
-        self.assertEqual(intent.route_source, "answer_required")
+        obligation = self.runner._pending_answer_obligation(self.state)
+        self.assertIsNotNone(obligation)
+        self.assertEqual(obligation.participant_id, "p2")
+        self.assertEqual(obligation.act, ActType.ANSWER)
         thread = _question_threads(self.state)[0]
-        self.assertEqual(intent.respond_to_turn, thread.source_turn_index)
+        self.assertEqual(obligation.respond_to_turn, thread.source_turn_index)
 
-    def test_answer_route_outranks_other_discussion_routes(self):
-        self.state.coverage["C"].mentions = 0  # coverage gap exists
+    def test_answer_obligation_takes_priority_over_open_floor(self):
+        # A pending direct-answer obligation forces the named respondent before
+        # any open-floor bidding round (the discussion loop checks it first).
+        self.state.coverage["C"].mentions = 0
         for _ in range(4):
             append_turn(self.state, "p1", "I still like the Museum best.")
             append_turn(self.state, "p2", "The Bike Ride keeps cost low.")
@@ -156,9 +175,10 @@ class QuestionRoutingTests(unittest.TestCase):
         )
         for seed in range(15):
             random.seed(seed)
-            intent = self.runner._route_discussion_turn(self.state)
-            self.assertEqual(intent.route_source, "answer_required")
-            self.assertEqual(intent.speaker_id, "p1")
+            obligation = self.runner._pending_answer_obligation(self.state)
+            self.assertIsNotNone(obligation)
+            self.assertEqual(obligation.participant_id, "p1")
+            self.assertEqual(obligation.act, ActType.ANSWER)
 
 
 class QuestionResolutionTests(unittest.TestCase):
@@ -177,7 +197,7 @@ class QuestionResolutionTests(unittest.TestCase):
         self.thread = _question_threads(self.state)[0]
 
     def test_relevant_answer_moves_thread_to_cooling(self):
-        answer_intent = self.runner._answer_intent_for_thread(self.state, self.thread)
+        answer_intent = _answer_intent(self.state, self.thread)
         _observe(self.runner, self.state, "p2", "The Museum seems fine for the calm pace.", intent=answer_intent)
         self.assertEqual(self.thread.status, ThreadStatus.COOLING)
 
@@ -201,13 +221,13 @@ class QuestionResolutionTests(unittest.TestCase):
         threads = sorted(_question_threads(self.state), key=lambda t: t.created_turn)
         self.assertEqual(len(threads), 2)
         first, second = threads
-        answer_intent = self.runner._answer_intent_for_thread(self.state, first)
+        answer_intent = _answer_intent(self.state, first)
         _observe(self.runner, self.state, "p2", "The Museum seems fine for the calm pace.", intent=answer_intent)
         self.assertEqual(first.status, ThreadStatus.COOLING)
         self.assertEqual(second.status, ThreadStatus.HOT)
 
     def test_answered_question_resolves_after_quiet_cooling_window(self):
-        answer_intent = self.runner._answer_intent_for_thread(self.state, self.thread)
+        answer_intent = _answer_intent(self.state, self.thread)
         _observe(self.runner, self.state, "p2", "The Museum seems fine for the calm pace.", intent=answer_intent)
         _observe(self.runner, self.state, "p3", "Fair enough, I can see that.")
         _observe(self.runner, self.state, "p1", "Good, that settles my worry.")
@@ -221,7 +241,7 @@ class QuestionResolutionTests(unittest.TestCase):
         # the thread hot.
         from models import AnswerEvidence, EvidenceSpan, VisibleEvidence
 
-        answer_intent = self.runner._answer_intent_for_thread(self.state, self.thread)
+        answer_intent = _answer_intent(self.state, self.thread)
         text = "Weekends always fill up fast around here."
         record = append_turn(self.state, "p2", text, intent=answer_intent)
         record.evidence = VisibleEvidence(
@@ -247,8 +267,10 @@ class QuestionResolutionTests(unittest.TestCase):
         )
         thread = _question_threads(state)[0]
         self.assertEqual(thread.focus_options, [])
-        respondent = thread.required_respondent
-        answer_intent = runner._answer_intent_for_thread(state, thread)
+        self.assertIsNone(thread.required_respondent)  # group question: self-selection
+        # Any eligible sim may answer a group question; p2 self-selects here.
+        respondent = "p2"
+        answer_intent = _answer_intent(state, thread, respondent=respondent)
         answer_intent.option_focus = []
         from models import AnswerEvidence, EvidenceSpan, VisibleEvidence
         answer = VisibleEvidence(answers=[AnswerEvidence(

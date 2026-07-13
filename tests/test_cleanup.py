@@ -12,7 +12,7 @@ import unittest
 
 import tests  # noqa: F401  # puts src/ on sys.path before src imports
 
-from controller.policy import PolicyMixin
+from controller.floor import FloorMixin
 from models import ActType, MoveIntent
 from prompts import _length_instruction
 from utils import clean_generated, extract_utterance
@@ -159,7 +159,7 @@ class WordBudgetsStaySoft(unittest.TestCase):
         persona = make_persona("p1", "Mira", verbosity=verbosity)
         intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="say something")
         random.seed(11)
-        return [PolicyMixin._word_bounds(intent, persona)[1] for _ in range(n)]
+        return [FloorMixin._word_bounds(intent, persona)[1] for _ in range(n)]
 
     def test_high_verbosity_gets_consistently_longer_budgets(self):
         budgets = self._budgets(0.9)

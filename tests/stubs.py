@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Any
 
 from dialogue import DialogueRunner
-from interpreter import InterpretationResult
+from interpreter import InterpretationResult, TurnInterpreter
 from models import DialogueState, VisibleEvidence
 from parsing import OptionResolver
 
@@ -60,23 +60,20 @@ class StubInterpreter:
     """
 
     def __init__(
-        self, resolver: OptionResolver, participant_names: dict[str, str],
+        self, resolver: OptionResolver, scenario, participant_names: dict[str, str],
         evidences: list[VisibleEvidence] | None = None,
     ) -> None:
         self._resolver = resolver
         self._names = dict(participant_names)
         self._evidences = list(evidences or [])
+        self._real = TurnInterpreter(None, resolver, scenario, participant_names)
 
-    def interpret(self, *, text: str, speaker_id: str, intent=None, **_context) -> InterpretationResult:
+    def interpret(self, *, text: str, speaker_id: str, intent=None, **context) -> InterpretationResult:
         if self._evidences:
             evidence = self._evidences.pop(0)
             evidence.utterance = text
             return InterpretationResult(evidence=evidence)
-        return InterpretationResult(evidence=critical_evidence(
-            text, self._resolver, speaker_id=speaker_id,
-            participant_names=self._names,
-            sanctioned_switch=bool(intent and intent.allow_vote_change),
-        ))
+        return self._real.interpret(text=text, speaker_id=speaker_id, intent=intent, **context)
 
 
 def make_runner(
@@ -92,7 +89,7 @@ def make_runner(
     runner._validator_llm = FakeLLM()
     runner._resolver = OptionResolver(state.scenario.options)
     runner._interpreter = StubInterpreter(
-        runner._resolver, {p.id: p.name for p in state.personas}, evidences
+        runner._resolver, state.scenario, {p.id: p.name for p in state.personas}, evidences
     )
     runner._intervention_count = 0
     runner._last_intervention_turn = -999

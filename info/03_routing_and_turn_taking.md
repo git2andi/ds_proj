@@ -1,45 +1,128 @@
-# 03 — Routing and turn-taking
+# 03 — Turn-taking: self-selection and floor arbitration
 
-The router decides who speaks next, which macro act they perform, who they address, and which option/thread they focus on. Routing is read-only over dialogue state: it returns a `MoveIntent` and never mutates persistent state; effects only count after the final accepted utterance's validated visible evidence is observed (the observer consumes exactly the evidence object that passed validation — it never reparses text).
+Turn-taking is **simulator-driven**. There is no centralized router that picks a
+speaker and authors a move. Instead, when the floor is open, every eligible
+simulator independently decides whether it wants to speak and, if so, submits one
+complete intended move; a floor manager arbitrates access and selects a winner
+without rewriting it. Bidding and arbitration are read-only over dialogue state
+— effects only count after the winning utterance's validated visible evidence is
+observed (the observer consumes exactly the evidence object that passed
+validation; it never reparses text).
 
-## Routing order
+## Open-floor bidding
 
-One readable routing function (`controller/policy.py::_route_discussion_turn`) applies this priority order:
-
-```text
-1. required direct answer            (hot question thread's required respondent)
-2. hot primary thread                (deterministic primary selection)
-3. cooling primary thread            (probabilistic continuation, never scripted)
-4. option coverage                   (only when no hot thread exists)
-5. rare same-speaker continuation    (short addendum, chain-capped)
-6. normal weighted discussion act
-```
-
-Phase/progress nudges run in the discussion loop before the router; narrowing/voting gates live outside act sampling (`controller/flow.py`).
-
-## Threads
-
-Local interaction is tracked as threads (`question`, `concern`, `blocker`, `comparison`; `repair` is phase-specific) with statuses `hot / cooling / resolved / stale`. Thread identity is `(type, focus options, deterministic issue key)`; the engine in `controller/threads.py` owns all lifecycle transitions and selects one deterministic primary thread per route decision (repair > direct question > group question > hard blocker on candidate > candidate concern > other hot > cooling).
-
-A hot thread drives the next local move, and the routed act always matches the decided objective. Concern threads: a low-stubbornness advocate concedes (CONCERN), a committed advocate defends (SUPPORT), a bystander who shares the dislike adds a grounded doubt (CONCERN), a neutral bystander grounds the issue in the listed facts (COMMENT). Blocker threads route one bounded probe (ASK), then a backer points to the addressing fact (SUPPORT) or anyone else acknowledges the blocker's weight (COMMENT). Comparison threads route engagement with the same trade-off (COMPARE). Cooling continuation lets the raiser visibly accept (SUPPORT) or push back once (CONCERN) — direction picked by a stubbornness-weighted draw — another participant react to an answer (questions), or a new voice join a comparison; probabilities come from `threads:` config, bounded to freshly cooled threads. There is no hidden commitment float anywhere in these decisions: they read ranks, traits, and thread state only.
-
-## Speaker choice
-
-Normal turns combine:
+Per ordinary turn (`controller/flow.py::_run_open_floor_turn`):
 
 ```text
-engagement-based expected turn share (actual share vs own target)
-+ recent-speaker penalty and anti-monologue damping
-+ minimum visibility for quiet sims
+1. build a public DiscussionStimulus (candidate, top pair, coverage gap, open group question, kind)
+2. ask every eligible simulator policy for one SimulatorBid (src/simulator.py)
+3. validate bids structurally (controller/floor.py::_validate_bid)
+4. score floor access and select the highest-scoring valid claiming bid
+5. generate one utterance for the winning bid's unchanged intent
+6. on bounded generation failure, use the next-best submitted valid bid
+7. if no valid simulator claims the floor, run stall handling
 ```
 
-Thread turns use relevance, not engagement alone: stance/option relevance dominates, the turn-share deficit corrects imbalance, engagement is only a secondary prior, and just-spoke/ping-pong penalties keep the floor moving. A direct question's required respondent overrides normal ranking.
+A simulator bid is `wants_to_speak` + a normalized `willingness` + (when
+claiming) one complete `MoveIntent` owning act, target turn/thread, addressee,
+option focus, direction, reason, and any vote/compromise. `wants_to_speak=False`
+is a legitimate simulated silence and is never overwritten.
 
-`engagement` is the only participation-share parameter: each sim gets an expected share (`0.30 + engagement`, normalized). Age/speech_style must not be used as a routing signal.
+## Willingness and act scoring (per simulator)
+
+Each simulator computes its own **willingness** from its persona, private stance,
+and public state (`src/simulator.py::_willingness`): engagement is the baseline,
+plus stake/relevance factors (its option was challenged, a disliked option gained
+visible support, its concern was engaged, an answerable group question, an unused
+grounded reason, being under its expected share, a stake in the narrowing
+candidate) minus damping (spoke last, over its share, repetition). Relevance and
+personal stake can outweigh engagement, so a low-engagement simulator whose
+preferred option was challenged can beat a highly engaged one with nothing new to
+add. `wants_to_speak` is sampled from willingness (seeded).
+
+Act scores (`_score_acts`) measure content availability, never turn frequency:
+`SUPPORT` rises when the sim's option is challenged or it has an unused reason;
+`CONCERN` when a disliked/rejected option gains support (scaled by stubbornness
+and directness); `ASK` when a relevant uncertainty is open; `COMPARE` when two
+active options are ranked differently; `COMMENT` is a weak baseline;
+`COMPROMISE` only when a non-rejected candidate has visible backing and movement
+is plausible; `PROCESS` only under an explicit stall stimulus. The act is chosen
+by seeded weighted selection among the positive scores, and the simulator then
+picks its own target/focus/reason/addressee.
+
+## Floor arbitration (access only)
+
+The floor manager (`controller/floor.py`) may reject or reorder complete bids but
+never rewrites an act, focus, target, addressee, reason, or vote. Its floor score
+starts from the submitted willingness and applies **only** floor mechanics:
+recent-speaker penalty, anti-monopoly damping when a sim is past its expected
+share, and a minimum-visibility boost when a sim has been silent beyond its
+expected share. Engagement is not applied a second time (it is already inside
+willingness). The last speaker is not hard-banned — a strong recent-speaker
+penalty plus a speaker-chain cap models self-selection instead. Structural
+validation rejects a bid before generation when the intent speaker mismatches,
+the act is illegal in the phase, a referenced turn/thread is missing, option
+focus is invalid, the addressee is invalid/self, a comparison has fewer than two
+options, a hard blocker targets a rejected option, or the bid is a clear
+repetition. A rejected or failed bid is skipped, never rewritten; the next-best
+valid bid is used.
+
+`engagement` is the only participation-share parameter: each sim gets an expected
+share (`0.30 + engagement`, normalized), used inside willingness and the
+floor's anti-monopoly/min-visibility corrections. Age/speech_style are never a
+floor signal.
+
+## Protocol obligations
+
+Some turns are protocol-required. A `TurnObligation` fixes only the speaker and
+act; the simulator still chooses the substance:
+
+- **opening** — every sim speaks once; the simulator chooses its opening option
+  focus and reason from its own stance.
+- **direct answer** — a valid direct question gives its named respondent the next
+  turn (act `ANSWER`); the simulator decides the answer's direction, focus, and
+  grounded reason (accept, reject, partial concession, condition, uncertainty, or
+  pushback). The controller never prescribes "accept/reject/defend/concede".
+- **vote** — the framework starts a vote and schedules voters; each simulator
+  selects its own `required_vote` from its ranks, visible lean/concessions,
+  switch resistance, hard constraints, and the tested candidate, and whether it
+  is a visible switch with a grounded reason.
+- **narrowing** — the framework creates a public group stimulus; relevant simulators self-select a response or remain silent.
+- **repair reactions** — bounded reservation/re-vote obligations fix only the participant and broad act; the simulator chooses the reservation and stay/switch substance.
 
 ## Questions
 
-Question *scope* comes from validated visible evidence only: a named or "you"-directed question is direct; a genuine question without an addressee is a group question with no target (rhetorical tags open nothing). The controller (never the interpreter) assigns the group respondent by relevance, engagement, and turn-share deficit. The required respondent answers on the next turn; an unrelated turn by that respondent does not close the question, and a fallback line resolves it only when its accepted answer evidence says it addressed the target (the deterministic listed-fact answer families do; nothing else does).
+Question *scope* comes from validated visible evidence only: a named or
+"you"-directed question is direct; a genuine question without an addressee is a
+**group** question with no assigned respondent. A direct question is a mandatory
+adjacency pair (its named respondent owes the next turn). A group question opens
+a public question thread with `required_respondent=None`, becomes a high-priority
+stimulus that raises `ANSWER` willingness for relevant simulators, and may be
+answered by any self-selecting simulator other than the asker; a relevant
+accepted answer from any of them cools the thread.
+
+## Threads as stimuli
+
+Local interaction is tracked as threads (`question`, `concern`, `blocker`,
+`comparison`) with statuses `hot / cooling / resolved / stale`, identity
+`(type, focus options, deterministic issue key)`, and per-thread contribution
+caps. The engine in `controller/threads.py` owns all lifecycle transitions but no
+longer selects a "primary thread" or prescribes a speaker/act. A hot thread is a
+**public stimulus**: it raises the relevant participant-local scores in each
+simulator's bid (a concern raiser may push back, an advocate may defend or
+concede, a bystander may clarify or compare, a blocker may restate under new
+pressure — or any of them may stay silent). Each simulator picks which hot thread
+it reacts to; a thread past its contribution cap stops being a live stimulus.
+
+## Coverage and stalls
+
+An under-discussed option is a relevance bonus to simulators that have a real
+stance on it, never a forced comparison. If it stays uncovered, the moderator
+asks the group about it (a group question with no assigned respondent); with the
+moderator off, a `stall` stimulus raises ask/compare/comment/process relevance
+for one more bid pass. A stall is a valid simulated group state: if no simulator
+claims the floor, the framework progresses at its configured bounds rather than
+inventing a participant stance.
 
 ## Macro acts
 
@@ -47,13 +130,21 @@ Question *scope* comes from validated visible evidence only: a named or "you"-di
 opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
 ```
 
-Normal sampling is limited to `support, concern, ask, compare, comment`. `answer` is route-driven by question threads; `process`/`compromise` belong to narrowing and repair; softening is an observed stance effect parsed from visible text, never a routed act.
+Open-floor self-selection can produce `answer, support, concern, ask, compare, comment, compromise` when a concrete contribution is available; `process` appears only under a stall stimulus. COMMENT has no generic baseline, and silence is valid.
+`opening`, `answer`, and `vote` are obligation/protocol acts whose substance the
+simulator still owns; softening is an observed stance effect parsed from visible
+text, never a chosen act.
 
 ## Parameter influence
 
-- engagement -> contribution frequency (expected turn share);
-- verbosity -> average utterance length (numeric word budgets, soft targets);
-- directness -> wording bluntness (and a higher concern/challenge prior);
-- stubbornness -> discussion-phase defense, concession, and softening — never final switching;
+- engagement -> willingness baseline / expected turn share (applied once, inside the simulator);
+- verbosity -> average utterance length (numeric word budgets, soft targets); never affects willingness or act choice;
+- directness -> wording bluntness and a higher concern/challenge prior and directed-question tendency; never turn share;
+- stubbornness -> discussion-phase defense and concession probability — never final switching;
 - switch_resistance -> final movement only: switches, compromise acceptance, holdout concession, vote/repair resistance;
-- speech_style -> lexical and register variation, never a routing signal.
+- speech_style -> lexical and register variation, never a turn-taking signal.
+
+
+## Public social awareness
+
+Each simulator receives a derived public participant ledger: names, latest visible positions, visible support/concerns, recent acts, and active question relationships. It is rebuilt from accepted turns and contains no other simulator's private goal, ranks, reasons, stubbornness, or switch resistance. Social targeting uses this ledger so questions and responses prefer the visible owner of the relevant claim or concern.

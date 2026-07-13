@@ -13,6 +13,7 @@ from collections.abc import Iterable
 
 from aliases import short_alias_map
 from config_loader import cfg
+from consensus import public_participant_ledger
 from models import ActType, DialogueState, MoveIntent, OptionCard, Persona, Phase, RunOutcome, Scenario, STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED, ThreadStatus, ThreadType
 from utils import compact_words
 
@@ -326,6 +327,32 @@ def _stance_summary(
     return "; ".join(parts[:5]) or "mostly neutral"
 
 
+def _public_group_snapshot(state: DialogueState, viewer_id: str) -> str:
+    """Compact public-only social context for one simulator."""
+    aliases = short_alias_map(state.scenario.options)
+    ledger = public_participant_ledger(state)
+    rows: list[str] = []
+    for persona in state.personas:
+        if persona.id == viewer_id:
+            continue
+        item = ledger[persona.id]
+        facts: list[str] = []
+        if item.public_position:
+            facts.append(f"publicly favors {aliases.get(item.public_position, item.public_position)}")
+        if item.concerned_options:
+            names = ", ".join(aliases.get(o, o) for o in item.concerned_options[:2])
+            facts.append(f"raised concern about {names}")
+        if item.pending_question_to:
+            facts.append(f"has an open question for {state.name_for(item.pending_question_to)}")
+        if item.pending_question_from:
+            facts.append(f"owes a response to {state.name_for(item.pending_question_from)}")
+        if not facts and item.last_act is not None:
+            focus = ", ".join(aliases.get(o, o) for o in item.last_focus_options[:2])
+            facts.append(f"last contributed {item.last_act.value}" + (f" about {focus}" if focus else ""))
+        rows.append(f"- {persona.name}: " + ("; ".join(facts) if facts else "no clear public position yet"))
+    return "\n".join(rows) if rows else "(no other participants)"
+
+
 # One concise semantic requirement per dialogue act (todo_new item 4): what the
 # realized line must MEAN, never how it must be phrased. Vote turns get their
 # requirement from the decision instruction, which also carries the
@@ -336,8 +363,8 @@ _ACT_REQUIREMENTS = {
         "is fine. Do not make it sound like a final vote."
     ),
     ActType.SUPPORT: (
-        "Give real support: one clearly positive reason or consequence for the focused "
-        "option. You may briefly acknowledge a concern first, but your supportive "
+        "State an unmistakably positive judgment about the focused option and give one "
+        "grounded reason or consequence. You may acknowledge a concern first, but your supportive "
         "position must stay clear. Do not add a new factual feature to justify it."
     ),
     ActType.CONCERN: (
@@ -418,7 +445,9 @@ def sim_utterance(
 ) -> str:
     aliases = short_alias_map(state.scenario.options)
     cards = _option_cards(focus_options or state.scenario.options)
+    recent_lines = recent_lines[-3:]
     recent = "\n".join(recent_lines) if recent_lines else "(no recent turns)"
+    social_snapshot = _public_group_snapshot(state, persona.id)
     current = state.runtimes[persona.id].top_option() or persona.preferred_option
     current_name = aliases.get(current, state.scenario.option(current).name if current in state.scenario.option_ids else "undecided")
     # Stance restricted to the options this move touches (item 3): the current
@@ -450,7 +479,12 @@ def sim_utterance(
         reason = state.runtimes[persona.id].reason_against(oid)
         blocked = f"\nHard blocker: they strongly reject {aliases.get(oid, oid)}" + (f" because {reason}" if reason else "") + ". Do not accept or vote for that option."
     target_block = _target_block(state, intent, len(recent_lines))
-    address = f"\nAddress {addressee_name} if it sounds natural." if addressee_name else ""
+    address = ""
+    if addressee_name:
+        if intent.act is ActType.ASK:
+            address = f"\nDirect the question clearly to {addressee_name}; using the name is appropriate when needed for clarity."
+        else:
+            address = f"\nRespond to {addressee_name}; using the name is optional when the exchange is already clear."
     context = "; ".join(compact_words(item, 14) for item in state.scenario.shared_context) if state.scenario.shared_context else "none"
     params = persona.sim_params
     decision_instruction = ""
@@ -553,21 +587,28 @@ def sim_utterance(
     )
     return f"""Write one natural chat message for {persona.name}.
 
-Voice: age {persona.age}; {persona.speech_style}. Directness {_scale_1_5(params.directness)}/5 (5 = blunt plain wording, 1 = soft tentative wording). Stubbornness {_scale_1_5(params.stubbornness)}/5 (5 = defends the current stance firmly and concedes slowly, 1 = concedes easily).{persona_line}
-Your stance: current pick {current_name}{initial_note}{stance_note}.{blocked}
+Your private state:
+- Voice: age {persona.age}; {persona.speech_style}. Directness {_scale_1_5(params.directness)}/5; stubbornness {_scale_1_5(params.stubbornness)}/5.{persona_line}
+- Current pick: {current_name}{initial_note}{stance_note}.{blocked}
 
-Move: {intent.act.value}. {_ACT_REQUIREMENTS.get(intent.act, "")}
-This turn: {intent.reason}{continuation_note}{target_block}{address}{decision_instruction}
+Public group snapshot:
+{social_snapshot}
 
+Current exchange:
+- Selected move: {intent.act.value}. {_ACT_REQUIREMENTS.get(intent.act, "")}
+- Your intention: {intent.reason}{continuation_note}{target_block}{address}{decision_instruction}
+
+Focused option facts:
 Topic: {state.scenario.topic}
 Shared context: {context}
 Closed-world grounding rule: the shared context and option cards below are the complete factual world for this chat. You may naturally repeat exact listed values such as prices, durations, capacities, or distances when they help the point. Never alter those values or add exact times, locations, amenities, capacities, schedules, availability, guarantees, reliability claims, service features, or outside conditions unless they are explicitly written below. Do not use general knowledge to complete a plausible detail. If a needed detail is unlisted, omit it or say naturally that we do not know it here.
 Allowed facts:
 {cards}
 
-Recent chat:
+Minimal recent verbatim chat:
 {recent}
 
+Output constraints:
 Output: exactly one message wrapped in <utterance></utterance> tags, like <utterance>your message</utterance>. Nothing outside the tags. No speaker prefix, no bullets/metadata inside. {length_note} Match the speech style and age naturally. Add something new instead of restating points already made. Refer to options naturally — full name, short name, or a clear reference, anywhere in the message, preferably not at the start of a sentence. Use only the listed option facts and shared context. Exact values printed on a card may be repeated naturally when relevant. Treat them as closed-world facts: when information is not explicitly given, omit it, say naturally that it is unknown here, or ask about it. Never alter a listed value or invent a plausible exact time, place, capacity, amenity, availability, guarantee, product/service capability, or external condition.{settled_unknowns}{style_notes}"""
 
 

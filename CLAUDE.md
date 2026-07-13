@@ -6,21 +6,35 @@ Working instructions for coding agents in this repository.
 
 This is a university project for an option-grounded multi-user decision simulator. The system simulates 2-7 LLM-driven participants discussing a fixed set of options. The goal is a configurable simulator whose participant parameters visibly affect turn-taking, stance movement, disagreement, compromise, and final outcomes.
 
-The architecture should stay explainable:
+The architecture is **simulator-driven**: each simulated user is the decision maker, not an LLM
+voice realizing controller-authored moves. The authority split is:
 
 ```text
-state -> route speaker/move/target/focus -> dialogue LLM generates one visible utterance
-      -> conservative extraction -> deterministic critical interpretation/validation
-      -> at most one critical repair, else minimal safe fallback or drop
-      -> observer updates state only from the final accepted visible text
-      -> narrow -> one complete vote round -> bounded one-round repair -> close
+simulator policy (src/simulator.py) -> each sim decides its own willingness to speak and, if it
+                                        claims the floor, one complete intended move
+                                        (act/target/option-focus/reason/vote/compromise)
+floor manager (controller/floor.py)  -> collects one bid per eligible sim, validates them
+                                        structurally, adjusts floor access (recent-speaker /
+                                        anti-monopoly / min-visibility), and selects a winner
+                                        WITHOUT rewriting its act/focus/target/reason/vote
+dialogue LLM                         -> realizes the winning intent as one visible utterance
+observer (observer.py)               -> updates public state only from the final accepted text
+flow (controller/flow.py)            -> phases, protocol obligations, bid rounds, termination
 ```
 
-The dialogue LLM renders utterances. Runtime validation is deterministic and normally makes zero
-validator-LLM calls (`validation.mode: critical`). Hidden controller intent never becomes public
-support, acceptance, a vote, a switch, or a blocker. Ordinary conversational quality is tolerated;
-formal commitments, blockers, option identity, and final outcome invariants are strict. The full
-eval suite (`py .\eval\run_eval_suite.py`) uses live endpoints and is costly.
+Per turn: build stimulus -> collect bids -> validate -> pick winner -> generate one utterance ->
+conservative extraction -> deterministic critical interpretation/validation -> at most one critical
+repair, else next-best bid / minimal safe fallback / drop -> observer updates state from accepted
+text. Opening and voting are protocol-required turns and direct questions are mandatory adjacency
+pairs, but the simulator still chooses the substance (opening position, answer direction, vote
+target, compromise). Group questions use self-selection. A derived public participant ledger exposes only visible positions, concerns, recent acts, and question relationships. Narrowing/vote readiness, repair detection, and outcome calculation remain framework responsibilities.
+
+The dialogue LLM renders utterances only. Runtime validation is deterministic and normally makes
+zero validator-LLM calls (`validation.mode: critical`). No bid or intended move ever becomes public
+support, acceptance, a vote, a switch, or a blocker — only accepted visible text does. The floor
+manager applies engagement only through the simulator's willingness (never a second time); relevance
+and personal stake can outweigh engagement. Selected SUPPORT, CONCERN, ASK, targeted ANSWER, COMPARE, COMPROMISE, and VOTE functions are correctness-critical: they must be visible after at most one repair. Formal commitments, blockers, option identity, and final outcome invariants are strict. The full eval suite
+(`py .\eval\run_eval_suite.py`) uses live endpoints and is costly.
 
 ## Scenario model
 
@@ -73,7 +87,7 @@ narrowing -> discussion            (at most once, on candidate collapse)
 voting -> compromise_repair -> voting | closing
 ```
 
-Local interaction is thread state (`src/controller/threads.py` is the single owner of thread lifecycle): `question`, `concern`, `blocker`, `comparison`, `repair` threads with statuses `hot/cooling/resolved/stale`, deterministic option-specific issue keys, and one deterministic primary thread per route decision. Routing is read-only; only the final accepted, parsed turn changes dialogue state (observer). Only formal votes from the voting/compromise_repair phases count toward the outcome.
+Local interaction is thread state (`src/controller/threads.py` is the single owner of thread lifecycle): `question`, `concern`, `blocker`, `comparison` threads with statuses `hot/cooling/resolved/stale`, deterministic option-specific issue keys, and per-thread contribution caps. Threads are **public stimuli, not scripts**: a hot thread influences the participant-local scores in each simulator's bid, but the thread engine never prescribes which sim speaks or which reaction it makes (each sim picks the thread it reacts to). Floor arbitration and simulator policy are both read-only over state; only the final accepted, parsed turn changes dialogue state (observer). Only formal votes from the voting/compromise_repair phases count toward the outcome.
 
 Persona-specific perspectives belong in:
 
@@ -85,23 +99,35 @@ OptionStance.reason_against
 
 ## Compact act vocabulary
 
-The controller should reason over macro acts:
+Each simulator policy chooses over macro acts:
 
 ```text
 opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
 ```
 
-Normal discussion sampling is limited to `support, concern, ask, compare, comment`. `answer` is route-driven by question threads; `process`/`compromise` are narrowing/repair-only; softening is an observed stance effect parsed from visible text, never a routed act. Do not grow the act list unless there is strong log evidence that a new act cannot be represented by the macro set.
+Open-floor self-selection samples `answer, support, concern, ask, compare, comment, compromise` only when a concrete public-state contribution exists; `process` is available only under an explicit stall stimulus. COMMENT has no filler baseline and silence is valid. `opening`, `answer`, and `vote` are obligation/protocol acts a simulator produces when the framework schedules that turn — the simulator still owns their substance. Softening is an observed stance effect parsed from visible text, never a chosen act. Do not grow the act list unless there is strong log evidence that a new act cannot be represented by the macro set.
 
 ## Implementation principles
 
-- Prefer deterministic controller/state logic over new LLM calls.
-- Keep prompts act-specific and compact.
+- Prefer deterministic simulator/state logic over new LLM calls. There is exactly one participant
+  LLM call per ordinary turn: the utterance realization of the winning bid. Do not add a per-sim
+  per-turn LLM policy call — the bid policy is Python/symbolic-probabilistic.
+- Participant behavior (act/target/option-focus/reason/vote/compromise) is owned by the simulator
+  policy in `src/simulator.py`. The floor manager may reject or reorder complete bids but must never
+  rewrite one. Do not move behavioral authority back into the controller/floor layer.
+- A simulator reads only its own persona/runtime/private ranks plus shared scenario and accepted
+  public state — never another simulator's private goal, hidden ranks, or hidden reasons.
+- Public candidate selection uses accepted backing, formal votes, positive evidence, proposals, and objection load only. Stable contribution keys are tracked across the full accepted history to prevent recycled points after they leave the prompt window.
+- Keep prompts act-specific and compact; the prompt realizes an already-decided intent and must not
+  ask the LLM to choose the speaker, act, stance direction, vote, or compromise.
 - Use the option-rank table as the stance source of truth.
-- Keep the five simulator parameters behavior-relevant; keep speech_style wording-only.
+- Keep the five simulator parameters behavior-relevant; keep speech_style wording-only. Engagement
+  drives willingness (once); verbosity affects only length; switch_resistance affects only final
+  movement; stubbornness affects only discussion-phase defense/concession.
 - Do not add more personality traits or simulator parameters unless required.
-- Do not reintroduce any content agenda or per-sim agenda steering.
-- Routing stays read-only; persistent state changes only after the final accepted turn is observed.
+- Do not reintroduce any content agenda, per-sim agenda steering, or a centralized speaker/act router.
+- Floor arbitration and simulator policy stay read-only; persistent state changes only after the
+  final accepted turn is observed.
 - Thread lifecycle transitions go through `src/controller/threads.py` only — never assign `thread.status` elsewhere.
 - Phase changes go through `_mark_phase` only; the transition graph is validated.
 - Normal auto-generated sims should have movable preferences, not categorical blockers.

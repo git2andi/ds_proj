@@ -40,7 +40,7 @@ Design rule:
 
 ## OCEAN -> parameters -> attributes
 
-OCEAN traits are hidden setup traits. They are sampled (or manually fixed), used once to derive the simulator parameters and to keep generated persona content plausible, and never passed into utterance prompts or routing.
+OCEAN traits are hidden setup traits. They are sampled (or manually fixed), used once to derive the simulator parameters and to keep generated persona content plausible, and never passed into utterance prompts or the simulator policy's turn-taking decisions.
 
 The five simulator parameters are the only numeric behavior controls:
 

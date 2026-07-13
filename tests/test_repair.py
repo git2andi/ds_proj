@@ -189,7 +189,7 @@ class RepairPromptCarriesActionableEvidence(unittest.TestCase):
 
 
 class RepairSelectionBySeverity(unittest.TestCase):
-    def test_worse_repair_never_replaces_the_original(self) -> None:
+    def test_unrealized_original_and_worse_repair_are_dropped(self) -> None:
         state = make_state()
         runner = make_runner(state, [
             "The Museum has been discussed a lot today.",
@@ -197,8 +197,9 @@ class RepairSelectionBySeverity(unittest.TestCase):
         ])
         intent = MoveIntent(speaker_id="p1", act=ActType.SUPPORT, reason="defend", option_focus=["A"])
         record = runner._generate_and_append(state, intent)
-        self.assertEqual(record.text, "The Museum has been discussed a lot today.")
-        self.assertFalse(record.state_mutation_blocked)
+        self.assertEqual(record.text, "")
+        self.assertTrue(record.state_mutation_blocked)
+        self.assertIn("SUPPORT_NOT_REALIZED", record.validation_issues)
 
     def test_strictly_better_repair_is_taken(self) -> None:
         state = make_state()

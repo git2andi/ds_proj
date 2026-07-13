@@ -16,20 +16,20 @@ from models import (
     ActType,
     BlockingStrength,
     DialogueState,
-    MoveIntent,
     ParticipantRuntime,
     Persona,
     Phase,
+    STANCE_ACCEPTABLE,
     STANCE_NEUTRAL,
     STANCE_REJECTED,
+    ThreadState,
     ThreadStatus,
     ThreadType,
     TurnRecord,
     VisibleEvidence,
 )
 from controller import threads as threads_engine
-from simulator import expected_turn_share
-from utils import weighted_choice
+from simulator import can_move_to
 
 
 class ObserverMixin:
@@ -217,17 +217,34 @@ class ObserverMixin:
                 rt.public_lean = target
         elif softened:
             # An explicit lean is public even when it confirms the current top
-            # option.  Only an actual move to a different legal option changes
+            # option. Only an actual move to a different legal option changes
             # ranks / counts as a concession.
             if softened == rt.top_option():
                 rt.public_lean = softened
-            elif self._can_shift_to(state, persona, softened):
-                # Explicit visible softening ("B is starting to make more sense
-                # to me"): the internal lean follows the sim's own words —
-                # withholding the shift would make the state dishonest.
+            elif can_move_to(persona, rt, softened, final=False):
                 rt.promote_to_preferred(softened, reason_for=record.text)
                 rt.public_lean = softened
                 rt.concessions_made += 1
+
+        # A realized simulator-owned compromise expresses the speaker's own
+        # conditional willingness. Persist it as acceptability even when it is
+        # not strong enough to replace the current preferred option. This uses
+        # accepted proposal/support evidence only; generic comments do nothing.
+        if record.intent and record.intent.act is ActType.COMPROMISE:
+            proposal_ids = [p.option_id for p in evidence.proposals if p.option_id]
+            conditional_support = [
+                support.option_id for support in evidence.supports
+                if support.strength == "conditional"
+            ]
+            for option_id in dict.fromkeys(proposal_ids + conditional_support):
+                if option_id not in state.scenario.option_ids or option_id in rt.rejected_options():
+                    continue
+                before_rank = rt.rank(option_id)
+                rt.mark_acceptable(option_id, reason_for=record.text)
+                rt.current_acceptance = option_id
+                if record.phase is Phase.DISCUSSION and before_rank < STANCE_ACCEPTABLE:
+                    state.accepted_conditional_acceptances += 1
+                    rt.concessions_made += 1
 
     def _register_concern_thread(
         self, state: DialogueState, record: TurnRecord, option_id: str, *, hard: bool, reason: str = ""
@@ -440,9 +457,10 @@ class ObserverMixin:
     ) -> None:
         """Open/update a question thread from accepted question evidence (6.1).
 
-        Scope comes from the validated visible evidence; the respondent for a
-        group question is a controller decision made here, using relevance and
-        turn balance — never the interpreter's.
+        A direct question names a required respondent (mandatory adjacency
+        pair). A group question carries NO required respondent (todo 12): it is
+        exposed as a public stimulus for self-selection, and any relevant
+        accepted answer may cool it.
         """
         mentioned = [
             m.option_id for m in evidence.mentions if m.option_id in state.scenario.option_ids
@@ -454,11 +472,7 @@ class ObserverMixin:
             if not respondent or respondent == record.speaker_id or respondent not in state.runtimes:
                 return
         else:
-            respondent = self._pick_group_respondent(
-                state, record.speaker_id, (question_focus or mentioned)[:2]
-            )
-            if respondent is None:
-                return
+            respondent = None  # group question: self-selection, no assigned respondent
         focus = (question_focus or mentioned)[:2]
         issue_key = threads_engine.normalize_issue_key(
             record.text,
@@ -494,8 +508,15 @@ class ObserverMixin:
         for thread in list(state.threads.values()):
             if thread.thread_type is not ThreadType.QUESTION or thread.status is not ThreadStatus.HOT:
                 continue
-            if thread.required_respondent != record.speaker_id:
-                continue
+            if thread.question_scope == "direct":
+                # A direct question is cooled only by its named respondent.
+                if thread.required_respondent != record.speaker_id:
+                    continue
+            else:
+                # A group question may be answered by any self-selecting sim
+                # other than the asker (todo 12).
+                if record.speaker_id == thread.started_by:
+                    continue
             if record.index <= thread.source_turn_index:
                 continue
             if record.used_fallback and not answered_target:
@@ -513,68 +534,20 @@ class ObserverMixin:
                 )
 
     def _required_answer_thread(self, state: DialogueState) -> "ThreadState | None":
-        """The question thread whose answer is owed next: direct before group,
-        then earliest creation. Read-only; deterministic."""
+        """The DIRECT question thread whose answer is owed next by its named
+        respondent, earliest creation first. Group questions carry no required
+        respondent and are answered through self-selection, so they never create
+        a mandatory answer obligation. Read-only; deterministic."""
         candidates = [
             t for t in state.threads.values()
             if t.thread_type is ThreadType.QUESTION
             and t.status is ThreadStatus.HOT
+            and t.question_scope == "direct"
             and t.required_respondent in state.runtimes
         ]
         if not candidates:
             return None
-        return min(
-            candidates,
-            key=lambda t: (t.question_scope != "direct", t.created_turn, t.thread_id),
-        )
-
-    def _answer_intent_for_thread(self, state: DialogueState, thread: "ThreadState") -> MoveIntent:
-        asker = thread.started_by
-        return MoveIntent(
-            speaker_id=str(thread.required_respondent),
-            act=ActType.ANSWER,
-            reason="answer the direct question you were just asked, then add one implication for the decision",
-            route_source="answer_required",
-            thread_id=thread.thread_id,
-            addressee_id=None if asker in {"moderator", ""} else asker,
-            option_focus=list(thread.focus_options) or self._focus_from_recent(state),
-            # Without this the prompt never shows WHICH question is owed, and
-            # group-directed questions get pivoted around instead of answered.
-            respond_to_turn=thread.source_turn_index,
-        )
-
-    def _pick_group_respondent(
-        self, state: DialogueState, asker_id: str, option_focus: list[str] | None = None
-    ) -> str | None:
-        """Respondent for a group-directed question, chosen by a weighted score:
-        relevance to the question's option focus, engagement, expected-share
-        deficit relative to the sim's own target, a recent-speaker penalty, and
-        the sampler's randomness. Not simply the quietest person."""
-        others = [p for p in state.personas if p.id != asker_id]
-        if not others:
-            return None
-        expected = expected_turn_share(state.personas)
-        total = sum(rt.turn_count for rt in state.runtimes.values()) or 1
-        weights = []
-        for p in others:
-            rt = state.runtimes[p.id]
-            deficit = expected[p.id] - rt.turn_count / total
-            relevance = sum(
-                0.35 for oid in (option_focus or []) if rt.rank(oid) != STANCE_NEUTRAL
-            )
-            weight = 0.30 + p.sim_params.engagement + relevance + max(0.0, 3.0 * deficit)
-            if rt.last_spoke_turn is not None and state.turn_index - rt.last_spoke_turn <= 1:
-                weight *= 0.5
-            weights.append(weight)
-        return weighted_choice(others, weights).id
-
-    @staticmethod
-    def _focus_from_recent(state: DialogueState) -> list[str]:
-        for turn in reversed(state.turns):
-            mentioned = turn.mentioned_options()
-            if mentioned:
-                return mentioned[:2]
-        return []
+        return min(candidates, key=lambda t: (t.created_turn, t.thread_id))
 
     def _snapshot_progress(self, state: DialogueState) -> tuple:
         """Deterministic progress signature (Section 11).

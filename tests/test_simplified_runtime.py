@@ -3,10 +3,17 @@ from __future__ import annotations
 import unittest
 
 import tests  # noqa: F401
+import simulator as sim_policy
 from consensus import ConsensusManager, public_support, visible_votes_from_transcript
 from interpreter import TurnInterpreter
-from models import ActType, MoveIntent, Phase, RunOutcome
+from models import ActType, MoveIntent, Phase, RunOutcome, TurnObligation
 from parsing import OptionResolver
+
+
+def _vote_decision(runner, state, pid, candidate, *, kind="vote"):
+    """The simulator's own vote intent for a framework vote obligation."""
+    ob = TurnObligation(kind=kind, participant_id=pid, act=ActType.VOTE, candidate=candidate)
+    return sim_policy.decide_simulator_bid(state, pid, obligation=ob).intent
 import prompts
 from tests.fixtures import append_turn, make_persona, make_scenario, make_state, vote_intent
 from tests.stubs import FakeLLM, make_runner
@@ -263,7 +270,7 @@ class CurrentPublicStateTests(unittest.TestCase):
         # Other participants visibly favor B, but p1 has not visibly moved from A.
         state.runtimes["p2"].current_acceptance = "B"
         state.runtimes["p3"].current_acceptance = "B"
-        intent = runner._vote_intent(state, next(p for p in state.personas if p.id == "p1"), "B")
+        intent = _vote_decision(runner, state, "p1", "B")
         self.assertEqual(intent.required_vote, "A")
         self.assertFalse(intent.allow_vote_change)
         self.assertIsNone(intent.old_preference)
@@ -339,8 +346,8 @@ class ComparisonFocusTests(unittest.TestCase):
             "p2",
             "The Bike Ride is active, while the Escape Room is memorable.",
         )
-        persona = state.persona_by_id("p1")
-        focus = runner._focus_options(state, persona, ActType.COMPARE, target)
+        view = sim_policy.build_view(state, "p1")
+        focus = sim_policy._compare_pair(view)
         self.assertEqual(len(focus), 2)
         self.assertEqual(focus[0], "A")
         self.assertIn(focus[1], {"B", "C"})
@@ -429,70 +436,35 @@ class SplitCandidateSelectionTests(unittest.TestCase):
             state, visible_votes_from_transcript(state)
         )
         self.assertTrue(ranked)
-        candidate, _dissenters, movers, meta = ranked[0]
+        candidate, dissenters, movers, meta = ranked[0]
+        # The framework tests B: tied on formal votes, most positive visible
+        # mentions. Whether each dissenter moves is the simulators' own call, so
+        # movers is exactly the set of visible dissenters.
         self.assertEqual(candidate, "B")
         self.assertEqual(meta["positive_mentions"], 2)
-        self.assertEqual(meta["required_movers"], 1)
-        self.assertEqual(len(movers), 1)
+        self.assertEqual({p.id for p in movers}, {p.id for p in dissenters})
+        self.assertEqual({p.id for p in dissenters}, {"p1", "p3"})
 
-    def test_split_targets_only_number_of_movers_required_for_majority(self):
+    def test_split_candidate_is_visible_plurality(self):
         personas = [
             make_persona("p1", "P1", preferred="A", switch_resistance=0.2),
             make_persona("p2", "P2", preferred="B", switch_resistance=0.2),
             make_persona("p3", "P3", preferred="C", switch_resistance=0.2),
             make_persona("p4", "P4", preferred="D", switch_resistance=0.2),
         ]
-        scenario = make_scenario()
-        # Reuse C as D is absent in the compact fixture: 2-1-1 needs one mover.
-        state = make_state(personas=personas, scenario=scenario)
+        state = make_state(personas=personas, scenario=make_scenario())
         runner = make_runner(state)
         for pid, option in (("p1", "A"), ("p2", "A"), ("p3", "B"), ("p4", "C")):
             formal_vote(state, pid, option)
         ranked = runner._rank_split_candidates(state, visible_votes_from_transcript(state))
+        # A is the visible plurality (2 votes); it is tested first.
         self.assertEqual(ranked[0][0], "A")
-        self.assertEqual(ranked[0][3]["required_movers"], 1)
-        self.assertEqual(len(ranked[0][2]), 1)
+        self.assertEqual(ranked[0][3]["votes"], 2)
 
-
-class NarrowingResponseTests(unittest.TestCase):
-    def test_hard_blocking_holdout_answers_moderator_before_vote(self):
-        personas = [
-            make_persona("p1", "Mira", preferred="A"),
-            make_persona("p2", "Jonas", preferred="B", rejection="A", rejection_reason="cannot accept A"),
-        ]
-        state = make_state(personas=personas)
-        state.phase = Phase.NARROWING
-        runner = make_runner(state, ["The Museum still doesn't work for me because of its quiet pace."])
-        runner._emit_narrowing_reaction(
-            state, "A", pair=["A", "B"], moderator_prompted=True
-        )
-        participant_turns = [t for t in state.turns if t.speaker_id != "moderator"]
-        self.assertEqual(len(participant_turns), 1)
-        self.assertEqual(participant_turns[0].speaker_id, "p2")
-        self.assertEqual(participant_turns[0].phase, Phase.NARROWING)
-
-    def test_moderator_narrowing_question_is_followed_by_participant_response(self):
-        personas = [
-            make_persona("p1", "Mira", preferred="A"),
-            make_persona("p2", "Jonas", preferred="B", rejection="A", rejection_reason="cannot accept A"),
-        ]
-        state = make_state(personas=personas)
-        state.phase = Phase.NARROWING
-        runner = make_runner(state, [
-            "Does anyone have one remaining concern about the Museum before we decide?",
-            "The Museum still does not work for me because it is too quiet.",
-        ])
-        runner._emit_moderator_narrowing(state, "A", ["A", "B"])
-        runner._emit_narrowing_reaction(
-            state, "A", pair=["A", "B"], moderator_prompted=True
-        )
-        self.assertEqual([turn.speaker_id for turn in state.turns], ["moderator", "p2"])
-        self.assertTrue(state.turns[0].text.endswith("?"))
-        self.assertEqual(state.turns[1].phase, Phase.NARROWING)
 
 
 class MoverSelectionTests(unittest.TestCase):
-    def test_visible_openness_breaks_equal_mover_resistance(self):
+    def test_tie_candidate_broken_by_visible_positive_mention(self):
         from models import EvidenceSpan, SupportEvidence, VisibleEvidence
 
         personas = [
@@ -514,31 +486,31 @@ class MoverSelectionTests(unittest.TestCase):
         for pid, option in (("p1", "A"), ("p2", "B"), ("p3", "C")):
             formal_vote(state, pid, option)
         ranked = runner._rank_split_candidates(state, visible_votes_from_transcript(state))
-        candidate, _dissenters, movers, _meta = ranked[0]
+        candidate, _dissenters, _movers, meta = ranked[0]
+        # 1-1-1 formal tie broken by A's single visible positive mention.
         self.assertEqual(candidate, "A")
-        self.assertEqual([p.id for p in movers], ["p3"])
+        self.assertEqual(meta["positive_mentions"], 1)
 
     def test_one_ordinary_concern_does_not_make_flexible_mover_immovable(self):
         persona = make_persona("p1", "P1", preferred="B", switch_resistance=0.2)
         state = make_state(personas=[persona, make_persona("p2", "P2", preferred="A")])
-        runner = make_runner(state)
         state.runtimes["p1"].mark_disliked("A", reason_against="one reservation")
-        self.assertFalse(runner._valid_holdout_against(state, persona, "A"))
+        # Movement is now the simulator's own judgment (sim_policy.valid_holdout).
+        self.assertFalse(sim_policy.valid_holdout(state, persona, "A"))
 
-    def test_split_final_decision_is_candidate_or_current_vote_only(self):
+    def test_final_decision_is_candidate_or_current_vote_only(self):
+        # A repair re-vote is simulator-owned: its target is either the tested
+        # candidate or the mover's own current vote — never a third option, and
+        # never a controller-computed can_move (todo 17/18).
         state = make_state()
-        runner = make_runner(state, ["I vote for the Bike Ride."])
+        runner = make_runner(state)
         formal_vote(state, "p1", "A")
         formal_vote(state, "p2", "B")
         formal_vote(state, "p3", "C")
-        mover = state.persona_by_id("p2")
-        runner._should_switch_after_reservation = lambda *_args, **_kwargs: False
-        record = runner._append_final_decision(
-            state, mover, candidate="A", can_move=True,
-            route_source="split_vote_repair",
-        )
-        self.assertEqual(record.intent.required_vote, "B")
-        self.assertNotEqual(record.intent.required_vote, "C")
+        ob = runner._final_decision_obligation(state.persona_by_id("p2"), "A")
+        intent = sim_policy.decide_simulator_bid(state, "p2", obligation=ob).intent
+        self.assertIn(intent.required_vote, {"A", "B"})
+        self.assertNotEqual(intent.required_vote, "C")
 
 
 class ClosingLineTests(unittest.TestCase):

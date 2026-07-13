@@ -8,7 +8,7 @@ Important configuration sections:
 - `environment`: automatic or manual option setup.
 - `participants`: automatic/manual profiles and hard-blocker sampling.
 - `conversation`: soft discussion pacing and vote-round limits.
-- `threads`, `narrowing`, and `routing`: interaction and controller behavior.
+- `threads`, `narrowing`, and `floor`: thread stimuli, narrowing gates, and floor-access arbitration (recent-speaker / anti-monopoly / min-visibility). Participant behavior itself is decided by the simulator policy, not configured here.
 - `moderator`: opening, nudges, vote call, and whether the deterministic closing line is shown.
 - `validation`: `mode: critical`; deterministic correctness checks with at most one critical repair.
 - `output`: log paths and optional prompt dumps.
