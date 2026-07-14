@@ -1,59 +1,28 @@
-# 03 — Routing and turn-taking
+# Simulator policy and floor arbitration
 
-The router decides who speaks next, which macro act they perform, who they address, and which option/thread they focus on. Routing is read-only over dialogue state: it returns a `MoveIntent` and never mutates persistent state; effects only count after the final accepted utterance's validated visible evidence is observed (the observer consumes exactly the evidence object that passed validation — it never reparses text).
+There is no global participant-act router. On every open-floor opportunity, each eligible `UserSimulator` independently evaluates a small seeded Python policy and returns either silence or one complete `UserAction`.
 
-## Routing order
+Candidate actions can come from:
 
-One readable routing function (`controller/policy.py::_route_discussion_turn`) applies this priority order:
+- answering a direct question;
+- responding to the active issue;
+- raising an unspoken concern;
+- supporting the current preference;
+- comparing relevant options;
+- asking a relevant question;
+- acknowledging a recent contribution;
+- defending a challenged option;
+- accepting or switching to a plausible finalist;
+- voting.
 
-```text
-1. required direct answer            (hot question thread's required respondent)
-2. hot primary thread                (deterministic primary selection)
-3. cooling primary thread            (probabilistic continuation, never scripted)
-4. option coverage                   (only when no hot thread exists)
-5. rare same-speaker continuation    (short addendum, chain-capped)
-6. normal weighted discussion act
-```
+The action contains the speaker, willingness, urgency, act, option focus, optional addressee, grounded reason, optional personal context, issue effect, stance update, and vote. The LLM is not involved in bidding.
 
-Phase/progress nudges run in the discussion loop before the router; narrowing/voting gates live outside act sampling (`controller/flow.py`).
+When a direct question is accepted, the addressed participant has the next response obligation. Its simulator still constructs the answer action. A pending obligation is completed, or explicitly exhausted through the existing bounded generation/repair path, before discussion can transition to narrowing; the required answer is not counted as voluntary engagement.
 
-## Threads
+Without an obligation, `FloorManager` removes silent bids and makes a seeded urgency-weighted selection. It applies only light coordination: a recent-speaker penalty and a maximum of two consecutive participant turns when alternatives exist. It does not use expected shares, deficits, quotas, minimum turns, or controller-selected content. The selected action object is passed onward unchanged.
 
-Local interaction is tracked as threads (`question`, `concern`, `blocker`, `comparison`; `repair` is phase-specific) with statuses `hot / cooling / resolved / stale`. Thread identity is `(type, focus options, deterministic issue key)`; the engine in `controller/threads.py` owns all lifecycle transitions and selects one deterministic primary thread per route decision (repair > direct question > group question > hard blocker on candidate > candidate concern > other hot > cooling).
+An empty floor is treated as progression evidence. The first empty round closes or stales an exhausted issue; a second may emit the one available structured moderator stimulus; only a later empty round below the minimum budget may invoke the final liveness mechanism. Liveness still asks a simulator for a policy-generated action, is logged separately, and is excluded from voluntary engagement metrics.
 
-A hot thread drives the next local move, and the routed act always matches the decided objective. Concern threads: a low-stubbornness advocate concedes (CONCERN), a committed advocate defends (SUPPORT), a bystander who shares the dislike adds a grounded doubt (CONCERN), a neutral bystander grounds the issue in the listed facts (COMMENT). Blocker threads route one bounded probe (ASK), then a backer points to the addressing fact (SUPPORT) or anyone else acknowledges the blocker's weight (COMMENT). Comparison threads route engagement with the same trade-off (COMPARE). Cooling continuation lets the raiser visibly accept (SUPPORT) or push back once (CONCERN) — direction picked by a stubbornness-weighted draw — another participant react to an answer (questions), or a new voice join a comparison; probabilities come from `threads:` config, bounded to freshly cooled threads. There is no hidden commitment float anywhere in these decisions: they read ranks, traits, and thread state only.
+When the moderator emits its single coverage or stall question, the runtime stores a compact `GroupStimulus`. Simulators may voluntarily answer, support, reject, compare, or ignore that stimulus. The moderator never chooses the respondent or response act.
 
-## Speaker choice
-
-Normal turns combine:
-
-```text
-engagement-based expected turn share (actual share vs own target)
-+ recent-speaker penalty and anti-monologue damping
-+ minimum visibility for quiet sims
-```
-
-Thread turns use relevance, not engagement alone: stance/option relevance dominates, the turn-share deficit corrects imbalance, engagement is only a secondary prior, and just-spoke/ping-pong penalties keep the floor moving. A direct question's required respondent overrides normal ranking.
-
-`engagement` is the only participation-share parameter: each sim gets an expected share (`0.30 + engagement`, normalized). Age/speech_style must not be used as a routing signal.
-
-## Questions
-
-Question *scope* comes from validated visible evidence only: a named or "you"-directed question is direct; a genuine question without an addressee is a group question with no target (rhetorical tags open nothing). The controller (never the interpreter) assigns the group respondent by relevance, engagement, and turn-share deficit. The required respondent answers on the next turn; an unrelated turn by that respondent does not close the question, and a fallback line resolves it only when its accepted answer evidence says it addressed the target (the deterministic listed-fact answer families do; nothing else does).
-
-## Macro acts
-
-```text
-opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
-```
-
-Normal sampling is limited to `support, concern, ask, compare, comment`. `answer` is route-driven by question threads; `process`/`compromise` belong to narrowing and repair; softening is an observed stance effect parsed from visible text, never a routed act.
-
-## Parameter influence
-
-- engagement -> contribution frequency (expected turn share);
-- verbosity -> average utterance length (numeric word budgets, soft targets);
-- directness -> wording bluntness (and a higher concern/challenge prior);
-- stubbornness -> discussion-phase defense, concession, and softening — never final switching;
-- switch_resistance -> final movement only: switches, compromise acceptance, holdout concession, vote/repair resistance;
-- speech_style -> lexical and register variation, never a routing signal.
+Question bids encode a specific information need: rationale, impact of a concern, acceptability, comparison, or clarification of a recent visible claim. Addressees are selected from public relevance rather than random choice. Compact question keys suppress only an equivalent `(intent, focus, addressee)` question; they do not block later questions about the same option for a different reason.

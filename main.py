@@ -76,8 +76,8 @@ def main() -> int:
                 "Tokens: "
                 f"setup={tokens['setup_tokens_in']}/{tokens['setup_tokens_out']} "
                 f"dialogue={tokens['dialogue_tokens_in']}/{tokens['dialogue_tokens_out']} "
-                f"validator={tokens['validator_tokens_in']}/{tokens['validator_tokens_out']} "
-                f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} (in/out)"
+                f"total={tokens['total_tokens_in']}/{tokens['total_tokens_out']} "
+                f"calls={tokens['llm_calls']} (in/out)"
             )
             warn_threshold = int(cfg.limits.get("warn_total_input_tokens", 0)) if "limits" in cfg else 0
             if warn_threshold and tokens["total_tokens_in"] > warn_threshold:

@@ -1,949 +1,807 @@
-"""Candidate assessment and act-specific fallback — side-effect free.
+"""Minimal structured-action and hard-failure text validation.
 
-ValidationMixin owns the single correctness-critical assessment path that decides what
-happens to a candidate utterance (ACCEPT / REPAIR / FALLBACK / DROP):
-deterministic structural, option-reference, question, commitment, blocker,
-switch, hybrid-option, and exact contradiction checks. Ordinary conversational
-semantics do not block runtime turns. It also builds narrow safe fallbacks.
-It returns structured assessments, never mutates dialogue state, and never
-resolves threads; the observer decides what an accepted turn realized.
+This module intentionally does not infer dialogue acts or reconstruct hidden
+state from language.  It only checks whether a rendering is safe to commit for
+its already-authoritative :class:`UserAction`.
 """
 
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 
-from aliases import short_alias_map
 from models import (
-    ActType,
-    AssessmentAction,
+    ActionType,
     DialogueState,
-    MoveIntent,
+    IssueEffect,
+    IssueKind,
+    IssueResponseKind,
     Persona,
-    TurnAssessment,
-    ValidationIssue,
-    VisibleEvidence,
-    _DECISION_ACTS,
+    StanceUpdateKind,
+    UserAction,
 )
-from parsing import hybrid_blend_detected, switch_bridge_ok
-from utils import usable_reason_fragment
+from utils import clean_generated, jaccard_text, tokenize
 
 
-_ACTION_SEVERITY = {
-    AssessmentAction.ACCEPT: 0,
-    AssessmentAction.ACCEPT_WITH_METRIC: 1,
-    AssessmentAction.REPAIR: 2,
-    AssessmentAction.FALLBACK: 3,
-    AssessmentAction.DROP: 4,
-}
+@dataclass(slots=True)
+class ValidationResult:
+    ok: bool
+    text: str = ""
+    errors: list[str] = field(default_factory=list)
 
 
-def assessment_severity(assessment: TurnAssessment) -> tuple[int, int, int, int]:
-    """Orderable severity: action first, then blocking issues, then issue count.
+_NUMERIC = re.compile(
+    r"(?<!\w)(?:[$€£]\s*)?\d+(?:[.,]\d+)?(?:\s*[-–—]\s*|\s*)"
+    r"(?:%|euros?|dollars?|pounds?|km|kilometers?|miles?|m|minutes?|mins?|hours?|hrs?|people|persons?|seats?|stops?|gb|tb|mbps|w|kw)?\b",
+    re.I,
+)
+_OPTION_TOKEN = re.compile(r"\boption\s+([A-Z0-9]+)\b", re.I)
+_ASSERTS_FEATURE = re.compile(
+    r"\b(?:has|have|includes?|offers?|provides?|features?|comes\s+with|contains?)\b[^.!?]{0,55}\b"
+    r"(wifi|wi-fi|parking|sauna|pool|gym|breakfast|shuttle|charger|warranty|bedrooms?|bathrooms?|seats?|workstations?|equipment|facility|facilities)\b",
+    re.I,
+)
+_POSITIVE_COMMITMENT = re.compile(
+    r"\b(?:prefer|choose|vote(?:\s+for)?|accept|support|go\s+with|settle\s+on|works?\s+for\s+me|fine\s+with)\b",
+    re.I,
+)
+_METADATA = re.compile(r"(?:^|\s)[\[{].*(?:act|stance|option_focus|speaker_id|urgency).*[\]}](?:\s|$)", re.I | re.S)
+_FORMAL_VOTE_LANGUAGE = re.compile(r"\b(?:vote(?:d|s|ing)?|my\s+vote|ballot)\b", re.I)
+_META_ACT_LANGUAGE = re.compile(
+    r"\bi\s+(?:open\s+the\s+discussion(?:\s+by)?|acknowledge\b|compare\b)",
+    re.I,
+)
 
-    Candidate selection compares these tuples — never raw issue counts. One
-    unsupported factual claim (blocking) outweighs any number of harmless
-    metric-only deviations.
+
+def _option_aliases(state: DialogueState, option_id: str) -> tuple[str, ...]:
+    option = state.scenario.option(option_id)
+    aliases = {f"Option {option_id}", option.name, option.short_name}
+    # Bare one-character labels such as A/B/C are too ambiguous in ordinary
+    # prose (especially the English article "a"). The renderer is instructed
+    # to use "Option A" or a public name, so omit those bare labels here.
+    if len(option_id) > 1:
+        aliases.add(option_id)
+    return tuple(alias for alias in aliases if alias)
+
+
+def option_mentioned(text: str, state: DialogueState, option_id: str) -> bool:
+    if any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", text, re.I) for alias in _option_aliases(state, option_id)):
+        return True
+    if len(option_id) != 1:
+        return False
+
+    # Accept compact references only in an option-list or preference/switch
+    # context. This recognizes "Options A and B" and "preferred A, but now
+    # choose B" without treating the English article "a" as Option A.
+    for match in re.finditer(r"\boptions?\s+([^.!?;:]{0,70})", text, re.I):
+        segment = match.group(1)
+        if re.search(rf"(?<!\w){re.escape(option_id)}(?!\w)", segment, re.I):
+            return True
+    contextual = rf"\b(?:prefer(?:red|s|ring)?|lean(?:ed|ing)?\s+(?:toward|towards)|from|to|choose|choosing|choice\s+was|moving\s+to|switch(?:ed|ing)?\s+to|between|over)\s+(?:option\s+)?{re.escape(option_id)}\b"
+    return bool(re.search(contextual, text, re.I))
+
+
+def mentioned_options(text: str, state: DialogueState) -> set[str]:
+    return {option_id for option_id in state.scenario.option_ids if option_mentioned(text, state, option_id)}
+
+
+def validate_action(state: DialogueState, persona: Persona, action: UserAction) -> list[str]:
+    errors: list[str] = []
+    participant_ids = {candidate.id for candidate in state.personas}
+    option_ids = set(state.scenario.option_ids)
+    if action.speaker_id != persona.id or action.speaker_id not in participant_ids:
+        errors.append("unknown or mismatched speaker")
+    invalid_focus = set(action.option_focus) - option_ids
+    if invalid_focus:
+        errors.append(f"invalid option focus: {sorted(invalid_focus)}")
+    if action.addressee_id is not None:
+        if action.addressee_id not in participant_ids:
+            errors.append("unknown addressee")
+        elif action.addressee_id == action.speaker_id:
+            errors.append("participant cannot address itself")
+    if action.reason_source:
+        source = action.reason_source
+        if source.option_id not in option_ids:
+            errors.append("reason source uses an unknown option")
+        else:
+            option = state.scenario.option(source.option_id)
+            if source.attribute_name == "upside":
+                actual = option.upside
+            elif source.attribute_name == "concern":
+                actual = option.concern
+            else:
+                actual = option.attrs.get(source.attribute_name)
+            if actual is None or str(actual) != str(source.public_value):
+                errors.append("reason source does not match the public option card")
+    if action.stimulus_id is not None:
+        if not state.group_stimulus or action.stimulus_id != state.group_stimulus.id:
+            errors.append("unknown group stimulus reference")
+    if action.issue_id:
+        known = {issue.id for issue in state.issue_history}
+        if state.active_issue:
+            known.add(state.active_issue.id)
+        if action.issue_id not in known:
+            errors.append("unknown issue reference")
+    if action.issue_effect == IssueEffect.OPEN:
+        if action.act not in {ActionType.ASK, ActionType.CONCERN, ActionType.COMPARE}:
+            errors.append("only a question, concern, or comparison may open an issue")
+        if action.issue_id is not None:
+            errors.append("a new issue must not reference an existing issue id")
+    elif action.issue_effect in {
+        IssueEffect.CONTINUE,
+        IssueEffect.ANSWERED,
+        IssueEffect.PARTIAL,
+        IssueEffect.RESOLVE,
+        IssueEffect.MAINTAIN,
+    }:
+        if not state.active_issue or action.issue_id != state.active_issue.id:
+            errors.append("issue continuation must reference the active issue")
+        elif state.active_issue.kind.value == "concern":
+            if action.issue_effect in {IssueEffect.PARTIAL, IssueEffect.RESOLVE, IssueEffect.MAINTAIN} and action.speaker_id != state.active_issue.opened_by:
+                errors.append("only the concern owner may partially address, resolve, or maintain the concern")
+        elif state.active_issue.kind.value == "question" and action.issue_effect == IssueEffect.ANSWERED:
+            if action.speaker_id == state.active_issue.opened_by:
+                errors.append("question author cannot answer its own group question")
+    if action.issue_response_kind is not None:
+        issue = state.active_issue
+        if not issue or issue.kind is not IssueKind.CONCERN or action.issue_id != issue.id:
+            errors.append("concern response must reference the active concern")
+        elif action.speaker_id == issue.opened_by:
+            errors.append("concern owner cannot be its own responder")
+        elif action.issue_response_kind is IssueResponseKind.MITIGATION:
+            if action.reason_source is None or issue.reason_source is None:
+                errors.append("mitigation requires public issue provenance")
+            elif action.reason_source.option_id != issue.reason_source.option_id:
+                errors.append("mitigation does not match the active concern option")
+            elif action.reason_source.attribute_name != issue.reason_source.attribute_name:
+                issue_words = {
+                    token for token in re.findall(r"[a-z0-9]+", issue.reason_source.public_value.casefold())
+                    if len(token) >= 4
+                }
+                source_text = (
+                    action.reason_source.attribute_name.replace("_", " ")
+                    + " " + action.reason_source.public_value
+                ).casefold()
+                if issue_words and not any(word in source_text for word in issue_words):
+                    errors.append("mitigation does not match the active concern provenance")
+
+    if action.act == ActionType.VOTE:
+        if action.vote_option not in option_ids:
+            errors.append("vote must select one valid option")
+        if action.option_focus != (action.vote_option,):
+            errors.append("vote focus must contain exactly the vote option")
+    elif action.vote_option is not None:
+        errors.append("only a vote action may contain vote_option")
+    if action.stance_update:
+        update = action.stance_update
+        if update.option_id not in option_ids:
+            errors.append("stance update uses an unknown option")
+        runtime = state.runtimes[persona.id]
+        if update.option_id in runtime.hard_rejected_options:
+            errors.append("stance update targets a hard-rejected option")
+        if update.kind == StanceUpdateKind.SWITCH_PREFERRED:
+            if update.previous_option_id != runtime.preferred_option:
+                errors.append("switch does not identify the current preferred option")
+            if update.option_id == runtime.preferred_option:
+                errors.append("switch target is already preferred")
+    if persona.hard_blocker:
+        preferred = state.runtimes[persona.id].preferred_option
+        if action.vote_option and action.vote_option != preferred:
+            errors.append("hard blocker may only vote for its preferred option")
+        if action.stance_update is not None:
+            errors.append("hard blocker may not change stance")
+        positive_acts = {ActionType.OPENING, ActionType.SUPPORT, ActionType.COMPROMISE, ActionType.VOTE}
+        if action.act in positive_acts and any(option_id != preferred for option_id in action.option_focus):
+            errors.append("hard blocker action positively targets an alternative")
+    if action.act == ActionType.OPENING:
+        preferred = state.runtimes[persona.id].preferred_option
+        if action.option_focus != (preferred,):
+            errors.append("opening must state the simulator's initial preferred option")
+    if state.response_obligation:
+        if action.speaker_id == state.response_obligation and action.act != ActionType.ANSWER:
+            errors.append("response obligation requires an answer action")
+        if action.act == ActionType.ANSWER and action.speaker_id != state.response_obligation:
+            errors.append("mandatory answer is assigned to another participant")
+    return errors
+
+
+def validate_realization(
+    raw_text: str,
+    state: DialogueState,
+    persona: Persona,
+    action: UserAction,
+    *,
+    target_question: str | None = None,
+) -> ValidationResult:
+    text = clean_generated(raw_text, persona.name)
+    errors: list[str] = []
+    if not text:
+        errors.append("empty output")
+        return ValidationResult(False, text, errors)
+    if "\n" in str(raw_text).strip() and sum(
+        bool(re.match(r"^\s*[A-Za-z][\w -]{0,35}:\s+", line))
+        for line in str(raw_text).splitlines() if line.strip()
+    ) > 1:
+        errors.append("multiple speaker turns")
+    if _METADATA.search(text) or text.startswith("{") or text.startswith("["):
+        errors.append("metadata instead of dialogue")
+    names = [candidate.name for candidate in state.personas]
+    if any(re.search(rf"(?:^|[.!?]\s+){re.escape(name)}\s*:", text, re.I) for name in names):
+        errors.append("multiple speaker turns")
+    if action.act is not ActionType.VOTE and _FORMAL_VOTE_LANGUAGE.search(text):
+        errors.append("formal vote language is not allowed outside voting")
+    if _META_ACT_LANGUAGE.search(text):
+        errors.append("dialogue-act label is exposed instead of natural wording")
+
+    if action.issue_effect is IssueEffect.MAINTAIN and not re.search(
+        r"\b(?:still|remain(?:s|ed|ing)?|unresolved|not (?:addressed|solved)|"
+        r"cannot accept|can't accept|rule(?:s|d)? out|non-negotiable)\b",
+        text, re.I,
+    ):
+        errors.append("maintained concern is not visible")
+    elif action.issue_effect is IssueEffect.PARTIAL and not (
+        re.search(r"\b(?:help(?:s|ed)?|partly|partially|somewhat|to a degree)\b", text, re.I)
+        and re.search(r"\b(?:but|still|not fully|not completely|remains?)\b", text, re.I)
+    ):
+        errors.append("partial concern response is not visible")
+    elif action.issue_effect is IssueEffect.RESOLVE and not re.search(
+        r"\b(?:address(?:es|ed)?|resolv(?:e|ed|es)|enough|acceptable|workable|"
+        r"can accept|could accept|can go with|could go with|no longer a concern)\b",
+        text, re.I,
+    ):
+        errors.append("resolved concern is not visible")
+
+    valid_ids = set(state.scenario.option_ids)
+    for match in _OPTION_TOKEN.finditer(text):
+        raw_token = match.group(1)
+        token = raw_token.upper()
+        # Ordinary prose such as "public option details" is not an option ID.
+        # Treat only short/symbolic or explicitly all-caps tokens as labels.
+        looks_like_id = len(raw_token) == 1 or raw_token.isdigit() or raw_token.isupper()
+        if looks_like_id and token not in valid_ids:
+            errors.append(f"nonexistent option {token}")
+
+    required_mentions = {
+        ActionType.OPENING,
+        ActionType.SUPPORT,
+        ActionType.CONCERN,
+        ActionType.COMPARE,
+        ActionType.COMPROMISE,
+        ActionType.VOTE,
+    }
+    if action.act in required_mentions:
+        required_focus = list(action.option_focus)
+        if action.stance_update and action.stance_update.kind == StanceUpdateKind.SWITCH_PREFERRED:
+            # The public state already carries the previous preference. During
+            # discussion, a visible switch only needs to unambiguously name the
+            # new preference and use change language; repeating the old option
+            # is optional. Formal vote switches are checked more strictly below.
+            required_focus = [action.stance_update.option_id]
+        missing = [option_id for option_id in required_focus if not option_mentioned(text, state, option_id)]
+        if missing:
+            errors.append(f"missing required option mention: {', '.join(missing)}")
+
+    public_text = " ".join([
+        *state.scenario.shared_context,
+        *(option.public_line() for option in state.scenario.options),
+    ])
+    public_numbers = {_numeric_key(value) for value in _NUMERIC.findall(public_text)}
+    private_text = " ".join(filter(None, [
+        persona.background,
+        persona.private_goal,
+        action.personal_context,
+        action.reason,
+    ]))
+    private_numbers = {_numeric_key(value) for value in _NUMERIC.findall(private_text)}
+    private_numbers.add(str(persona.age))
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        sentence_options = mentioned_options(sentence, state)
+        option_specific_text = " ".join(state.scenario.shared_context)
+        if len(sentence_options) == 1:
+            option_specific_text += " " + state.scenario.option(next(iter(sentence_options))).public_line()
+        option_specific_numbers = {
+            _numeric_key(value) for value in _NUMERIC.findall(option_specific_text)
+        }
+        objective_option_claim = bool(re.search(
+            r"\b(?:costs?|price|closes?|opens?|until|distance|away|takes?|duration|capacity|seats?|people|km|miles?|minutes?|hours?)\b",
+            sentence,
+            re.I,
+        ))
+        for token in _NUMERIC.findall(sentence):
+            key = _numeric_key(token)
+            if not key:
+                continue
+            if len(sentence_options) == 1 and objective_option_claim and key not in option_specific_numbers:
+                errors.append(
+                    f"invented concrete value contradicts the public card for Option {next(iter(sentence_options))}: {token.strip()}"
+                )
+            elif key not in public_numbers and key not in private_numbers:
+                errors.append(f"invented concrete value: {token.strip()}")
+
+        feature_match = _ASSERTS_FEATURE.search(sentence)
+        if feature_match:
+            feature = feature_match.group(1).casefold().replace("wi-fi", "wifi")
+            grounding_text = public_text
+            if len(sentence_options) == 1:
+                grounding_text = " ".join(state.scenario.shared_context) + " " + state.scenario.option(
+                    next(iter(sentence_options))
+                ).public_line()
+            if feature not in grounding_text.casefold().replace("wi-fi", "wifi"):
+                errors.append(f"invented option feature: {feature_match.group(1)}")
+
+        errors.extend(_concrete_comparison_errors(sentence, state, action))
+
+    if action.act == ActionType.ANSWER and not _answer_is_relevant(text, state, action, target_question):
+        errors.append("direct answer is unrelated")
+
+    if action.stance_update:
+        update = action.stance_update
+        if not option_mentioned(text, state, update.option_id):
+            errors.append("stance change does not visibly name its option")
+        if (
+            update.kind == StanceUpdateKind.SWITCH_PREFERRED
+            and action.act is not ActionType.VOTE
+            and not _switch_is_visible(text, state, update)
+        ):
+            errors.append("preferred-option switch is not visible")
+        elif update.kind == StanceUpdateKind.MAKE_ACCEPTABLE and not _acceptance_is_visible(text):
+            errors.append("acceptance change is not visible")
+        elif update.kind == StanceUpdateKind.REJECT and not re.search(
+            r"\b(?:reject|cannot accept|won't accept|not an option|rule out)\b",
+            text,
+            re.I,
+        ):
+            errors.append("rejection change is not visible")
+
+    if action.act == ActionType.VOTE:
+        mentioned = mentioned_options(text, state)
+        if action.vote_option not in mentioned:
+            errors.append("formal vote does not name the structured option")
+        targets = _explicit_vote_targets(text, state)
+        if targets != {action.vote_option}:
+            errors.append("formal vote is ambiguous or contradicts the structured vote")
+        runtime = state.runtimes[persona.id]
+        if runtime.public_preference and runtime.public_preference != action.vote_option:
+            previous = action.stance_update.previous_option_id if action.stance_update else runtime.public_preference
+            if not _vote_switch_bridge_visible(text, state, previous, action.vote_option):
+                errors.append("vote switch lacks a visible bridge")
+
+    if persona.hard_blocker:
+        preferred = state.runtimes[persona.id].preferred_option
+        for option_id in mentioned_options(text, state) - {preferred}:
+            if _positive_for_option(text, state, option_id):
+                errors.append("hard-blocker contradiction")
+                break
+
+    repetition_exempt = action.act is ActionType.VOTE or action.issue_effect is IssueEffect.MAINTAIN
+    if not repetition_exempt:
+        previous = [
+            turn.text for turn in state.participant_turns
+            if turn.speaker_id == persona.id
+        ][-4:]
+        for old in previous:
+            if jaccard_text(text, old, min_len=2) >= 0.88 or SequenceMatcher(None, text.casefold(), old.casefold()).ratio() >= 0.91:
+                errors.append("near-verbatim repetition")
+                break
+    return ValidationResult(not errors, text, errors)
+
+
+def _acceptance_is_visible(text: str) -> bool:
+    """Return whether a structured acceptance is broadly visible in wording.
+
+    The stance update is authoritative.  This check deliberately accepts
+    ordinary willingness language instead of trying to classify the whole
+    utterance semantically.
     """
-    blocking = sum(1 for issue in assessment.issues if issue.blocking)
-    return (
-        _ACTION_SEVERITY.get(assessment.action, 4),
-        1 if blocking else 0,
-        blocking,
-        len(assessment.issues),
+    return bool(re.search(
+        r"\b(?:acceptable|reasonable|workable|viable|suitable(?: choice)?|"
+        r"could live with|can accept|could accept|willing to accept|fine with|okay with|ok with|"
+        r"open to|can go with|could go with|willing to go with|happy to go with|prepared to go with|"
+        r"works? for me|would work for me|could work (?:well )?for (?:me|us|the group)(?: too)?|"
+        r"I(?:'m| am) good with|I(?:'m| am) comfortable with)\b",
+        text,
+        re.I,
+    ))
+
+
+def _switch_is_visible(text: str, state: DialogueState, update) -> bool:
+    """Check only target naming plus an explicit movement marker.
+
+    The public state already records the prior preference. During discussion,
+    the old option therefore need not be repeated. This is intentionally a
+    small surface-consistency check, not a semantic stance interpreter.
+    """
+    if not option_mentioned(text, state, update.option_id):
+        return False
+    patterns = (
+        r"\bchanged my mind\b",
+        r"\bchang(?:e|ed|ing) my (?:mind|preference|preferred choice|vote)\b",
+        r"\b(?:willing|ready|prepared) to (?:switch|move)(?: my preference)?(?: from [^.!?]{0,50})? to\b",
+        r"\bswitch(?:ing|ed)?(?: my preference)?(?: from [^.!?]{0,50})? to\b",
+        r"\b(?:move|moving|moved)(?: my preference)?(?: from [^.!?]{0,50})? to\b",
+        r"\b(?:now|actually)\s+(?:prefer|favor|choose)\b",
+        r"\b(?:i(?:'m| am)\s+)?(?:now|actually)\s+lean(?:ing)?\s+(?:a bit\s+|somewhat\s+|more\s+)?(?:toward|towards)\b",
+        r"\b(?:starting|beginning) to (?:prefer|favor|lean)\b",
+        r"\blean(?:ing)?(?: a bit| somewhat)? more (?:toward|towards)\b",
+        r"\blean(?:ing)? (?:toward|towards) [^.!?]{0,45} instead\b",
+        r"\blean(?:ing)? (?:toward|towards) [^.!?]{0,45}\bnow\b",
+        r"\bprefer [^.!?]{0,45} instead\b",
+        r"\bhas become my preferred (?:choice|option)\b",
+        r"\bmy preferred (?:choice|option) is now\b",
+        r"\bbut now\b[^.!?]{0,70}\b(?:better|preferred|best fit)\b",
+    )
+    return any(re.search(pattern, text, re.I) for pattern in patterns)
+
+
+def _vote_switch_bridge_visible(
+    text: str,
+    state: DialogueState,
+    previous_option: str | None,
+    vote_option: str | None,
+) -> bool:
+    """Require an explicit old-to-new bridge only for a formal vote switch."""
+    if not vote_option or not option_mentioned(text, state, vote_option):
+        return False
+    # When the previous preference is already public, ordinary change-of-mind
+    # wording is enough. The validator does not require the speaker to restate
+    # public history in the same sentence as the vote.
+    public_history_patterns = (
+        r"\bchang(?:e|ed|ing) my (?:mind|preference|preferred choice|vote)\b",
+        r"\bchanged the balance\b",
+        r"\breconsider(?:ed|ing)?\b",
+    )
+    if any(re.search(pattern, text, re.I) for pattern in public_history_patterns):
+        return True
+
+    # Other bridges explicitly contrast the former and current choice, so the
+    # old option must be visible as well as the vote target.
+    if previous_option and not option_mentioned(text, state, previous_option):
+        return False
+    explicit_old_to_new_patterns = (
+        r"\bswitch(?:ing|ed)?(?: my (?:preference|preferred choice|vote))?\b",
+        r"\b(?:moved|moving) from\b",
+        r"\bpreviously prefer(?:red|ring)\b",
+        r"\binitially preferred\b",
+        r"\bused to prefer\b",
+        r"\bfirst choice\b",
+        r"\bpreferred [^.!?]{0,45}\bbut\b",
+        r"\bfrom [^.!?]{0,35} to\b",
+    )
+    return any(re.search(pattern, text, re.I) for pattern in explicit_old_to_new_patterns)
+
+
+def _numeric_key(value: str) -> str:
+    value = value.casefold().replace(",", "").strip()
+    currency = ""
+    if value.startswith("$"):
+        currency, value = "usd", value[1:]
+    elif value.startswith("€"):
+        currency, value = "eur", value[1:]
+    elif value.startswith("£"):
+        currency, value = "gbp", value[1:]
+    value = re.sub(r"\s*[-–—]\s*", "", value)
+    value = re.sub(r"\s+", "", value)
+    unit_aliases = (
+        (r"hours?$|hrs?$", "h"),
+        (r"minutes?$|mins?$", "min"),
+        (r"dollars?$", "usd"),
+        (r"euros?$", "eur"),
+        (r"pounds?$", "gbp"),
+        (r"kilometers?$|kms?$", "km"),
+        (r"miles?$", "mile"),
+        (r"persons?$|people$", "people"),
+        (r"seats?$", "seat"),
+        (r"stops?$", "stop"),
+    )
+    for pattern, replacement in unit_aliases:
+        value = re.sub(pattern, replacement, value)
+    return value + currency if currency else value
+
+
+def _explicit_vote_targets(text: str, state: DialogueState) -> set[str]:
+    """Return explicit final vote targets while excluding a visible old choice.
+
+    In ordinary vote wording, every option governed by a vote/choice phrase is
+    a target. In an explicit ``switch my vote from X to Y`` bridge, X is public
+    history and only Y is the final target. This keeps ambiguous alternatives
+    invalid without misclassifying natural switch language.
+    """
+    targets: set[str] = set()
+    vote_words = r"(?:vote(?:d|s|\s+is|\s+for|\s+goes\s+to)?|voting\s+for|choose|choosing|choice\s+is|select|selecting|ballot|go(?:ing)?\s+with)"
+    for option_id in state.scenario.option_ids:
+        for alias in _option_aliases(state, option_id):
+            escaped = re.escape(alias)
+            before = rf"{vote_words}[^.!?]{{0,35}}(?<!\w){escaped}(?!\w)"
+            after = rf"(?<!\w){escaped}(?!\w)[^.!?]{{0,25}}(?:gets?\s+my\s+vote|is\s+my\s+vote|has\s+my\s+vote)"
+            if re.search(before, text, re.I) or re.search(after, text, re.I):
+                targets.add(option_id)
+
+    old_choices: set[str] = set()
+    new_choices: set[str] = set()
+    movement = r"(?:switch(?:ing|ed)?|chang(?:e|ed|ing)|mov(?:e|ed|ing))"
+    object_phrase = r"(?:\s+(?:my\s+)?(?:vote|preference|preferred\s+choice))?"
+    for old_id in state.scenario.option_ids:
+        for new_id in state.scenario.option_ids:
+            if old_id == new_id:
+                continue
+            for old_alias in _option_aliases(state, old_id):
+                for new_alias in _option_aliases(state, new_id):
+                    bridge = (
+                        rf"{movement}{object_phrase}\s+from\s+[^.!?]{{0,30}}"
+                        rf"(?<!\w){re.escape(old_alias)}(?!\w)[^.!?]{{0,180}}"
+                        rf"\bto\s+[^.!?]{{0,30}}(?<!\w){re.escape(new_alias)}(?!\w)"
+                    )
+                    if re.search(bridge, text, re.I):
+                        old_choices.add(old_id)
+                        new_choices.add(new_id)
+    targets.update(new_choices)
+    targets.difference_update(old_choices - new_choices)
+    return targets
+
+
+def _concrete_comparison_errors(sentence: str, state: DialogueState, action: UserAction) -> list[str]:
+    """Block only clear, measurable comparative contradictions.
+
+    Pairwise claims are evaluated against the explicitly named or structured
+    comparison peer. Global superlatives are evaluated across all measurable
+    options. Ambiguous qualitative language is allowed rather than treated as
+    an unsupported fact: the structured action and reason provenance already
+    carry the intended meaning.
+    """
+    claim_specs = (
+        ("cheaper", "cost", -1, r"\b(?:cheaper|lower[- ]priced?|lower price)\b"),
+        ("expensive", "cost", 1, r"\b(?:more expensive|higher[- ]priced?|higher price|costlier)\b"),
+        ("shorter", "duration", -1, r"\b(?:shorter (?:flight|trip|journey|duration|travel time)|faster)\b"),
+        ("longer", "duration", 1, r"\b(?:longer (?:flight|trip|journey|duration|travel time)|slower)\b"),
+        ("earlier", "time", -1, r"\bearlier\s+(?:departure|arrival|closing|opening|time)\b"),
+        ("later", "time", 1, r"\blater\s+(?:departure|arrival|closing|opening|time)\b"),
+    )
+    superlative_specs = (
+        ("cost", -1, r"\b(?:cheapest|lowest[- ]priced?|lowest price)\b"),
+        ("cost", 1, r"\b(?:most expensive|highest[- ]priced?|highest price|costliest)\b"),
+        ("duration", -1, r"\b(?:shortest (?:flight|trip|journey|duration|travel time)|fastest)\b"),
+        ("duration", 1, r"\b(?:longest (?:flight|trip|journey|duration|travel time)|slowest)\b"),
+        ("time", -1, r"\bearliest\s+(?:departure|arrival|closing|opening|time)\b"),
+        ("time", 1, r"\blatest\s+(?:departure|arrival|closing|opening|time)\b"),
+    )
+    errors: list[str] = []
+    mentioned = mentioned_options(sentence, state)
+
+    for claim_name, kind, direction, pattern in claim_specs:
+        for match in re.finditer(pattern, sentence, re.I):
+            subject = _comparison_claim_subject(sentence, state, match.start(), match.end())
+            pair = _comparison_subjects(sentence, state, match.start())
+            if pair is not None:
+                pair_subject, peer = pair
+                if _measures_available(state, pair_subject, [peer], kind) and not _direction_is_true(
+                    state, pair_subject, [peer], kind, direction
+                ):
+                    errors.append("concrete comparison contradicts public values")
+                continue
+
+            if subject is None and action.reason_source and action.reason_source.option_id in mentioned:
+                subject = action.reason_source.option_id
+            if subject is None and len(mentioned) == 1:
+                subject = next(iter(mentioned))
+            if subject is None:
+                continue
+
+            peers = [option_id for option_id in mentioned if option_id != subject]
+            if not peers and action.act is ActionType.COMPARE and subject in action.option_focus:
+                peers = [option_id for option_id in action.option_focus if option_id != subject]
+            measurable_peers = [
+                option_id for option_id in peers
+                if _public_measure(state, option_id, kind) is not None
+            ]
+            if measurable_peers:
+                if _public_measure(state, subject, kind) is not None and not _direction_is_true(
+                    state, subject, measurable_peers, kind, direction
+                ):
+                    errors.append("concrete comparison contradicts public values")
+                continue
+
+            # A card descriptor or reason source may intentionally say "lower
+            # price" or "earlier closing time" without naming a comparison
+            # target. Accept that provenance. Otherwise block only when public
+            # measures prove the exact opposite extreme.
+            if _option_card_supports_claim(state, subject, claim_name):
+                continue
+            if (
+                action.reason_source
+                and action.reason_source.option_id == subject
+                and _structured_claim_supports(claim_name, _structured_action_fact_text(action))
+            ):
+                continue
+            values = _all_public_measures(state, kind)
+            subject_value = values.get(subject)
+            if subject_value is None or len(values) < 2:
+                continue
+            other_values = [value for option_id, value in values.items() if option_id != subject]
+            clearly_opposite = (
+                subject_value >= max(other_values) if direction < 0
+                else subject_value <= min(other_values)
+            )
+            if clearly_opposite:
+                errors.append("concrete comparison contradicts public values")
+
+    for kind, direction, pattern in superlative_specs:
+        for match in re.finditer(pattern, sentence, re.I):
+            subject = _comparison_claim_subject(sentence, state, match.start(), match.end())
+            if subject is None and action.reason_source and action.reason_source.option_id in mentioned:
+                subject = action.reason_source.option_id
+            if subject is None and len(mentioned) == 1:
+                subject = next(iter(mentioned))
+            values = _all_public_measures(state, kind)
+            if subject is None or subject not in values or len(values) < 2:
+                continue
+            expected = min(values.values()) if direction < 0 else max(values.values())
+            if values[subject] != expected:
+                errors.append("concrete comparison contradicts public values")
+    return list(dict.fromkeys(errors))
+
+
+def _measures_available(
+    state: DialogueState, subject: str, peers: list[str], kind: str
+) -> bool:
+    return _public_measure(state, subject, kind) is not None and all(
+        _public_measure(state, peer, kind) is not None for peer in peers
     )
 
 
-# P7: a discourse-marker head that promises content but delivers none
-# ("Just to be clear.", "Actually.", "Oh, and."). Genuine short reactions
-# ("Fair point.", "Not for me.") do not match.
-_BARE_MARKER_TURN = re.compile(
-    r"^\W*(?:just\s+to\s+be\s+clear|to\s+be\s+clear|actually|oh(?:,\s*and)?|"
-    r"one\s+more\s+thing|by\s+the\s+way|that\s+said|on\s+top\s+of\s+that)\W*$",
-    re.I,
-)
-
-# P7: a lone subordinate clause printed as a whole turn ("Since the Museum
-# plan is low effort."). As an answer to a question this shape is natural
-# ("Because it's cheap."), so the check skips answer acts.
-_EXACT_QUANTIFIED_DETAIL = re.compile(
-    r"(?:[$€£]\s*\d+(?:[.,]\d+)?|\d+(?:[.,]\d+)?\s*[$€£]|"
-    r"\d+\s*h(?:\s*\d+\s*m)?|"
-    r"\d+(?:[.,]\d+)?\s*[- ]?(?:%|percent|seconds?|secs?|minutes?|mins?|"
-    r"hours?|hrs?|days?|weeks?|months?|euros?|dollars?|pounds?|people|persons?|"
-    r"attendees?|seats?|rooms?|stops?|kilomet(?:er|re)s?|km|miles?|mb|gb|tb|"
-    r"cups?|lit(?:er|re)s?))\b",
-    re.I,
-)
-
-_TEXTUAL_TIME_DETAIL = re.compile(
-    r"\b(?:(?P<relation>under|less\s+than|over|more\s+than)\s+)?"
-    r"(?P<amount>half\s+an?|an?|one|two|three|four|five|six|seven|eight|nine|ten)\s+"
-    r"(?P<unit>hours?|hrs?|minutes?|mins?)\b",
-    re.I,
-)
-
-_WORD_NUMBER = {
-    "a": 1.0, "an": 1.0, "one": 1.0, "two": 2.0, "three": 3.0,
-    "four": 4.0, "five": 5.0, "six": 6.0, "seven": 7.0,
-    "eight": 8.0, "nine": 9.0, "ten": 10.0, "eleven": 11.0,
-    "twelve": 12.0, "thirteen": 13.0, "fourteen": 14.0,
-    "fifteen": 15.0, "sixteen": 16.0, "seventeen": 17.0,
-    "eighteen": 18.0, "nineteen": 19.0, "twenty": 20.0,
-    "thirty": 30.0, "forty": 40.0, "fifty": 50.0,
-    "sixty": 60.0, "seventy": 70.0, "eighty": 80.0,
-    "ninety": 90.0, "hundred": 100.0,
-}
+def _option_card_supports_claim(state: DialogueState, option_id: str, claim_name: str) -> bool:
+    option = state.scenario.option(option_id)
+    card_text = " ".join([
+        *(f"{key.replace('_', ' ')} {value}" for key, value in option.attrs.items()),
+        option.upside,
+        option.concern,
+    ]).casefold()
+    return _structured_claim_supports(claim_name, card_text)
 
 
-def _fact_norm(text: str) -> str:
-    return " ".join(re.sub(r"[^a-z0-9%€$£]+", " ", text.lower()).split())
+def _structured_action_fact_text(action: UserAction) -> str:
+    return " ".join(filter(None, [
+        action.reason,
+        action.reason_source.public_value if action.reason_source else None,
+    ])).casefold()
 
 
-def _duration_minutes(text: str) -> float | None:
-    """Parse one explicit card duration such as ``1h 40m`` or ``25 minutes``."""
-    normalized = text.lower().replace(",", ".")
-    combined = re.search(
-        r"(?P<h>\d+(?:\.\d+)?)\s*(?:h|hours?|hrs?)\s*"
-        r"(?P<m>\d+(?:\.\d+)?)?\s*(?:m|minutes?|mins?)?",
-        normalized,
+def _direction_is_true(
+    state: DialogueState,
+    subject: str,
+    peers: list[str],
+    kind: str,
+    direction: int,
+) -> bool:
+    subject_value = _public_measure(state, subject, kind)
+    peer_values = [_public_measure(state, peer, kind) for peer in peers]
+    peer_values = [value for value in peer_values if value is not None]
+    if subject_value is None or not peer_values:
+        return False
+    return all(subject_value < value for value in peer_values) if direction < 0 else all(
+        subject_value > value for value in peer_values
     )
-    if combined:
-        hours = float(combined.group("h"))
-        minutes = float(combined.group("m") or 0.0)
-        return hours * 60.0 + minutes
-    minutes = re.search(r"(?P<m>\d+(?:\.\d+)?)\s*(?:m|minutes?|mins?)\b", normalized)
-    if minutes:
-        return float(minutes.group("m"))
+
+
+def _all_public_measures(state: DialogueState, kind: str) -> dict[str, float]:
+    result: dict[str, float] = {}
+    for option_id in state.scenario.option_ids:
+        value = _public_measure(state, option_id, kind)
+        if value is not None:
+            result[option_id] = value
+    return result
+
+
+def _comparison_claim_subject(
+    sentence: str,
+    state: DialogueState,
+    comparative_start: int,
+    comparative_end: int,
+) -> str | None:
+    """Return the option locally described by a comparative phrase."""
+    before = sentence[:comparative_start]
+    after = sentence[comparative_end:comparative_end + 70]
+    before_hits: list[tuple[int, str]] = []
+    for option_id in state.scenario.option_ids:
+        for alias in _option_aliases(state, option_id):
+            for hit in re.finditer(rf"(?<!\w){re.escape(alias)}(?!\w)", before, re.I):
+                before_hits.append((hit.start(), option_id))
+            if re.search(rf"^\s*(?:of|for)\s+(?:the\s+)?(?<!\w){re.escape(alias)}(?!\w)", after, re.I):
+                return option_id
+    if not before_hits:
+        return None
+    position, option_id = max(before_hits, key=lambda item: item[0])
+    return option_id if len(before) - position <= 100 else None
+
+
+def _structured_claim_supports(name: str, structured: str) -> bool:
+    equivalents = {
+        "cheaper": ("cheaper", "lower price", "lowest price", "low cost", "free"),
+        "expensive": ("more expensive", "higher price", "highest price", "costlier"),
+        "shorter": ("shorter", "shortest", "faster", "fastest"),
+        "longer": ("longer", "longest", "slower", "slowest"),
+        "earlier": ("earlier", "earliest"),
+        "later": ("later", "latest"),
+    }
+    return any(term in structured for term in equivalents[name])
+
+
+def _comparison_subjects(
+    sentence: str,
+    state: DialogueState,
+    comparative_start: int,
+) -> tuple[str, str] | None:
+    before = sentence[:comparative_start]
+    after = sentence[comparative_start:]
+    than_part = re.split(r"\bthan\b", after, maxsplit=1, flags=re.I)
+    if len(than_part) != 2:
+        return None
+    before_hits: list[tuple[int, str]] = []
+    after_hits: list[tuple[int, str]] = []
+    for option_id in state.scenario.option_ids:
+        for alias in _option_aliases(state, option_id):
+            for hit in re.finditer(rf"(?<!\w){re.escape(alias)}(?!\w)", before, re.I):
+                before_hits.append((hit.start(), option_id))
+            for hit in re.finditer(rf"(?<!\w){re.escape(alias)}(?!\w)", than_part[1], re.I):
+                after_hits.append((hit.start(), option_id))
+    if not before_hits or not after_hits:
+        return None
+    subject = max(before_hits, key=lambda item: item[0])[1]
+    peer = min(after_hits, key=lambda item: item[0])[1]
+    return None if subject == peer else (subject, peer)
+
+
+def _public_measure(state: DialogueState, option_id: str, kind: str) -> float | None:
+    option = state.scenario.option(option_id)
+    for key, raw in option.attrs.items():
+        key_text = key.casefold().replace("_", " ")
+        value_text = str(raw).casefold().replace("–", "-").replace("—", "-")
+        if kind == "cost" and any(token in key_text for token in ("cost", "price", "fare")):
+            if "free" in value_text:
+                return 0.0
+            match = re.search(r"\d+(?:[.,]\d+)?", value_text)
+            return float(match.group().replace(",", ".")) if match else None
+        if kind == "duration" and any(token in key_text for token in ("duration", "travel", "journey", "flight time")):
+            hours = re.search(r"(\d+(?:[.,]\d+)?)\s*-?\s*(?:hours?|hrs?)", value_text)
+            minutes = re.search(r"(\d+(?:[.,]\d+)?)\s*-?\s*(?:minutes?|mins?)", value_text)
+            if hours or minutes:
+                return (float(hours.group(1).replace(",", ".")) * 60 if hours else 0.0) + (float(minutes.group(1).replace(",", ".")) if minutes else 0.0)
+        if kind == "time" and any(token in key_text for token in ("departure", "arrival", "closing", "opening", "time")):
+            clock = re.search(r"\b(\d{1,2}):(\d{2})\b", value_text)
+            if clock:
+                return float(int(clock.group(1)) * 60 + int(clock.group(2)))
     return None
 
 
-def _textual_time_bound(match: re.Match[str]) -> tuple[str, float]:
-    amount_text = _fact_norm(match.group("amount"))
-    if amount_text.startswith("half"):
-        amount = 0.5
-    else:
-        amount = _WORD_NUMBER[amount_text]
-    unit = match.group("unit").lower()
-    minutes = amount * (60.0 if unit.startswith(("h", "hr")) else 1.0)
-    relation = _fact_norm(match.group("relation") or "exact")
-    return relation, minutes
+def _positive_for_option(text: str, state: DialogueState, option_id: str) -> bool:
+    for alias in _option_aliases(state, option_id):
+        for match in re.finditer(re.escape(alias), text, re.I):
+            start = max(0, match.start() - 55)
+            end = min(len(text), match.end() + 55)
+            if _POSITIVE_COMMITMENT.search(text[start:end]):
+                return True
+    return False
 
 
-def _time_claim_conflicts(actual_minutes: float, relation: str, claimed_minutes: float) -> bool:
-    if relation in {"under", "less than"}:
-        return actual_minutes >= claimed_minutes
-    if relation in {"over", "more than"}:
-        return actual_minutes <= claimed_minutes
-    return abs(actual_minutes - claimed_minutes) > 1.0
-
-
-def _attribute_key_spans(key: str, text: str) -> list[tuple[int, int]]:
-    """Return conservative lexical spans referring to one card attribute."""
-    key_norm = _fact_norm(key.replace("_", " "))
-    patterns: list[str] = []
-    if key_norm:
-        patterns.append(rf"\b{re.escape(key_norm)}\b")
-    key_tokens = set(key_norm.split())
-    if key_tokens & {"cost", "price", "fee", "usd", "eur"}:
-        patterns.append(r"\b(?:cost|costs|price|priced|fee|euros?|dollars?|pounds?)\b|[$€£]")
-    if "layover" in key_tokens:
-        patterns.append(r"\b(?:layovers?|connections?)\b")
-    elif "departure" in key_tokens and "time" in key_tokens:
-        patterns.append(r"\b(?:departure(?:\s+time)?|departs?)\b")
-    elif "travel" in key_tokens:
-        patterns.append(r"\b(?:travel(?:\s+time)?|journey|commute)\b")
-    elif key_tokens & {"duration", "length"}:
-        patterns.append(r"\b(?:duration|length|lasts?|takes?)\b")
-    elif "time" in key_tokens:
-        patterns.append(r"\btime\b")
-    if key_tokens & {"capacity", "seats", "places"}:
-        patterns.append(r"\b(?:capacity|seats?|places?)\b")
-    spans: list[tuple[int, int]] = []
-    for pattern in patterns:
-        spans.extend((m.start(), m.end()) for m in re.finditer(pattern, text, re.I))
-    return sorted(set(spans))
-
-
-def _attribute_key_visible(key: str, text: str) -> bool:
-    return bool(_attribute_key_spans(key, text))
-
-
-def _value_spans(value: str, text: str) -> list[tuple[int, int]]:
-    """Find a listed attribute value in natural equivalent formatting.
-
-    Card values and dialogue commonly differ only by hyphenation/pluralisation:
-    ``45`` beside ``travel_time_minutes`` appears as ``45-minute travel time``;
-    ``12 euros`` appears as ``12 euro``.  Matching these forms by raw substring
-    caused listed facts to be treated as cross-option transfers.
-    """
-    raw = str(value).strip().lower()
-    if not raw:
-        return []
-    tokens = re.findall(r"[a-z]+|\d+(?:[.,]\d+)?|[%€$£]", raw)
-    if not tokens:
-        return []
-    unit_aliases = {
-        "euro": r"euros?", "euros": r"euros?",
-        "dollar": r"dollars?", "dollars": r"dollars?",
-        "pound": r"pounds?", "pounds": r"pounds?",
-        "hour": r"(?:hours?|hrs?|h)", "hours": r"(?:hours?|hrs?|h)",
-        "minute": r"(?:minutes?|mins?|m)", "minutes": r"(?:minutes?|mins?|m)",
-        "person": r"(?:people|persons?)", "people": r"(?:people|persons?)",
+def _positive_option_mentions(text: str, state: DialogueState) -> set[str]:
+    return {
+        option_id for option_id in state.scenario.option_ids
+        if option_mentioned(text, state, option_id) and _positive_for_option(text, state, option_id)
     }
-    parts = [unit_aliases.get(token, re.escape(token)) for token in tokens]
-    pattern = r"(?<![a-z0-9])" + r"[\s-]*".join(parts) + r"(?![a-z0-9])"
-    return [(m.start(), m.end()) for m in re.finditer(pattern, text, re.I)]
 
 
-def _numbers_in_text(text: str) -> set[str]:
-    values = set(re.findall(r"\d+(?:[.,]\d+)?", _fact_norm(text)))
-    for word in re.findall(r"[a-z]+", text.lower()):
-        number = _WORD_NUMBER.get(word)
-        if number is not None:
-            values.add(str(int(number)) if number.is_integer() else str(number))
-    return values
-
-
-def _span_distance(left: tuple[int, int], right: tuple[int, int]) -> int:
-    if left[1] < right[0]:
-        return right[0] - left[1]
-    if right[1] < left[0]:
-        return left[0] - right[1]
-    return 0
-
-
-def _locally_attached(text: str, left: tuple[int, int], right: tuple[int, int], *, max_gap: int = 18) -> bool:
-    if _span_distance(left, right) > max_gap:
-        return False
-    lo = min(left[1], right[1]) if left[0] <= right[0] else min(right[1], left[1])
-    hi = max(left[0], right[0])
-    between = text[lo:hi]
-    return not bool(re.search(r"\b(?:and|but|plus|while|whereas|versus|vs)\b", between, re.I))
-
-
-_ASSERTED_OPTION_FACT = re.compile(
-    r"\b(?:has|have|offers?|includes?|provides?|features?|supports?|sends?|"
-    r"allows?|requires?|uses?|fits?\s+(?:on|in|inside|under|the|a|an)|guarantees?|can|could|might|will|comes?\s+with|"
-    r"is\s+located(?:\s+in|\s+near|\s+at)?|is\s+downtown|is\s+nearby|"
-    r"(?:schedule|availability|capacity|location|security|connection|layover|"
-    r"baggage|noise|reliability|delays?)\s+(?:is|looks?|seems?|can|could|might|will))"
-    r"\b(?P<claim>[^.!?;,—]*)",
-    re.I,
-)
-
-_FACT_CLAIM_STOP_HEADS = {
-    "a concern", "concerns", "a problem", "problems", "a point", "points",
-    "a reason", "reasons", "a preference", "preferences", "a worry", "worries",
-}
-
-_FACTUAL_DETAIL_NOUN = re.compile(
-    r"\b(?:amenit(?:y|ies)|lounges?|baggage|allowances?|capabilit(?:y|ies)|"
-    r"features?|alerts?|updates?|locations?|downtown|nearby|capacity|seats?|seating|rooms?|"
-    r"parking|accounts?|apps?|availability|schedules?|security|strikes?|delays?|warrant(?:y|ies)|"
-    r"reliability|noise|services?|equipment|stations?|brew(?:ing)?|counter|"
-    r"airport|terminal|connection|layover)\b",
-    re.I,
-)
-
-
-_DETAIL_SEMANTIC_ALIASES = {
-    "room": {"room", "roomy", "space", "capacity", "seat", "seats"},
-    "rooms": {"room", "roomy", "space", "capacity", "seat", "seats"},
-    "attendee": {"attendee", "attendees", "people", "person", "participants"},
-    "attendees": {"attendee", "attendees", "people", "person", "participants"},
-    "person": {"attendee", "attendees", "people", "person", "participants"},
-    "persons": {"attendee", "attendees", "people", "person", "participants"},
-    "alert": {"alert", "alerts", "update", "updates", "notification", "notifications"},
-    "alerts": {"alert", "alerts", "update", "updates", "notification", "notifications"},
-    "update": {"alert", "alerts", "update", "updates", "notification", "notifications"},
-    "updates": {"alert", "alerts", "update", "updates", "notification", "notifications"},
-    "connection": {"connection", "connections", "layover", "layovers"},
-    "connections": {"connection", "connections", "layover", "layovers"},
-    "layover": {"connection", "connections", "layover", "layovers"},
-    "layovers": {"connection", "connections", "layover", "layovers"},
-    "counter": {"counter", "compact", "footprint", "space-saving"},
-    "counters": {"counter", "compact", "footprint", "space-saving"},
-}
-
-
-def _feature_detail_terms(text: str) -> list[str]:
-    return [_fact_norm(match.group(0)) for match in _FACTUAL_DETAIL_NOUN.finditer(text)]
-
-
-def _detail_is_listed(term: str, allowed_norm: str) -> bool:
-    candidates = {term}
-    if term.endswith("ies"):
-        candidates.add(term[:-3] + "y")
-    if term.endswith("es"):
-        candidates.add(term[:-2])
-    if term.endswith("s"):
-        candidates.add(term[:-1])
-    candidates.update(_DETAIL_SEMANTIC_ALIASES.get(term, set()))
-    return any(
-        re.search(rf"\b{re.escape(candidate)}\b", allowed_norm)
-        for candidate in candidates if candidate
-    )
-
-_SUBORDINATE_ONLY_TURN = re.compile(
-    r"^(?:since|because|although|even\s+if|even\s+though|whereas|unless)\b[^,.!?]*[.!?]?$",
-    re.I,
-)
-
-
-class ValidationMixin:
-    # ------------------------------------------------------------------
-    # Evidence-based assessment (todo_validation item 9)
-    # ------------------------------------------------------------------
-
-    def _assess_candidate(
-        self,
-        *,
-        text: str,
-        state: DialogueState,
-        persona: Persona,
-        intent: MoveIntent,
-        evidence: VisibleEvidence | None,
-        verification_issues: list[str] | None = None,
-        structure_flags: list[str] | None = None,
-        operational_failure: bool = False,
-    ) -> TurnAssessment:
-        """Assess only correctness-critical runtime properties.
-
-        Soft realization quality is telemetry. It must not trigger repairs of
-        usable support, concern, answer, comparison, or opinion turns.
-        """
-        issues: list[ValidationIssue] = []
-
-        def add(code: str, explanation: str = "", *, span: str = "",
-                option: str | None = None, blocking: bool = True) -> None:
-            if not any(i.code == code and i.option_id == option for i in issues):
-                issues.append(ValidationIssue(code, explanation, span, option, blocking))
-
-        stripped = text.strip()
-        if not stripped:
-            add("EMPTY_UTTERANCE")
-        for flag in structure_flags or []:
-            if flag in {"MULTI_TURN_OUTPUT", "LEAKED_METADATA", "MALFORMED_ENVELOPE"}:
-                add("MALFORMED_UTTERANCE", flag)
-        if _BARE_MARKER_TURN.match(stripped) or (
-            intent.act != ActType.ANSWER and _SUBORDINATE_ONLY_TURN.match(stripped)
-        ):
-            add("MALFORMED_UTTERANCE", "lead-in or lone subordinate clause")
-        if self._resolver and self._resolver.invalid_option_refs(text):
-            add("INVALID_OPTION_REFERENCE")
-
-        if operational_failure or evidence is None:
-            add("CRITICAL_INTERPRETATION_UNAVAILABLE")
-            return TurnAssessment(action=AssessmentAction.REPAIR, issues=issues)
-
-        mentioned = [m.option_id for m in evidence.mentions]
-        commitment = evidence.sole_commitment()
-        if evidence.commitments and commitment is None:
-            add("CONFLICTING_COMMITMENTS")
-
-        focus = [o for o in intent.option_focus if o in state.scenario.option_ids]
-        if intent.route_source == "coverage" and focus and focus[0] not in mentioned:
-            add("MISSING_REQUIRED_OPTION_FOCUS", option=focus[0])
-        if intent.act is ActType.COMPARE and len(focus) >= 2:
-            missing = [oid for oid in focus[:2] if oid not in mentioned]
-            if missing:
-                add("MISSING_REQUIRED_OPTION_FOCUS", ",".join(missing))
-        if intent.act is ActType.ASK and not evidence.questions:
-            add("QUESTION_REQUIRED")
-
-        rt = state.runtimes[persona.id]
-        resolved = {b.option_id for b in evidence.blockers if b.action == "resolved"}
-        for entry in evidence.commitments:
-            if entry.option_id in rt.rejected_options() and entry.option_id not in resolved:
-                add("BLOCKED_OPTION_ACCEPTED", option=entry.option_id)
-
-        if (intent.act == ActType.COMPROMISE or evidence.proposals) and self._resolver and hybrid_blend_detected(text, self._resolver):
-            add("HYBRID_COMPROMISE")
-
-        if intent.act is ActType.VOTE:
-            if commitment is None or commitment.kind not in {"vote", "accept"}:
-                add("UNCLEAR_VISIBLE_COMMITMENT")
-            elif intent.required_vote and commitment.option_id != intent.required_vote:
-                add("REQUIRED_VOTE_MISMATCH", option=commitment.option_id)
-
-        if intent.allow_vote_change and commitment and focus:
-            allowed = set(focus)
-            if intent.required_vote:
-                allowed.add(intent.required_vote)
-            if rt.explicit_vote:
-                allowed.add(rt.explicit_vote)
-            if commitment.option_id not in allowed:
-                add("OFF_TARGET_SWITCH", option=commitment.option_id)
-
-        previous_public = rt.explicit_vote
-        if (
-            commitment
-            and intent.act is ActType.VOTE
-            and previous_public in state.scenario.option_ids
-            and commitment.option_id != previous_public
-        ):
-            bridged = any(
-                s.target == commitment.option_id and (s.source or s.reason_span)
-                for s in evidence.switches
-            ) or bool(self._resolver and switch_bridge_ok(text, previous_public, self._resolver))
-            if not bridged:
-                add("UNBRIDGED_SWITCH")
-
-        # High-confidence deterministic contradictions only. The resolver owns
-        # exact card-value checks; ordinary implications and opinions are never
-        # grounding failures here.
-        if self._resolver:
-            grounding_context = focus[0] if len(focus) == 1 else None
-            for code, option_id, explanation in self._deterministic_fact_issues(
-                text, state, context_option=grounding_context
-            ):
-                add(code, explanation, option=option_id)
-
-        realized = self._intended_move_realized(intent, evidence, commitment, focus, lambda *a, **k: None)
-        focus_realized = bool(set(focus) & set(mentioned)) if focus else None
-        action = AssessmentAction.REPAIR if any(i.blocking for i in issues) else AssessmentAction.ACCEPT
-        return TurnAssessment(
-            action=action,
-            issues=issues,
-            intended_act_realized=realized,
-            intended_focus_realized=focus_realized,
-            notes="critical deterministic validation",
-        )
-
-    def _deterministic_fact_issues(
-        self,
-        text: str,
-        state: DialogueState,
-        *,
-        context_option: str | None = None,
-    ) -> list[tuple[str, str | None, str]]:
-        """Detect only high-confidence closed-world fact violations.
-
-        A normal sentence is checked when it names one option. A comparison
-        sentence naming several options is checked only when it contains a
-        clear clause boundary (for example ``while``/``whereas``/``versus``)
-        that leaves one explicit option in each local segment. Ambiguous shared
-        predicates such as "A and B both ..." are deliberately ignored rather
-        than guessed.
-        """
-        if self._resolver is None:
-            return []
-        issues: list[tuple[str, str | None, str]] = []
-        full_ids = self._resolver.ids_in_text(text)
-        clauses = [c.strip() for c in re.split(r"(?<=[.!?;])\s+|\s*,\s*(?=[A-Z])", text) if c.strip()]
-        segments: list[tuple[str, str]] = []
-        for clause in clauses:
-            mentions = self._resolver.mentions(clause)
-            ids = list(dict.fromkeys(m.option_id for m in mentions))
-            if not ids and len(full_ids) == 1:
-                segments.append((clause, full_ids[0]))
-                continue
-            if not ids and not full_ids and context_option in state.scenario.option_ids:
-                # A routed answer/concern may naturally use "it" or only repeat
-                # the visible card values.  The public single-option route may
-                # scope grounding, but it still creates no support/commitment
-                # evidence in the observer.
-                segments.append((clause, context_option))
-                continue
-            if len(ids) == 1:
-                segments.append((clause, ids[0]))
-                continue
-            # Multi-option clauses are safe to attribute only after an explicit
-            # contrast/conjunction boundary. Every retained piece must name one
-            # option itself; pronouns and shared "both/respectively" predicates
-            # remain intentionally unaudited.
-            pieces = [
-                piece.strip(" ,:-")
-                for piece in re.split(
-                    r"\b(?:while|whereas|versus|vs\.?|but|compared\s+(?:with|to)|and)\b",
-                    clause,
-                    flags=re.I,
-                )
-                if piece.strip(" ,:-")
-            ]
-            if len(pieces) < 2:
-                continue
-            for piece in pieces:
-                if re.search(r"\b(?:both|each|respectively)\b", piece, re.I):
-                    continue
-                piece_ids = list(dict.fromkeys(self._resolver.ids_in_text(piece)))
-                if len(piece_ids) != 1:
-                    continue
-                # A bare option-name fragment created by splitting "A and B"
-                # carries no local claim and must not borrow the next fragment's
-                # predicate.
-                has_local_fact = bool(
-                    _EXACT_QUANTIFIED_DETAIL.search(piece)
-                    or _ASSERTED_OPTION_FACT.search(piece)
-                    or any(
-                        str(value).strip().lower() in piece.lower()
-                        for option in state.scenario.options
-                        for value in option.attrs.values()
-                        if len(str(value).strip()) >= 2
-                    )
-                )
-                arithmetic_comparison = bool(
-                    _EXACT_QUANTIFIED_DETAIL.search(piece)
-                    and re.search(
-                        r"\b(?:more|less|cheaper|costlier|longer|shorter|higher|lower)\s+than\b",
-                        piece,
-                        re.I,
-                    )
-                )
-                if has_local_fact and not arithmetic_comparison:
-                    segments.append((piece, piece_ids[0]))
-
-        for clause, target_id in segments:
-            target = state.scenario.option(target_id)
-            low = clause.lower()
-            clause_norm_for_values = _fact_norm(clause)
-            for source in state.scenario.options:
-                if source.id == target_id:
-                    continue
-                for attr, raw in source.attrs.items():
-                    # Cross-option transfer is blocking only when both options
-                    # expose the same attribute and the clause explicitly names
-                    # that attribute. Generic values such as "low" or "weekly"
-                    # are too ambiguous to police by substring.
-                    if attr not in target.attrs or not _attribute_key_visible(attr, clause):
-                        continue
-                    value = str(raw).strip()
-                    target_value = str(target.attrs.get(attr, "")).strip()
-                    if not value or _fact_norm(target_value) == _fact_norm(value):
-                        continue
-                    value_spans = _value_spans(value, clause)
-                    key_spans = _attribute_key_spans(attr, clause)
-                    if value_spans and key_spans and any(
-                        _locally_attached(clause, key_span, value_span)
-                        for key_span in key_spans
-                        for value_span in value_spans
-                    ):
-                        issues.append((
-                            "CROSS_OPTION_VALUE", target_id,
-                            f"{value!r} is listed for {source.id}, not {target_id}",
-                        ))
-
-            clause_norm = _fact_norm(clause)
-            for time_match in _TEXTUAL_TIME_DETAIL.finditer(clause):
-                relation, claimed_minutes = _textual_time_bound(time_match)
-                all_temporal_attrs: list[tuple[str, str, float]] = []
-                temporal_attrs: list[tuple[str, str, float]] = []
-                claim_span = (time_match.start(), time_match.end())
-                for attr, raw in target.attrs.items():
-                    actual_minutes = _duration_minutes(str(raw))
-                    if actual_minutes is None:
-                        continue
-                    entry = (attr, str(raw), actual_minutes)
-                    all_temporal_attrs.append(entry)
-                    spans = _attribute_key_spans(attr, clause)
-                    if any(_locally_attached(clause, span, claim_span) for span in spans):
-                        temporal_attrs.append(entry)
-                if not temporal_attrs and len(all_temporal_attrs) == 1:
-                    temporal_attrs = all_temporal_attrs
-                if len(temporal_attrs) == 1:
-                    attr, raw, actual_minutes = temporal_attrs[0]
-                    if _time_claim_conflicts(actual_minutes, relation, claimed_minutes):
-                        issues.append((
-                            "ATTRIBUTE_CONTRADICTION", target_id,
-                            f"the stated {attr!r} time conflicts with {raw!r} for {target_id}",
-                        ))
-
-            allowed_text = " ".join([
-                state.scenario.topic,
-                target.name, target.short_name,
-                *[f"{key} {value}" for key, value in target.attrs.items()],
-                target.upside or "", target.concern or "",
-                *state.scenario.shared_context,
-            ])
-            quantified = list(_EXACT_QUANTIFIED_DETAIL.finditer(clause))
-            for attr, raw in target.attrs.items():
-                expected_numbers = _numbers_in_text(str(raw))
-                key_spans = _attribute_key_spans(attr, clause)
-                nearby_claims = [
-                    match for match in quantified
-                    if any(
-                        _locally_attached(clause, span, (match.start(), match.end()))
-                        for span in key_spans
-                    )
-                ]
-                local_numbers = {
-                    number for match in nearby_claims
-                    for number in _numbers_in_text(match.group(0))
-                }
-                if expected_numbers and local_numbers and expected_numbers.isdisjoint(local_numbers):
-                    issues.append((
-                        "ATTRIBUTE_CONTRADICTION", target_id,
-                        f"the stated {attr!r} value conflicts with {str(raw)!r} for {target_id}",
-                    ))
-
-            allowed_numbers = _numbers_in_text(allowed_text)
-            for match in quantified:
-                claimed = match.group(0)
-                claimed_numbers = _numbers_in_text(claimed)
-                if claimed_numbers and not claimed_numbers.issubset(allowed_numbers):
-                    issues.append((
-                        "UNLISTED_NUMERIC_DETAIL", target_id,
-                        f"{claimed!r} is not listed for {target_id} or in shared context",
-                    ))
-
-            # Conservative existence/capability/location claims are checked
-            # only when phrased as an assertive option fact. This catches
-            # invented amenities, service features, alerts, and locations
-            # without treating opinions or ordinary implications as facts.
-            universal_context = [
-                item for item in state.scenario.shared_context
-                if target_id in self._resolver.ids_in_text(item)
-                or re.search(
-                    r"\b(?:all|every|each)\s+(?:options?|plans?|choices?|venues?|services?|products?)\b",
-                    item,
-                    re.I,
-                )
-            ]
-            allowed_feature_text = " ".join([
-                target.name, target.short_name,
-                *[f"{key} {value}" for key, value in target.attrs.items()],
-                target.upside or "", target.concern or "",
-                *universal_context,
-            ])
-            allowed_norm = _fact_norm(allowed_feature_text)
-            for match in _ASSERTED_OPTION_FACT.finditer(clause):
-                prefix = clause[:match.start()].strip().lower()
-                if re.search(r"\b(?:i|we|you)\s*$", prefix):
-                    continue
-                claim = match.group("claim").strip(" ,:-") or match.group(0)
-                claim_norm = _fact_norm(claim)
-                if (
-                    not claim_norm
-                    or claim_norm in _FACT_CLAIM_STOP_HEADS
-                    or re.search(r"\b(?:been\s+)?(?:discussed|mentioned|supported|backed)\b", claim_norm)
-                ):
-                    continue
-                # A listed phrase or a phrase made entirely from listed factual
-                # tokens is safe. Otherwise the asserted feature/location is
-                # not available in the closed-world setup.
-                location_predicate = bool(re.search(
-                    r"\bis\s+(?:located|downtown|nearby)\b", match.group(0), re.I
-                ))
-                if not location_predicate and not _FACTUAL_DETAIL_NOUN.search(match.group(0)):
-                    continue
-                detail_terms = _feature_detail_terms(match.group(0))
-                missing_details = [
-                    term for term in detail_terms
-                    if not _detail_is_listed(term, allowed_norm)
-                ]
-                guarantee_predicate = bool(re.search(r"\bguarantees?\b", match.group(0), re.I))
-                claim_content = {
-                    token for token in claim_norm.split()
-                    if len(token) > 3 and token not in {
-                        "that", "this", "with", "from", "will", "every", "everyone",
-                        "attendees", "people", "person", "group", "really", "enough",
-                    }
-                }
-                guarantee_supported = bool(claim_content & set(allowed_norm.split()))
-                if (
-                    location_predicate and claim_norm not in allowed_norm
-                    or missing_details
-                    or guarantee_predicate and not guarantee_supported
-                ):
-                    issues.append((
-                        "UNLISTED_FEATURE_DETAIL", target_id,
-                        f"asserted feature/location {claim!r} is not listed for {target_id}",
-                    ))
-
-            # Possessive noun phrases can assert option features without an
-            # explicit verb (for example "Senseo's quick brew"). Check only
-            # the short phrase immediately following a resolved option mention
-            # and only factual detail nouns from the conservative vocabulary.
-            for mention in self._resolver.mentions(clause):
-                if mention.option_id != target_id:
-                    continue
-                mention_end = mention.span.start + len(mention.span.text)
-                tail = clause[mention_end:]
-                possessive = re.match(
-                    r"^\s*(?:'s|’s)\s+(?P<claim>[^.!?;,—]{1,60})",
-                    tail,
-                    re.I,
-                )
-                if not possessive:
-                    continue
-                claim = possessive.group("claim").strip(" ,:-")
-                preceding = clause[max(0, mention.span.start - 72):mention.span.start].replace("’", "'")
-                # Uncertainty suppresses a feature assertion only when it
-                # directly governs this possessive phrase. A prior clause such
-                # as "timing is unknown, but Senseo's quick brew ..." does not
-                # license the new feature after the contrast boundary.
-                local_preceding = re.split(
-                    r"[.!?;]|,|\b(?:but|however|though|yet)\b",
-                    preceding,
-                    flags=re.I,
-                )[-1]
-                if re.search(
-                    r"\b(?:do(?:n't| not)\s+know|unknown|unclear|uncertain|not\s+given|not\s+listed|"
-                    r"question(?:ing)?\s+whether)\b",
-                    local_preceding,
-                    re.I,
-                ):
-                    continue
-                # Only the possessive noun phrase itself asserts a feature.
-                # Later consequences ("leaves room", "means delay") are
-                # opinions/implications and must not be pulled into grounding.
-                noun_phrase = re.split(
-                    r"\b(?:is|are|was|were|has|have|had|can|could|might|may|will|would|"
-                    r"means?|gives?|leaves?|seems?|looks?|worries?|helps?)\b",
-                    claim,
-                    maxsplit=1,
-                    flags=re.I,
-                )[0].strip(" ,:-")
-                if re.search(
-                    r"\b(?:question|concern|worry|unknown|unclear|uncertain|not\s+given|not\s+listed)\b",
-                    noun_phrase,
-                    re.I,
-                ):
-                    continue
-                detail_terms = _feature_detail_terms(noun_phrase)
-                missing_details = [
-                    term for term in detail_terms
-                    if not _detail_is_listed(term, allowed_norm)
-                ]
-                if missing_details:
-                    issues.append((
-                        "UNLISTED_FEATURE_DETAIL", target_id,
-                        f"asserted possessive feature {noun_phrase!r} is not listed for {target_id}",
-                    ))
-        # Stable deduplication: one clause may trigger both a transferred card
-        # value and an unlisted-number check for the same span.
-        return list(dict.fromkeys(issues))
-
-
-    @staticmethod
-    def _intended_move_realized(
-        intent: MoveIntent,
-        evidence: VisibleEvidence,
-        commitment,
-        focus: list[str],
-        add,
-    ) -> bool | None:
-        """Universal realization check: was the requested FUNCTION visibly
-        performed (not: does the primary label match)? Applies on every route."""
-        act = intent.act
-        if act is ActType.SUPPORT:
-            hit = any(not focus or s.option_id in focus for s in evidence.supports) or (
-                commitment is not None and (not focus or commitment.option_id in focus)
-            )
-            if hit:
-                return True
-            if focus and evidence.supports:
-                add("WRONG_OPTION_FOCUS",
-                    f"supports {evidence.supports[0].option_id}, intended {focus[0]}",
-                    option=focus[0], blocking=True)
-            else:
-                add("SUPPORT_NOT_REALIZED")
-            return False
-        if act is ActType.CONCERN:
-            hit = any(not focus or c.option_id in focus for c in evidence.concerns)
-            if hit:
-                return True
-            if focus and evidence.concerns:
-                add("WRONG_OPTION_FOCUS",
-                    f"concern about {evidence.concerns[0].option_id}, intended {focus[0]}",
-                    option=focus[0], blocking=True)
-            else:
-                add("CONCERN_NOT_REALIZED")
-            return False
-        if act is ActType.COMPARE:
-            need = set(focus[:2])
-            has_comparison = any(len(set(c.option_ids)) >= 2 for c in evidence.comparisons)
-            hit = any(
-                len(set(c.option_ids) & need) >= min(2, len(need)) if need else len(c.option_ids) >= 2
-                for c in evidence.comparisons
-            )
-            if not has_comparison:
-                add("COMPARE_NOT_REALIZED")
-            elif not hit:
-                strict_focus = intent.route_source in {
-                    "thread_hot", "thread_cooling", "coverage",
-                    "participant_narrowing", "answer_required",
-                }
-                add(
-                    "COMPARE_FOCUS_MISMATCH",
-                    f"visible comparison does not cover required options {sorted(need)}",
-                    blocking=strict_focus,
-                )
-            return hit
-        if act is ActType.ASK:
-            hit = any(q.scope in ("direct", "group") for q in evidence.questions)
-            if not hit:
-                add("ASK_NOT_REALIZED")
-            return hit
-        if act is ActType.ANSWER:
-            hit = any(a.addresses_target for a in evidence.answers)
-            if not hit:
-                add("ANSWER_DOES_NOT_ADDRESS_QUESTION",
-                    blocking=(intent.route_source == "answer_required"))
-            return hit
-        if act is ActType.COMPROMISE:
-            hit = bool(evidence.proposals) or (commitment is not None and commitment.kind == "accept")
-            if not hit:
-                add("COMPROMISE_NOT_REALIZED")
-            return hit
-        if act is ActType.VOTE:
-            if commitment is None:
-                add("UNCLEAR_VISIBLE_COMMITMENT", blocking=True)
-                return False
-            if intent.required_vote and commitment.option_id != intent.required_vote:
-                add("REQUIRED_VOTE_MISMATCH",
-                    f"committed to {commitment.option_id}, required {intent.required_vote}",
-                    option=intent.required_vote, blocking=True)
-                return False
-            return True
-        return None  # opening / comment / process / closing: no realization contract
-
-    def _fallback_candidate(
-        self,
-        state: DialogueState,
-        persona: Persona,
-        intent: MoveIntent,
-        issue_codes: list[str],
-    ) -> tuple[str | None, str]:
-        """Narrow, truthful deterministic fallback (todo_validation item 12).
-
-        Returns ``(text, family)`` — text is None when no truthful fallback
-        exists for this intent, in which case the turn is dropped rather than
-        printing false evidence. Only families whose complete public evidence
-        can be constructed from known grounded data remain:
-
-        - explicit vote / vote switch with the approved grounded reason;
-        - hard-blocker restatement from the already grounded reason;
-        - coverage request (a question introducing the unprocessed option);
-        - exact listed answer, or the explicit does-not-say answer.
-
-        Generic support/concern/compromise stand-ins are gone: a fallback
-        must never fabricate a stance, proposal, or objection the sim did not
-        visibly produce.
-        """
-        aliases = short_alias_map(state.scenario.options)
-        rt = state.runtimes[persona.id]
-        if intent.continuation:
-            # An optional addendum with no safe content is simply dropped.
-            return None, ""
-        if intent.act in _DECISION_ACTS:
-            return self._decision_fallback_text(state, persona, intent, issue_codes), "vote"
-        if (
-            "MISSING_REQUIRED_OPTION_FOCUS" in issue_codes
-            and intent.route_source == "coverage"
-            and intent.option_focus
-        ):
-            return self._coverage_question_fallback(state, intent, aliases), "coverage_question"
-        focus = next((o for o in intent.option_focus if o in state.scenario.option_ids), None)
-        if intent.act is ActType.CONCERN and focus is not None and focus in rt.rejected_options():
-            reason = usable_reason_fragment(rt.reason_against(focus), aliases[focus])
-            if reason:
-                # Hard-blocker restatement from the already grounded reason.
-                return f"{aliases[focus]} still doesn't work for me — {reason}.", "blocker_restate"
-            return None, ""
-        if intent.act is ActType.ANSWER:
-            text, family = self._answer_fallback_text(state, intent, aliases)
-            return (text, family) if text else (None, "")
-        # No truthful act-specific form exists (support/concern/compromise/
-        # comment/process/ask outside coverage): drop instead of printing.
-        return None, ""
-
-    def _coverage_question_fallback(self, state: DialogueState, intent: MoveIntent, aliases: dict) -> str:
-        gap = intent.option_focus[0]
-        other = next((o for o in state.scenario.option_ids if o != gap), None)
-        if other:
-            return f"One option we haven't really talked about: {aliases[gap]}. How does it stack up against {aliases[other]}?"
-        return f"One option we haven't really talked about: {aliases[gap]}. Worth a quick look before we decide."
-
-    def _answer_fallback_text(self, state: DialogueState, intent: MoveIntent, aliases: dict) -> tuple[str | None, str]:
-        """Exact listed answer when the asked attribute is on the card; the
-        explicit does-not-say answer when it is not."""
-        focus = next((o for o in intent.option_focus if o in state.scenario.option_ids), None)
-        if focus is None:
-            return None, ""
-        option = state.scenario.option(focus)
-        question = ""
-        if intent.respond_to_turn is not None:
-            target = next((t for t in state.turns if t.index == intent.respond_to_turn), None)
-            question = target.text if target is not None else ""
-        if not question.strip():
-            # Without the actual question, neither a listed answer nor an
-            # honest "the cards don't say" can be constructed truthfully.
-            return None, ""
-        question_tokens = set(re.findall(r"[a-zäöüß]+", question.lower()))
-        for key, value in option.attrs.items():
-            key_lower = key.lower().replace("_", " ")
-            key_tokens = set(key_lower.split())
-            # Generic English question-word bridges (how long -> duration,
-            # how much -> cost); no scenario-specific dimension vocabulary.
-            bridged = (
-                (any(k in key_lower for k in ("duration", "time", "length"))
-                 and question_tokens & {"long", "time", "hours", "minutes", "take", "takes", "last", "lasts"})
-                or (any(k in key_lower for k in ("cost", "price", "fee"))
-                    and question_tokens & {"much", "cost", "costs", "price", "expensive", "cheap", "euros", "dollars"})
-            )
-            if key_tokens & question_tokens or bridged:
-                return f"For {aliases[focus]}, the card lists {key.replace('_', ' ')}: {value}.", "answer_listed"
-        return (
-            f"The listed facts don't say — {aliases[focus]}'s card doesn't cover that.",
-            "answer_unknown",
-        )
-
-    def _decision_fallback_text(self, state: DialogueState, persona: Persona, intent: MoveIntent, issue_codes: list[str]) -> str:
-        """Minimal, public, truthful decision-turn replacement (item 4).
-
-        The text is one unambiguous commitment to an allowed option and nothing
-        more. It never carries controller rationale (``intent.allowed_reason``),
-        route/trace wording, or a prior preference taken from private ranks or
-        controller state. A switch is mentioned ONLY when this participant has a
-        prior PUBLIC commitment recorded in accepted state, and it carries no
-        invented reason. Blocker turns never accept a rejected option.
-        """
-        aliases = short_alias_map(state.scenario.options)
-        rt = state.runtimes[persona.id]
-        blocked = next(iter(rt.rejected_options()), None)
-        if intent.act in _DECISION_ACTS and intent.required_vote in state.scenario.option_ids:
-            target = intent.required_vote
-        else:
-            candidates = [rt.top_option(), persona.preferred_option, *intent.option_focus, *state.scenario.option_ids]
-            target = next(
-                (o for o in candidates if o in state.scenario.option_ids and o != blocked and o not in rt.rejected_options()),
-                next(o for o in state.scenario.option_ids if o != blocked),
-            )
-        if target == blocked or target in rt.rejected_options():
-            target = next(o for o in state.scenario.option_ids if o != blocked and o not in rt.rejected_options())
-        target_name = aliases[target]
-
-        # Truthful hard-block restatement: this sim visibly cannot back `blocked`.
-        if blocked and "BLOCKED_OPTION_ACCEPTED" in issue_codes:
-            return f"I can't get behind {aliases[blocked]}, so I vote for {target_name}."
-
-        # A public switch is stated only from a prior PUBLIC commitment by this
-        # same participant (accepted vote in state) — never from private ranks
-        # or controller intent — and only on a sanctioned change turn. The named
-        # source is the visible bridge; no fabricated reason is added.
-        prior_public = rt.explicit_vote
-        if (
-            intent.allow_vote_change
-            and prior_public in state.scenario.option_ids
-            and prior_public != target
-        ):
-            return f"I'm switching from {aliases[prior_public]} to {target_name}."
-
-        # Default: a minimal, unambiguous vote. A small rotated template pool so
-        # several fallback voters in one round do not sound identical; labels
-        # match parsing._PHRASE_FAMILIES so avoid_phrases rotation works, and
-        # every template parses as a direct vote.
-        templates = [
-            ("gets my vote", "{o} gets my vote."),
-            ("I vote for", "I vote for {o}."),
-            ("I'm going with", "I'm going with {o}."),
-            ("my pick is", "My pick is {o}."),
-        ]
-        _label, template = next(
-            ((l, t) for l, t in templates if l not in intent.avoid_phrases),
-            templates[0],
-        )
-        return template.format(o=target_name)
-
+def _answer_is_relevant(
+    text: str,
+    state: DialogueState,
+    action: UserAction,
+    target_question: str | None,
+) -> bool:
+    lowered = text.casefold()
+    if re.search(r"\b(?:yes|no|not really|it depends|because|i think|for me|my concern|my reason)\b", lowered):
+        return True
+    if any(option_mentioned(text, state, option_id) for option_id in action.option_focus):
+        return True
+    reference = " ".join(filter(None, [target_question, state.active_issue.summary if state.active_issue else None, action.reason]))
+    reference_tokens = set(tokenize(reference, min_len=4))
+    answer_tokens = set(tokenize(text, min_len=4))
+    return bool(reference_tokens & answer_tokens)

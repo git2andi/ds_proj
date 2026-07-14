@@ -144,7 +144,7 @@ def clause_fragment(text: str, proper_context: str = "") -> str:
 
 
 # Wording that voids a decision line when embedded as its reason: hedges,
-# conditionals, and questions read as non-commitment to the parser.
+# conditionals, and questions remain distinct from explicit commitments.
 _REASON_NOISE = re.compile(
     r"[?]|\b(?:maybe|might|could|unless|only\s+if|depends|not\s+sure|i\s+guess|would\s+need|worr\w+|concern\w*)\b",
     re.I,
@@ -213,7 +213,7 @@ FLAG_LEAKED_METADATA = "LEAKED_METADATA"          # bracketed metadata inside th
 def extract_utterance(raw: str, speaker_name: str) -> tuple[str, list[str]]:
     """Extract exactly one visible utterance from a raw model response.
 
-    Conservative and non-destructive (todo_validation item 4). May only:
+    Conservative and non-destructive. May only:
     take the text inside the explicit ``<utterance>`` envelope, remove an
     accidental speaker prefix, unwrap one surrounding quote pair, and
     normalize whitespace. It must never remove natural tails ("What do you

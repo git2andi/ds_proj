@@ -1,0 +1,5277 @@
+{
+  "run_id": "20260714_035818_616330_no_moderator",
+  "seed": 108,
+  "scenario": {
+    "topic": "Choose a restaurant for dinner",
+    "options": [
+      {
+        "id": "A",
+        "name": "Green Table",
+        "attrs": {
+          "price": "24 euros",
+          "travel": "15 minutes",
+          "menu": "mixed vegetarian"
+        },
+        "upside": "broad dietary coverage",
+        "concern": "limited outdoor seating",
+        "short_name": "Green Table"
+      },
+      {
+        "id": "B",
+        "name": "Harbor Grill",
+        "attrs": {
+          "price": "29 euros",
+          "travel": "20 minutes",
+          "menu": "seafood and meat"
+        },
+        "upside": "large group tables",
+        "concern": "few vegetarian mains",
+        "short_name": "Harbor Grill"
+      },
+      {
+        "id": "C",
+        "name": "Old Town Pasta",
+        "attrs": {
+          "price": "22 euros",
+          "travel": "25 minutes",
+          "menu": "Italian"
+        },
+        "upside": "lowest meal price",
+        "concern": "longest travel time",
+        "short_name": "Pasta"
+      },
+      {
+        "id": "D",
+        "name": "Market Kitchen",
+        "attrs": {
+          "price": "27 euros",
+          "travel": "10 minutes",
+          "menu": "seasonal"
+        },
+        "upside": "shortest travel time",
+        "concern": "smaller menu",
+        "short_name": "Market"
+      }
+    ],
+    "shared_context": [
+      "The group will meet at 19:00.",
+      "The target budget is 30 euros per person."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Nora is making this decision with the group.",
+      "private_goal": "wants a convenient dinner that fits the group budget",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 22,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "broad dietary coverage",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "large group tables",
+          "reason_against": "few vegetarian mains"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lowest meal price",
+          "reason_against": "longest travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "shortest travel time",
+          "reason_against": "smaller menu"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben is making this decision with the group.",
+      "private_goal": "wants a convenient dinner that fits the group budget",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 31,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "broad dietary coverage",
+          "reason_against": "limited outdoor seating"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "large group tables",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lowest meal price",
+          "reason_against": "longest travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "shortest travel time",
+          "reason_against": "smaller menu"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Mira is making this decision with the group.",
+      "private_goal": "wants a convenient dinner that fits the group budget",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 40,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "broad dietary coverage",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "large group tables",
+          "reason_against": "few vegetarian mains"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lowest meal price",
+          "reason_against": "longest travel time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "shortest travel time",
+          "reason_against": "smaller menu"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "answer:A:upside:broad dietary coverage",
+        "ask:ask what the visible point about a means for that participant's choice",
+        "ask:ask why b fits that participant's priority",
+        "comment:A:upside:broad dietary coverage",
+        "opening:A:upside:broad dietary coverage",
+        "support:A:price:24 euros",
+        "support:A:travel:15 minutes",
+        "support:A:upside:broad dietary coverage",
+        "vote:broad dietary coverage"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "clarification|A|p3",
+        "rationale|B|p2"
+      ],
+      "action_signature_counts": {
+        "('opening', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": 1,
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": 1,
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i002', None, None)": 1,
+        "('support', ('A',), ('A', 'price', '24 euros'), None, None, None)": 1,
+        "('support', ('A',), ('A', 'travel', '15 minutes'), None, None, None)": 1,
+        "('ask', ('B',), (\"ask why b fits that participant's priority\",), 'i003', None, None)": 1,
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i005', None, None)": 1,
+        "('comment', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i005', None, None)": 1,
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": "('OPENING', None, 'A', (), -1)",
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": "('DISCUSSION', None, 'A', (), 6)",
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i002', None, None)": "('DISCUSSION', 'i002', 'A', (), 6)",
+        "('support', ('A',), ('A', 'price', '24 euros'), None, None, None)": "('DISCUSSION', None, 'A', (), 10)",
+        "('support', ('A',), ('A', 'travel', '15 minutes'), None, None, None)": "('DISCUSSION', None, 'A', (), 10)",
+        "('ask', ('B',), (\"ask why b fits that participant's priority\",), 'i003', None, None)": "('DISCUSSION', 'i003', 'A', (), 14)",
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i005', None, None)": "('DISCUSSION', 'i005', 'A', (), 20)",
+        "('comment', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i005', None, None)": "('DISCUSSION', 'i005', 'A', (), 20)",
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": "('VOTING', None, 'A', (), 29)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 6,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 30,
+      "visible_switches": 0,
+      "last_switch_turn": -1,
+      "last_switch_target": null,
+      "last_switch_external_evidence_turn": -1,
+      "switch_opportunities": 0,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.0,
+      "last_switch_rejection_reason": ""
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A",
+        "B"
+      ],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "acknowledge:acknowledge the useful point from turn 24 without changing stance",
+        "answer:B:upside:large group tables",
+        "ask:ask what the visible point about a means for that participant's choice",
+        "ask:ask why a fits that participant's priority",
+        "compare:B:upside:large group tables",
+        "compromise:A:upside:broad dietary coverage",
+        "opening:B:upside:large group tables",
+        "support:A:upside:broad dietary coverage",
+        "support:B:price:29 euros",
+        "support:B:upside:large group tables",
+        "vote:broad dietary coverage"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "clarification|A|p3",
+        "rationale|A|p1"
+      ],
+      "action_signature_counts": {
+        "('opening', ('B',), ('B', 'upside', 'large group tables'), None, None, None)": 1,
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i001', None, None)": 1,
+        "('support', ('B',), ('B', 'upside', 'large group tables'), None, None, None)": 1,
+        "('compare', ('A', 'B'), ('B', 'upside', 'large group tables'), None, None, None)": 1,
+        "('answer', ('B',), ('B', 'upside', 'large group tables'), 'i003', None, None)": 1,
+        "('answer', ('B',), ('B', 'upside', 'large group tables'), 'i004', None, None)": 1,
+        "('ask', ('A',), (\"ask why a fits that participant's priority\",), 'i005', None, None)": 1,
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 24 without changing stance',), None, None, None)": 1,
+        "('support', ('B',), ('B', 'price', '29 euros'), None, None, None)": 1,
+        "('compromise', ('A',), ('A', 'upside', 'broad dietary coverage'), None, ('make_acceptable', 'A'), None)": 1,
+        "('compromise', ('B', 'A'), ('A', 'upside', 'broad dietary coverage'), None, ('switch_preferred', 'A'), None)": 1,
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": 1,
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('B',), ('B', 'upside', 'large group tables'), None, None, None)": "('OPENING', None, 'B', (), -1)",
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i001', None, None)": "('DISCUSSION', 'i001', 'B', (), 2)",
+        "('support', ('B',), ('B', 'upside', 'large group tables'), None, None, None)": "('DISCUSSION', None, 'B', (), -1)",
+        "('compare', ('A', 'B'), ('B', 'upside', 'large group tables'), None, None, None)": "('DISCUSSION', None, 'B', (), 12)",
+        "('answer', ('B',), ('B', 'upside', 'large group tables'), 'i003', None, None)": "('DISCUSSION', 'i003', 'B', (), 16)",
+        "('answer', ('B',), ('B', 'upside', 'large group tables'), 'i004', None, None)": "('DISCUSSION', 'i004', 'B', (), 18)",
+        "('ask', ('A',), (\"ask why a fits that participant's priority\",), 'i005', None, None)": "('DISCUSSION', 'i005', 'B', (), 15)",
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 24 without changing stance',), None, None, None)": "('DISCUSSION', None, 'B', (), 24)",
+        "('support', ('B',), ('B', 'price', '29 euros'), None, None, None)": "('DISCUSSION', None, 'B', (), 18)",
+        "('compromise', ('A',), ('A', 'upside', 'broad dietary coverage'), None, ('make_acceptable', 'A'), None)": "('NARROWING', None, 'B', ('A',), 24)",
+        "('compromise', ('B', 'A'), ('A', 'upside', 'broad dietary coverage'), None, ('switch_preferred', 'A'), None)": "('NARROWING', None, 'A', ('B',), 24)",
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": "('NARROWING', None, 'A', ('B',), 24)",
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": "('VOTING', None, 'A', ('B',), 30)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 9,
+      "mandatory_answers": 2,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 31,
+      "visible_switches": 1,
+      "last_switch_turn": 28,
+      "last_switch_target": "A",
+      "last_switch_external_evidence_turn": 24,
+      "switch_opportunities": 3,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.75,
+      "last_switch_rejection_reason": ""
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "acknowledge:acknowledge the useful point from turn 22 without changing stance",
+        "answer:A:upside:broad dietary coverage",
+        "ask:ask what the visible point about b means for that participant's choice",
+        "comment:A:upside:broad dietary coverage",
+        "opening:A:upside:broad dietary coverage",
+        "support:A:price:24 euros",
+        "support:A:travel:15 minutes",
+        "support:A:upside:broad dietary coverage",
+        "vote:broad dietary coverage"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "clarification|B|p2"
+      ],
+      "action_signature_counts": {
+        "('opening', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": 1,
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i001', None, None)": 1,
+        "('comment', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i001', None, None)": 1,
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i002', None, None)": 1,
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": 1,
+        "('support', ('A',), ('A', 'price', '24 euros'), None, None, None)": 1,
+        "('ask', ('B',), (\"ask what the visible point about b means for that participant's choice\",), 'i004', None, None)": 1,
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 22 without changing stance',), None, None, None)": 1,
+        "('support', ('A',), ('A', 'travel', '15 minutes'), None, None, None)": 1,
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": "('OPENING', None, 'A', (), 1)",
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i001', None, None)": "('DISCUSSION', 'i001', 'A', (), 4)",
+        "('comment', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i001', None, None)": "('DISCUSSION', 'i001', 'A', (), 4)",
+        "('answer', ('A',), ('A', 'upside', 'broad dietary coverage'), 'i002', None, None)": "('DISCUSSION', 'i002', 'A', (), 8)",
+        "('support', ('A',), ('A', 'upside', 'broad dietary coverage'), None, None, None)": "('DISCUSSION', None, 'A', (), 8)",
+        "('support', ('A',), ('A', 'price', '24 euros'), None, None, None)": "('DISCUSSION', None, 'A', (), 14)",
+        "('ask', ('B',), (\"ask what the visible point about b means for that participant's choice\",), 'i004', None, None)": "('DISCUSSION', 'i004', 'A', (), 17)",
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 22 without changing stance',), None, None, None)": "('DISCUSSION', None, 'A', (), 22)",
+        "('support', ('A',), ('A', 'travel', '15 minutes'), None, None, None)": "('DISCUSSION', None, 'A', (), 22)",
+        "('vote', ('A',), ('broad dietary coverage',), None, None, None)": "('VOTING', None, 'A', (), 31)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 6,
+      "mandatory_answers": 2,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 32,
+      "visible_switches": 0,
+      "last_switch_turn": -1,
+      "last_switch_target": null,
+      "last_switch_external_evidence_turn": -1,
+      "switch_opportunities": 0,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.0,
+      "last_switch_rejection_reason": ""
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "active_issue": null,
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p3",
+      "summary": "Ask what the visible point about A means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 4,
+      "last_relevant_turn": 6,
+      "follow_up_count": 2,
+      "source_text": "Mira, could you clarify what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p3",
+      "summary": "Ask what the visible point about A means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 8,
+      "last_relevant_turn": 9,
+      "follow_up_count": 1,
+      "source_text": "Mira, could you help me understand a bit more about what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i003",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p2",
+      "summary": "Ask why B fits that participant's priority",
+      "status": "resolved",
+      "opened_at_turn": 16,
+      "last_relevant_turn": 17,
+      "follow_up_count": 1,
+      "source_text": "Ben, could you share a bit more about how the large group tables at Option B fit with what you’re prioritizing for the dinner?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i004",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p3",
+      "addressed_to": "p2",
+      "summary": "Ask what the visible point about B means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 18,
+      "last_relevant_turn": 19,
+      "follow_up_count": 1,
+      "source_text": "Ben, can you clarify how the large group tables at Harbor Grill influence your choice compared to other factors like price and menu options?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i005",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p1",
+      "summary": "Ask why A fits that participant's priority",
+      "status": "resolved",
+      "opened_at_turn": 20,
+      "last_relevant_turn": 22,
+      "follow_up_count": 2,
+      "source_text": "Nora, could you explain what about Option A’s mix of vegetarian choices and travel time makes it the best fit for your priorities?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    }
+  ],
+  "group_stimulus": null,
+  "turns": [
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I think Option A sounds like a good fit since it covers different diets and should work well for everyone, plus it’s pretty convenient.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 807,
+      "output_tokens": 27,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option A is the best choice for us because it offers broad dietary coverage and fits within our budget while keeping things convenient.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 833,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Option B seems like a solid pick since it has large group tables, which should make things easier for all of us.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 845,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Mira, could you clarify what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 923,
+      "output_tokens": 26,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option A includes a mixed vegetarian menu, which accommodates various dietary needs in the group without complicating the budget or logistics.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1017,
+      "output_tokens": 24,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option A’s mixed vegetarian menu ensures everyone’s dietary needs are met without complicating the budget or plans.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1041,
+      "output_tokens": 21,
+      "intended_word_min": 8,
+      "intended_word_max": 20,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’d lean toward Option A since it seems to offer the most flexibility with dietary needs, which should keep things straightforward for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 980,
+      "output_tokens": 26,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Mira, could you help me understand a bit more about what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1063,
+      "output_tokens": 32,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option A’s broad dietary coverage means it can satisfy everyone’s needs without complicating the budget or plans.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1185,
+      "output_tokens": 21,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I support Option A because its broad dietary coverage makes it the most practical and budget-friendly choice for our group.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1078,
+      "output_tokens": 22,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m kind of leaning toward Option A since the 24 euros fits well within what we’re aiming to spend, which feels pretty convenient.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1096,
+      "output_tokens": 28,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Option A seems like a solid pick since the 15-minute travel time is pretty manageable for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1102,
+      "output_tokens": 20,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’d support Option B because having large group tables will make it easier for us to stay together and keep things simple.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1056,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Comparing Option B with Option A, I favor Option B because the large group tables make it easier for us to stay together and keep things straightforward.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1122,
+      "output_tokens": 30,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I support Option A because the 24-euro price fits well within our budget and keeps dinner convenient for everyone.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1083,
+      "output_tokens": 23,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Ben, could you share a bit more about how the large group tables at Option B fit with what you’re prioritizing for the dinner?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask why B fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i003",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1117,
+      "output_tokens": 28,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask why B fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask why B fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Option B’s large group tables make it easier for us to all sit together comfortably, which helps keep the dinner convenient and organized.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1175,
+      "output_tokens": 26,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Ben, can you clarify how the large group tables at Harbor Grill influence your choice compared to other factors like price and menu options?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask what the visible point about B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i004",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1110,
+      "output_tokens": 26,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask what the visible point about B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask what the visible point about B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The large group tables at Harbor Grill make it easier for us to stay together, which is a key convenience that outweighs the price and limited vegetarian options for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1187,
+      "output_tokens": 33,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Nora, could you explain what about Option A’s mix of vegetarian choices and travel time makes it the best fit for your priorities?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask why A fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i005",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1130,
+      "output_tokens": 27,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask why A fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask why A fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I think Option A works well because its menu covers lots of dietary needs, which suits everyone, and the travel time is pretty reasonable.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1191,
+      "output_tokens": 27,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’d lean toward Option A because its variety fits different diets well, which helps keep things easy for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1165,
+      "output_tokens": 22,
+      "intended_word_min": 8,
+      "intended_word_max": 20,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Nora, your point about the menu variety and travel time for Option A is valid and keeps us aligned with the group's needs.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 22 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1091,
+      "output_tokens": 26,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 22 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 22 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option A’s 15-minute travel time fits well with our budget and makes it a practical choice for dinner tonight.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1104,
+      "output_tokens": 23,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Mira, your point about Option A’s menu variety and travel time is definitely useful to keep in mind.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Acknowledge the useful point from turn 24 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1099,
+      "output_tokens": 22,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Acknowledge the useful point from turn 24 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Acknowledge the useful point from turn 24 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I support Option B because the price of 29 euros fits well within our budget and offers practical convenience for the group.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 29 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price",
+          "public_value": "29 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1099,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 29 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price",
+          "public_value": "29 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 29 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price",
+          "public_value": "29 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 27,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m happy to go with Option A since it covers a broad range of dietary needs, which makes it a sensible choice for the group.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.7932575757575757,
+        "act": "compromise",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.7932575757575757,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": null
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1130,
+      "output_tokens": 28,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.7932575757575757,
+        "act": "compromise",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.7932575757575757,
+        "act": "compromise",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 28,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m willing to switch to Option A since Green Table’s broad dietary coverage suits the group’s needs better than Option B.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.835,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "B"
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1172,
+      "output_tokens": 25,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 29,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I support Option A because its broad dietary coverage makes it a convenient choice that fits well with the group’s needs.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.66,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.66,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1088,
+      "output_tokens": 23,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.66,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.66,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’ll vote for Option A since it covers a broad range of dietary needs, which feels most convenient for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1048,
+      "output_tokens": 23,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I vote for Option A because it offers broad dietary coverage, which works well for the group.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1045,
+      "output_tokens": 19,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I vote for Option A because its broad dietary coverage makes it the most practical choice for the group.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 1039,
+      "output_tokens": 20,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      }
+    }
+  ],
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I think Option A sounds like a good fit since it covers different diets and should work well for everyone, plus it’s pretty convenient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": "wants a convenient dinner that fits the group budget",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A is the best choice for us because it offers broad dietary coverage and fits within our budget while keeping things convenient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option B seems like a solid pick since it has large group tables, which should make things easier for all of us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Mira, could you clarify what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A includes a mixed vegetarian menu, which accommodates various dietary needs in the group without complicating the budget or logistics.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A’s mixed vegetarian menu ensures everyone’s dietary needs are met without complicating the budget or plans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’d lean toward Option A since it seems to offer the most flexibility with dietary needs, which should keep things straightforward for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Mira, could you help me understand a bit more about what you mean by the broad dietary coverage of Option A and how that fits with everyone’s preferences?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A’s broad dietary coverage means it can satisfy everyone’s needs without complicating the budget or plans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option A because its broad dietary coverage makes it the most practical and budget-friendly choice for our group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m kind of leaning toward Option A since the 24 euros fits well within what we’re aiming to spend, which feels pretty convenient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A seems like a solid pick since the 15-minute travel time is pretty manageable for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’d support Option B because having large group tables will make it easier for us to stay together and keep things simple.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Comparing Option B with Option A, I favor Option B because the large group tables make it easier for us to stay together and keep things straightforward.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 24 euros fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price",
+          "public_value": "24 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option A because the 24-euro price fits well within our budget and keeps dinner convenient for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask why B fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Ben, could you share a bit more about how the large group tables at Option B fit with what you’re prioritizing for the dinner?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option B’s large group tables make it easier for us to all sit together comfortably, which helps keep the dinner convenient and organized.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Ask what the visible point about B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|B|p2",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Ben, can you clarify how the large group tables at Harbor Grill influence your choice compared to other factors like price and menu options?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "large group tables",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "large group tables"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "The large group tables at Harbor Grill make it easier for us to stay together, which is a key convenience that outweighs the price and limited vegetarian options for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask why A fits that participant's priority",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "rationale",
+        "question_key": "rationale|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, could you explain what about Option A’s mix of vegetarian choices and travel time makes it the best fit for your priorities?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I think Option A works well because its menu covers lots of dietary needs, which suits everyone, and the travel time is pretty reasonable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": "i005",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’d lean toward Option A because its variety fits different diets well, which helps keep things easy for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 22 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, your point about the menu variety and travel time for Option A is valid and keeps us aligned with the group's needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the travel of 15 minutes fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel",
+          "public_value": "15 minutes"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A’s 15-minute travel time fits well with our budget and makes it a practical choice for dinner tonight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Acknowledge the useful point from turn 24 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Mira, your point about Option A’s menu variety and travel time is definitely useful to keep in mind.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the price of 29 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price",
+          "public_value": "29 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option B because the price of 29 euros fits well within our budget and offers practical convenience for the group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.7932575757575757,
+        "act": "compromise",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m happy to go with Option A since it covers a broad range of dietary needs, which makes it a sensible choice for the group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m willing to switch to Option A since Green Table’s broad dietary coverage suits the group’s needs better than Option B.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.66,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "broad dietary coverage"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option A because its broad dietary coverage makes it a convenient choice that fits well with the group’s needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "raw_text": "I’ll vote for Option A since it covers a broad range of dietary needs, which feels most convenient for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "raw_text": "I vote for Option A because it offers broad dietary coverage, which works well for the group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "broad dietary coverage",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "A",
+        "stimulus_id": null
+      },
+      "raw_text": "I vote for Option A because its broad dietary coverage makes it the most practical choice for the group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    }
+  ],
+  "validation_failures": {},
+  "distinct_supporters": {
+    "A": [
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "B": [
+      "p2"
+    ],
+    "C": [],
+    "D": []
+  },
+  "distinct_concern_raisers": {
+    "A": [],
+    "B": [],
+    "C": [],
+    "D": []
+  },
+  "switch_decisions": [
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 0.6747,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.3374,
+      "probability": 0.7311,
+      "latest_external_evidence_turn": 24,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 0.6747,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.3374,
+      "probability": 0.7311,
+      "latest_external_evidence_turn": 24,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 28,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 1.0,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.6626,
+      "probability": 0.75,
+      "latest_external_evidence_turn": 24,
+      "allowed": true,
+      "rejection_reason": ""
+    }
+  ],
+  "first_round_votes": {},
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "A",
+    "p2": "A",
+    "p3": "A"
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "metrics": {
+    "turns": {
+      "participant_turns": 32,
+      "voluntary_turns": 21,
+      "mandatory_answers": 5,
+      "openings": 3,
+      "votes": 3,
+      "moderator_turns": 0,
+      "participant_turns_by_id": {
+        "p1": 9,
+        "p3": 10,
+        "p2": 13
+      },
+      "voluntary_turns_by_id": {
+        "p2": 9,
+        "p3": 6,
+        "p1": 6
+      },
+      "average_words_by_id": {
+        "p1": 22.44,
+        "p2": 22.54,
+        "p3": 20.2
+      },
+      "average_voluntary_words_by_id": {
+        "p1": 22.33,
+        "p2": 22.33,
+        "p3": 20.33
+      },
+      "comparable_voluntary_turns_by_id": {
+        "p1": 4,
+        "p2": 6,
+        "p3": 4
+      },
+      "average_comparable_voluntary_words_by_id": {
+        "p1": 20.5,
+        "p2": 23.0,
+        "p3": 18.75
+      },
+      "action_counts": {
+        "opening": 3,
+        "ask": 5,
+        "answer": 5,
+        "comment": 2,
+        "support": 9,
+        "compare": 1,
+        "acknowledge": 2,
+        "compromise": 2,
+        "vote": 3
+      }
+    },
+    "traits": {
+      "p1": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 0,
+        "visible_switches": 0,
+        "switch_rate_per_opportunity": 0.0,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      },
+      "p2": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 3,
+        "visible_switches": 1,
+        "switch_rate_per_opportunity": 0.333,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      },
+      "p3": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 0,
+        "visible_switches": 0,
+        "switch_rate_per_opportunity": 0.0,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      }
+    },
+    "generation": {
+      "repairs": 0,
+      "dropped_turns": 0,
+      "liveness_forced_turns": 0,
+      "suppressed_repetitions": 0,
+      "attempts": 32,
+      "validation_failures": {},
+      "repair_rate": 0.0,
+      "drop_rate": 0.0,
+      "repetition_repairs": 0,
+      "vote_switch_attempts": 0,
+      "vote_switch_accepted": 0,
+      "vote_switch_failures": 0
+    },
+    "issues": {
+      "opened": 5,
+      "resolved": 5,
+      "stale": 0,
+      "open": 0,
+      "follow_ups": 7,
+      "by_kind": {
+        "question": 5
+      },
+      "outcomes": {
+        "answered": 5
+      },
+      "questions_answered": 5,
+      "questions_resolved": 5,
+      "concerns_resolved": 0,
+      "concerns_maintained": 0,
+      "concerns_partially_addressed": 0,
+      "relevant_concern_responders": 0,
+      "same_attribute_mitigations": 0,
+      "provenance": []
+    },
+    "stances": {
+      "visible_switches": 1,
+      "public_acceptance_count": 2,
+      "public_preferences": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A"
+      },
+      "public_acceptances": {
+        "p1": [],
+        "p2": [
+          "A",
+          "B"
+        ],
+        "p3": []
+      },
+      "switch_decisions": [
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 0.6747,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.3374,
+          "probability": 0.7311,
+          "latest_external_evidence_turn": 24,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 0.6747,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.3374,
+          "probability": 0.7311,
+          "latest_external_evidence_turn": 24,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 28,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 1.0,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.6626,
+          "probability": 0.75,
+          "latest_external_evidence_turn": 24,
+          "allowed": true,
+          "rejection_reason": ""
+        }
+      ]
+    },
+    "public_evidence": {
+      "distinct_supporters": {
+        "A": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "B": [
+          "p2"
+        ],
+        "C": [],
+        "D": []
+      },
+      "distinct_concern_raisers": {
+        "A": [],
+        "B": [],
+        "C": [],
+        "D": []
+      }
+    },
+    "realization": {
+      "word_budget_by_id": {
+        "p1": [
+          {
+            "turn": 1,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 24,
+            "within_target": true
+          },
+          {
+            "turn": 7,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 8,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 28,
+            "within_target": false
+          },
+          {
+            "turn": 11,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 12,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 17,
+            "within_target": true
+          },
+          {
+            "turn": 16,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 24,
+            "within_target": false
+          },
+          {
+            "turn": 21,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 24,
+            "within_target": false
+          },
+          {
+            "turn": 22,
+            "act": "comment",
+            "intended_min": 8,
+            "intended_max": 20,
+            "realized": 19,
+            "within_target": true
+          },
+          {
+            "turn": 30,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 20,
+            "within_target": false
+          }
+        ],
+        "p2": [
+          {
+            "turn": 3,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 22,
+            "within_target": true
+          },
+          {
+            "turn": 4,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 22,
+            "within_target": false
+          },
+          {
+            "turn": 13,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 22,
+            "within_target": true
+          },
+          {
+            "turn": 14,
+            "act": "compare",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 27,
+            "within_target": true
+          },
+          {
+            "turn": 17,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 23,
+            "within_target": false
+          },
+          {
+            "turn": 19,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 30,
+            "within_target": false
+          },
+          {
+            "turn": 20,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 23,
+            "within_target": false
+          },
+          {
+            "turn": 25,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 18,
+            "within_target": false
+          },
+          {
+            "turn": 26,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 22,
+            "within_target": true
+          },
+          {
+            "turn": 27,
+            "act": "compromise",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 25,
+            "within_target": true
+          },
+          {
+            "turn": 28,
+            "act": "compromise",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 21,
+            "within_target": true
+          },
+          {
+            "turn": 29,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 21,
+            "within_target": true
+          },
+          {
+            "turn": 31,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 17,
+            "within_target": true
+          }
+        ],
+        "p3": [
+          {
+            "turn": 2,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 5,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 21,
+            "within_target": true
+          },
+          {
+            "turn": 6,
+            "act": "comment",
+            "intended_min": 8,
+            "intended_max": 20,
+            "realized": 17,
+            "within_target": true
+          },
+          {
+            "turn": 9,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 17,
+            "within_target": true
+          },
+          {
+            "turn": 10,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 20,
+            "within_target": true
+          },
+          {
+            "turn": 15,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 19,
+            "within_target": true
+          },
+          {
+            "turn": 18,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 24,
+            "within_target": false
+          },
+          {
+            "turn": 23,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 23,
+            "within_target": false
+          },
+          {
+            "turn": 24,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 19,
+            "within_target": true
+          },
+          {
+            "turn": 32,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 19,
+            "within_target": true
+          }
+        ]
+      },
+      "within_target_rate": 0.656
+    },
+    "narrowing": {
+      "participant_turns": 3,
+      "focused_turns": 3,
+      "focus_adherence": 1.0
+    },
+    "votes": {
+      "first_round": {},
+      "final": {
+        "p1": "A",
+        "p2": "A",
+        "p3": "A"
+      },
+      "records_by_round": {
+        "1": {
+          "p1": "valid",
+          "p2": "valid",
+          "p3": "valid"
+        }
+      },
+      "non_valid_final_statuses": 0,
+      "protocol_degraded": false,
+      "protocol_errors": [],
+      "outcome": "successful",
+      "final_option": "A"
+    },
+    "coverage": {
+      "A": {
+        "substantive_count": 18,
+        "participants": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "actions": {
+          "ask": 3,
+          "answer": 3,
+          "support": 7,
+          "compare": 1,
+          "compromise": 4
+        }
+      },
+      "B": {
+        "substantive_count": 8,
+        "participants": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "actions": {
+          "support": 2,
+          "compare": 1,
+          "ask": 2,
+          "answer": 2,
+          "compromise": 1
+        }
+      },
+      "C": {
+        "substantive_count": 0,
+        "participants": [],
+        "actions": {}
+      },
+      "D": {
+        "substantive_count": 0,
+        "participants": [],
+        "actions": {}
+      }
+    },
+    "tokens": {
+      "llm_calls": 32,
+      "runtime_llm_calls": 32,
+      "setup_llm_calls": 0,
+      "repair_calls": 0,
+      "input_tokens": 34221,
+      "output_tokens": 794
+    }
+  }
+}

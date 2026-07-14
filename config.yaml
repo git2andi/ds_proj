@@ -1,154 +1,61 @@
-# Option-grounded multi-user simulator configuration.
-# Keep this file small: only parameters that are useful to tune live here.
+# Autonomous option-grounded multi-user simulator.
 
 llm:
-  # Dialogue owns every live generative call: scenario/persona setup,
-  # participant utterances, moderator lines, and repair rewrites.
-  # `validator` remains as a compatibility role for older tooling, but the
-  # normal `validation.mode: critical` runtime does not construct or call it.
   dialogue: "gpt"                     # uni | groq | gemini | gpt
-  validator: "gpt"                    # uni | groq | gemini | gpt
-  models:                             # model name used per provider
+  models:
     uni: "llama3.3:latest"
     groq: "llama-3.3-70b-versatile"
     gemini: "gemini-2.0-flash-lite"
     gpt: "gpt-4.1-mini"
   endpoints:
-    uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"   # university Ollama server (uni provider only)
+    uni: "http://ursa.ds.uni-bamberg.de:11434/api/generate"
   timeouts:
-    request_seconds: 240              # HTTP timeout per LLM call
-  gemini_rpm_delay_seconds: 12        # pause between Gemini calls (free-tier rate limit)
+    request_seconds: 240
+  gemini_rpm_delay_seconds: 12
   sampling:
-    # Per call type: setup and repair run cold (deterministic, format-obedient),
-    # dialogue runs warm (varied phrasing).
-    setup:
-      temperature: 0.35
-      top_k: 45
-      top_p: 0.90
-    dialogue:
-      temperature: 0.82
-      top_k: 60
-      top_p: 0.94
-    repair:
-      temperature: 0.20
-      top_k: 25
-      top_p: 0.80
-    # Compatibility profile only; unused by the normal critical runtime.
-    validator:
-      temperature: 0.0
-      top_k: 1
-      top_p: 1.0
-      max_output_tokens: 600
+    setup: {temperature: 0.35, top_k: 45, top_p: 0.90, max_output_tokens: 0}
+    dialogue: {temperature: 0.82, top_k: 60, top_p: 0.94, max_output_tokens: 220}
+    repair: {temperature: 0.20, top_k: 25, top_p: 0.80, max_output_tokens: 220}
 
 environment:
-  # Descriptive labels written into logs; no behavioral effect.
   type: "option_grounded_group_decision"
   source_of_truth: "generated_option_board"
-  # How the decision environment is created.
-  #   auto   = a topic (CLI arg / stdin) is turned into a scenario by the setup LLM, as before.
-  #   manual = the scenario is built deterministically from manual: below; the scenario
-  #            LLM call is skipped and no CLI topic is needed (a given one is ignored).
-  # Manual environments must define exactly len(scenario.option_labels) options, each
-  # with a name, a valid concise short_name, and at least one factual attribute;
-  # upside/concern are optional. Constraints (budget/distance/duration caps) belong in
-  # shared_context — hard numeric caps are parsed from there and the options are
-  # checked against them at startup (a violation is a config error, never a silent
-  # rewrite). The moderator opening ends with a fixed neutral line; there is no
-  # opening_question or decision_kind field. Pacing/stopping conditions stay under
-  # conversation: and consensus:.
-  mode: auto   # auto | manual
+  mode: auto                          # auto | manual
   manual: {}
-  # manual:
-  #   topic: "Choose a coffee machine for the office"
-  #   shared_context:
-  #     - "Budget is capped at $300"
-  #     - "The machine must fit the small kitchen counter"
-  #   options:
-  #     - name: "Moccamaster KBG Select"
-  #       short_name: "Moccamaster"                    # required, concise natural alias
-  #       attrs: {cost: "$290", brew time: "6 minutes", type: "filter"}
-  #       upside: "very durable and fast for full pots" # optional
-  #       concern: "highest price in the lineup"        # optional
-  #     - name: "..."   # exactly as many options as scenario.option_labels
 
 simulation:
-  num_participants: 3                 # how many sims join the discussion
-  min_participants: 2                 # allowed range (validation + corpus-preset clamping)
+  num_participants: 3
+  min_participants: 2
   max_participants: 7
-  random_seed: null                   # int = reproducible controller decisions; null = random each run
-  setup_generation_attempts: 3        # retries for scenario/persona generation before the run fails
-  max_repairs_per_turn: 1             # re-asks for a flagged utterance before the deterministic fallback replaces it
+  random_seed: null
+  setup_generation_attempts: 3
 
 participants:
-  # How the simulated users are created.
-  #   auto   = sample everything (names, OCEAN traits, preferences, backgrounds) as before.
-  #   manual = define the cast in profiles: below; group size = number of profiles
-  #            (simulation.num_participants is ignored in manual mode).
-  # Manual profiles may be PARTIAL: any missing field is filled by the auto path
-  # (missing traits sampled from personas.trait_ranges, missing name from the pool,
-  # missing background/private_goal written by the setup LLM, missing preferred_option
-  # drawn at random). If every profile is complete (name, description, private_goal,
-  # preferred_option), the persona LLM call is skipped entirely and the cast is
-  # fully deterministic. Giving a profile a rejection initializes that option at rank 1
-  # (rejection_reason required). If the profile leaves agreeableness unset it is
-  # pinned to 1 (classic blocker persona); an explicit agreeableness is kept, so
-  # an agreeable participant can still hold a hard constraint politely.
-  # If any profile pins preferred_option, the preference_distribution shapes are
-  # bypassed: unpinned profiles get a uniformly random option instead.
-  mode: auto   # auto | manual
+  mode: auto                          # auto | manual
   profiles: []
-  # profiles:
-  #   - name: "Kira"
-  #     description: "junior developer who mainly cares about day-to-day tooling speed"
-  #     private_goal: "wants the choice that keeps her daily workflow fast"
-  #     preferred_option: "A"          # option id (A-D), initial private preference
-  #     traits: {extraversion: 5, agreeableness: 4}   # OCEAN 1-5, partial ok
-  #     parameters: {verbosity: 0.9, engagement: 0.8} # direct 0-1 overrides, partial ok
-  #                                                   # (engagement, verbosity, directness, stubbornness, switch_resistance)
-  #     speech_style: "relaxed practical wording"     # optional register override; age-derived if omitted
-  #   - name: "Sven"
-  #     description: "veteran sysadmin burned by flaky vendor tools before"
-  #     rejection: "B"                 # initializes option B at rank 1
-  #     rejection_reason: "refuses another vendor lock-in after the last migration"
+  # Manual profiles may be partial. Direct traits use integer low..high scales:
+  # traits: {engagement: 4, verbosity: 2, directness: 5, stubbornness: 3}
+  # A manual hard blocker sets hard_blocker: true, exactly one preferred option,
+  # and a rejection_reason. The builder rejects multiple hard blockers.
 
 scenario:
-  # Shape of the generated option board.
-  option_labels: ["A", "B", "C", "D"] # option IDs -> four options per scenario
-  public_attr_min: 3                  # attributes per option card (min..max)
+  option_labels: ["A", "B", "C", "D"]
+  public_attr_min: 3
   public_attr_max: 5
-  shared_context_max_items: 3         # shared facts like "budget is $500" (count / words each)
+  shared_context_max_items: 3
   shared_context_max_words: 18
-  short_alias_min_chars: 4            # constraints for the short option nickname used in dialogue ("Snap Peas")
+  short_alias_min_chars: 4
   short_alias_max_words: 3
 
 personas:
-  # OCEAN traits are hidden setup traits: they are sampled here, then converted
-  # into the five explicit simulator parameters in src/simulator.py:
-  # engagement, verbosity, directness, stubbornness, and switch_resistance.
-  # GROUP-level chance that exactly one participant is sampled as an exclusive
-  # hard blocker: one preferred option (rank 5), every other option hard-rejected
-  # (rank 1) with a grounded reason. Unsampled groups stay fully movable.
   hard_blocker_probability: 0.06
-  trait_min: 1                        # OCEAN scale bounds
-  trait_max: 5
-  trait_ranges:                       # sampling range per trait for normal sims
-    openness: [2, 5]
-    conscientiousness: [2, 5]
-    extraversion: [1, 5]
-    agreeableness: [2, 5]             # never below 2, so nobody is accidentally blocker-like
-    neuroticism: [1, 4]
-  hard_blocker_trait_ranges:          # the blocker's ranges: agreeableness pinned to 1
-    openness: [1, 2]
-    conscientiousness: [3, 5]
-    extraversion: [1, 5]
-    agreeableness: [1, 1]
-    neuroticism: [3, 5]
+  trait_ranges:
+    engagement: [1, 5]
+    verbosity: [1, 5]
+    directness: [1, 5]
+    stubbornness: [1, 4]
   preference_distribution:
-    # forced_shape forces a specific initial-preference split, e.g. "2-1" = two sims
-    # prefer one option, one prefers another. null = sample from shape_weights.
     forced_shape: null
-    # Per group size: probability of each starting split. Example n=3: 50% three-way
-    # split, 45% two-vs-one, 5% everyone already agrees.
     shape_weights:
       2: {"1-1": 0.80, "2": 0.20}
       3: {"1-1-1": 0.50, "2-1": 0.45, "3": 0.05}
@@ -158,147 +65,31 @@ personas:
       7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
 
 conversation:
-  # Pacing. The controller derives actual turn caps from these per-participant
-  # values (x num_participants, plus the extras below). An active corpus preset
-  # overrides the three *_turns_per_participant values at load time.
-  min_discussion_turns_per_participant: 5.0     # x n = turns before any narrowing/voting may start
-  target_discussion_turns_per_participant: 6.0  # x n (+extras) = where the controller starts pushing toward a vote
-  max_discussion_turns_per_participant: 7.0     # x n (+extras) = hard cap; a visible vote is forced here
-  contention_extra_turns: 2            # bonus turns when starting preferences are split
-  low_compromise_extra_turns: 1        # bonus turns when the cast is stubborn on average
-  early_vote_extra_turns: 2            # after min_turns, wait this many turns before visible support can trigger voting
-  question_answer_window_turns: 2      # eval-only analysis window: a directed question counts as promptly answered within 2x this many turns
-  moderator_stall_window: 6            # no-progress turns before one moderator nudge
-  moderator_cooldown_turns: 5          # minimum spacing between moderator interventions
-  moderator_max_interventions: 1       # cap on mid-discussion nudges (vote call and closure don't count)
-  max_vote_rounds: 2                   # vote -> one re-ask round for unclear voters -> finalize from visible votes
-  require_option_coverage_before_vote: true  # each option should be mentioned/compared once before final voting when feasible
+  # Group-level participant pacing. Openings, mandatory answers and votes are
+  # excluded from these voluntary-turn budgets.
+  min_voluntary_turns: 8
+  soft_target_voluntary_turns: 20
+  hard_max_voluntary_turns: 30
+  narrowing_voluntary_turns: 4
+  revote_narrowing_voluntary_turns: 3
+  issue_normal_follow_ups: 3
+  issue_follow_up_cap: 5
+  recent_turns_in_prompt: 8
+  max_consecutive_turns: 2
 
 moderator:
-  # Which structural jobs the visible moderator voice performs. The controller
-  # policy (who speaks, what act, when a vote is ready) is unaffected by these
-  # flags — they only gate the moderator's *turns* in the transcript, so lower-
-  # or no-moderator modes still reach a decision through participant vote turns
-  # and the participant-level narrowing acts (defend/compare/compromise/
-  # stagnation break). Defaults reproduce the fully-moderated behavior.
-  #   enabled              = master switch; false suppresses every moderator turn.
-  #   opening              = moderator presents the option board at the start.
-  #                          When false the board is still shown as plain setup
-  #                          scaffolding (header + transcript "## Options"), not a turn.
-  #   mid_discussion_nudges = stall/circling nudges during discussion.
-  #   final_vote_call      = moderator vote calls, holdout probes, and the split-vote
-  #                          compromise summary line (participants still vote either way).
-  #   closing              = moderator closing summary line (outcome is logged regardless).
   enabled: true
-  opening: true
-  mid_discussion_nudges: true
-  final_vote_call: true
-  closing: true
-
-threads:
-  # Local-interaction thread engine (question/concern/blocker/comparison
-  # threads). Turn counts are participant turns since the thread was last touched.
-  cooling_turns: 2                     # cooling window before an unreinforced thread resolves
-  stale_after_turns: 4                 # hot/cooling threads age out to stale after this many turns
-  hard_blocker_stale_after_turns: 6    # hard blockers keep routing priority longer
-  max_thread_turns_soft: 3             # soft cap: no optional cooling continuation past this many accepted contributions
-  max_thread_turns_hard: 5             # hard cap: the thread stops driving turns entirely at this many
-  cooling_continue_probability: 0.45   # chance a cooling thread gets one more beat
-  cooling_continue_if_disagreement: 0.60  # ... when the response disagreed
-  cooling_continue_if_blocker: 0.75    # ... when the thread is a blocker
-  allow_reactivation: true             # a stale thread may return to hot when visibly reopened
-
-narrowing:
-  # Discussion -> narrowing gates (mandatory conditions + readiness triggers).
-  require_discussion_support: true      # at least one option needs visible support from discussion turns (not only opening)
-  require_no_hot_blocking_thread: true  # a hot hard blocker against the candidate blocks normal narrowing
-  stable_top_pair_window: 2             # identical visible top pair for this many turns triggers narrowing
-  allow_return_to_discussion_once: true # narrowing may fall back to discussion at most once if the candidate collapses
-
-routing:
-  # Who speaks next and what kind of move they make. The engine samples from
-  # these base weights for NORMAL turns only; thread routes (answers, concern
-  # defenses, blocker probes, comparisons-in-thread) are priority-driven and
-  # never sampled. answer/process/compromise/vote/softening are not normal
-  # acts: answers are route-driven by question threads, process/compromise
-  # belong to narrowing and repair, and softening is an observed stance effect.
-  move_weights:
-    support: 0.34        # add or reinforce a grounded reason
-    concern: 0.18        # object or push back
-    ask: 0.12            # ask a concrete question
-    compare: 0.20        # compare two options
-    comment: 0.16        # light beat: acknowledge, interpret, or state a priority
-  direct_address_probability: 0.32     # chance a turn is aimed at a named person rather than the group
-  # Engagement-weighted participation: each sim gets a target turn share derived
-  # from engagement alone; the router boosts sims behind their target and damps
-  # sims ahead of it (never strict turn equalization).
-  trait_share_adaptation: 3.5          # how strongly actual share is pulled toward the trait target (exp slope)
-  max_share_overshoot: 0.16            # actual share this far above target -> hard damp (anti-monopoly)
-  max_silence_rounds: 2                # a sim silent this many full rounds is pushed back in (min visibility)
-  quiet_speaker_boost: 1.25            # additive weight for the min-visibility push (and corpus-preset rebalancing)
-  target_window: 6                     # recent participant turns eligible as response targets
-
-style:
-  # Local surface-naturalness tracker over the last few participant turns:
-  # when a surface pattern gets too dense, the next turn is told to vary.
-  name_prefix_window: 4              # how many recent participant turns to scan
-  name_prefix_max_fraction: 0.3     # above this share of name-prefixed openings ("Kira, ..."), suppress names on non-functional turns
-  option_opening_max_fraction: 0.25 # above this share of option-name openings, tell the next turn to lead differently
-  i_opening_max_fraction: 0.35      # above this share of first-person "I ..." openings, tell the next non-decision turn to lead differently
-  we_opening_max_fraction: 0.30     # same mechanism for "We ..." openings
-  repeated_opening_window: 3        # consecutive turns sharing one opening word before variation is forced
-  repeated_pattern_window: 3        # consecutive turns sharing one surface pattern before variation is forced
-
-utterances:
-  recent_turns_in_prompt: 4           # transcript lines each sim prompt sees
-  response_target_max_words: 18       # how much of the responded-to turn is quoted in the prompt
-  # Per-act length targets in words, scaled by each sim's verbosity (with per-turn
-  # jitter). Soft targets, not hard cuts: a complete sentence somewhat over budget
-  # is kept whole rather than chopped mid-thought.
-  word_budgets:
-    opening: 18
-    discussion: 15
-    ask: 13
-    answer: 13
-    vote: 11
-    moderator: 20
-
-corpus:
-  # Optional corpus-inspired presets. With preset null everything under presets:
-  # is ignored and the simulator behaves exactly as configured above. Setting
-  # preset: delidata folds that preset in at load time: turns_per_participant
-  # OVERRIDES the three conversation *_turns_per_participant values
-  # (min=0.75x, target=1x, max=1.5x) and preferred_group_size OVERRIDES
-  # simulation.num_participants (clamped to min/max_participants). The dominance
-  # fields don't overwrite config; they switch the speaker router from strict
-  # equalization to a share-aware target ("one person talks ~40% of the time").
-  # No topic-specific logic.
-  preset: null                        # null | delidata
-  presets:
-    delidata:
-      turns_per_participant: 4.5      # typical discussion length per participant in the corpus
-      preferred_group_size: 3         # typical group size in the corpus
-      top_speaker_share: 0.40         # expected turn share of the most active speaker
-      dominance_range: [0.30, 0.50]   # acceptable band for the top speaker's share
-      imbalance_tolerance: 0.15       # deviation from fair share before rebalancing kicks in
-
-validation:
-  # critical = deterministic runtime correctness checks only. The validator
-  # LLM is not created or called during ordinary dialogue.
-  mode: critical   # critical
-
-limits:
-  # Total covers setup, participant dialogue, moderator generation, and repair.
-  # Critical validation is deterministic and makes no validator-LLM calls.
-  warn_total_input_tokens: 80000   # print a warning if a run's total input tokens exceed this (nothing is stopped)
 
 consensus:
-  majority_fraction: 0.51          # share of visible votes needed for a "majority" outcome; unanimity = "successful"
+  majority_fraction: 0.51
+
+limits:
+  warn_total_input_tokens: 80000
 
 output:
-  log_dir: "logs"                  # where per-run log directories are created
-  write_prompts: false             # true additionally dumps every LLM prompt to prompt_file (useful for debugging, big files)
+  log_dir: "logs"
+  write_prompts: false
   prompt_file: "prompts.jsonl"
-  transcript_file: "transcript.md" # human-readable transcript + metrics
-  json_file: "run.json"            # full structured trace (scenario, personas, turns, metrics)
-  metrics_csv: "metrics.csv"       # one summary row per run, appended across runs
+  transcript_file: "transcript.md"
+  json_file: "run.json"
+  metrics_csv: "metrics.csv"

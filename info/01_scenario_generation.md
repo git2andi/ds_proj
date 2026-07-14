@@ -1,56 +1,18 @@
-# 01 — Scenario and environment generation
+# Scenario and option generation
 
-The environment defines the factual decision space. It should provide enough shared facts for sims to argue concretely without requiring external knowledge.
+Scenario generation remains separate from the dialogue runtime. `SetupBuilder` either reads a manual option board or asks the configured dialogue LLM to create one.
 
-## Modes
+A `Scenario` contains:
 
-`environment.mode = auto`:
+- the public decision topic;
+- a short shared public context;
+- fixed option IDs;
+- a full and short option name;
+- topic-specific public attributes;
+- a brief upside and concern.
 
-- the CLI topic is sent to the setup LLM;
-- the setup LLM creates the shared context and option cards (nothing else — there is no generated opening question or decision-kind category);
-- generated options are validated before the discussion starts; a substantive failure (missing fields, too few attributes, cap violations) rejects the attempt and retries;
-- an invalid or duplicate generated `short_name` alone does NOT discard the scenario: the affected aliases get one small alias-only repair call (dialogue LLM role, small retry limit, deterministic re-validation), and the setup notes record `invalid_alias`/`duplicate_alias`/`alias_repaired` diagnostics. Only a failed alias repair rejects the attempt, with a precise error.
+All objective facts available during the discussion must appear in the shared context or option cards. There are no hidden option facts. The setup prompt therefore asks the model to choose attributes natural for the topic without prescribing a fixed schema.
 
-`environment.mode = manual`:
+Short names must be supplied and validated. The builder may make one alias-only repair call when names are invalid or duplicated; it does not derive clipped names from the full option name.
 
-- `environment.manual` in `config.yaml` defines the topic, shared context, and options;
-- the scenario setup LLM call is skipped; an invalid manual `short_name` is a config error (no repair);
-- an explicit CLI/piped topic still wins over manual mode and requests automatic generation for that topic (see 08);
-- this is the preferred mode for controlled tests.
-
-## Scenario schema
-
-A scenario is exactly:
-
-```text
-topic
-shared_context   (public facts every participant knows — the public source of truth)
-options          (one card per option label)
-```
-
-Each option card has: `id`, `name`, `short_name`, `attrs`, `upside`, `concern`.
-
-- `attrs` are concrete, stable, topic-natural attributes. The setup LLM chooses which attributes fit the topic; the prompt gives no example dimensions and the code hard-codes no preferred dimensions.
-- `upside` is one positive argument; `concern` is one stable likely objection. There is no separate `tradeoff` or `best_for` field.
-- `short_name` is a required concise natural alias copied from the name, unique across options. It is never derived by clipping words from the full name; full names are never mutated.
-
-The board should expose real trade-offs. Avoid one obvious winner unless the goal is to test quick consensus.
-
-## Moderator opening
-
-The moderator opening is fixed and neutral: it introduces the topic, lists the option board and shared context, then ends with the criteria-free line "Let's discuss which option fits best overall." The setup never selects concrete decision dimensions for the first turns.
-
-## Grounding rule
-
-Sims may use only:
-
-- option facts;
-- shared context;
-- prior visible dialogue;
-- explicit uncertainty.
-
-They must not state unsupported concrete facts as known. Hypothetical mitigation is acceptable only when marked as uncertain.
-
-## Current relevance
-
-The option board remains central. The controller may move holdouts only when the tested candidate is plausible according to visible votes, blockers, resistance, rank state, and traits. It does not create new options or blended plans.
+The runtime treats the resulting option board as the source of truth. Simulators can make subjective judgments about public facts, but the realization model may not introduce new prices, times, distances, capacities, facilities, or specifications.

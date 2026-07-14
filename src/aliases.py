@@ -1,4 +1,4 @@
-"""One option-alias contract shared by setup, prompts, validation, and parsing."""
+"""One option-alias contract shared by setup, prompts, and minimal validation."""
 
 from __future__ import annotations
 
@@ -55,8 +55,8 @@ def short_alias_map(options: Iterable[Any]) -> dict[str, str]:
 
     Setup guarantees every option carries a valid, unique short_name (invalid
     generated ones reject the scenario attempt; invalid manual ones are a
-    config error), so no clipped fallback aliases are ever derived here. The
-    full-name fallback only protects against objects built outside setup.
+    config error), so no clipped aliases are ever derived here. The full-name safeguard only
+    protects against objects built outside setup.
     """
     option_list = list(options)
     aliases = {

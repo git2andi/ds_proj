@@ -1,0 +1,5481 @@
+{
+  "run_id": "20260714_035506_105061_three_way_split",
+  "seed": 102,
+  "scenario": {
+    "topic": "Choose a Saturday study location",
+    "options": [
+      {
+        "id": "A",
+        "name": "Central Library",
+        "attrs": {
+          "cost": "free",
+          "closing time": "20:00",
+          "equipment": "standard desks"
+        },
+        "upside": "quiet and predictable",
+        "concern": "can become crowded",
+        "short_name": "Library"
+      },
+      {
+        "id": "B",
+        "name": "Riverside Cafe",
+        "attrs": {
+          "cost": "8 euros",
+          "closing time": "22:00",
+          "noise": "moderate"
+        },
+        "upside": "relaxed atmosphere",
+        "concern": "background noise",
+        "short_name": "Cafe"
+      },
+      {
+        "id": "C",
+        "name": "Engineering Lab",
+        "attrs": {
+          "cost": "free",
+          "closing time": "19:00",
+          "equipment": "specialist workstations"
+        },
+        "upside": "reliable technical equipment",
+        "concern": "earlier closing time",
+        "short_name": "Lab"
+      },
+      {
+        "id": "D",
+        "name": "Online Session",
+        "attrs": {
+          "cost": "free",
+          "travel": "none",
+          "access": "from home"
+        },
+        "upside": "no travel",
+        "concern": "less social interaction",
+        "short_name": "Online"
+      }
+    ],
+    "shared_context": [
+      "The group meets on Saturday.",
+      "The budget is capped at 20 euros per person."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Nora is making this decision with the group.",
+      "private_goal": "needs a location that supports focused project work",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 22,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "quiet and predictable",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "relaxed atmosphere",
+          "reason_against": "background noise"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "reliable technical equipment",
+          "reason_against": "earlier closing time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "no travel",
+          "reason_against": "less social interaction"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben is making this decision with the group.",
+      "private_goal": "needs a location that supports focused project work",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 31,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "quiet and predictable",
+          "reason_against": "can become crowded"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "relaxed atmosphere",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "reliable technical equipment",
+          "reason_against": "earlier closing time"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "no travel",
+          "reason_against": "less social interaction"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Mira is making this decision with the group.",
+      "private_goal": "needs a location that supports focused project work",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 40,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "quiet and predictable",
+          "reason_against": "can become crowded"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "relaxed atmosphere",
+          "reason_against": "background noise"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "reliable technical equipment",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "no travel",
+          "reason_against": "less social interaction"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "A",
+        "B"
+      ],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "acknowledge:acknowledge the useful point from turn 14 without changing stance",
+        "acknowledge:acknowledge the useful point from turn 7 without changing stance",
+        "answer:A:upside:quiet and predictable",
+        "comment:A:upside:quiet and predictable",
+        "compare:A:upside:quiet and predictable",
+        "compromise:B:upside:relaxed atmosphere",
+        "opening:A:upside:quiet and predictable",
+        "support:A:closing time:20:00",
+        "support:A:cost:free",
+        "support:A:upside:quiet and predictable",
+        "vote:public discussion changed the balance from a: relaxed atmosphere"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [],
+      "action_signature_counts": {
+        "('opening', ('A',), ('A', 'upside', 'quiet and predictable'), None, None, None)": 1,
+        "('support', ('A',), ('A', 'upside', 'quiet and predictable'), None, None, None)": 1,
+        "('compare', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), None, None, None)": 1,
+        "('acknowledge', ('B',), ('acknowledge the useful point from turn 7 without changing stance',), None, None, None)": 1,
+        "('answer', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), 'i001', None, None)": 1,
+        "('comment', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), 'i001', None, None)": 1,
+        "('acknowledge', ('B',), ('acknowledge the useful point from turn 14 without changing stance',), None, None, None)": 1,
+        "('support', ('A',), ('A', 'cost', 'free'), None, None, None)": 1,
+        "('answer', ('A',), ('A', 'upside', 'quiet and predictable'), 'i002', None, None)": 1,
+        "('comment', ('A',), ('A', 'upside', 'quiet and predictable'), 'i002', None, None)": 1,
+        "('support', ('A',), ('A', 'closing time', '20:00'), None, None, None)": 1,
+        "('compromise', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, ('make_acceptable', 'B'), None)": 1,
+        "('vote', ('B',), ('public discussion changed the balance from a: relaxed atmosphere',), None, ('switch_preferred', 'B'), None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('A',), ('A', 'upside', 'quiet and predictable'), None, None, None)": "('OPENING', None, 'A', (), -1)",
+        "('support', ('A',), ('A', 'upside', 'quiet and predictable'), None, None, None)": "('DISCUSSION', None, 'A', (), -1)",
+        "('compare', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), None, None, None)": "('DISCUSSION', None, 'A', (), 2)",
+        "('acknowledge', ('B',), ('acknowledge the useful point from turn 7 without changing stance',), None, None, None)": "('DISCUSSION', None, 'A', (), 7)",
+        "('answer', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), 'i001', None, None)": "('DISCUSSION', 'i001', 'A', (), 10)",
+        "('comment', ('A', 'B'), ('A', 'upside', 'quiet and predictable'), 'i001', None, None)": "('DISCUSSION', 'i001', 'A', (), 10)",
+        "('acknowledge', ('B',), ('acknowledge the useful point from turn 14 without changing stance',), None, None, None)": "('DISCUSSION', None, 'A', (), 14)",
+        "('support', ('A',), ('A', 'cost', 'free'), None, None, None)": "('DISCUSSION', None, 'A', (), 13)",
+        "('answer', ('A',), ('A', 'upside', 'quiet and predictable'), 'i002', None, None)": "('DISCUSSION', 'i002', 'A', (), 17)",
+        "('comment', ('A',), ('A', 'upside', 'quiet and predictable'), 'i002', None, None)": "('DISCUSSION', 'i002', 'A', (), 17)",
+        "('support', ('A',), ('A', 'closing time', '20:00'), None, None, None)": "('DISCUSSION', None, 'A', (), 21)",
+        "('compromise', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, ('make_acceptable', 'B'), None)": "('NARROWING', 'i004', 'A', ('B',), 21)",
+        "('vote', ('B',), ('public discussion changed the balance from a: relaxed atmosphere',), None, ('switch_preferred', 'B'), None)": "('VOTING', None, 'B', ('A',), 29)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 9,
+      "mandatory_answers": 2,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 31,
+      "visible_switches": 1,
+      "last_switch_turn": 31,
+      "last_switch_target": "B",
+      "last_switch_external_evidence_turn": 29,
+      "switch_opportunities": 4,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.75,
+      "last_switch_rejection_reason": ""
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "ask:ask what the visible point about a, b means for that participant's choice",
+        "ask:ask what the visible point about c means for that participant's choice",
+        "compare:B:upside:relaxed atmosphere",
+        "opening:B:upside:relaxed atmosphere",
+        "support:B:closing time:22:00",
+        "support:B:cost:8 euros",
+        "support:B:upside:relaxed atmosphere",
+        "vote:relaxed atmosphere"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "clarification|A,B|p1",
+        "clarification|C|p3"
+      ],
+      "action_signature_counts": {
+        "('opening', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, None, None)": 1,
+        "('support', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, None, None)": 1,
+        "('support', ('B',), ('B', 'cost', '8 euros'), None, None, None)": 1,
+        "('ask', ('A', 'B'), (\"ask what the visible point about a, b means for that participant's choice\",), 'i001', None, None)": 1,
+        "('support', ('B',), ('B', 'closing time', '22:00'), None, None, None)": 1,
+        "('compare', ('A', 'B'), ('B', 'upside', 'relaxed atmosphere'), 'i003', None, None)": 1,
+        "('ask', ('C',), (\"ask what the visible point about c means for that participant's choice\",), 'i004', None, None)": 1,
+        "('vote', ('B',), ('relaxed atmosphere',), None, None, None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, None, None)": "('OPENING', None, 'B', (), -1)",
+        "('support', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, None, None)": "('DISCUSSION', None, 'B', (), 6)",
+        "('support', ('B',), ('B', 'cost', '8 euros'), None, None, None)": "('DISCUSSION', None, 'B', (), 8)",
+        "('ask', ('A', 'B'), (\"ask what the visible point about a, b means for that participant's choice\",), 'i001', None, None)": "('DISCUSSION', 'i001', 'B', (), 8)",
+        "('support', ('B',), ('B', 'closing time', '22:00'), None, None, None)": "('DISCUSSION', None, 'B', (), 13)",
+        "('compare', ('A', 'B'), ('B', 'upside', 'relaxed atmosphere'), 'i003', None, None)": "('DISCUSSION', 'i003', 'B', (), 20)",
+        "('ask', ('C',), (\"ask what the visible point about c means for that participant's choice\",), 'i004', None, None)": "('DISCUSSION', 'i004', 'B', (), 23)",
+        "('vote', ('B',), ('relaxed atmosphere',), None, None, None)": "('VOTING', None, 'B', (), 31)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 6,
+      "mandatory_answers": 0,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 32,
+      "visible_switches": 0,
+      "last_switch_turn": -1,
+      "last_switch_target": null,
+      "last_switch_external_evidence_turn": -1,
+      "switch_opportunities": 3,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.478030303030303,
+      "last_switch_rejection_reason": "insufficient_margin"
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B",
+        "C"
+      ],
+      "public_rejections": [],
+      "stated_reason_keys": [
+        "acknowledge:acknowledge the useful point from turn 12 without changing stance",
+        "acknowledge:acknowledge the useful point from turn 19 without changing stance",
+        "answer:C:equipment:specialist workstations",
+        "ask:ask what the visible point about a means for that participant's choice",
+        "compromise:B:upside:relaxed atmosphere",
+        "opening:C:equipment:specialist workstations",
+        "support:C:equipment:specialist workstations",
+        "vote:relaxed atmosphere"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "clarification|A|p1"
+      ],
+      "action_signature_counts": {
+        "('opening', ('C',), ('C', 'equipment', 'specialist workstations'), None, None, None)": 1,
+        "('acknowledge', ('A', 'B'), ('acknowledge the useful point from turn 12 without changing stance',), None, None, None)": 1,
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i002', None, None)": 1,
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 19 without changing stance',), None, None, None)": 1,
+        "('support', ('C',), ('C', 'equipment', 'specialist workstations'), None, None, None)": 1,
+        "('answer', ('C',), ('C', 'equipment', 'specialist workstations'), 'i004', None, None)": 1,
+        "('compromise', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, ('make_acceptable', 'B'), None)": 1,
+        "('compromise', ('C', 'B'), ('B', 'upside', 'relaxed atmosphere'), None, ('switch_preferred', 'B'), None)": 1,
+        "('vote', ('B',), ('relaxed atmosphere',), None, None, None)": 1
+      },
+      "action_signature_contexts": {
+        "('opening', ('C',), ('C', 'equipment', 'specialist workstations'), None, None, None)": "('OPENING', None, 'C', (), -1)",
+        "('acknowledge', ('A', 'B'), ('acknowledge the useful point from turn 12 without changing stance',), None, None, None)": "('DISCUSSION', None, 'C', (), 12)",
+        "('ask', ('A',), (\"ask what the visible point about a means for that participant's choice\",), 'i002', None, None)": "('DISCUSSION', 'i002', 'C', (), 16)",
+        "('acknowledge', ('A',), ('acknowledge the useful point from turn 19 without changing stance',), None, None, None)": "('DISCUSSION', None, 'C', (), 19)",
+        "('support', ('C',), ('C', 'equipment', 'specialist workstations'), None, None, None)": "('DISCUSSION', None, 'C', (), -1)",
+        "('answer', ('C',), ('C', 'equipment', 'specialist workstations'), 'i004', None, None)": "('DISCUSSION', 'i004', 'C', (), 24)",
+        "('compromise', ('B',), ('B', 'upside', 'relaxed atmosphere'), None, ('make_acceptable', 'B'), None)": "('NARROWING', None, 'C', ('B',), 27)",
+        "('compromise', ('C', 'B'), ('B', 'upside', 'relaxed atmosphere'), None, ('switch_preferred', 'B'), None)": "('NARROWING', None, 'B', ('C',), 27)",
+        "('vote', ('B',), ('relaxed atmosphere',), None, None, None)": "('VOTING', None, 'B', ('C',), 32)"
+      },
+      "responded_stimuli": [],
+      "voluntary_turns": 6,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 33,
+      "visible_switches": 1,
+      "last_switch_turn": 29,
+      "last_switch_target": "B",
+      "last_switch_external_evidence_turn": 27,
+      "switch_opportunities": 6,
+      "switch_cooldown_rejections": 0,
+      "last_switch_probability": 0.478030303030303,
+      "last_switch_rejection_reason": "insufficient_margin"
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "active_issue": null,
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "A",
+        "B"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p1",
+      "summary": "Ask what the visible point about A, B means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 10,
+      "last_relevant_turn": 12,
+      "follow_up_count": 2,
+      "source_text": "Nora, can you clarify what you mean by Option A being quiet and predictable, and how that shapes your preference compared to Option B’s relaxed atmosphere?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p3",
+      "addressed_to": "p1",
+      "summary": "Ask what the visible point about A means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 17,
+      "last_relevant_turn": 19,
+      "follow_up_count": 2,
+      "source_text": "Nora, can you clarify how the quiet and predictable environment of Option A specifically helps your focus compared to other factors like cost or closing time?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i003",
+      "kind": "comparison",
+      "option_focus": [
+        "B",
+        "A"
+      ],
+      "opened_by": "p2",
+      "addressed_to": null,
+      "summary": "The trade-off favors B: relaxed atmosphere",
+      "status": "stale",
+      "opened_at_turn": 21,
+      "last_relevant_turn": 21,
+      "follow_up_count": 1,
+      "source_text": "Between Option B and Option A, I favor Option B because its relaxed atmosphere better supports the focused project work we need.",
+      "answered": false,
+      "outcome": null,
+      "close_reason": "nobody continued the issue",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "upside",
+        "public_value": "relaxed atmosphere"
+      },
+      "issue_key": [
+        "B",
+        "upside"
+      ],
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    },
+    {
+      "id": "i004",
+      "kind": "question",
+      "option_focus": [
+        "C"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p3",
+      "summary": "Ask what the visible point about C means for that participant's choice",
+      "status": "resolved",
+      "opened_at_turn": 24,
+      "last_relevant_turn": 25,
+      "follow_up_count": 1,
+      "source_text": "Mira, could you explain how the earlier closing time at Option C affects your preference despite the benefit of the specialist workstations?",
+      "answered": true,
+      "outcome": "answered",
+      "close_reason": "question answered; no further follow-up",
+      "reason_source": null,
+      "issue_key": null,
+      "relevant_responder_ids": [],
+      "relevant_response_kinds": {},
+      "same_attribute_mitigation": false,
+      "owner_last_evaluated_follow_up_count": 0
+    }
+  ],
+  "group_stimulus": null,
+  "turns": [
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we're deciding: Choose a Saturday study location. The group meets on Saturday. The budget is capped at 20 euros per person. Options: A) Central Library — cost: free; closing time: 20:00; equipment: standard desks (+ quiet and predictable; − can become crowded) B) Riverside Cafe — cost: 8 euros; closing time: 22:00; noise: moderate (+ relaxed atmosphere; − background noise) C) Engineering Lab — cost: free; closing time: 19:00; equipment: specialist workstations (+ reliable technical equipment; − earlier closing time) D) Online Session — cost: free; travel: none; access: from home (+ no travel; − less social interaction)",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 0.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_min": 0,
+      "intended_word_max": 0,
+      "candidate_action": null,
+      "selected_action": null
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m leaning toward Option B, Riverside Cafe, since the relaxed atmosphere would help us stay focused despite some background noise.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 941,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m kind of leaning toward Option A, the Central Library, since it’s quiet and predictable, which really helps when we need to focus.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 972,
+      "output_tokens": 29,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option C stands out with its specialist workstations, offering reliable technical equipment that supports focused project work efficiently.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 997,
+      "output_tokens": 21,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’d lean toward Option A, the Central Library, since it’s quiet and predictable, which feels best for keeping focused on our project work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1062,
+      "output_tokens": 29,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Thinking it over, Option A’s quiet and predictable vibe probably suits our project focus better than Option B’s more relaxed but noisier environment.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors A: quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1152,
+      "output_tokens": 28,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors A: quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors A: quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I support Option B, Riverside Cafe, because its relaxed atmosphere makes it easier to stay focused even with some background noise.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1102,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I see why Option B’s relaxed vibe could help, Ben.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 7 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1191,
+      "output_tokens": 13,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 7 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 7 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I support Option B, Riverside Cafe, since the 8-euro cost fits well within our budget and suits our need for a comfortable work setting.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of 8 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cost",
+          "public_value": "8 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1173,
+      "output_tokens": 30,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of 8 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cost",
+          "public_value": "8 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of 8 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cost",
+          "public_value": "8 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Nora, can you clarify what you mean by Option A being quiet and predictable, and how that shapes your preference compared to Option B’s relaxed atmosphere?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A, B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A,B|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1151,
+      "output_tokens": 31,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A, B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A,B|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A, B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A,B|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Sure, I think Option A feels more stable because it’s consistently quiet, which helps me concentrate better than the occasional noise in Option B.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1220,
+      "output_tokens": 28,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Option A’s quiet and predictable setting feels like a safer bet for focused work compared to the more variable noise at Option B.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1185,
+      "output_tokens": 25,
+      "intended_word_min": 8,
+      "intended_word_max": 20,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Nora, I see your point about Option A’s quiet and predictable environment supporting focus well, and Ben’s view on Option B’s relaxed atmosphere is valid too.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 12 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1068,
+      "output_tokens": 33,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 12 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 12 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I lean toward Option B because the closing time of 22:00 fits well with our schedule and supports focused work.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 22:00 fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "closing time",
+          "public_value": "22:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1108,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 22:00 fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "closing time",
+          "public_value": "22:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 22:00 fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "closing time",
+          "public_value": "22:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "You make a good point about Option B’s atmosphere, Ben.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 14 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1076,
+      "output_tokens": 13,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 14 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 14 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m leaning more toward Option A since it’s free, which really fits with keeping things affordable for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of free fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "free"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1072,
+      "output_tokens": 22,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of free fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "free"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of free fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "free"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Nora, can you clarify how the quiet and predictable environment of Option A specifically helps your focus compared to other factors like cost or closing time?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1095,
+      "output_tokens": 29,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Option A’s quiet and predictable environment helps me stay focused better than factors like cost or closing time because I find less distraction there, which is crucial for the kind of project work we need to do.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1168,
+      "output_tokens": 40,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’d say Option A’s quiet and predictable vibe is what really helps me focus best in our project work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1163,
+      "output_tokens": 22,
+      "intended_word_min": 8,
+      "intended_word_max": 20,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Nora, your point about Option A’s quiet and predictable environment clearly supports focused work.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 19 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.25,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1095,
+      "output_tokens": 18,
+      "intended_word_min": 2,
+      "intended_word_max": 11,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 19 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 19 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Between Option B and Option A, I favor Option B because its relaxed atmosphere better supports the focused project work we need.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.48,
+      "repair_count": 0,
+      "issue_event": "opened:i003",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1132,
+      "output_tokens": 24,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": "i003",
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m leaning toward Option A because the closing time of 20:00 fits well with what I need for focused project work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 20:00 fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "closing time",
+          "public_value": "20:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1093,
+      "output_tokens": 26,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 20:00 fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "closing time",
+          "public_value": "20:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 20:00 fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "closing time",
+          "public_value": "20:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I support Option C because the specialist workstations there provide the reliable technical equipment we need for focused project work.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.63,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1084,
+      "output_tokens": 22,
+      "intended_word_min": 11,
+      "intended_word_max": 24,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Mira, could you explain how the earlier closing time at Option C affects your preference despite the benefit of the specialist workstations?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about C means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|C|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.44,
+      "repair_count": 0,
+      "issue_event": "opened:i004",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1119,
+      "output_tokens": 26,
+      "intended_word_min": 9,
+      "intended_word_max": 21,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about C means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|C|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about C means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|C|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Option C’s earlier closing time does limit our hours, but the specialist workstations there provide essential reliable equipment for focused project work.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": "continued",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 1176,
+      "output_tokens": 26,
+      "intended_word_min": 8,
+      "intended_word_max": 22,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 26,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The current leading options are Cafe and Library. Please focus the final discussion on that comparison.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 0.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_min": 0,
+      "intended_word_max": 0,
+      "candidate_action": null,
+      "selected_action": null
+    },
+    {
+      "index": 27,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I guess I can see the appeal of Option B’s relaxed atmosphere, so I’d be okay with going with that if it helps us all agree.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.6363787878787879,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.6363787878787879,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": null
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B",
+        "A"
+      ],
+      "prompt_tokens": 1166,
+      "output_tokens": 30,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.6363787878787879,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.6363787878787879,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 28,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I can make Option B acceptable since its relaxed atmosphere provides a workable environment for focused project work.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.7556818181818182,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.7556818181818182,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": null
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B",
+        "A"
+      ],
+      "prompt_tokens": 1112,
+      "output_tokens": 19,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.7556818181818182,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.7556818181818182,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 29,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I now lean toward Option B, Riverside Cafe, because its relaxed atmosphere better supports the focused project work we need, moving away from Option C.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "urgency": 0.835,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C"
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B",
+        "A"
+      ],
+      "prompt_tokens": 1164,
+      "output_tokens": 29,
+      "intended_word_min": 11,
+      "intended_word_max": 28,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please cast one final vote for exactly one option.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 0.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_min": 0,
+      "intended_word_max": 0,
+      "candidate_action": null,
+      "selected_action": null
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m switching from Option A to vote for Option B, since the relaxed atmosphere seems to better support our focused work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Public discussion changed the balance from A: relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A"
+        },
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A"
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 1119,
+      "output_tokens": 24,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Public discussion changed the balance from A: relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A"
+        },
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Public discussion changed the balance from A: relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A"
+        },
+        "vote_option": "B",
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m voting for Option B, Riverside Cafe, since its relaxed atmosphere fits well with our need for focused project work.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 1033,
+      "output_tokens": 24,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I vote for Option B, Riverside Cafe, because the relaxed atmosphere supports the focused project work we need.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 1.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 1036,
+      "output_tokens": 21,
+      "intended_word_min": 7,
+      "intended_word_max": 19,
+      "candidate_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "selected_action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      }
+    },
+    {
+      "index": 34,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The result is successful: Cafe.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "urgency": 0.0,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_min": 0,
+      "intended_word_max": 0,
+      "candidate_action": null,
+      "selected_action": null
+    }
+  ],
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m leaning toward Option B, Riverside Cafe, since the relaxed atmosphere would help us stay focused despite some background noise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m kind of leaning toward Option A, the Central Library, since it’s quiet and predictable, which really helps when we need to focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option C stands out with its specialist workstations, offering reliable technical equipment that supports focused project work efficiently.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": "needs a location that supports focused project work",
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’d lean toward Option A, the Central Library, since it’s quiet and predictable, which feels best for keeping focused on our project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors A: quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Thinking it over, Option A’s quiet and predictable vibe probably suits our project focus better than Option B’s more relaxed but noisier environment.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option B, Riverside Cafe, because its relaxed atmosphere makes it easier to stay focused even with some background noise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 7 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I see why Option B’s relaxed vibe could help, Ben.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of 8 euros fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cost",
+          "public_value": "8 euros"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option B, Riverside Cafe, since the 8-euro cost fits well within our budget and suits our need for a comfortable work setting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A, B means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A,B|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, can you clarify what you mean by Option A being quiet and predictable, and how that shapes your preference compared to Option B’s relaxed atmosphere?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Sure, I think Option A feels more stable because it’s consistently quiet, which helps me concentrate better than the occasional noise in Option B.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i001",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A’s quiet and predictable setting feels like a safer bet for focused work compared to the more variable noise at Option B.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 12 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, I see your point about Option A’s quiet and predictable environment supporting focus well, and Ben’s view on Option B’s relaxed atmosphere is valid too.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 22:00 fits my priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "closing time",
+          "public_value": "22:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I lean toward Option B because the closing time of 22:00 fits well with our schedule and supports focused work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors C: reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option C offers specialist workstations, providing reliable technical equipment that better supports focused project work despite the earlier closing time.",
+      "validation_errors": [
+        "missing required option mention: A"
+      ],
+      "repair_text": "Compared to A’s standard desks and later closing time at 20:00, C’s specialist workstations offer more reliable technical equipment despite closing earlier.",
+      "repair_errors": [
+        "missing required option mention: C"
+      ],
+      "final_status": "dropped"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Acknowledge the useful point from turn 14 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "You make a good point about Option B’s atmosphere, Ben.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the cost of free fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "free"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m leaning more toward Option A since it’s free, which really fits with keeping things affordable for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Ask what the visible point about A means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|A|p1",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, can you clarify how the quiet and predictable environment of Option A specifically helps your focus compared to other factors like cost or closing time?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option A’s quiet and predictable environment helps me stay focused better than factors like cost or closing time because I find less distraction there, which is crucial for the kind of project work we need to do.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "comment",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "quiet and predictable",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "quiet and predictable"
+        },
+        "personal_context": null,
+        "issue_id": "i002",
+        "issue_effect": "continue",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’d say Option A’s quiet and predictable vibe is what really helps me focus best in our project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.25,
+        "act": "acknowledge",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Acknowledge the useful point from turn 19 without changing stance",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Nora, your point about Option A’s quiet and predictable environment clearly supports focused work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.48,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "The trade-off favors B: relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Between Option B and Option A, I favor Option B because its relaxed atmosphere better supports the focused project work we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "the closing time of 20:00 fits my priority",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "closing time",
+          "public_value": "20:00"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I’m leaning toward Option A because the closing time of 20:00 fits well with what I need for focused project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.63,
+        "act": "support",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I support Option C because the specialist workstations there provide the reliable technical equipment we need for focused project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 0.44,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Ask what the visible point about C means for that participant's choice",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": "open",
+        "issue_response_kind": null,
+        "question_intent": "clarification",
+        "question_key": "clarification|C|p3",
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Mira, could you explain how the earlier closing time at Option C affects your preference despite the benefit of the specialist workstations?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "reliable technical equipment",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment",
+          "public_value": "specialist workstations"
+        },
+        "personal_context": null,
+        "issue_id": "i004",
+        "issue_effect": "answered",
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "Option C’s earlier closing time does limit our hours, but the specialist workstations there provide essential reliable equipment for focused project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 0.6363787878787879,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I guess I can see the appeal of Option B’s relaxed atmosphere, so I’d be okay with going with that if it helps us all agree.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.7556818181818182,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": null
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I can make Option B acceptable since its relaxed atmosphere provides a workable environment for focused project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 0.835,
+        "act": "compromise",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "relaxed atmosphere"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C"
+        },
+        "vote_option": null,
+        "stimulus_id": null
+      },
+      "raw_text": "I now lean toward Option B, Riverside Cafe, because its relaxed atmosphere better supports the focused project work we need, moving away from Option C.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Public discussion changed the balance from A: relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A"
+        },
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "raw_text": "I’m switching from Option A to vote for Option B, since the relaxed atmosphere seems to better support our focused work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "raw_text": "I’m voting for Option B, Riverside Cafe, since its relaxed atmosphere fits well with our need for focused project work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "urgency": 1.0,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "relaxed atmosphere",
+        "reason_source": null,
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "issue_response_kind": null,
+        "question_intent": null,
+        "question_key": null,
+        "stance_update": null,
+        "vote_option": "B",
+        "stimulus_id": null
+      },
+      "raw_text": "I vote for Option B, Riverside Cafe, because the relaxed atmosphere supports the focused project work we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted"
+    }
+  ],
+  "validation_failures": {
+    "option_mention": 2
+  },
+  "distinct_supporters": {
+    "A": [
+      "p1"
+    ],
+    "B": [
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "C": [
+      "p3"
+    ],
+    "D": []
+  },
+  "distinct_concern_raisers": {
+    "A": [],
+    "B": [],
+    "C": [],
+    "D": []
+  },
+  "switch_decisions": [
+    {
+      "participant_id": "p1",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "A",
+      "target_option": "B",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 21,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 22,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "C",
+      "target_option": "B",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 21,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 27,
+      "current_option": "C",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 22,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p1",
+      "phase": "NARROWING",
+      "turn_index": 28,
+      "current_option": "A",
+      "target_option": "B",
+      "target_evidence": 0.7939,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.4566,
+      "probability": 0.75,
+      "latest_external_evidence_turn": 21,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 28,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.5939,
+      "evidence_margin": -0.2566,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 27,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 28,
+      "current_option": "C",
+      "target_option": "B",
+      "target_evidence": 0.5939,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.2566,
+      "probability": 0.6705,
+      "latest_external_evidence_turn": 27,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 28,
+      "current_option": "C",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 22,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p1",
+      "phase": "NARROWING",
+      "turn_index": 29,
+      "current_option": "A",
+      "target_option": "B",
+      "target_evidence": 1.0,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.6626,
+      "probability": 0.75,
+      "latest_external_evidence_turn": 28,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p2",
+      "phase": "NARROWING",
+      "turn_index": 29,
+      "current_option": "B",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.8505,
+      "evidence_margin": -0.5131,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 28,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 29,
+      "current_option": "C",
+      "target_option": "B",
+      "target_evidence": 1.0,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.6626,
+      "probability": 0.75,
+      "latest_external_evidence_turn": 27,
+      "allowed": true,
+      "rejection_reason": ""
+    },
+    {
+      "participant_id": "p3",
+      "phase": "NARROWING",
+      "turn_index": 29,
+      "current_option": "C",
+      "target_option": "A",
+      "target_evidence": 0.3374,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.0,
+      "probability": 0.478,
+      "latest_external_evidence_turn": 22,
+      "allowed": false,
+      "rejection_reason": "insufficient_margin"
+    },
+    {
+      "participant_id": "p1",
+      "phase": "VOTING",
+      "turn_index": 31,
+      "current_option": "A",
+      "target_option": "B",
+      "target_evidence": 1.0,
+      "current_evidence": 0.3374,
+      "evidence_margin": 0.6626,
+      "probability": 0.75,
+      "latest_external_evidence_turn": 29,
+      "allowed": true,
+      "rejection_reason": ""
+    }
+  ],
+  "first_round_votes": {},
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "B"
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "B"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "metrics": {
+    "turns": {
+      "participant_turns": 30,
+      "voluntary_turns": 21,
+      "mandatory_answers": 3,
+      "openings": 3,
+      "votes": 3,
+      "moderator_turns": 4,
+      "participant_turns_by_id": {
+        "p2": 8,
+        "p1": 13,
+        "p3": 9
+      },
+      "voluntary_turns_by_id": {
+        "p1": 9,
+        "p2": 6,
+        "p3": 6
+      },
+      "average_words_by_id": {
+        "p1": 21.38,
+        "p2": 21.88,
+        "p3": 20.78
+      },
+      "average_voluntary_words_by_id": {
+        "p1": 19.22,
+        "p2": 22.5,
+        "p3": 21.5
+      },
+      "comparable_voluntary_turns_by_id": {
+        "p1": 7,
+        "p2": 4,
+        "p3": 3
+      },
+      "average_comparable_voluntary_words_by_id": {
+        "p1": 21.86,
+        "p2": 21.75,
+        "p3": 21.0
+      },
+      "action_counts": {
+        "opening": 3,
+        "support": 7,
+        "compare": 2,
+        "acknowledge": 4,
+        "ask": 3,
+        "answer": 3,
+        "comment": 2,
+        "compromise": 3,
+        "vote": 3
+      }
+    },
+    "traits": {
+      "p1": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 4,
+        "visible_switches": 1,
+        "switch_rate_per_opportunity": 0.25,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      },
+      "p2": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 3,
+        "visible_switches": 0,
+        "switch_rate_per_opportunity": 0.0,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      },
+      "p3": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2,
+        "hard_blocker": false,
+        "switch_opportunities": 6,
+        "visible_switches": 1,
+        "switch_rate_per_opportunity": 0.167,
+        "hard_blocker_nonpreferred_acceptances": 0,
+        "hard_blocker_nonpreferred_votes": 0
+      }
+    },
+    "generation": {
+      "repairs": 0,
+      "dropped_turns": 1,
+      "liveness_forced_turns": 0,
+      "suppressed_repetitions": 1,
+      "attempts": 31,
+      "validation_failures": {
+        "option_mention": 2
+      },
+      "repair_rate": 0.0,
+      "drop_rate": 0.032,
+      "repetition_repairs": 0,
+      "vote_switch_attempts": 1,
+      "vote_switch_accepted": 1,
+      "vote_switch_failures": 0
+    },
+    "issues": {
+      "opened": 4,
+      "resolved": 3,
+      "stale": 1,
+      "open": 0,
+      "follow_ups": 6,
+      "by_kind": {
+        "question": 3,
+        "comparison": 1
+      },
+      "outcomes": {
+        "answered": 3,
+        "none": 1
+      },
+      "questions_answered": 3,
+      "questions_resolved": 3,
+      "concerns_resolved": 0,
+      "concerns_maintained": 0,
+      "concerns_partially_addressed": 0,
+      "relevant_concern_responders": 0,
+      "same_attribute_mitigations": 0,
+      "provenance": []
+    },
+    "stances": {
+      "visible_switches": 2,
+      "public_acceptance_count": 4,
+      "public_preferences": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "B"
+      },
+      "public_acceptances": {
+        "p1": [
+          "A",
+          "B"
+        ],
+        "p2": [],
+        "p3": [
+          "B",
+          "C"
+        ]
+      },
+      "switch_decisions": [
+        {
+          "participant_id": "p1",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "A",
+          "target_option": "B",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 21,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 22,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "C",
+          "target_option": "B",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 21,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 27,
+          "current_option": "C",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 22,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p1",
+          "phase": "NARROWING",
+          "turn_index": 28,
+          "current_option": "A",
+          "target_option": "B",
+          "target_evidence": 0.7939,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.4566,
+          "probability": 0.75,
+          "latest_external_evidence_turn": 21,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 28,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.5939,
+          "evidence_margin": -0.2566,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 27,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 28,
+          "current_option": "C",
+          "target_option": "B",
+          "target_evidence": 0.5939,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.2566,
+          "probability": 0.6705,
+          "latest_external_evidence_turn": 27,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 28,
+          "current_option": "C",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 22,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p1",
+          "phase": "NARROWING",
+          "turn_index": 29,
+          "current_option": "A",
+          "target_option": "B",
+          "target_evidence": 1.0,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.6626,
+          "probability": 0.75,
+          "latest_external_evidence_turn": 28,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p2",
+          "phase": "NARROWING",
+          "turn_index": 29,
+          "current_option": "B",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.8505,
+          "evidence_margin": -0.5131,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 28,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 29,
+          "current_option": "C",
+          "target_option": "B",
+          "target_evidence": 1.0,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.6626,
+          "probability": 0.75,
+          "latest_external_evidence_turn": 27,
+          "allowed": true,
+          "rejection_reason": ""
+        },
+        {
+          "participant_id": "p3",
+          "phase": "NARROWING",
+          "turn_index": 29,
+          "current_option": "C",
+          "target_option": "A",
+          "target_evidence": 0.3374,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.0,
+          "probability": 0.478,
+          "latest_external_evidence_turn": 22,
+          "allowed": false,
+          "rejection_reason": "insufficient_margin"
+        },
+        {
+          "participant_id": "p1",
+          "phase": "VOTING",
+          "turn_index": 31,
+          "current_option": "A",
+          "target_option": "B",
+          "target_evidence": 1.0,
+          "current_evidence": 0.3374,
+          "evidence_margin": 0.6626,
+          "probability": 0.75,
+          "latest_external_evidence_turn": 29,
+          "allowed": true,
+          "rejection_reason": ""
+        }
+      ]
+    },
+    "public_evidence": {
+      "distinct_supporters": {
+        "A": [
+          "p1"
+        ],
+        "B": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "C": [
+          "p3"
+        ],
+        "D": []
+      },
+      "distinct_concern_raisers": {
+        "A": [],
+        "B": [],
+        "C": [],
+        "D": []
+      }
+    },
+    "realization": {
+      "word_budget_by_id": {
+        "p1": [
+          {
+            "turn": 3,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 5,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 6,
+            "act": "compare",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 23,
+            "within_target": true
+          },
+          {
+            "turn": 8,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 10,
+            "within_target": true
+          },
+          {
+            "turn": 11,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 24,
+            "within_target": false
+          },
+          {
+            "turn": 12,
+            "act": "comment",
+            "intended_min": 8,
+            "intended_max": 20,
+            "realized": 23,
+            "within_target": false
+          },
+          {
+            "turn": 15,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 10,
+            "within_target": true
+          },
+          {
+            "turn": 16,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 18,
+            "within_target": true
+          },
+          {
+            "turn": 18,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 37,
+            "within_target": false
+          },
+          {
+            "turn": 19,
+            "act": "comment",
+            "intended_min": 8,
+            "intended_max": 20,
+            "realized": 19,
+            "within_target": true
+          },
+          {
+            "turn": 22,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 21,
+            "within_target": true
+          },
+          {
+            "turn": 27,
+            "act": "compromise",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 26,
+            "within_target": true
+          },
+          {
+            "turn": 31,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 21,
+            "within_target": false
+          }
+        ],
+        "p2": [
+          {
+            "turn": 2,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 20,
+            "within_target": true
+          },
+          {
+            "turn": 7,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 21,
+            "within_target": true
+          },
+          {
+            "turn": 9,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 24,
+            "within_target": true
+          },
+          {
+            "turn": 10,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 26,
+            "within_target": false
+          },
+          {
+            "turn": 14,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 20,
+            "within_target": true
+          },
+          {
+            "turn": 21,
+            "act": "compare",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 22,
+            "within_target": true
+          },
+          {
+            "turn": 24,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 22,
+            "within_target": false
+          },
+          {
+            "turn": 32,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 20,
+            "within_target": false
+          }
+        ],
+        "p3": [
+          {
+            "turn": 4,
+            "act": "opening",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 18,
+            "within_target": true
+          },
+          {
+            "turn": 13,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 26,
+            "within_target": false
+          },
+          {
+            "turn": 17,
+            "act": "ask",
+            "intended_min": 9,
+            "intended_max": 21,
+            "realized": 26,
+            "within_target": false
+          },
+          {
+            "turn": 20,
+            "act": "acknowledge",
+            "intended_min": 2,
+            "intended_max": 11,
+            "realized": 14,
+            "within_target": false
+          },
+          {
+            "turn": 23,
+            "act": "support",
+            "intended_min": 11,
+            "intended_max": 24,
+            "realized": 20,
+            "within_target": true
+          },
+          {
+            "turn": 25,
+            "act": "answer",
+            "intended_min": 8,
+            "intended_max": 22,
+            "realized": 22,
+            "within_target": true
+          },
+          {
+            "turn": 28,
+            "act": "compromise",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 18,
+            "within_target": true
+          },
+          {
+            "turn": 29,
+            "act": "compromise",
+            "intended_min": 11,
+            "intended_max": 28,
+            "realized": 25,
+            "within_target": true
+          },
+          {
+            "turn": 33,
+            "act": "vote",
+            "intended_min": 7,
+            "intended_max": 19,
+            "realized": 18,
+            "within_target": true
+          }
+        ]
+      },
+      "within_target_rate": 0.667
+    },
+    "narrowing": {
+      "participant_turns": 3,
+      "focused_turns": 3,
+      "focus_adherence": 1.0
+    },
+    "votes": {
+      "first_round": {},
+      "final": {
+        "p1": "B",
+        "p2": "B",
+        "p3": "B"
+      },
+      "records_by_round": {
+        "1": {
+          "p1": "valid",
+          "p2": "valid",
+          "p3": "valid"
+        }
+      },
+      "non_valid_final_statuses": 0,
+      "protocol_degraded": false,
+      "protocol_errors": [],
+      "outcome": "successful",
+      "final_option": "B"
+    },
+    "coverage": {
+      "A": {
+        "substantive_count": 9,
+        "participants": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "actions": {
+          "support": 3,
+          "compare": 2,
+          "ask": 2,
+          "answer": 2
+        }
+      },
+      "B": {
+        "substantive_count": 14,
+        "participants": [
+          "p1",
+          "p2",
+          "p3"
+        ],
+        "actions": {
+          "compare": 2,
+          "support": 3,
+          "ask": 1,
+          "answer": 1,
+          "compromise": 6,
+          "vote": 1
+        }
+      },
+      "C": {
+        "substantive_count": 4,
+        "participants": [
+          "p2",
+          "p3"
+        ],
+        "actions": {
+          "support": 1,
+          "ask": 1,
+          "answer": 1,
+          "compromise": 1
+        }
+      },
+      "D": {
+        "substantive_count": 0,
+        "participants": [],
+        "actions": {}
+      }
+    },
+    "tokens": {
+      "llm_calls": 32,
+      "runtime_llm_calls": 32,
+      "setup_llm_calls": 0,
+      "repair_calls": 1,
+      "input_tokens": 34669,
+      "output_tokens": 807
+    }
+  }
+}

@@ -1,5 +1,5 @@
-"""Evaluation metrics package for the dialogue simulator."""
+"""Evaluation metrics for the autonomous simulator runtime."""
 
-from .eval import flat_metrics_for, metrics_for, token_summary_for
+from .eval import flat_metrics_for, metrics_for
 
-__all__ = ["flat_metrics_for", "metrics_for", "token_summary_for"]
+__all__ = ["flat_metrics_for", "metrics_for"]

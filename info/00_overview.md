@@ -1,59 +1,40 @@
-# 00 — Overview
+# Runtime overview
 
-The project is an option-grounded multi-user decision simulator. It creates 2-7 simulated participants, gives them tunable behavioral parameters, and lets them discuss a fixed option board until the run ends as `successful`, `majority`, or `unresolved`.
+The project is an option-grounded multi-user decision simulator. It is not a generic chatbot and not an open-ended social simulation. A fixed public option board defines the objective facts. Several simulated users discuss those options and close with a `successful`, `majority`, or `unresolved` result.
 
-The target is not arbitrary chat. The target is an explainable simulator:
-
-```text
-topic/manual environment
-  -> option board
-  -> simulated users with hidden traits, age, speech_style, profile, and initial option ranks
-  -> explicit phases, option coverage, and local interaction threads
-  -> controller routes speaker / macro act / target / focus
-  -> LLM renders one utterance
-  -> deterministic critical interpretation and grounding checks
-  -> observer updates visible state, option ranks, threads, and coverage
-  -> consensus manager computes outcome from visible evidence
-```
-
-## Current stance model
-
-Each sim stores one rank for every option:
+The central design decision is that structured simulator actions are authoritative:
 
 ```text
-5 = preferred
-4 = acceptable
-3 = neutral / untested
-2 = disliked but negotiable
-1 = rejected / hard blocked
+OPENING -> DISCUSSION -> NARROWING -> VOTING -> CLOSED
+
+all eligible simulators evaluate their local policy in Python
+    -> each proposes silence or one complete UserAction
+    -> the floor selects one bid without rewriting it
+    -> the dialogue LLM realizes that action as natural language
+    -> minimal validation accepts, repairs once, or drops the rendering
+    -> state updates are committed from UserAction
 ```
 
-Derived helpers such as `top_option()`, `acceptable_options()`, `disliked_options()`, and `rejected_options()` are computed from this table. There are no separate runtime preference/rejection containers.
+Each simulator privately owns its preference state, goal, background, traits, possible hard-blocker status, action choice, stance evolution, and final vote. The environment owns only protocol: phases, mandatory openings and votes, direct-answer obligations, light floor arbitration, broad group pacing, one active issue, neutral moderator messages, candidate derivation, vote counting, and one bounded re-vote. Public candidate evidence is participant-distinct, direct-answer obligations outrank phase transitions, and preferred switches require new external evidence plus a short hysteresis window.
 
-## Current participant model
+The runtime does not parse utterances to infer acts, reasons, stance changes, issues, or votes. Text checking is limited to hard failures such as malformed output, missing required option mentions, premature formal-vote language, invented concrete facts, contradictory concrete comparisons, irrelevant direct answers, ambiguous votes, hard-blocker contradictions, issue-effect visibility, and near-verbatim repetition. Pairwise comparisons use the named/focused peer, while lowest/highest and shortest/longest claims are checked globally. Natural acceptance and switch expressions are checked only for broad visible consistency with the authoritative structured action; a discussion switch may name only the new preference because the old preference is already public, whereas a formal vote switch uses one vote-specific old-to-new bridge contract.
 
-A sim has hidden OCEAN traits that derive five simulator parameters (engagement, verbosity, directness, stubbornness, switch_resistance) for behavior. Age, speech_style, and profile are descriptive metadata for plausibility and surface wording.
-
-Core rule:
+The active source modules are:
 
 ```text
-the five parameters decide behavior; speech_style changes wording only
+src/
+    aliases.py
+    builders.py
+    config_loader.py
+    consensus.py
+    dialogue.py
+    llm_client.py
+    logger.py
+    models.py
+    prompts.py
+    simulator.py
+    utils.py
+    validation.py
 ```
 
-Age/profile plausibility is checked during setup so generated personas do not contain obvious contradictions.
-
-## Current progress model
-
-There is no content agenda. Global progress is represented by explicit phases,
-per-option visible coverage, and local question/concern/blocker/comparison
-threads. Persona-specific reasons remain attached to option stances.
-
-## Current act model
-
-The controller uses a compact macro-act vocabulary:
-
-```text
-opening, support, concern, ask, answer, compare, comment, compromise, process, vote, closing
-```
-
-Only the macro set is used so routing, prompts, and logs remain aligned.
+The former controller package, parser, semantic interpreter, observer, style tracker, complex thread engine, and validator-LLM infrastructure have been removed.

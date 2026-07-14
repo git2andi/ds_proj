@@ -1,68 +1,91 @@
-"""Typed objects for the option-grounded multi-user simulator.
+"""Domain models for the autonomous user-simulator runtime.
 
-The project simulates several user simulators in a shared decision environment.
-LLMs render utterances, but the environment owns the option board, simulator
-parameters, thread state, routing state, visible commitments, and outcome logic.
+The structured :class:`UserAction` is the semantic authority.  Accepted natural
+language is a rendering of that action; dialogue state is never reconstructed by
+parsing the utterance.
 """
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Literal
-
-# Controller runtime state lives in controller/state.py; re-exported here so
-# every module keeps one stable import surface for the typed objects.
-from controller.state import (
-    BlockingStrength,
-    Phase,
-    QuestionScope,
-    RepairState,
-    ThreadState,
-    ThreadStatus,
-    ThreadType,
-)
-
-# Intentional re-exports (stable import surface): the controller enums below
-# are unused inside this module but imported from `models` across src/tests.
-# Declared so static tools count them as used; nothing star-imports models.
-__all__ = [
-    "BlockingStrength", "Phase", "QuestionScope", "RepairState",
-    "ThreadState", "ThreadStatus", "ThreadType",
-]
+from typing import Any
 
 
-class ActType(str, Enum):
-    """Compact dialogue-act vocabulary used by routing, prompting, and logs."""
+class Phase(str, Enum):
+    OPENING = "OPENING"
+    DISCUSSION = "DISCUSSION"
+    NARROWING = "NARROWING"
+    VOTING = "VOTING"
+    CLOSED = "CLOSED"
 
+
+class ActionType(str, Enum):
     OPENING = "opening"
     SUPPORT = "support"
     CONCERN = "concern"
     ASK = "ask"
-    ANSWER = "answer"      # route-driven by an active question thread, never sampled
+    ANSWER = "answer"
     COMPARE = "compare"
-    COMMENT = "comment"    # light contribution: acknowledge/interpret/state a priority
-    COMPROMISE = "compromise"  # narrowing/repair prompts only, not sampled
-    PROCESS = "process"        # participant-led narrowing/procedure only, not sampled
+    ACKNOWLEDGE = "acknowledge"
+    COMMENT = "comment"
+    COMPROMISE = "compromise"
     VOTE = "vote"
-    CLOSING = "closing"
 
 
-# Act groupings shared across the routing/observation/validation modules.
-_DECISION_ACTS = {ActType.VOTE}
-_DISCUSSION_ACTS = {
-    ActType.SUPPORT,
-    ActType.CONCERN,
-    ActType.ASK,
-    ActType.ANSWER,
-    ActType.COMPARE,
-    ActType.COMMENT,
-    ActType.COMPROMISE,
-    ActType.PROCESS,
-}
+class IssueKind(str, Enum):
+    QUESTION = "question"
+    CONCERN = "concern"
+    COMPARISON = "comparison"
 
 
-LengthHint = Literal["short", "medium", "long"]
+class IssueStatus(str, Enum):
+    OPEN = "open"
+    RESOLVED = "resolved"
+    STALE = "stale"
+
+
+class IssueEffect(str, Enum):
+    OPEN = "open"
+    CONTINUE = "continue"
+    ANSWERED = "answered"
+    PARTIAL = "partial"
+    RESOLVE = "resolve"
+    MAINTAIN = "maintain"
+
+
+class QuestionIntent(str, Enum):
+    RATIONALE = "rationale"
+    IMPACT = "impact"
+    ACCEPTABILITY = "acceptability"
+    COMPARISON = "comparison"
+    CLARIFICATION = "clarification"
+
+
+class IssueResponseKind(str, Enum):
+    MITIGATION = "mitigation"
+    TRADE_OFF = "trade_off"
+    AGREEMENT = "agreement"
+
+
+class StimulusKind(str, Enum):
+    COVERAGE = "coverage"
+    STALL = "stall"
+
+
+class VoteStatus(str, Enum):
+    VALID = "valid"
+    ABSTAINED = "abstained"
+    UNCLEAR = "unclear"
+    GENERATION_FAILED = "generation_failed"
+
+
+class StanceUpdateKind(str, Enum):
+    MAKE_ACCEPTABLE = "make_acceptable"
+    REMOVE_ACCEPTANCE = "remove_acceptance"
+    SWITCH_PREFERRED = "switch_preferred"
+    REJECT = "reject"
 
 
 @dataclass(slots=True)
@@ -75,44 +98,28 @@ class OptionCard:
     short_name: str = ""
 
     def public_line(self) -> str:
-        """Complete public option card shown to both participants and readers.
-
-        Runtime generation must never receive option facts that are hidden from
-        the visible board. Therefore attributes and the stable upside/concern
-        are not truncated here.
-        """
-        attr_bits = [
-            f"{key.replace('_', ' ')}: {value}"
-            for key, value in ordered_attrs(self.attrs)
-        ]
-        details = "; ".join(attr_bits)
-        suffix_bits: list[str] = []
+        attrs = "; ".join(
+            f"{key.replace('_', ' ')}: {value}" for key, value in self.attrs.items()
+        )
+        extras: list[str] = []
         if self.upside:
-            suffix_bits.append(f"+ {self.upside.strip().rstrip(' .;:')}")
+            extras.append(f"+ {self.upside.strip().rstrip(' .;:')}")
         if self.concern:
-            suffix_bits.append(f"− {self.concern.strip().rstrip(' .;:')}")
-        suffix = f" ({'; '.join(suffix_bits)})" if suffix_bits else ""
-        return f"{self.id}) {self.name}" + (f" — {details}" if details else "") + suffix
+            extras.append(f"− {self.concern.strip().rstrip(' .;:')}")
+        suffix = f" ({'; '.join(extras)})" if extras else ""
+        return f"{self.id}) {self.name}" + (f" — {attrs}" if attrs else "") + suffix
 
     def prompt_card(self) -> str:
-        attrs = ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in ordered_attrs(self.attrs))
-        pieces = [
-            f"{self.id}) {self.name}",
-            f"attrs: {attrs}" if attrs else "attrs: none",
-            f"upside: {self.upside}" if self.upside else "",
-            f"concern: {self.concern}" if self.concern else "",
-        ]
-        return "; ".join(p for p in pieces if p)
+        attrs = ", ".join(f"{k.replace('_', ' ')}={v}" for k, v in self.attrs.items())
+        pieces = [f"{self.id}) {self.name}", f"attrs: {attrs}" if attrs else "attrs: none"]
+        if self.upside:
+            pieces.append(f"upside: {self.upside}")
+        if self.concern:
+            pieces.append(f"concern: {self.concern}")
+        return "; ".join(pieces)
 
-
-
-def ordered_attrs(attrs: dict[str, str]) -> list[tuple[str, str]]:
-    """Attributes in the order the setup provided them.
-
-    No hard-coded dimension priority: the setup chooses attributes that are
-    natural for the topic, and its own ordering is kept for display.
-    """
-    return list(attrs.items())
+    def public_values(self) -> list[str]:
+        return [*self.attrs.values(), self.upside, self.concern]
 
 
 @dataclass(slots=True)
@@ -121,11 +128,11 @@ class Scenario:
     options: list[OptionCard]
     shared_context: list[str] = field(default_factory=list)
     environment_type: str = "option_grounded_group_decision"
-    setup_notes: list[str] = field(default_factory=list)  # deterministic setup repairs (e.g. cap clamps)
+    setup_notes: list[str] = field(default_factory=list)
 
     @property
     def option_ids(self) -> list[str]:
-        return [o.id for o in self.options]
+        return [option.id for option in self.options]
 
     def option(self, option_id: str) -> OptionCard:
         for option in self.options:
@@ -135,42 +142,31 @@ class Scenario:
 
 
 @dataclass(slots=True)
-class TraitProfile:
-    openness: int
-    conscientiousness: int
-    extraversion: int
-    agreeableness: int
-    neuroticism: int
-
-
-@dataclass(slots=True)
 class SimulatorParameters:
-    """Operational controls for a simulated user.
+    """Direct, user-facing simulator traits.
 
-    OCEAN traits are hidden setup traits: they only derive these four explicit
-    parameters (and plausible persona content). Routing and prompts read the
-    parameters, never the traits.
-
-    engagement        -> expected speaker frequency / turn share
-    verbosity         -> average utterance length via numeric word budgets
-    directness        -> blunt vs soft wording
-    stubbornness      -> strength of stance defense during discussion
-    switch_resistance -> resistance to final switching, compromise acceptance,
-                         holdout concession, and vote/repair movement
+    The scale is integer 1..5 (low..high).  Normal stubbornness is restricted to
+    1..4; value 5 is reserved for explicit hard blockers.
     """
 
-    engagement: float
-    verbosity: float
-    directness: float
-    stubbornness: float
-    switch_resistance: float = 0.5
+    engagement: int
+    verbosity: int
+    directness: int
+    stubbornness: int
 
-    def clipped(self) -> "SimulatorParameters":
-        return SimulatorParameters(**{name: _clip01(getattr(self, name)) for name in self.__dataclass_fields__})
-
-
-def _clip01(value: float) -> float:
-    return max(0.0, min(1.0, float(value)))
+    def validated(self, *, hard_blocker: bool = False) -> "SimulatorParameters":
+        for name in ("engagement", "verbosity", "directness"):
+            value = int(getattr(self, name))
+            if not 1 <= value <= 5:
+                raise ValueError(f"{name} must be in [1, 5], got {value}")
+            setattr(self, name, value)
+        self.stubbornness = int(self.stubbornness)
+        expected_high = 5 if hard_blocker else 4
+        if hard_blocker:
+            self.stubbornness = 5
+        elif not 1 <= self.stubbornness <= expected_high:
+            raise ValueError(f"normal stubbornness must be in [1, 4], got {self.stubbornness}")
+        return self
 
 
 STANCE_REJECTED = 1
@@ -182,14 +178,6 @@ STANCE_PREFERRED = 5
 
 @dataclass(slots=True)
 class OptionStance:
-    """One simulator's stance toward one option.
-
-    Rank is the single source of truth for preference/rejection buckets:
-    5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected/hard-blocked.
-    Reasons are deliberately short setup hints; they are not hidden transcript
-    facts, only controller guidance for plausible moves.
-    """
-
     option_id: str
     rank: int = STANCE_NEUTRAL
     reason_for: str = ""
@@ -208,7 +196,6 @@ class OptionStance:
 class Persona:
     id: str
     name: str
-    traits: TraitProfile
     sim_params: SimulatorParameters
     background: str
     private_goal: str
@@ -218,10 +205,6 @@ class Persona:
     rejection: str | None = None
     rejection_reason: str = ""
     option_stances: dict[str, OptionStance] = field(default_factory=dict)
-    # Sampled exclusive hard blocker (setup metadata): exactly one preferred
-    # option, every other option hard-rejected (rank 1). Multi-rejection is
-    # represented by the rank table itself; the singular `rejection` field
-    # remains the manual single-rejection input.
     hard_blocker: bool = False
 
     @property
@@ -229,513 +212,332 @@ class Persona:
         return self.preferred_options[0]
 
 
+@dataclass(slots=True, frozen=True)
+class ReasonSource:
+    option_id: str
+    attribute_name: str
+    public_value: str
+
+
+@dataclass(slots=True, frozen=True)
+class StanceUpdate:
+    kind: StanceUpdateKind
+    option_id: str
+    previous_option_id: str | None = None
+
+
 @dataclass(slots=True)
-class MoveIntent:
+class UserAction:
     speaker_id: str
-    act: ActType
-    reason: str
-    # Why the controller selected this turn (trace metadata, no routing effect).
-    # Values: opening, answer_required, thread_hot, thread_cooling, coverage,
-    # continuation, normal, participant_narrowing, vote, vote_clarification,
-    # majority_holdout_repair, split_vote_repair, two_person_deadlock_repair.
-    route_source: str = "normal"
+    wants_to_speak: bool
+    urgency: float
+    act: ActionType
+    option_focus: tuple[str, ...] = ()
     addressee_id: str | None = None
-    option_focus: list[str] = field(default_factory=list)
-    length_hint: LengthHint = "medium"
-    respond_to_turn: int | None = None
-    thread_id: str | None = None       # thread that routed this turn (trace metadata)
-    suppress_name_prefix: bool = False
-    suppress_option_opening: bool = False
-    suppress_i_opening: bool = False
-    suppress_we_opening: bool = False
-    suppress_tail_question: bool = False  # enough questions are open; end on a statement (P2)
-    vary_opening: bool = False
-    avoid_pattern: str | None = None
-    avoid_phrases: list[str] = field(default_factory=list)
-    avoid_reasons: list[str] = field(default_factory=list)  # justification snippets already used this round
-    allow_vote_change: bool = False
-    required_vote: str | None = None   # controller-selected decision target; validation blocks drift
-    old_preference: str | None = None  # controller-visible previous pick for sanctioned switches
-    allowed_reason: str | None = None  # grounded reason fragment the LLM may use for a vote/switch
-    continuation: bool = False        # same-speaker follow-up turn (issue 6): short addendum/clarification
+    reason: str = ""
+    reason_source: ReasonSource | None = None
+    personal_context: str | None = None
+    issue_id: str | None = None
+    issue_effect: IssueEffect | None = None
+    issue_response_kind: IssueResponseKind | None = None
+    question_intent: QuestionIntent | None = None
+    question_key: str | None = None
+    stance_update: StanceUpdate | None = None
+    vote_option: str | None = None
+    stimulus_id: int | None = None
 
-
-# ---------------------------------------------------------------------------
-# Visible-evidence contract (todo_validation item 3)
-#
-# The typed multi-label representation of what ONE final visible utterance
-# publicly says. Populated by the deterministic critical interpretation
-# pipeline, verified against the raw text, and used as the only semantic
-# evidence allowed to update dialogue
-# state. Controller intent is never encoded here: this is visible text only.
-# ---------------------------------------------------------------------------
-
-# Controlled vocabularies shared by deterministic evidence and test fixtures.
-SUPPORT_STRENGTHS = ("weak", "conditional", "firm")
-CONCERN_SEVERITIES = ("ordinary", "hard")
-QUESTION_SCOPES = ("direct", "group", "rhetorical")
-ANSWER_COMPLETENESS = ("full", "partial", "evasive", "unrelated")
-COMMITMENT_KINDS = ("vote", "accept")
-BLOCKER_ACTIONS = ("raised", "resolved")
-CLAIM_KINDS = (
-    "listed_fact",            # exact option-attribute-value or shared-context fact
-    "arithmetic",             # simple reproducible arithmetic over listed values
-    "opinion",                # subjective judgment, never a scenario fact
-    "inference",              # qualified conclusion drawn from listed facts
-    "uncertainty",            # explicit uncertainty or a question about missing info
-    "invented_detail",        # concrete detail not present in the scenario
-    "cross_option_transfer",  # another option's value applied to this option
-    "ungrounded_inference",   # concrete conclusion asserted with no listed support
-    "contradiction",          # directly conflicts with a listed option fact
-)
+    def copy(self) -> "UserAction":
+        """An explicit value copy useful in tests proving floor non-rewriting."""
+        return UserAction(
+            speaker_id=self.speaker_id,
+            wants_to_speak=self.wants_to_speak,
+            urgency=self.urgency,
+            act=self.act,
+            option_focus=tuple(self.option_focus),
+            addressee_id=self.addressee_id,
+            reason=self.reason,
+            reason_source=self.reason_source,
+            personal_context=self.personal_context,
+            issue_id=self.issue_id,
+            issue_effect=self.issue_effect,
+            issue_response_kind=self.issue_response_kind,
+            question_intent=self.question_intent,
+            question_key=self.question_key,
+            stance_update=self.stance_update,
+            vote_option=self.vote_option,
+            stimulus_id=self.stimulus_id,
+        )
 
 
 @dataclass(slots=True)
-class EvidenceSpan:
-    """Exact substring of the visible utterance backing one piece of evidence.
-
-    ``start`` is the character offset in the final utterance; -1 means the
-    span text was reported without a located offset (verification then only
-    checks substring membership).
-    """
-
-    text: str
-    start: int = -1
-
-
-@dataclass(slots=True)
-class OptionMention:
-    option_id: str
-    span: EvidenceSpan
-    order: int = 0                  # textual order among mentions, 0-based
-    alias_form: str = ""            # surface form used ("Museum", "Option B", ...)
-    resolution: str = "explicit"    # explicit | context (pronoun/thread resolved)
-
-
-@dataclass(slots=True)
-class SupportEvidence:
-    option_id: str
-    strength: str                   # SUPPORT_STRENGTHS
-    span: EvidenceSpan
+class ActiveIssue:
+    id: str
+    kind: IssueKind
+    option_focus: tuple[str, ...]
+    opened_by: str
+    addressed_to: str | None
+    summary: str
+    status: IssueStatus
+    opened_at_turn: int
+    last_relevant_turn: int
+    follow_up_count: int = 0
+    source_text: str = ""
+    answered: bool = False
+    outcome: str | None = None
+    close_reason: str = ""
+    reason_source: ReasonSource | None = None
+    issue_key: tuple[str, str] | None = None
+    relevant_responder_ids: set[str] = field(default_factory=set)
+    relevant_response_kinds: Counter[str] = field(default_factory=Counter)
+    same_attribute_mitigation: bool = False
+    owner_last_evaluated_follow_up_count: int = 0
 
 
 @dataclass(slots=True)
-class ConcernEvidence:
-    option_id: str
-    severity: str                   # CONCERN_SEVERITIES ("hard" = rejection-strength)
-    span: EvidenceSpan
+class GroupStimulus:
+    id: int
+    kind: StimulusKind
+    option_focus: tuple[str, ...]
+    prompt_text: str
+    created_at_turn: int
 
 
 @dataclass(slots=True)
-class ComparisonEvidence:
-    option_ids: list[str]
-    span: EvidenceSpan
-    favored: str | None = None      # only when the text visibly favors one side
-    dimension: str | None = None    # only when visible in the text
-
-
-@dataclass(slots=True)
-class QuestionEvidence:
-    """Visible question, detected deterministically (scope + addressee)."""
-
-    scope: str                      # QUESTION_SCOPES
-    span: EvidenceSpan
-    addressee_id: str | None = None  # participant id for direct questions
-    option_ids: list[str] = field(default_factory=list)
-
-
-@dataclass(slots=True)
-class AnswerEvidence:
-    completeness: str               # ANSWER_COMPLETENESS
-    span: EvidenceSpan
-    addresses_target: bool = True
-
-
-@dataclass(slots=True)
-class SofteningEvidence:
-    """Visible stance movement short of a commitment: warming toward an
-    option and/or explicitly conceding a point / moving off an earlier stance."""
-
-    span: EvidenceSpan
-    option_id: str | None = None    # option warmed toward, when visible
-    concession: bool = False        # explicitly yields a prior position
-
-
-@dataclass(slots=True)
-class ProposalEvidence:
-    """Visible compromise/common-ground proposal, including question forms."""
-
-    option_id: str | None
-    span: EvidenceSpan
-
-
-@dataclass(slots=True)
-class CommitmentEvidence:
-    kind: str                       # COMMITMENT_KINDS: vote | accept
-    option_id: str
-    span: EvidenceSpan
-
-
-@dataclass(slots=True)
-class SwitchEvidence:
-    target: str
-    span: EvidenceSpan
-    source: str | None = None       # None when the old pick is not visible
-    reason_span: EvidenceSpan | None = None  # visible reason, when present
-
-
-@dataclass(slots=True)
-class BlockerEvidence:
-    option_id: str
-    action: str                     # BLOCKER_ACTIONS: raised | resolved
-    span: EvidenceSpan
-
-
-@dataclass(slots=True)
-class VisibleEvidence:
-    """Multi-label visible semantics of one final utterance.
-
-    One utterance may carry several evidence types simultaneously (e.g. a
-    concern, a switch commitment with a reason, and a group question); earlier
-    evidence never erases later evidence. Every entry binds to its specific
-    option(s) — nothing applies globally to all mentioned options.
-    """
-
-    utterance: str = ""
-    mentions: list[OptionMention] = field(default_factory=list)
-    supports: list[SupportEvidence] = field(default_factory=list)
-    concerns: list[ConcernEvidence] = field(default_factory=list)
-    comparisons: list[ComparisonEvidence] = field(default_factory=list)
-    questions: list[QuestionEvidence] = field(default_factory=list)
-    answers: list[AnswerEvidence] = field(default_factory=list)
-    softenings: list[SofteningEvidence] = field(default_factory=list)
-    proposals: list[ProposalEvidence] = field(default_factory=list)
-    commitments: list[CommitmentEvidence] = field(default_factory=list)
-    switches: list[SwitchEvidence] = field(default_factory=list)
-    blockers: list[BlockerEvidence] = field(default_factory=list)
-    # References that could not be resolved to exactly one public referent.
-    ambiguous_references: list[EvidenceSpan] = field(default_factory=list)
-    # Whether the utterance addressed the routed public thread (None = no thread).
-    thread_relevant: bool | None = None
-    # Derived primary label for compatibility, logs, and summary metrics only —
-    # never the sole semantic authority over the multi-label evidence above.
-    primary_act: ActType | None = None
-
-    def sole_commitment(self) -> CommitmentEvidence | None:
-        """The single visible commitment, or None when absent or conflicting."""
-        targets = {c.option_id for c in self.commitments}
-        if len(self.commitments) >= 1 and len(targets) == 1:
-            return self.commitments[0]
-        return None
-
-    def evidence_kinds(self) -> set[str]:
-        kinds: set[str] = set()
-        for name, entries in (
-            ("support", self.supports),
-            ("concern", self.concerns),
-            ("comparison", self.comparisons),
-            ("question", self.questions),
-            ("answer", self.answers),
-            ("proposal", self.proposals),
-            ("commitment", self.commitments),
-            ("switch", self.switches),
-        ):
-            if entries:
-                kinds.add(name)
-        # A softening warms toward a specific option; a pure concession (no
-        # target option) is movement off a stance without a visible direction.
-        if any(s.option_id for s in self.softenings):
-            kinds.add("softening")
-        if any(b.action == "raised" for b in self.blockers):
-            kinds.add("blocker")
-        if any(b.action == "resolved" for b in self.blockers):
-            kinds.add("blocker_resolution")
-        if any(s.concession for s in self.softenings):
-            kinds.add("concession")
-        return kinds
-
-
-class AssessmentAction(str, Enum):
-    """Explicit action decided by validation (replaces issue-count logic)."""
-
-    ACCEPT = "accept"
-    ACCEPT_WITH_METRIC = "accept_with_metric"  # safe deviation, telemetry only
-    REPAIR = "repair"
-    FALLBACK = "fallback"
-    DROP = "drop"
-
-
-@dataclass(slots=True)
-class ValidationIssue:
-    code: str
-    explanation: str = ""
-    span: str = ""                  # offending exact span when applicable
+class VoteRecord:
+    participant_id: str
+    round: int
+    status: VoteStatus
     option_id: str | None = None
-    # Blocking issues must never reach the transcript as state evidence; a
-    # candidate that keeps one after repair is replaced or dropped. Non-blocking
-    # issues are worth one repair but may print if repair cannot improve them.
-    blocking: bool = False
+    attempts: int = 0
+    errors: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
-class TurnAssessment:
-    """Validation outcome for one candidate utterance: what to do and why."""
-
-    action: AssessmentAction = AssessmentAction.ACCEPT
-    issues: list[ValidationIssue] = field(default_factory=list)
-    intended_act_realized: bool | None = None    # requested function visibly realized
-    intended_focus_realized: bool | None = None  # requested option focus visibly present
-    notes: str = ""
+class GenerationAttempt:
+    speaker_id: str
+    phase: Phase
+    action: UserAction
+    raw_text: str
+    validation_errors: list[str]
+    repair_text: str | None = None
+    repair_errors: list[str] = field(default_factory=list)
+    final_status: str = "pending"
 
 
 @dataclass(slots=True)
-class OptionCoverage:
-    mentions: int = 0
-    reasons: int = 0
-    objections: int = 0
-    acceptances: int = 0
-    coverage_attempts: int = 0  # times the controller routed a turn to cover this option
+class SwitchDecision:
+    participant_id: str
+    phase: Phase
+    turn_index: int
+    current_option: str
+    target_option: str
+    target_evidence: float
+    current_evidence: float
+    evidence_margin: float
+    probability: float
+    latest_external_evidence_turn: int
+    allowed: bool
+    rejection_reason: str = ""
 
 
 @dataclass(slots=True)
 class ParticipantRuntime:
     persona_id: str
-    turn_count: int = 0
-    last_spoke_turn: int | None = None
-    # Stance ranks are the runtime source of truth.
-    # 5 preferred, 4 acceptable, 3 neutral, 2 disliked, 1 rejected.
-    option_ranks: dict[str, int] = field(default_factory=dict)
-    reasons_for: dict[str, str] = field(default_factory=dict)
-    reasons_against: dict[str, str] = field(default_factory=dict)
-    challenges_received: int = 0
-    concessions_made: int = 0
-    # Current visible discussion stance is separate from the formal vote.
-    current_acceptance: str | None = None
-    public_lean: str | None = None
-    explicit_vote: str | None = None
-    vote_stance: str | None = None
-    already_said: list[str] = field(default_factory=list)
-    switch_events: list[dict] = field(default_factory=list)
+    preferred_option: str
+    ranks: dict[str, int]
+    acceptable_options: set[str] = field(default_factory=set)
+    disliked_options: set[str] = field(default_factory=set)
+    hard_rejected_options: set[str] = field(default_factory=set)
+    public_preference: str | None = None
+    public_acceptances: set[str] = field(default_factory=set)
+    public_rejections: set[str] = field(default_factory=set)
+    stated_reason_keys: set[str] = field(default_factory=set)
+    opened_issue_keys: set[str] = field(default_factory=set)
+    asked_question_keys: set[str] = field(default_factory=set)
+    action_signature_counts: Counter[str] = field(default_factory=Counter)
+    action_signature_contexts: dict[str, str] = field(default_factory=dict)
+    responded_stimuli: set[int] = field(default_factory=set)
+    voluntary_turns: int = 0
+    mandatory_answers: int = 0
+    openings: int = 0
+    votes_cast: int = 0
+    last_action: ActionType | None = None
+    last_spoken_turn: int = -1
+    visible_switches: int = 0
+    last_switch_turn: int = -1
+    last_switch_target: str | None = None
+    last_switch_external_evidence_turn: int = -1
+    switch_opportunities: int = 0
+    switch_cooldown_rejections: int = 0
+    last_switch_probability: float = 0.0
+    last_switch_rejection_reason: str = ""
 
-    def rank(self, option_id: str | None) -> int:
-        if not option_id:
-            return STANCE_NEUTRAL
-        return int(self.option_ranks.get(option_id, STANCE_NEUTRAL))
+    def rank(self, option_id: str) -> int:
+        return int(self.ranks.get(option_id, STANCE_NEUTRAL))
 
-    def reason_for(self, option_id: str | None) -> str:
-        return self.reasons_for.get(option_id or "", "")
 
-    def reason_against(self, option_id: str | None) -> str:
-        return self.reasons_against.get(option_id or "", "")
+@dataclass(slots=True)
+class OptionCoverage:
+    substantive_count: int = 0
+    participant_ids: set[str] = field(default_factory=set)
+    action_types: Counter[str] = field(default_factory=Counter)
 
-    def set_rank(self, option_id: str, rank: int, *, reason_for: str = "", reason_against: str = "") -> None:
-        self.option_ranks[option_id] = max(STANCE_REJECTED, min(STANCE_PREFERRED, int(rank)))
-        if reason_for:
-            self.reasons_for[option_id] = reason_for.strip()
-        if reason_against:
-            self.reasons_against[option_id] = reason_against.strip()
+    def add(self, speaker_id: str, act: ActionType) -> None:
+        self.substantive_count += 1
+        self.participant_ids.add(speaker_id)
+        self.action_types[act.value] += 1
 
-    def top_option(self, *, fallback: str | None = None) -> str | None:
-        if not self.option_ranks:
-            return fallback
-        best_rank = max(self.option_ranks.values())
-        candidates = [oid for oid, rank in self.option_ranks.items() if rank == best_rank]
-        if fallback in candidates:
-            return fallback
-        return sorted(candidates)[0] if candidates else fallback
-
-    def acceptable_options(self) -> set[str]:
-        top = self.top_option()
-        return {
-            oid for oid, value in self.option_ranks.items()
-            if value >= STANCE_ACCEPTABLE and oid != top
-        }
-
-    def disliked_options(self) -> set[str]:
-        return {oid for oid, value in self.option_ranks.items() if value == STANCE_DISLIKED}
-
-    def rejected_options(self) -> set[str]:
-        return {oid for oid, value in self.option_ranks.items() if value == STANCE_REJECTED}
-
-    def promote_to_preferred(self, option_id: str, *, reason_for: str = "") -> None:
-        old = self.top_option()
-        if old and old != option_id and self.rank(old) >= STANCE_PREFERRED:
-            self.option_ranks[old] = STANCE_ACCEPTABLE
-        self.set_rank(option_id, STANCE_PREFERRED, reason_for=reason_for)
-
-    def mark_acceptable(self, option_id: str, *, reason_for: str = "") -> None:
-        if self.rank(option_id) > STANCE_REJECTED:
-            self.set_rank(option_id, max(self.rank(option_id), STANCE_ACCEPTABLE), reason_for=reason_for)
-
-    def mark_disliked(self, option_id: str, *, reason_against: str = "") -> None:
-        if self.rank(option_id) > STANCE_REJECTED and self.rank(option_id) < STANCE_PREFERRED:
-            self.set_rank(option_id, STANCE_DISLIKED, reason_against=reason_against)
-
-    def mark_rejected(self, option_id: str, *, reason_against: str = "") -> None:
-        self.set_rank(option_id, STANCE_REJECTED, reason_against=reason_against)
 
 @dataclass(slots=True)
 class TurnRecord:
     index: int
+    phase: Phase
     speaker_id: str
     speaker_name: str
     text: str
-    phase: Phase
-    intent: MoveIntent | None = None
-    tokens_in: int = 0
-    tokens_out: int = 0
-    validation_issues: list[str] = field(default_factory=list)
-    repaired: bool = False
-    repair_trigger_codes: list[str] = field(default_factory=list)
-    state_mutation_blocked: bool = False
-    used_fallback: bool = False
-    fallback_family: str = ""  # which act-specific fallback produced the text
-    # Final accepted visible evidence and its validation assessment: the ONE
-    # semantic authority for this turn. Every appended participant turn
-    # carries evidence (pipeline, peer procedure, and test fixtures alike);
-    # a record without evidence (moderator lines) carries no public semantic
-    # signal at all.
-    evidence: "VisibleEvidence | None" = None
-    assessment: "TurnAssessment | None" = None
-    assigned_min_words: int = 0
-    assigned_max_words: int = 0
+    action: UserAction | None = None
+    moderator: bool = False
+    mandatory: bool = False
+    voluntary: bool = False
+    liveness_forced: bool = False
+    urgency: float = 0.0
+    repair_count: int = 0
+    issue_event: str | None = None
+    stance_update: StanceUpdate | None = None
+    vote_option: str | None = None
+    narrowing_options: tuple[str, ...] = ()
+    prompt_tokens: int = 0
+    output_tokens: int = 0
+    intended_word_min: int = 0
+    intended_word_max: int = 0
 
-    def mentioned_options(self) -> list[str]:
-        if self.evidence is None:
-            return []
-        seen: list[str] = []
-        for mention in self.evidence.mentions:
-            if mention.option_id not in seen:
-                seen.append(mention.option_id)
-        return seen
-
-    def is_formal_commitment_turn(self) -> bool:
-        """Whether this accepted participant turn belongs to the formal tally.
-
-        A formal phase alone is insufficient: concern/answer turns inside the
-        bounded repair phase must never become votes merely because they contain
-        tentative acceptance language. The controller must have requested a
-        formal vote, and the visible evidence must still contain the commitment.
-        """
-        return (
-            self.speaker_id != "moderator"
-            and self.phase in {Phase.VOTING, Phase.COMPROMISE_REPAIR}
-            and self.intent is not None
-            and self.intent.act is ActType.VOTE
-        )
-
-    def visible_vote(self) -> str | None:
-        if self.evidence is None:
-            return None
-        commitment = self.evidence.sole_commitment()
-        return commitment.option_id if commitment else None
-
-    def visible_accepts(self) -> list[str]:
-        if self.evidence is None:
-            return []
-        return [c.option_id for c in self.evidence.commitments if c.kind == "accept"]
-
-    def objected_options(self) -> set[str]:
-        if self.evidence is None:
-            return set()
-        return {c.option_id for c in self.evidence.concerns} | {
-            b.option_id for b in self.evidence.blockers if b.action == "raised"
-        }
-
-    def question_target(self) -> str | None:
-        if self.evidence is None:
-            return None
-        return next(
-            (q.addressee_id for q in self.evidence.questions if q.scope == "direct"), None
-        )
-
-    def realized_act(self) -> ActType:
-        """Display/trace label only — never a state authority. Derived from the
-        accepted visible evidence; falls back to the routed intent act for
-        records without evidence (e.g. moderator lines)."""
-        if self.evidence is not None and self.evidence.primary_act is not None:
-            return self.evidence.primary_act
-        return self.intent.act if self.intent is not None else ActType.COMMENT
+    @property
+    def word_count(self) -> int:
+        return len(self.text.split())
 
 
 @dataclass(slots=True)
-class RunOutcome:
-    status: str
-    final_option: str | None
-    reason: str
-    turns: int
-    metadata: dict[str, Any] = field(default_factory=dict)
+class RuntimeStats:
+    llm_calls: int = 0
+    setup_llm_calls: int = 0
+    repair_calls: int = 0
+    dropped_turns: int = 0
+    liveness_forced_turns: int = 0
+    suppressed_repetitions: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    moderator_turns: int = 0
+    voluntary_turns: int = 0
 
 
 @dataclass(slots=True)
 class DialogueState:
     scenario: Scenario
     personas: list[Persona]
+    runtimes: dict[str, ParticipantRuntime]
     phase: Phase = Phase.OPENING
     turns: list[TurnRecord] = field(default_factory=list)
-    runtimes: dict[str, ParticipantRuntime] = field(default_factory=dict)
+    active_issue: ActiveIssue | None = None
+    issue_history: list[ActiveIssue] = field(default_factory=list)
+    response_obligation: str | None = None
+    group_stimulus: GroupStimulus | None = None
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
-    # Thread-based local interaction state: questions, concerns, blockers, and
-    # comparisons are thread-driven; there is no content agenda.
-    threads: dict[str, ThreadState] = field(default_factory=dict)
-    thread_counter: int = 0
-    active_repair: "RepairState | None" = None
-    candidate_option: str | None = None
-    narrowing_returned: bool = False       # the one allowed narrowing -> discussion fallback was used
-    top_pair_history: list[tuple] = field(default_factory=list)  # visible top pair per turn (stability trigger)
-    # One bounded repair objective at a time (13.7); completed objectives are
-    # appended to repair_history (each reason runs at most once per run).
-    repair_history: list["RepairState"] = field(default_factory=list)
-    reservation_exchanges: int = 0           # holdout/supporter reservation pairs run inside repairs
-    procedural_move_count: int = 0           # participant-owned structure beats taken (split summaries/probes)
-    outcome: RunOutcome | None = None
-    turn_index: int = 0
-    no_progress_count: int = 0
-    fallback_turn_count: int = 0
-    invalid_printed_turn_count: int = 0
-    discussion_lean_shifts: int = 0      # latent-lean movements during the discussion phase (issue 3)
-    discussion_lean_shift_turns: list[int] = field(default_factory=list)  # source turn per shift (item 14)
-    phase_history: list[str] = field(default_factory=list)
-    # Immutable per-turn controller trace: why each turn was selected (pre) and
-    # what the final accepted text actually realized (result). Entries are plain
-    # dicts with copied values; nothing routes from this list.
-    controller_trace: list[dict] = field(default_factory=list)
-    min_discussion_turns: int = 0
-    force_narrow_turns: int = 0
-    hard_max_turns: int = 0
-    setup_tokens_in: int = 0
-    setup_tokens_out: int = 0
-    dialogue_tokens_in: int = 0
-    dialogue_tokens_out: int = 0
-    token_usage_by_call_type: dict[str, dict[str, int]] = field(default_factory=dict)
-    failed_route_counts: dict[str, int] = field(default_factory=dict)
-    failed_route_group_counts: dict[str, int] = field(default_factory=dict)
-    validation_stats: dict[str, Any] = field(default_factory=lambda: {
-        "logical_checks": 0,
-        "fast_paths": 0,
-        "api_retries": 0,
-        "retry_failures": {},
-    })
+    public_supports: Counter[str] = field(default_factory=Counter)
+    public_concerns: Counter[str] = field(default_factory=Counter)
+    public_comparisons: Counter[tuple[str, ...]] = field(default_factory=Counter)
+    public_supporters: dict[str, set[str]] = field(default_factory=dict)
+    public_concern_raisers: dict[str, set[str]] = field(default_factory=dict)
+    public_comparers: dict[tuple[str, ...], set[str]] = field(default_factory=dict)
+    votes: dict[str, str | None] = field(default_factory=dict)
+    first_round_votes: dict[str, str | None] = field(default_factory=dict)
+    vote_records: dict[int, dict[str, VoteRecord]] = field(default_factory=dict)
+    vote_round: int = 0
+    vote_protocol_degraded: bool = False
+    vote_protocol_errors: list[str] = field(default_factory=list)
+    narrowing_options: tuple[str, ...] = ()
+    phase_history: list[str] = field(default_factory=lambda: [Phase.OPENING.value])
+    stats: RuntimeStats = field(default_factory=RuntimeStats)
+    stall_prompt_used: bool = False
+    coverage_prompt_used: bool = False
+    no_bid_rounds: int = 0
+    recent_novelty: list[bool] = field(default_factory=list)
+    generation_attempts: list[GenerationAttempt] = field(default_factory=list)
+    validation_failures: Counter[str] = field(default_factory=Counter)
+    switch_decisions: list[SwitchDecision] = field(default_factory=list)
 
-    def persona_by_id(self, persona_id: str) -> Persona:
+    @property
+    def participant_turns(self) -> list[TurnRecord]:
+        return [turn for turn in self.turns if not turn.moderator]
+
+    @property
+    def voluntary_turn_count(self) -> int:
+        return sum(1 for turn in self.turns if turn.voluntary)
+
+    @property
+    def last_participant_id(self) -> str | None:
+        for turn in reversed(self.turns):
+            if not turn.moderator:
+                return turn.speaker_id
+        return None
+
+    def consecutive_turns_by(self, participant_id: str) -> int:
+        count = 0
+        for turn in reversed(self.turns):
+            if turn.moderator:
+                continue
+            if turn.speaker_id != participant_id:
+                break
+            count += 1
+        return count
+
+    def persona(self, participant_id: str) -> Persona:
         for persona in self.personas:
-            if persona.id == persona_id:
+            if persona.id == participant_id:
                 return persona
-        raise KeyError(persona_id)
+        raise KeyError(participant_id)
 
-    def name_for(self, persona_id: str | None) -> str:
-        if persona_id is None:
-            return ""
-        if persona_id == "moderator":
-            return "Moderator"
-        return self.persona_by_id(persona_id).name
+    def public_snapshot(self) -> dict[str, Any]:
+        """Public state only; deliberately excludes all private persona fields."""
+        return {
+            "phase": self.phase.value,
+            "preferences": {
+                pid: runtime.public_preference for pid, runtime in self.runtimes.items()
+                if runtime.public_preference is not None
+            },
+            "acceptances": {
+                pid: sorted(runtime.public_acceptances) for pid, runtime in self.runtimes.items()
+                if runtime.public_acceptances
+            },
+            "supports": dict(self.public_supports),
+            "concerns": dict(self.public_concerns),
+            "distinct_supporters": {
+                option_id: sorted(participant_ids)
+                for option_id, participant_ids in self.public_supporters.items()
+                if participant_ids
+            },
+            "distinct_concern_raisers": {
+                option_id: sorted(participant_ids)
+                for option_id, participant_ids in self.public_concern_raisers.items()
+                if participant_ids
+            },
+            "active_issue": self.active_issue,
+            "group_stimulus": self.group_stimulus,
+            "narrowing_options": self.narrowing_options,
+            "votes": dict(self.votes),
+        }
+
+
+@dataclass(slots=True)
+class RunOutcome:
+    status: str
+    final_option: str | None
+    votes: dict[str, str | None]
+    reason: str
 
 
 @dataclass(slots=True)
 class DialogueRunResult:
-    scenario: Scenario
-    personas: list[Persona]
-    transcript: list[str]
+    state: DialogueState
     outcome: RunOutcome
     log_paths: dict[str, str]
     token_summary: dict[str, int]

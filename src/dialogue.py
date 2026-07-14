@@ -1,881 +1,913 @@
-"""Dialogue runner: top-level orchestration and the generation pipeline.
-
-DialogueRunner composes the concern-specific mixins:
-FlowMixin (controller/flow.py — phases, narrowing, voting, repair machine),
-PolicyMixin (controller/policy.py — route/speaker/act selection),
-ObserverMixin (observer.py — post-turn state updates), and
-ValidationMixin (validation.py — accept/repair/reject/fallback).
-
-This file itself owns only run orchestration, the generate→parse→validate→
-repair→append pipeline, turn/trace appends, and logging/output.
-"""
+"""Single autonomous-simulator dialogue runtime."""
 
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
-from datetime import datetime
-
+from collections import Counter
 import prompts
-from builders import SetupBuilder, manual_environment
+from builders import SetupBuilder
 from config_loader import cfg
-from consensus import ConsensusManager
-from interpreter import InterpretationResult, TurnInterpreter
-from logger import DialogueLogger, token_summary_for
+from consensus import derive_narrowing_options, outcome_from_votes
 from llm_client import get_llm_client
+from logger import DialogueLogger
 from models import (
-    ActType,
-    AssessmentAction,
-    TurnAssessment,
-    VisibleEvidence,
+    ActionType,
+    ActiveIssue,
     DialogueRunResult,
     DialogueState,
-    MoveIntent,
+    GenerationAttempt,
+    GroupStimulus,
+    IssueEffect,
+    IssueKind,
+    IssueResponseKind,
+    IssueStatus,
     OptionCoverage,
-    STANCE_ACCEPTABLE,
-    STANCE_NEUTRAL,
-    STANCE_PREFERRED,
-    STANCE_REJECTED,
-    ParticipantRuntime,
     Persona,
     Phase,
-    ThreadStatus,
-    ThreadType,
+    RunOutcome,
+    Scenario,
+    StanceUpdateKind,
+    StimulusKind,
     TurnRecord,
+    UserAction,
+    VoteRecord,
+    VoteStatus,
 )
-from parsing import (
-    OptionResolver,
-    commitment_has_reason,
-    visible_commitment,
-    visible_question,
-)
-from models import (
-    AnswerEvidence,
-    BlockerEvidence,
-    CommitmentEvidence,
-    ComparisonEvidence,
-    ConcernEvidence,
-    EvidenceSpan,
-    QuestionEvidence,
-    SwitchEvidence,
-)
-from style import strip_leading_name
-from utils import clean_generated, extract_utterance, normalise_lines
-from observer import ObserverMixin
-from controller.flow import FlowMixin
-from controller.policy import PolicyMixin
-from validation import ValidationMixin, assessment_severity
+from simulator import FloorManager, UserSimulator, action_cooldown_context, action_signature, initial_runtime
+from validation import validate_action, validate_realization
 
 
-@dataclass(slots=True)
-class _Candidate:
-    """One processed candidate: text plus its interpretation and assessment."""
-
-    text: str
-    evidence: VisibleEvidence | None
-    assessment: TurnAssessment
-    tokens_in: int = 0
-    tokens_out: int = 0
-    # Compatibility telemetry. In critical mode these remain false/zero; they
-    # make old trace readers tolerate the simplified deterministic path.
-    validator_llm_used: bool = False
-    fast_path_reason: str = ""
-    requested_categories: tuple[str, ...] = ()
-    validator_retries: int = 0
-    validator_retry_failures: tuple[str, ...] = ()
-
-
-class DialogueRunner(FlowMixin, PolicyMixin, ObserverMixin, ValidationMixin):
-    def __init__(self, topic: str, *, force_auto_scenario: bool = False) -> None:
-        # A manual environment carries its own topic; an explicit CLI/piped
-        # topic overrides it and requests automatic scenario generation.
-        self._force_auto_scenario = bool(force_auto_scenario)
-        manual_env = None if self._force_auto_scenario else manual_environment()
-        self.topic = str((manual_env or {}).get("topic") or topic).strip()
-        if not self.topic:
-            raise ValueError("topic must not be empty")
-        seed = cfg.simulation.get("random_seed", None)
+class DialogueRunner:
+    def __init__(
+        self,
+        topic: str,
+        *,
+        force_auto_scenario: bool = False,
+        scenario: Scenario | None = None,
+        personas: list[Persona] | None = None,
+        llm=None,
+        logger: DialogueLogger | None = None,
+        rng: random.Random | None = None,
+        seed: int | None = None,
+    ) -> None:
+        self.topic = topic.strip()
+        configured_seed = cfg.simulation.get("random_seed", None)
         if seed is not None:
-            random.seed(int(seed))
-        # The dialogue model is always required. Critical validation is fully
-        # deterministic, so no validator client is constructed during normal
-        # runtime.
-        self._llm = get_llm_client("dialogue")
-        self._validator_llm = None
-        self._resolver: OptionResolver | None = None
-        self._intervention_count = 0
-        self._last_intervention_turn = -999
-
-    def _mod(self, part: str) -> bool:
-        """Whether the moderator voice performs a given structural job (issue 7).
-
-        The controller policy is independent of these flags; they only gate the
-        moderator's visible turns. An absent `moderator` config section keeps the
-        fully-moderated default (every part on)."""
-        mod = getattr(cfg, "moderator", None)
-        if mod is None:
-            return True
-        if not bool(mod.get("enabled", True)):
-            return False
-        return bool(mod.get(part, True))
+            self.seed = int(seed)
+        elif configured_seed is not None:
+            self.seed = int(configured_seed)
+        else:
+            self.seed = random.SystemRandom().randint(0, 2**31 - 1)
+        self.rng = rng or random.Random(self.seed)
+        self._llm = llm or get_llm_client()
+        if scenario is None or personas is None:
+            self._llm.reset_session()
+            builder = SetupBuilder(
+                self.topic,
+                force_auto_scenario=force_auto_scenario,
+                llm=self._llm,
+            )
+            scenario, personas = builder.build(cfg.participant_count())
+            setup_tokens_in = int(getattr(self._llm, "session_tokens_in", 0))
+            setup_tokens_out = int(getattr(self._llm, "session_tokens_out", 0))
+            setup_calls = int(getattr(self._llm, "session_calls", 0))
+        else:
+            setup_tokens_in = setup_tokens_out = setup_calls = 0
+        self.state = initialise_state(scenario, personas)
+        self._captured_setup_in = setup_tokens_in
+        self._captured_setup_out = setup_tokens_out
+        self.state.stats.setup_llm_calls = setup_calls
+        self.state.stats.input_tokens = setup_tokens_in
+        self.state.stats.output_tokens = setup_tokens_out
+        self.logger = logger or DialogueLogger(self.topic)
+        self._simulators = {
+            persona.id: UserSimulator(persona, random.Random(self.rng.getrandbits(64)))
+            for persona in personas
+        }
+        self._floor = FloorManager(self.rng)
+        self._issue_counter = 0
+        self._stimulus_counter = 0
+        self._last_failure_errors: list[str] = []
+        self._moderator_enabled = bool((cfg.get("moderator", None) or {}).get("enabled", True))
 
     def run(self) -> DialogueRunResult:
-        n = cfg.participant_count()
-        self._llm.reset_session()
-        scenario, personas = SetupBuilder(
-            self.topic, force_auto_scenario=self._force_auto_scenario
-        ).build(n)
-        setup_tokens_in = self._llm.session_tokens_in
-        setup_tokens_out = self._llm.session_tokens_out
-        self._llm.reset_session()
-
-        state = initialise_state(scenario, personas)
-        state.setup_tokens_in = setup_tokens_in
-        state.setup_tokens_out = setup_tokens_out
-        self._record_token_usage(state, "setup", setup_tokens_in, setup_tokens_out)
-        self._resolver = OptionResolver(scenario.options)
-        validation_mode = str((cfg.get("validation", None) or {}).get("mode", "critical"))
-        self._interpreter = TurnInterpreter(
-            self._validator_llm, self._resolver, scenario,
-            {p.id: p.name for p in personas},
-            mode=validation_mode,
-        )
-        self._derive_pacing(state)
-
-        run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        self.logger = DialogueLogger(run_id, self.topic)
-
-        # When the moderator opening is off, the board is still shown to the
-        # reader as plain setup scaffolding (header + transcript "## Options"),
-        # just not as a moderator turn.
-        self._print_header(state, show_board=not self._mod("opening"))
-        if self._mod("opening"):
-            self._emit(self._append_moderator(state, prompts.moderator_opening(scenario), Phase.OPENING))
-            print("=" * 72)
-
-        self._opening_round(state)
-        self._discussion_loop(state)
-        self._narrowing_phase(state)
-        self._decision_loop(state)
-
-        outcome = ConsensusManager.finalize(state)
-        state.outcome = outcome
-        if outcome.status == "unresolved":
-            self._emit_unresolved_acknowledgement(state, outcome)
-        if self._mod("closing"):
-            closing = prompts.moderator_closure_line(outcome, scenario, state)
-            self._emit(self._append_moderator(state, closing, Phase.CLOSING))
-        else:
-            self._emit_peer_closing(state, outcome)
-        self._mark_phase(state, Phase.CLOSING, f"closed as {outcome.status}")
-
-        state.dialogue_tokens_in = self._llm.session_tokens_in
-        state.dialogue_tokens_out = self._llm.session_tokens_out
-        paths = self.logger.finish(state, outcome)
-        transcript = [f"{turn.speaker_name}: {turn.text}" for turn in state.turns]
-        return DialogueRunResult(scenario, personas, transcript, outcome, paths, token_summary_for(state))
-
-    # ------------------------------------------------------------------
-    # Controller trace
-    # ------------------------------------------------------------------
-
-    def _pre_turn_trace(self, state: DialogueState, intent: MoveIntent, persona: Persona) -> dict:
-        """Immutable pre-turn snapshot: why this turn was selected (16.1)."""
-        answer_thread = self._required_answer_thread(state)
-        # The thread that actually routed this turn, carried on the intent.
-        routed = state.threads.get(intent.thread_id) if intent.thread_id else None
-        return {
-            "routed_thread_id": routed.thread_id if routed else None,
-            "routed_thread_type": routed.thread_type.value if routed else None,
-            "routed_thread_status": routed.status.value if routed else None,
-            "hot_thread_count": sum(1 for t in state.threads.values() if t.status is ThreadStatus.HOT),
-            "active_repair_reason": state.active_repair.repair_reason if state.active_repair else None,
-            "phase": state.phase.value,
-            "route_source": intent.route_source,
-            "speaker_id": persona.id,
-            "speaker_name": persona.name,
-            "selected_act": intent.act.value,
-            "selected_addressee_id": intent.addressee_id,
-            "selected_option_focus": list(intent.option_focus),
-            "respond_to_turn": intent.respond_to_turn,
-            "coverage_gaps": sorted(
-                oid for oid, cov in state.coverage.items() if cov.mentions == 0
-            ),
-            "candidate_option": state.candidate_option,
-            "required_answer_thread_id": answer_thread.thread_id if answer_thread else None,
-            "required_respondent_id": answer_thread.required_respondent if answer_thread else None,
-            "open_question_count": sum(
-                1 for t in state.threads.values()
-                if t.thread_type is ThreadType.QUESTION and t.status is ThreadStatus.HOT
-            ),
-            "unaddressed_concern_count": sum(
-                1 for t in state.threads.values()
-                if t.thread_type in (ThreadType.CONCERN, ThreadType.BLOCKER)
-                and t.status is ThreadStatus.HOT
-            ),
-            "no_progress_count": state.no_progress_count,
-        }
-
-    @staticmethod
-    def _trace_result(
-        state: DialogueState,
-        pre: dict,
-        record: TurnRecord,
-        *,
-        appended: bool,
-        validation_repair_attempts: int,
-        trigger_codes: list[str],
-        used_fallback: bool,
-        intent: MoveIntent,
-        candidate: "_Candidate | None" = None,
-        candidate_texts: dict | None = None,
-    ) -> None:
-        mentioned = record.mentioned_options()
-        coverage_realized = bool(
-            intent.route_source == "coverage"
-            and intent.option_focus
-            and appended
-            and not record.state_mutation_blocked
-            and intent.option_focus[0] in mentioned
-        )
-        assessment = record.assessment
-        evidence = record.evidence
-        evidence_bindings: dict[str, list[str]] = {}
-        if evidence is not None:
-            for kind, options in (
-                ("support", [s.option_id for s in evidence.supports]),
-                ("concern", [c.option_id for c in evidence.concerns]),
-                ("commitment", [c.option_id for c in evidence.commitments]),
-                ("comparison", sorted({o for c in evidence.comparisons for o in c.option_ids})),
-                ("proposal", [p.option_id for p in evidence.proposals if p.option_id]),
-                ("switch", [s.target for s in evidence.switches]),
-                ("blocker", [b.option_id for b in evidence.blockers]),
-            ):
-                if options:
-                    evidence_bindings[kind] = options
-        state.controller_trace.append({
-            "type": "turn",
-            "turn_index": record.index,
-            "pre": pre,
-            "result": {
-                "appended": appended,
-                "realized_act": record.realized_act().value,
-                "act_mismatch": record.realized_act() != intent.act,
-                "validation_issue_codes": list(record.validation_issues),
-                "validation_repair_attempts": validation_repair_attempts,
-                "validation_repair_trigger_codes": list(trigger_codes),
-                "fallback_used": used_fallback,
-                "state_mutation_blocked": record.state_mutation_blocked,
-                "final_option_refs": mentioned,
-                "final_addressee_id": record.question_target(),
-                "question_target_id": record.question_target(),
-                "formal_vote_realized": record.visible_vote(),
-                "accepts_realized": record.visible_accepts(),
-                "coverage_realized": coverage_realized,
-                # Assessment + evidence diagnostics (item 15): every repair,
-                # fallback, and state decision is explainable from the trace.
-                "assessment_action": assessment.action.value if assessment else None,
-                "intended_act_realized": assessment.intended_act_realized if assessment else None,
-                "intended_focus_realized": assessment.intended_focus_realized if assessment else None,
-                "assessment_notes": assessment.notes if assessment else "",
-                "evidence_kinds": sorted(evidence.evidence_kinds()) if evidence else [],
-                "evidence_bindings": evidence_bindings,
-                "ambiguous_references": [s.text for s in evidence.ambiguous_references] if evidence else [],
-                "fallback_family": record.fallback_family,
-                "tokens_in": record.tokens_in,
-                "tokens_out": record.tokens_out,
-                "assigned_word_bounds": [record.assigned_min_words, record.assigned_max_words],
-                "candidate_texts": candidate_texts or {},
-                # Compatibility validation telemetry. Critical mode is fully
-                # deterministic, so validator usage/tokens remain zero.
-                "validator_llm_used": candidate.validator_llm_used if candidate else None,
-                "validation_fast_path_reason": candidate.fast_path_reason if candidate else "",
-                "validator_categories": list(candidate.requested_categories) if candidate else [],
-                "validator_tokens_in": candidate.tokens_in if candidate else 0,
-                "validator_tokens_out": candidate.tokens_out if candidate else 0,
-                "validator_api_retries": candidate.validator_retries if candidate else 0,
-                "validator_retry_failures": list(candidate.validator_retry_failures) if candidate else [],
-            },
-        })
-
-    @staticmethod
-    def _post_turn_route_accounting(state: DialogueState, intent: MoveIntent) -> None:
-        """Consume bounded-route attempts once the generation pipeline finished.
-
-        Route selection is read-only (contract 4.1): these bounds are charged
-        after the turn completed — appended or dropped — so a failed generation
-        still consumes its attempt and cannot re-route the same move forever,
-        while a mere route selection never mutates state before text exists.
-        Realized effects (coverage mentions, addressed concerns, votes) are
-        observed separately from the final accepted text.
-        """
-        source = intent.route_source
-        if source == "coverage" and intent.option_focus:
-            option_id = intent.option_focus[0]
-            if option_id in state.coverage:
-                state.coverage[option_id].coverage_attempts += 1
-        elif source == "thread_hot" and intent.act == ActType.ASK and intent.thread_id:
-            # A blocker-thread probe: one bounded probe per blocker thread,
-            # shared with the moderator probe, charged only post-turn.
-            thread = state.threads.get(intent.thread_id)
-            if thread is not None:
-                thread.probe_count += 1
-        elif source == "participant_narrowing":
-            state.procedural_move_count += 1
-            state.no_progress_count = 0
-
-    def _process_candidate(
-        self,
-        state: DialogueState,
-        persona: Persona,
-        intent: MoveIntent,
-        text: str,
-        structure_flags: list[str],
-        constructed_evidence: VisibleEvidence | None = None,
-    ) -> "_Candidate":
-        """The one deterministic candidate-processing path.
-
-        Initial generations, repaired generations, and safe fallbacks all pass
-        through the same visible-evidence interpretation and critical checks.
-        ``constructed_evidence`` is allowed only for deterministic fallback text
-        whose evidence is re-derived from the visible line itself.
-        """
-        if constructed_evidence is not None:
-            interp = InterpretationResult(
-                evidence=constructed_evidence, fast_path=True,
-                fast_path_reason="deterministic fallback: evidence known from construction",
-            )
-        else:
-            interp = self._interpret_candidate(state, persona, intent, text)
-        stats = state.validation_stats
-        if interp.fast_path:
-            stats["fast_paths"] = int(stats.get("fast_paths", 0)) + 1
-        else:
-            stats["logical_checks"] = int(stats.get("logical_checks", 0)) + 1
-        stats["api_retries"] = int(stats.get("api_retries", 0)) + interp.operational_retries
-        failure_counts = stats.setdefault("retry_failures", {})
-        for failure in interp.retry_failures:
-            failure_counts[failure] = int(failure_counts.get(failure, 0)) + 1
-        if interp.tokens_in or interp.tokens_out:
-            self._record_token_usage(state, "validator", interp.tokens_in, interp.tokens_out)
-        assessment = self._assess_candidate(
-            text=text, state=state, persona=persona, intent=intent,
-            evidence=interp.evidence,
-            verification_issues=interp.verification_issues,
-            structure_flags=structure_flags,
-            operational_failure=interp.operational_failure,
-        )
-        return _Candidate(
-            text=text, evidence=interp.evidence, assessment=assessment,
-            tokens_in=interp.tokens_in, tokens_out=interp.tokens_out,
-            validator_llm_used=not interp.fast_path,
-            fast_path_reason=interp.fast_path_reason,
-            requested_categories=interp.requested_categories,
-            validator_retries=interp.operational_retries,
-            validator_retry_failures=interp.retry_failures,
-        )
-
-    def _constructed_fallback_evidence(
-        self, state: DialogueState, intent: MoveIntent, text: str, family: str
-    ) -> VisibleEvidence | None:
-        """Evidence for deterministic fallback lines (item 8): their semantics
-        are known from construction, re-derived here from the TEXT itself via
-        the deterministic parsers — hidden intent alone never labels anything.
-        Returns None when the construction cannot be re-verified, in which
-        case the normal interpretation path runs."""
-        if self._resolver is None:
-            return None
-        stripped = text.strip()
-        span = EvidenceSpan(text=stripped, start=0)
-        mentions = self._resolver.mentions(text)
-        ids = [m.option_id for m in mentions]
-        evidence = VisibleEvidence(utterance=text, mentions=mentions)
-        if family == "vote":
-            commit = visible_commitment(
-                text, self._resolver, sanctioned_switch=bool(intent.allow_vote_change)
-            )
-            if not commit or commit[0] not in ("vote", "accept"):
-                return None
-            kind, target = commit
-            evidence.commitments.append(CommitmentEvidence(kind, target, span))
-            # The switch source is read from the VISIBLE text (the other named
-            # option in a "switching from X to Y" line), never from hidden
-            # intent (item 4): a minimal vote names no source and records no
-            # switch; a public-switch line names its own bridge.
-            source = next((oid for oid in ids if oid != target), None)
-            if source is not None:
-                evidence.switches.append(SwitchEvidence(
-                    target=target, span=span, source=source,
-                    reason_span=span if commitment_has_reason(text) else None,
-                ))
-            evidence.primary_act = ActType.VOTE
-            return evidence
-        if family == "comparison":
-            pair = list(dict.fromkeys(ids))[:2]
-            if len(pair) < 2:
-                return None
-            evidence.comparisons.append(ComparisonEvidence(option_ids=pair, span=span))
-            evidence.primary_act = ActType.COMPARE
-            return evidence
-        if family in ("answer_listed", "answer_unknown"):
-            evidence.answers.append(AnswerEvidence(
-                completeness="full", span=span, addresses_target=True,
-            ))
-            evidence.primary_act = ActType.ANSWER
-            return evidence
-        if family == "coverage_question":
-            question = visible_question(
-                text, speaker_id=intent.speaker_id,
-                participant_names={p.id: p.name for p in state.personas},
-            )
-            if question is not None:
-                evidence.questions.append(QuestionEvidence(
-                    scope=question[0], span=span, addressee_id=question[1],
-                    option_ids=ids[:2],
-                ))
-            evidence.primary_act = ActType.ASK if question else ActType.COMMENT
-            return evidence
-        if family == "blocker_restate":
-            target = next((o for o in intent.option_focus if o in ids), None)
-            if target is None:
-                return None
-            evidence.concerns.append(ConcernEvidence(target, "hard", span))
-            evidence.blockers.append(BlockerEvidence(target, "raised", span))
-            evidence.primary_act = ActType.CONCERN
-            return evidence
-        return None
-
-    def _interpret_candidate(self, state: DialogueState, persona: Persona, intent: MoveIntent, text: str):
-        """Interpret one candidate with PUBLIC context only: the targeted prior
-        turn, the routed thread's focus, and the speaker's previous public
-        vote. Hidden intent reaches the validator as requested behavior,
-        never as evidence."""
-        target = None
-        if intent.respond_to_turn is not None:
-            target = next((t for t in state.turns if t.index == intent.respond_to_turn), None)
-        thread = state.threads.get(intent.thread_id) if intent.thread_id else None
-        candidates: list[str] = []
-        if target is not None and self._resolver is not None:
-            candidates += self._resolver.ids_in_text(target.text)
-        if thread is not None:
-            candidates += list(thread.focus_options)
-        thread_summary = None
-        if thread is not None:
-            about = ", ".join(thread.focus_options) or "the options"
-            issue = f" ({thread.issue_key})" if thread.issue_key and not thread.issue_key.startswith("sig:") else ""
-            thread_summary = f"{thread.thread_type.value} thread about {about}{issue}"
-        return self._interpreter.interpret(
-            text=text,
-            speaker_id=persona.id,
-            intent=intent,
-            target_turn_text=target.text if target is not None else None,
-            target_turn_speaker=target.speaker_name if target is not None else None,
-            thread_summary=thread_summary,
-            previous_vote=state.runtimes[persona.id].explicit_vote,
-            context_candidates=tuple(dict.fromkeys(candidates)),
-            rejected_options=tuple(sorted(state.runtimes[persona.id].rejected_options())),
-            previous_speaker_id=self._last_participant_id(state),
-        )
-
-    def _generate_and_append(self, state: DialogueState, intent: MoveIntent) -> TurnRecord:
-        self._apply_style_flags(state, intent)
-        persona = state.persona_by_id(intent.speaker_id)
-        pre_trace = self._pre_turn_trace(state, intent, persona)
-        min_words, max_words = self._word_bounds(intent, persona)
-        recent_lines = self._recent_lines(state)
-        focus_options = [state.scenario.option(i) for i in intent.option_focus if i in state.scenario.option_ids]
-        addressee_name = state.name_for(intent.addressee_id) if intent.addressee_id else None
-        prompt = prompts.sim_utterance(
-            persona=persona,
+        state = self.state
+        self._print_header(state)
+        if self._moderator_enabled:
+            self._append_moderator(prompts.moderator_opening(state.scenario))
+        self._run_opening()
+        self._transition(Phase.DISCUSSION)
+        self._run_discussion()
+        self._run_narrowing(revote=False)
+        outcome = self._run_voting(revote=False)
+        if outcome is None:
+            state.first_round_votes = dict(state.votes)
+            self._run_narrowing(revote=True)
+            outcome = self._run_voting(revote=True)
+            if outcome is None:
+                outcome = outcome_from_votes(state, state.votes, allow_unresolved=True)
+        assert outcome is not None
+        self._transition(Phase.CLOSED)
+        if self._moderator_enabled:
+            self._append_moderator(prompts.moderator_closure(outcome, state.scenario))
+        log_paths = self.logger.write_run(state, outcome, seed=self.seed)
+        return DialogueRunResult(
             state=state,
-            intent=intent,
-            recent_lines=recent_lines,
-            focus_options=focus_options,
-            addressee_name=addressee_name,
-            max_words=max_words,
-            min_words=min_words,
+            outcome=outcome,
+            log_paths=log_paths,
+            token_summary={
+                "setup_tokens_in": self._setup_tokens_in(),
+                "setup_tokens_out": self._setup_tokens_out(),
+                "dialogue_tokens_in": max(0, state.stats.input_tokens - self._setup_tokens_in()),
+                "dialogue_tokens_out": max(0, state.stats.output_tokens - self._setup_tokens_out()),
+                "total_tokens_in": state.stats.input_tokens,
+                "total_tokens_out": state.stats.output_tokens,
+                "llm_calls": state.stats.llm_calls + state.stats.setup_llm_calls,
+            },
         )
-        self.logger.write_prompt(prompt, f"{state.turn_index + 1:03d}_{persona.id}_{intent.act.value}")
-        text, tokens_in, tokens_out, structure_flags = self._call_participant(prompt, persona.name)
-        self._record_token_usage(state, "utterance", tokens_in, tokens_out)
-        if intent.suppress_name_prefix:
-            text = strip_leading_name(text, [p.name for p in state.personas])
-        candidate = self._process_candidate(state, persona, intent, text, structure_flags)
-        initial_candidate_text = text
-        repair_candidate_texts: list[str] = []
-        fallback_candidate_text = ""
-        tokens_in += candidate.tokens_in
-        tokens_out += candidate.tokens_out
 
-        repaired = False
-        trigger_codes = [issue.code for issue in candidate.assessment.issues]
-        attempts = min(1, int(cfg.simulation.max_repairs_per_turn))
-        validation_repair_attempts = 0
-        while candidate.assessment.action is AssessmentAction.REPAIR and attempts > 0:
-            attempts -= 1
-            validation_repair_attempts += 1
-            repaired = True
-            repair_prompt = prompts.repair_utterance(
-                original_text=candidate.text,
-                issues=list(candidate.assessment.issues),
-                persona=persona,
-                state=state,
-                recent_lines=recent_lines,
-                intent=intent,
-                max_words=max_words,
-                min_words=min_words,
+    def _setup_tokens_in(self) -> int:
+        # Setup totals are captured before the runtime begins. Fake clients used
+        # in tests may not expose per-call history, so infer them from the state
+        # snapshot stored at initialization.
+        return int(self._captured_setup_in)
+
+    def _setup_tokens_out(self) -> int:
+        return int(self._captured_setup_out)
+
+    def _run_opening(self) -> None:
+        state = self.state
+        order = [persona.id for persona in state.personas]
+        self.rng.shuffle(order)
+        for participant_id in order:
+            action = self._simulators[participant_id].opening_action(state)
+            self._realize_and_commit(action, mandatory=True, voluntary=False)
+
+    def _run_discussion(self) -> None:
+        state = self.state
+        hard_max = int(cfg.conversation.hard_max_voluntary_turns)
+        while (
+            self._phase_voluntary_count(Phase.DISCUSSION) < hard_max
+            or state.response_obligation is not None
+        ):
+            if state.response_obligation:
+                self._drain_response_obligation_before_transition(
+                    failure_reason="mandatory answer failed"
+                )
+                continue
+
+            if self._phase_voluntary_count(Phase.DISCUSSION) >= hard_max:
+                break
+
+            bids = [simulator.propose(state) for simulator in self._simulators.values()]
+            issue_continued = bool(
+                state.active_issue
+                and any(bid.wants_to_speak and bid.issue_id == state.active_issue.id for bid in bids)
             )
-            self.logger.write_prompt(repair_prompt, f"{state.turn_index + 1:03d}_{persona.id}_repair")
-            repair_text, ti, to, repair_flags = self._call_participant(repair_prompt, persona.name)
-            repair_candidate_texts.append(repair_text)
-            self._record_token_usage(state, "repair", ti, to)
-            tokens_in += ti
-            tokens_out += to
-            repaired_candidate = self._process_candidate(state, persona, intent, repair_text, repair_flags)
-            tokens_in += repaired_candidate.tokens_in
-            tokens_out += repaired_candidate.tokens_out
-            # Selection by assessment severity, never by raw issue count (item
-            # 9): the repair is kept only when it is strictly safer/better.
-            if assessment_severity(repaired_candidate.assessment) < assessment_severity(candidate.assessment):
-                candidate = repaired_candidate
+            if state.active_issue and not issue_continued:
+                self._finish_exhausted_issue("nobody continued the issue")
 
-        block = any(issue.blocking for issue in candidate.assessment.issues)
-        used_fallback = False
-        fallback_family = ""
-        if block:
-            # Blocking issues survived generation + repair: the LLM text must not
-            # reach the transcript (issue I1). Replace it with a narrow
-            # act-specific deterministic fallback when a truthful one exists and
-            # run it through the SAME complete candidate path (resolve,
-            # interpret, critical-check, ground, assess); otherwise drop.
-            fallback_text, fallback_family = self._fallback_candidate(
-                state, persona, intent, [i.code for i in candidate.assessment.issues]
-            )
-            if fallback_text is not None:
-                fallback_candidate_text = fallback_text
-                constructed = self._constructed_fallback_evidence(
-                    state, intent, fallback_text, fallback_family
-                )
-                candidate = self._process_candidate(
-                    state, persona, intent, fallback_text, [],
-                    constructed_evidence=constructed,
-                )
-                tokens_in += candidate.tokens_in
-                tokens_out += candidate.tokens_out
-                used_fallback = True
-                state.fallback_turn_count += 1
-                block = any(issue.blocking for issue in candidate.assessment.issues)
-            if block:
-                # Last-resort protection: an invalid line must not become visible
-                # transcript evidence. The preferred fix is upstream (clearer
-                # decision prompts + correct parser/validator alignment), but if
-                # those still fail, drop the turn instead of printing evidence the
-                # state tracker refuses to count.
-                candidate.assessment.action = AssessmentAction.DROP
-                state.no_progress_count += 1
-                dropped = TurnRecord(
-                    index=state.turn_index,
-                    speaker_id=persona.id,
-                    speaker_name=persona.name,
-                    text="",
-                    phase=state.phase,
-                    intent=intent,
-                    tokens_in=tokens_in,
-                    tokens_out=tokens_out,
-                    validation_issues=[i.code for i in candidate.assessment.issues],
-                    repaired=repaired,
-                    repair_trigger_codes=trigger_codes,
-                    state_mutation_blocked=True,
-                    used_fallback=used_fallback,
-                    fallback_family=fallback_family if used_fallback else "",
-                    evidence=candidate.evidence,
-                    assessment=candidate.assessment,
-                    assigned_min_words=min_words,
-                    assigned_max_words=max_words,
-                )
-                self._trace_result(
-                    state,
-                    pre_trace,
-                    dropped,
-                    appended=False,
-                    validation_repair_attempts=validation_repair_attempts,
-                    trigger_codes=trigger_codes,
-                    used_fallback=used_fallback,
-                    intent=intent,
-                    candidate=candidate,
-                    candidate_texts={
-                        "initial": initial_candidate_text,
-                        "repairs": repair_candidate_texts,
-                        "fallback": fallback_candidate_text,
-                        "final_rejected": candidate.text,
-                    },
-                )
-                self._record_failed_route(state, intent)
-                self._post_turn_route_accounting(state, intent)
-                return dropped
-        record = self._append_participant(
-            state,
-            persona,
-            candidate.text,
-            intent,
-            tokens_in,
-            tokens_out,
-            [i.code for i in candidate.assessment.issues],
-            repaired,
-            trigger_codes,
-            block,
-            min_words,
-            max_words,
+            accepted = self._select_and_realize(bids, phase=Phase.DISCUSSION)
+            if accepted:
+                state.no_bid_rounds = 0
+            else:
+                state.no_bid_rounds += 1
+                if self._ready_to_narrow():
+                    break
+                if state.no_bid_rounds == 1:
+                    continue
+
+                if state.no_bid_rounds == 2:
+                    if self._moderator_enabled and not state.stall_prompt_used:
+                        text = prompts.moderator_stall_prompt()
+                        self._append_moderator(text)
+                        self._set_group_stimulus(StimulusKind.STALL, (), text)
+                        state.stall_prompt_used = True
+                    continue
+
+                minimum = int(cfg.conversation.min_voluntary_turns)
+                if self._phase_voluntary_count(Phase.DISCUSSION) < minimum:
+                    if self._force_liveness(Phase.DISCUSSION):
+                        state.no_bid_rounds = 0
+                        continue
+                break
+
+            if self._coverage_prompt_needed():
+                option_id = self._uncovered_options()[0]
+                text = prompts.moderator_coverage_prompt(state.scenario, option_id)
+                self._append_moderator(text)
+                self._set_group_stimulus(StimulusKind.COVERAGE, (option_id,), text)
+                state.coverage_prompt_used = True
+                continue
+            if self._ready_to_narrow():
+                break
+
+    def _run_narrowing(self, *, revote: bool) -> None:
+        state = self.state
+        self._drain_response_obligation_before_transition(
+            failure_reason="mandatory answer failed before narrowing"
         )
-        record.used_fallback = used_fallback
-        record.fallback_family = fallback_family if used_fallback else ""
-        record.evidence = candidate.evidence
-        record.assessment = candidate.assessment
-        self._trace_result(
-            state,
-            pre_trace,
-            record,
-            appended=True,
-            validation_repair_attempts=validation_repair_attempts,
-            trigger_codes=trigger_codes,
-            used_fallback=used_fallback,
-            intent=intent,
-            candidate=candidate,
-            candidate_texts=(
-                {
-                    "initial": initial_candidate_text,
-                    "repairs": repair_candidate_texts,
-                    "fallback": fallback_candidate_text,
-                    "accepted": candidate.text,
-                }
-                if repaired or used_fallback else {}
-            ),
+        state.group_stimulus = None
+        self._transition(Phase.NARROWING)
+        state.narrowing_options = derive_narrowing_options(state)
+        if not state.narrowing_options:
+            state.narrowing_options = tuple(state.scenario.option_ids[:2])
+        if self._moderator_enabled:
+            if revote:
+                self._append_moderator("No option reached a majority. We will have one short final narrowing before a re-vote.")
+            self._append_moderator(prompts.moderator_narrowing(state.scenario, state.narrowing_options))
+
+        budget = int(
+            cfg.conversation.revote_narrowing_voluntary_turns
+            if revote else cfg.conversation.narrowing_voluntary_turns
         )
-        turn_entry = state.controller_trace[-1]
-        self._post_turn_route_accounting(state, intent)
-        if not block:
-            before = self._observable_state_snapshot(state, persona.id)
-            self._apply_semantics(state, record)
-            changes = self._state_changes(before, self._observable_state_snapshot(state, persona.id))
-            # Attach exactly which speaker-local/public fields the observer
-            # changed to this turn's trace entry (item 14).
-            turn_entry["result"]["state_changes"] = changes
-            turn_entry["result"]["state_changed"] = bool(changes)
-        else:
-            state.no_progress_count += 1
-        return record
+        start_count = self._phase_voluntary_count(Phase.NARROWING)
+        empty_rounds = 0
+        while self._phase_voluntary_count(Phase.NARROWING) - start_count < budget:
+            if state.response_obligation:
+                participant_id = state.response_obligation
+                action = self._simulators[participant_id].propose(state, mandatory_answer=True)
+                if self._realize_and_commit(action, mandatory=True, voluntary=False) is None:
+                    self._stale_active_issue("mandatory narrowing answer failed")
+                continue
+            bids = [simulator.propose(state) for simulator in self._simulators.values()]
+            if state.active_issue and not any(
+                bid.wants_to_speak and bid.issue_id == state.active_issue.id for bid in bids
+            ):
+                self._finish_exhausted_issue("nobody continued the narrowing issue")
+            if not self._select_and_realize(bids, phase=Phase.NARROWING):
+                empty_rounds += 1
+                # One empty arbitration round is not enough evidence that every
+                # autonomous simulator has finished. Retry once, then progress.
+                if empty_rounds < 2:
+                    continue
+                break
+            empty_rounds = 0
+        if state.response_obligation:
+            participant_id = state.response_obligation
+            action = self._simulators[participant_id].propose(state, mandatory_answer=True)
+            if self._realize_and_commit(action, mandatory=True, voluntary=False) is None:
+                self._stale_active_issue("final mandatory answer failed")
+        if state.active_issue:
+            self._finish_exhausted_issue("narrowing window ended")
+        state.narrowing_options = derive_narrowing_options(state) or state.narrowing_options
 
-    @staticmethod
-    def _observable_state_snapshot(state: DialogueState, speaker_id: str) -> dict:
-        """Compact snapshot of the fields the observer may change."""
-        rt = state.runtimes[speaker_id]
-        return {
-            f"rank:{speaker_id}:{oid}": rank for oid, rank in rt.option_ranks.items()
-        } | {
-            f"vote:{speaker_id}": rt.explicit_vote,
-            f"vote_stance:{speaker_id}": rt.vote_stance,
-        } | {
-            f"thread:{tid}": thread.status.value for tid, thread in state.threads.items()
-        } | {
-            f"coverage:{oid}": (cov.mentions, cov.reasons, cov.objections, cov.acceptances)
-            for oid, cov in state.coverage.items()
-        } | {
-            f"lean:{pid}": r.top_option() for pid, r in state.runtimes.items()
-        }
+    def _drain_response_obligation_before_transition(self, *, failure_reason: str) -> None:
+        """Complete one pending direct-answer adjacency pair before a phase change.
 
-    @staticmethod
-    def _state_changes(before: dict, after: dict) -> list[str]:
-        return sorted(
-            f"{key}: {before.get(key)!r} -> {value!r}"
-            for key, value in after.items()
-            if before.get(key) != value
-        )
-
-    def _call_participant(self, prompt: str, speaker_name: str) -> tuple[str, int, int, list[str]]:
-        """Generate one participant line; returns (text, tokens_in, tokens_out,
-        raw-output structure flags from the envelope extraction)."""
-        raw = self._llm.generate(prompt, profile="dialogue")
-        text, structure_flags = extract_utterance(raw, speaker_name)
-        return text, self._llm.last_tokens_in, self._llm.last_tokens_out, structure_flags
-
-    @staticmethod
-    def _record_token_usage(state: DialogueState, kind: str, tokens_in: int, tokens_out: int) -> None:
-        if tokens_in == 0 and tokens_out == 0:
-            return
-        bucket = state.token_usage_by_call_type.setdefault(kind, {"in": 0, "out": 0, "calls": 0})
-        bucket["in"] += int(tokens_in)
-        bucket["out"] += int(tokens_out)
-        bucket["calls"] += 1
-
-    def _append_participant(
-        self,
-        state: DialogueState,
-        persona: Persona,
-        text: str,
-        intent: MoveIntent,
-        tokens_in: int,
-        tokens_out: int,
-        issues: list[str],
-        repaired: bool,
-        trigger_codes: list[str],
-        block: bool,
-        assigned_min_words: int,
-        assigned_max_words: int,
-    ) -> TurnRecord:
-        state.turn_index += 1
-        rt = state.runtimes[persona.id]
-        rt.turn_count += 1
-        rt.last_spoke_turn = state.turn_index
-        rt.already_said.append(text)
-        record = TurnRecord(
-            index=state.turn_index,
-            speaker_id=persona.id,
-            speaker_name=persona.name,
-            text=text,
-            phase=state.phase,
-            intent=intent,
-            tokens_in=tokens_in,
-            tokens_out=tokens_out,
-            validation_issues=issues,
-            repaired=repaired,
-            repair_trigger_codes=trigger_codes,
-            state_mutation_blocked=block,
-            assigned_min_words=assigned_min_words,
-            assigned_max_words=assigned_max_words,
-        )
-        state.turns.append(record)
-        return record
-
-    def _append_moderator(self, state: DialogueState, text: str, phase: Phase) -> TurnRecord:
-        state.turn_index += 1
-        text = normalise_lines(text)
-        record = TurnRecord(index=state.turn_index, speaker_id="moderator", speaker_name="Moderator", text=text, phase=phase)
-        state.turns.append(record)
-        state.controller_trace.append({
-            "type": "moderator_turn",
-            "turn_index": record.index,
-            "phase": phase.value,
-        })
-        return record
-
-    def _append_peer_procedure(
-        self,
-        state: DialogueState,
-        persona: Persona,
-        text: str,
-        act_type: ActType,
-        option_focus: list[str],
-        *,
-        phase: Phase | None = None,
-    ) -> TurnRecord:
-        """Append deterministic participant-owned procedure text.
-
-        Split summaries are controller facts: vote counts and the candidate being
-        tested must not drift in an LLM paraphrase. Keeping this line
-        deterministic also removes one utterance+grounding call in no-moderator
-        split cases while still making the procedural move visibly owned by a
-        participant.
+        The addressed simulator receives the normal bounded realization path:
+        one generation plus the existing single repair attempt. A remaining
+        failure explicitly stales the issue so the phase transition cannot
+        silently strand the obligation.
         """
-        if phase is None:
-            phase = state.phase
-        state.turn_index += 1
-        text = normalise_lines(text)
-        rt = state.runtimes[persona.id]
-        rt.turn_count += 1
-        rt.last_spoke_turn = state.turn_index
-        rt.already_said.append(text)
-        # Deterministic controller text: its semantics are known by
-        # construction, so the evidence carries exactly the option mentions
-        # and the procedural label — never fabricated support or commitments.
+        participant_id = self.state.response_obligation
+        if participant_id is None:
+            return
+        action = self._simulators[participant_id].propose(
+            self.state,
+            mandatory_answer=True,
+        )
+        if self._realize_and_commit(action, mandatory=True, voluntary=False) is None:
+            self._stale_active_issue(failure_reason)
+
+    def _run_voting(self, *, revote: bool) -> RunOutcome | None:
+        state = self.state
+        self._transition(Phase.VOTING)
+        state.vote_round = 2 if revote else 1
+        state.votes = {}
+        state.vote_records[state.vote_round] = {}
+        if self._moderator_enabled:
+            self._append_moderator(prompts.moderator_vote_request(revote=revote))
+        for persona in state.personas:
+            action = self._simulators[persona.id].decide_vote(state, revote=revote)
+            before_attempts = len(state.generation_attempts)
+            record = self._realize_and_commit(action, mandatory=True, voluntary=False)
+            attempt_entries = state.generation_attempts[before_attempts:]
+            attempts = sum(1 + int(entry.repair_text is not None) for entry in attempt_entries)
+            if record is not None:
+                vote_record = VoteRecord(
+                    participant_id=persona.id,
+                    round=state.vote_round,
+                    status=VoteStatus.VALID,
+                    option_id=action.vote_option,
+                    attempts=max(1, attempts),
+                )
+            else:
+                errors = list(self._last_failure_errors)
+                unclear = any("vote" in error.casefold() or "ambiguous" in error.casefold() for error in errors)
+                vote_record = VoteRecord(
+                    participant_id=persona.id,
+                    round=state.vote_round,
+                    status=VoteStatus.UNCLEAR if unclear else VoteStatus.GENERATION_FAILED,
+                    option_id=None,
+                    attempts=max(1, attempts),
+                    errors=errors,
+                )
+                state.votes[persona.id] = None
+                state.vote_protocol_degraded = True
+                state.vote_protocol_errors.append(
+                    f"round {state.vote_round} {persona.id}: {vote_record.status.value}"
+                )
+            state.vote_records[state.vote_round][persona.id] = vote_record
+        return outcome_from_votes(state, state.votes, allow_unresolved=revote)
+
+    def _select_and_realize(self, bids: list[UserAction], *, phase: Phase) -> bool:
+        remaining = list(bids)
+        while True:
+            selection = self._floor.select(self.state, remaining)
+            if selection is None:
+                return False
+            action = selection.action
+            record = self._realize_and_commit(action, mandatory=False, voluntary=True)
+            if record is not None:
+                return True
+            remaining = [candidate for candidate in remaining if candidate is not action]
+
+    def _force_liveness(self, phase: Phase) -> bool:
+        state = self.state
+        simulators = sorted(
+            self._simulators.values(),
+            key=lambda simulator: simulator.persona.sim_params.engagement,
+            reverse=True,
+        )
+        top_level = simulators[0].persona.sim_params.engagement if simulators else 0
+        candidates = [simulator for simulator in simulators if simulator.persona.sim_params.engagement == top_level]
+        self.rng.shuffle(candidates)
+        for simulator in [*candidates, *[s for s in simulators if s not in candidates]]:
+            action = simulator.propose(state, liveness_forced=True)
+            if not action.wants_to_speak:
+                continue
+            record = self._realize_and_commit(
+                action,
+                mandatory=False,
+                voluntary=False,
+                liveness_forced=True,
+            )
+            if record:
+                state.stats.liveness_forced_turns += 1
+                return True
+        return False
+
+    def _realize_and_commit(
+        self,
+        action: UserAction,
+        *,
+        mandatory: bool,
+        voluntary: bool,
+        liveness_forced: bool = False,
+    ) -> TurnRecord | None:
+        state = self.state
+        persona = state.persona(action.speaker_id)
+        self._last_failure_errors = []
+        action_errors = validate_action(state, persona, action)
+        if action_errors:
+            self._last_failure_errors = list(action_errors)
+            for error in action_errors:
+                state.validation_failures[self._validation_category(error)] += 1
+            raise ValueError(f"invalid structured action from {persona.name}: {'; '.join(action_errors)}")
+
+        target_question = None
+        if action.act == ActionType.ANSWER and state.active_issue:
+            target_question = state.active_issue.source_text or state.active_issue.summary
+        prompt = prompts.realization_prompt(state, persona, action, target_question=target_question)
+        self.logger.write_prompt(prompt, "realization")
+        raw = self._call_llm(prompt, profile="dialogue")
+        result = validate_realization(raw, state, persona, action, target_question=target_question)
+        attempt = GenerationAttempt(
+            speaker_id=persona.id,
+            phase=state.phase,
+            action=action.copy(),
+            raw_text=raw,
+            validation_errors=list(result.errors),
+        )
+        state.generation_attempts.append(attempt)
+        for error in result.errors:
+            state.validation_failures[self._validation_category(error)] += 1
+
+        repair_count = 0
+        if not result.ok:
+            repair_count = 1
+            state.stats.repair_calls += 1
+            repair_prompt = prompts.repair_prompt(
+                state,
+                persona,
+                action,
+                result.text or raw,
+                result.errors,
+                target_question=target_question,
+            )
+            self.logger.write_prompt(repair_prompt, "repair")
+            repaired = self._call_llm(repair_prompt, profile="repair")
+            repaired_result = validate_realization(
+                repaired,
+                state,
+                persona,
+                action,
+                target_question=target_question,
+            )
+            attempt.repair_text = repaired
+            attempt.repair_errors = list(repaired_result.errors)
+            for error in repaired_result.errors:
+                state.validation_failures[self._validation_category(error)] += 1
+            result = repaired_result
+        if not result.ok:
+            attempt.final_status = "dropped"
+            self._last_failure_errors = list(result.errors)
+            state.stats.dropped_turns += 1
+            return None
+        attempt.final_status = "accepted"
+        return self._commit_action(
+            action,
+            result.text,
+            mandatory=mandatory,
+            voluntary=voluntary,
+            liveness_forced=liveness_forced,
+            repair_count=repair_count,
+        )
+
+    @staticmethod
+    def _validation_category(error: str) -> str:
+        lowered = error.casefold()
+        categories = (
+            ("repetition", "repetition"),
+            ("outside voting", "phase_language"),
+            ("dialogue-act label", "phase_language"),
+            ("vote", "vote"),
+            ("ambiguous", "vote"),
+            ("invented", "grounding"),
+            ("contradict", "grounding"),
+            ("unsupported", "grounding"),
+            ("option mention", "option_mention"),
+            ("unrelated", "answer_relevance"),
+            ("speaker", "format"),
+            ("metadata", "format"),
+            ("empty", "format"),
+        )
+        for token, category in categories:
+            if token in lowered:
+                return category
+        return "other"
+
+    def _call_llm(self, prompt: str, *, profile: str) -> str:
+        text = self._llm.generate(prompt, profile=profile)
+        state = self.state
+        state.stats.llm_calls += 1
+        state.stats.input_tokens += int(getattr(self._llm, "last_tokens_in", max(1, len(prompt.split()))))
+        state.stats.output_tokens += int(getattr(self._llm, "last_tokens_out", max(1, len(text.split()))))
+        return text
+
+    def _commit_action(
+        self,
+        action: UserAction,
+        text: str,
+        *,
+        mandatory: bool,
+        voluntary: bool,
+        liveness_forced: bool,
+        repair_count: int,
+    ) -> TurnRecord:
+        state = self.state
+        persona = state.persona(action.speaker_id)
+        runtime = state.runtimes[action.speaker_id]
+        issue_event = self._apply_issue_before_turn(action, text)
+        self._apply_stance_update(action)
+        self._apply_public_action(action)
+
+        intended_word_min, intended_word_max = prompts.word_budget(
+            action.act, persona.sim_params.verbosity
+        )
         record = TurnRecord(
-            index=state.turn_index,
+            index=len(state.turns) + 1,
+            phase=state.phase,
             speaker_id=persona.id,
             speaker_name=persona.name,
             text=text,
-            phase=phase,
-            evidence=VisibleEvidence(
-                utterance=text,
-                mentions=self._resolver.mentions(text) if self._resolver is not None else [],
-                primary_act=act_type,
-            ),
+            action=action.copy(),
+            mandatory=mandatory,
+            voluntary=voluntary,
+            liveness_forced=liveness_forced,
+            urgency=action.urgency,
+            repair_count=repair_count,
+            issue_event=issue_event,
+            stance_update=action.stance_update,
+            vote_option=action.vote_option,
+            narrowing_options=tuple(state.narrowing_options),
+            prompt_tokens=int(getattr(self._llm, "last_tokens_in", 0)),
+            output_tokens=int(getattr(self._llm, "last_tokens_out", 0)),
+            intended_word_min=intended_word_min,
+            intended_word_max=intended_word_max,
         )
         state.turns.append(record)
-        state.controller_trace.append({
-            "type": "peer_procedure",
-            "turn_index": record.index,
-            "phase": phase.value,
-            "speaker_id": persona.id,
-            "act": act_type.value,
-            "option_focus": [oid for oid in option_focus if oid in state.scenario.option_ids],
-        })
+        runtime.last_action = action.act
+        runtime.last_spoken_turn = record.index
+        if action.act == ActionType.OPENING:
+            runtime.openings += 1
+        elif action.act == ActionType.ANSWER and mandatory:
+            runtime.mandatory_answers += 1
+        elif action.act == ActionType.VOTE:
+            runtime.votes_cast += 1
+        elif voluntary:
+            runtime.voluntary_turns += 1
+            state.stats.voluntary_turns += 1
+        if action.reason:
+            runtime.stated_reason_keys.add(self._reason_key(action))
+        if action.question_key:
+            runtime.asked_question_keys.add(action.question_key)
+        signature = action_signature(action)
+        runtime.action_signature_counts[signature] += 1
+        runtime.action_signature_contexts[signature] = action_cooldown_context(state, runtime, action)
+        if action.stimulus_id is not None:
+            runtime.responded_stimuli.add(action.stimulus_id)
+            if state.group_stimulus and state.group_stimulus.id == action.stimulus_id:
+                state.group_stimulus = None
+        self._record_novelty(record)
+        self._apply_issue_after_turn(action)
+        print(f"{persona.name}: {text}")
         return record
 
-    # ------------------------------------------------------------------
-    # Rendering helpers
-    # ------------------------------------------------------------------
-
-    def _moderator_say(self, prompt: str, state: DialogueState) -> str:
-        raw = self._llm.generate(prompt, profile="dialogue")
-        self._record_token_usage(state, "moderator", self._llm.last_tokens_in, self._llm.last_tokens_out)
-        text = clean_generated(raw, "Moderator")
-        if self._resolver and self._resolver.invalid_option_refs(text):
-            raw = self._llm.generate(prompt + "\nOnly use the exact option names already listed.", profile="repair")
-            self._record_token_usage(state, "moderator_repair", self._llm.last_tokens_in, self._llm.last_tokens_out)
-            text = clean_generated(raw, "Moderator")
-        return text or "Let’s make this concrete: what is the strongest remaining concern before we choose?"
-
-    def _recent_lines(self, state: DialogueState) -> list[str]:
-        limit = int(cfg.utterances.recent_turns_in_prompt)
-        return [f"{turn.speaker_name}: {turn.text}" for turn in prompts.recent_turn_window(state, limit)]
-
-    @staticmethod
-    def _print_header(state: DialogueState, show_board: bool = False) -> None:
-        print("\n" + "=" * 72)
-        print(f"Topic: {state.scenario.topic}")
-        print("Participants: " + ", ".join(p.name for p in state.personas))
-        if show_board:
-            # No moderator opening turn: still show the reader the option board
-            # as plain setup scaffolding so the console isn't missing the world.
-            print(prompts.moderator_opening(state.scenario))
-        print("=" * 72)
-
-    @staticmethod
-    def _emit(record: TurnRecord) -> None:
-        if not record.text.strip():
+    def _apply_stance_update(self, action: UserAction) -> None:
+        if not action.stance_update:
             return
-        print(f"{record.speaker_name}: {record.text}")
+        state = self.state
+        runtime = state.runtimes[action.speaker_id]
+        update = action.stance_update
+        if update.kind == StanceUpdateKind.MAKE_ACCEPTABLE:
+            runtime.ranks[update.option_id] = max(4, runtime.ranks.get(update.option_id, 3))
+            runtime.acceptable_options.add(update.option_id)
+            runtime.disliked_options.discard(update.option_id)
+            runtime.public_acceptances.add(update.option_id)
+        elif update.kind == StanceUpdateKind.REMOVE_ACCEPTANCE:
+            runtime.acceptable_options.discard(update.option_id)
+            runtime.public_acceptances.discard(update.option_id)
+            runtime.ranks[update.option_id] = min(3, runtime.ranks.get(update.option_id, 3))
+        elif update.kind == StanceUpdateKind.SWITCH_PREFERRED:
+            previous = runtime.preferred_option
+            runtime.ranks[previous] = max(4, min(4, runtime.ranks.get(previous, 4)))
+            runtime.acceptable_options.add(previous)
+            runtime.public_acceptances.add(previous)
+            runtime.preferred_option = update.option_id
+            runtime.ranks[update.option_id] = 5
+            runtime.acceptable_options.discard(update.option_id)
+            runtime.public_preference = update.option_id
+            runtime.visible_switches += 1
+            runtime.last_switch_turn = len(state.turns) + 1
+            runtime.last_switch_target = update.option_id
+            runtime.last_switch_external_evidence_turn = self._latest_external_evidence_turn(
+                action.speaker_id,
+                {previous, update.option_id},
+            )
+        elif update.kind == StanceUpdateKind.REJECT:
+            runtime.ranks[update.option_id] = 1
+            runtime.hard_rejected_options.add(update.option_id)
+            runtime.acceptable_options.discard(update.option_id)
+            runtime.public_acceptances.discard(update.option_id)
+            runtime.public_rejections.add(update.option_id)
 
+    def _apply_public_action(self, action: UserAction) -> None:
+        state = self.state
+        runtime = state.runtimes[action.speaker_id]
+        if action.act == ActionType.OPENING:
+            runtime.public_preference = runtime.preferred_option
+        if action.act == ActionType.SUPPORT:
+            for option_id in action.option_focus:
+                state.public_supports[option_id] += 1
+                state.public_supporters[option_id].add(action.speaker_id)
+        elif action.act == ActionType.CONCERN:
+            for option_id in action.option_focus:
+                state.public_concerns[option_id] += 1
+                state.public_concern_raisers[option_id].add(action.speaker_id)
+        elif action.act == ActionType.COMPARE and len(action.option_focus) >= 2:
+            pair = tuple(sorted(action.option_focus[:2]))
+            state.public_comparisons[pair] += 1
+            state.public_comparers.setdefault(pair, set()).add(action.speaker_id)
+        elif action.act == ActionType.COMPROMISE:
+            for option_id in action.option_focus:
+                state.public_supports[option_id] += 1
+                state.public_supporters[option_id].add(action.speaker_id)
+        elif action.act == ActionType.VOTE:
+            state.votes[action.speaker_id] = action.vote_option
 
-def initialise_state(scenario, personas: list[Persona]) -> DialogueState:
-    state = DialogueState(scenario=scenario, personas=personas)
-    # Per-sim option ranks are the single runtime source of truth for private
-    # stance. Derived helpers read from these ranks; no separate preference/rejection
-    # containers are maintained.
-    state.runtimes = {}
-    for p in personas:
-        ranks = {option.id: STANCE_NEUTRAL for option in scenario.options}
-        reasons_for: dict[str, str] = {}
-        reasons_against: dict[str, str] = {}
-        for oid, stance in (p.option_stances or {}).items():
-            if oid in ranks:
-                ranks[oid] = int(stance.rank)
-                if stance.reason_for:
-                    reasons_for[oid] = stance.reason_for
-                if stance.reason_against:
-                    reasons_against[oid] = stance.reason_against
-        for oid in p.preferred_options:
-            if oid in ranks:
-                ranks[oid] = max(ranks[oid], STANCE_PREFERRED if oid == p.preferred_option else STANCE_ACCEPTABLE)
-        if p.rejection and p.rejection in ranks:
-            ranks[p.rejection] = STANCE_REJECTED
-            if p.rejection_reason:
-                reasons_against[p.rejection] = p.rejection_reason
-        rt = ParticipantRuntime(
-            persona_id=p.id,
-            option_ranks=ranks,
-            reasons_for=reasons_for,
-            reasons_against=reasons_against,
+        substantive = {
+            ActionType.SUPPORT,
+            ActionType.CONCERN,
+            ActionType.ASK,
+            ActionType.ANSWER,
+            ActionType.COMPARE,
+            ActionType.COMPROMISE,
+        }
+        if action.act in substantive:
+            for option_id in action.option_focus:
+                state.coverage[option_id].add(action.speaker_id, action.act)
+        if action.stance_update and action.stance_update.kind in {
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            StanceUpdateKind.SWITCH_PREFERRED,
+            StanceUpdateKind.REJECT,
+        }:
+            state.coverage[action.stance_update.option_id].add(action.speaker_id, action.act)
+
+    def _latest_external_evidence_turn(
+        self,
+        participant_id: str,
+        option_ids: set[str],
+    ) -> int:
+        return max((
+            turn.index
+            for turn in self.state.participant_turns
+            if turn.speaker_id != participant_id
+            and turn.action is not None
+            and bool(option_ids & set(turn.action.option_focus))
+        ), default=-1)
+
+    def _apply_issue_before_turn(self, action: UserAction, text: str) -> str | None:
+        state = self.state
+        if action.issue_effect == IssueEffect.OPEN:
+            if state.active_issue:
+                self._stale_active_issue("a new issue took priority")
+            kind = {
+                ActionType.ASK: IssueKind.QUESTION,
+                ActionType.CONCERN: IssueKind.CONCERN,
+                ActionType.COMPARE: IssueKind.COMPARISON,
+            }.get(action.act)
+            if kind:
+                return self._open_issue(kind, action, text)
+        if action.act == ActionType.COMPARE and len(action.option_focus) >= 2 and not state.active_issue:
+            pair = tuple(sorted(action.option_focus[:2]))
+            # The first comparison is ordinary evidence. A later independent
+            # development of the same trade-off creates the local issue.
+            if state.public_comparisons[pair] >= 1:
+                return self._open_issue(IssueKind.COMPARISON, action, text)
+        return "continued" if state.active_issue and action.issue_id == state.active_issue.id else None
+
+    def _apply_issue_after_turn(self, action: UserAction) -> None:
+        state = self.state
+        issue = state.active_issue
+        if not issue or action.issue_id != issue.id:
+            return
+        issue.last_relevant_turn = len(state.turns)
+        is_opening_turn = (
+            action.issue_effect == IssueEffect.OPEN
+            and issue.opened_at_turn == len(state.turns)
+            and action.speaker_id == issue.opened_by
         )
-        state.runtimes[p.id] = rt
-    state.coverage = {option.id: OptionCoverage() for option in scenario.options}
-    return state
+        if not is_opening_turn:
+            issue.follow_up_count += 1
+        if action.act == ActionType.ANSWER and state.response_obligation == action.speaker_id:
+            state.response_obligation = None
+        if (
+            issue.kind is IssueKind.CONCERN
+            and action.speaker_id != issue.opened_by
+            and action.issue_response_kind is not None
+        ):
+            issue.relevant_responder_ids.add(action.speaker_id)
+            issue.relevant_response_kinds[action.issue_response_kind.value] += 1
+            if action.issue_response_kind is IssueResponseKind.MITIGATION:
+                issue.same_attribute_mitigation = True
+        if action.issue_effect == IssueEffect.ANSWERED:
+            issue.answered = True
+            issue.outcome = "answered"
+        elif action.issue_effect == IssueEffect.PARTIAL:
+            issue.owner_last_evaluated_follow_up_count = issue.follow_up_count
+            issue.outcome = "partially_addressed"
+        elif action.issue_effect == IssueEffect.MAINTAIN:
+            issue.owner_last_evaluated_follow_up_count = issue.follow_up_count
+            issue.outcome = "maintained"
+        elif action.issue_effect == IssueEffect.RESOLVE:
+            issue.owner_last_evaluated_follow_up_count = issue.follow_up_count
+            issue.outcome = "resolved"
+            self._close_active_issue(IssueStatus.RESOLVED, "explicit structured resolution")
+            return
+        cap = int(cfg.conversation.issue_follow_up_cap)
+        if issue.follow_up_count >= cap:
+            self._stale_active_issue("hard follow-up cap reached")
+
+    def _open_issue(self, kind: IssueKind, action: UserAction, text: str) -> str:
+        self._issue_counter += 1
+        issue_id = f"i{self._issue_counter:03d}"
+        action.issue_id = issue_id
+        issue = ActiveIssue(
+            id=issue_id,
+            kind=kind,
+            option_focus=tuple(action.option_focus),
+            opened_by=action.speaker_id,
+            addressed_to=action.addressee_id,
+            summary=action.reason or text,
+            status=IssueStatus.OPEN,
+            opened_at_turn=len(self.state.turns) + 1,
+            last_relevant_turn=len(self.state.turns) + 1,
+            source_text=text,
+            reason_source=action.reason_source,
+            issue_key=(action.reason_source.option_id, action.reason_source.attribute_name)
+            if action.reason_source else None,
+        )
+        self.state.active_issue = issue
+        if kind == IssueKind.QUESTION and action.addressee_id:
+            self.state.response_obligation = action.addressee_id
+        runtime = self.state.runtimes[action.speaker_id]
+        if kind == IssueKind.CONCERN:
+            for option_id in action.option_focus:
+                runtime.opened_issue_keys.add(f"concern:{option_id}")
+        return f"opened:{issue_id}"
+
+    def _close_active_issue(self, status: IssueStatus, reason: str = "") -> None:
+        issue = self.state.active_issue
+        if not issue:
+            return
+        issue.status = status
+        issue.close_reason = reason
+        self.state.issue_history.append(issue)
+        self.state.active_issue = None
+        self.state.response_obligation = None
+
+    def _stale_active_issue(self, reason: str) -> None:
+        issue = self.state.active_issue
+        if not issue:
+            return
+        self._close_active_issue(IssueStatus.STALE, reason)
+
+    def _finish_exhausted_issue(self, reason: str) -> None:
+        issue = self.state.active_issue
+        if not issue:
+            return
+        if issue.kind == IssueKind.QUESTION and issue.answered:
+            issue.outcome = issue.outcome or "answered"
+            self._close_active_issue(IssueStatus.RESOLVED, "question answered; no further follow-up")
+            return
+        self._stale_active_issue(reason)
+
+    def _set_group_stimulus(
+        self,
+        kind: StimulusKind,
+        option_focus: tuple[str, ...],
+        prompt_text: str,
+    ) -> None:
+        self._stimulus_counter += 1
+        self.state.group_stimulus = GroupStimulus(
+            id=self._stimulus_counter,
+            kind=kind,
+            option_focus=option_focus,
+            prompt_text=prompt_text,
+            created_at_turn=len(self.state.turns),
+        )
+
+    def _coverage_prompt_needed(self) -> bool:
+        if not self._moderator_enabled or self.state.coverage_prompt_used:
+            return False
+        if self._phase_voluntary_count(Phase.DISCUSSION) < int(cfg.conversation.min_voluntary_turns):
+            return False
+        # Coverage is soft. Do not reopen alternatives after all participants
+        # already publicly prefer the same option and no issue is active.
+        if self._publicly_converged():
+            return False
+        ready = self._otherwise_ready_to_narrow()
+        return bool(self._uncovered_options()) and ready
+
+    def _uncovered_options(self) -> list[str]:
+        return [
+            option_id for option_id, coverage in self.state.coverage.items()
+            if coverage.substantive_count == 0
+        ]
+
+    def _ready_to_narrow(self) -> bool:
+        state = self.state
+        count = self._phase_voluntary_count(Phase.DISCUSSION)
+        minimum = int(cfg.conversation.min_voluntary_turns)
+        target = int(cfg.conversation.soft_target_voluntary_turns)
+        maximum = int(cfg.conversation.hard_max_voluntary_turns)
+        if state.response_obligation or state.active_issue:
+            return False
+        converged = self._publicly_converged()
+        if converged and self._convergence_confirmed():
+            return True
+        if count < minimum:
+            return False
+        if (
+            self._moderator_enabled
+            and self._uncovered_options()
+            and not state.coverage_prompt_used
+            and not converged
+        ):
+            return False
+        substantive = sum(coverage.substantive_count for coverage in state.coverage.values())
+        if converged and substantive >= max(3, len(state.personas)):
+            return True
+        if count >= maximum:
+            return True
+        recent = state.recent_novelty[-5:]
+        low_novelty = len(recent) >= 4 and sum(recent) <= 1
+        return count >= target and low_novelty
+
+    def _publicly_converged(self) -> bool:
+        preferences = [runtime.public_preference for runtime in self.state.runtimes.values()]
+        return bool(preferences and None not in preferences and len(set(preferences)) == 1)
+
+    def _convergence_confirmed(self) -> bool:
+        """Require one voluntary discussion contribution after unanimous openings."""
+        if not self._publicly_converged():
+            return False
+        shared = next(iter({
+            runtime.public_preference for runtime in self.state.runtimes.values()
+            if runtime.public_preference is not None
+        }))
+        confirming_acts = {
+            ActionType.SUPPORT, ActionType.ACKNOWLEDGE, ActionType.COMMENT,
+            ActionType.ANSWER, ActionType.COMPARE, ActionType.COMPROMISE,
+        }
+        return any(
+            turn.phase is Phase.DISCUSSION
+            and turn.voluntary
+            and turn.action is not None
+            and turn.action.act in confirming_acts
+            and shared in turn.action.option_focus
+            for turn in self.state.participant_turns
+        )
+
+    def _otherwise_ready_to_narrow(self) -> bool:
+        state = self.state
+        if state.response_obligation or state.active_issue:
+            return False
+        count = self._phase_voluntary_count(Phase.DISCUSSION)
+        target = int(cfg.conversation.soft_target_voluntary_turns)
+        maximum = int(cfg.conversation.hard_max_voluntary_turns)
+        recent = state.recent_novelty[-5:]
+        return count >= maximum or (count >= target and (not recent or sum(recent) <= 2))
+
+    def _record_novelty(self, record: TurnRecord) -> None:
+        action = record.action
+        if not action:
+            return
+        signature = (
+            action.act.value,
+            tuple(action.option_focus),
+            action.reason_source.attribute_name if action.reason_source else action.reason.casefold()[:30],
+        )
+        prior = []
+        for turn in self.state.participant_turns[:-1][-8:]:
+            if not turn.action:
+                continue
+            prior.append((
+                turn.action.act.value,
+                tuple(turn.action.option_focus),
+                turn.action.reason_source.attribute_name if turn.action.reason_source else turn.action.reason.casefold()[:30],
+            ))
+        self.state.recent_novelty.append(signature not in prior)
+        self.state.recent_novelty = self.state.recent_novelty[-12:]
+
+    @staticmethod
+    def _reason_key(action: UserAction) -> str:
+        source = action.reason_source
+        if source:
+            return f"{action.act.value}:{source.option_id}:{source.attribute_name}:{source.public_value}"
+        return f"{action.act.value}:{action.reason.casefold()}"
+
+    def _phase_voluntary_count(self, phase: Phase) -> int:
+        return sum(1 for turn in self.state.turns if turn.phase == phase and turn.voluntary)
+
+    def _transition(self, phase: Phase) -> None:
+        self.state.phase = phase
+        self.state.phase_history.append(phase.value)
+
+    def _append_moderator(self, text: str) -> None:
+        record = TurnRecord(
+            index=len(self.state.turns) + 1,
+            phase=self.state.phase,
+            speaker_id="moderator",
+            speaker_name="Moderator",
+            text=text,
+            moderator=True,
+        )
+        self.state.turns.append(record)
+        self.state.stats.moderator_turns += 1
+        print(f"Moderator: {text}")
+
+    @staticmethod
+    def _print_header(state: DialogueState) -> None:
+        print("=" * 72)
+        print(f"Topic: {state.scenario.topic}")
+        print("Participants: " + ", ".join(persona.name for persona in state.personas))
+        print("=" * 72)
+        if not bool((cfg.get("moderator", None) or {}).get("enabled", True)):
+            print("Public setup:")
+            for fact in state.scenario.shared_context:
+                print(f"- {fact}")
+            for option in state.scenario.options:
+                print(option.public_line())
+
+
+def initialise_state(scenario: Scenario, personas: list[Persona]) -> DialogueState:
+    if not personas:
+        raise ValueError("at least one persona is required")
+    option_ids = scenario.option_ids
+    runtimes = {persona.id: initial_runtime(persona, option_ids) for persona in personas}
+    coverage = {option_id: OptionCoverage() for option_id in option_ids}
+    return DialogueState(
+        scenario=scenario,
+        personas=personas,
+        runtimes=runtimes,
+        coverage=coverage,
+        public_supports=Counter(),
+        public_concerns=Counter(),
+        public_comparisons=Counter(),
+        public_supporters={option_id: set() for option_id in option_ids},
+        public_concern_raisers={option_id: set() for option_id in option_ids},
+        public_comparers={},
+    )

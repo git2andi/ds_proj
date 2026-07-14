@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 import random
 import re
-from dataclasses import asdict, replace
+from dataclasses import asdict
 from typing import Any
 
 import prompts
@@ -19,10 +19,9 @@ from aliases import validated_short_alias
 from config_loader import PROFILE_TRAIT_NAMES, cfg, parse_preference_shape
 from llm_client import get_llm_client
 from models import (
-    OptionCard, OptionStance, Persona, Scenario, SimulatorParameters, TraitProfile,
+    OptionCard, OptionStance, Persona, Scenario, SimulatorParameters,
     STANCE_ACCEPTABLE, STANCE_DISLIKED, STANCE_NEUTRAL, STANCE_PREFERRED, STANCE_REJECTED,
 )
-from simulator import derive_simulator_parameters
 from utils import sample_int_range
 
 _TOPIC_COUNT_PATTERNS = [
@@ -85,7 +84,7 @@ def _speech_style_for_age(age: int) -> str:
     return "measured traditional wording"
 
 
-def _age_for_profile(profile: dict, traits: TraitProfile | None = None) -> int:
+def _age_for_profile(profile: dict, traits: SimulatorParameters | None = None) -> int:
     """Use manual age when present, otherwise sample a stable plausible age.
 
     Traits get a weak influence so generated casts are not fully uniform, but age
@@ -94,10 +93,9 @@ def _age_for_profile(profile: dict, traits: TraitProfile | None = None) -> int:
     raw = profile.get("age")
     if raw is not None and str(raw).strip():
         return max(16, min(85, int(raw)))
-    if traits is None:
-        return random.randint(20, 65)
-    base = 38 + int(round((traits.conscientiousness - 3) * 4 - (traits.openness - 3) * 3))
-    return max(18, min(72, base + random.randint(-12, 12)))
+    # Age is lexical metadata only and is deliberately independent of the
+    # behavioral traits.
+    return random.randint(20, 65)
 
 
 def _speech_style_for_profile(profile: dict, age: int) -> str:
@@ -289,12 +287,7 @@ def manual_environment() -> dict | None:
 
 
 def manual_participant_profiles() -> list[dict]:
-    """Normalized manual simulator profiles, or [] when participants.mode is auto.
-
-    Config validation (config_loader) has already checked field names, trait and
-    parameter bounds, and option labels; this only canonicalizes types/casing so
-    the builder can consume the rows uniformly. Profile order maps to p1..pn.
-    """
+    """Return normalized manual profiles using direct simulator traits."""
     participants = cfg.get("participants", None) or {}
     if str(participants.get("mode", "auto")) != "manual":
         return []
@@ -309,10 +302,10 @@ def manual_participant_profiles() -> list[dict]:
             "preferred_option": preferred,
             "age": int(row["age"]) if row.get("age") is not None and str(row.get("age")).strip() else None,
             "speech_style": str(row.get("speech_style") or "").strip(),
+            "hard_blocker": bool(row.get("hard_blocker", False)),
             "rejection": rejection,
             "rejection_reason": str(row.get("rejection_reason") or "").strip(),
             "traits": {key: int(value) for key, value in (row.get("traits") or {}).items()},
-            "parameters": {key: float(value) for key, value in (row.get("parameters") or {}).items()},
         })
     return profiles
 
@@ -325,7 +318,7 @@ def repair_preferred_options(
 ) -> list[str]:
     """Deterministically align a persona's preference list with its assignment.
 
-    The controller assigns the required primary option before prompting, so a
+    The setup builder assigns the required primary option before prompting, so a
     row that drops or reorders it is a formatting slip, not a different world —
     repair it instead of failing the whole persona batch. A rejection of the
     required option is a real contradiction and raises so the attempt retries.
@@ -375,9 +368,9 @@ def _stance_from_option_table(row: dict[str, Any], labels: list[str], scenario: 
 
     Missing rows stay neutral. The table is an initial stance guide, not a final
     script: most options should remain neutral/acceptable, with hard rejects only
-    when explicitly configured or generated for a low-agreeableness blocker.
+    when explicitly configured or generated for the sole hard blocker.
     """
-    raw = row.get("option_stances") or row.get("option_compatibility") or []
+    raw = row.get("option_stances") or []
     by_id: dict[str, OptionStance] = {}
     if isinstance(raw, dict):
         iterable = [{"option": oid, **(value if isinstance(value, dict) else {"rank": value})} for oid, value in raw.items()]
@@ -429,13 +422,13 @@ def _normalise_initial_stances(
             reason_for = reason_for or _option_hint(option, True)
             reason_against = ""
         elif exclusive_blocker:
-            # Sampled hard blocker (todo_blocker item 1): every non-preferred
-            # option is hard-rejected with a grounded reason — the sim must not
+            # A sampled hard blocker hard-rejects every non-preferred
+            # option with a grounded reason; the simulator must not
             # silently remain neutral or acceptable toward an alternative.
             rank = STANCE_REJECTED
             reason_against = (
                 reason_against
-                or (_clip_reason(rejection_reason) if oid == rejection else "")
+                or _clip_reason(rejection_reason)
                 or _option_hint(option, False)
                 or "does not meet their one non-negotiable requirement"
             )
@@ -460,7 +453,13 @@ def _normalise_initial_stances(
 
 
 class SetupBuilder:
-    def __init__(self, topic: str, *, force_auto_scenario: bool = False) -> None:
+    def __init__(
+        self,
+        topic: str,
+        *,
+        force_auto_scenario: bool = False,
+        llm=None,
+    ) -> None:
         self.topic = topic.strip()
         seed = cfg.simulation.get("random_seed", None)
         if seed is not None:
@@ -471,7 +470,7 @@ class SetupBuilder:
         self._manual_env = None if force_auto_scenario else manual_environment()
         if self._manual_env:
             self.topic = str(self._manual_env["topic"]).strip()
-        self._llm = get_llm_client("dialogue")  # setup is a generative call: dialogue role
+        self._llm = llm or get_llm_client()  # one shared setup/dialogue provider
         self._hard_blocker_id: str | None = None
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
@@ -632,37 +631,31 @@ class SetupBuilder:
         return self._parse_personas(data.get("participants", []), trait_rows, scenario, required_preferences)
 
     def _trait_rows(self, n: int) -> list[dict[str, Any]]:
-        # Random hard blockers only in auto mode; a manual cast gets a blocker
-        # solely through an explicit profile rejection. The probability is
-        # GROUP-level: at most one exclusive hard blocker per run.
-        hard_id = None
+        """Sample direct simulator traits and at most one hard blocker."""
+        manual_blockers = [
+            f"p{idx + 1}" for idx, profile in enumerate(self._profiles)
+            if profile.get("hard_blocker")
+        ]
+        if len(manual_blockers) > 1:
+            raise ValueError("manual profiles may define at most one hard blocker")
+        hard_id = manual_blockers[0] if manual_blockers else None
         if not self._profiles and n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
             hard_id = f"p{random.randint(1, n)}"
         self._hard_blocker_id = hard_id
+
         given_names = [p["name"] for p in self._profiles if p["name"]]
         fill_names = iter(_sample_names(n, exclude=given_names))
         rows: list[dict[str, Any]] = []
         for idx in range(n):
             pid = f"p{idx + 1}"
             profile = self._profiles[idx] if self._profiles else {}
-            fixed_traits = profile.get("traits") or {}
-            # A manual rejection with explicitly configured agreeableness keeps
-            # that agreeableness: the constraint holds regardless of personality
-            # (P5). Only an unset agreeableness falls back to the classic
-            # low-agreeableness blocker persona.
-            stubborn = (
-                pid == hard_id
-                or fixed_traits.get("agreeableness") == 1
-                or (bool(profile.get("rejection")) and fixed_traits.get("agreeableness") is None)
-            )
-            traits = self._sample_traits(stubborn, fixed_traits)
+            params = self._sample_traits(pid == hard_id, profile.get("traits") or {})
             row: dict[str, Any] = {
                 "id": pid,
                 "name": profile.get("name") or next(fill_names),
-                "traits": asdict(traits),
+                "traits": asdict(params),
+                "hard_blocker": pid == hard_id,
             }
-            # Fixed texts ride along in the row so the persona prompt keeps the
-            # LLM-filled fields consistent with them; parsing overrides them anyway.
             if profile.get("description"):
                 row["background"] = profile["description"]
             if profile.get("private_goal"):
@@ -764,16 +757,19 @@ class SetupBuilder:
             else:
                 assignments[pid] = random.choice([o for o in option_ids if o != rejection])
 
-    def _sample_traits(self, stubborn: bool, fixed: dict[str, int] | None = None) -> TraitProfile:
-        ranges = cfg.personas.hard_blocker_trait_ranges if stubborn else cfg.personas.trait_ranges
-        values = {name: sample_int_range(ranges[name]) for name in PROFILE_TRAIT_NAMES}
+    def _sample_traits(
+        self, hard_blocker: bool, fixed: dict[str, int] | None = None
+    ) -> SimulatorParameters:
+        ranges = cfg.personas.trait_ranges
+        values = {
+            name: sample_int_range(ranges[name])
+            for name in PROFILE_TRAIT_NAMES
+        }
         if fixed:
-            values.update(fixed)
-        if stubborn:
-            # Hard-blocker invariant: only agreeableness=1 personas may hold a
-            # hard rejection (config validation rejects contradicting profiles).
-            values["agreeableness"] = 1
-        return TraitProfile(**values)
+            values.update({key: int(value) for key, value in fixed.items()})
+        if hard_blocker:
+            values["stubbornness"] = 5
+        return SimulatorParameters(**values).validated(hard_blocker=hard_blocker)
 
     def _profiles_complete(self) -> bool:
         """True when every manual profile fully specifies the persona-level fields.
@@ -794,25 +790,30 @@ class SetupBuilder:
         for row in trait_rows:
             pid = row["id"]
             profile = self._profile_for(pid)
-            traits = self._trait_from_row(row)
+            params = self._trait_from_row(row)
+            hard_blocker = pid == self._hard_blocker_id
             preferred_options = repair_preferred_options(
                 [], profile.get("rejection"), required_preferences.get(pid),
-                single_only=traits.agreeableness == 1,
+                single_only=hard_blocker,
             )
             option_stances = _normalise_initial_stances(
-                self._current_scenario, {}, preferred_options, profile.get("rejection"), profile.get("rejection_reason", "")
+                self._current_scenario,
+                {},
+                preferred_options,
+                profile.get("rejection"),
+                profile.get("rejection_reason", ""),
+                exclusive_blocker=hard_blocker,
             )
-            age = _age_for_profile(profile, traits)
+            age = _age_for_profile(profile, params)
             background = profile["description"]
             private_goal = profile["private_goal"]
             plausibility = _age_plausibility_issues(age, background, private_goal)
             if plausibility:
                 raise ValueError(f"participant {pid} age/profile mismatch: {'; '.join(plausibility)}")
-            persona = Persona(
+            personas.append(Persona(
                 id=pid,
                 name=row["name"],
-                traits=traits,
-                sim_params=self._sim_params_for(traits, profile),
+                sim_params=params,
                 background=background,
                 private_goal=private_goal,
                 preferred_options=preferred_options,
@@ -821,14 +822,9 @@ class SetupBuilder:
                 rejection=profile.get("rejection"),
                 rejection_reason=profile.get("rejection_reason", ""),
                 option_stances=option_stances,
-            )
-            personas.append(persona)
+                hard_blocker=hard_blocker,
+            ))
         return personas
-
-    def _sim_params_for(self, traits: TraitProfile, profile: dict) -> SimulatorParameters:
-        params = derive_simulator_parameters(traits)
-        overrides = profile.get("parameters") or {}
-        return replace(params, **overrides).clipped() if overrides else params
 
     def _parse_scenario(self, raw: Any, n: int) -> Scenario:
         if not isinstance(raw, dict):
@@ -842,7 +838,7 @@ class SetupBuilder:
             raise ValueError("wrong number of options")
         options = [card for card, _proposed in parsed]
         # Alias problems never discard a substantively valid board: they get a
-        # small alias-only repair call instead (todo_validation item 3).
+        # small alias-only repair call instead.
         alias_notes = self._ensure_valid_aliases(options, {card.id: prop for card, prop in parsed})
         ctx_raw = raw.get("shared_context", [])
         shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
@@ -890,15 +886,31 @@ class SetupBuilder:
         for _attempt in range(2):  # explicit alias-repair retry limit
             need = sorted(set(invalid) | set(duplicates))
             used = [o.short_name for o in options if o.short_name and o.id not in need]
+            option_rows = [
+                {
+                    "id": option.id,
+                    "name": option.name,
+                    "short_name": option.short_name or proposed.get(option.id, ""),
+                    "attrs": dict(option.attrs),
+                    "upside": option.upside,
+                    "concern": option.concern,
+                }
+                for option in options
+            ]
             prompt = prompts.alias_repair(
-                [(oid, by_id[oid].name, ", ".join(sorted(rejected.get(oid, ())))) for oid in need],
-                used,
+                topic=self.topic,
+                option_rows=option_rows,
+                invalid=invalid,
+                duplicates=duplicates,
             )
             try:
                 data = self._llm.generate_json(prompt, profile="setup")
             except Exception:
                 data = {}
-            raw_aliases = data.get("aliases", data) if isinstance(data, dict) else {}
+            if isinstance(data, dict):
+                raw_aliases = data.get("short_names", data.get("aliases", data))
+            else:
+                raw_aliases = {}
             taken = {alias.casefold() for alias in used}
             for oid in need:
                 candidate = str((raw_aliases or {}).get(oid) or "").strip()
@@ -1011,14 +1023,15 @@ class SetupBuilder:
         return personas
 
     @staticmethod
-    def _trait_from_row(row: dict[str, Any]) -> TraitProfile:
-        raw = row["traits"]
-        return TraitProfile(**raw)
+    def _trait_from_row(row: dict[str, Any]) -> SimulatorParameters:
+        return SimulatorParameters(**row["traits"]).validated(
+            hard_blocker=bool(row.get("hard_blocker", False))
+        )
 
-    def _persona_from_row(self, row: dict[str, Any], traits: TraitProfile, scenario: Scenario, idx: int, pid: str,
+    def _persona_from_row(self, row: dict[str, Any], params: SimulatorParameters, scenario: Scenario, idx: int, pid: str,
                           required: str | None = None) -> Persona:
         labels = scenario.option_ids
-        # Parse preferred_options (1–2 items); fall back to old preferred_option field
+        # Parse the generated preferred_options list (one or two items).
         raw_prefs = row.get("preferred_options") or []
         if not isinstance(raw_prefs, list):
             raw_prefs = [raw_prefs] if raw_prefs else []
@@ -1026,11 +1039,6 @@ class SetupBuilder:
             str(x).strip().upper() for x in raw_prefs[:2]
             if str(x).strip().upper() in labels
         ]
-        if not preferred_options:
-            # backward-compat with old preferred_option single field
-            old = str(row.get("preferred_option") or "").strip().upper()
-            if old in labels:
-                preferred_options = [old]
         # Parse optional rejection (hard blockers only, but accepted from any row and validated later)
         rej_raw = str(row.get("rejection") or "").strip().upper()
         rejection: str | None = rej_raw if rej_raw in labels and rej_raw not in preferred_options else None
@@ -1043,7 +1051,7 @@ class SetupBuilder:
             rejection_reason = profile["rejection_reason"]
             preferred_options = [opt for opt in preferred_options if opt != rejection]
         preferred_options = repair_preferred_options(
-            preferred_options, rejection, required, single_only=traits.agreeableness == 1
+            preferred_options, rejection, required, single_only=(pid == self._hard_blocker_id)
         )
         if not preferred_options:
             raise ValueError(f"participant {pid} has no valid preferred_options")
@@ -1056,12 +1064,12 @@ class SetupBuilder:
         raw_age = row.get("age")
         profile_age = profile.get("age")
         age_source = profile_age if profile_age is not None else raw_age
-        age = _age_for_profile({"age": age_source} if age_source is not None else profile, traits)
+        age = _age_for_profile({"age": age_source} if age_source is not None else profile, params)
         # speech_style is builder-derived from age (or a manual profile
         # override); the persona LLM never writes it.
         speech_style = _speech_style_for_profile(profile, age)
         background = profile.get("description") or _require(
-            row.get("background") or row.get("backstory"),
+            row.get("background"),
             f"participant {pid} background",
         )
         private_goal = profile.get("private_goal") or _require(
@@ -1073,8 +1081,7 @@ class SetupBuilder:
         persona = Persona(
             id=pid,
             name=_require(row.get("name"), f"participant {pid} name"),
-            traits=traits,
-            sim_params=self._sim_params_for(traits, profile),
+            sim_params=params,
             background=background,
             private_goal=private_goal,
             preferred_options=preferred_options,
@@ -1136,9 +1143,9 @@ class SetupBuilder:
                 raise ValueError(f"participant {persona.id} has invalid rejection {persona.rejection}")
             if persona.rejection and persona.rejection in persona.preferred_options:
                 raise ValueError(f"participant {persona.id} cannot reject a preferred option")
-            if persona.traits.agreeableness == 1 and len(persona.preferred_options) > 1:
+            if persona.hard_blocker and len(persona.preferred_options) > 1:
                 raise ValueError(f"hard blocker {persona.id} should have exactly one preferred option")
-            # Exclusive hard-blocker contract (todo_blocker item 3): a sampled
+            # Exclusive hard-blocker contract: a sampled
             # blocker has exactly one rank-5 option and hard-rejects every
             # alternative with a grounded reason; a non-blocker must never end
             # up with that exclusive pattern (at most the one manual/LLM

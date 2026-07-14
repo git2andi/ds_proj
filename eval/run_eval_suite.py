@@ -1,1293 +1,712 @@
-#!/usr/bin/env python3
-r"""
-Run a sequential evaluation suite for the option-grounded multi-user simulator.
+"""LLM-backed end-to-end evaluation suite for the autonomous runtime.
 
-Usage from the project root:
-
-    py .\eval\run_eval_suite.py
-
-The script temporarily overwrites config.yaml for each case, runs main.py, and
-restores the original config.yaml at the end, even if a run fails or you stop it.
-
-It writes all generated logs under eval/logs_eval_suite/ so they are separated from
-normal interactive runs and kept with the evaluation scripts.
+The configured dialogue LLM realizes selected structured actions. Bidding,
+action choice, state updates, validation, issues, voting, and outcomes remain
+seeded Python responsibilities.
 """
 
 from __future__ import annotations
 
-import argparse
-import copy
 import csv
-import hashlib
 import json
+import random
+import re
 import shutil
-import subprocess
 import sys
-from datetime import datetime
+import zipfile
+from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
-# Child transcripts contain unicode (e.g. the "−" minus sign in option boards).
-# When stdout is a cp1252 console or a pipe, re-printing them would crash.
-for _stream in (sys.stdout, sys.stderr):
-    try:
-        _stream.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
-    except (AttributeError, ValueError):
-        pass
+ROOT = Path(__file__).resolve().parent.parent
+SRC = ROOT / "src"
+for path in (str(ROOT), str(SRC)):
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
-try:
-    import yaml
-except ImportError as exc:
-    raise SystemExit(
-        "PyYAML is required. Your project already uses yaml in config_loader.py, "
-        "so run this inside the same virtualenv you use for the simulator."
-    ) from exc
-
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = PROJECT_ROOT / "config.yaml"
-MAIN_PATH = PROJECT_ROOT / "main.py"
-SUITE_LOG_DIR = PROJECT_ROOT / "eval" / "logs_eval_suite"
-SUMMARY_CSV = SUITE_LOG_DIR / "eval_suite_runs.csv"
-SUITE_VERSION = "critical-validation-consensus-v8"
-
-
-def deep_merge(base: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
-    """Recursively merge patch into base and return base."""
-    for key, value in patch.items():
-        if isinstance(value, dict) and isinstance(base.get(key), dict):
-            deep_merge(base[key], value)
-        else:
-            base[key] = copy.deepcopy(value)
-    return base
+from config_loader import cfg  # noqa: E402
+import prompts  # noqa: E402
+from dialogue import DialogueRunner, initialise_state  # noqa: E402
+from eval.eval import flat_metrics_for  # noqa: E402
+from logger import DialogueLogger, metrics_for  # noqa: E402
+from llm_client import get_llm_client  # noqa: E402
+from models import (  # noqa: E402
+    ActionType,
+    OptionCard,
+    OptionStance,
+    Persona,
+    Scenario,
+    SimulatorParameters,
+    STANCE_DISLIKED,
+    STANCE_NEUTRAL,
+    STANCE_PREFERRED,
+    STANCE_REJECTED,
+    StanceUpdate,
+    StanceUpdateKind,
+    UserAction,
+    VoteStatus,
+)
+from simulator import UserSimulator, switch_probability  # noqa: E402
+from validation import validate_realization  # noqa: E402
 
 
-def load_config() -> dict[str, Any]:
-    with CONFIG_PATH.open("r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+@dataclass(frozen=True)
+class EvalCase:
+    id: str
+    why: str
+    preferences: tuple[str, ...]
+    seed: int
+    moderator: bool = True
+    scenario_key: str = "study"
+    engagements: tuple[int, ...] | None = None
+    verbosities: tuple[int, ...] | None = None
+    stubbornness: tuple[int, ...] | None = None
+    hard_blocker_index: int | None = None
+    dislike_alternatives_for: tuple[int, ...] = ()
+    expected_outcome: str | None = None
 
 
-def write_config(data: dict[str, Any]) -> None:
-    with CONFIG_PATH.open("w", encoding="utf-8") as f:
-        yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True, width=100)
-
-
-def base_patch(
-    *,
-    seed: int,
-    n: int,
-    env_mode: str,
-    participants_mode: str,
-    forced_shape: str | None = None,
-    moderator: dict[str, bool] | None = None,
-    max_turns_per_participant: float | None = None,
-) -> dict[str, Any]:
-    # The evaluation suite exercises the normal deterministic critical path.
-    # Runtime validator LLM calls should normally remain zero.
-    patch: dict[str, Any] = {
-        "simulation": {
-            "num_participants": n,
-            "random_seed": seed,
-        },
-        "environment": {
-            "mode": env_mode,
-        },
-        "participants": {
-            "mode": participants_mode,
-        },
-        "personas": {
-            "preference_distribution": {
-                "forced_shape": forced_shape,
-            }
-        },
-        "output": {
-            "log_dir": "eval/logs_eval_suite",
-            "write_prompts": False,
-        },
-        "validation": {"mode": "critical"},
-        "limits": {
-            "warn_total_input_tokens": 50000,
-        },
-    }
-    if env_mode == "auto":
-        patch["environment"]["manual"] = {}
-    if participants_mode == "auto":
-        patch["participants"]["profiles"] = []
-    if moderator is not None:
-        patch["moderator"] = moderator
-    if max_turns_per_participant is not None:
-        patch["conversation"] = {
-            "min_discussion_turns_per_participant": max(2.0, max_turns_per_participant - 2.0),
-            "target_discussion_turns_per_participant": max(3.0, max_turns_per_participant - 1.0),
-            "max_discussion_turns_per_participant": max_turns_per_participant,
-        }
-    return patch
-
-
-def option(
-    option_id: str,
-    name: str,
-    attrs: dict[str, str],
-    upside: str,
-    concern: str,
-    short_name: str,
-) -> dict[str, Any]:
-    return {
-        "id": option_id,
-        "name": name,
-        "attrs": attrs,
-        "upside": upside,
-        "concern": concern,
-        "short_name": short_name,
-    }
-
-
-RESTAURANT_ENV = {
-    "topic": "Choose a restaurant for a mixed-preference group dinner",
-    "shared_context": [
-        "The group wants dinner this Friday after work.",
-        "The budget target is around 25 euros per person.",
-        "One participant prefers vegetarian-friendly choices.",
-    ],
-    "options": [
-        option(
-            "A",
-            "Corner Ramen",
-            {"price": "18 euros", "travel": "10 minutes by tram", "vegetarian": "two vegetarian bowls"},
-            "warm, quick, and easy to organize",
-            "may not feel special enough for everyone",
-            "Ramen",
-        ),
-        option(
-            "B",
-            "La Piazza",
-            {"price": "26 euros", "travel": "18 minutes by bus", "vegetarian": "several pasta and pizza options"},
-            "broad menu and relaxed atmosphere",
-            "can become noisy on Fridays",
-            "Piazza",
-        ),
-        option(
-            "C",
-            "Green Table",
-            {"price": "24 euros", "travel": "20 minutes walking", "vegetarian": "mostly vegetarian menu"},
-            "best dietary fit and calm setting",
-            "some may see it as too niche",
-            "Green Table",
-        ),
-        option(
-            "D",
-            "Burger Cellar",
-            {"price": "21 euros", "travel": "8 minutes walking", "vegetarian": "one vegetarian burger"},
-            "closest and casual",
-            "may not satisfy the dietary requirement well",
-            "Burger Cellar",
-        ),
-    ],
-}
-
-WEEKEND_ENV = {
-    "topic": "Choose a weekend activity for three friends with different energy levels",
-    "shared_context": [
-        "The group only has Saturday available.",
-        "Nobody wants to spend more than 60 euros.",
-        "The plan should leave time to rest in the evening.",
-    ],
-    "options": [
-        option(
-            "A",
-            "Museum and Cafe Day",
-            {"cost": "24 euros", "travel": "15 minutes by subway", "duration": "4 hours"},
-            "low effort and easy to adjust",
-            "may feel too quiet",
-            "Museum",
-        ),
-        option(
-            "B",
-            "Lake Bike Ride",
-            {"cost": "12 euros", "travel": "25 minutes by train", "duration": "6 hours"},
-            "active and inexpensive",
-            "bad fit for someone tired",
-            "Bike Ride",
-        ),
-        option(
-            "C",
-            "Escape Room",
-            {"cost": "32 euros", "travel": "20 minutes by tram", "duration": "2 hours"},
-            "interactive and memorable",
-            "less flexible once booked",
-            "Escape Room",
-        ),
-        option(
-            "D",
-            "Home Cooking Night",
-            {"cost": "18 euros", "travel": "none", "duration": "5 hours"},
-            "cheapest and most flexible",
-            "may feel too ordinary",
-            "Cooking",
-        ),
-    ],
-}
-
-COFFEE_ENV = {
-    "topic": "Choose a coffee machine for a small shared office kitchen",
-    "shared_context": [
-        "The maximum budget is 320 euros.",
-        "The kitchen counter is small.",
-        "About ten people use the machine on office days.",
-    ],
-    "options": [
-        option(
-            "A",
-            "Moccamaster KBG Select",
-            {"cost": "299 euros", "type": "filter", "capacity": "10 cups"},
-            "reliable for shared pots",
-            "highest upfront cost",
-            "Moccamaster",
-        ),
-        option(
-            "B",
-            "DeLonghi Dedica",
-            {"cost": "179 euros", "type": "espresso", "capacity": "single shots"},
-            "compact and good for espresso",
-            "requires more hands-on use",
-            "Dedica",
-        ),
-        option(
-            "C",
-            "Philips Senseo Switch",
-            {"cost": "119 euros", "type": "pads and filter", "capacity": "7 cups"},
-            "flexible and cheap",
-            "less premium build",
-            "Senseo",
-        ),
-        option(
-            "D",
-            "Ninja Filter Brewer",
-            {"cost": "149 euros", "type": "filter", "capacity": "12 cups"},
-            "large capacity for the price",
-            "less compact than the others",
-            "Ninja",
-        ),
-    ],
-}
-
-ROOMMATE_ENV = {
-    "topic": "Choose whether two roommates should upgrade cleaning at home",
-    "shared_context": [
-        "Two roommates share the apartment costs equally.",
-        "The maximum budget is 450 euros.",
-        "Both want less weekly cleaning friction.",
-    ],
-    "options": [
-        option(
-            "A",
-            "Eufy Robot Vacuum",
-            {"cost": "260 euros", "task": "daily floor cleaning", "space": "needs clear floor paths"},
-            "reduces visible dust without manual effort",
-            "does not help with dishes or kitchen cleanup",
-            "Robot Vacuum",
-        ),
-        option(
-            "B",
-            "Bosch Compact Dishwasher",
-            {"cost": "430 euros", "task": "daily dishes", "space": "uses counter space"},
-            "removes the most common kitchen chore",
-            "does not help with dust or floors",
-            "Dishwasher",
-        ),
-        option(
-            "C",
-            "Monthly Cleaning Service Trial",
-            {"cost": "80 euros per month", "task": "general cleaning", "duration": "three-month trial"},
-            "covers several chores without buying equipment",
-            "depends on scheduling someone to come in",
-            "Cleaning Trial",
-        ),
-        option(
-            "D",
-            "Shared Cleaning Supplies Kit",
-            {"cost": "70 euros", "task": "manual cleaning", "storage": "small closet box"},
-            "cheap and easy to start immediately",
-            "may not change habits enough",
-            "Supplies Kit",
-        ),
-    ],
-}
-
-
-DEMO_ENV = {
-    "topic": "Choose how a student software project should present its final demo",
-    "shared_context": [
-        "The demo slot is 15 minutes in front of the course staff and peers.",
-        "The team has one week left before the presentation.",
-        "A projector and reliable campus wifi are available in the room.",
-    ],
-    "options": [
-        option(
-            "A",
-            "Live Coding Walkthrough",
-            {"prep_time": "low", "risk": "high", "audience_engagement": "high"},
-            "shows the app working in real time and feels authentic",
-            "a live failure in front of staff is hard to recover from",
-            "Live Coding",
-        ),
-        option(
-            "B",
-            "Recorded Screencast",
-            {"prep_time": "medium", "risk": "low", "audience_engagement": "medium"},
-            "safe and rehearsed, nothing can break on stage",
-            "feels less lively and cannot answer follow-ups mid-play",
-            "Screencast",
-        ),
-        option(
-            "C",
-            "Slide Deck With Screenshots",
-            {"prep_time": "low", "risk": "low", "audience_engagement": "low"},
-            "quickest to prepare and easy to keep on time",
-            "least convincing that the software actually runs",
-            "Slides",
-        ),
-        option(
-            "D",
-            "Interactive Audience Try-Out",
-            {"prep_time": "high", "risk": "medium", "audience_engagement": "high"},
-            "most memorable and lets the audience use the app",
-            "needs the most setup and depends on wifi holding up",
-            "Try-Out",
-        ),
-    ],
-}
-
-WORKSHOP_ENV = {
-    "topic": "Choose a format and venue for a weekend community coding workshop",
-    "shared_context": [
-        "About thirty people from mixed skill levels have signed up.",
-        "The organizing budget is 500 euros for the day.",
-        "The workshop must fit into a single Saturday.",
-    ],
-    "options": [
-        option(
-            "A",
-            "University Lab Hands-On Day",
-            {"cost": "150 euros", "capacity": "40 seats", "setup": "computers provided"},
-            "everyone gets a workstation and stable setup",
-            "the campus location is farther for most attendees",
-            "University Lab",
-        ),
-        option(
-            "B",
-            "Community Center Talks",
-            {"cost": "200 euros", "capacity": "60 seats", "setup": "bring your own laptop"},
-            "central and roomy with space for talks",
-            "less hands-on and depends on attendees' own laptops",
-            "Community Center",
-        ),
-        option(
-            "C",
-            "Online Live Sessions",
-            {"cost": "40 euros", "capacity": "no seat limit", "setup": "video platform"},
-            "cheapest and open to anyone regardless of travel",
-            "harder to help beginners who get stuck at home",
-            "Online",
-        ),
-        option(
-            "D",
-            "Cafe Meetup Workshop",
-            {"cost": "120 euros", "capacity": "25 seats", "setup": "informal, limited power outlets"},
-            "relaxed, social atmosphere that lowers the barrier",
-            "tight on space and power for a full hands-on day",
-            "Cafe Meetup",
-        ),
-    ],
-}
-
-
-def persona_profile(
-    *,
-    age: int,
-    speech_style: str,
-    description: str,
-    private_goal: str,
-    preferred_option: str,
-    traits: dict[str, int],
-    parameters: dict[str, float],
-    name: str,
-    rejection: str | None = None,
-    rejection_reason: str = "",
-) -> dict[str, Any]:
-    """Create a manual persona profile with explicit age/speech_style fields.
-
-    Eval personas intentionally keep behavior-driving parameters separate from
-    surface wording: engagement/verbosity/directness/stubbornness control
-    behavior; speech_style is only age-consistent register coloring.
-    """
-    profile: dict[str, Any] = {
-        "name": name,
-        "age": age,
-        "speech_style": speech_style,
-        "description": description,
-        "private_goal": private_goal,
-        "preferred_option": preferred_option,
-        "traits": traits,
-        "parameters": parameters,
-    }
-    if rejection:
-        profile["rejection"] = rejection
-        profile["rejection_reason"] = rejection_reason
-    return profile
-
-
-# The four compact age-band registers used by the builder (src/builders.py).
-STYLE_YOUNG = "young casual wording"
-STYLE_RELAXED = "relaxed practical wording"
-STYLE_WORKPLACE = "direct workplace wording"
-STYLE_TRADITIONAL = "measured traditional wording"
-
-
-def profiles_three_way() -> list[dict[str, Any]]:
-    """Three distinct initial favorites; designed to catch premature split-vote closure."""
-    return [
-        persona_profile(
-            name="Mira",
-            age=42,
-            speech_style=STYLE_WORKPLACE,
-            description="organized project coordinator who cares about broad fit and avoiding awkward logistics",
-            private_goal="wants the option that works for most people without needing extra coordination",
-            preferred_option="A",
-            traits={"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
-            parameters={
-                "engagement": 0.55,
-                "verbosity": 0.55,
-                "directness": 0.50,
-                "stubbornness": 0.45,
-                "switch_resistance": 0.40,
-            },
-        ),
-        persona_profile(
-            name="Jonas",
-            age=24,
-            speech_style=STYLE_YOUNG,
-            description="early-career budget-watcher who rents a shared flat and avoids unnecessary spending",
-            private_goal="wants the group to avoid overspending but can accept a better compromise",
-            preferred_option="B",
-            traits={"openness": 3, "conscientiousness": 4, "extraversion": 2, "agreeableness": 4, "neuroticism": 2},
-            parameters={
-                "engagement": 0.35,
-                "verbosity": 0.35,
-                "directness": 0.45,
-                "stubbornness": 0.35,
-                "switch_resistance": 0.30,
-            },
-        ),
-        persona_profile(
-            name="Lea",
-            age=29,
-            speech_style=STYLE_RELAXED,
-            description="high-energy event planner who likes memorable choices and often drives the conversation forward",
-            private_goal="wants the group to choose something that feels worth the effort",
-            preferred_option="C",
-            traits={"openness": 5, "conscientiousness": 3, "extraversion": 5, "agreeableness": 3, "neuroticism": 2},
-            parameters={
-                "engagement": 0.90,
-                "verbosity": 0.80,
-                "directness": 0.70,
-                "stubbornness": 0.55,
-                "switch_resistance": 0.50,
-            },
-        ),
-    ]
-
-
-def profiles_trait_spread_4() -> list[dict[str, Any]]:
-    """One very active sim, one quiet sim, two middle sims."""
-    return [
-        persona_profile(
-            name="Nora",
-            age=37,
-            speech_style=STYLE_WORKPLACE,
-            description="very engaged product lead who notices process problems and proposes next steps",
-            private_goal="wants a clear decision and tends to keep the group moving",
-            preferred_option="B",
-            traits={"openness": 4, "conscientiousness": 4, "extraversion": 5, "agreeableness": 3, "neuroticism": 1},
-            parameters={
-                "engagement": 0.95,
-                "verbosity": 0.85,
-                "directness": 0.75,
-                "stubbornness": 0.35,
-                "switch_resistance": 0.30,
-            },
-        ),
-        persona_profile(
-            name="Tarek",
-            age=21,
-            speech_style=STYLE_YOUNG,
-            description="quiet university student who answers when asked but rarely pushes himself into the discussion",
-            private_goal="wants the simplest acceptable choice and avoids long arguments",
-            preferred_option="D",
-            traits={"openness": 2, "conscientiousness": 3, "extraversion": 1, "agreeableness": 4, "neuroticism": 3},
-            parameters={
-                "engagement": 0.15,
-                "verbosity": 0.25,
-                "directness": 0.35,
-                "stubbornness": 0.30,
-                "switch_resistance": 0.30,
-            },
-        ),
-        persona_profile(
-            name="Eva",
-            age=56,
-            speech_style=STYLE_WORKPLACE,
-            description="experienced office administrator who weighs concrete constraints before moving position",
-            private_goal="wants the option with the fewest hidden tradeoffs",
-            preferred_option="A",
-            traits={"openness": 3, "conscientiousness": 5, "extraversion": 3, "agreeableness": 3, "neuroticism": 2},
-            parameters={
-                "engagement": 0.55,
-                "verbosity": 0.55,
-                "directness": 0.55,
-                "stubbornness": 0.50,
-                "switch_resistance": 0.55,
-            },
-        ),
-        persona_profile(
-            name="Sam",
-            age=31,
-            speech_style=STYLE_RELAXED,
-            description="socially flexible UX designer who often bridges between opposing preferences",
-            private_goal="wants the final choice to feel acceptable to everyone",
-            preferred_option="C",
-            traits={"openness": 4, "conscientiousness": 3, "extraversion": 3, "agreeableness": 5, "neuroticism": 2},
-            parameters={
-                "engagement": 0.50,
-                "verbosity": 0.50,
-                "directness": 0.40,
-                "stubbornness": 0.20,
-                "switch_resistance": 0.15,
-            },
-        ),
-    ]
-
-
-
-def profiles_compromise_5() -> list[dict[str, Any]]:
-    """Controlled 2-1-1-1 split with flexible movers for one bounded repair."""
-    profiles = profiles_trait_spread_4()
-    profiles.append(persona_profile(
-        name="Lena",
-        age=42,
-        speech_style=STYLE_RELAXED,
-        description="practical community organizer who values reliable equipment but can accept a workable group choice",
-        private_goal="wants beginners to receive enough hands-on help without exceeding the budget",
-        preferred_option="A",
-        traits={"openness": 4, "conscientiousness": 4, "extraversion": 3, "agreeableness": 5, "neuroticism": 2},
-        parameters={
-            "engagement": 0.60,
-            "verbosity": 0.55,
-            "directness": 0.45,
-            "stubbornness": 0.20,
-            "switch_resistance": 0.15,
-        },
-    ))
-    return profiles
-
-def profiles_hard_holdout_4() -> list[dict[str, Any]]:
-    """One stubborn minority, useful for bounded reservation/compromise testing."""
-    return [
-        persona_profile(
-            name="Clara",
-            age=46,
-            speech_style=STYLE_WORKPLACE,
-            description="detail-focused operations specialist who will not accept weak dietary fit",
-            private_goal="wants the option that clearly protects the dietary requirement",
-            preferred_option="C",
-            traits={"openness": 3, "conscientiousness": 5, "extraversion": 2, "agreeableness": 2, "neuroticism": 3},
-            parameters={
-                "engagement": 0.55,
-                "verbosity": 0.55,
-                "directness": 0.75,
-                "stubbornness": 0.85,
-                "switch_resistance": 0.90,
-            },
-        ),
-        persona_profile(
-            name="Ben",
-            age=27,
-            speech_style=STYLE_YOUNG,
-            description="cost-conscious early-career employee who likes broad, familiar compromises",
-            private_goal="wants a safe group choice that does not exceed the budget too much",
-            preferred_option="B",
-            traits={"openness": 3, "conscientiousness": 4, "extraversion": 3, "agreeableness": 4, "neuroticism": 2},
-            parameters={
-                "engagement": 0.60,
-                "verbosity": 0.50,
-                "directness": 0.50,
-                "stubbornness": 0.35,
-                "switch_resistance": 0.30,
-            },
-        ),
-        persona_profile(
-            name="Iris",
-            age=34,
-            speech_style=STYLE_RELAXED,
-            description="active social organizer who prefers easy logistics and broad menus",
-            private_goal="wants the group to settle on a practical choice without dragging the debate out",
-            preferred_option="B",
-            traits={"openness": 4, "conscientiousness": 3, "extraversion": 5, "agreeableness": 4, "neuroticism": 1},
-            parameters={
-                "engagement": 0.85,
-                "verbosity": 0.70,
-                "directness": 0.65,
-                "stubbornness": 0.30,
-                "switch_resistance": 0.25,
-            },
-        ),
-        persona_profile(
-            name="Omar",
-            age=62,
-            speech_style=STYLE_TRADITIONAL,
-            description="relaxed retired teacher who usually follows a reasonable majority",
-            private_goal="wants a choice that avoids obvious inconvenience",
-            preferred_option="B",
-            traits={"openness": 3, "conscientiousness": 3, "extraversion": 2, "agreeableness": 5, "neuroticism": 2},
-            parameters={
-                "engagement": 0.40,
-                "verbosity": 0.35,
-                "directness": 0.35,
-                "stubbornness": 0.20,
-                "switch_resistance": 0.15,
-            },
-        ),
-    ]
-
-
-def profiles_stubborn_deadlock_2() -> list[dict[str, Any]]:
-    """Two stubborn opposing participants; designed to force the 1-1 protocol."""
-    return [
-        persona_profile(
-            name="Maja",
-            age=23,
-            speech_style=STYLE_YOUNG,
-            description="stubborn graduate student in a shared apartment who thinks floors are the visible problem",
-            private_goal="wants the robot vacuum and does not want a counter-space appliance",
-            preferred_option="A",
-            rejection="B",
-            rejection_reason="it is near the budget limit and uses counter space",
-            traits={"openness": 2, "conscientiousness": 4, "extraversion": 2, "agreeableness": 1, "neuroticism": 4},
-            parameters={
-                "engagement": 0.55,
-                "verbosity": 0.45,
-                "directness": 0.80,
-                "stubbornness": 0.95,
-                "switch_resistance": 0.95,
-            },
-        ),
-        persona_profile(
-            name="Felix",
-            age=58,
-            speech_style=STYLE_WORKPLACE,
-            description="stubborn long-time tenant who thinks dishes cause most conflict and distrusts partial floor-only fixes",
-            private_goal="wants the dishwasher and does not want a device that ignores the kitchen mess",
-            preferred_option="B",
-            rejection="A",
-            rejection_reason="it does not help with dishes or kitchen cleanup",
-            traits={"openness": 2, "conscientiousness": 4, "extraversion": 3, "agreeableness": 1, "neuroticism": 3},
-            parameters={
-                "engagement": 0.60,
-                "verbosity": 0.50,
-                "directness": 0.85,
-                "stubbornness": 0.95,
-                "switch_resistance": 0.95,
-            },
-        ),
-    ]
-
-
-MOD_FULL = {
-    "enabled": True,
-    "opening": True,
-    "mid_discussion_nudges": True,
-    "final_vote_call": True,
-    "closing": True,
-}
-
-MOD_NONE = {
-    "enabled": False,
-    "opening": False,
-    "mid_discussion_nudges": False,
-    "final_vote_call": False,
-    "closing": False,
-}
-
-MOD_LIGHT = {
-    "enabled": True,
-    "opening": True,
-    "mid_discussion_nudges": False,
-    "final_vote_call": False,
-    "closing": True,
-}
-
-
-CASES: list[dict[str, Any]] = [
-    # 1. Manual/manual, n=2, stubborn deadlock (shared-home upgrade regression).
-    {
-        "id": "c01_manual_manual_n2_stubborn_deadlock",
-        "why": "Two opposing hard blockers should close as a defensible unresolved result without a pointless repair loop.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=201, n=2, env_mode="manual", participants_mode="manual",
-                       forced_shape="1-1", moderator=MOD_FULL),
-            {
-                "environment": {"manual": ROOMMATE_ENV},
-                "participants": {"profiles": profiles_stubborn_deadlock_2()},
-            },
-        ),
-    },
-    # 2. Manual/manual, n=3, three-way split and narrowing (Saturday plan).
-    {
-        "id": "c02_manual_manual_n3_three_way_split",
-        "why": "A/B/C split must narrow before closing, not vote through immediately.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=202, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
-            {
-                "environment": {"manual": WEEKEND_ENV},
-                "participants": {"profiles": profiles_three_way()},
-            },
-        ),
-    },
-    # 3. Manual/manual, n=4, strong trait spread, light moderator (student demo).
-    {
-        "id": "c03_manual_manual_n4_trait_spread_light_mod",
-        "why": "High/low engagement should visibly change turn share and word length; light moderator only opens/closes.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=203, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_LIGHT),
-            {
-                "environment": {"manual": DEMO_ENV},
-                "participants": {"profiles": profiles_trait_spread_4()},
-            },
-        ),
-    },
-    # 4. Manual/manual, n=4, no moderator (group dinner with dietary/travel).
-    {
-        "id": "c04_manual_manual_n4_no_moderator",
-        "why": "No-moderator mode must still narrow via participant probes/summaries and visible votes.",
-        "topic": "",
-        "expect": {"peer_process": True},
-        "patch": deep_merge(
-            base_patch(seed=204, n=4, env_mode="manual", participants_mode="manual", moderator=MOD_NONE),
-            {
-                "environment": {"manual": RESTAURANT_ENV},
-                "participants": {"profiles": profiles_hard_holdout_4()},
-            },
-        ),
-    },
-    # 5. Manual/manual, n=3, grounding stress case (coffee machine).
-    {
-        "id": "c05_manual_manual_n3_grounding_coffee",
-        "why": "Exposes invented product capabilities, inference over-rejection, and grounding/token cost.",
-        "topic": "",
-        "expect": {"zero_unsupported_printed": True},
-        "patch": deep_merge(
-            base_patch(seed=205, n=3, env_mode="manual", participants_mode="manual", moderator=MOD_FULL),
-            {
-                "environment": {"manual": COFFEE_ENV},
-                "participants": {"profiles": profiles_three_way()},
-            },
-        ),
-    },
-    # 6. Controlled compromise/voting-heavy n=5 case.
-    {
-        "id": "c06_manual_manual_n5_compromise",
-        "why": "Controlled 2-1-1-1 starting preferences test one existing-option compromise attempt and bounded revoting.",
-        "topic": "",
-        "patch": deep_merge(
-            base_patch(seed=206, n=5, env_mode="manual", participants_mode="manual",
-                       forced_shape="2-1-1-1", moderator=MOD_FULL,
-                       max_turns_per_participant=3.5),
-            {
-                "environment": {"manual": WORKSHOP_ENV},
-                "participants": {"profiles": profiles_compromise_5()},
-            },
-        ),
-    },
-    # 7. Automatic environment / manual participants, n=3 (alias-repair regression).
-    {
-        "id": "c07_auto_env_manual_participants_n3",
-        "why": "Retains the automatic setup and alias-repair regression with controlled personas.",
-        "topic": "Book a flight from Miami to Stockholm",
-        "patch": deep_merge(
-            base_patch(seed=207, n=3, env_mode="auto", participants_mode="manual", moderator=MOD_FULL),
-            {"participants": {"profiles": profiles_three_way()}},
-        ),
-    },
-    # 8. Automatic/automatic, n=3 baseline (volunteer scheduling).
-    {
-        "id": "c08_auto_auto_n3_baseline",
-        "why": "Normal default-style auto/auto run for regression comparison.",
-        "topic": "Choose a shared scheduling method for a volunteer group",
-        "patch": base_patch(seed=208, n=3, env_mode="auto", participants_mode="auto",
-                            forced_shape="1-1-1", moderator=MOD_FULL),
-    },
-    # 9. Automatic/automatic, n=5 scaling (one-day team retreat).
-    {
-        "id": "c09_auto_auto_n5_scaling",
-        "why": "Checks routing/pacing scale beyond n=3/4 with mixed budgets and energy.",
-        "topic": "Choose a one-day team retreat format with mixed budgets and energy levels",
-        "patch": base_patch(seed=209, n=5, env_mode="auto", participants_mode="auto",
-                            forced_shape="2-1-1-1", moderator=MOD_FULL),
-    },
-    # 10. Automatic/automatic, n=7 maximum size (student showcase), bounded turns.
-    {
-        "id": "c10_auto_auto_n7_max_size",
-        "why": "Maximum group size; a bounded turn budget tests scale without dominating total cost.",
-        "topic": "Choose a format for a student hackathon project showcase",
-        "patch": base_patch(seed=210, n=7, env_mode="auto", participants_mode="auto",
-                            forced_shape="3-2-1-1", moderator=MOD_FULL,
-                            max_turns_per_participant=4.0),
-    },
-]
-
-
-def case_fingerprint(case: dict[str, Any]) -> str:
-    payload = {
-        "suite_version": SUITE_VERSION,
-        "id": case["id"],
-        "topic": case.get("topic", ""),
-        "patch": case.get("patch", {}),
-        "expect": case.get("expect", {}),
-    }
-    encoded = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
-    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:16]
-
-
-def _read_summary_rows() -> list[dict[str, str]]:
-    if not SUMMARY_CSV.exists():
-        return []
-    with SUMMARY_CSV.open("r", newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def _completed_row(case: dict[str, Any], rows: list[dict[str, str]]) -> dict[str, str] | None:
-    expected = case_fingerprint(case)
-    for row in reversed(rows):
-        if row.get("case_id") != case["id"] or row.get("case_fingerprint") != expected:
-            continue
-        if row.get("suite_version") != SUITE_VERSION or str(row.get("returncode")) != "0":
-            continue
-        log_dir = Path(row.get("log_dir") or "")
-        run_json = log_dir / "run.json"
-        if not run_json.exists():
-            continue
-        try:
-            data = json.loads(run_json.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        if (
-            data.get("case_id") == case["id"]
-            and data.get("suite_version") == SUITE_VERSION
-            and data.get("case_fingerprint") == expected
-        ):
-            return row
-    return None
-
-
-def _rewrite_summary(rows: list[dict[str, Any]]) -> None:
-    if not rows:
-        if SUMMARY_CSV.exists():
-            SUMMARY_CSV.unlink()
-        return
-    SUMMARY_CSV.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = list(rows[0].keys())
-    with SUMMARY_CSV.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({key: row.get(key, "") for key in fieldnames})
-
-
-def selected_cases() -> list[dict[str, Any]]:
-    """Return the full suite. The eval script intentionally has no quick/list modes."""
-    return CASES
-
-
-# Controller-facing phrasing that must never appear in a PRINTED participant
-# line (item 10 leak detector). These are internal rationale/trace terms.
-_LEAK_PHRASES = (
-    "most defensible choice",
-    "clearest visible support",
-    "visible discussion",
-    "route_source",
-    "intended_move",
-    "primary_act",
-    "allowed_reason",
-    "thread_id",
-    "controller",
-    "fallback",
-    "required_vote",
-    "option_focus",
-    "coverage",
+CASES = (
+    EvalCase("easy_agreement", "Shared initial preference should close early without repetitive filler.", ("A", "A", "A"), 101, expected_outcome="successful"),
+    EvalCase("three_way_split", "Independent preferences should narrow without controller-authored concessions.", ("A", "B", "C"), 102),
+    EvalCase("normal_compromise", "Low-stubbornness participants can visibly accept or switch.", ("A", "B", "B"), 5, stubbornness=(1, 1, 2)),
+    EvalCase(
+        "majority_holdout",
+        "A valid majority must close without unanimity repair.",
+        ("A", "A", "A", "B"),
+        104,
+        stubbornness=(2, 2, 2, 4),
+        dislike_alternatives_for=(0, 1, 2, 3),
+        expected_outcome="majority",
+    ),
+    EvalCase("hard_blocker", "The sole blocker never switches or votes away from its option.", ("A", "A", "C"), 105, scenario_key="cleaning", hard_blocker_index=2),
+    EvalCase("direct_question_followup", "A direct question must be answered and receive a real issue outcome.", ("A", "B", "A"), 106, engagements=(5, 4, 3)),
+    EvalCase(
+        "unresolved_concern",
+        "A concern owner may explicitly maintain an objection.",
+        ("A", "B", "C"),
+        107,
+        stubbornness=(4, 4, 4),
+        dislike_alternatives_for=(0, 1, 2),
+    ),
+    EvalCase(
+        "concern_resolution",
+        "A low-stubbornness concern owner can evaluate a mitigation, resolve the issue, and accept the option.",
+        ("A", "B", "B"),
+        1,
+        engagements=(5, 4, 3),
+        stubbornness=(1, 2, 2),
+        dislike_alternatives_for=(0,),
+    ),
+    EvalCase("no_moderator", "Protocol must run with no visible moderator turns.", ("A", "B", "A"), 108, moderator=False, scenario_key="restaurant"),
+    EvalCase("grounding_sensitive", "Prepared flight facts and comparisons must remain grounded.", ("B", "C", "A"), 109, scenario_key="flight"),
+    EvalCase("engagement_spread", "Unequal engagement should yield unequal voluntary participation.", ("A", "B", "C", "A"), 110, engagements=(5, 1, 2, 4)),
+    EvalCase("verbosity_spread", "Comparable voluntary contributions should reflect word-budget differences.", ("A", "B", "A"), 111, verbosities=(1, 5, 3)),
+    EvalCase("visible_stance_switch", "A committed preference switch must be visible in the transcript.", ("A", "B", "B"), 1, stubbornness=(1, 1, 1)),
+    EvalCase(
+        "persona_distinctness",
+        "Different personal priorities should produce different structured reasons and occasional relevant personal context.",
+        ("C", "B", "A", "D"),
+        112,
+        scenario_key="study",
+    ),
+    EvalCase(
+        "no_majority_revote",
+        "A split may use one complete re-vote and then close unresolved.",
+        ("A", "A", "B", "B"),
+        113,
+        stubbornness=(4, 4, 4, 4),
+        dislike_alternatives_for=(0, 1, 2, 3),
+        expected_outcome="unresolved",
+    ),
 )
 
 
-def _leak_hits(run_data: dict[str, Any]) -> list[str]:
-    """Printed participant lines carrying controller-facing wording (item 10)."""
-    hits: list[str] = []
-    for turn in run_data.get("turns", []):
-        if turn.get("speaker_id") == "moderator":
-            continue
-        text = (turn.get("text") or "")
-        low = text.lower()
-        for phrase in _LEAK_PHRASES:
-            if phrase in low:
-                hits.append(f"turn {turn.get('index')}: '{phrase}' in {text[:60]!r}")
-    return hits
-
-
-def _metric(metrics: dict[str, Any], section: str, key: str, default: Any = None) -> Any:
-    values = metrics.get(section, {})
-    return values.get(key, default) if isinstance(values, dict) else default
-
-
-def case_flags(case: dict[str, Any], metrics: dict[str, Any], run_data: dict[str, Any]) -> list[str]:
-    """Concise behavioral and efficiency health checks for one completed case."""
-    flags: list[str] = []
-    participant_turns = int(_metric(metrics, "run_structure", "participant_turn_count", 0) or 0)
-    n = max(1, len(run_data.get("personas", [])))
-    validation = metrics.get("validation_grounding", {}) or {}
-    decision = metrics.get("decision_behavior", {}) or {}
-    interaction = metrics.get("interaction", {}) or {}
-    tokens = _metric(metrics, "token_usage", "total", {}) or {}
-
-    if participant_turns > max(35, 8 * n):
-        flags.append(f"excessive_participant_turns={participant_turns}")
-    post_vote = sum(
-        1 for turn in run_data.get("turns", [])
-        if turn.get("speaker_id") != "moderator"
-        and turn.get("phase") in {"compromise_repair", "voting"}
-    )
-    if post_vote > 2 * n + 4:
-        flags.append(f"excessive_post_vote_turns={post_vote}")
-
-    repair_rate = validation.get("repair_rate")
-    if repair_rate is not None and float(repair_rate) > 0.10:
-        flags.append(f"repair_rate={float(repair_rate):.2f}>0.10")
-    fallback_rate = validation.get("fallback_rate")
-    if fallback_rate is not None and float(fallback_rate) > 0.05:
-        flags.append(f"fallback_rate={float(fallback_rate):.2f}>0.05")
-    if int(validation.get("dropped_turns", 0) or 0) > 0:
-        flags.append(f"dropped_turns={validation.get('dropped_turns')}")
-    if int(validation.get("runtime_validator_calls", 0) or 0) > 0:
-        flags.append(f"runtime_validator_calls={validation.get('runtime_validator_calls')}")
-    if int(decision.get("vote_state_consistency_failures", 0) or 0) > 0:
-        flags.append(f"vote_state_consistency_failures={decision.get('vote_state_consistency_failures')}")
-    if len(decision.get("visible_votes", {}) or {}) < n:
-        flags.append("missing_visible_votes")
-    if decision.get("outcome_status") == "successful" and decision.get("active_blockers_at_close"):
-        final = decision.get("final_option")
-        blockers = decision.get("active_blockers_at_close") or {}
-        if any(final in blocked for blocked in blockers.values()):
-            flags.append("consensus_with_active_final_blocker")
-    q_rate = interaction.get("question_completion_rate")
-    if q_rate is not None and float(q_rate) < 0.65:
-        flags.append(f"question_completion_rate={float(q_rate):.2f}<0.65")
-    c_rate = interaction.get("concern_response_rate")
-    if c_rate is not None and float(c_rate) < 0.50:
-        flags.append(f"concern_response_rate={float(c_rate):.2f}<0.50")
-    repetition = interaction.get("repetition_score")
-    if repetition is not None and float(repetition) > 0.40:
-        flags.append(f"repetition_score={float(repetition):.2f}>0.40")
-    total_in = int(tokens.get("input_tokens", 0) or 0)
-    threshold = 40000 if n <= 3 else (70000 if n <= 5 else 100000)
-    if total_in > threshold:
-        flags.append(f"input_tokens={total_in}>{threshold}")
-    if int(validation.get("critical_grounding_interventions", 0) or 0) > 0:
-        flags.append(f"critical_grounding_interventions={validation.get('critical_grounding_interventions')}")
-    if case.get("id") == "c06_manual_manual_n5_compromise" and int(
-        decision.get("compromise_attempt_count", 0) or 0
-    ) == 0:
-        flags.append("expected_compromise_not_exercised")
-    leaks = _leak_hits(run_data)
-    if leaks:
-        flags.append(f"controller_language_leak x{len(leaks)}")
-    return flags
-
-
-
-def run_case(case: dict[str, Any], base_config: dict[str, Any]) -> dict[str, Any]:
-    cfg = copy.deepcopy(base_config)
-    deep_merge(cfg, case["patch"])
-    # Persist the suite case id so run.json/transcript metadata and the log
-    # directory name all tie back to this case (item 9).
-    output = cfg.setdefault("output", {})
-    output["case_id"] = case["id"]
-    output["suite_version"] = SUITE_VERSION
-    output["case_fingerprint"] = case_fingerprint(case)
-
-    # Keep case logs separate inside the suite folder by using run metadata in stdout;
-    # the simulator itself creates timestamped subdirs under eval/logs_eval_suite/.
-    write_config(cfg)
-
-    cmd = [sys.executable, str(MAIN_PATH)]
-    if cfg.get("environment", {}).get("mode") == "auto":
-        cmd.append(case["topic"])
-
-    started = datetime.now().isoformat(timespec="seconds")
-    print(f"\n=== {case['id']} ===")
-    print(case["why"])
-    print("Command:", " ".join(str(x) for x in cmd))
-    proc = subprocess.run(
-        cmd,
-        cwd=PROJECT_ROOT,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        capture_output=True,
+def scenario_for(key: str) -> Scenario:
+    if key == "flight":
+        return Scenario(
+            topic="Book a flight from Miami to Stockholm",
+            shared_context=["All flights leave on the same date.", "Prices are per passenger."],
+            options=[
+                OptionCard("A", "Direct Premium Flight", {"price": "750 dollars", "duration": "10 hours", "stops": "none"}, "shortest travel time", "highest price", "Direct"),
+                OptionCard("B", "One-Stop Saver", {"price": "520 dollars", "duration": "13 hours", "stops": "one"}, "lower price", "longer travel time", "Saver"),
+                OptionCard("C", "Overnight Connection", {"price": "600 dollars", "duration": "12 hours", "stops": "one"}, "overnight timing", "connection required", "Overnight"),
+                OptionCard("D", "Two-Stop Budget Flight", {"price": "430 dollars", "duration": "16 hours", "stops": "two"}, "lowest price", "longest travel time", "Budget"),
+            ],
+        )
+    if key == "cleaning":
+        return Scenario(
+            topic="Choose a household cleaning upgrade",
+            shared_context=["The household wants one primary upgrade.", "All listed prices are within the available budget."],
+            options=[
+                OptionCard("A", "Robot Vacuum", {"price": "260 euros", "task": "daily floor cleaning", "setup": "clear floor paths"}, "reduces routine floor work", "does not clean dishes", "Robot"),
+                OptionCard("B", "Weekly Cleaner", {"price": "80 euros per visit", "task": "full weekly cleaning", "schedule": "Saturday morning"}, "covers several rooms", "requires a fixed appointment", "Cleaner"),
+                OptionCard("C", "Dishwasher Upgrade", {"price": "480 euros", "task": "dish cleaning", "capacity": "12 place settings"}, "removes daily dishwashing", "does not clean floors", "Dishwasher"),
+                OptionCard("D", "Shared Chore Plan", {"price": "free", "task": "manual rotation", "schedule": "three sessions per week"}, "no purchase cost", "requires consistent participation", "Chore plan"),
+            ],
+        )
+    if key == "restaurant":
+        return Scenario(
+            topic="Choose a restaurant for dinner",
+            shared_context=["The group will meet at 19:00.", "The target budget is 30 euros per person."],
+            options=[
+                OptionCard("A", "Green Table", {"price": "24 euros", "travel": "15 minutes", "menu": "mixed vegetarian"}, "broad dietary coverage", "limited outdoor seating", "Green Table"),
+                OptionCard("B", "Harbor Grill", {"price": "29 euros", "travel": "20 minutes", "menu": "seafood and meat"}, "large group tables", "few vegetarian mains", "Harbor Grill"),
+                OptionCard("C", "Old Town Pasta", {"price": "22 euros", "travel": "25 minutes", "menu": "Italian"}, "lowest meal price", "longest travel time", "Pasta"),
+                OptionCard("D", "Market Kitchen", {"price": "27 euros", "travel": "10 minutes", "menu": "seasonal"}, "shortest travel time", "smaller menu", "Market"),
+            ],
+        )
+    return Scenario(
+        topic="Choose a Saturday study location",
+        shared_context=["The group meets on Saturday.", "The budget is capped at 20 euros per person."],
+        options=[
+            OptionCard("A", "Central Library", {"cost": "free", "closing time": "20:00", "equipment": "standard desks"}, "quiet and predictable", "can become crowded", "Library"),
+            OptionCard("B", "Riverside Cafe", {"cost": "8 euros", "closing time": "22:00", "noise": "moderate"}, "relaxed atmosphere", "background noise", "Cafe"),
+            OptionCard("C", "Engineering Lab", {"cost": "free", "closing time": "19:00", "equipment": "specialist workstations"}, "reliable technical equipment", "earlier closing time", "Lab"),
+            OptionCard("D", "Online Session", {"cost": "free", "travel": "none", "access": "from home"}, "no travel", "less social interaction", "Online"),
+        ],
     )
 
-    stdout = proc.stdout.strip()
-    stderr = proc.stderr.strip()
-    if stdout:
-        print(stdout)
-    if stderr:
-        print("STDERR:")
-        print(stderr)
 
-    log_dir = ""
-    for line in stdout.splitlines():
-        if line.startswith("Logs:"):
-            log_dir = line.split("Logs:", 1)[1].strip()
-
-    metrics: dict[str, Any] = {}
-    run_data: dict[str, Any] = {}
-    if log_dir:
-        run_json = Path(log_dir) / "run.json"
-        if run_json.exists():
-            try:
-                run_data = json.loads(run_json.read_text(encoding="utf-8"))
-                metrics = run_data.get("metrics", {}) or {}
-            except Exception as exc:  # noqa: BLE001 - diagnostic only
-                metrics = {"metrics_read_error": str(exc)}
-
-    # Tag the log directory with the case id (item 9) so the folder itself
-    # identifies its case, not only run.json/CSV.
-    if log_dir:
-        src = Path(log_dir)
-        if src.exists() and case["id"] not in src.name:
-            dest = src.with_name(f"{src.name}__{case['id']}")
-            try:
-                src.rename(dest)
-                log_dir = str(dest)
-            except OSError:
-                pass
-
-    flags = case_flags(case, metrics, run_data)
-    if flags:
-        print("FLAGS:", "; ".join(flags))
-
-    persona_age_style = "; ".join(
-        f"{p.get('name', '?')}:{p.get('age', '?')}:{p.get('speech_style', '')}"
-        for p in run_data.get("personas", [])
-    )
-
-    run_structure = metrics.get("run_structure", {}) or {}
-    participation = metrics.get("participation", {}) or {}
-    traits = metrics.get("traits", {}) or {}
-    interaction = metrics.get("interaction", {}) or {}
-    decision = metrics.get("decision_behavior", {}) or {}
-    validation = metrics.get("validation_grounding", {}) or {}
-    total_tokens = _metric(metrics, "token_usage", "total", {}) or {}
-    row = {
-        "case_id": case["id"],
-        "suite_version": SUITE_VERSION,
-        "metric_schema_version": metrics.get("metric_schema_version"),
-        "case_fingerprint": case_fingerprint(case),
-        "started": started,
-        "returncode": proc.returncode,
-        "flags": "; ".join(flags),
-        "log_dir": log_dir,
-        "why": case["why"],
-        "environment_mode": cfg.get("environment", {}).get("mode"),
-        "participants_mode": cfg.get("participants", {}).get("mode"),
-        "moderator_enabled": cfg.get("moderator", {}).get("enabled"),
-        "n": cfg.get("simulation", {}).get("num_participants"),
-        "forced_shape": cfg.get("personas", {}).get("preference_distribution", {}).get("forced_shape"),
-        "persona_age_style": persona_age_style,
-        "outcome_status": decision.get("outcome_status"),
-        "final_option": decision.get("final_option"),
-        "participant_turn_count": run_structure.get("participant_turn_count"),
-        "moderator_turns": run_structure.get("moderator_turns"),
-        "moderator_ratio": run_structure.get("moderator_ratio"),
-        "avg_words_per_participant_turn": run_structure.get("avg_words_per_participant_turn"),
-        "question_density": run_structure.get("question_density"),
-        "participation_gini": participation.get("participation_gini"),
-        "engagement_behavior_correlation": participation.get("engagement_behavior_correlation"),
-        "verbosity_budget_correlation": traits.get("verbosity_budget_correlation"),
-        "verbosity_behavior_correlation": traits.get("verbosity_behavior_correlation"),
-        "mean_word_budget_adherence": (
-            round(
-                sum(v for v in (traits.get("word_budget_adherence", {}) or {}).values() if v is not None)
-                / len([v for v in (traits.get("word_budget_adherence", {}) or {}).values() if v is not None]),
-                3,
-            )
-            if any(v is not None for v in (traits.get("word_budget_adherence", {}) or {}).values())
-            else None
-        ),
-        "question_threads": interaction.get("question_threads"),
-        "concern_threads": interaction.get("concern_threads"),
-        "question_completion_rate": interaction.get("question_completion_rate"),
-        "concern_response_rate": interaction.get("concern_response_rate"),
-        "repetition_score": interaction.get("repetition_score"),
-        "visible_vote_count": len(decision.get("visible_votes", {}) or {}),
-        "switch_event_count": decision.get("switch_event_count"),
-        "discussion_lean_shifts": decision.get("discussion_lean_shifts"),
-        "compromise_attempt_count": decision.get("compromise_attempt_count"),
-        "compromise_success_rate": decision.get("compromise_success_rate"),
-        "vote_state_consistency_failures": decision.get("vote_state_consistency_failures"),
-        "repaired_turns": validation.get("repaired_turns"),
-        "repair_rate": validation.get("repair_rate"),
-        "fallback_turns": validation.get("fallback_turns"),
-        "fallback_rate": validation.get("fallback_rate"),
-        "dropped_turns": validation.get("dropped_turns"),
-        "drop_rate": validation.get("drop_rate"),
-        "critical_grounding_interventions": validation.get("critical_grounding_interventions"),
-        "runtime_validator_calls": validation.get("runtime_validator_calls"),
-        "total_input_tokens": total_tokens.get("input_tokens"),
-        "total_output_tokens": total_tokens.get("output_tokens"),
-        "total_api_calls": total_tokens.get("api_calls"),
+def personas_for(case: EvalCase, scenario: Scenario) -> list[Persona]:
+    names = ("Nora", "Ben", "Mira", "Omar", "Lea", "Tariq", "Sofia")
+    goals = {
+        "study": "needs a location that supports focused project work",
+        "flight": "needs a practical balance of travel time and price",
+        "cleaning": "wants the upgrade to remove the most frustrating recurring chore",
+        "restaurant": "wants a convenient dinner that fits the group budget",
     }
-    append_summary(row)
+    distinct_profiles = (
+        ("works with hardware prototypes and needs the lab tools", "needs specialist equipment"),
+        ("can only join after an evening work shift", "cannot arrive before 19:00"),
+        ("loses concentration in busy rooms", "strongly avoids noisy environments"),
+        ("has a long commute to campus", "prioritizes avoiding travel"),
+    )
+    result: list[Persona] = []
+    for index, preferred in enumerate(case.preferences):
+        hard = index == case.hard_blocker_index
+        engagement = case.engagements[index] if case.engagements else 3
+        verbosity = case.verbosities[index] if case.verbosities else 3
+        stubbornness = case.stubbornness[index] if case.stubbornness else 2
+        stances: dict[str, OptionStance] = {}
+        for option in scenario.options:
+            if option.id == preferred:
+                stances[option.id] = OptionStance(option.id, STANCE_PREFERRED, option.upside, "")
+            elif hard:
+                stances[option.id] = OptionStance(option.id, STANCE_REJECTED, "", option.concern or "it violates the non-negotiable requirement")
+            elif index in case.dislike_alternatives_for:
+                stances[option.id] = OptionStance(option.id, STANCE_DISLIKED, option.upside, option.concern or "it does not fit the priority well enough")
+            else:
+                stances[option.id] = OptionStance(option.id, STANCE_NEUTRAL, option.upside, option.concern)
+        result.append(Persona(
+            id=f"p{index + 1}",
+            name=names[index],
+            sim_params=SimulatorParameters(
+                engagement=engagement,
+                verbosity=verbosity,
+                directness=3 if case.id == "persona_distinctness" else 1 + (index * 2) % 5,
+                stubbornness=5 if hard else stubbornness,
+            ).validated(hard_blocker=hard),
+            background=(
+                f"{names[index]} {distinct_profiles[index][0]}."
+                if case.id == "persona_distinctness"
+                else f"{names[index]} is making this decision with the group."
+            ),
+            private_goal=(
+                distinct_profiles[index][1]
+                if case.id == "persona_distinctness"
+                else goals[case.scenario_key]
+            ),
+            preferred_options=[preferred],
+            age=22 + index * 9,
+            speech_style=("young casual wording", "relaxed practical wording", "direct workplace wording", "measured traditional wording")[index % 4],
+            rejection_reason="alternatives violate a non-negotiable personal requirement" if hard else "",
+            option_stances=stances,
+            hard_blocker=hard,
+        ))
+    return result
+
+
+@contextmanager
+def runtime_settings(*, moderator: bool) -> Iterator[None]:
+    scalar_changes = {
+        "min_voluntary_turns": 6,
+        "soft_target_voluntary_turns": 12,
+        "hard_max_voluntary_turns": 18,
+        "narrowing_voluntary_turns": 3,
+        "revote_narrowing_voluntary_turns": 2,
+    }
+    old_scalars = {key: getattr(cfg.conversation, key) for key in scalar_changes}
+    old_log_dir = cfg.output.log_dir
+    old_moderator_attr = cfg.moderator.enabled
+    old_moderator_raw = cfg._raw["moderator"]["enabled"]
+    try:
+        for key, value in scalar_changes.items():
+            setattr(cfg.conversation, key, value)
+        cfg.output.log_dir = "eval/logs_eval_suite"
+        cfg.moderator.enabled = moderator
+        cfg._raw["moderator"]["enabled"] = moderator
+        yield
+    finally:
+        for key, value in old_scalars.items():
+            setattr(cfg.conversation, key, value)
+        cfg.output.log_dir = old_log_dir
+        cfg.moderator.enabled = old_moderator_attr
+        cfg._raw["moderator"]["enabled"] = old_moderator_raw
+
+
+def _policy_calibration() -> dict[str, Any]:
+    sc = scenario_for("study")
+    bid_counts: dict[int, int] = {}
+    for engagement in (1, 3, 5):
+        total = 0
+        for seed in range(5):
+            case = EvalCase("calibration", "", ("A",), seed, engagements=(engagement,))
+            persona = personas_for(case, sc)[0]
+            state = initialise_state(sc, [persona])
+            simulator = UserSimulator(persona, random.Random(seed + 1000))
+            total += sum(simulator.propose(state).wants_to_speak for _ in range(300))
+        bid_counts[engagement] = total
+    switch = {level: switch_probability(level, 0.8) for level in (1, 2, 3, 4)}
+
+    diversity_case = EvalCase("policy_diversity", "", ("A", "B", "C"), 902)
+    diversity_personas = personas_for(diversity_case, sc)
+    diversity_state = initialise_state(sc, diversity_personas)
+    diversity_state.runtimes["p2"].public_preference = "B"
+    diversity_state.public_supporters["B"].add("p2")
+    diversity_state.runtimes["p3"].public_preference = "C"
+    diversity_state.public_concern_raisers["C"].add("p3")
+    simulator = UserSimulator(diversity_personas[0], random.Random(903))
+    runtime = diversity_state.runtimes["p1"]
+    question_keys: list[str] = []
+    for _ in range(8):
+        action = simulator._ask_action(diversity_state, runtime)
+        if action is None:
+            break
+        if action.question_key:
+            question_keys.append(action.question_key)
+            runtime.asked_question_keys.add(action.question_key)
+    reason_candidates = simulator._positive_reason_candidates(diversity_state, runtime.preferred_option)
+
+    return {
+        "engagement_bid_counts": bid_counts,
+        "engagement_monotonic": bid_counts[5] > bid_counts[3] > bid_counts[1],
+        "switch_probabilities": switch,
+        "stubbornness_monotonic": switch[1] > switch[2] > switch[3] > switch[4],
+        "distinct_question_keys": question_keys,
+        "question_key_diversity": len(set(question_keys)),
+        "available_reason_sources": len(reason_candidates),
+    }
+
+
+def _realization_calibration(llm) -> dict[str, Any]:
+    """Generate isolated language-trait diagnostics from one fixed action."""
+    sc = scenario_for("study")
+    base_case = EvalCase("realization_calibration", "", ("A",), 901)
+    base = personas_for(base_case, sc)[0]
+    action = UserAction(
+        "p1", True, 0.7, ActionType.SUPPORT, ("A",),
+        reason="quiet and predictable",
+    )
+
+    def realize(*, verbosity: int = 3, directness: int = 3, age: int = 35, style: str = "relaxed practical wording") -> dict[str, Any]:
+        persona = Persona(
+            id=base.id, name=base.name,
+            sim_params=SimulatorParameters(3, verbosity, directness, 2).validated(),
+            background=base.background, private_goal=base.private_goal,
+            preferred_options=list(base.preferred_options), age=age,
+            speech_style=style, option_stances=dict(base.option_stances),
+        )
+        state = initialise_state(sc, [persona])
+        text = llm.generate(prompts.realization_prompt(state, persona, action), profile="dialogue").strip()
+        return {"text": text, "word_count": len(text.split())}
+
+    result = {
+        "verbosity_1": realize(verbosity=1),
+        "verbosity_5": realize(verbosity=5),
+        "directness_1": realize(directness=1),
+        "directness_5": realize(directness=5),
+        "style_young": realize(age=22, style="young casual wording"),
+        "style_measured": realize(age=65, style="measured traditional wording"),
+    }
+    result["verbosity_monotonic"] = (
+        result["verbosity_5"]["word_count"] > result["verbosity_1"]["word_count"]
+    )
+    result["directness_qualified_terms"] = len(re.findall(
+        r"\b(?:maybe|perhaps|might|could|somewhat|I think|I feel)\b",
+        result["directness_1"]["text"], re.I,
+    ))
+    result["directness_explicit_terms"] = len(re.findall(
+        r"\b(?:clearly|definitely|need|must|I prefer|I support)\b",
+        result["directness_5"]["text"], re.I,
+    ))
+
+    switch_state = initialise_state(sc, [base])
+    switch_runtime = switch_state.runtimes[base.id]
+    switch_runtime.preferred_option = "B"
+    switch_runtime.public_preference = "B"
+    vote_action = UserAction(
+        base.id, True, 1.0, ActionType.VOTE, ("A",),
+        reason="the discussion changed the balance", vote_option="A",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.SWITCH_PREFERRED, "A", previous_option_id="B"
+        ),
+    )
+    vote_text = llm.generate(
+        prompts.realization_prompt(switch_state, base, vote_action), profile="dialogue"
+    ).strip()
+    vote_validation = validate_realization(vote_text, switch_state, base, vote_action)
+    result["formal_vote_switch"] = {
+        "text": vote_text,
+        "valid": vote_validation.ok,
+        "errors": vote_validation.errors,
+    }
+    return result
+
+
+def vote_protocol_flags(state, participant_count: int) -> tuple[bool, bool]:
+    """Return (all required attempts recorded, final protocol valid).
+
+    A generation failure or unclear validator result is a protocol degradation,
+    not an intentional abstention. Explicit abstentions remain valid protocol
+    outcomes even though the current simulator policy normally chooses a vote.
+    """
+    attempts_complete = bool(state.vote_records) and all(
+        len(records) == participant_count for records in state.vote_records.values()
+    )
+    final_records = state.vote_records.get(state.vote_round, {})
+    final_valid = (
+        len(final_records) == participant_count
+        and all(record.status in {VoteStatus.VALID, VoteStatus.ABSTAINED} for record in final_records.values())
+    )
+    return attempts_complete, final_valid
+
+
+def _narrowing_before_direct_answer(state) -> int:
+    violations = 0
+    turns = state.turns
+    for index, turn in enumerate(turns):
+        action = turn.action
+        if not action or action.act is not ActionType.ASK or not action.addressee_id:
+            continue
+        for later in turns[index + 1:]:
+            if (
+                later.action is not None
+                and later.action.act is ActionType.ANSWER
+                and later.speaker_id == action.addressee_id
+            ):
+                break
+            if later.phase.value == "NARROWING":
+                violations += 1
+                break
+    return violations
+
+
+def _rapid_switch_count(state) -> int:
+    by_speaker: dict[str, list[int]] = {}
+    for turn in state.participant_turns:
+        if (
+            turn.stance_update is not None
+            and turn.stance_update.kind is StanceUpdateKind.SWITCH_PREFERRED
+        ):
+            by_speaker.setdefault(turn.speaker_id, []).append(turn.index)
+    return sum(
+        current - previous < 3
+        for indices in by_speaker.values()
+        for previous, current in zip(indices, indices[1:])
+    )
+
+
+def _duplicate_structured_reasons(state) -> int:
+    counts: dict[tuple[Any, ...], int] = {}
+    for turn in state.participant_turns:
+        action = turn.action
+        if action is None or not action.reason:
+            continue
+        source = (
+            action.reason_source.option_id,
+            action.reason_source.attribute_name,
+            action.reason_source.public_value,
+        ) if action.reason_source else (action.reason.casefold().strip(),)
+        key = (turn.speaker_id, action.act.value, *source)
+        counts[key] = counts.get(key, 0) + 1
+    return sum(max(0, count - 1) for count in counts.values())
+
+
+def _duplicate_question_keys(state) -> int:
+    counts: dict[tuple[str, str], int] = {}
+    for turn in state.participant_turns:
+        if turn.action and turn.action.question_key:
+            key = (turn.speaker_id, turn.action.question_key)
+            counts[key] = counts.get(key, 0) + 1
+    return sum(max(0, count - 1) for count in counts.values())
+
+
+def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
+    llm.reset_session()
+    sc = scenario_for(case.scenario_key)
+    personas = personas_for(case, sc)
+    with runtime_settings(moderator=case.moderator):
+        runner = DialogueRunner(
+            "",
+            scenario=sc,
+            personas=personas,
+            llm=llm,
+            logger=DialogueLogger(case.id),
+            rng=random.Random(case.seed),
+            seed=case.seed,
+        )
+        result = runner.run()
+    detailed = metrics_for(result.state, result.outcome)
+    row = {"case": case.id, "why": case.why, "scenario": case.scenario_key, **flat_metrics_for(result.state, result.outcome)}
+    row["log_dir"] = result.log_paths["dir"]
+    row["vote_round"] = result.state.vote_round
+    row["direct_answers"] = sum(
+        turn.action is not None and turn.action.act is ActionType.ANSWER and turn.mandatory
+        for turn in result.state.participant_turns
+    )
+    row["hard_blocker_ok"] = all(
+        result.state.votes.get(persona.id) == persona.preferred_option
+        and result.state.runtimes[persona.id].preferred_option == persona.preferred_option
+        for persona in result.state.personas if persona.hard_blocker
+    )
+    row["moderator_ok"] = case.moderator or row["moderator_turns"] == 0
+    row["closed"] = result.state.phase.value == "CLOSED"
+    row["max_one_revote"] = result.state.vote_round <= 2
+    row["voluntary_by_id"] = json.dumps(detailed["turns"]["voluntary_turns_by_id"], sort_keys=True)
+    row["avg_voluntary_words_by_id"] = json.dumps(detailed["turns"]["average_voluntary_words_by_id"], sort_keys=True)
+    row["avg_comparable_voluntary_words_by_id"] = json.dumps(
+        detailed["turns"]["average_comparable_voluntary_words_by_id"], sort_keys=True
+    )
+    row["action_counts"] = json.dumps(detailed["turns"]["action_counts"], sort_keys=True)
+    vote_language = re.compile(r"\b(?:vote(?:d|s|ing)?|my\s+vote|ballot)\b", re.I)
+    action_label_language = re.compile(
+        r"\bi\s+(?:open\s+the\s+discussion(?:\s+by)?|acknowledge\b|compare\b)",
+        re.I,
+    )
+    row["premature_vote_turns"] = sum(
+        bool(turn.action)
+        and turn.action.act is not ActionType.VOTE
+        and bool(vote_language.search(turn.text))
+        for turn in result.state.participant_turns
+    )
+    row["exposed_action_label_turns"] = sum(
+        bool(action_label_language.search(turn.text))
+        for turn in result.state.participant_turns
+    )
+    row["coverage_prompt_used"] = bool(result.state.coverage_prompt_used)
+    row["question_followups"] = max(
+        (issue.follow_up_count for issue in result.state.issue_history if issue.kind.value == "question"),
+        default=0,
+    )
+    row["narrowing_before_direct_answer"] = _narrowing_before_direct_answer(result.state)
+    row["rapid_switches"] = _rapid_switch_count(result.state)
+    row["duplicate_structured_reasons"] = _duplicate_structured_reasons(result.state)
+    row["duplicate_question_keys"] = _duplicate_question_keys(result.state)
+    row["repair_rate"] = detailed["generation"]["repair_rate"]
+    row["drop_rate"] = detailed["generation"]["drop_rate"]
+    row["vote_switch_attempts"] = detailed["generation"]["vote_switch_attempts"]
+    row["vote_switch_failures"] = detailed["generation"]["vote_switch_failures"]
+    relevant_actions = [
+        turn.action for turn in result.state.participant_turns
+        if turn.action and turn.action.act in {
+            ActionType.OPENING, ActionType.SUPPORT, ActionType.CONCERN,
+            ActionType.ANSWER, ActionType.COMPARE, ActionType.COMPROMISE,
+        }
+    ]
+    row["reason_source_rate"] = round(
+        sum(action.reason_source is not None for action in relevant_actions) / max(1, len(relevant_actions)),
+        3,
+    )
+    row["structured_reason_diversity"] = len({
+        (action.reason_source.option_id, action.reason_source.attribute_name, action.reason_source.public_value)
+        if action.reason_source else (action.reason.casefold().strip(),)
+        for action in relevant_actions if action.reason
+    })
+    row["question_key_diversity"] = len({
+        turn.action.question_key for turn in result.state.participant_turns
+        if turn.action and turn.action.question_key
+    })
+    row["distinct_private_goals"] = len({persona.private_goal for persona in result.state.personas})
+    row["relevant_concern_responders"] = detailed["issues"]["relevant_concern_responders"]
+    row["llm_provider"] = str(getattr(llm, "provider", cfg.llm.dialogue))
+    row["llm_model"] = str(getattr(llm, "model_id", cfg.llm.models[str(cfg.llm.dialogue)]))
+
+    vote_round_attempts_complete, final_vote_protocol_valid = vote_protocol_flags(
+        result.state, len(case.preferences)
+    )
+    final_records = result.state.vote_records.get(result.state.vote_round, {})
+    row["vote_round_attempts_complete"] = vote_round_attempts_complete
+    row["vote_round_valid"] = final_vote_protocol_valid
+    # Retained aliases keep older analysis notebooks readable while the clearer
+    # protocol terminology is used by the suite itself.
+    row["vote_rounds_complete"] = vote_round_attempts_complete
+    row["final_votes_all_valid"] = all(
+        record.status is VoteStatus.VALID for record in final_records.values()
+    ) and len(final_records) == len(case.preferences)
+    row["vote_protocol_degraded"] = bool(
+        result.state.vote_protocol_degraded
+        or (vote_round_attempts_complete and not final_vote_protocol_valid)
+    )
+    row["structural_pass"] = all((
+        row["closed"],
+        row["openings"] == len(case.preferences),
+        row["hard_blocker_ok"],
+        row["moderator_ok"],
+        row["max_one_revote"],
+        row["repair_calls"] <= row["participant_turns"],
+        vote_round_attempts_complete,
+        final_vote_protocol_valid,
+        not row["vote_protocol_degraded"],
+        row["narrowing_focus_adherence"] >= 0.80,
+        row["premature_vote_turns"] == 0,
+        row["exposed_action_label_turns"] == 0,
+        row["narrowing_before_direct_answer"] == 0,
+        row["rapid_switches"] == 0,
+        row["duplicate_question_keys"] == 0,
+        row["vote_switch_failures"] == 0,
+    ))
+
+    voluntary = detailed["turns"]["voluntary_turns_by_id"]
+    voluntary_words = detailed["turns"]["average_comparable_voluntary_words_by_id"]
+    actions = detailed["turns"]["action_counts"]
+    case_checks = {
+        "easy_agreement": (
+            result.outcome.status == "successful"
+            and row["voluntary_turns"] <= 10
+            and actions.get("compare", 0) <= 3
+            and row["liveness_forced_turns"] <= 1
+            and not row["coverage_prompt_used"]
+            and row["premature_vote_turns"] == 0
+        ),
+        "normal_compromise": row["visible_switches"] > 0 or row["public_acceptances"] > 0,
+        "majority_holdout": result.outcome.status == "majority" and result.state.vote_round == 1,
+        "hard_blocker": row["hard_blocker_ok"],
+        "direct_question_followup": (
+            row["direct_answers"] >= 1
+            and row["questions_answered"] >= 1
+            and row["questions_resolved"] >= 1
+            and row["question_followups"] >= 1
+        ),
+        "unresolved_concern": row["concerns_maintained"] >= 1,
+        "concern_resolution": (
+            row["concerns_resolved"] + row["concerns_partially_addressed"] >= 1
+            and row["relevant_concern_responders"] >= 1
+            and row["public_acceptances"] >= 1
+            and row["vote_round_valid"]
+        ),
+        "no_moderator": row["moderator_turns"] == 0,
+        "grounding_sensitive": (
+            row["reason_source_rate"] >= 0.50
+            and row["vote_round_valid"]
+            and row["premature_vote_turns"] == 0
+        ),
+        "engagement_spread": voluntary.get("p1", 0) > voluntary.get("p2", 0),
+        "verbosity_spread": (
+            voluntary.get("p1", 0) > 0
+            and voluntary.get("p2", 0) > 0
+            and voluntary_words.get("p2", 0.0) > voluntary_words.get("p1", 0.0)
+        ),
+        "visible_stance_switch": row["visible_switches"] >= 1 and row["rapid_switches"] == 0,
+        "persona_distinctness": (
+            row["distinct_private_goals"] == len(case.preferences)
+            and row["structured_reason_diversity"] >= len(case.preferences)
+        ),
+        "no_majority_revote": (
+            result.outcome.status == "unresolved"
+            and result.state.vote_round == 2
+            and row["vote_round_valid"]
+        ),
+    }
+    expected_outcome_ok = case.expected_outcome is None or result.outcome.status == case.expected_outcome
+    row["case_pass"] = row["structural_pass"] and expected_outcome_ok and case_checks.get(case.id, True)
     return row
 
 
-def append_summary(row: dict[str, Any]) -> None:
-    SUITE_LOG_DIR.mkdir(exist_ok=True)
-    fieldnames = list(row.keys())
-    existing: list[dict[str, Any]] = []
-    if SUMMARY_CSV.exists():
-        with SUMMARY_CSV.open("r", newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            if reader.fieldnames == fieldnames:
-                existing = list(reader)
-    with SUMMARY_CSV.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+def write_summary(rows: list[dict[str, Any]], root: Path, calibration: dict[str, Any]) -> tuple[Path, Path, Path]:
+    csv_path = root / "eval_suite_runs.csv"
+    json_path = root / "eval_suite_summary.json"
+    md_path = root / "eval_suite_summary.md"
+    fieldnames = list(rows[0]) if rows else []
+    with csv_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(existing)
-        writer.writerow(row)
-
-
-def remove_extra_metrics_csv() -> None:
-    """Remove per-run metrics.csv files; keep only eval_suite_runs.csv as suite summary."""
-    if not SUITE_LOG_DIR.exists():
-        return
-    for metrics_path in SUITE_LOG_DIR.rglob("metrics.csv"):
-        if metrics_path.resolve() == SUMMARY_CSV.resolve():
-            continue
-        try:
-            metrics_path.unlink()
-        except OSError as exc:
-            print(f"Warning: could not remove extra metrics CSV {metrics_path}: {exc}", file=sys.stderr)
-
-
-def zip_suite_log_dir() -> Path:
-    """Create eval/logs_eval_suite.zip containing the complete logs_eval_suite folder."""
-    if not SUITE_LOG_DIR.exists():
-        raise FileNotFoundError(f"Cannot zip missing suite log directory: {SUITE_LOG_DIR}")
-    archive_base = SUITE_LOG_DIR.parent / SUITE_LOG_DIR.name
-    archive_path = shutil.make_archive(
-        str(archive_base),
-        "zip",
-        root_dir=SUITE_LOG_DIR.parent,
-        base_dir=SUITE_LOG_DIR.name,
-    )
-    return Path(archive_path)
-
-
-def format_summary_row(row: dict[str, Any]) -> str:
-    """Render one suite row using the current grouped-metric column names."""
-    flags = row.get("flags") or ""
-    return (
-        f"- {row['case_id']}: rc={row['returncode']}, "
-        f"outcome={row.get('outcome_status')}, final={row.get('final_option')}, "
-        f"turns={row.get('participant_turn_count')}, "
-        f"validator_calls={row.get('runtime_validator_calls')}, "
-        f"repair={row.get('repair_rate')}, drops={row.get('dropped_turns')}, "
-        f"critical_grounding={row.get('critical_grounding_interventions')}, "
-        f"tokens_in={row.get('total_input_tokens')}"
-        + (f"  ⚑ {flags}" if flags else "")
-    )
-
-
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run or resume the 10-case dialogue evaluation suite.")
-    parser.add_argument("--clean", action="store_true", help="delete prior suite runs and start from zero")
-    args = parser.parse_args(argv)
-    if not CONFIG_PATH.exists() or not MAIN_PATH.exists():
-        print("Run this script from the project root, next to config.yaml and main.py.", file=sys.stderr)
-        return 2
-
-    cases = selected_cases()
-    # The safety copy lives under eval/ (not the project root), next to the
-    # suite logs it belongs to.
-    backup_path = PROJECT_ROOT / "eval" / "config.yaml.eval_backup"
-    original_text = CONFIG_PATH.read_text(encoding="utf-8")
-    backup_path.write_text(original_text, encoding="utf-8")
-    base_config = yaml.safe_load(original_text) or {}
-
-    SUITE_LOG_DIR.mkdir(exist_ok=True)
-    if args.clean:
-        if SUMMARY_CSV.exists():
-            SUMMARY_CSV.unlink()
-        for child in SUITE_LOG_DIR.iterdir():
-            if child.is_dir():
-                shutil.rmtree(child, ignore_errors=True)
-    existing_rows = _read_summary_rows()
-    completed: dict[str, dict[str, str]] = {}
-    for case in cases:
-        row = _completed_row(case, existing_rows)
-        if row is not None:
-            completed[case["id"]] = row
-    # Rewrite away stale/duplicate rows while preserving valid completed cases.
-    _rewrite_summary([completed[c["id"]] for c in cases if c["id"] in completed])
-
-    print(f"Running/resuming {len(cases)} eval cases. Logs: {SUITE_LOG_DIR}")
-    print(f"Completed cases reused: {len(completed)}")
-    print(f"Original config backup: {backup_path}")
-
-    rows: list[dict[str, Any]] = []
-    return_code = 0
-    try:
-        for case in cases:
-            if case["id"] in completed:
-                row = completed[case["id"]]
-                rows.append(row)
-                print(f"\n=== {case['id']} ===")
-                print("Reusing completed matching run:", row.get("log_dir", ""))
-                continue
-            row = run_case(case, base_config)
-            rows.append(row)
-            if row["returncode"] != 0:
-                return_code = row["returncode"]
-                print(f"\nStopping because {case['id']} failed with return code {return_code}.")
-                break
-    finally:
-        CONFIG_PATH.write_text(original_text, encoding="utf-8")
-        print("\nRestored original config.yaml.")
-
-    remove_extra_metrics_csv()
-    zip_path = zip_suite_log_dir()
-
-    print(f"\nSummary ({len(rows)} rows):")
-    flagged = 0
+        writer.writerows(rows)
+    json_path.write_text(json.dumps({"cases": rows, "policy_calibration": calibration}, ensure_ascii=False, indent=2), encoding="utf-8")
+    lines = [
+        "# LLM-backed evaluation suite",
+        "",
+        f"Dialogue provider/model: {rows[0]['llm_provider']} / {rows[0]['llm_model']}" if rows else "",
+        "The LLM realizes authoritative actions; seeded Python policies choose and commit them.",
+        "",
+        "| Case | Scenario | Outcome | Round | Turns | Voluntary | Repairs | Drops | Resolved issues | Switches | Vote protocol | Pass |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
     for row in rows:
-        flags = row.get("flags") or ""
-        if flags:
-            flagged += 1
-        print(format_summary_row(row))
-    print(f"\n{flagged}/{len(rows)} cases flagged for manual review.")
-    print(f"Suite CSV: {SUMMARY_CSV}")
-    print(f"Suite ZIP: {zip_path}")
-    return return_code
+        lines.append(
+            f"| {row['case']} | {row['scenario']} | {row['outcome']} | {row['vote_round']} | "
+            f"{row['participant_turns']} | {row['voluntary_turns']} | {row['repairs']} | "
+            f"{row['dropped_turns']} | {row['issues_resolved']} | {row['visible_switches']} | "
+            f"{'DEGRADED' if row['vote_protocol_degraded'] else 'valid'} | "
+            f"{'yes' if row['case_pass'] else 'NO'} |"
+        )
+    lines += [
+        "",
+        f"Structural passes: {sum(bool(row['structural_pass']) for row in rows)}/{len(rows)}",
+        f"Case-specific passes: {sum(bool(row['case_pass']) for row in rows)}/{len(rows)}",
+        f"Total repairs: {sum(int(row['repairs']) for row in rows)}",
+        f"Total dropped turns: {sum(int(row['dropped_turns']) for row in rows)}",
+        f"Vote-protocol degradations: {sum(bool(row['vote_protocol_degraded']) for row in rows)}",
+        f"Rapid-switch violations: {sum(int(row['rapid_switches']) for row in rows)}",
+        f"Direct-answer phase-boundary violations: {sum(int(row['narrowing_before_direct_answer']) for row in rows)}",
+        "",
+        "## Policy and isolated realization calibration",
+        "",
+        "```json",
+        json.dumps(calibration, indent=2),
+        "```",
+    ]
+    md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return csv_path, json_path, md_path
+
+
+def zip_logs(root: Path) -> Path:
+    target = root.parent / "logs_eval_suite.zip"
+    if target.exists():
+        target.unlink()
+    with zipfile.ZipFile(target, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(root.rglob("*")):
+            if path.is_file():
+                archive.write(path, path.relative_to(root.parent))
+    return target
+
+
+def main() -> int:
+    log_root = ROOT / "eval" / "logs_eval_suite"
+    if log_root.exists():
+        shutil.rmtree(log_root)
+    log_root.mkdir(parents=True)
+    llm = get_llm_client()
+    print(f"Using dialogue LLM: {llm.provider} / {llm.model_id}")
+    calibration = _policy_calibration()
+    calibration["realization_diagnostics"] = _realization_calibration(llm)
+    rows: list[dict[str, Any]] = []
+    for case in CASES:
+        print(f"\n=== {case.id} ===\n{case.why}")
+        rows.append(evaluate_case(case, llm))
+    csv_path, json_path, md_path = write_summary(rows, log_root, calibration)
+    zip_path = zip_logs(log_root)
+    structural_passed = sum(bool(row["structural_pass"]) for row in rows)
+    passed = sum(bool(row["case_pass"]) for row in rows)
+    print(f"\nStructural passes: {structural_passed}/{len(rows)}")
+    print(f"Case-specific passes: {passed}/{len(rows)}")
+    print(f"Summary: {md_path}")
+    print(f"CSV: {csv_path}")
+    print(f"JSON: {json_path}")
+    print(f"Archive: {zip_path}")
+    return 0 if passed == len(rows) else 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
