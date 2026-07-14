@@ -1,51 +1,49 @@
 # Configuration and running
 
-The main runtime controls in `config.yaml` are:
-
-```text
-llm.dialogue and provider/model sampling
-simulation participant count, seed, setup attempts, one-repair bound
-personas direct trait ranges and hard-blocker probability
-conversation group pacing, issue caps, recent prompt context, floor limits
-moderator.enabled
-consensus majority fraction
-output paths
-```
-
-Removed controls include OCEAN, switch resistance, expected turn shares, validator endpoints, granular moderator switches, thread priorities, repair families, fallback families, and unanimity-repair tuning.
-
-Manual personas assign traits directly:
+Important configuration sections:
 
 ```yaml
-participants:
-  mode: manual
-  profiles:
-    - name: Nora
-      description: Works on a practical project.
-      private_goal: Needs reliable equipment.
-      preferred_option: C
-      age: 29
-      speech_style: relaxed practical wording
-      traits:
-        engagement: 4
-        verbosity: 3
-        directness: 4
-        stubbornness: 2
+simulator:
+  bid_probability_by_engagement: {1: 0.20, 2: 0.35, 3: 0.50, 4: 0.70, 5: 0.90}
+  movement_probability_by_stubbornness: {1: 0.80, 2: 0.60, 3: 0.40, 4: 0.20, 5: 0.00}
+
+language:
+  max_words_by_verbosity: {1: 10, 2: 14, 3: 18, 4: 24, 5: 30}
+  directness_instructions: {...}
+
+conversation:
+  min_voluntary_turns_per_participant: 2
+  soft_target_voluntary_turns_per_participant: 4
+  hard_max_voluntary_turns_per_participant: 6
+  soft_target_voluntary_turn_cap: 22
+  hard_max_voluntary_turn_cap: 30
+  issue_follow_up_cap: 3
+  max_concerns_per_participant: 1
+  stagnation_no_bid_rounds: 1
+  compromise_window_max_turns: 1
+  narrowing_reaction_turn_cap: 2
+  recent_turns_in_prompt: 5
+  max_consecutive_turns: 2
 ```
 
-A manual hard blocker additionally sets `hard_blocker: true` and a `rejection_reason`. At most one may appear.
+All behavioral probabilities and limits are explicit configuration values. The code does not hide additional multiplier formulas.
 
-Run a generated scenario:
+Run:
 
 ```powershell
-py .\main.py "Choose a study location"
+py .\main.py "Your topic"
 ```
 
-Run the configured manual environment by invoking `main.py` without an explicit topic. Run deterministic verification first, then the live LLM-backed evaluation suite:
+Tests:
 
 ```powershell
-$env:PYTHONPATH = "src"
 py -m pytest -q
-py -m compileall -q main.py src eval tests
+```
+
+Evaluation:
+
+```powershell
 py .\eval\run_eval_suite.py
 ```
+
+The LLM-backed suite contains 15 cases over 10 topics and covers every supported group size from 2 through 7 participants.

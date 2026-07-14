@@ -1,39 +1,25 @@
-# Simulated users and direct traits
+# User simulator generation
 
-A persona contains:
+Each persona contains:
 
-```text
-id, name
-background, private_goal
-age, speech_style
-engagement, verbosity, directness, stubbornness
-preferred option and option-specific stances
-optional hard-blocker state and rejection reason
-```
+- name;
+- age and `speech_style`;
+- short background;
+- private goal;
+- direct traits: engagement, verbosity, directness, stubbornness;
+- one `OptionStance` per option;
+- optional hard-blocker state.
 
-The project no longer uses OCEAN or a separate switch-resistance trait. Generated and manual personas use direct integer traits:
+## Trait responsibilities
 
-- `engagement: 1..5` controls only voluntary bid probability, urgency, and willingness to join a relevant issue;
-- `verbosity: 1..5` controls only action-scaled soft realization targets (normal discussion is approximately 4–11, 7–16, 11–24, 16–32, and 22–44 words); acknowledgments, votes, and simple answers may be shorter, while comparisons and concern explanations may be longer;
-- `directness: 1..5` controls only realization wording;
-- `stubbornness: 1..4` controls defence, acceptance, and switching probability for normal simulators.
+- engagement → probability of a voluntary bid;
+- verbosity → maximum realization length;
+- directness → wording instruction;
+- stubbornness → movement probability after a concrete trigger. Movement may be acceptance or a preference switch.
 
-Age and `speech_style` provide small lexical guidance only. They do not alter participation, length, preferences, or stance-transition probabilities.
+Normal stubbornness is 1–4. A hard blocker uses 5, accepts only its preferred option, and never switches.
 
-Option stances use ranks 1–5:
+Persona reasons are the primary content source. Option upside/concern is fallback content. Private information becomes public only when the simulator says it visibly.
 
-```text
-5 preferred
-4 acceptable
-3 neutral
-2 disliked
-1 hard rejected
-```
 
-The runtime also keeps synchronized sets for acceptable, disliked, and hard-rejected options. A stance change occurs only through an accepted structured action that visibly communicates it.
-
-## Hard blockers
-
-At automatic setup time, the group-level `hard_blocker_probability` samples either zero or one hard blocker. Manual profiles may explicitly define one, but configuration rejects several.
-
-A hard blocker has stubbornness 5, exactly one preferred option, rejects every alternative with a reason, never changes stance, and votes only for its preferred option. Hard blocking is never inferred from ordinary stubbornness.
+A non-hard-blocker can autonomously propose an acceptable alternative when the group is stagnant. The opportunity is probabilistic and participant-local; no controller target or switch is forced.

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
 import random
-from typing import Any
 
 from dialogue import DialogueRunner, initialise_state
 from models import (
@@ -113,13 +111,7 @@ class NullLogger:
 
 
 class ActionRendererLLM:
-    """Offline renderer that follows the authoritative action in the prompt."""
-
-    _modifiers = (
-        "overall", "for my needs", "in practice", "on balance", "at this stage",
-        "given the discussion", "from my perspective", "for the group", "as things stand",
-        "after that point", "with the current trade-off", "for this decision",
-    )
+    """Offline renderer that follows the compact plain-language action prompt."""
 
     def __init__(self, scripted: list[str] | None = None) -> None:
         self.scripted = list(scripted or [])
@@ -142,7 +134,7 @@ class ActionRendererLLM:
         if self.scripted:
             text = self.scripted.pop(0)
         else:
-            action = self._action(prompt)
+            action = self._action_line(prompt)
             text = self._render(action)
         self.last_tokens_in = max(1, len(prompt.split()))
         self.last_tokens_out = max(1, len(text.split()))
@@ -152,61 +144,113 @@ class ActionRendererLLM:
         return text
 
     @staticmethod
-    def _action(prompt: str) -> dict[str, Any]:
-        if "AUTHORITATIVE ACTION:\n" in prompt:
-            block = prompt.split("AUTHORITATIVE ACTION:\n", 1)[1].split("\nResolved addressee", 1)[0]
-        else:
-            block = prompt.split("Structured action: ", 1)[1].split("\nExact target", 1)[0]
-        return json.loads(block)
+    def _action_line(prompt: str) -> str:
+        marker = "Selected action:\n"
+        if marker not in prompt:
+            return "Make one relevant contribution."
+        return prompt.split(marker, 1)[1].split("\n\n", 1)[0].strip()
 
-    def _render(self, action: dict[str, Any]) -> str:
-        act = action["act"]
-        options = action.get("option_focus") or []
-        update = action.get("stance_update")
-        vote = action.get("vote_option")
-        modifier = self._modifiers[self.calls % len(self._modifiers)]
-        effect = action.get("issue_effect")
-        label = lambda option_id: f"Option {option_id}"
-        if effect == "maintain":
-            return f"The concern about {label(options[0])} still matters to me {modifier}."
-        if effect == "partial":
-            return f"That helps somewhat, but the concern about {label(options[0])} is not fully solved {modifier}."
-        if effect == "resolve" and act != ActionType.COMPROMISE.value:
-            return f"That addresses the concern enough; {label(options[-1])} is workable for me {modifier}."
-        joined = " and ".join(label(option_id) for option_id in options)
-        if act == ActionType.OPENING.value:
-            return f"Hi everyone. I prefer {label(options[0])} because it fits my main priority {modifier}."
-        if act == ActionType.SUPPORT.value:
-            return f"I support {label(options[0])}; it remains the strongest fit {modifier}."
-        if act == ActionType.CONCERN.value:
-            if len(options) > 1:
-                return f"I still prefer {label(options[0])}; my concern about {label(options[1])} remains {modifier}."
-            return f"I have a concern about {label(options[0])}; it does not fit my priority {modifier}."
-        if act == ActionType.ASK.value:
-            return f"What makes {label(options[0])} workable {modifier}?"
-        if act == ActionType.ANSWER.value:
-            return f"Yes, {label(options[0])} can work because the trade-off seems reasonable {modifier}."
-        if act == ActionType.COMPARE.value:
-            return f"{label(options[0])} fits my priority better than {label(options[1])} {modifier}."
-        if act == ActionType.ACKNOWLEDGE.value:
-            if update and update["kind"] == "make_acceptable":
-                return f"That addresses my concern; {label(update['option_id'])} now seems workable and acceptable."
-            return f"That point makes sense to me {modifier}."
-        if act == ActionType.COMMENT.value:
-            return f"I see the point, though I am still weighing it {modifier}."
-        if act == ActionType.COMPROMISE.value:
-            target = update["option_id"] if update else options[-1]
-            if update and update["kind"] == "switch_preferred":
-                old = update["previous_option_id"]
-                return f"I preferred {label(old)}, but that changed my mind; I now prefer {label(target)} {modifier}."
-            if update and update["kind"] == "make_acceptable":
-                return f"{label(target)} now seems workable and acceptable to me {modifier}."
-            return f"I could accept {joined} as a compromise {modifier}."
-        if act == ActionType.VOTE.value:
-            if update:
-                return f"I preferred {label(update['previous_option_id'])}, but the discussion changed my mind, so I vote for {label(vote)} {modifier}."
-            return f"I vote for {label(vote)} because it remains my best fit {modifier}."
-        return f"That seems reasonable {modifier}."
+    def _render(self, action: str) -> str:
+        suffix = ("Overall", "For me", "At this point", "Given that", "In practice")[self.calls % 5]
+        lower = action.casefold()
+
+        if lower.startswith("start the discussion naturally"):
+            option = action.split("prefer ", 1)[1].split(", and give", 1)[0].strip()
+            reason = action.split("reason:", 1)[1].strip(" .")
+            return f"Hi everyone. {option} seems best because {reason}."
+        if lower.startswith("join the opening naturally. another participant"):
+            option = action.split("prefers ", 1)[1].split("; align", 1)[0].strip()
+            reason = action.split("reason:", 1)[1].split(". A greeting", 1)[0].strip(" .")
+            return f"Same here—{option} fits me because {reason}."
+        if lower.startswith("join the opening naturally with a different preference"):
+            option = action.split("preference:", 1)[1].split(". Give", 1)[0].strip()
+            reason = action.split("reason:", 1)[1].split(". A greeting", 1)[0].strip(" .")
+            return f"I’d rather take {option} because {reason}."
+        if lower.startswith("add one useful supporting point"):
+            option = action.split("for ", 1)[1].split(":", 1)[0].strip()
+            reason = action.split(":", 1)[1].strip(" .")
+            return f"{suffix}, {option} works best for me because {reason}."
+        if lower.startswith("raise this concrete concern"):
+            option = action.split("about ", 1)[1].split(":", 1)[0].strip()
+            reason = action.split(":", 1)[1].strip(" .")
+            return f"My concern with {option} is that {reason}."
+        if lower.startswith("react to the response"):
+            option = action.split("about ", 1)[1].split(" still matters", 1)[0].strip()
+            return f"That helps, but my concern about {option} still remains."
+        if lower.startswith("briefly state that this unresolved concern"):
+            option = action.split("about ", 1)[1].split(" still blocks", 1)[0].strip()
+            reason = action.rsplit(":", 1)[1].strip(" .")
+            return f"The {reason} still keeps me from accepting {option}."
+        if lower.startswith("ask "):
+            target = action.split("Ask ", 1)[1].split(" ", 1)[0]
+            if "which factor matters more" in lower:
+                option = action.split("for ", 1)[1].split(".", 1)[0].strip()
+                return f"{target}, which factor matters more for {option}?"
+            if "whether any known condition" in lower:
+                option = action.split("make ", 1)[1].split(" workable", 1)[0].strip()
+                return f"{target}, is there anything known that would make {option} workable?"
+            option = action.split("choice of ", 1)[1].split(":", 1)[0].strip()
+            return f"{target}, does that concern change your choice of {option}?"
+        if lower.startswith("answer "):
+            if "available information is insufficient" in lower:
+                return "I’m not sure; we don’t have enough information to say."
+            if "concern still affects your choice" in lower:
+                reason = action.rsplit("Concern:", 1)[1].strip(" .")
+                return f"It still affects my choice because {reason}."
+            if "recognize the concern and still prefer" in lower:
+                option = action.split("still prefer ", 1)[1].split(".", 1)[0].strip()
+                reason = action.rsplit("Decisive reason:", 1)[1].split(".", 1)[0].strip()
+                return f"I still prefer {option}; {reason} matters more to me."
+            if "known information that addresses" in lower:
+                return f"{suffix}, the known information addresses it."
+            answer = action.split("Actual position:", 1)[1].strip(" .") if "Actual position:" in action else "that still works for me"
+            return f"{suffix}, {answer}."
+        if lower.startswith("compare "):
+            names = action.split("Compare ", 1)[1].split(" using", 1)[0]
+            tradeoff = action.split("trade-off:", 1)[1].split(". A useful", 1)[0].strip(" .")
+            return f"Between {names}, {tradeoff}."
+        if lower.startswith("react briefly"):
+            option = action.split("around ", 1)[1].split(".", 1)[0].strip()
+            return f"That works for me too; {option} is reasonable."
+        if lower.startswith("respond to the concern"):
+            reason = action.rsplit("Decisive reason:", 1)[1].split(".", 1)[0].strip(" .")
+            return f"I still support it; {reason} matters more to me."
+        if lower.startswith("respond that the concern"):
+            reason = action.rsplit(":", 1)[1].strip(" .")
+            return f"That concern still matters to me because {reason}."
+        if lower.startswith("respond to the active issue") or lower.startswith("continue the current exchange"):
+            reason = action.rsplit(":", 1)[1].strip(" .")
+            return f"That matters here; {reason}."
+        if "moving to" in lower and lower.startswith("clearly say"):
+            option = action.split("moving to ", 1)[1].split(" after", 1)[0].strip()
+            return f"That changed my mind; I’m moving to {option}."
+        if lower.startswith("say that the response addressed your concern"):
+            option = action.split("make ", 1)[1].split(" visibly", 1)[0].strip()
+            return f"That addresses my concern; I can accept {option}."
+        if lower.startswith("make ") and "visibly acceptable" in lower:
+            option = action.split("Make ", 1)[1].split(" visibly", 1)[0].strip()
+            return f"{option} isn’t my first choice, but I can accept it."
+        if lower.startswith("briefly state that you are staying with"):
+            option = action.split("staying with ", 1)[1].split(".", 1)[0].strip()
+            return f"I’m staying with {option}."
+        if lower.startswith("state only one short"):
+            option = action.split("choice for ", 1)[1].split(".", 1)[0].strip()
+            return f"{option} for me."
+        if lower.startswith("state one clear vote"):
+            option = action.split("for ", 1)[1].split(" and briefly", 1)[0].strip()
+            return f"I’m moving to {option}; that gets my vote."
+        return "That point matters for my decision."
+
+    @staticmethod
+    def _option_after(action: str, markers: tuple[str, ...]) -> str:
+        for marker in markers:
+            if marker in action:
+                tail = action.split(marker, 1)[1]
+                for sep in (", and explain", ". Main", ". Explain", ".", ":"):
+                    if sep in tail:
+                        tail = tail.split(sep, 1)[0]
+                return tail.strip()
+        return "Option A"
 
 
 def make_runner(

@@ -1,0 +1,1170 @@
+{
+  "run_id": "20260715_013152_153665_direct_question_hike",
+  "seed": 206,
+  "scenario": {
+    "topic": "Choose a day hike for the group",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lake Loop",
+        "attrs": {
+          "difficulty": "easy",
+          "terrain": "wide paths",
+          "shade": "frequent"
+        },
+        "upside": "manageable route with lake views",
+        "concern": "less challenging",
+        "short_name": "Lake Loop"
+      },
+      {
+        "id": "B",
+        "name": "Ridge Trail",
+        "attrs": {
+          "difficulty": "hard",
+          "terrain": "steep rocky sections",
+          "exposure": "open ridge"
+        },
+        "upside": "wide mountain views",
+        "concern": "steep sections",
+        "short_name": "Ridge"
+      },
+      {
+        "id": "C",
+        "name": "Wilderness Route",
+        "attrs": {
+          "difficulty": "very hard",
+          "navigation": "marked sparsely",
+          "facilities": "none"
+        },
+        "upside": "remote natural setting",
+        "concern": "long and physically demanding",
+        "short_name": "Wilderness"
+      },
+      {
+        "id": "D",
+        "name": "Forest Path",
+        "attrs": {
+          "difficulty": "easy",
+          "terrain": "compact gravel",
+          "accessibility": "most accessible"
+        },
+        "upside": "short and accessible",
+        "concern": "few panoramic views",
+        "short_name": "Forest"
+      }
+    ],
+    "shared_context": [
+      "The group has one full Saturday.",
+      "Everyone must complete the same route."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Nora has moderate hiking experience.",
+      "private_goal": "wants a manageable route with good scenery",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 24,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "manageable route with lake views",
+          "reason_against": "less challenging"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "wide mountain views",
+          "reason_against": "steep sections"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "remote natural setting",
+          "reason_against": "long and physically demanding"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "short and accessible",
+          "reason_against": "few panoramic views"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben trains for long-distance hikes.",
+      "private_goal": "wants a demanding wilderness route",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "manageable route with lake views",
+          "reason_against": "less challenging"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "wide mountain views",
+          "reason_against": "steep sections"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "remote natural setting",
+          "reason_against": "long and physically demanding"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "short and accessible",
+          "reason_against": "few panoramic views"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Mira regularly hikes on weekends.",
+      "private_goal": "prioritizes mountain views",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 49,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "manageable route with lake views",
+          "reason_against": "less challenging"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "wide mountain views",
+          "reason_against": "steep sections"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "remote natural setting",
+          "reason_against": "long and physically demanding"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "short and accessible",
+          "reason_against": "few panoramic views"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "B:B:concern:steep sections",
+        "C:C:concern:long and physically demanding",
+        "A:A:upside:manageable route with lake views"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "B:B:concern:steep sections",
+        "C:C:concern:long and physically demanding"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i003"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 2,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 2,
+      "last_action": "vote",
+      "last_spoken_turn": 19,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "C:C:upside:remote natural setting",
+        "B:B:upside:wide mountain views",
+        "B:i accepted it as workable common ground",
+        "C,A:wilderness remote natural setting lake loop manageable route with lake views"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i002"
+      ],
+      "used_compromise_options": [
+        "B"
+      ],
+      "voluntary_turns": 2,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 2,
+      "last_action": "vote",
+      "last_spoken_turn": 20,
+      "visible_switches": 1,
+      "last_switch_turn": 20
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "A:A:concern:less challenging",
+        "B:B:upside:wide mountain views",
+        "B,A:ridge wide mountain views lake loop manageable route with lake views"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "A:A:concern:less challenging"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i001"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 2,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 2,
+      "last_action": "vote",
+      "last_spoken_turn": 21,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p3",
+      "summary": "steep sections",
+      "status": "resolved",
+      "opened_at_turn": 5,
+      "last_relevant_turn": 6,
+      "follow_up_count": 1,
+      "source_text": "Since Ridge has those steep parts, does that change how you feel about going that way?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "steep sections"
+      },
+      "issue_key": [
+        "B",
+        "steep sections"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "C"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p2",
+      "summary": "long and physically demanding",
+      "status": "resolved",
+      "opened_at_turn": 7,
+      "last_relevant_turn": 8,
+      "follow_up_count": 1,
+      "source_text": "With Wilderness, do you think the long, tough trek or the remote nature matters more to you?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "C",
+        "attribute_name": "concern",
+        "public_value": "long and physically demanding"
+      },
+      "issue_key": [
+        "C",
+        "long and physically demanding"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "tradeoff"
+    },
+    {
+      "id": "i003",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p3",
+      "addressed_to": "p1",
+      "summary": "less challenging",
+      "status": "resolved",
+      "opened_at_turn": 9,
+      "last_relevant_turn": 10,
+      "follow_up_count": 1,
+      "source_text": "For Lake Loop, which matters more to you: the easier pace or the lake views?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "A",
+        "attribute_name": "concern",
+        "public_value": "less challenging"
+      },
+      "issue_key": [
+        "A",
+        "less challenging"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "tradeoff"
+    }
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s begin with each person’s current preference and main reason.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 10,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Hey all, I’m leaning toward the Wilderness route for that truly remote, natural feel out there.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 255,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Ridge Trail catches my eye for the wide mountain views—it’s tough to beat that scenery.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 288,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The Lake Loop sounds good to me—nice and manageable, plus those lake views would be sweet.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 317,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The Lake Loop’s manageable length and lake views could be a nice balance if the Wilderness feels too intense.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 19,
+      "prompt_tokens": 383,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Since Ridge has those steep parts, does that change how you feel about going that way?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 362,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Steep sections are a concern, but the wide mountain views on Ridge still make it worth it for me.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 19,
+      "prompt_tokens": 397,
+      "output_tokens": 22,
+      "intended_word_max": 18
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "With Wilderness, do you think the long, tough trek or the remote nature matters more to you?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 403,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The challenge is real, but I’m all in for that remote, untouched wilderness vibe we’ll get there.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 429,
+      "output_tokens": 22,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "For Lake Loop, which matters more to you: the easier pace or the lake views?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i003",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 407,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Honestly, the manageable pace combined with those lake views makes Lake Loop my top pick.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 430,
+      "output_tokens": 17,
+      "intended_word_max": 18
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Wide mountain views on Ridge feel more rewarding despite steep parts; Lake Loop’s easier pace is also appealing.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 18,
+      "prompt_tokens": 434,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 12,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Now give one clear choice.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 5,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 13,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Lake Loop’s easier pace with lake views wins.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 8,
+      "prompt_tokens": 374,
+      "output_tokens": 10,
+      "intended_word_max": 10
+    },
+    {
+      "index": 14,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Let’s go with the classic Wilderness option.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "word_count": 7,
+      "prompt_tokens": 368,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 15,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Ridge for those rewarding wide mountain views.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 7,
+      "prompt_tokens": 354,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The first vote had no majority. Is there any option someone can newly accept as common ground?",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 17,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Ridge offers those wide mountain views, so it’s definitely a reasonable spot to consider for our hike.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 1,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C"
+      },
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 148,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 18,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Now give one final clear choice.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 6,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Lake Loop feels like the best middle ground.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 8,
+      "prompt_tokens": 341,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Changing my pick to Ridge for those mountain views.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C"
+      },
+      "vote_option": "B",
+      "word_count": 9,
+      "prompt_tokens": 347,
+      "output_tokens": 10,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Let’s go with Ridge for those views.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 7,
+      "prompt_tokens": 344,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 22,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The result is majority: Ridge.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 5,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "first_round_votes": {
+    "p1": "A",
+    "p2": "C",
+    "p3": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    },
+    "2": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 2,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 2,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 2,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "B"
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "B"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "metrics": {
+    "turns": {
+      "participant": 18,
+      "voluntary": 6,
+      "mandatory": 12,
+      "moderator": 5
+    },
+    "generation": {
+      "repairs": 1,
+      "dropped": 2,
+      "liveness_forced": 0,
+      "semantic_reason_reuse": 3,
+      "vote_fallbacks": 0,
+      "mandatory_movement_failures": 0,
+      "repair_causes": {
+        "required_stance_change_is_not_visible": 3
+      }
+    },
+    "questions": {
+      "opened": 3,
+      "answered": 3
+    },
+    "issues": {
+      "opened": 3,
+      "resolved": 3,
+      "stale": 0,
+      "concerns_opened": 0,
+      "concerns_resolved": 0,
+      "concerns_stale": 0
+    },
+    "stances": {
+      "switches": 1,
+      "acceptances": 1,
+      "narrowing_movements": 1
+    },
+    "compromise": {
+      "proposals": 1,
+      "acceptances": 1
+    },
+    "coverage": {
+      "A": 3,
+      "B": 3,
+      "C": 2,
+      "D": 0
+    },
+    "votes": {
+      "round": 2,
+      "valid": 3,
+      "unclear": 0,
+      "protocol_degraded": false,
+      "revote_skipped": false
+    },
+    "tokens": {
+      "llm_calls": 23,
+      "input": 7756,
+      "output": 393
+    },
+    "participants": {
+      "p1": {
+        "name": "Nora",
+        "traits": {
+          "engagement": 5,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 6,
+        "voluntary": 2,
+        "avg_words": 13.333333333333334,
+        "initial_preference": "A",
+        "final_preference": "A"
+      },
+      "p2": {
+        "name": "Ben",
+        "traits": {
+          "engagement": 4,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 6,
+        "voluntary": 2,
+        "avg_words": 14.166666666666666,
+        "initial_preference": "C",
+        "final_preference": "B"
+      },
+      "p3": {
+        "name": "Mira",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 6,
+        "voluntary": 2,
+        "avg_words": 13.5,
+        "initial_preference": "B",
+        "final_preference": "B"
+      }
+    },
+    "outcome": {
+      "status": "majority",
+      "final_option": "B"
+    }
+  },
+  "failed_generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "wide mountain views",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "wide mountain views"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C"
+        },
+        "vote_option": null,
+        "stimulus_id": null,
+        "opening_mode": null,
+        "question_mode": null,
+        "response_mode": null,
+        "decisive_reason": "",
+        "condition": ""
+      },
+      "raw_text": "Ridge has its appeal too—those wide mountain views could really make the effort worth it for us.",
+      "validation_errors": [
+        "required stance change is not visible"
+      ],
+      "repair_text": "Ridge isn’t a bad option—those wide mountain views might make it a solid middle ground for us.",
+      "repair_errors": [
+        "required stance change is not visible"
+      ],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compromise",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "remote natural setting",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "remote natural setting"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A"
+        },
+        "vote_option": null,
+        "stimulus_id": null,
+        "opening_mode": null,
+        "question_mode": null,
+        "response_mode": null,
+        "decisive_reason": "",
+        "condition": ""
+      },
+      "raw_text": "The Wilderness route’s remote natural setting definitely offers a nice change of pace and scenery for us.",
+      "validation_errors": [
+        "required stance change is not visible"
+      ],
+      "repair_text": "The Wilderness route’s remote natural setting makes it a solid option for a different kind of experience.",
+      "repair_errors": [
+        "required stance change is not visible"
+      ],
+      "final_status": "dropped",
+      "fallback_text": null
+    }
+  ]
+}

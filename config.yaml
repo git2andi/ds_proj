@@ -65,17 +65,54 @@ personas:
       7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
 
 conversation:
-  # Group-level participant pacing. Openings, mandatory answers and votes are
-  # excluded from these voluntary-turn budgets.
-  min_voluntary_turns: 8
-  soft_target_voluntary_turns: 20
-  hard_max_voluntary_turns: 30
-  narrowing_voluntary_turns: 4
-  revote_narrowing_voluntary_turns: 3
-  issue_normal_follow_ups: 3
-  issue_follow_up_cap: 5
-  recent_turns_in_prompt: 8
+  # Voluntary participant-turn pacing scales with group size. Openings,
+  # mandatory answers, narrowing obligations and votes do not count here.
+  min_voluntary_turns_per_participant: 2
+  soft_target_voluntary_turns_per_participant: 4
+  hard_max_voluntary_turns_per_participant: 6
+  soft_target_voluntary_turn_cap: 22
+  hard_max_voluntary_turn_cap: 30
+  issue_follow_up_cap: 3
+  max_concerns_per_participant: 1
+  stagnation_no_bid_rounds: 1
+  compromise_window_max_turns: 1
+  narrowing_reaction_turn_cap: 2
+  recent_turns_in_prompt: 5
   max_consecutive_turns: 2
+
+simulator:
+  # Operational definitions of the configurable traits. These are simulation
+  # parameters, not claims about universal human probabilities.
+  bid_probability_by_engagement:
+    1: 0.20
+    2: 0.35
+    3: 0.50
+    4: 0.70
+    5: 0.90
+  question_modes:
+    - choice_impact
+    - tradeoff
+  movement_probability_by_stubbornness:
+    1: 0.80
+    2: 0.60
+    3: 0.40
+    4: 0.20
+    5: 0.00
+
+language:
+  max_words_by_verbosity:
+    1: 10
+    2: 14
+    3: 18
+    4: 24
+    5: 30
+  near_duplicate_similarity_threshold: 0.92
+  directness_instructions:
+    1: "Express disagreement tentatively and as a personal preference; use uncertainty where natural."
+    2: "Soften disagreement slightly and avoid categorical judgments."
+    3: "State agreement or disagreement neutrally and clearly."
+    4: "State the judgment directly with little hedging."
+    5: "State the judgment explicitly and firmly, while remaining respectful."
 
 moderator:
   enabled: true
@@ -93,3 +130,5 @@ output:
   transcript_file: "transcript.md"
   json_file: "run.json"
   metrics_csv: "metrics.csv"
+  debug_metrics: false
+  write_action_trace: false

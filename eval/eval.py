@@ -1,9 +1,4 @@
-"""Deterministic structural evaluation for one autonomous-simulator run.
-
-The runtime already records compact defensible metrics. This module exposes
-those metrics to evaluation scripts and supplies a flat row for CSV summaries.
-No evaluation or validator LLM is used.
-"""
+"""Deterministic structural evaluation helpers."""
 
 from __future__ import annotations
 
@@ -21,41 +16,40 @@ from models import DialogueState, RunOutcome  # noqa: E402
 
 def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     metrics = metrics_for(state, outcome)
-    turns = metrics["turns"]
-    generation = metrics["generation"]
-    issues = metrics["issues"]
-    stances = metrics["stances"]
-    tokens = metrics["tokens"]
     return {
         "outcome": outcome.status,
         "final_option": outcome.final_option or "",
-        "participant_turns": turns["participant_turns"],
-        "voluntary_turns": turns["voluntary_turns"],
-        "mandatory_answers": turns["mandatory_answers"],
-        "openings": turns["openings"],
-        "votes": turns["votes"],
-        "moderator_turns": turns["moderator_turns"],
-        "repairs": generation["repairs"],
-        "dropped_turns": generation["dropped_turns"],
-        "liveness_forced_turns": generation["liveness_forced_turns"],
-        "suppressed_repetitions": generation["suppressed_repetitions"],
-        "issues_opened": issues["opened"],
-        "issues_resolved": issues["resolved"],
-        "issues_stale": issues["stale"],
-        "issue_follow_ups": issues["follow_ups"],
-        "questions_answered": issues["questions_answered"],
-        "questions_resolved": issues["questions_resolved"],
-        "concerns_resolved": issues["concerns_resolved"],
-        "concerns_maintained": issues["concerns_maintained"],
-        "concerns_partially_addressed": issues["concerns_partially_addressed"],
-        "visible_switches": stances["visible_switches"],
-        "public_acceptances": stances["public_acceptance_count"],
-        "vote_failures": metrics["votes"]["non_valid_final_statuses"],
-        "narrowing_focus_adherence": metrics["narrowing"]["focus_adherence"],
-        "llm_calls": tokens["llm_calls"],
-        "repair_calls": tokens["repair_calls"],
-        "tokens_in": tokens["input_tokens"],
-        "tokens_out": tokens["output_tokens"],
+        "participant_turns": metrics["turns"]["participant"],
+        "voluntary_turns": metrics["turns"]["voluntary"],
+        "mandatory_turns": metrics["turns"]["mandatory"],
+        "moderator_turns": metrics["turns"]["moderator"],
+        "repairs": metrics["generation"]["repairs"],
+        "dropped_turns": metrics["generation"]["dropped"],
+        "liveness_forced_turns": metrics["generation"]["liveness_forced"],
+        "questions_opened": metrics["questions"]["opened"],
+        "questions_answered": metrics["questions"]["answered"],
+        "issues_opened": metrics["issues"]["opened"],
+        "issues_resolved": metrics["issues"]["resolved"],
+        "issues_stale": metrics["issues"]["stale"],
+        "concerns_opened": metrics["issues"]["concerns_opened"],
+        "concerns_resolved": metrics["issues"]["concerns_resolved"],
+        "concerns_stale": metrics["issues"]["concerns_stale"],
+        "visible_switches": metrics["stances"]["switches"],
+        "public_acceptances": metrics["stances"]["acceptances"],
+        "narrowing_movements": metrics["stances"]["narrowing_movements"],
+        "compromise_proposals": metrics["compromise"]["proposals"],
+        "compromise_acceptances": metrics["compromise"]["acceptances"],
+        "revote_skipped_no_movement": metrics["votes"]["revote_skipped"],
+        "semantic_reason_reuse": metrics["generation"]["semantic_reason_reuse"],
+        "vote_fallbacks": metrics["generation"]["vote_fallbacks"],
+        "mandatory_movement_failures": metrics["generation"]["mandatory_movement_failures"],
+        "repair_causes": metrics["generation"]["repair_causes"],
+        "valid_final_votes": metrics["votes"]["valid"],
+        "unclear_final_votes": metrics["votes"]["unclear"],
+        "vote_protocol_degraded": metrics["votes"]["protocol_degraded"],
+        "llm_calls": metrics["tokens"]["llm_calls"],
+        "tokens_in": metrics["tokens"]["input"],
+        "tokens_out": metrics["tokens"]["output"],
     }
 
 

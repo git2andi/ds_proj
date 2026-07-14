@@ -1,21 +1,50 @@
-# Discussion, issues, and stance updates
+# Discussion and decision process
 
-The runtime uses five phases only: `OPENING`, `DISCUSSION`, `NARROWING`, `VOTING`, and `CLOSED`.
+## Opening
 
-Every participant first receives one mandatory opening action naming its initial preference and a reason. Discussion then uses autonomous simulator bids. Broad pacing is group-level: a minimum, soft target, and hard maximum count only voluntary open-floor turns. Openings, mandatory answers, votes, re-votes, and liveness-forced turns are excluded.
+Each participant must visibly state a current preferred option and one reason. The first speaker receives an `INITIAL` opening mode; later speakers receive `ALIGN` or `CONTRAST` according to already-visible preferences. A greeting is required only for the first opening and remains optional afterward.
 
-## One active issue
+Mandatory openings retry and then fail clearly; they never disappear silently.
 
-The state contains at most one `ActiveIssue` plus an append-only history. Supported kinds are `QUESTION`, `CONCERN`, and `COMPARISON`; statuses are `OPEN`, `RESOLVED`, and `STALE`.
+## Discussion
 
-A direct question creates both an issue and a mandatory response obligation. A group question creates an issue without choosing a respondent. Answered questions are recorded as answered/resolved when no relevant follow-up remains rather than being mislabeled stale. A concern retains the opening action's reason source and normalized issue key. A response counts as relevant only when its structured action supplies same-issue mitigation, explicitly weighs the drawback against another public benefit, or agrees that the concern remains. An unrelated upside does not accumulate resolution pressure. The concern owner alone may maintain, partially address, or resolve the concern, and reevaluates when new relevant evidence arrives. Resolution may atomically make the option acceptable or switch preference after the visible utterance passes validation. A comparison becomes an issue only when the same trade-off is independently developed or challenged.
+Simulators may support, raise concerns, ask concern-based questions, answer directly, compare options, react to another participant’s latest relevant statement, respond to an active issue, or remain silent.
 
-Issues normally receive zero to three follow-ups. Continuation becomes less likely after the configured normal window, while the environment enforces a hard cap. An issue becomes stale when nobody continues it, a new issue takes priority, narrowing ends, or the cap is reached. Resolved and stale records remain in history.
+The ordinary reason hierarchy is:
 
-## Structured stance changes
+1. persona reason;
+2. option upside/concern fallback;
+3. raw attribute only when explicitly relevant.
 
-`UserAction.stance_update` may make an option acceptable, remove acceptance, switch the preferred option, or explicitly reject an option. The update is validated before generation and committed only after an aligned visible utterance passes validation. Other participants' turns cannot directly change someone else's stance.
+One active issue may be a question, concern, or comparison. Comparison is a soft language objective: if the endpoint visibly expresses only one useful side, the message remains valid but the hidden pair is not recorded as public comparison evidence.
 
-During narrowing, candidates are derived only from public structured preferences, acceptances, distinct supporters, distinct concern raisers, comparisons, and visible switches. Repeated support from one speaker remains a raw logging occurrence but contributes only one persuasive participant. Private ranks are not used to manufacture a public leader. A preferred switch normally requires new evidence from another participant, a minimum accepted-turn distance, and a meaningful evidence advantage before the stubbornness-dependent probability is evaluated. Re-voting itself adds no switch pressure. Candidate actions are phase-specific: finalists, active issues, mandatory answers, explicit non-finalist defence, compromise, acceptance, rejection, and switching remain relevant; unrelated ordinary questions do not. A participant whose own option is already a finalist may still make another finalist acceptable or switch voluntarily.
+- A direct question closes after its addressed answer. The structured question carries a small semantic mode instead of a prewritten sentence; prompts describe the meaning without prescribing “deal-breaker” or a fixed drawback-versus-benefit construction. The answer distinguishes trade-off acceptance, maintained concern, known mitigation, or unknown information.
+- A concern may receive one or more relevant responses, then its owner visibly resolves or maintains it.
+- Resolving a concern may make a previously disliked option acceptable for a normal participant.
+- Maintained concerns become stale public reservations rather than looping until the turn cap.
+- Hard blockers never resolve a concern by accepting another option.
 
-When every participant has publicly converged on one option, no obligation or concern remains, and at least one voluntary discussion contribution has genuinely tested or confirmed that agreement, the system moves to a brief final-concern/narrowing step instead of producing redundant support. A newly raised concern still blocks early closure.
+The issue does not prescribe the content of a response; the responding simulator still selects its own structured action.
+
+## Pacing
+
+Voluntary-turn budgets scale with participant count. The current defaults are 2/4/6 voluntary turns per participant for minimum/soft/hard pacing, bounded by absolute soft/hard caps of 22/30 turns. Openings, mandatory answers, narrowing turns, and votes are separate. This gives engagement more room in small and medium groups without letting six- or seven-person chats grow without bound.
+
+## Narrowing
+
+Narrowing is adaptive rather than a mandatory restatement round:
+
+- unanimous public preference or shared public acceptability → skip participant narrowing and request votes;
+- one clear leader → only dissenters and unresolved concern owners receive final-position opportunities; supporters may respond voluntarily when a dissenter raises a concern or proposal;
+- exact top pair → participants whose public position does not settle the pair may clarify, accept, or remain firm;
+- complete tie → expose one bounded simulator-owned compromise opportunity. Participants may propose an acceptable alternative, remain firm, or produce no bid.
+
+An unchanged participant normally states only a short position. Explanations are required for new acceptance, switching, or a maintained blocker. Narrowing options are derived from latest public preferences and shared public acceptability, never weighted support/concern scores.
+
+## Stagnation and compromise
+
+A no-bid window after the minimum discussion budget is treated as stagnation. The moderator asks whether any non-first-choice option is workable only when a simulator has already produced a selectable compromise proposal. Each non-hard-blocker then independently applies the configured movement probability to its own acceptable alternatives. One proposal may create a short reaction exchange. If nobody proposes movement, the discussion proceeds toward a valid unresolved outcome.
+
+## Protocol-critical realization
+
+One normal generation and one focused repair are used for a selected action. Failed attempts and errors are retained compactly in `run.json`. Ordinary failed movement is not committed as hidden state. Formal votes are different: the structured simulator choice is authoritative, so a minimal deterministic visible vote is used only when both language attempts fail.

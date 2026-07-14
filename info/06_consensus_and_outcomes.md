@@ -1,17 +1,17 @@
-# Voting and outcomes
+# Consensus and outcomes
 
-Every participant receives one formal vote obligation. Its simulator selects one valid option. The action and rendered text must identify the same option. A hard blocker always selects its sole preferred option.
+Every participant states one clear visible choice. Natural forms such as `Lab gets my vote`, `I’m going with Riverside`, `I’ll stick with Online`, and the contextual `Library for me` are valid; the word `formal` is unnecessary. In the voting phase, exactly one visible intended option with no competitor is sufficient.
 
-When a vote differs from the latest public preference, the action includes a structured switch and the realization must visibly bridge the old preference to the new vote. Formal vote switches use this single vote-specific contract rather than also being forced through the ordinary discussion-switch rule. Natural old-to-new language and an explicit changed-mind statement are accepted when the prior public preference is known; multiple or contradictory vote targets remain invalid. An unclear vote remains invalid, and the runtime does not invent a replacement.
+Outcomes:
 
-Outcomes are computed directly from structured valid votes:
+- `successful`: every participant selects the same option;
+- `majority`: one option reaches the majority threshold;
+- `unresolved`: no option reaches a majority and no further visible movement produces a viable second vote.
 
-```text
-successful: every participant casts the same valid vote
-majority:   one option reaches the configured majority threshold, but not unanimously
-unresolved: no option reaches a majority after the single bounded re-vote
-```
+A valid majority closes immediately. The environment does not pressure holdouts toward unanimity.
 
-A valid majority closes immediately. There is no holdout pressure or majority-to-unanimity repair.
+A non-blocker may move after a concrete trigger: a concern response made the trade-off acceptable, stagnation exposed an acceptable alternative, or narrowing identified viable common ground. The configured `movement_probability_by_stubbornness` controls whether the simulator takes that opportunity. A hard blocker never moves.
 
-Only a first-round no-majority result returns briefly to narrowing. The runtime then requests exactly one re-vote. A second no-majority result closes unresolved.
+A clear choice for a new option is itself visible movement. A short bridge is encouraged for readability but validation does not discard an otherwise unambiguous changed vote.
+
+A second vote occurs only when the first vote has no majority and the intervening re-narrowing produces at least one visible acceptance or preference switch. If nobody moves, the system closes unresolved instead of repeating the same votes.

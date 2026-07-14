@@ -1,0 +1,864 @@
+{
+  "run_id": "20260715_013143_156204_hard_blocker_cleaning",
+  "seed": 205,
+  "scenario": {
+    "topic": "Choose a household cleaning upgrade",
+    "options": [
+      {
+        "id": "A",
+        "name": "Robot Vacuum",
+        "attrs": {
+          "coverage": "floors",
+          "maintenance": "empty dust bin",
+          "storage": "charging dock"
+        },
+        "upside": "reduces routine floor work",
+        "concern": "does not clean dishes",
+        "short_name": "Robot"
+      },
+      {
+        "id": "B",
+        "name": "Weekly Cleaner",
+        "attrs": {
+          "coverage": "several rooms",
+          "schedule flexibility": "fixed weekly slot",
+          "privacy": "external person enters home"
+        },
+        "upside": "covers several rooms",
+        "concern": "requires a fixed appointment",
+        "short_name": "Cleaner"
+      },
+      {
+        "id": "C",
+        "name": "Dishwasher Upgrade",
+        "attrs": {
+          "coverage": "dishes",
+          "installation": "kitchen fitting",
+          "capacity": "12 place settings"
+        },
+        "upside": "removes daily dishwashing",
+        "concern": "does not clean floors",
+        "short_name": "Dishwasher"
+      },
+      {
+        "id": "D",
+        "name": "Shared Chore Plan",
+        "attrs": {
+          "coverage": "all agreed chores",
+          "coordination": "shared rota",
+          "reliability": "depends on participation"
+        },
+        "upside": "no purchase required",
+        "concern": "requires consistent participation",
+        "short_name": "Chore Plan"
+      }
+    ],
+    "shared_context": [
+      "The household wants one primary upgrade.",
+      "Storage space is limited."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Nora does most of the routine vacuuming.",
+      "private_goal": "wants to reduce daily floor work",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 24,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "reduces routine floor work",
+          "reason_against": "does not clean dishes"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "covers several rooms",
+          "reason_against": "requires a fixed appointment"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "removes daily dishwashing",
+          "reason_against": "does not clean floors"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "no purchase required",
+          "reason_against": "requires consistent participation"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben does most of the routine vacuuming.",
+      "private_goal": "wants to reduce daily floor work",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "reduces routine floor work",
+          "reason_against": "does not clean dishes"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "covers several rooms",
+          "reason_against": "requires a fixed appointment"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "removes daily dishwashing",
+          "reason_against": "does not clean floors"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "no purchase required",
+          "reason_against": "requires consistent participation"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 5
+      },
+      "background": "Mira handles most of the dishes.",
+      "private_goal": "needs dishwashing removed from the routine",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 49,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "only the preferred option satisfies the requirement",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "does not clean dishes"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "requires a fixed appointment"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "removes daily dishwashing",
+          "reason_against": "does not clean floors"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "requires consistent participation"
+        }
+      },
+      "hard_blocker": true
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "C:C:concern:does not clean floors",
+        "A:A:upside:reduces routine floor work",
+        "A,B:robot reduces routine floor work cleaner covers several rooms"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "C:C:concern:does not clean floors"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [],
+      "used_compromise_options": [],
+      "voluntary_turns": 2,
+      "mandatory_answers": 0,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 12,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "A:A:upside:reduces routine floor work"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i002"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 0,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 13,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 1,
+        "B": 1,
+        "C": 5,
+        "D": 1
+      },
+      "acceptable_options": [
+        "C"
+      ],
+      "disliked_options": [
+        "D",
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [
+        "D",
+        "A",
+        "B"
+      ],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "public_rejections": [],
+      "used_reason_keys": [
+        "C:C:upside:removes daily dishwashing",
+        "A:A:concern:does not clean dishes"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "A:A:concern:does not clean dishes"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i001"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 1,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 14,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "C"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p3",
+      "summary": "does not clean floors",
+      "status": "resolved",
+      "opened_at_turn": 5,
+      "last_relevant_turn": 6,
+      "follow_up_count": 1,
+      "source_text": "If the dishwasher doesn’t clean floors, does that shift your pick at all, Mira?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "C",
+        "attribute_name": "concern",
+        "public_value": "does not clean floors"
+      },
+      "issue_key": [
+        "C",
+        "does not clean floors"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p3",
+      "addressed_to": "p2",
+      "summary": "does not clean dishes",
+      "status": "resolved",
+      "opened_at_turn": 7,
+      "last_relevant_turn": 8,
+      "follow_up_count": 1,
+      "source_text": "Ben, between not cleaning dishes and cutting floor work, which benefit feels more important for you?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "A",
+        "attribute_name": "concern",
+        "public_value": "does not clean dishes"
+      },
+      "issue_key": [
+        "A",
+        "does not clean dishes"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "tradeoff"
+    }
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s begin with each person’s current preference and main reason.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 10,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Hey everyone! Leaning toward the Robot Vacuum since it really cuts down on daily floor cleaning.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 258,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Removing daily dishwashing would make a big difference, so I’m leaning toward the dishwasher upgrade.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 293,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Cutting down on daily floor work sounds great—I'm on board with the Robot Vacuum for that reason.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 308,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The cleaner’s benefit is covering multiple rooms, but the Robot’s daily floor help feels more practical.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 380,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "If the dishwasher doesn’t clean floors, does that shift your pick at all, Mira?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 386,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Not cleaning floors is a drawback, but removing daily dishwashing is still a bigger win for me.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 405,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Ben, between not cleaning dishes and cutting floor work, which benefit feels more important for you?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 403,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Taking floors off my daily list matters more, so I’m sticking with the Robot Vacuum.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 406,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Robot currently leads. Anyone not there yet can say whether they can accept it or what still prevents that.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 19,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 10,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "The dishwasher still feels like the better fit for my daily routine despite the floor cleaning advantage.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 387,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 11,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Now give one clear choice.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 5,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 12,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m good with going for the Robot.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 7,
+      "prompt_tokens": 371,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 13,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Let’s move forward with the Robot Vacuum.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 7,
+      "prompt_tokens": 361,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 14,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Dishwasher fits my routine better overall.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "word_count": 6,
+      "prompt_tokens": 351,
+      "output_tokens": 8,
+      "intended_word_max": 10
+    },
+    {
+      "index": 15,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The result is majority: Robot.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 5,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "first_round_votes": {},
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "A",
+    "p2": "A",
+    "p3": "C"
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "A",
+      "p3": "C"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "metrics": {
+    "turns": {
+      "participant": 12,
+      "voluntary": 3,
+      "mandatory": 9,
+      "moderator": 4
+    },
+    "generation": {
+      "repairs": 0,
+      "dropped": 0,
+      "liveness_forced": 0,
+      "semantic_reason_reuse": 2,
+      "vote_fallbacks": 0,
+      "mandatory_movement_failures": 0,
+      "repair_causes": {}
+    },
+    "questions": {
+      "opened": 2,
+      "answered": 2
+    },
+    "issues": {
+      "opened": 2,
+      "resolved": 2,
+      "stale": 0,
+      "concerns_opened": 0,
+      "concerns_resolved": 0,
+      "concerns_stale": 0
+    },
+    "stances": {
+      "switches": 0,
+      "acceptances": 0,
+      "narrowing_movements": 0
+    },
+    "compromise": {
+      "proposals": 0,
+      "acceptances": 0
+    },
+    "coverage": {
+      "A": 3,
+      "B": 1,
+      "C": 1,
+      "D": 0
+    },
+    "votes": {
+      "round": 1,
+      "valid": 3,
+      "unclear": 0,
+      "protocol_degraded": false,
+      "revote_skipped": false
+    },
+    "tokens": {
+      "llm_calls": 12,
+      "input": 4309,
+      "output": 198
+    },
+    "participants": {
+      "p1": {
+        "name": "Nora",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 4,
+        "voluntary": 2,
+        "avg_words": 13.25,
+        "initial_preference": "A",
+        "final_preference": "A"
+      },
+      "p2": {
+        "name": "Ben",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 3,
+        "voluntary": 0,
+        "avg_words": 13,
+        "initial_preference": "A",
+        "final_preference": "A"
+      },
+      "p3": {
+        "name": "Mira",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 5
+        },
+        "turns": 5,
+        "voluntary": 1,
+        "avg_words": 14.2,
+        "initial_preference": "C",
+        "final_preference": "C"
+      }
+    },
+    "outcome": {
+      "status": "majority",
+      "final_option": "A"
+    }
+  },
+  "failed_generation_attempts": []
+}

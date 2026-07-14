@@ -95,7 +95,13 @@ class Config(Section):
         for key in (
             "llm.dialogue", "llm.models", "simulation.num_participants",
             "simulation.min_participants", "simulation.max_participants",
-            "scenario.option_labels", "conversation.hard_max_voluntary_turns",
+            "scenario.option_labels", "conversation.hard_max_voluntary_turns_per_participant",
+            "simulator.bid_probability_by_engagement",
+            "simulator.question_modes",
+            "simulator.movement_probability_by_stubbornness",
+            "language.max_words_by_verbosity",
+            "language.near_duplicate_similarity_threshold",
+            "language.directness_instructions",
             "output.log_dir",
         ):
             self._require(key)
@@ -117,6 +123,7 @@ class Config(Section):
         self._validate_participants(lo, hi, labels)
         self._validate_environment(labels)
         self._validate_conversation()
+        self._validate_behavior_mappings()
         moderator = self._raw.get("moderator") or {}
         if set(moderator) - {"enabled"}:
             raise ValueError("moderator only supports the 'enabled' flag")
@@ -141,19 +148,111 @@ class Config(Section):
             if profile not in sampling:
                 raise ValueError(f"llm.sampling.{profile} is required")
 
+    @staticmethod
+    def _level_mapping(section: dict[str, Any], name: str, *, cast=float) -> dict[int, Any]:
+        raw = section.get(name)
+        if not isinstance(raw, dict):
+            raise ValueError(f"{name} must be a mapping with levels 1..5")
+        result: dict[int, Any] = {}
+        for level in range(1, 6):
+            value = raw.get(level, raw.get(str(level)))
+            if value is None:
+                raise ValueError(f"{name} is missing level {level}")
+            result[level] = cast(value)
+        extra = {str(key) for key in raw} - {str(level) for level in range(1, 6)}
+        if extra:
+            raise ValueError(f"{name} has unsupported levels: {sorted(extra)}")
+        return result
+
     def _validate_conversation(self) -> None:
         conv = self._raw.get("conversation") or {}
-        minimum = int(conv.get("min_voluntary_turns", 0))
-        target = int(conv.get("soft_target_voluntary_turns", 0))
-        maximum = int(conv.get("hard_max_voluntary_turns", 0))
+        minimum = float(conv.get("min_voluntary_turns_per_participant", 0))
+        target = float(conv.get("soft_target_voluntary_turns_per_participant", 0))
+        maximum = float(conv.get("hard_max_voluntary_turns_per_participant", 0))
         if not 0 <= minimum <= target <= maximum:
-            raise ValueError("voluntary turn budgets must satisfy 0 <= min <= soft target <= hard max")
-        normal_cap = int(conv.get("issue_normal_follow_ups", 3))
-        hard_cap = int(conv.get("issue_follow_up_cap", 5))
-        if not 0 <= normal_cap <= hard_cap:
-            raise ValueError("issue follow-up caps must satisfy normal <= hard")
+            raise ValueError(
+                "voluntary per-participant budgets must satisfy 0 <= min <= soft target <= hard max"
+            )
+        soft_cap = int(conv.get("soft_target_voluntary_turn_cap", 0))
+        hard_cap = int(conv.get("hard_max_voluntary_turn_cap", 0))
+        if soft_cap < 1 or hard_cap < soft_cap:
+            raise ValueError("absolute voluntary-turn caps must satisfy 1 <= soft cap <= hard cap")
+        if int(conv.get("issue_follow_up_cap", 5)) < 1:
+            raise ValueError("conversation.issue_follow_up_cap must be positive")
+        if int(conv.get("max_concerns_per_participant", 1)) < 0:
+            raise ValueError("conversation.max_concerns_per_participant must be non-negative")
+        if int(conv.get("stagnation_no_bid_rounds", 1)) < 1:
+            raise ValueError("conversation.stagnation_no_bid_rounds must be positive")
+        if int(conv.get("compromise_window_max_turns", 2)) < 1:
+            raise ValueError("conversation.compromise_window_max_turns must be positive")
+        if int(conv.get("narrowing_reaction_turn_cap", 2)) < 0:
+            raise ValueError("conversation.narrowing_reaction_turn_cap must be non-negative")
+        if int(conv.get("recent_turns_in_prompt", 5)) < 1:
+            raise ValueError("conversation.recent_turns_in_prompt must be positive")
         if int(conv.get("max_consecutive_turns", 2)) < 1:
             raise ValueError("conversation.max_consecutive_turns must be positive")
+
+    def _validate_behavior_mappings(self) -> None:
+        simulator = self._raw.get("simulator") or {}
+        bid = self._level_mapping(simulator, "bid_probability_by_engagement", cast=float)
+        movement = self._level_mapping(simulator, "movement_probability_by_stubbornness", cast=float)
+        for name, values in (("bid_probability_by_engagement", bid), ("movement_probability_by_stubbornness", movement)):
+            if any(not 0.0 <= value <= 1.0 for value in values.values()):
+                raise ValueError(f"simulator.{name} values must be in [0, 1]")
+        if any(bid[level] > bid[level + 1] for level in range(1, 5)):
+            raise ValueError("bid probabilities must be non-decreasing with engagement")
+        if any(movement[level] < movement[level + 1] for level in range(1, 5)):
+            raise ValueError("movement probabilities must be non-increasing with stubbornness")
+        if movement[5] != 0.0:
+            raise ValueError("stubbornness level 5 must have zero movement probability")
+        question_modes = simulator.get("question_modes")
+        allowed_question_modes = {"choice_impact", "tradeoff", "condition"}
+        if not isinstance(question_modes, list) or not question_modes:
+            raise ValueError("simulator.question_modes must be a non-empty list")
+        normalized_modes = [str(value) for value in question_modes]
+        if len(normalized_modes) != len(set(normalized_modes)):
+            raise ValueError("simulator.question_modes must not contain duplicates")
+        unknown_modes = set(normalized_modes) - allowed_question_modes
+        if unknown_modes:
+            raise ValueError(f"simulator.question_modes contains unsupported values: {sorted(unknown_modes)}")
+
+        language = self._raw.get("language") or {}
+        words = self._level_mapping(language, "max_words_by_verbosity", cast=int)
+        directness = self._level_mapping(language, "directness_instructions", cast=str)
+        if any(value <= 0 for value in words.values()):
+            raise ValueError("language.max_words_by_verbosity values must be positive")
+        if any(words[level] > words[level + 1] for level in range(1, 5)):
+            raise ValueError("word limits must be non-decreasing with verbosity")
+        if any(not value.strip() for value in directness.values()):
+            raise ValueError("directness instructions must be non-empty")
+        similarity = float(language.get("near_duplicate_similarity_threshold", 0.92))
+        if not 0.0 <= similarity <= 1.0:
+            raise ValueError("language.near_duplicate_similarity_threshold must be in [0, 1]")
+
+    def level_value(self, section_name: str, mapping_name: str, level: int, *, cast=float):
+        section = self._raw.get(section_name) or {}
+        values = self._level_mapping(section, mapping_name, cast=cast)
+        try:
+            return values[int(level)]
+        except KeyError as exc:
+            raise ValueError(f"level must be in 1..5, got {level}") from exc
+
+    def conversation_turn_budgets(self, participant_count: int) -> tuple[int, int, int]:
+        n = max(1, int(participant_count))
+        conv = self._raw.get("conversation") or {}
+        import math
+        minimum = math.ceil(float(conv["min_voluntary_turns_per_participant"]) * n)
+        target = min(
+            math.ceil(float(conv["soft_target_voluntary_turns_per_participant"]) * n),
+            int(conv["soft_target_voluntary_turn_cap"]),
+        )
+        maximum = min(
+            math.ceil(float(conv["hard_max_voluntary_turns_per_participant"]) * n),
+            int(conv["hard_max_voluntary_turn_cap"]),
+        )
+        target = max(minimum, target)
+        maximum = max(target, maximum)
+        return minimum, target, maximum
 
     def _validate_environment(self, labels: list[str]) -> None:
         env = self._raw.get("environment") or {}

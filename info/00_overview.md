@@ -1,40 +1,17 @@
-# Runtime overview
+# System overview
 
-The project is an option-grounded multi-user decision simulator. It is not a generic chatbot and not an open-ended social simulation. A fixed public option board defines the objective facts. Several simulated users discuss those options and close with a `successful`, `majority`, or `unresolved` result.
+The system simulates a small group choosing among a fixed set of public options.
 
-The central design decision is that structured simulator actions are authoritative:
+The implementation separates:
 
-```text
-OPENING -> DISCUSSION -> NARROWING -> VOTING -> CLOSED
+- **setup**: scenario and persona generation;
+- **simulator policy**: participant-local structured decisions;
+- **floor/environment**: conversational obligations and phase control;
+- **realization**: one LLM call for the selected action;
+- **validation**: deterministic hard-correctness checks;
+- **outcome**: public narrowing and clear visible votes.
 
-all eligible simulators evaluate their local policy in Python
-    -> each proposes silence or one complete UserAction
-    -> the floor selects one bid without rewriting it
-    -> the dialogue LLM realizes that action as natural language
-    -> minimal validation accepts, repairs once, or drops the rendering
-    -> state updates are committed from UserAction
-```
+The key research object is the user simulator. Each simulator owns whether it wants to participate and what it wants to do. The environment does not assign ordinary support, concern, comparison, compromise, or switching behavior.
 
-Each simulator privately owns its preference state, goal, background, traits, possible hard-blocker status, action choice, stance evolution, and final vote. The environment owns only protocol: phases, mandatory openings and votes, direct-answer obligations, light floor arbitration, broad group pacing, one active issue, neutral moderator messages, candidate derivation, vote counting, and one bounded re-vote. Public candidate evidence is participant-distinct, direct-answer obligations outrank phase transitions, and preferred switches require new external evidence plus a short hysteresis window.
 
-The runtime does not parse utterances to infer acts, reasons, stance changes, issues, or votes. Text checking is limited to hard failures such as malformed output, missing required option mentions, premature formal-vote language, invented concrete facts, contradictory concrete comparisons, irrelevant direct answers, ambiguous votes, hard-blocker contradictions, issue-effect visibility, and near-verbatim repetition. Pairwise comparisons use the named/focused peer, while lowest/highest and shortest/longest claims are checked globally. Natural acceptance and switch expressions are checked only for broad visible consistency with the authoritative structured action; a discussion switch may name only the new preference because the old preference is already public, whereas a formal vote switch uses one vote-specific old-to-new bridge contract.
-
-The active source modules are:
-
-```text
-src/
-    aliases.py
-    builders.py
-    config_loader.py
-    consensus.py
-    dialogue.py
-    llm_client.py
-    logger.py
-    models.py
-    prompts.py
-    simulator.py
-    utils.py
-    validation.py
-```
-
-The former controller package, parser, semantic interpreter, observer, style tracker, complex thread engine, and validator-LLM infrastructure have been removed.
+Discussion progression is deliberately simple: direct questions create obligations, one active issue supports short local exchanges, stagnation may expose one optional compromise opportunity, and adaptive narrowing schedules only participants whose position still matters.

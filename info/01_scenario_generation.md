@@ -1,18 +1,17 @@
-# Scenario and option generation
+# Scenario generation
 
-Scenario generation remains separate from the dialogue runtime. `SetupBuilder` either reads a manual option board or asks the configured dialogue LLM to create one.
+A scenario contains:
 
-A `Scenario` contains:
+- one topic;
+- short shared public context;
+- exactly the configured option IDs;
+- one public card per option;
+- topic-specific factual attributes;
+- one short upside and concern;
+- a unique short name.
 
-- the public decision topic;
-- a short shared public context;
-- fixed option IDs;
-- a full and short option name;
-- topic-specific public attributes;
-- a brief upside and concern.
+The complete board is always printed once before the dialogue and stored in the transcript.
 
-All objective facts available during the discussion must appear in the shared context or option cards. There are no hidden option facts. The setup prompt therefore asks the model to choose attributes natural for the topic without prescribing a fixed schema.
+The Python runtime retains the full board in `DialogueState.scenario`. The LLM is stateless: each realization call receives only the facts relevant to the selected action.
 
-Short names must be supplied and validated. The builder may make one alias-only repair call when names are invalid or duplicated; it does not derive clipped names from the full option name.
-
-The runtime treats the resulting option board as the source of truth. Simulators can make subjective judgments about public facts, but the realization model may not introduce new prices, times, distances, capacities, facilities, or specifications.
+Raw attributes remain available for factual questions and grounded comparisons, but they do not automatically create conversational reasons.

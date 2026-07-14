@@ -1,28 +1,21 @@
-# Simulator policy and floor arbitration
+# Routing and turn taking
 
-There is no global participant-act router. On every open-floor opportunity, each eligible `UserSimulator` independently evaluates a small seeded Python policy and returns either silence or one complete `UserAction`.
+Every eligible simulator creates either silence or one complete `UserAction`.
 
-Candidate actions can come from:
+There is no numeric urgency. Bids use categorical priority:
 
-- answering a direct question;
-- responding to the active issue;
-- raising an unspoken concern;
-- supporting the current preference;
-- comparing relevant options;
-- asking a relevant question;
-- acknowledging a recent contribution;
-- defending a challenged option;
-- accepting or switching to a plausible finalist;
-- voting.
+1. required direct answer;
+2. concern-owner reaction after a response;
+3. active-issue or moderator-stimulus response;
+4. ordinary voluntary contribution.
 
-The action contains the speaker, willingness, urgency, act, option focus, optional addressee, grounded reason, optional personal context, issue effect, stance update, and vote. The LLM is not involved in bidding.
+The floor selects randomly within the highest non-empty category using the run seed. It prefers a different speaker when possible and enforces the configured maximum consecutive turns.
 
-When a direct question is accepted, the addressed participant has the next response obligation. Its simulator still constructs the answer action. A pending obligation is completed, or explicitly exhausted through the existing bounded generation/repair path, before discussion can transition to narrowing; the required answer is not counted as voluntary engagement.
+Engagement affects whether a voluntary bid exists. The floor does not equalize participation or use expected shares.
 
-Without an obligation, `FloorManager` removes silent bids and makes a seeded urgency-weighted selection. It applies only light coordination: a recent-speaker penalty and a maximum of two consecutive participant turns when alternatives exist. It does not use expected shares, deficits, quotas, minimum turns, or controller-selected content. The selected action object is passed onward unchanged.
+A direct question creates a next-turn obligation for the addressee. It uses one configured semantic mode—choice impact, trade-off, or an optional condition—and asks about a concrete concern rather than requesting the opening rationale again. After the addressed participant answers, the question issue closes; other participants do not repeat answers to the same direct question.
 
-An empty floor is treated as progression evidence. The first empty round closes or stales an exhausted issue; a second may emit the one available structured moderator stimulus; only a later empty round below the minimum budget may invoke the final liveness mechanism. Liveness still asks a simulator for a policy-generated action, is logged separately, and is excluded from voluntary engagement metrics.
+When a concern receives a response, the participant who raised it gets the next reaction opportunity. That reaction may accept the trade-off, partially soften, or maintain the concern. Moderator coverage/stall stimuli are handled before unrelated ordinary actions, so visible nudges are not silently ignored.
 
-When the moderator emits its single coverage or stall question, the runtime stores a compact `GroupStimulus`. Simulators may voluntarily answer, support, reject, compare, or ignore that stimulus. The moderator never chooses the respondent or response act.
 
-Question bids encode a specific information need: rationale, impact of a concern, acceptability, comparison, or clarification of a recent visible claim. Addressees are selected from public relevance rather than random choice. Compact question keys suppress only an equivalent `(intent, focus, addressee)` question; they do not block later questions about the same option for a different reason.
+When the ordinary floor stalls after the minimum discussion budget, the environment exposes at most one compromise window. Eligible non-hard-blockers independently decide whether to propose common ground. The floor selects among actual proposals and never creates one. The moderator prompt is appended only after a selected compromise contribution has been successfully realized, so failed generation cannot leave a visible nudge followed by silence.

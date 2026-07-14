@@ -1,39 +1,54 @@
-# Project engineering guide
+# Development instructions
 
-This repository has one active dialogue runtime. Do not reintroduce the deleted controller/parser/observer architecture or add compatibility wrappers for it.
+Read `README.md`, `POST_EVAL_CLOSEOUT_PLAN.md`, and `info/00_overview.md` before changing runtime behavior.
 
-## Architectural invariant
+## Architectural invariants
 
-`UserAction` is authoritative. Each `UserSimulator` independently decides whether to bid, which action to perform, the option focus, addressee, reason, issue effect, stance update, and vote. `FloorManager` may select among intact bids but must not rewrite them. The dialogue LLM only realizes the selected action. Accepted state changes are applied from the action, never reconstructed from text.
+1. `UserAction` is authoritative.
+2. `UserSimulator` chooses participant behavior.
+3. The floor selects an intact bid and never rewrites it.
+4. The LLM realizes wording only.
+5. Public state changes only after accepted visible text.
+6. State-changing actions—opening preference, issue resolution, stance change, and vote—must be visibly expressed.
+7. There is no validator LLM.
+8. Do not reintroduce urgency scores, floor multipliers, expected-turn-share correction, candidate weights, or public-pressure formulas.
+9. All behavioral probabilities and language limits belong in `config.yaml`.
+10. Raw option attributes do not automatically become conversation topics.
+11. Direct questions use a compact semantic mode, ask about a concrete concern without prescribing stock wording, and close after the required answer.
+12. Narrowing is adaptive: unanimous groups skip participant restatements; with one leader only dissenters or unresolved concern owners need a final-position opportunity; complete ties expose optional compromise.
+13. A non-hard blocker may resolve a previously disliked option concern; a hard blocker never accepts another option.
+14. Stagnation creates a simulator-owned compromise opportunity, never a controller-ordered concession.
+15. A second vote is allowed only after visible acceptance or switching in re-narrowing.
+16. Ordinary discussion must not systematically open concerns against every alternative; the configured concern cap is a safety bound.
+17. Do not commit a moderator compromise/stagnation prompt unless a selected simulator response has been successfully realized and will immediately follow it.
+18. Comparison wording is soft: only visibly mentioned option pairs become public comparison evidence.
+19. During voting, one visible intended option with no competitor is a valid natural vote even without a fixed vote phrase. If generation and focused repair both fail, render a minimal deterministic statement for the already-authoritative vote; never lose a vote.
 
-## Runtime ownership
+20. Opening realization uses `INITIAL`, `ALIGN`, or `CONTRAST` mode to avoid restarting every participant turn with the same greeting/preference skeleton.
+21. Voluntary pacing is participant-scaled but bounded by absolute caps for groups of six and seven.
 
-- `src/models.py`: public/private runtime state, actions, issues, votes, outcomes.
-- `src/simulator.py`: seeded participant-local policy and open-floor arbitration.
-- `src/dialogue.py`: phase loop, obligations, issue lifecycle, deterministic moderator, realization and one bounded repair.
-- `src/prompts.py`: compact setup and action-realization prompts.
-- `src/validation.py`: structured-action checks and minimal hard-failure text checks.
-- `src/consensus.py`: public candidate standings and vote outcomes.
-- `src/builders.py`: existing scenario and persona setup, direct traits, at most one hard blocker.
-- `src/logger.py`: compact transcript, JSON, and CSV metrics.
+## Scope
 
-## Non-negotiable boundaries
+This is an option-grounded group-decision user simulator, not a general human social simulation. Do not add coalitions, emotions, deception, status hierarchies, or unrestricted memory unless explicitly required.
 
-Do not add an LLM call for bidding or action selection. Do not add a validator LLM. Do not infer complete state from utterances. Do not add expected participation shares, per-person quotas, multiple active issues, deterministic participant fallback lines, hidden stance changes, majority-to-unanimity repair, or more than one re-vote.
+## Runtime phases
 
-Direct traits are integer scales: engagement, verbosity, and directness use 1–5; normal stubbornness uses 1–4. Stubbornness 5 is reserved for an explicit hard blocker. Engagement affects only voluntary bid probability and urgency. Verbosity controls soft action-scaled word targets; directness changes wording only. Stubbornness controls acceptance and switching, which also require distinct public evidence and switch hysteresis. Age and speech style affect lexical realization only.
-
-Candidate standings and switching evidence must use distinct public participants, never raw repeated support counts. Question uniqueness is keyed by intent, option focus, and addressee. Concern responses must retain issue provenance and explicitly identify whether they mitigate the same issue, accept the trade-off, or agree the concern remains. Required direct answers take precedence over phase transitions.
-
-## Verification
-
-After runtime changes, run deterministic tests first. The evaluation command then uses the configured live dialogue LLM:
-
-```powershell
-$env:PYTHONPATH = "src"
-py -m pytest -q
-py -m compileall -q main.py src eval tests
-py .\eval\run_eval_suite.py
+```text
+OPENING → DISCUSSION → NARROWING → VOTING → CLOSED
 ```
 
-Inspect representative `transcript.md` and `run.json` files, not only aggregate metrics. Confirm that actions remain autonomous, questions route correctly, stance changes are visible, concrete option facts remain grounded, hard blockers never switch, majority closes directly, and at most one re-vote occurs.
+One bounded `VOTING → NARROWING → VOTING` return is allowed when no majority exists.
+
+## Testing
+
+Run after each meaningful change:
+
+```powershell
+py -m pytest -q
+```
+
+Tests should assert public behavior and ownership boundaries, not exact LLM wording or removed implementation details.
+
+## Evaluation
+
+The LLM-backed suite is diagnostic. Adapt it when the public runtime contract changes, but do not turn it into a second runtime policy.
