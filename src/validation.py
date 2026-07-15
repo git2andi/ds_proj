@@ -99,6 +99,13 @@ def validate_realization(
         and not _stance_update_visible(state, action, clean)
     ):
         errors.append("required stance change is not visible")
+    if (
+        action.stance_update
+        and action.stance_update.movement_reason.strip()
+        and not action.stance_update.reason_already_public
+        and not _movement_reason_visible(state, action, clean)
+    ):
+        errors.append("stance change lacks its grounded movement reason")
 
     if action.issue_effect is IssueEffect.RESOLVE and not re.search(
         r"\b(?:address(?:es|ed)?|resolv(?:e|ed|es)|works?\s+for\s+me|acceptable|can\s+accept|could\s+accept|fine\s+with|okay\s+with|convinced|could\s+live\s+with|can\s+live\s+with|go\s+along\s+with|can\s+support|could\s+support|willing\s+to\s+(?:try|support|accept)|works?\s+as\s+(?:a\s+)?compromise|settle\s+on|on\s+board\s+with)\b",
@@ -160,6 +167,41 @@ def _stance_update_visible(state: DialogueState, action: UserAction, text: str) 
     if update.kind is StanceUpdateKind.REJECT:
         return bool(re.search(r"\b(?:reject|rule\s+out|won['’]?t\s+accept|not\s+acceptable)\b", text, re.I))
     return True
+
+
+def _movement_reason_visible(state: DialogueState, action: UserAction, text: str) -> bool:
+    update = action.stance_update
+    if update is None or update.reason_already_public:
+        return True
+    reason = update.movement_reason.strip()
+    if not reason:
+        return True
+
+    generic = {
+        "accept", "acceptable", "choice", "common", "fair", "ground", "option",
+        "prefer", "reasonable", "switch", "work", "works", "working",
+    }
+    option_terms: set[str] = set()
+    option = state.scenario.option(update.option_id)
+    for value in (option.id, option.name, option.short_name):
+        option_terms.update(_semantic_terms(value or ""))
+    reason_terms = _semantic_terms(reason) - generic - option_terms
+    if not reason_terms:
+        return True
+    return bool(reason_terms & _semantic_terms(text))
+
+
+def _semantic_terms(text: str) -> set[str]:
+    terms: set[str] = set()
+    for token in re.findall(r"[a-z0-9]+", text.casefold()):
+        if len(token) < 4:
+            continue
+        for suffix in ("ingly", "edly", "ing", "ed", "es", "s", "ly"):
+            if token.endswith(suffix) and len(token) - len(suffix) >= 4:
+                token = token[: -len(suffix)]
+                break
+        terms.add(token)
+    return terms
 
 
 def _answer_is_relevant(state: DialogueState, action: UserAction, text: str) -> bool:

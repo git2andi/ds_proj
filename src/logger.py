@@ -96,6 +96,10 @@ class DialogueLogger:
             "semantic_reason_reuse": metrics["generation"]["semantic_reason_reuse"],
             "vote_fallbacks": metrics["generation"]["vote_fallbacks"],
             "mandatory_movement_failures": metrics["generation"]["mandatory_movement_failures"],
+            "movement_fallbacks": metrics["generation"]["movement_fallbacks"],
+            "selected_movement_actions": metrics["generation"]["selected_movement_actions"],
+            "committed_movement_actions": metrics["generation"]["committed_movement_actions"],
+            "movement_realization_failures": metrics["generation"]["movement_realization_failures"],
             "llm_calls": metrics["tokens"]["llm_calls"],
             "tokens_in": metrics["tokens"]["input"],
             "tokens_out": metrics["tokens"]["output"],
@@ -162,10 +166,13 @@ class DialogueLogger:
             f"- Voluntary turns: {metrics['turns']['voluntary']}",
             f"- Moderator turns: {metrics['turns']['moderator']}",
             f"- Repairs / dropped turns: {metrics['generation']['repairs']} / {metrics['generation']['dropped']}",
-            f"- Vote fallbacks / failed movement realizations: {metrics['generation']['vote_fallbacks']} / {metrics['generation']['mandatory_movement_failures']}",
+            f"- Vote / movement fallbacks: {metrics['generation']['vote_fallbacks']} / {metrics['generation']['movement_fallbacks']}",
+            f"- Selected / committed movement actions: {metrics['generation']['selected_movement_actions']} / {metrics['generation']['committed_movement_actions']}",
+            f"- Failed movement realizations: {metrics['generation']['movement_realization_failures']}",
             f"- Questions answered: {metrics['questions']['answered']}/{metrics['questions']['opened']}",
             f"- Issues resolved / stale: {metrics['issues']['resolved']} / {metrics['issues']['stale']}",
             f"- Visible acceptances / switches: {metrics['stances']['acceptances']} / {metrics['stances']['switches']}",
+            f"- Grounded / unexplained movement turns: {metrics['stances']['grounded_movements']} / {metrics['stances']['unexplained_movements']}",
             f"- Compromise proposals: {metrics['compromise']['proposals']}",
             f"- Re-vote skipped for no movement: {'yes' if metrics['votes']['revote_skipped'] else 'no'}",
             f"- Semantic reason reuse: {metrics['generation']['semantic_reason_reuse']}",
@@ -194,6 +201,11 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
     question_rows = [issue for issue in issue_rows if issue and issue.kind is IssueKind.QUESTION]
     concern_rows = [issue for issue in issue_rows if issue and issue.kind is IssueKind.CONCERN]
     final_records = state.vote_records.get(state.vote_round, {})
+    movement_turns = [turn for turn in participant_turns if turn.stance_update is not None]
+    grounded_movements = sum(
+        bool(turn.stance_update and turn.stance_update.movement_reason.strip())
+        for turn in movement_turns
+    )
 
     participants: dict[str, Any] = {}
     for persona in state.personas:
@@ -228,6 +240,10 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             "semantic_reason_reuse": state.stats.semantic_reason_reuse,
             "vote_fallbacks": state.stats.vote_fallbacks,
             "mandatory_movement_failures": state.stats.mandatory_movement_failures,
+            "movement_fallbacks": state.stats.movement_fallbacks,
+            "selected_movement_actions": state.stats.selected_movement_actions,
+            "committed_movement_actions": state.stats.committed_movement_actions,
+            "movement_realization_failures": state.stats.movement_realization_failures,
             "repair_causes": dict(state.validation_failures),
         },
         "questions": {
@@ -246,6 +262,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
             "switches": sum(runtime.visible_switches for runtime in state.runtimes.values()),
             "acceptances": sum(len(runtime.public_acceptances) for runtime in state.runtimes.values()),
             "narrowing_movements": state.stats.narrowing_movements,
+            "grounded_movements": grounded_movements,
+            "unexplained_movements": len(movement_turns) - grounded_movements,
         },
         "compromise": {
             "proposals": state.stats.compromise_proposals,

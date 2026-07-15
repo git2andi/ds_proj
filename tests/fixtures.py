@@ -186,6 +186,9 @@ class ActionRendererLLM:
             if "which factor matters more" in lower:
                 option = action.split("for ", 1)[1].split(".", 1)[0].strip()
                 return f"{target}, which factor matters more for {option}?"
+            if "known benefit of" in lower and "known concern" in lower:
+                option = action.split("known benefit of ", 1)[1].split(" is enough", 1)[0].strip()
+                return f"{target}, does the known benefit make the concern about {option} acceptable to you?"
             if "whether any known condition" in lower:
                 option = action.split("make ", 1)[1].split(" workable", 1)[0].strip()
                 return f"{target}, is there anything known that would make {option} workable?"
@@ -215,30 +218,44 @@ class ActionRendererLLM:
         if lower.startswith("respond to the concern"):
             reason = action.rsplit("Decisive reason:", 1)[1].split(".", 1)[0].strip(" .")
             return f"I still support it; {reason} matters more to me."
-        if lower.startswith("respond that the concern"):
+        if lower.startswith("acknowledge this response"):
+            acknowledged = action.split(":", 1)[1].split(". Then", 1)[0].strip(" .")
+            concern = action.rsplit(":", 1)[1].strip(" .")
+            return f"I see the point about {acknowledged}, but {concern} still worries me."
+        if lower.startswith("respond that this concern"):
             reason = action.rsplit(":", 1)[1].strip(" .")
             return f"That concern still matters to me because {reason}."
         if lower.startswith("respond to the active issue") or lower.startswith("continue the current exchange"):
             reason = action.rsplit(":", 1)[1].strip(" .")
             return f"That matters here; {reason}."
-        if "moving to" in lower and lower.startswith("clearly say"):
-            option = action.split("moving to ", 1)[1].split(" after", 1)[0].strip()
+        if lower.startswith("clearly state that you are moving to"):
+            tail = action.split("moving to ", 1)[1]
+            option = tail.split(".", 1)[0].split(" because", 1)[0].strip()
+            if "concrete reason:" in action:
+                reason = action.split("concrete reason:", 1)[1].split(".", 1)[0].strip()
+                return f"I’m moving to {option} because {reason}."
             return f"That changed my mind; I’m moving to {option}."
         if lower.startswith("say that the response addressed your concern"):
             option = action.split("make ", 1)[1].split(" visibly", 1)[0].strip()
-            return f"That addresses my concern; I can accept {option}."
+            reason = action.split("concrete reason:", 1)[1].split(".", 1)[0].strip()
+            return f"That addresses my concern; I can accept {option} because {reason}."
         if lower.startswith("make ") and "visibly acceptable" in lower:
             option = action.split("Make ", 1)[1].split(" visibly", 1)[0].strip()
-            return f"{option} isn’t my first choice, but I can accept it."
+            reason = action.split("concrete reason:", 1)[1].split(".", 1)[0].strip()
+            return f"{option} isn’t my first choice, but I can accept it because {reason}."
         if lower.startswith("briefly state that you are staying with"):
             option = action.split("staying with ", 1)[1].split(".", 1)[0].strip()
             return f"I’m staying with {option}."
         if lower.startswith("state only one short"):
             option = action.split("choice for ", 1)[1].split(".", 1)[0].strip()
             return f"{option} for me."
-        if lower.startswith("state one clear vote"):
-            option = action.split("for ", 1)[1].split(" and briefly", 1)[0].strip()
+        if lower.startswith("state one short, clear vote"):
+            option = action.split("for ", 1)[1].split(" and indicate", 1)[0].strip()
             return f"I’m moving to {option}; that gets my vote."
+        if lower.startswith("state one clear vote"):
+            option = action.split("for ", 1)[1].split(", indicate", 1)[0].strip()
+            reason = action.split("concrete reason:", 1)[1].split(".", 1)[0].strip()
+            return f"I’m moving to {option} because {reason}; that gets my vote."
         return "That point matters for my decision."
 
     @staticmethod

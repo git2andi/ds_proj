@@ -6,7 +6,7 @@ import pytest
 
 from config_loader import cfg
 from dialogue import DialogueRunner
-from models import ActionType, BidPriority, Phase, UserAction
+from models import ActionType, BidPriority, Phase, StanceUpdate, StanceUpdateKind, UserAction
 from tests.fixtures import ActionRendererLLM, NullLogger, make_persona, make_personas, make_runner, make_scenario
 
 
@@ -195,8 +195,9 @@ def test_tie_narrowing_prompt_is_hidden_when_no_simulator_wants_to_move(monkeypa
         runner.state.runtimes[participant_id].public_preference = option_id
     runner._run_narrowing(revote=False)
     output = capsys.readouterr().out
-    assert "No clear leader has emerged" not in output
+    assert "There is no clear leader yet" not in output
     assert "We seem stuck" not in output
+    assert runner.state.stats.selected_movement_actions == 0
 
 
 def test_failed_vote_realization_uses_authoritative_visible_fallback():
@@ -235,7 +236,7 @@ def test_failed_vote_realization_uses_authoritative_visible_fallback():
     assert all("vote" in turn.text.casefold() or "switching" in turn.text.casefold() for turn in vote_turns)
 
 
-def test_failed_compromise_realization_does_not_print_unanswered_nudge(monkeypatch, capsys):
+def test_failed_compromise_realization_uses_fallback_and_keeps_nudge_answered(monkeypatch, capsys):
     import simulator as simulator_module
 
     class CompromiseFailingLLM(ActionRendererLLM):
@@ -259,5 +260,48 @@ def test_failed_compromise_realization_does_not_print_unanswered_nudge(monkeypat
         runner.state.runtimes[participant_id].public_preference = option_id
     runner._run_narrowing(revote=False)
     output = capsys.readouterr().out
-    assert "No clear leader has emerged" not in output
-    assert "We seem stuck" not in output
+    assert "There is no clear leader yet" in output
+    assert "I can accept" in output
+    assert runner.state.stats.movement_fallbacks >= 1
+    assert runner.state.stats.movement_realization_failures >= 1
+    assert runner.state.stats.dropped_turns == 0
+    assert (
+        runner.state.stats.selected_movement_actions
+        == runner.state.stats.committed_movement_actions
+    )
+
+
+def test_failed_mandatory_movement_uses_grounded_fallback():
+    class VagueMovementLLM(ActionRendererLLM):
+        def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
+            if "visibly acceptable" in prompt or "concrete movement reason" in prompt:
+                text = "Cafe seems reasonable enough for me."
+                self.prompts.append(prompt)
+                self.profiles.append(profile)
+                self.calls += 1
+                self.last_tokens_in = max(1, len(prompt.split()))
+                self.last_tokens_out = len(text.split())
+                self.session_tokens_in += self.last_tokens_in
+                self.session_tokens_out += self.last_tokens_out
+                self.session_calls += 1
+                return text
+            return super().generate(prompt, profile=profile)
+
+    runner = make_runner(("A", "B", "C"), llm=VagueMovementLLM(), seed=51)
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+        ("B",), reason="relaxed atmosphere", decisive_reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="common_ground",
+        ),
+    )
+    record = runner._realize_and_commit(action, mandatory=True, voluntary=False)
+    assert record is not None
+    assert "relaxed atmosphere" in record.text.casefold()
+    assert runner.state.stats.movement_fallbacks == 1
+    assert "B" in runner.state.runtimes["p1"].public_acceptances
+    assert runner.state.runtimes["p1"].acceptance_reasons["B"] == "relaxed atmosphere"

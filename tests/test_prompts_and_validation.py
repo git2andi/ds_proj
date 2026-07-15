@@ -283,3 +283,147 @@ def test_semantic_answer_prompt_uses_tradeoff_fields():
     assert "quiet and predictable" in prompt
     assert "the drawback matters, but" not in prompt.casefold()
     assert "deal-breaker" not in prompt.casefold()
+
+
+def test_movement_prompt_requires_concrete_grounded_reason():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+        ("B",), reason="relaxed atmosphere",
+        decisive_reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="common_ground",
+        ),
+    )
+    prompt = prompts.realization_prompt(state, state.persona("p1"), action)
+    assert "concrete reason: relaxed atmosphere" in prompt
+    assert "vague fairness reason" in prompt
+
+
+def test_vague_movement_without_grounded_reason_is_rejected():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+        ("B",), reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="common_ground",
+        ),
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Cafe seems reasonable enough for me.",
+    )
+    assert any("grounded movement reason" in error for error in errors)
+
+
+def test_grounded_movement_reason_is_accepted():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+        ("B",), reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="common_ground",
+        ),
+    )
+    assert not validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "I can accept Cafe because the relaxed atmosphere works for me.",
+    )
+
+
+def test_vote_after_explained_acceptance_stays_short():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.VOTE,
+        ("B",), vote_option="B",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.SWITCH_PREFERRED,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="previous_acceptance",
+            reason_already_public=True,
+        ),
+    )
+    prompt = prompts.realization_prompt(state, state.persona("p1"), action)
+    assert "reason was already explained publicly" in prompt
+    assert "do not invent a new reason" in prompt
+
+
+def test_partial_concern_reaction_keeps_original_concern_as_hesitation():
+    from models import ResponseMode
+
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.ISSUE_OWNER_REACTION, ActionType.COMMENT,
+        ("A",), reason="can become crowded", decisive_reason="quiet and predictable",
+        issue_id="issue-1", issue_effect=IssueEffect.PARTIAL,
+        response_mode=ResponseMode.MAINTAIN_CONCERN,
+    )
+    prompt = prompts.realization_prompt(state, state.persona("p1"), action)
+    assert "Acknowledge this response" in prompt
+    assert "quiet and predictable" in prompt
+    assert "original concern still remains: can become crowded" in prompt
+
+
+def test_first_acceptance_prompt_preserves_previous_priority():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.COMPROMISE,
+        ("B",), reason="relaxed atmosphere",
+        decisive_reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="relaxed atmosphere",
+            movement_basis="common_ground",
+        ),
+    )
+    prompt = prompts.realization_prompt(state, state.persona("p1"), action)
+    assert "previously preferred Library" in prompt
+    assert "fits my main priority" in prompt
+    assert "preserve that priority" in prompt
+
+
+def test_realization_prompt_guards_qualitative_grounding():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="quiet and predictable",
+    )
+    prompt = prompts.realization_prompt(state, state.persona("p1"), action)
+    assert "option subtypes" in prompt
+    assert "facilities" in prompt
+    assert "stronger/weaker versions" in prompt
+
+
+def test_moderator_vote_request_is_neutral_and_combines_unanimity():
+    state = make_state(("A", "A", "A"))
+    neutral = prompts.moderator_vote_request(revote=False)
+    assert neutral == "Let’s take the final vote. Please name the one option you’re choosing."
+    assert "Now give" not in neutral
+
+    unanimous = prompts.moderator_vote_request(
+        revote=False,
+        scenario=state.scenario,
+        unanimous_option="A",
+    )
+    assert "already has everyone’s support" in unanimous
+    assert "confirm it with a final vote" in unanimous

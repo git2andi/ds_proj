@@ -167,7 +167,17 @@ def _option_name(state: DialogueState, option_id: str) -> str:
     return safe_short or option.name
 
 
-def _selected_action(state: DialogueState, action: UserAction) -> str:
+def _previous_priority(state: DialogueState, persona: Persona, action: UserAction) -> tuple[str, str]:
+    update = action.stance_update
+    if update is None or not update.previous_option_id or update.previous_option_id == update.option_id:
+        return "", ""
+    previous_name = _option_name(state, update.previous_option_id)
+    stance = persona.option_stances.get(update.previous_option_id)
+    previous_reason = stance.reason_for.strip() if stance is not None else ""
+    return previous_name, previous_reason
+
+
+def _selected_action(state: DialogueState, action: UserAction, persona: Persona | None = None) -> str:
     names = [_option_name(state, option_id) for option_id in action.option_focus]
     focus = " and ".join(names)
     reason = action.reason.strip()
@@ -198,8 +208,9 @@ def _selected_action(state: DialogueState, action: UserAction) -> str:
         target = state.persona(action.addressee_id).name if action.addressee_id else "the group"
         if action.question_mode is QuestionMode.TRADEOFF:
             return (
-                f"Ask {target} naturally which factor matters more for {focus}. "
-                f"Concern: {reason}. Positive reason: {decisive}. Do not answer for them or prescribe wording."
+                f"Ask {target} naturally whether the known benefit of {focus} is enough for them to accept the known concern. "
+                f"Concern: {reason}. Known benefit: {decisive}. Do not split one fact into unsupported sub-comparisons, "
+                "answer for them, or prescribe wording."
             )
         if action.question_mode is QuestionMode.CONDITION:
             return (
@@ -237,7 +248,12 @@ def _selected_action(state: DialogueState, action: UserAction) -> str:
                     f"Decisive reason: {decisive}. Use your own natural structure."
                 )
             if action.response_mode is ResponseMode.MAINTAIN_CONCERN:
-                return f"Respond that the concern about {focus} still matters to you: {decisive or reason}."
+                if action.issue_effect is IssueEffect.PARTIAL and decisive:
+                    return (
+                        f"Acknowledge this response about {focus}: {decisive}. "
+                        f"Then make clear that your original concern still remains: {reason}."
+                    )
+                return f"Respond that this concern about {focus} still matters to you: {reason}."
             if action.response_mode is ResponseMode.UNKNOWN:
                 return f"Respond that you do not know enough to judge the concern about {focus}. Do not invent a solution."
             return f"Respond to the active issue about {focus}. State this position honestly: {reason}."
@@ -245,19 +261,60 @@ def _selected_action(state: DialogueState, action: UserAction) -> str:
             return f"React to {target}'s last point about {focus}, then add this distinct point: {reason}."
         return f"Continue the current exchange with this relevant point about {focus}: {reason}."
     if action.act is ActionType.COMPROMISE:
-        if action.stance_update and action.stance_update.kind is StanceUpdateKind.SWITCH_PREFERRED:
-            detail = f" A brief reason may be used: {reason}." if reason else ""
-            return f"Clearly say that you are moving to {focus} after the discussion.{detail}"
-        movement_reason = decisive or reason
-        detail = f" You may briefly mention: {movement_reason}." if movement_reason else ""
+        update = action.stance_update
+        movement_reason = (
+            update.movement_reason.strip() if update is not None else ""
+        ) or decisive or reason
+        remaining_concern = update.remaining_concern.strip() if update is not None else ""
+        previous_name, previous_reason = (
+            _previous_priority(state, persona, action) if persona is not None else ("", "")
+        )
+        previous_clause = ""
+        if previous_name and previous_reason:
+            previous_clause = (
+                f" You previously preferred {previous_name} because {previous_reason}. "
+                "Briefly preserve that priority while explaining why the new option is still acceptable."
+            )
+        elif previous_name:
+            previous_clause = (
+                f" You previously preferred {previous_name}. Briefly preserve that preference while explaining "
+                "why the new option is still acceptable."
+            )
+        if update and update.kind is StanceUpdateKind.SWITCH_PREFERRED:
+            if update.reason_already_public:
+                return (
+                    f"Clearly state that you are moving to {focus}. The concrete reason was already stated earlier: "
+                    f"{movement_reason}. Keep this short and do not replace it with vague wording such as 'fair enough'."
+                )
+            return (
+                f"Clearly state that you are moving to {focus} because of this concrete reason: {movement_reason}. "
+                "Do not use only vague wording such as 'fair enough' or 'reasonable enough'."
+            )
         if action.issue_effect is IssueEffect.RESOLVE:
-            return f"Say that the response addressed your concern and make {focus} visibly acceptable.{detail}"
-        return f"Make {focus} visibly acceptable as common ground without claiming it was your first choice.{detail}"
+            concern = f" You may acknowledge the earlier concern: {remaining_concern}." if remaining_concern else ""
+            return (
+                f"Say that the response addressed your concern and make {focus} visibly acceptable because of this "
+                f"concrete reason: {movement_reason}.{concern}{previous_clause} Do not give only a generic fairness reason."
+            )
+        return (
+            f"Make {focus} visibly acceptable as common ground because of this concrete reason: {movement_reason}. "
+            f"{previous_clause} Do not claim it was always your first choice, and do not give only a vague fairness reason."
+        )
     if action.act is ActionType.FINAL_POSITION:
         return f"Briefly state that you are staying with {focus}. Do not repeat earlier reasons and do not use a voting formula."
     if action.act is ActionType.VOTE:
         if action.stance_update:
-            return f"State one clear vote for {focus} and briefly indicate that your choice changed. Use natural group-chat wording."
+            update = action.stance_update
+            movement_reason = update.movement_reason.strip() or decisive or reason
+            if update.reason_already_public:
+                return (
+                    f"State one short, clear vote for {focus} and indicate that your choice changed. "
+                    "The reason was already explained publicly, so do not invent a new reason."
+                )
+            return (
+                f"State one clear vote for {focus}, indicate that your choice changed, and briefly use this concrete "
+                f"reason: {movement_reason}."
+            )
         return f"State only one short, natural choice for {focus}. Three to eight words are enough; do not repeat your reason."
     return reason or "Make one relevant contribution."
 
@@ -345,7 +402,7 @@ Voice: {persona.speech_style}.
 Directness: {persona.sim_params.directness}/5 — {directness_instruction(persona.sim_params.directness)}
 {personal}
 Selected action:
-{_selected_action(state, action)}
+{_selected_action(state, action, persona)}
 
 Relevant public option facts:
 {_relevant_facts(state, action)}
@@ -355,7 +412,8 @@ Recent chat:
 {target}{own}
 Write exactly one natural group-chat message that continues from the local context.
 Express the selected meaning, but do not copy the instruction's sentence structure or rely on one fixed question or contrast formula.
-Use only the supplied public option facts. Do not invent numbers, values, features, solutions, or guarantees.
+Use only the supplied public option facts. Preserve their exact meaning and strength.
+Do not invent numbers, values, option subtypes, facilities, use cases, solutions, guarantees, or stronger/weaker versions of a fact.
 Personal opinions and the supplied personal context are allowed. If a fact or mitigation is unknown, say so.
 Do not add a speaker label or summarize the discussion.
 Vary the sentence opening naturally; do not mechanically begin with a name, “I”, or the option name.
@@ -377,7 +435,7 @@ def repair_prompt(
     return f"""Rewrite one group-chat message for {persona.name}.
 
 Selected action:
-{_selected_action(state, action)}
+{_selected_action(state, action, persona)}
 
 Relevant public facts:
 {_relevant_facts(state, action)}
@@ -389,7 +447,9 @@ Problems to fix:
 - """ + "\n- ".join(errors) + f"""
 
 Return one corrected message only.
-Do not invent facts, values, solutions, or guarantees. Preserve the selected action and any required vote or stance change.
+Do not invent facts, values, option subtypes, facilities, use cases, solutions, guarantees, or stronger/weaker versions of a fact.
+Preserve the selected action and any required vote or stance change.
+When the action changes stance, use the concrete movement reason from the selected action; do not replace it with vague wording such as “fair enough”.
 Use natural group-chat wording; the word “formal” is unnecessary.
 No speaker label. Maximum {maximum} words; finish the thought naturally.
 """
@@ -419,11 +479,11 @@ def moderator_unanimous_narrowing(scenario: Scenario, option_id: str) -> str:
 
 def moderator_narrowing(scenario: Scenario, options: tuple[str, ...]) -> str:
     if not options:
-        return "No clear leader has emerged. Anyone may propose an option they could genuinely accept before we vote."
+        return "There is no clear leader yet. Is there another option anyone could accept as common ground?"
     names = [scenario.option(option_id).short_name or scenario.option(option_id).name for option_id in options]
     if len(names) == 1:
         return f"{names[0]} currently leads. Anyone not there yet can say whether they can accept it or what still prevents that."
-    return f"The group is split between {names[0]} and {names[1]}. Is either one workable common ground before we vote?"
+    return f"{names[0]} and {names[1]} currently have the most support. Could either work for those currently elsewhere?"
 
 
 def moderator_revote_narrowing(scenario: Scenario, options: tuple[str, ...]) -> str:
@@ -433,10 +493,18 @@ def moderator_revote_narrowing(scenario: Scenario, options: tuple[str, ...]) -> 
     return f"The first vote had no majority. Can anyone newly accept {' or '.join(names)} as common ground?"
 
 
-def moderator_vote_request(*, revote: bool = False, had_revote_discussion: bool = False) -> str:
+def moderator_vote_request(
+    *,
+    revote: bool = False,
+    scenario: Scenario | None = None,
+    unanimous_option: str | None = None,
+) -> str:
     if revote:
-        return "Now give one final clear choice."
-    return "Now give one clear choice."
+        return "Let’s take the final vote again. Please name the one option you’re choosing."
+    if scenario is not None and unanimous_option:
+        name = scenario.option(unanimous_option).short_name or scenario.option(unanimous_option).name
+        return f"{name} already has everyone’s support. Let’s confirm it with a final vote."
+    return "Let’s take the final vote. Please name the one option you’re choosing."
 
 
 def moderator_closure(outcome: RunOutcome, scenario: Scenario) -> str:

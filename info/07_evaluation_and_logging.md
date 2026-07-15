@@ -25,7 +25,7 @@ The focused test suite verifies the architecture without requiring an LLM endpoi
 
 ## LLM-backed suite
 
-`eval/run_eval_suite.py` runs 10 focused manual scenarios with varied topics. It reports structure, adaptive narrowing participation, question/concern resolution and staleness, visible switches, repetitive starts, same-speaker repetition, outcomes, token use, and prompt size. The suite is diagnostic and always completes all selected cases.
+`eval/run_eval_suite.py` runs 15 focused manual scenarios with varied topics. It reports structure, adaptive narrowing participation, question/concern resolution and staleness, visible switches, repetitive starts, same-speaker repetition, outcomes, token use, and prompt size. The suite is diagnostic and always completes all selected cases.
 
 
-Compact quality diagnostics include compromise proposals/acceptances, narrowing movements, whether a re-vote was skipped for no movement, semantic reason reuse, and aggregate repair causes. The suite treats a second vote without preceding movement as a failure.
+Compact quality diagnostics include compromise proposals/acceptances, selected versus committed movement actions, movement realization failures and fallbacks, grounded versus unexplained movements, narrowing movements, whether a re-vote was skipped for no movement, semantic reason reuse, and aggregate repair causes. The suite fails when any selected movement does not commit, or when a second vote occurs without preceding movement.

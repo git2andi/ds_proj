@@ -41,12 +41,16 @@ The environment owns:
 
 The LLM only realizes one selected action as natural language. It does not choose the speaker, action, stance change, or vote.
 
+Ordinary pro/con facts already established publicly are not offered again as new standalone contributions; required answers, issue reactions, and stance movement remain available.
+
 ## Simplified policy
 
 There are no urgency scores, floor multipliers, candidate-score formulas, or public-pressure scores.
 
 - Engagement maps to a configurable probability of submitting a voluntary bid.
 - Stubbornness maps to a configurable movement probability after a concrete trigger. Movement may mean making an option acceptable or visibly switching preference.
+- Every acceptance or switch stores one concrete movement reason from the persona stance or resolved issue. The acceptance must make that reason visible; a later vote may stay short because the rationale is already public.
+- A rank-3 neutral option may become compromise material directly. A rank-2 disliked option becomes eligible only after that participant's concrete concern was visibly resolved or softened. Rank-1 and hard-blocked options never become acceptable.
 - Verbosity maps to a configurable maximum word count.
 - Directness maps to one short wording instruction.
 - The floor uses categorical priority: required answer, concern-owner reaction, active-issue response, ordinary contribution.
@@ -55,6 +59,7 @@ There are no urgency scores, floor multipliers, candidate-score formulas, or pub
 - Ties inside one category are resolved with seeded random selection.
 - Ordinary discussion limits each simulator to one newly opened concern by default, avoiding systematic processing of every alternative.
 - Stagnation exposes one simulator-owned compromise opportunity; it never forces a switch. A visible moderator compromise prompt is committed only together with a successfully realized participant response, so failed language generation cannot leave an unanswered nudge.
+- Once a movement action wins the floor, language failure cannot erase it: after one focused repair the runtime commits a grounded minimal movement fallback and records that fallback explicitly.
 
 ## Reasons and grounding
 
@@ -66,7 +71,7 @@ Ordinary actions primarily use:
 
 The structured action is authoritative. Validation blocks only hard failures such as unusable output, unknown options, unsupported concrete values, unrelated direct answers, genuinely ambiguous votes, invisible required stance changes, hard-blocker contradictions, and near-verbatim self-repetition. During voting, a short message that visibly names exactly the intended option is sufficient even without a fixed vote verb. An incomplete comparison is accepted as a useful one-sided contribution and is not recorded as public comparison evidence.
 
-No validator LLM is used. Failed ordinary realizations remain diagnosable in `run.json`. A formal vote can never disappear: after one generation and one focused repair fail, the runtime renders a minimal deterministic statement for the simulator’s already-authoritative choice.
+No validator LLM is used. Realization prompts explicitly forbid invented option subtypes, facilities, use cases, guarantees, and stronger or weaker mutations of supplied facts. Failed ordinary realizations remain diagnosable in `run.json`. A selected stance movement or formal vote can never disappear: after one generation and one focused repair fail, the runtime renders a minimal grounded statement for the simulator’s already-authoritative action.
 
 ## Running
 
@@ -84,7 +89,7 @@ With no CLI topic, the program uses the manual scenario when `environment.mode: 
 py -m pytest -q
 ```
 
-The deterministic suite covers configuration, simulator authority, opening variation, concern-based questions, issue closure, concern resolution, adaptive narrowing, optional compromise, authoritative vote fallback, hard blockers, logging, and bounded pacing from two through seven participants.
+The deterministic suite covers configuration, simulator authority, opening variation, concern-based questions, issue closure, rank-2 concern gating, adaptive narrowing, optional compromise, authoritative movement and vote fallback, deterministic tied choices, hard blockers, logging, and bounded pacing from two through seven participants.
 
 ## LLM-backed evaluation
 

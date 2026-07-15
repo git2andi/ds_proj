@@ -234,7 +234,7 @@ class UserSimulator:
         pool = [
             action
             for action in candidates
-            if self._action_is_novel_or_required(runtime, action)
+            if self._action_is_novel_or_required(state, runtime, action)
         ]
         if not pool:
             return self._silence()
@@ -247,30 +247,29 @@ class UserSimulator:
             return self._silence()
         if self.rng.random() > bid_probability(self.persona.sim_params.engagement):
             return self._silence()
-        if not self._action_is_novel_or_required(runtime, action):
+        if not self._action_is_novel_or_required(state, runtime, action):
             return self._silence()
         return action
 
     def has_novel_voluntary_bid(self, state: DialogueState) -> bool:
         runtime = state.runtimes[self.id]
         return any(
-            self._action_is_novel_or_required(runtime, action)
+            self._action_is_novel_or_required(state, runtime, action)
             for action in self._candidate_actions(state, runtime)
         )
 
-    @staticmethod
     def _action_is_novel_or_required(
+        self,
+        state: DialogueState,
         runtime: ParticipantRuntime,
         action: UserAction,
     ) -> bool:
         key = reason_key(action)
         if not key:
             return True
-        if key not in runtime.used_reason_keys:
-            return True
         if action.stance_update is not None:
             return True
-        if action.act is ActionType.ANSWER:
+        if action.act in {ActionType.ANSWER, ActionType.FINAL_POSITION, ActionType.VOTE}:
             return True
         if action.issue_effect in {
             IssueEffect.RESOLVE,
@@ -284,7 +283,23 @@ class UserSimulator:
             and action.issue_id not in runtime.responded_issue_ids
         ):
             return True
-        return False
+        if key in runtime.used_reason_keys:
+            return False
+        if action.act in {
+            ActionType.SUPPORT,
+            ActionType.CONCERN,
+            ActionType.COMPARE,
+            ActionType.COMMENT,
+        } and self._public_reason_already_visible(state, key):
+            return False
+        return True
+
+    @staticmethod
+    def _public_reason_already_visible(state: DialogueState, key: str) -> bool:
+        return any(
+            turn.action is not None and reason_key(turn.action) == key
+            for turn in state.participant_turns
+        )
 
     def final_position_action(
         self,
@@ -354,7 +369,7 @@ class UserSimulator:
                 issue_effect=IssueEffect.OPEN,
             )
 
-        can_move = self._can_consider(runtime, leader)
+        can_move = self._can_consider(state, runtime, leader)
         movement = can_move and self.rng.random() < movement_probability(
             self.persona.sim_params.stubbornness
         )
@@ -365,11 +380,9 @@ class UserSimulator:
                 if already_accepted
                 else StanceUpdateKind.MAKE_ACCEPTABLE
             )
-            reason = (
-                "it is already a workable common-ground option for me"
-                if already_accepted
-                else "it is not my first choice, but I can accept it as common ground"
-            )
+            reason, source = self._positive_reason(state, leader)
+            if already_accepted:
+                reason = runtime.acceptance_reasons.get(leader) or reason
             return UserAction(
                 self.id,
                 True,
@@ -377,10 +390,16 @@ class UserSimulator:
                 ActionType.COMPROMISE,
                 option_focus=(leader,),
                 reason=reason,
+                reason_source=source,
+                personal_context=self._personal_context(source),
+                decisive_reason=reason,
                 stance_update=StanceUpdate(
                     update_kind,
                     leader,
                     previous_option_id=current,
+                    movement_reason=reason,
+                    movement_basis=("previous_acceptance" if already_accepted else "common_ground"),
+                    reason_already_public=already_accepted and leader in runtime.acceptance_reasons,
                 ),
             )
 
@@ -401,6 +420,7 @@ class UserSimulator:
         runtime = state.runtimes[self.id]
         target = runtime.preferred_option
         update: StanceUpdate | None = None
+        movement_source: ReasonSource | None = None
 
         if not self.persona.hard_blocker:
             candidate_pool = list(state.narrowing_options)
@@ -410,32 +430,42 @@ class UserSimulator:
                     for option_id in runtime.public_acceptances
                     if self._publicly_preferred_by_other(state, option_id)
                 ]
-            accepted = [
+            accepted = sorted(
                 option_id
                 for option_id in candidate_pool
                 if option_id != target and option_id in runtime.public_acceptances
-            ]
+            )
             if accepted and (
                 not state.narrowing_options or target not in state.narrowing_options
             ):
-                target = max(
-                    accepted,
-                    key=lambda option_id: (
+                best_key = max(
+                    (
                         runtime.rank(option_id),
                         self._publicly_preferred_by_other(state, option_id),
-                    ),
+                    )
+                    for option_id in accepted
                 )
+                tied = [
+                    option_id
+                    for option_id in accepted
+                    if (
+                        runtime.rank(option_id),
+                        self._publicly_preferred_by_other(state, option_id),
+                    ) == best_key
+                ]
+                target = self.rng.choice(sorted(tied))
+                fallback_reason, movement_source = self._positive_reason(state, target)
+                movement_reason = runtime.acceptance_reasons.get(target) or fallback_reason
                 update = StanceUpdate(
                     StanceUpdateKind.SWITCH_PREFERRED,
                     target,
                     previous_option_id=runtime.preferred_option,
+                    movement_reason=movement_reason,
+                    movement_basis="previous_acceptance",
+                    reason_already_public=target in runtime.acceptance_reasons,
                 )
 
-        reason = (
-            "I accepted it as workable common ground"
-            if update is not None
-            else ""
-        )
+        reason = update.movement_reason if update is not None else ""
         return UserAction(
             speaker_id=self.id,
             wants_to_speak=True,
@@ -443,6 +473,9 @@ class UserSimulator:
             act=ActionType.VOTE,
             option_focus=(target,),
             reason=reason,
+            reason_source=movement_source,
+            personal_context=self._personal_context(movement_source),
+            decisive_reason=reason,
             stance_update=update,
             vote_option=target,
         )
@@ -466,7 +499,7 @@ class UserSimulator:
             return [action] if action is not None else []
 
         reaction = self._reaction_action(state, runtime)
-        if reaction is not None:
+        if reaction is not None and self._action_is_novel_or_required(state, runtime, reaction):
             return [reaction]
 
         if state.phase is Phase.NARROWING:
@@ -569,6 +602,10 @@ class UserSimulator:
         probability = movement_probability(self.persona.sim_params.stubbornness)
 
         if can_accept and draw < probability:
+            movement_reason = (
+                self._latest_issue_response_reason(state, issue)
+                or self._positive_reason(state, option_id)[0]
+            )
             return [
                 UserAction(
                     self.id,
@@ -580,11 +617,14 @@ class UserSimulator:
                     issue_id=issue.id,
                     issue_effect=IssueEffect.RESOLVE,
                     response_mode=ResponseMode.ACCEPT_TRADEOFF,
-                    decisive_reason=self._latest_issue_response_reason(state, issue),
+                    decisive_reason=movement_reason,
                     stance_update=StanceUpdate(
                         StanceUpdateKind.MAKE_ACCEPTABLE,
                         option_id,
                         previous_option_id=runtime.preferred_option,
+                        movement_reason=movement_reason,
+                        movement_basis="concern_resolved",
+                        remaining_concern=issue.summary,
                     ),
                 )
             ]
@@ -697,7 +737,8 @@ class UserSimulator:
                     addressee_id=latest.speaker_id,
                     reason="",
                 )
-            if self._can_consider(runtime, option_id) and self.rng.random() < movement_probability(self.persona.sim_params.stubbornness):
+            if self._can_consider(state, runtime, option_id) and self.rng.random() < movement_probability(self.persona.sim_params.stubbornness):
+                reason, source = self._positive_reason(state, option_id)
                 return UserAction(
                     self.id,
                     True,
@@ -705,11 +746,16 @@ class UserSimulator:
                     ActionType.COMPROMISE,
                     option_focus=(option_id,),
                     addressee_id=latest.speaker_id,
-                    reason=self._positive_reason(state, option_id)[0],
+                    reason=reason,
+                    reason_source=source,
+                    personal_context=self._personal_context(source),
+                    decisive_reason=reason,
                     stance_update=StanceUpdate(
                         StanceUpdateKind.MAKE_ACCEPTABLE,
                         option_id,
                         previous_option_id=runtime.preferred_option,
+                        movement_reason=reason,
+                        movement_basis="common_ground_proposal",
                     ),
                 )
 
@@ -757,12 +803,12 @@ class UserSimulator:
         pool = list(state.narrowing_options) or list(state.scenario.option_ids)
         candidates = [
             option_id
-            for option_id in pool
+            for option_id in sorted(pool)
             if option_id != runtime.preferred_option
             and option_id not in runtime.hard_rejected_options
             and option_id not in runtime.public_rejections
             and option_id not in runtime.used_compromise_options
-            and runtime.rank(option_id) >= STANCE_DISLIKED
+            and self._can_consider(state, runtime, option_id)
         ]
         if not candidates:
             return None
@@ -774,7 +820,7 @@ class UserSimulator:
             for option_id in candidates
             if self._publicly_preferred_by_other(state, option_id)
         ]
-        target = self.rng.choice(publicly_supported or candidates)
+        target = self.rng.choice(sorted(publicly_supported or candidates))
 
         if self.rng.random() >= movement_probability(self.persona.sim_params.stubbornness):
             return None
@@ -795,10 +841,14 @@ class UserSimulator:
             reason=reason,
             reason_source=source,
             personal_context=self._personal_context(source),
+            decisive_reason=reason,
             stance_update=StanceUpdate(
                 update_kind,
                 target,
                 previous_option_id=runtime.preferred_option,
+                movement_reason=reason,
+                movement_basis=("previous_acceptance" if already_accepted else "stagnation_compromise"),
+                reason_already_public=already_accepted and target in runtime.acceptance_reasons,
             ),
         )
 
@@ -961,7 +1011,7 @@ class UserSimulator:
             option_id
             for option_id in state.scenario.option_ids
             if option_id != runtime.preferred_option
-            and self._can_consider(runtime, option_id)
+            and self._can_consider(state, runtime, option_id)
         ]
         if not alternatives:
             return None
@@ -1086,16 +1136,40 @@ class UserSimulator:
             return None
         return self.persona.private_goal or self.persona.background or None
 
-    @staticmethod
-    def _can_consider(runtime: ParticipantRuntime, option_id: str) -> bool:
-        return (
-            option_id not in runtime.hard_rejected_options
-            and option_id not in runtime.public_rejections
-            and (
-                runtime.rank(option_id) >= STANCE_DISLIKED
-                or option_id in runtime.acceptable_options
-                or option_id in runtime.public_acceptances
-            )
+    def _can_consider(
+        self,
+        state: DialogueState,
+        runtime: ParticipantRuntime,
+        option_id: str,
+    ) -> bool:
+        if option_id in runtime.hard_rejected_options or option_id in runtime.public_rejections:
+            return False
+        if option_id in runtime.acceptable_options or option_id in runtime.public_acceptances:
+            return True
+        rank = runtime.rank(option_id)
+        if rank >= STANCE_NEUTRAL:
+            return True
+        if rank != STANCE_DISLIKED:
+            return False
+        return self._own_concern_softened(state, option_id)
+
+    def _own_concern_softened(self, state: DialogueState, option_id: str) -> bool:
+        """Allow a disliked option only after this simulator's concern moved.
+
+        A rank-2 option is not ordinary compromise material. It becomes
+        eligible only when the participant visibly opened the concrete concern
+        and the exchange ended with resolution or partial softening.
+        """
+
+        issues = list(state.issue_history)
+        if state.active_issue is not None:
+            issues.append(state.active_issue)
+        return any(
+            issue.kind is IssueKind.CONCERN
+            and issue.opened_by == self.id
+            and option_id in issue.option_focus
+            and issue.outcome in {"resolved", "partial"}
+            for issue in issues
         )
 
     def _latest_issue_response_supports(

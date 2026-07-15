@@ -279,10 +279,9 @@ class DialogueRunner:
         narrowing_prompt = ""
         if self._moderator_enabled:
             if unanimous and unanimous_option:
-                narrowing_prompt = prompts.moderator_unanimous_narrowing(
-                    self.state.scenario,
-                    unanimous_option,
-                )
+                # The unanimous status is combined with the final-vote request
+                # so the moderator does not speak twice in a row.
+                narrowing_prompt = ""
             else:
                 narrowing_prompt = (
                     prompts.moderator_revote_narrowing(
@@ -297,7 +296,7 @@ class DialogueRunner:
                 )
             # A clear leader or unanimous state has a real scheduled next step.
             # Tie/compromise prompts are emitted later only if a simulator bid exists.
-            if unanimous or len(self.state.narrowing_options) == 1:
+            if not unanimous and len(self.state.narrowing_options) == 1:
                 self._append_moderator(narrowing_prompt)
 
         unanimous_option = next(
@@ -486,13 +485,34 @@ class DialogueRunner:
         self.state.votes = {}
         self.state.vote_records[self.state.vote_round] = {}
         if self._moderator_enabled:
-            self._append_moderator(prompts.moderator_vote_request(revote=revote))
+            unanimous_option = None
+            if not revote and self._publicly_converged():
+                unanimous_option = next(
+                    (
+                        runtime.public_preference
+                        for runtime in self.state.runtimes.values()
+                        if runtime.public_preference is not None
+                    ),
+                    None,
+                )
+            self._append_moderator(
+                prompts.moderator_vote_request(
+                    revote=revote,
+                    scenario=self.state.scenario,
+                    unanimous_option=unanimous_option,
+                )
+            )
 
         for persona in self.state.personas:
             action = self._simulators[persona.id].decide_vote(self.state, revote=revote)
             record = self._realize_and_commit(action, mandatory=True, voluntary=False)
             errors = list(self._last_failure_errors) if record is None else []
             if record is None:
+                structured_errors = validate_action(self.state, persona, action)
+                if structured_errors:
+                    raise RuntimeError(
+                        f"invalid authoritative vote for {persona.id}: {structured_errors}"
+                    )
                 fallback_text = self._vote_fallback_text(action)
                 fallback_attempt = GenerationAttempt(
                     persona.id,
@@ -529,8 +549,51 @@ class DialogueRunner:
         option = self.state.scenario.option(option_id)
         name = option.short_name or option.name
         if action.stance_update is not None:
+            reason = action.stance_update.movement_reason.strip()
+            if action.stance_update.reason_already_public:
+                return f"I’m moving to {name}; that gets my vote."
+            if reason:
+                return f"I’m switching to {name} because {reason}."
             return f"I’m switching to {name}."
         return f"{name} gets my vote."
+
+    def _movement_fallback_text(self, action: UserAction) -> str:
+        update = action.stance_update
+        if update is None:
+            raise ValueError("movement fallback requires a stance update")
+        option = self.state.scenario.option(update.option_id)
+        name = option.short_name or option.name
+        reason = update.movement_reason.strip() or action.decisive_reason.strip() or action.reason.strip()
+        previous_name = ""
+        previous_reason = ""
+        if update.previous_option_id and update.previous_option_id != update.option_id:
+            previous = self.state.scenario.option(update.previous_option_id)
+            previous_name = previous.short_name or previous.name
+            stance = self.state.persona(action.speaker_id).option_stances.get(update.previous_option_id)
+            if stance is not None:
+                previous_reason = stance.reason_for.strip()
+        if update.kind is StanceUpdateKind.SWITCH_PREFERRED:
+            if previous_name and not update.reason_already_public:
+                return (
+                    f"I’m switching from {previous_name} to {name} because {reason}."
+                    if reason
+                    else f"I’m switching from {previous_name} to {name}."
+                )
+            return f"I’m switching to {name} because {reason}." if reason else f"I’m switching to {name}."
+        if update.kind is StanceUpdateKind.MAKE_ACCEPTABLE:
+            if previous_name and previous_reason:
+                return (
+                    f"I still prefer {previous_name} because {previous_reason}, "
+                    f"but I can accept {name} because {reason}."
+                )
+            if previous_name:
+                return (
+                    f"I still prefer {previous_name}, but I can accept {name} because {reason}."
+                    if reason
+                    else f"I still prefer {previous_name}, but I can accept {name}."
+                )
+            return f"I can accept {name} because {reason}." if reason else f"I can accept {name}."
+        return f"My position on {name} has changed."
 
     def _select_and_realize(
         self,
@@ -588,11 +651,15 @@ class DialogueRunner:
         liveness_forced: bool = False,
         moderator_before: str | None = None,
     ) -> TurnRecord | None:
+        if action.stance_update is not None:
+            self.state.stats.selected_movement_actions += 1
         persona = self.state.persona(action.speaker_id)
         action_errors = validate_action(self.state, persona, action)
         if action_errors:
             self._last_failure_errors = action_errors
             self.state.stats.dropped_turns += 1
+            if action.stance_update is not None:
+                self.state.stats.movement_realization_failures += 1
             return None
 
         prompt = prompts.realization_prompt(self.state, persona, action)
@@ -615,9 +682,37 @@ class DialogueRunner:
             attempt.repair_text = fixed
             attempt.repair_errors = list(repair_errors)
             if repair_errors:
+                if action.stance_update is not None:
+                    fallback_text = (
+                        self._vote_fallback_text(action)
+                        if action.act is ActionType.VOTE
+                        else self._movement_fallback_text(action)
+                    )
+                    attempt.final_status = "fallback"
+                    attempt.fallback_text = fallback_text
+                    self.state.generation_attempts.append(attempt)
+                    self.state.stats.movement_realization_failures += 1
+                    self.state.stats.movement_fallbacks += 1
+                    if action.act is ActionType.VOTE:
+                        self.state.stats.vote_fallbacks += 1
+                    if mandatory:
+                        self.state.stats.mandatory_movement_failures += 1
+                    self._last_failure_errors = []
+                    if moderator_before and self._moderator_enabled:
+                        self._append_moderator(moderator_before)
+                    return self._commit_action(
+                        action,
+                        fallback_text,
+                        mandatory=mandatory,
+                        voluntary=voluntary,
+                        liveness_forced=liveness_forced,
+                        repair_count=repair_count,
+                    )
                 attempt.final_status = "dropped"
                 self.state.generation_attempts.append(attempt)
                 self.state.stats.dropped_turns += 1
+                if action.stance_update is not None:
+                    self.state.stats.movement_realization_failures += 1
                 self._last_failure_errors = repair_errors
                 return None
             final = fixed
@@ -657,6 +752,7 @@ class DialogueRunner:
         issue_event = self._apply_issue_before_turn(action, text)
         if action.stance_update:
             self._apply_stance_update(action)
+            self.state.stats.committed_movement_actions += 1
         self._apply_public_action(action, text)
 
         _, max_words = prompts.word_budget(action.act, self.state.persona(action.speaker_id).sim_params.verbosity)
@@ -687,7 +783,16 @@ class DialogueRunner:
         runtime.last_spoken_turn = record.index
         semantic_key = reason_key(action)
         if semantic_key:
-            if semantic_key in runtime.used_reason_keys:
+            public_seen = any(
+                prior.action is not None and reason_key(prior.action) == semantic_key
+                for prior in self.state.turns[:-1]
+            )
+            if (
+                public_seen
+                and action.stance_update is None
+                and action.act not in {ActionType.ANSWER, ActionType.FINAL_POSITION, ActionType.VOTE}
+                and action.issue_effect not in {IssueEffect.RESOLVE, IssueEffect.MAINTAIN, IssueEffect.PARTIAL}
+            ):
                 self.state.stats.semantic_reason_reuse += 1
             runtime.used_reason_keys.add(semantic_key)
         if action.act is ActionType.COMPROMISE and action.option_focus:
@@ -719,6 +824,9 @@ class DialogueRunner:
             newly_visible = update.option_id not in runtime.public_acceptances
             runtime.acceptable_options.add(update.option_id)
             runtime.public_acceptances.add(update.option_id)
+            movement_reason = update.movement_reason.strip() or action.decisive_reason.strip() or action.reason.strip()
+            if movement_reason:
+                runtime.acceptance_reasons[update.option_id] = movement_reason
             runtime.ranks[update.option_id] = max(runtime.ranks.get(update.option_id, 3), 4)
             if newly_visible:
                 self.state.movement_events += 1
@@ -727,6 +835,9 @@ class DialogueRunner:
                     self.state.stats.narrowing_movements += 1
         elif update.kind is StanceUpdateKind.SWITCH_PREFERRED:
             changed = runtime.preferred_option != update.option_id
+            movement_reason = update.movement_reason.strip() or action.decisive_reason.strip() or action.reason.strip()
+            if movement_reason:
+                runtime.acceptance_reasons[update.option_id] = movement_reason
             runtime.preferred_option = update.option_id
             runtime.public_preference = update.option_id
             runtime.acceptable_options.add(update.option_id)

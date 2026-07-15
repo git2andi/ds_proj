@@ -20,9 +20,11 @@ One active issue may be a question, concern, or comparison. Comparison is a soft
 
 - A direct question closes after its addressed answer. The structured question carries a small semantic mode instead of a prewritten sentence; prompts describe the meaning without prescribing “deal-breaker” or a fixed drawback-versus-benefit construction. The answer distinguishes trade-off acceptance, maintained concern, known mitigation, or unknown information.
 - A concern may receive one or more relevant responses, then its owner visibly resolves or maintains it.
-- Resolving a concern may make a previously disliked option acceptable for a normal participant.
+- A neutral rank-3 option may be considered directly. A disliked rank-2 option becomes eligible only after that participant's own concrete concern was visibly resolved or softened. Rank-1 and hard-blocked options remain impossible.
+- A visible acceptance must state the concrete reason that made the option workable. That reason is stored with the stance update and reused by later switching or fallback realization.
 - Maintained concerns become stale public reservations rather than looping until the turn cap.
 - Hard blockers never resolve a concern by accepting another option.
+- Ordinary public pro/con reasons are not repeatedly offered by different speakers as new standalone points; direct answers and issue responses remain exempt.
 
 The issue does not prescribe the content of a response; the responding simulator still selects its own structured action.
 
@@ -47,4 +49,4 @@ A no-bid window after the minimum discussion budget is treated as stagnation. Th
 
 ## Protocol-critical realization
 
-One normal generation and one focused repair are used for a selected action. Failed attempts and errors are retained compactly in `run.json`. Ordinary failed movement is not committed as hidden state. Formal votes are different: the structured simulator choice is authoritative, so a minimal deterministic visible vote is used only when both language attempts fail.
+One normal generation and one focused repair are used for a selected action. Failed attempts and errors are retained compactly in `run.json`. Once a stance-changing action has won the floor, it is authoritative and may not disappear: if both language attempts fail, the runtime commits a minimal grounded movement statement. Formal votes use the same principle. Moderator compromise prompts remain buffered and are appended only together with the successfully realized or fallback participant turn.

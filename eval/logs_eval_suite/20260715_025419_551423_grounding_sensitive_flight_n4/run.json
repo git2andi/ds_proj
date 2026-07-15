@@ -1,0 +1,1236 @@
+{
+  "run_id": "20260715_025419_551423_grounding_sensitive_flight_n4",
+  "seed": 308,
+  "scenario": {
+    "topic": "Book a flight from Miami to Stockholm",
+    "options": [
+      {
+        "id": "A",
+        "name": "Direct Premium Flight",
+        "attrs": {
+          "transfers": "none",
+          "baggage": "checked bag included",
+          "refundability": "partial"
+        },
+        "upside": "lowest transfer risk",
+        "concern": "highest fare",
+        "short_name": "Direct"
+      },
+      {
+        "id": "B",
+        "name": "One-Stop Saver",
+        "attrs": {
+          "transfers": "one",
+          "baggage": "carry-on only",
+          "refundability": "change fee"
+        },
+        "upside": "balanced itinerary",
+        "concern": "connection required",
+        "short_name": "Saver"
+      },
+      {
+        "id": "C",
+        "name": "Overnight Connection",
+        "attrs": {
+          "transfers": "one overnight",
+          "baggage": "checked bag included",
+          "seat choice": "included"
+        },
+        "upside": "overnight schedule",
+        "concern": "connection required",
+        "short_name": "Overnight"
+      },
+      {
+        "id": "D",
+        "name": "Two-Stop Budget Flight",
+        "attrs": {
+          "transfers": "two",
+          "baggage": "personal item only",
+          "refundability": "none"
+        },
+        "upside": "lowest fare",
+        "concern": "highest transfer risk",
+        "short_name": "Budget Flight"
+      }
+    ],
+    "shared_context": [
+      "All flights leave on the same date.",
+      "Each traveller needs the same itinerary."
+    ],
+    "environment_type": "option_grounded_group_decision",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Nora has a moderate travel budget.",
+      "private_goal": "wants a reasonable balance of price and duration",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 24,
+      "speech_style": "young casual wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest transfer risk",
+          "reason_against": "highest fare"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "balanced itinerary",
+          "reason_against": "connection required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "overnight schedule",
+          "reason_against": "connection required"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest fare",
+          "reason_against": "highest transfer risk"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben can sleep during overnight travel.",
+      "private_goal": "prefers the overnight schedule",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest transfer risk",
+          "reason_against": "highest fare"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "balanced itinerary",
+          "reason_against": "connection required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "overnight schedule",
+          "reason_against": "connection required"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest fare",
+          "reason_against": "highest transfer risk"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Mira has little tolerance for long travel days.",
+      "private_goal": "prioritizes the shortest trip",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 49,
+      "speech_style": "direct workplace wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "lowest transfer risk",
+          "reason_against": "highest fare"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "balanced itinerary",
+          "reason_against": "connection required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "overnight schedule",
+          "reason_against": "connection required"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest fare",
+          "reason_against": "highest transfer risk"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Omar has a moderate travel budget.",
+      "private_goal": "wants a reasonable balance of price and duration",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 65,
+      "speech_style": "measured traditional wording",
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest transfer risk",
+          "reason_against": "highest fare"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "balanced itinerary",
+          "reason_against": "connection required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "overnight schedule",
+          "reason_against": "connection required"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest fare",
+          "reason_against": "highest transfer risk"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "public_rejections": [],
+      "used_reason_keys": [
+        "B,A:saver balanced itinerary direct lowest transfer risk",
+        "B:B:upside:balanced itinerary",
+        "C:C:concern:connection required"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "C:C:concern:connection required"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [],
+      "used_compromise_options": [],
+      "voluntary_turns": 3,
+      "mandatory_answers": 0,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 20,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "balanced itinerary"
+      },
+      "public_rejections": [],
+      "used_reason_keys": [
+        "C:C:upside:overnight schedule",
+        "C,A:overnight overnight schedule direct lowest transfer risk",
+        "B:B:concern:connection required",
+        "A:A:concern:highest fare",
+        "B:B:upside:balanced itinerary"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "B:B:concern:connection required",
+        "A:A:concern:highest fare"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i002"
+      ],
+      "used_compromise_options": [
+        "B"
+      ],
+      "voluntary_turns": 3,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 21,
+      "visible_switches": 1,
+      "last_switch_turn": 21
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "balanced itinerary"
+      },
+      "public_rejections": [],
+      "used_reason_keys": [
+        "A,B:direct lowest transfer risk saver balanced itinerary",
+        "A:A:upside:lowest transfer risk",
+        "B:B:upside:balanced itinerary"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i001"
+      ],
+      "used_compromise_options": [
+        "B"
+      ],
+      "voluntary_turns": 2,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 22,
+      "visible_switches": 1,
+      "last_switch_turn": 22
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "disliked_options": [],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "public_rejections": [],
+      "used_reason_keys": [
+        "B:B:upside:balanced itinerary"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i003"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 0,
+      "mandatory_answers": 1,
+      "openings": 1,
+      "votes_cast": 1,
+      "last_action": "vote",
+      "last_spoken_turn": 23,
+      "visible_switches": 0,
+      "last_switch_turn": -1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p3",
+      "summary": "highest fare",
+      "status": "resolved",
+      "opened_at_turn": 7,
+      "last_relevant_turn": 8,
+      "follow_up_count": 1,
+      "source_text": "Does the highest fare for the direct premium flight change your preference at all?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "A",
+        "attribute_name": "concern",
+        "public_value": "highest fare"
+      },
+      "issue_key": [
+        "A",
+        "highest fare"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "C"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p2",
+      "summary": "connection required",
+      "status": "resolved",
+      "opened_at_turn": 9,
+      "last_relevant_turn": 10,
+      "follow_up_count": 1,
+      "source_text": "Is the overnight timing benefit enough to overlook needing a connection for you guys?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "C",
+        "attribute_name": "concern",
+        "public_value": "connection required"
+      },
+      "issue_key": [
+        "C",
+        "connection required"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "tradeoff"
+    },
+    {
+      "id": "i003",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p4",
+      "summary": "connection required",
+      "status": "resolved",
+      "opened_at_turn": 12,
+      "last_relevant_turn": 13,
+      "follow_up_count": 1,
+      "source_text": "Omar, does the need for a connection with the One-Stop Saver shift your pick at all?",
+      "outcome": "answered",
+      "close_reason": "direct question answered",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "connection required"
+      },
+      "issue_key": [
+        "B",
+        "connection required"
+      ],
+      "response_count": 1,
+      "owner_reacted": false,
+      "question_mode": "choice_impact"
+    }
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s begin with each person’s current preference and main reason.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 10,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Hello all, I lean toward the One-Stop Saver since it offers a balanced itinerary for us.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 280,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Overnight Connection works better for me because I prefer the overnight schedule—it fits my routine best.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 309,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "I’m with Saver too—the balanced itinerary makes it a great middle ground for price and duration.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 1,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 204,
+      "output_tokens": 19,
+      "intended_word_max": 18
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "The direct premium flight works best for me since it has the lowest transfer risk overall.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 355,
+      "output_tokens": 17,
+      "intended_word_max": 18
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The direct flight’s lowest transfer risk is a solid point, though I value the overnight timing more.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 413,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "A balanced itinerary is appealing, but avoiding transfers reduces complications and potential delays for us.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 421,
+      "output_tokens": 17,
+      "intended_word_max": 18
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Does the highest fare for the direct premium flight change your preference at all?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 404,
+      "output_tokens": 15,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "The higher fare is worth it to me for the direct flight’s lowest transfer risk.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 429,
+      "output_tokens": 17,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Is the overnight timing benefit enough to overlook needing a connection for you guys?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 406,
+      "output_tokens": 15,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Even with a connection, the overnight schedule fits better for me and keeps things manageable.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 422,
+      "output_tokens": 17,
+      "intended_word_max": 18
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The direct flight cuts transfer risks, which might be worth the higher fare for less hassle.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 426,
+      "output_tokens": 18,
+      "intended_word_max": 18
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Omar, does the need for a connection with the One-Stop Saver shift your pick at all?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i003",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 390,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "The balanced itinerary of the One-Stop Saver still feels like the best compromise for price and duration.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 415,
+      "output_tokens": 20,
+      "intended_word_max": 18
+    },
+    {
+      "index": 14,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Saver currently leads. Anyone not there yet can say whether they can accept it or what still prevents that.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 19,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 15,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "I preferred Direct for fewer transfers, but One-Stop Saver’s balanced itinerary makes it an acceptable choice.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 1,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "balanced itinerary",
+        "movement_basis": "common_ground",
+        "remaining_concern": "",
+        "reason_already_public": false
+      },
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 235,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Yeah, the balanced itinerary does make it a solid middle ground.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 11,
+      "prompt_tokens": 412,
+      "output_tokens": 13,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The balanced itinerary makes One-Stop Saver a reasonable middle ground, even if overnight still suits me better.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "balanced itinerary",
+        "movement_basis": "common_ground",
+        "remaining_concern": "",
+        "reason_already_public": false
+      },
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 446,
+      "output_tokens": 21,
+      "intended_word_max": 18
+    },
+    {
+      "index": 18,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Connection is a concern, but the balance still works for me.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 11,
+      "prompt_tokens": 413,
+      "output_tokens": 13,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s take the final vote. Please name the one option you’re choosing.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 12,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "One-Stop Saver strikes the best balance.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 6,
+      "prompt_tokens": 402,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Switching to One-Stop Saver for its balanced itinerary.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "balanced itinerary",
+        "movement_basis": "previous_acceptance",
+        "remaining_concern": "",
+        "reason_already_public": true
+      },
+      "vote_option": "B",
+      "word_count": 8,
+      "prompt_tokens": 397,
+      "output_tokens": 12,
+      "intended_word_max": 10
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Changing to One-Stop Saver for its balanced itinerary now.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "balanced itinerary",
+        "movement_basis": "previous_acceptance",
+        "remaining_concern": "",
+        "reason_already_public": true
+      },
+      "vote_option": "B",
+      "word_count": 9,
+      "prompt_tokens": 387,
+      "output_tokens": 12,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "One-Stop Saver seems the most reasonable choice.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 4,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 7,
+      "prompt_tokens": 388,
+      "output_tokens": 10,
+      "intended_word_max": 10
+    },
+    {
+      "index": 24,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The result is successful: Saver.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 5,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "first_round_votes": {},
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "B",
+    "p4": "B"
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "B",
+      "p4": "B"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "metrics": {
+    "turns": {
+      "participant": 21,
+      "voluntary": 8,
+      "mandatory": 13,
+      "moderator": 4
+    },
+    "generation": {
+      "repairs": 2,
+      "dropped": 0,
+      "liveness_forced": 0,
+      "semantic_reason_reuse": 1,
+      "vote_fallbacks": 0,
+      "mandatory_movement_failures": 0,
+      "movement_fallbacks": 0,
+      "selected_movement_actions": 4,
+      "committed_movement_actions": 4,
+      "movement_realization_failures": 0,
+      "repair_causes": {
+        "opening_does_not_visibly_state_the_preferred_option": 1,
+        "required_stance_change_is_not_visible": 1
+      }
+    },
+    "questions": {
+      "opened": 3,
+      "answered": 3
+    },
+    "issues": {
+      "opened": 3,
+      "resolved": 3,
+      "stale": 0,
+      "concerns_opened": 0,
+      "concerns_resolved": 0,
+      "concerns_stale": 0
+    },
+    "stances": {
+      "switches": 2,
+      "acceptances": 2,
+      "narrowing_movements": 2,
+      "grounded_movements": 4,
+      "unexplained_movements": 0
+    },
+    "compromise": {
+      "proposals": 2,
+      "acceptances": 2
+    },
+    "coverage": {
+      "A": 3,
+      "B": 4,
+      "C": 2,
+      "D": 0
+    },
+    "votes": {
+      "round": 1,
+      "valid": 4,
+      "unclear": 0,
+      "protocol_degraded": false,
+      "revote_skipped": false
+    },
+    "tokens": {
+      "llm_calls": 23,
+      "input": 8727,
+      "output": 382
+    },
+    "participants": {
+      "p1": {
+        "name": "Nora",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 5,
+        "voluntary": 3,
+        "avg_words": 12.6,
+        "initial_preference": "B",
+        "final_preference": "B"
+      },
+      "p2": {
+        "name": "Ben",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 7,
+        "voluntary": 3,
+        "avg_words": 14.714285714285714,
+        "initial_preference": "C",
+        "final_preference": "B"
+      },
+      "p3": {
+        "name": "Mira",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 6,
+        "voluntary": 2,
+        "avg_words": 13.666666666666666,
+        "initial_preference": "A",
+        "final_preference": "B"
+      },
+      "p4": {
+        "name": "Omar",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 3,
+        "voluntary": 0,
+        "avg_words": 13.333333333333334,
+        "initial_preference": "B",
+        "final_preference": "B"
+      }
+    },
+    "outcome": {
+      "status": "successful",
+      "final_option": "B"
+    }
+  },
+  "failed_generation_attempts": []
+}

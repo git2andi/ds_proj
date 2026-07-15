@@ -236,6 +236,10 @@ class StanceUpdate:
     kind: StanceUpdateKind
     option_id: str
     previous_option_id: str | None = None
+    movement_reason: str = ""
+    movement_basis: str = ""
+    remaining_concern: str = ""
+    reason_already_public: bool = False
 
 
 @dataclass(slots=True)
@@ -358,6 +362,7 @@ class ParticipantRuntime:
     hard_rejected_options: set[str] = field(default_factory=set)
     public_preference: str | None = None
     public_acceptances: set[str] = field(default_factory=set)
+    acceptance_reasons: dict[str, str] = field(default_factory=dict)
     public_rejections: set[str] = field(default_factory=set)
     used_reason_keys: set[str] = field(default_factory=set)
     opened_issue_keys: set[str] = field(default_factory=set)
@@ -437,6 +442,10 @@ class RuntimeStats:
     semantic_reason_reuse: int = 0
     vote_fallbacks: int = 0
     mandatory_movement_failures: int = 0
+    movement_fallbacks: int = 0
+    selected_movement_actions: int = 0
+    committed_movement_actions: int = 0
+    movement_realization_failures: int = 0
 
 
 @dataclass(slots=True)

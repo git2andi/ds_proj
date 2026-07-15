@@ -531,12 +531,17 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
     expected_ok = case.expected_outcome is None or result.outcome.status == case.expected_outcome
     revote_has_movement = state.vote_round < 2 or metrics["narrowing_movements"] > 0
     repair_rate_ok = metrics["repairs"] / max(1, metrics["participant_turns"]) <= 0.25
+    movement_commit_ok = (
+        metrics["selected_movement_actions"] == metrics["committed_movement_actions"]
+    )
     quality_ok = all((
         metrics["visible_switches"] >= case.min_switches,
         metrics["concerns_resolved"] >= case.min_resolved_concerns,
         metrics["issues_stale"] >= case.min_stale_issues,
         narrowing_turns >= case.min_narrowing_turns,
         revote_has_movement,
+        metrics["unexplained_movements"] == 0,
+        movement_commit_ok,
         repair_rate_ok,
     ))
     structural = all((
@@ -548,6 +553,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         hard_ok,
         moderator_ok,
         state.vote_round <= 2,
+        movement_commit_ok,
         metrics["participant_turns"] <= case.max_participant_turns,
     ))
 
@@ -571,6 +577,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         "quality_expectations_ok": quality_ok,
         "revote_has_movement": revote_has_movement,
         "repair_rate_ok": repair_rate_ok,
+        "movement_commit_ok": movement_commit_ok,
         "structural_pass": structural,
         "case_pass": structural and expected_ok and quality_ok,
         "avg_prompt_tokens": round(
@@ -631,7 +638,7 @@ def write_summary(rows: list[dict[str, Any]], root: Path) -> tuple[Path, Path, P
         f"Mean input tokens per case: {round(sum(int(row['tokens_in']) for row in rows) / max(1, len(rows)), 1)}",
         "",
         "A second vote is permitted only when the preceding re-narrowing produced visible acceptance or switching.",
-        "Comp. reports compromise proposals/acceptances; repair-rate quality threshold is 25%.",
+        "Comp. reports compromise proposals/acceptances; every selected movement must commit and carry a stored grounded reason; repair-rate quality threshold is 25%.",
         "",
         "## Policy calibration",
         "",

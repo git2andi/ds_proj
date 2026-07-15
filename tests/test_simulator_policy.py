@@ -217,3 +217,94 @@ def test_opening_mode_reflects_visible_group_context():
 
     state.runtimes["p2"].public_preference = "B"
     assert simulator.opening_action(state).opening_mode is OpeningMode.CONTRAST
+
+
+def test_final_position_movement_carries_concrete_reason(monkeypatch):
+    import simulator as simulator_module
+
+    monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 1.0)
+    state = make_state(("A", "B", "B"))
+    for pid, option in zip(("p1", "p2", "p3"), ("A", "B", "B")):
+        state.runtimes[pid].public_preference = option
+    state.narrowing_options = ("B",)
+
+    action = UserSimulator(state.persona("p1"), random.Random(1)).final_position_action(state)
+    assert action.stance_update is not None
+    assert action.stance_update.movement_reason
+    assert action.stance_update.movement_reason == action.decisive_reason == action.reason
+    assert "common-ground option" not in action.reason
+
+
+def test_vote_switch_reuses_public_acceptance_reason():
+    state = make_state(("A", "B", "B"))
+    runtime = state.runtimes["p1"]
+    runtime.public_acceptances.add("B")
+    runtime.acceptance_reasons["B"] = "the relaxed atmosphere supports focused work"
+    state.narrowing_options = ("B",)
+    state.runtimes["p2"].public_preference = "B"
+    state.runtimes["p3"].public_preference = "B"
+
+    action = UserSimulator(state.persona("p1"), random.Random(2)).decide_vote(state)
+    assert action.stance_update is not None
+    assert action.stance_update.movement_reason == runtime.acceptance_reasons["B"]
+    assert action.stance_update.reason_already_public
+
+
+def test_public_reason_reuse_is_suppressed_for_ordinary_support():
+    state = make_state(("A", "A", "C"))
+    first = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="quiet and predictable",
+        reason_source=ReasonSource("A", "upside", "quiet and predictable"),
+    )
+    state.turns.append(TurnRecord(0, Phase.DISCUSSION, "p1", "Nora", "The library is quiet.", action=first))
+    repeated = UserAction(
+        "p2", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="quiet and predictable",
+        reason_source=ReasonSource("A", "upside", "quiet and predictable"),
+    )
+    simulator = UserSimulator(state.persona("p2"), random.Random(3))
+    assert not simulator._action_is_novel_or_required(state, state.runtimes["p2"], repeated)
+
+
+def test_rank_two_requires_own_concern_softening_before_compromise():
+    from models import ActiveIssue, IssueKind, IssueStatus, STANCE_DISLIKED
+
+    state = make_state(("A", "B", "C"))
+    runtime = state.runtimes["p1"]
+    runtime.ranks["B"] = STANCE_DISLIKED
+    simulator = UserSimulator(state.persona("p1"), random.Random(4))
+
+    assert not simulator._can_consider(state, runtime, "B")
+
+    state.issue_history.append(ActiveIssue(
+        id="i-softened",
+        kind=IssueKind.CONCERN,
+        option_focus=("B",),
+        opened_by="p1",
+        addressed_to=None,
+        summary="background noise",
+        status=IssueStatus.STALE,
+        opened_at_turn=0,
+        last_relevant_turn=2,
+        outcome="partial",
+    ))
+    assert simulator._can_consider(state, runtime, "B")
+
+
+def test_vote_tie_candidates_are_sorted_before_seeded_choice():
+    class RecordingChoice:
+        def choice(self, values):
+            values = list(values)
+            assert values == sorted(values)
+            return values[0]
+
+    state = make_state(("A", "B", "C"))
+    runtime = state.runtimes["p1"]
+    runtime.public_acceptances.update({"C", "B"})
+    runtime.ranks.update({"B": 4, "C": 4})
+    state.runtimes["p2"].public_preference = "B"
+    state.runtimes["p3"].public_preference = "C"
+
+    action = UserSimulator(state.persona("p1"), RecordingChoice()).decide_vote(state)
+    assert action.vote_option == "B"
