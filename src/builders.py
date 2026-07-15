@@ -432,17 +432,14 @@ def _require(value: Any, field: str) -> str:
     return text
 
 
-def _clip_reason(text: str, limit: int = 11) -> str:
-    words = str(text or "").strip().split()
-    if not words:
-        return ""
-    return " ".join(words[:limit]).rstrip(" ,.;:")
+def _clean_reason(text: str) -> str:
+    """Normalize whitespace without truncating generated or manual reasons."""
+
+    return " ".join(str(text or "").strip().split())
 
 
 def _option_hint(option: OptionCard, positive: bool) -> str:
-    if positive:
-        return _clip_reason(option.upside, 10)
-    return _clip_reason(option.concern, 10)
+    return _clean_reason(option.upside if positive else option.concern)
 
 
 def _stance_from_option_table(row: dict[str, Any], labels: list[str], scenario: Scenario) -> dict[str, OptionStance]:
@@ -473,8 +470,8 @@ def _stance_from_option_table(row: dict[str, Any], labels: list[str], scenario: 
         by_id[oid] = OptionStance(
             option_id=oid,
             rank=max(STANCE_REJECTED, min(STANCE_PREFERRED, rank)),
-            reason_for=_clip_reason(item.get("reason_for", "")),
-            reason_against=_clip_reason(item.get("reason_against", "")),
+            reason_for=_clean_reason(item.get("reason_for", "")),
+            reason_against=_clean_reason(item.get("reason_against", "")),
         ).clipped()
     for oid in labels:
         by_id.setdefault(oid, OptionStance(option_id=oid, rank=STANCE_NEUTRAL))
@@ -510,7 +507,7 @@ def _normalise_initial_stances(
             rank = STANCE_REJECTED
             reason_against = (
                 reason_against
-                or _clip_reason(rejection_reason)
+                or _clean_reason(rejection_reason)
                 or _option_hint(option, False)
                 or "does not meet their one non-negotiable requirement"
             )
@@ -520,7 +517,7 @@ def _normalise_initial_stances(
             reason_for = reason_for or _option_hint(option, True)
         elif oid == rejection:
             rank = STANCE_REJECTED
-            reason_against = _clip_reason(rejection_reason) or reason_against or _option_hint(option, False)
+            reason_against = _clean_reason(rejection_reason) or reason_against or _option_hint(option, False)
             reason_for = ""
         else:
             rank = min(max(rank, STANCE_DISLIKED), STANCE_ACCEPTABLE)
@@ -530,7 +527,7 @@ def _normalise_initial_stances(
                 reason_for = reason_for or _option_hint(option, True)
             elif rank <= STANCE_DISLIKED:
                 reason_against = reason_against or _option_hint(option, False)
-        normal[oid] = OptionStance(oid, rank, _clip_reason(reason_for), _clip_reason(reason_against)).clipped()
+        normal[oid] = OptionStance(oid, rank, _clean_reason(reason_for), _clean_reason(reason_against)).clipped()
     return normal
 
 

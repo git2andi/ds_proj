@@ -65,60 +65,71 @@ personas:
       7: {"2-2-2-1": 0.35, "3-2-1-1": 0.30, "3-2-2": 0.20, "4-1-1-1": 0.15}
 
 conversation:
-  # Voluntary participant-turn pacing scales with group size. Openings,
-  # mandatory answers, narrowing obligations and votes do not count here.
-  min_voluntary_turns_per_participant: 2
-  soft_target_voluntary_turns_per_participant: 5
-  hard_max_voluntary_turns_per_participant: 7
-  soft_target_voluntary_turn_cap: 22
-  hard_max_voluntary_turn_cap: 30
-  issue_follow_up_cap: 3
-  direct_question_optional_follow_up_cap: 1
-  concern_external_response_cap: 2
-  max_concerns_per_participant: 1
-  diagnostic_allow_reason_reuse: false
-  stagnation_no_bid_rounds: 1
-  compromise_window_max_turns: 1
-  narrowing_reaction_turn_cap: 2
-  large_group_narrowing_final_position_cap: 3
-  recent_turns_in_prompt: 7
-  max_consecutive_turns: 2
+  min_voluntary_turns_per_participant: 2       # Minimum voluntary discussion turns scaled by group size before normal closure is allowed.
+  soft_target_voluntary_turns_per_participant: 5  # Preferred voluntary discussion length per participant before the system starts looking to close.
+  hard_max_voluntary_turns_per_participant: 7  # Maximum voluntary discussion length per participant before discussion must stop.
+  soft_target_voluntary_turn_cap: 22           # Absolute ceiling on the scaled soft target so large groups do not grow indefinitely.
+  hard_max_voluntary_turn_cap: 30              # Absolute ceiling on all voluntary discussion turns, regardless of group size.
+  issue_follow_up_cap: 3                       # Maximum total follow-up turns attached to one active question or concern.
+  direct_question_optional_follow_up_cap: 1    # Maximum voluntary third-party reactions after the addressed participant answers.
+  concern_external_response_cap: 2             # Maximum distinct nonowners who may voluntarily respond to one concern.
+  max_concerns_per_participant: 1              # Maximum concerns one participant may open during a run; zero disables participant concerns.
+  max_concern_reopens: 1                       # Maximum times a previously closed concern may be reopened during narrowing.
+  diagnostic_allow_reason_reuse: false         # Allows repeated semantic reasons only in deliberately extended diagnostic runs.
+  stagnation_no_bid_rounds: 1                  # Consecutive empty bidding rounds before the runtime tries compromise or closure behavior.
+  compromise_window_max_turns: 1               # Maximum participant contributions allowed in one open compromise window.
+  narrowing_reaction_turn_cap: 2               # Maximum participant turns inside one ordinary narrowing reaction window.
+  small_group_max_participants: 4              # Largest group size that receives the special small-group pacing rules below.
+  small_group_extra_no_bid_rounds: 1           # Extra ordinary bidding rounds a small group gets after an empty floor before closing.
+  small_group_shared_acceptance_extra_turns: 3 # Extra voluntary turns small groups allow before shared acceptability closes discussion.
+  unanimous_closure_min_voluntary_turns_per_participant: 1.0  # Minimum post-opening voluntary contributions per participant before early unanimous closure.
+  large_group_min_participants: 5              # Smallest group size that receives the large-group narrowing limits below.
+  large_group_optional_reaction_window_cap: 2  # Maximum separate optional reaction windows during large-group narrowing.
+  large_group_narrowing_issue_turn_cap: 1      # Maximum active-issue response turns after each required large-group final position.
+  large_group_narrowing_final_position_cap: 3  # Maximum dissenters asked for required final positions in large-group narrowing.
+  recent_turns_in_prompt: 7                    # Number of latest visible dialogue turns included in each realization prompt.
+  max_consecutive_turns: 2                     # Hard maximum consecutive participant turns by the same simulator.
 
 simulator:
-  # Operational definitions of the configurable traits. These are simulation
-  # parameters, not claims about universal human probabilities.
-  bid_probability_by_engagement:
-    1: 0.20
-    2: 0.35
-    3: 0.50
-    4: 0.70
-    5: 0.90
-  question_modes:
-    - choice_impact
-    - tradeoff
-  # Rarely ask whether the provided information explains how a concern is handled.
-  unknown_information_question_probability: 0.08
-  movement_probability_by_stubbornness:
-    1: 0.80
-    2: 0.60
-    3: 0.40
-    4: 0.20
-    5: 0.00
+  bid_probability_by_engagement:               # Chance an eligible simulator submits a voluntary bid at each engagement level.
+    1: 0.20                                    # Very low engagement.
+    2: 0.35                                    # Low engagement.
+    3: 0.50                                    # Medium engagement.
+    4: 0.70                                    # High engagement.
+    5: 0.90                                    # Very high engagement.
+  question_modes:                              # Question forms the simulator may choose when asking another participant.
+    - choice_impact                            # Ask whether a stated issue changes the addressee's option choice.
+    - tradeoff                                 # Ask how the addressee weighs two competing option properties.
+  unknown_information_question_probability: 0.08  # Chance that a question asks which relevant detail is not supplied by the option board.
+  movement_probability_by_stubbornness:        # Chance a valid narrowing opportunity produces acceptance or switching at each stubbornness level.
+    1: 0.80                                    # Very flexible participant.
+    2: 0.60                                    # Fairly flexible participant.
+    3: 0.40                                    # Moderately resistant participant.
+    4: 0.20                                    # Strongly resistant participant.
+    5: 0.00                                    # Hard blocker; movement is prohibited.
 
 language:
-  max_words_by_verbosity:
-    1: 8
-    2: 12
-    3: 16
-    4: 22
-    5: 27
-  near_duplicate_similarity_threshold: 0.92
-  directness_instructions:
-    1: "Express disagreement tentatively and as a personal preference; use uncertainty where natural."
-    2: "Soften disagreement slightly and avoid categorical judgments."
-    3: "State agreement or disagreement neutrally and clearly."
-    4: "State the judgment directly with little hedging."
-    5: "State the judgment explicitly and firmly, while remaining respectful."
+  max_words_by_verbosity:                      # Base soft maximum for ordinary utterances at each verbosity level.
+    1: 8                                       # Very concise participant.
+    2: 12                                      # Concise participant.
+    3: 16                                      # Medium-length participant.
+    4: 22                                      # Detailed participant.
+    5: 27                                      # Very detailed participant.
+  action_max_words:                            # Additional soft ceilings for acts that should stay shorter than ordinary discussion turns.
+    acknowledge: 12                            # Brief acknowledgment or agreement.
+    ask: 18                                    # Direct or group question.
+    answer: 18                                 # Answer to an active question.
+    final_position: 18                         # Required narrowing statement before voting.
+    vote: 10                                   # Vote that may also make a stance change explicit.
+    simple_vote: 8                             # Vote with no new stance movement or explanation.
+  near_duplicate_similarity_threshold: 0.92    # Text similarity at or above this value triggers a near-duplicate repair.
+  near_duplicate_recent_turns: 3               # Number of the speaker's latest eligible utterances checked for near duplication.
+  directness_instructions:                     # Realization guidance used for each directness level; it affects wording, not decisions.
+    1: "Express disagreement tentatively and as a personal preference; use uncertainty where natural."  # Very indirect.
+    2: "Soften disagreement slightly and avoid categorical judgments."                                  # Somewhat indirect.
+    3: "State agreement or disagreement neutrally and clearly."                                         # Neutral.
+    4: "State the judgment directly with little hedging."                                                # Direct.
+    5: "State the judgment explicitly and firmly, while remaining respectful."                           # Very direct.
 
 moderator:
   enabled: true

@@ -1354,7 +1354,7 @@ class UserSimulator:
         return bool(
             record is not None
             and record.kind is IssueKind.CONCERN
-            and record.reopen_count < 1
+            and record.reopen_count < int(cfg.conversation.max_concern_reopens)
         )
 
     def _publicly_preferred_by_other(

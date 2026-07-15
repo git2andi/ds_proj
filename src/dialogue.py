@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import random
 import re
 from collections import Counter
@@ -155,7 +156,9 @@ class DialogueRunner:
     def _run_discussion(self) -> None:
         minimum, target, maximum = cfg.conversation_turn_budgets(len(self.state.personas))
         stagnation_rounds = int(cfg.conversation.stagnation_no_bid_rounds)
-        small_group_extra_round_used = False
+        small_group_max = int(cfg.conversation.small_group_max_participants)
+        small_group_extra_round_cap = int(cfg.conversation.small_group_extra_no_bid_rounds)
+        small_group_extra_rounds_used = 0
         while self._phase_voluntary_count(Phase.DISCUSSION) < maximum or self.state.response_obligation:
             if self.state.response_obligation:
                 self._drain_response_obligation("mandatory answer failed")
@@ -190,13 +193,13 @@ class DialogueRunner:
                         self.state.no_bid_rounds = 0
                         continue
                 if (
-                    len(self.state.personas) <= 4
+                    len(self.state.personas) <= small_group_max
                     and count < target
-                    and not small_group_extra_round_used
+                    and small_group_extra_rounds_used < small_group_extra_round_cap
                 ):
                     # One ordinary retry gives small groups a little more room
                     # without forcing filler or changing simulator authority.
-                    small_group_extra_round_used = True
+                    small_group_extra_rounds_used += 1
                     continue
                 if count >= minimum:
                     break
@@ -214,7 +217,11 @@ class DialogueRunner:
                 break
             shared_acceptance_minimum = min(
                 target,
-                minimum + (3 if len(self.state.personas) <= 4 else 0),
+                minimum + (
+                    int(cfg.conversation.small_group_shared_acceptance_extra_turns)
+                    if len(self.state.personas) <= small_group_max
+                    else 0
+                ),
             )
             if count >= minimum and not self.state.active_issue:
                 if self._publicly_converged():
@@ -296,8 +303,11 @@ class DialogueRunner:
         start_movement = self.state.movement_events
         accepted_count = 0
         optional_reaction_windows_used = 0
+        large_group_min = int(cfg.conversation.large_group_min_participants)
         optional_reaction_window_cap = (
-            2 if len(self.state.personas) >= 5 else len(self.state.personas)
+            int(cfg.conversation.large_group_optional_reaction_window_cap)
+            if len(self.state.personas) >= large_group_min
+            else len(self.state.personas)
         )
 
         unanimous = self._publicly_converged()
@@ -362,7 +372,7 @@ class DialogueRunner:
                 max(majority_threshold(len(self.state.personas)), initial_support + 1),
             )
             participants = self._clear_leader_participants(leader, revote=revote)
-            if len(self.state.personas) >= 5:
+            if len(self.state.personas) >= large_group_min:
                 participants = participants[: int(
                     cfg.conversation.large_group_narrowing_final_position_cap
                 )]
@@ -384,7 +394,11 @@ class DialogueRunner:
                 if self.state.active_issue:
                     accepted_count += self._run_active_issue_window(
                         Phase.NARROWING,
-                        max_turns=(1 if len(self.state.personas) >= 5 else None),
+                        max_turns=(
+                            int(cfg.conversation.large_group_narrowing_issue_turn_cap)
+                            if len(self.state.personas) >= large_group_min
+                            else None
+                        ),
                     )
                 elif optional_reaction_windows_used < optional_reaction_window_cap:
                     reaction_count = self._run_optional_reaction_window()
@@ -1184,7 +1198,13 @@ class DialogueRunner:
         """
 
         return bool(
-            voluntary_count >= max(1, len(self.state.personas))
+            voluntary_count >= max(
+                1,
+                math.ceil(
+                    float(cfg.conversation.unanimous_closure_min_voluntary_turns_per_participant)
+                    * len(self.state.personas)
+                ),
+            )
             and self.state.active_issue is None
             and self.state.response_obligation is None
             and self._publicly_converged()

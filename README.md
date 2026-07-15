@@ -77,6 +77,8 @@ Ordinary actions primarily use:
 2. option `upside` and `concern` as fallback;
 3. raw option attributes only when a direct question, active issue, persona reason, or concrete comparison needs them.
 
+Persona reasons are whitespace-normalized but never truncated by word count. The setup prompt still asks for brief grounded reasons, while the full generated or manually supplied reason remains available to simulator policy and realization.
+
 The structured action is authoritative. Validation blocks only hard failures such as unusable output, unknown options, unsupported concrete values, unrelated direct answers, genuinely ambiguous votes, invisible required stance changes, hard-blocker contradictions, and near-verbatim self-repetition. During voting, a short message that visibly names exactly the intended option is sufficient even without a fixed vote verb. An incomplete comparison is accepted as a useful one-sided contribution and is not recorded as public comparison evidence.
 
 No validator LLM is used. Realization prompts require literal option names and treat supplied facts as atomic. They explicitly forbid invented option subtypes, facilities, schedules, costs, use cases, consequences, guarantees, absences, unsupported relative claims such as “shortest” or “best value,” and stronger or weaker mutations of supplied facts. Narrow deterministic checks reject high-risk unsupported strengthening and clear cross-option reason transfer during a vote or visible stance movement. They do not claim complete semantic entailment for every paraphrase. Failed ordinary realizations remain diagnosable in `run.json`. A selected stance movement or formal vote can never disappear: after one generation and one focused repair fail, the runtime renders a minimal grounded statement for the simulator’s already-authoritative action.
@@ -97,7 +99,7 @@ With no CLI topic, the program uses the manual scenario when `environment.mode: 
 py -m pytest -q
 ```
 
-The deterministic suite currently contains 143 passing tests covering configuration, simulator authority, opening variation, mandatory direct answers, optional question follow-ups, voluntary concern participation, rare unknown-information answers, visible issue wording, rank-2 concern gating, adaptive narrowing, optional compromise, authoritative movement and vote fallback, deterministic tied choices, hard blockers, logging, and bounded pacing from two through seven participants.
+The deterministic suite currently contains 147 passing tests covering configuration, simulator authority, opening variation, mandatory direct answers, optional question follow-ups, voluntary concern participation, rare unknown-information answers, visible issue wording, rank-2 concern gating, adaptive narrowing, optional compromise, authoritative movement and vote fallback, deterministic tied choices, hard blockers, logging, and bounded pacing from two through seven participants.
 
 ## LLM-backed evaluation
 

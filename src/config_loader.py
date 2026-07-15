@@ -96,11 +96,21 @@ class Config(Section):
             "llm.dialogue", "llm.models", "simulation.num_participants",
             "simulation.min_participants", "simulation.max_participants",
             "scenario.option_labels", "conversation.hard_max_voluntary_turns_per_participant",
+            "conversation.small_group_max_participants",
+            "conversation.small_group_extra_no_bid_rounds",
+            "conversation.small_group_shared_acceptance_extra_turns",
+            "conversation.unanimous_closure_min_voluntary_turns_per_participant",
+            "conversation.large_group_min_participants",
+            "conversation.large_group_optional_reaction_window_cap",
+            "conversation.large_group_narrowing_issue_turn_cap",
+            "conversation.max_concern_reopens",
             "simulator.bid_probability_by_engagement",
             "simulator.question_modes",
             "simulator.movement_probability_by_stubbornness",
             "language.max_words_by_verbosity",
+            "language.action_max_words",
             "language.near_duplicate_similarity_threshold",
+            "language.near_duplicate_recent_turns",
             "language.directness_instructions",
             "output.log_dir",
         ):
@@ -195,6 +205,30 @@ class Config(Section):
             raise ValueError("conversation.narrowing_reaction_turn_cap must be non-negative")
         if int(conv.get("large_group_narrowing_final_position_cap", 3)) < 1:
             raise ValueError("conversation.large_group_narrowing_final_position_cap must be positive")
+        if int(conv.get("small_group_extra_no_bid_rounds", 1)) < 0:
+            raise ValueError("conversation.small_group_extra_no_bid_rounds must be non-negative")
+        if int(conv.get("small_group_shared_acceptance_extra_turns", 3)) < 0:
+            raise ValueError("conversation.small_group_shared_acceptance_extra_turns must be non-negative")
+        if float(conv.get("unanimous_closure_min_voluntary_turns_per_participant", 1.0)) < 0:
+            raise ValueError(
+                "conversation.unanimous_closure_min_voluntary_turns_per_participant must be non-negative"
+            )
+        if int(conv.get("large_group_optional_reaction_window_cap", 2)) < 0:
+            raise ValueError("conversation.large_group_optional_reaction_window_cap must be non-negative")
+        if int(conv.get("large_group_narrowing_issue_turn_cap", 1)) < 0:
+            raise ValueError("conversation.large_group_narrowing_issue_turn_cap must be non-negative")
+        if int(conv.get("max_concern_reopens", 1)) < 0:
+            raise ValueError("conversation.max_concern_reopens must be non-negative")
+        small_group_max = int(conv.get("small_group_max_participants", 4))
+        large_group_min = int(conv.get("large_group_min_participants", 5))
+        simulation_min = int(self.simulation.min_participants)
+        simulation_max = int(self.simulation.max_participants)
+        if not simulation_min <= small_group_max <= simulation_max:
+            raise ValueError("conversation.small_group_max_participants must be within the supported group-size range")
+        if not simulation_min <= large_group_min <= simulation_max:
+            raise ValueError("conversation.large_group_min_participants must be within the supported group-size range")
+        if small_group_max >= large_group_min:
+            raise ValueError("small-group maximum must be lower than large-group minimum")
         if int(conv.get("recent_turns_in_prompt", 5)) < 1:
             raise ValueError("conversation.recent_turns_in_prompt must be positive")
         if int(conv.get("max_consecutive_turns", 2)) < 1:
@@ -236,9 +270,29 @@ class Config(Section):
             raise ValueError("word limits must be non-decreasing with verbosity")
         if any(not value.strip() for value in directness.values()):
             raise ValueError("directness instructions must be non-empty")
+        action_max_words = language.get("action_max_words")
+        expected_action_caps = {
+            "acknowledge", "ask", "answer", "final_position", "vote", "simple_vote"
+        }
+        if not isinstance(action_max_words, dict):
+            raise ValueError("language.action_max_words must be a mapping")
+        unknown_action_caps = set(action_max_words) - expected_action_caps
+        missing_action_caps = expected_action_caps - set(action_max_words)
+        if unknown_action_caps or missing_action_caps:
+            raise ValueError(
+                "language.action_max_words must contain exactly "
+                f"{sorted(expected_action_caps)}"
+            )
+        caps = {name: int(value) for name, value in action_max_words.items()}
+        if any(value <= 0 for value in caps.values()):
+            raise ValueError("language.action_max_words values must be positive")
+        if caps["simple_vote"] > caps["vote"]:
+            raise ValueError("language.action_max_words.simple_vote must not exceed vote")
         similarity = float(language.get("near_duplicate_similarity_threshold", 0.92))
         if not 0.0 <= similarity <= 1.0:
             raise ValueError("language.near_duplicate_similarity_threshold must be in [0, 1]")
+        if int(language.get("near_duplicate_recent_turns", 3)) < 1:
+            raise ValueError("language.near_duplicate_recent_turns must be positive")
 
     def level_value(self, section_name: str, mapping_name: str, level: int, *, cast=float):
         section = self._raw.get(section_name) or {}
@@ -247,6 +301,13 @@ class Config(Section):
             return values[int(level)]
         except KeyError as exc:
             raise ValueError(f"level must be in 1..5, got {level}") from exc
+
+    def action_word_cap(self, action_name: str) -> int:
+        caps = (self._raw.get("language") or {}).get("action_max_words") or {}
+        try:
+            return int(caps[action_name])
+        except KeyError as exc:
+            raise ValueError(f"unknown language action word cap: {action_name}") from exc
 
     def conversation_turn_budgets(self, participant_count: int) -> tuple[int, int, int]:
         n = max(1, int(participant_count))

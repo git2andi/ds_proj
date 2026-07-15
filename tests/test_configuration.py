@@ -27,9 +27,24 @@ def test_scaled_conversation_budgets():
     assert cfg.conversation_turn_budgets(7) == (14, 22, 30)
     assert int(cfg.conversation.compromise_window_max_turns) == 1
     assert int(cfg.conversation.narrowing_reaction_turn_cap) == 2
+    assert int(cfg.conversation.small_group_max_participants) == 4
+    assert int(cfg.conversation.small_group_extra_no_bid_rounds) == 1
+    assert int(cfg.conversation.small_group_shared_acceptance_extra_turns) == 3
+    assert float(cfg.conversation.unanimous_closure_min_voluntary_turns_per_participant) == 1.0
+    assert int(cfg.conversation.large_group_min_participants) == 5
+    assert int(cfg.conversation.large_group_optional_reaction_window_cap) == 2
+    assert int(cfg.conversation.large_group_narrowing_issue_turn_cap) == 1
     assert int(cfg.conversation.large_group_narrowing_final_position_cap) == 3
+    assert int(cfg.conversation.max_concern_reopens) == 1
     assert int(cfg.conversation.recent_turns_in_prompt) == 7
     assert [cfg.level_value("language", "max_words_by_verbosity", level, cast=int) for level in range(1, 6)] == [8, 12, 16, 22, 27]
+    assert cfg.action_word_cap("acknowledge") == 12
+    assert cfg.action_word_cap("ask") == 18
+    assert cfg.action_word_cap("answer") == 18
+    assert cfg.action_word_cap("final_position") == 18
+    assert cfg.action_word_cap("vote") == 10
+    assert cfg.action_word_cap("simple_vote") == 8
+    assert int(cfg.language.near_duplicate_recent_turns) == 3
 
 
 def _write_config(tmp_path: Path, mutate) -> Path:
@@ -85,4 +100,21 @@ def test_config_rejects_negative_issue_response_caps(tmp_path):
         data["conversation"]["direct_question_optional_follow_up_cap"] = -1
     path = _write_config(tmp_path, mutate)
     with pytest.raises(ValueError, match="direct_question_optional_follow_up_cap"):
+        Config(path)
+
+
+def test_config_rejects_overlapping_group_thresholds(tmp_path):
+    def mutate(data):
+        data["conversation"]["small_group_max_participants"] = 5
+        data["conversation"]["large_group_min_participants"] = 5
+    path = _write_config(tmp_path, mutate)
+    with pytest.raises(ValueError, match="small-group maximum"):
+        Config(path)
+
+
+def test_config_rejects_invalid_action_word_caps(tmp_path):
+    def mutate(data):
+        data["language"]["action_max_words"]["simple_vote"] = 11
+    path = _write_config(tmp_path, mutate)
+    with pytest.raises(ValueError, match="simple_vote"):
         Config(path)

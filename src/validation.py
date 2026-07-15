@@ -441,7 +441,12 @@ def _near_duplicate_of_recent_own_turn(state: DialogueState, speaker_id: str, te
     normalized = " ".join(normalized.split())
     if len(normalized.split()) < 4:
         return False
-    own = [turn.text for turn in state.turns if not turn.moderator and turn.speaker_id == speaker_id][-3:]
+    recent_turns = int(cfg.language.near_duplicate_recent_turns)
+    own = [
+        turn.text
+        for turn in state.turns
+        if not turn.moderator and turn.speaker_id == speaker_id
+    ][-recent_turns:]
     for previous in own:
         prior = re.sub(r"[^a-z0-9 ]+", " ", previous.casefold())
         prior = " ".join(prior.split())

@@ -152,12 +152,15 @@ def word_budget(action: ActionType, verbosity: int) -> tuple[int, int]:
     maximum = int(cfg.level_value(
         "language", "max_words_by_verbosity", verbosity, cast=int
     ))
-    if action is ActionType.ACKNOWLEDGE:
-        maximum = min(maximum, 12)
-    elif action is ActionType.VOTE:
-        maximum = min(maximum, 10)
-    elif action in {ActionType.ASK, ActionType.ANSWER, ActionType.FINAL_POSITION}:
-        maximum = min(maximum, 18)
+    cap_name = {
+        ActionType.ACKNOWLEDGE: "acknowledge",
+        ActionType.ASK: "ask",
+        ActionType.ANSWER: "answer",
+        ActionType.FINAL_POSITION: "final_position",
+        ActionType.VOTE: "vote",
+    }.get(action)
+    if cap_name is not None:
+        maximum = min(maximum, cfg.action_word_cap(cap_name))
     minimum = 2 if action in {ActionType.ACKNOWLEDGE, ActionType.VOTE} else 4
     return minimum, maximum
 
@@ -486,8 +489,8 @@ def realization_prompt(
     action: UserAction,
 ) -> str:
     _, maximum = word_budget(action.act, persona.sim_params.verbosity)
-    if action.act is ActionType.VOTE:
-        maximum = min(maximum, 14 if action.stance_update else 8)
+    if action.act is ActionType.VOTE and action.stance_update is None:
+        maximum = min(maximum, cfg.action_word_cap("simple_vote"))
     personal = (
         f"\nRelevant personal context: {action.personal_context.strip()}\n"
         if action.personal_context else ""
@@ -535,8 +538,8 @@ def repair_prompt(
     errors: list[str],
 ) -> str:
     _, maximum = word_budget(action.act, persona.sim_params.verbosity)
-    if action.act is ActionType.VOTE:
-        maximum = min(maximum, 14 if action.stance_update else 8)
+    if action.act is ActionType.VOTE and action.stance_update is None:
+        maximum = min(maximum, cfg.action_word_cap("simple_vote"))
     return f"""Rewrite one group-chat message for {persona.name}.
 
 Selected action:
