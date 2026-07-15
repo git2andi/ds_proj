@@ -1,9 +1,9 @@
-"""Focused 15-case LLM-backed evaluation suite.
+"""Focused 17-case LLM-backed evaluation suite.
 
 The suite tests the simplified runtime's most important end-to-end properties:
 participant authority, conversation progression, issue handling, stance movement,
 hard blockers, grounding, moderator-free operation, trait visibility, and bounded
-re-voting. It uses ten varied topics and covers every supported group size from two through seven participants.
+re-voting. It uses ten varied topics, covers every supported group size from two through seven participants, and includes two longer diagnostic stress cases.
 """
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ for path in (str(ROOT), str(SRC)):
         sys.path.insert(0, path)
 
 from config_loader import cfg  # noqa: E402
+from builders import style_tendencies_for  # noqa: E402
 from dialogue import DialogueRunner  # noqa: E402
 from eval import flat_metrics_for  # noqa: E402
 from logger import DialogueLogger, metrics_for  # noqa: E402
@@ -69,6 +70,12 @@ class EvalCase:
     min_stale_issues: int = 0
     min_narrowing_turns: int = 0
     max_participant_turns: int = 60
+    voluntary_budget_override: tuple[float, float, float] | None = None
+    voluntary_caps_override: tuple[int, int] | None = None
+    max_concerns_override: int | None = None
+    deliberation_turn_range: tuple[int, int] | None = None
+    allow_reason_reuse_override: bool | None = None
+    diagnostic_stress: bool = False
 
 
 CASES = (
@@ -82,11 +89,11 @@ CASES = (
         max_participant_turns=20,
     ),
     EvalCase(
-        "three_way_split_workspace",
-        "A genuine high-stubbornness three-way split may remain unresolved without forcing compromise.",
+        "three_way_split_data_storage",
+        "A genuine high-stubbornness split over research-data storage may remain unresolved without forcing compromise.",
         ("A", "B", "C"),
         102,
-        scenario_key="study",
+        scenario_key="data_storage",
         stubbornness=(4, 4, 4),
         dislike_alternatives_for=(0, 1, 2),
         expected_outcome="unresolved",
@@ -103,20 +110,20 @@ CASES = (
         min_narrowing_turns=1,
     ),
     EvalCase(
-        "majority_no_moderator_dinner",
-        "Moderator-free discussion must progress and close without visible moderator turns.",
+        "majority_no_moderator_fundraiser",
+        "A moderator-free community-fundraiser decision must progress and close without visible moderator turns.",
         ("A", "A", "A", "B"),
         204,
         moderator=False,
-        scenario_key="restaurant",
+        scenario_key="fundraiser",
         stubbornness=(2, 2, 2, 4),
     ),
     EvalCase(
-        "hard_blocker_cleaning",
-        "The sole hard blocker must never accept or vote for a nonpreferred cleaning option.",
+        "hard_blocker_energy_upgrade",
+        "The sole hard blocker must never accept or vote for a nonpreferred apartment energy upgrade.",
         ("A", "A", "C"),
         205,
-        scenario_key="cleaning",
+        scenario_key="energy_upgrade",
         hard_blocker_index=2,
         expected_outcome="majority",
     ),
@@ -129,11 +136,11 @@ CASES = (
         engagements=(5, 4, 3),
     ),
     EvalCase(
-        "concern_resolution_book_club",
-        "A non-hard concern should be answerable and may make another novel acceptable.",
+        "concern_resolution_documentary",
+        "A non-hard concern about a documentary should be answerable and may make another option acceptable.",
         ("A", "B", "B"),
         180,
-        scenario_key="book_club",
+        scenario_key="documentary",
         engagements=(5, 5, 5),
         stubbornness=(1, 2, 2),
         dislike_alternatives_for=(0,),
@@ -141,11 +148,11 @@ CASES = (
         min_switches=1,
     ),
     EvalCase(
-        "grounding_sensitive_flight_n4",
-        "Baggage, refundability and transfer risk must remain grounded for four travellers.",
+        "grounding_sensitive_shipping_n4",
+        "Transit time, insurance and handling claims must remain grounded for four prototype shippers.",
         ("B", "C", "A", "B"),
         308,
-        scenario_key="flight",
+        scenario_key="shipping",
     ),
     EvalCase(
         "engagement_spread_meeting_n5",
@@ -176,11 +183,11 @@ CASES = (
         max_participant_turns=55,
     ),
     EvalCase(
-        "seven_person_workspace_scale",
-        "The largest supported group must remain coherent and within absolute pacing caps.",
+        "seven_person_data_storage_scale",
+        "The largest supported group must remain coherent while choosing shared research-data storage.",
         ("A", "B", "C", "D", "A", "B", "A"),
         312,
-        scenario_key="study",
+        scenario_key="data_storage",
         engagements=(5, 2, 3, 4, 1, 5, 3),
         max_participant_turns=62,
     ),
@@ -196,22 +203,56 @@ CASES = (
         max_participant_turns=24,
     ),
     EvalCase(
-        "five_person_restaurant_compromise",
-        "Five diners with distinct priorities should have a genuine opportunity to propose common ground.",
+        "five_person_fundraiser_compromise",
+        "Five organizers with distinct priorities should have a genuine opportunity to propose common ground.",
         ("A", "B", "C", "D", "A"),
         314,
-        scenario_key="restaurant",
+        scenario_key="fundraiser",
         stubbornness=(1, 2, 2, 3, 2),
         max_participant_turns=48,
     ),
     EvalCase(
-        "six_person_cleaning_mixed",
-        "A six-person household decision should preserve a hard blocker while allowing majority progression.",
+        "six_person_energy_upgrade_mixed",
+        "A six-person apartment decision should preserve a hard blocker while allowing majority progression.",
         ("A", "A", "B", "C", "D", "A"),
         315,
-        scenario_key="cleaning",
+        scenario_key="energy_upgrade",
         hard_blocker_index=3,
         max_participant_turns=55,
+    ),
+    EvalCase(
+        "long_three_sim_deliberation",
+        "Diagnostic three-person run with an expanded voluntary range; target about 28 deliberation turns excluding openings and final votes.",
+        ("A", "B", "C"),
+        452,
+        scenario_key="shipping",
+        engagements=(5, 5, 5),
+        stubbornness=(4, 4, 4),
+        dislike_alternatives_for=(0, 1, 2),
+        voluntary_budget_override=(6.0, 8.0, 10.0),
+        voluntary_caps_override=(24, 30),
+        max_concerns_override=3,
+        deliberation_turn_range=(24, 32),
+        allow_reason_reuse_override=True,
+        diagnostic_stress=True,
+        max_participant_turns=45,
+    ),
+    EvalCase(
+        "long_six_sim_deliberation",
+        "Diagnostic larger-group run with an expanded but bounded voluntary range.",
+        ("A", "B", "C", "D", "A", "B"),
+        433,
+        scenario_key="meeting",
+        engagements=(5, 4, 5, 4, 3, 5),
+        stubbornness=(4, 4, 4, 4, 4, 4),
+        dislike_alternatives_for=(0, 1, 2, 3, 4, 5),
+        voluntary_budget_override=(3.0, 4.0, 6.0),
+        voluntary_caps_override=(24, 36),
+        max_concerns_override=1,
+        deliberation_turn_range=(35, 47),
+        allow_reason_reuse_override=True,
+        diagnostic_stress=True,
+        max_participant_turns=68,
     ),
 )
 
@@ -226,17 +267,17 @@ def scenario_for(key: str) -> Scenario:
                 OptionCard("C", "Escape Room", {"booking": "advance reservation", "teamwork": "high", "accessibility": "one narrow room"}, "interactive team challenge", "less flexible entry time", "Escape Room"),
                 OptionCard("D", "Cinema Evening", {"schedule": "fixed screening", "interaction": "low during film", "accessibility": "step-free"}, "low planning effort", "little group interaction", "Cinema"),
             ],
-            ["The group is free from 14:00 onward.", "Everyone wants one shared activity."],
+            ["The group is free from 14:00 onward and wants to spend Saturday together. They need to choose one shared activity that everyone can attend."],
         ),
-        "study": Scenario(
-            "Choose a Saturday study location",
+        "data_storage": Scenario(
+            "Choose a storage setup for a shared research dataset",
             [
-                OptionCard("A", "Central Library", {"noise level": "quiet", "privacy": "shared desks", "accessibility": "step-free"}, "quiet and predictable", "can become crowded", "Library"),
-                OptionCard("B", "Riverside Cafe", {"noise level": "moderate", "seating": "informal tables", "food access": "on site"}, "relaxed atmosphere", "background noise", "Cafe"),
-                OptionCard("C", "Engineering Lab", {"equipment": "specialist workstations", "privacy": "bookable room", "accessibility": "staff access required"}, "reliable technical equipment", "earlier closing time", "Lab"),
-                OptionCard("D", "Online Session", {"travel": "none", "interaction": "video call", "equipment": "personal devices"}, "no travel", "less social interaction", "Online"),
+                OptionCard("A", "University Cloud", {"access": "institutional accounts", "backup": "automatic", "collaboration": "shared folders"}, "managed backups", "depends on internet access", "University Cloud"),
+                OptionCard("B", "Local NAS", {"access": "local network", "capacity": "16 TB", "maintenance": "team managed"}, "high local capacity", "requires team maintenance", "Local NAS"),
+                OptionCard("C", "Encrypted External Drives", {"access": "offline", "copies": "two", "portability": "high"}, "offline control", "manual synchronization", "External Drives"),
+                OptionCard("D", "Commercial Cloud", {"access": "from anywhere", "collaboration": "share links", "billing": "monthly"}, "easy remote sharing", "recurring cost", "Commercial Cloud"),
             ],
-            ["The group meets on Saturday.", "Everyone needs access to the same shared materials."],
+            ["The research dataset contains non-public project files that several team members update. Everyone needs dependable access to the same current version."],
         ),
         "presentation": Scenario(
             "Choose the format for a project presentation",
@@ -246,27 +287,27 @@ def scenario_for(key: str) -> Scenario:
                 OptionCard("C", "Recorded Screencast", {"editing": "possible", "audience interaction": "low", "reliability": "playback file"}, "can be rehearsed and edited", "less audience interaction", "Screencast"),
                 OptionCard("D", "Poster Session", {"material": "printed poster", "audience interaction": "informal", "mobility": "standing discussion"}, "supports informal questions", "requires printing and standing discussion", "Poster"),
             ],
-            ["The audience consists of students and two instructors.", "Only one presentation format may be submitted."],
+            ["The project will be presented to students and two instructors in one scheduled session. The team may submit only one presentation format."],
         ),
-        "restaurant": Scenario(
-            "Choose a restaurant for dinner",
+        "fundraiser": Scenario(
+            "Choose a format for a community fundraiser",
             [
-                OptionCard("A", "Green Table", {"dietary coverage": "broad", "seating": "one large indoor table", "reservation reliability": "confirmed"}, "broad dietary coverage", "limited outdoor seating", "Green Table"),
-                OptionCard("B", "Harbor Grill", {"dietary coverage": "few vegetarian mains", "seating": "large group booths", "noise level": "lively"}, "large group tables", "few vegetarian mains", "Harbor Grill"),
-                OptionCard("C", "Old Town Pasta", {"menu variety": "pasta-focused", "seating": "two adjacent tables", "reservation reliability": "walk-in only"}, "simple familiar menu", "group may be split across tables", "Pasta"),
-                OptionCard("D", "Market Kitchen", {"menu variety": "small seasonal menu", "seating": "communal table", "dietary coverage": "moderate"}, "central location", "smaller menu", "Market"),
+                OptionCard("A", "Community Hall Dinner", {"capacity": "120 guests", "weather exposure": "none", "staffing": "eight volunteers"}, "seated social event", "highest preparation burden", "Hall Dinner"),
+                OptionCard("B", "Park Market", {"capacity": "open layout", "weather exposure": "high", "vendors": "local stalls"}, "flexible attendance", "depends on dry weather", "Park Market"),
+                OptionCard("C", "Online Auction", {"accessibility": "remote", "schedule": "one week", "interaction": "asynchronous"}, "no venue required", "less face-to-face interaction", "Online Auction"),
+                OptionCard("D", "Sponsored Fun Run", {"route": "5 km", "weather exposure": "high", "registration": "advance"}, "active public event", "physical participation barrier", "Fun Run"),
             ],
-            ["The group meets at 19:00.", "Everyone wants to eat together."],
+            ["Ten volunteers are available to organize a community fundraiser. Their time and coordination capacity allow only one primary event format."],
         ),
-        "cleaning": Scenario(
-            "Choose a household cleaning upgrade",
+        "energy_upgrade": Scenario(
+            "Choose the first energy-saving upgrade for a rented apartment",
             [
-                OptionCard("A", "Robot Vacuum", {"coverage": "floors", "maintenance": "empty dust bin", "storage": "charging dock"}, "reduces routine floor work", "does not clean dishes", "Robot"),
-                OptionCard("B", "Weekly Cleaner", {"coverage": "several rooms", "schedule flexibility": "fixed weekly slot", "privacy": "external person enters home"}, "covers several rooms", "requires a fixed appointment", "Cleaner"),
-                OptionCard("C", "Dishwasher Upgrade", {"coverage": "dishes", "installation": "kitchen fitting", "capacity": "12 place settings"}, "removes daily dishwashing", "does not clean floors", "Dishwasher"),
-                OptionCard("D", "Shared Chore Plan", {"coverage": "all agreed chores", "coordination": "shared rota", "reliability": "depends on participation"}, "no purchase required", "requires consistent participation", "Chore Plan"),
+                OptionCard("A", "Window Insulation Film", {"installation": "removable", "target": "window heat loss", "cost level": "low"}, "low-cost starting point", "limited effect", "Window Film"),
+                OptionCard("B", "Smart Thermostats", {"coverage": "each room", "control": "app or manual", "installation": "radiator valves"}, "precise heating control", "setup complexity", "Thermostats"),
+                OptionCard("C", "Balcony Solar Kit", {"installation": "balcony mounted", "output": "small household supply", "weather dependence": "high"}, "renewable electricity", "requires building approval", "Solar Kit"),
+                OptionCard("D", "Efficient Appliances", {"coverage": "fridge and washing machine", "replacement": "staged", "cost level": "highest"}, "lower appliance energy use", "largest upfront purchase", "Appliances"),
             ],
-            ["The household wants one primary upgrade.", "Storage space is limited."],
+            ["The residents rent the apartment and must avoid changes that conflict with the building rules. Their budget covers only one energy-saving upgrade this year."],
         ),
         "hike": Scenario(
             "Choose a day hike for the group",
@@ -276,17 +317,17 @@ def scenario_for(key: str) -> Scenario:
                 OptionCard("C", "Wilderness Route", {"difficulty": "very hard", "navigation": "marked sparsely", "facilities": "none"}, "remote natural setting", "long and physically demanding", "Wilderness"),
                 OptionCard("D", "Forest Path", {"difficulty": "easy", "terrain": "compact gravel", "accessibility": "most accessible"}, "short and accessible", "few panoramic views", "Forest"),
             ],
-            ["The group has one full Saturday.", "Everyone must complete the same route."],
+            ["The group has one full Saturday for the hike and plans to stay together throughout it. Everyone must therefore complete the same route."],
         ),
-        "book_club": Scenario(
-            "Choose the next book-club novel",
+        "documentary": Scenario(
+            "Choose the next documentary for a media discussion club",
             [
-                OptionCard("A", "The Silent Guest", {"genre": "mystery", "narrative style": "fast plot", "availability": "paperback"}, "suspenseful discussion material", "darker subject matter", "Silent Guest"),
-                OptionCard("B", "Small Days", {"genre": "contemporary", "narrative style": "character-focused", "availability": "paperback and ebook"}, "short and character-focused", "slower pacing", "Small Days"),
-                OptionCard("C", "Orbit of Ash", {"genre": "science fiction", "themes": "technology and identity", "availability": "ebook first"}, "rich speculative ideas", "longest book", "Orbit"),
-                OptionCard("D", "The Garden Letters", {"genre": "historical", "narrative style": "letters", "availability": "paperback"}, "accessible historical setting", "less plot-driven", "Garden Letters"),
+                OptionCard("A", "Deep Ocean", {"subject": "marine science", "runtime": "92 minutes", "style": "immersive visuals"}, "strong visual material", "slower pacing", "Deep Ocean"),
+                OptionCard("B", "City After Dark", {"subject": "urban culture", "runtime": "68 minutes", "style": "interviews"}, "concise discussion material", "narrow local focus", "City After Dark"),
+                OptionCard("C", "Algorithmic Lives", {"subject": "AI and society", "runtime": "110 minutes", "style": "investigative"}, "rich ethical questions", "longest runtime", "Algorithmic Lives"),
+                OptionCard("D", "Archive of Voices", {"subject": "oral history", "runtime": "84 minutes", "style": "archival"}, "accessible historical perspective", "less visual action", "Archive Voices"),
             ],
-            ["The club has four weeks before the meeting.", "Members want one title available to everyone."],
+            ["The media club has a two-hour meeting slot for viewing and discussion. Every member can access the same streaming service."],
         ),
         "laptop": Scenario(
             "Choose a shared project laptop",
@@ -296,17 +337,17 @@ def scenario_for(key: str) -> Scenario:
                 OptionCard("C", "Budget Laptop", {"repairability": "replaceable storage", "memory": "least", "sustainability": "refurbished option"}, "lowest purchase price", "least memory", "Budget"),
                 OptionCard("D", "Ultralight Laptop", {"weight": "lightest", "ports": "two compact ports", "display": "smallest"}, "easiest to carry", "smaller screen", "Ultralight"),
             ],
-            ["The laptop will be shared for one academic year.", "It must run the project development tools."],
+            ["The laptop will be shared by the project team for one academic year. It must support their normal development tools and regular transport between work locations."],
         ),
-        "flight": Scenario(
-            "Book a flight from Miami to Stockholm",
+        "shipping": Scenario(
+            "Choose how to ship a fragile prototype from Berlin to Lisbon",
             [
-                OptionCard("A", "Direct Premium Flight", {"transfers": "none", "baggage": "checked bag included", "refundability": "partial"}, "lowest transfer risk", "highest fare", "Direct"),
-                OptionCard("B", "One-Stop Saver", {"transfers": "one", "baggage": "carry-on only", "refundability": "change fee"}, "balanced itinerary", "connection required", "Saver"),
-                OptionCard("C", "Overnight Connection", {"transfers": "one overnight", "baggage": "checked bag included", "seat choice": "included"}, "overnight schedule", "connection required", "Overnight"),
-                OptionCard("D", "Two-Stop Budget Flight", {"transfers": "two", "baggage": "personal item only", "refundability": "none"}, "lowest fare", "highest transfer risk", "Budget Flight"),
+                OptionCard("A", "Express Air", {"transit": "1 day", "tracking": "live", "insurance": "included"}, "lowest delay risk", "highest price", "Express Air"),
+                OptionCard("B", "Standard Air", {"transit": "3–4 days", "tracking": "milestones", "insurance": "basic"}, "moderate delivery time", "transfer hub required", "Standard Air"),
+                OptionCard("C", "Rail Freight", {"transit": "5–7 days", "emissions": "lower", "handling": "one terminal"}, "lower emissions", "longer transit", "Rail Freight"),
+                OptionCard("D", "Economy Road", {"transit": "7–9 days", "tracking": "daily", "insurance": "optional"}, "lowest price", "longest delivery time", "Economy Road"),
             ],
-            ["All flights leave on the same date.", "Each traveller needs the same itinerary."],
+            ["The shipment is a single fragile working prototype that must arrive complete and undamaged. The Lisbon team needs it for the next project stage, so delays and extra handling matter."],
         ),
         "meeting": Scenario(
             "Choose a format for a monthly team meeting",
@@ -316,7 +357,7 @@ def scenario_for(key: str) -> Scenario:
                 OptionCard("C", "Online Meeting", {"interaction": "video call", "privacy": "personal locations", "recording": "available"}, "no commute", "less informal interaction", "Online"),
                 OptionCard("D", "Offsite Workshop", {"interaction": "facilitated exercises", "preparation": "agenda and materials", "accessibility": "travel required"}, "dedicated collaborative time", "largest preparation burden", "Offsite"),
             ],
-            ["The team has eight members.", "The same format will be used for three months."],
+            ["The eight-person team meets monthly and includes people with different attendance constraints. The chosen format will be used consistently for the next three months."],
         ),
     }
     return scenarios[key]
@@ -329,11 +370,11 @@ PREFERENCE_CONTEXT: dict[str, dict[str, tuple[str, str]]] = {
         "C": ("likes cooperative puzzles", "wants an activity with active group interaction"),
         "D": ("has had a tiring week", "wants a low-effort plan"),
     },
-    "study": {
-        "A": ("loses concentration in unpredictable spaces", "needs a quiet and stable place"),
-        "B": ("works better in informal surroundings", "values a relaxed atmosphere and late access"),
-        "C": ("works with hardware prototypes", "needs dependable technical equipment"),
-        "D": ("has a long commute", "wants to avoid travel"),
+    "data_storage": {
+        "A": ("works across several university devices", "prioritizes managed backups and shared folders"),
+        "B": ("maintains local lab hardware", "prioritizes local capacity and control"),
+        "C": ("often works without reliable internet", "prioritizes offline encrypted access"),
+        "D": ("collaborates with remote partners", "prioritizes easy access from different locations"),
     },
     "presentation": {
         "A": ("prefers carefully rehearsed delivery", "wants a predictable presentation format"),
@@ -341,17 +382,17 @@ PREFERENCE_CONTEXT: dict[str, dict[str, tuple[str, str]]] = {
         "C": ("is comfortable editing video", "wants to reduce live technical risk"),
         "D": ("enjoys informal one-to-one discussion", "wants room for audience questions"),
     },
-    "restaurant": {
-        "A": ("often coordinates mixed dietary needs", "wants everyone to have a suitable meal"),
-        "B": ("expects a larger social group", "prioritizes comfortable group seating"),
-        "C": ("is watching personal spending", "prioritizes the lowest meal cost"),
-        "D": ("has limited time before another appointment", "prioritizes the shortest journey"),
+    "fundraiser": {
+        "A": ("enjoys hosting structured community dinners", "prioritizes a social seated event"),
+        "B": ("works with local makers and vendors", "wants flexible public attendance"),
+        "C": ("coordinates supporters in several cities", "prioritizes remote access without a venue"),
+        "D": ("organizes recreational sports", "wants a visible active event"),
     },
-    "cleaning": {
-        "A": ("does most of the routine vacuuming", "wants to reduce daily floor work"),
-        "B": ("prefers professional cleaning", "wants several rooms handled at once"),
-        "C": ("handles most of the dishes", "needs dishwashing removed from the routine"),
-        "D": ("does not want another purchase", "prioritizes a no-cost solution"),
+    "energy_upgrade": {
+        "A": ("needs a low-cost change that can be removed later", "prioritizes simple window insulation"),
+        "B": ("monitors heating use room by room", "prioritizes precise heating control"),
+        "C": ("wants to generate some renewable electricity", "prioritizes the balcony solar option"),
+        "D": ("owns several older appliances", "prioritizes lower appliance energy use"),
     },
     "hike": {
         "A": ("has moderate hiking experience", "wants a manageable route with good scenery"),
@@ -359,11 +400,11 @@ PREFERENCE_CONTEXT: dict[str, dict[str, tuple[str, str]]] = {
         "C": ("trains for long-distance hikes", "wants a demanding wilderness route"),
         "D": ("is recovering from a minor knee strain", "needs a short accessible route"),
     },
-    "book_club": {
-        "A": ("likes plot-driven mysteries", "wants a book that keeps the discussion lively"),
-        "B": ("has limited reading time this month", "wants a shorter character-focused book"),
-        "C": ("reads speculative fiction frequently", "wants rich ideas to debate"),
-        "D": ("enjoys historical settings", "wants an accessible period story"),
+    "documentary": {
+        "A": ("enjoys nature cinematography", "wants strong visual material"),
+        "B": ("has limited time before the discussion", "wants a concise interview-based film"),
+        "C": ("studies AI and social impacts", "wants rich ethical questions"),
+        "D": ("collects local oral histories", "wants an accessible historical perspective"),
     },
     "laptop": {
         "A": ("runs compute-heavy development tools", "prioritizes performance"),
@@ -371,11 +412,11 @@ PREFERENCE_CONTEXT: dict[str, dict[str, tuple[str, str]]] = {
         "C": ("manages the project budget", "prioritizes the lowest sufficient cost"),
         "D": ("carries the laptop between campuses", "prioritizes low weight"),
     },
-    "flight": {
-        "A": ("has little tolerance for long travel days", "prioritizes the shortest trip"),
-        "B": ("has a moderate travel budget", "wants a reasonable balance of price and duration"),
-        "C": ("can sleep during overnight travel", "prefers the overnight schedule"),
-        "D": ("has the tightest budget", "prioritizes the lowest fare"),
+    "shipping": {
+        "A": ("needs the prototype available for an imminent demonstration", "prioritizes the lowest delay risk"),
+        "B": ("can allow several days for delivery", "prioritizes moderate delivery time with tracking"),
+        "C": ("tracks the project’s environmental impact", "prioritizes lower-emission shipping"),
+        "D": ("manages the smallest shipping budget", "prioritizes the lowest price"),
     },
     "meeting": {
         "A": ("values informal face-to-face discussion", "wants strong in-person interaction"),
@@ -421,6 +462,7 @@ def personas_for(case: EvalCase, scenario: Scenario) -> list[Persona]:
             else:
                 stances[option.id] = OptionStance(option.id, STANCE_NEUTRAL, option.upside, option.concern)
 
+
         personas.append(Persona(
             id=f"p{index + 1}",
             name=names[index],
@@ -430,6 +472,10 @@ def personas_for(case: EvalCase, scenario: Scenario) -> list[Persona]:
             preferred_options=[preferred],
             age=ages[index],
             speech_style=_speech_style(ages[index]),
+            style_tendencies=style_tendencies_for(
+                f"p{index + 1}", _speech_style(ages[index]),
+                SimulatorParameters(engagement, verbosity, directness, stubbornness).validated(hard_blocker=hard),
+            ),
             rejection=None,
             rejection_reason="only the preferred option satisfies the requirement" if hard else "",
             option_stances=stances,
@@ -483,8 +529,45 @@ def _same_speaker_repeat_count(state) -> int:
     return repeats
 
 
+def _apply_case_conversation_overrides(case: EvalCase) -> dict[str, object]:
+    raw = cfg._raw["conversation"]
+    updates: dict[str, object] = {}
+    if case.voluntary_budget_override is not None:
+        minimum, target, maximum = case.voluntary_budget_override
+        updates.update({
+            "min_voluntary_turns_per_participant": minimum,
+            "soft_target_voluntary_turns_per_participant": target,
+            "hard_max_voluntary_turns_per_participant": maximum,
+        })
+    if case.voluntary_caps_override is not None:
+        soft_cap, hard_cap = case.voluntary_caps_override
+        updates.update({
+            "soft_target_voluntary_turn_cap": soft_cap,
+            "hard_max_voluntary_turn_cap": hard_cap,
+        })
+    if case.max_concerns_override is not None:
+        updates["max_concerns_per_participant"] = case.max_concerns_override
+    if case.allow_reason_reuse_override is not None:
+        updates["diagnostic_allow_reason_reuse"] = case.allow_reason_reuse_override
+
+    old: dict[str, object] = {}
+    for key, value in updates.items():
+        old[key] = raw[key]
+        raw[key] = value
+        setattr(cfg.conversation, key, value)
+    return old
+
+
+def _restore_case_conversation_overrides(old: dict[str, object]) -> None:
+    raw = cfg._raw["conversation"]
+    for key, value in old.items():
+        raw[key] = value
+        setattr(cfg.conversation, key, value)
+
+
 def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
     old_moderator = cfg.moderator.enabled
+    old_conversation = _apply_case_conversation_overrides(case)
     cfg.moderator.enabled = case.moderator
     try:
         scenario = scenario_for(case.scenario_key)
@@ -501,6 +584,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         result = runner.run()
     finally:
         cfg.moderator.enabled = old_moderator
+        _restore_case_conversation_overrides(old_conversation)
 
     state = result.state
     metrics = flat_metrics_for(state, result.outcome)
@@ -508,6 +592,14 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
     participant_turns = state.participant_turns
     openings = sum(turn.action and turn.action.act is ActionType.OPENING for turn in participant_turns)
     narrowing_turns = sum(turn.phase is Phase.NARROWING for turn in participant_turns)
+    deliberation_turns = sum(
+        turn.phase in {Phase.DISCUSSION, Phase.NARROWING}
+        for turn in participant_turns
+    )
+    deliberation_range_ok = (
+        case.deliberation_turn_range is None
+        or case.deliberation_turn_range[0] <= deliberation_turns <= case.deliberation_turn_range[1]
+    )
 
     direct_sequence_ok = True
     for index, turn in enumerate(participant_turns[:-1]):
@@ -543,6 +635,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         metrics["unexplained_movements"] == 0,
         movement_commit_ok,
         repair_rate_ok,
+        deliberation_range_ok,
     ))
     structural = all((
         state.phase.value == "CLOSED",
@@ -555,6 +648,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         state.vote_round <= 2,
         movement_commit_ok,
         metrics["participant_turns"] <= case.max_participant_turns,
+        deliberation_range_ok,
     ))
 
     participants = detailed["participants"]
@@ -562,11 +656,14 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         "case": case.id,
         "scenario": case.scenario_key,
         "participant_count": len(personas),
+        "diagnostic_stress": case.diagnostic_stress,
         "outcome": result.outcome.status,
         "final_option": result.outcome.final_option or "",
         "vote_round": state.vote_round,
         **metrics,
         "narrowing_turns": narrowing_turns,
+        "deliberation_turns": deliberation_turns,
+        "deliberation_range_ok": deliberation_range_ok,
         "restricted_start_rate": _restricted_start_rate(state),
         "same_speaker_repeats": _same_speaker_repeat_count(state),
         "openings": openings,
@@ -619,13 +716,14 @@ def write_summary(rows: list[dict[str, Any]], root: Path) -> tuple[Path, Path, P
     lines = [
         "# Focused LLM-backed evaluation suite",
         "",
-        "| Case | Outcome | Turns | Narrow | Move | Comp. | Concerns R/S | Re-vote | Repairs | Tokens | Pass |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Case | Outcome | Turns | Delib. | Self-selected | Move | Comp. | Concerns R/S | Re-vote | Repairs | Tokens | Pass |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
         lines.append(
-            f"| {row['case']} | {row['outcome']} | {row['participant_turns']} | {row['narrowing_turns']} | "
-            f"{row['narrowing_movements']} | {row['compromise_proposals']}/{row['compromise_acceptances']} | "
+            f"| {row['case']} | {row['outcome']} | {row['participant_turns']} | {row['deliberation_turns']} | "
+            f"{row['self_selected_turns']} | {row['narrowing_movements']} | "
+            f"{row['compromise_proposals']}/{row['compromise_acceptances']} | "
             f"{row['concerns_resolved']}/{row['concerns_stale']} | {row['vote_round']} | "
             f"{row['repairs']} | {row['tokens_in']} | {'yes' if row['case_pass'] else 'NO'} |"
         )
@@ -639,6 +737,8 @@ def write_summary(rows: list[dict[str, Any]], root: Path) -> tuple[Path, Path, P
         "",
         "A second vote is permitted only when the preceding re-narrowing produced visible acceptance or switching.",
         "Comp. reports compromise proposals/acceptances; every selected movement must commit and carry a stored grounded reason; repair-rate quality threshold is 25%.",
+        "Self-selected means the simulator chose to enter the floor. Required answers are mandatory; a later unsolicited comment by another participant is self-selected.",
+        "The two long_* cases are diagnostic stress runs. Their per-case overrides allow semantic reason reuse so long-range repetition becomes visible without changing normal defaults.",
         "",
         "## Policy calibration",
         "",

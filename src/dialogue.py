@@ -9,7 +9,7 @@ from collections import Counter
 import prompts
 from builders import SetupBuilder
 from config_loader import cfg
-from consensus import derive_narrowing_options, outcome_from_votes
+from consensus import derive_narrowing_options, majority_threshold, outcome_from_votes
 from llm_client import get_llm_client
 from logger import DialogueLogger
 from models import (
@@ -36,7 +36,7 @@ from models import (
     VoteRecord,
     VoteStatus,
 )
-from simulator import FloorManager, UserSimulator, initial_runtime, reason_key
+from simulator import FloorManager, UserSimulator, initial_runtime, public_question_key, reason_key
 from validation import mentioned_options, validate_action, validate_realization
 
 
@@ -85,6 +85,7 @@ class DialogueRunner:
         self._stimulus_counter = 0
         self._last_failure_errors: list[str] = []
         self._moderator_enabled = bool(cfg.moderator.enabled)
+        self._vote_prompt_already_emitted = False
 
     def run(self) -> DialogueRunResult:
         self._print_header(self.state)
@@ -154,6 +155,7 @@ class DialogueRunner:
     def _run_discussion(self) -> None:
         minimum, target, maximum = cfg.conversation_turn_budgets(len(self.state.personas))
         stagnation_rounds = int(cfg.conversation.stagnation_no_bid_rounds)
+        small_group_extra_round_used = False
         while self._phase_voluntary_count(Phase.DISCUSSION) < maximum or self.state.response_obligation:
             if self.state.response_obligation:
                 self._drain_response_obligation("mandatory answer failed")
@@ -165,7 +167,7 @@ class DialogueRunner:
             if self.state.active_issue and not any(
                 bid.wants_to_speak and bid.issue_id == self.state.active_issue.id for bid in bids
             ):
-                self._stale_active_issue("the group moved on")
+                self._close_or_stale_inactive_issue("the group moved on")
                 bids = [simulator.propose(self.state) for simulator in self._simulators.values()]
 
             accepted = self._select_and_realize(bids, phase=Phase.DISCUSSION)
@@ -174,6 +176,8 @@ class DialogueRunner:
             else:
                 self.state.no_bid_rounds += 1
                 count = self._phase_voluntary_count(Phase.DISCUSSION)
+                if self._public_unanimity_ready_for_vote(count):
+                    break
                 if (
                     count >= minimum
                     and self.state.no_bid_rounds >= stagnation_rounds
@@ -185,6 +189,15 @@ class DialogueRunner:
                     ):
                         self.state.no_bid_rounds = 0
                         continue
+                if (
+                    len(self.state.personas) <= 4
+                    and count < target
+                    and not small_group_extra_round_used
+                ):
+                    # One ordinary retry gives small groups a little more room
+                    # without forcing filler or changing simulator authority.
+                    small_group_extra_round_used = True
+                    continue
                 if count >= minimum:
                     break
                 if self._moderator_enabled and not self.state.stall_prompt_used:
@@ -197,8 +210,19 @@ class DialogueRunner:
             if self.state.response_obligation:
                 continue
             count = self._phase_voluntary_count(Phase.DISCUSSION)
+            if self._public_unanimity_ready_for_vote(count):
+                break
+            shared_acceptance_minimum = min(
+                target,
+                minimum + (3 if len(self.state.personas) <= 4 else 0),
+            )
             if count >= minimum and not self.state.active_issue:
-                if self._publicly_converged() or self._shared_acceptable_option() is not None:
+                if self._publicly_converged():
+                    break
+                if (
+                    count >= shared_acceptance_minimum
+                    and self._shared_acceptable_option() is not None
+                ):
                     break
             if count >= minimum and self._coverage_prompt_needed():
                 self._run_coverage_window(self._uncovered_options()[0])
@@ -217,14 +241,14 @@ class DialogueRunner:
                 break
 
         if self.state.active_issue:
-            self._stale_active_issue("discussion phase ended")
+            self._close_or_stale_inactive_issue("discussion phase ended")
 
     def _run_coverage_window(self, option_id: str) -> bool:
         if not self._moderator_enabled or self.state.coverage_prompt_used:
             return False
         text = prompts.moderator_coverage_prompt(self.state.scenario, option_id)
         self._set_group_stimulus(StimulusKind.COVERAGE, (option_id,), text)
-        bids = [simulator.propose(self.state, liveness_forced=True) for simulator in self._simulators.values()]
+        bids = [simulator.propose(self.state) for simulator in self._simulators.values()]
         relevant = [
             bid for bid in bids
             if bid.wants_to_speak and option_id in bid.option_focus and bid.stimulus_id == self.state.group_stimulus.id
@@ -264,8 +288,17 @@ class DialogueRunner:
 
         self._transition(Phase.NARROWING)
         self.state.narrowing_options = derive_narrowing_options(self.state)
+        split_options = (
+            self._public_compromise_options()
+            if not self.state.narrowing_options
+            else ()
+        )
         start_movement = self.state.movement_events
         accepted_count = 0
+        optional_reaction_windows_used = 0
+        optional_reaction_window_cap = (
+            2 if len(self.state.personas) >= 5 else len(self.state.personas)
+        )
 
         unanimous = self._publicly_converged()
         unanimous_option = next(
@@ -283,17 +316,24 @@ class DialogueRunner:
                 # so the moderator does not speak twice in a row.
                 narrowing_prompt = ""
             else:
-                narrowing_prompt = (
-                    prompts.moderator_revote_narrowing(
+                if split_options:
+                    narrowing_prompt = prompts.moderator_split_compromise_prompt(
                         self.state.scenario,
-                        self.state.narrowing_options,
+                        split_options,
+                        revote=revote,
                     )
-                    if revote
-                    else prompts.moderator_narrowing(
-                        self.state.scenario,
-                        self.state.narrowing_options,
+                else:
+                    narrowing_prompt = (
+                        prompts.moderator_revote_narrowing(
+                            self.state.scenario,
+                            self.state.narrowing_options,
+                        )
+                        if revote
+                        else prompts.moderator_narrowing(
+                            self.state.scenario,
+                            self.state.narrowing_options,
+                        )
                     )
-                )
             # A clear leader or unanimous state has a real scheduled next step.
             # Tie/compromise prompts are emitted later only if a simulator bid exists.
             if not unanimous and len(self.state.narrowing_options) == 1:
@@ -312,7 +352,21 @@ class DialogueRunner:
 
         if len(self.state.narrowing_options) == 1:
             leader = self.state.narrowing_options[0]
-            for participant_id in self._clear_leader_participants(leader, revote=revote):
+            initial_support = self._public_position_support_count(leader)
+            # Ask at least one relevant dissenter, but stop once one additional
+            # acceptance (or the strict majority threshold) has been reached.
+            # This avoids coordinated-looking rounds where every dissenter is
+            # marched through the same concession.
+            target_support = min(
+                len(self.state.personas),
+                max(majority_threshold(len(self.state.personas)), initial_support + 1),
+            )
+            participants = self._clear_leader_participants(leader, revote=revote)
+            if len(self.state.personas) >= 5:
+                participants = participants[: int(
+                    cfg.conversation.large_group_narrowing_final_position_cap
+                )]
+            for participant_id in participants:
                 action = self._simulators[participant_id].final_position_action(
                     self.state,
                     revote=revote,
@@ -328,18 +382,46 @@ class DialogueRunner:
                     continue
                 accepted_count += 1
                 if self.state.active_issue:
-                    accepted_count += self._run_active_issue_window(Phase.NARROWING)
-                else:
-                    accepted_count += self._run_optional_reaction_window()
+                    accepted_count += self._run_active_issue_window(
+                        Phase.NARROWING,
+                        max_turns=(1 if len(self.state.personas) >= 5 else None),
+                    )
+                elif optional_reaction_windows_used < optional_reaction_window_cap:
+                    reaction_count = self._run_optional_reaction_window()
+                    accepted_count += reaction_count
+                    if reaction_count:
+                        optional_reaction_windows_used += 1
                 self.state.narrowing_options = derive_narrowing_options(self.state)
                 if self._publicly_converged():
                     break
+                if (
+                    self._public_position_support_count(leader) >= target_support
+                    and self.state.active_issue is None
+                ):
+                    break
         else:
+            announce = self._moderator_enabled
+            if not self.state.narrowing_options and narrowing_prompt and self._moderator_enabled:
+                # A complete public split should be visible even when nobody
+                # volunteers to move. The prompt names only publicly preferred
+                # or accepted options, never an untouched coverage option.
+                self._append_moderator(narrowing_prompt)
+                announce = False
             accepted_count += self._run_compromise_window(
                 phase=Phase.NARROWING,
-                announce=self._moderator_enabled,
+                announce=announce,
                 prompt_text=narrowing_prompt,
             )
+            if (
+                accepted_count == 0
+                and not self.state.narrowing_options
+                and narrowing_prompt
+                and self._moderator_enabled
+            ):
+                bridge = prompts.moderator_no_movement_bridge(revote=revote)
+                self._append_moderator(bridge)
+                if not revote:
+                    self._vote_prompt_already_emitted = True
             self.state.narrowing_options = derive_narrowing_options(self.state)
 
         if self.state.active_issue:
@@ -437,9 +519,16 @@ class DialogueRunner:
             self.state.compromise_opportunity = False
         return accepted
 
-    def _run_active_issue_window(self, phase: Phase) -> int:
+    def _run_active_issue_window(
+        self,
+        phase: Phase,
+        *,
+        max_turns: int | None = None,
+    ) -> int:
         accepted = 0
         cap = int(cfg.conversation.narrowing_reaction_turn_cap)
+        if max_turns is not None:
+            cap = min(cap, max(0, int(max_turns)))
         for _ in range(cap):
             if not self.state.active_issue:
                 break
@@ -457,11 +546,11 @@ class DialogueRunner:
                 and bid.issue_id == self.state.active_issue.id
             ]
             if not self._select_and_realize(relevant, phase=phase):
-                self._stale_active_issue("no participant continued the narrowing issue")
+                self._close_or_stale_inactive_issue("no participant continued the narrowing issue")
                 break
             accepted += 1
         if self.state.active_issue:
-            self._stale_active_issue("narrowing issue window ended")
+            self._close_or_stale_inactive_issue("narrowing issue window ended")
         return accepted
 
     def _run_optional_reaction_window(self) -> int:
@@ -484,7 +573,7 @@ class DialogueRunner:
         self.state.vote_round = 2 if revote else 1
         self.state.votes = {}
         self.state.vote_records[self.state.vote_round] = {}
-        if self._moderator_enabled:
+        if self._moderator_enabled and not self._vote_prompt_already_emitted:
             unanimous_option = None
             if not revote and self._publicly_converged():
                 unanimous_option = next(
@@ -502,6 +591,7 @@ class DialogueRunner:
                     unanimous_option=unanimous_option,
                 )
             )
+        self._vote_prompt_already_emitted = False
 
         for persona in self.state.personas:
             action = self._simulators[persona.id].decide_vote(self.state, revote=revote)
@@ -544,17 +634,32 @@ class DialogueRunner:
             self.state.vote_records[self.state.vote_round][persona.id] = vote_record
         return outcome_from_votes(self.state, self.state.votes, allow_unresolved=revote)
 
+    def _fallback_variant(self, action: UserAction, count: int) -> int:
+        token = f"{action.speaker_id}:{action.option_focus}:{action.act.value}"
+        return sum(ord(char) for char in token) % count
+
     def _vote_fallback_text(self, action: UserAction) -> str:
         option_id = action.vote_option or (action.option_focus[0] if action.option_focus else "")
         option = self.state.scenario.option(option_id)
         name = option.short_name or option.name
         if action.stance_update is not None:
             reason = action.stance_update.movement_reason.strip()
+            variant = self._fallback_variant(action, 3)
             if action.stance_update.reason_already_public:
-                return f"I’m moving to {name}; that gets my vote."
+                options = (
+                    f"I’m going with {name} now.",
+                    f"{name} is my choice now.",
+                    f"I’m on board with {name} for the final vote.",
+                )
+                return options[variant]
             if reason:
-                return f"I’m switching to {name} because {reason}."
-            return f"I’m switching to {name}."
+                options = (
+                    f"{name} is my choice now. The point that shifted me: {reason}.",
+                    f"I’ve settled on {name}. The deciding consideration: {reason}.",
+                    f"I’m going with {name} now. What mattered most: {reason}.",
+                )
+                return options[variant]
+            return f"I’m going with {name} now."
         return f"{name} gets my vote."
 
     def _movement_fallback_text(self, action: UserAction) -> str:
@@ -564,35 +669,49 @@ class DialogueRunner:
         option = self.state.scenario.option(update.option_id)
         name = option.short_name or option.name
         reason = update.movement_reason.strip() or action.decisive_reason.strip() or action.reason.strip()
-        previous_name = ""
-        previous_reason = ""
-        if update.previous_option_id and update.previous_option_id != update.option_id:
-            previous = self.state.scenario.option(update.previous_option_id)
-            previous_name = previous.short_name or previous.name
-            stance = self.state.persona(action.speaker_id).option_stances.get(update.previous_option_id)
-            if stance is not None:
-                previous_reason = stance.reason_for.strip()
+        variant = self._fallback_variant(action, 3)
         if update.kind is StanceUpdateKind.SWITCH_PREFERRED:
-            if previous_name and not update.reason_already_public:
-                return (
-                    f"I’m switching from {previous_name} to {name} because {reason}."
-                    if reason
-                    else f"I’m switching from {previous_name} to {name}."
+            if update.reason_already_public or not reason:
+                options = (
+                    f"That changes my view. I’m going with {name} now.",
+                    f"I now prefer {name}.",
+                    f"I’m on board with {name} now.",
                 )
-            return f"I’m switching to {name} because {reason}." if reason else f"I’m switching to {name}."
+                return options[variant]
+            options = (
+                f"{name} is my choice now. The point that shifted me: {reason}.",
+                f"I’ve settled on {name}. The deciding consideration: {reason}.",
+                f"I’m going with {name} now. What mattered most: {reason}.",
+            )
+            return options[variant]
         if update.kind is StanceUpdateKind.MAKE_ACCEPTABLE:
-            if previous_name and previous_reason:
-                return (
-                    f"I still prefer {previous_name} because {previous_reason}, "
-                    f"but I can accept {name} because {reason}."
+            if update.reason_already_public or not reason:
+                options = (
+                    f"{name} would work for me now.",
+                    f"I could support {name} now.",
+                    f"I’m good with {name} now.",
                 )
-            if previous_name:
-                return (
-                    f"I still prefer {previous_name}, but I can accept {name} because {reason}."
-                    if reason
-                    else f"I still prefer {previous_name}, but I can accept {name}."
+                return options[variant]
+            basis = update.movement_basis
+            if basis == "concern_resolved":
+                options = (
+                    f"That settles my concern, so {name} works for me now. Relevant point: {reason}.",
+                    f"{name} is workable for me now. The response that resolved it: {reason}.",
+                    f"I can support {name} now; my earlier concern is settled. Relevant point: {reason}.",
                 )
-            return f"I can accept {name} because {reason}." if reason else f"I can accept {name}."
+            elif basis in {"common_ground", "common_ground_proposal", "stagnation_compromise"}:
+                options = (
+                    f"I can go along with {name} as common ground. The benefit I’m weighing: {reason}.",
+                    f"{name} works for me as a compromise. What carries the trade-off: {reason}.",
+                    f"I could support {name} for the group. The point that matters here: {reason}.",
+                )
+            else:
+                options = (
+                    f"{name} works for me now. The relevant point: {reason}.",
+                    f"I could support {name} now. What makes it workable: {reason}.",
+                    f"I’m comfortable with {name} now. The deciding consideration: {reason}.",
+                )
+            return options[variant]
         return f"My position on {name} has changed."
 
     def _select_and_realize(
@@ -619,14 +738,25 @@ class DialogueRunner:
         return False
 
     def _force_liveness(self, phase: Phase) -> bool:
-        candidates = [simulator.propose(self.state, liveness_forced=True) for simulator in self._simulators.values()]
-        selection = self._floor.select(self.state, candidates)
-        if selection is None:
-            return False
-        record = self._realize_and_commit(selection.action, mandatory=False, voluntary=False, liveness_forced=True)
-        if record:
-            self.state.stats.liveness_forced_turns += 1
-            return True
+        candidates = [
+            simulator.propose(self.state, liveness_forced=True)
+            for simulator in self._simulators.values()
+        ]
+        remaining = list(candidates)
+        while remaining:
+            selection = self._floor.select(self.state, remaining)
+            if selection is None:
+                return False
+            record = self._realize_and_commit(
+                selection.action,
+                mandatory=False,
+                voluntary=False,
+                liveness_forced=True,
+            )
+            if record:
+                self.state.stats.liveness_forced_turns += 1
+                return True
+            remaining = [bid for bid in remaining if bid is not selection.action]
         return False
 
     def _drain_response_obligation(self, failure_reason: str) -> None:
@@ -795,6 +925,8 @@ class DialogueRunner:
             ):
                 self.state.stats.semantic_reason_reuse += 1
             runtime.used_reason_keys.add(semantic_key)
+        if action.act is ActionType.ACKNOWLEDGE and action.option_focus:
+            runtime.acknowledged_options.add(action.option_focus[0])
         if action.act is ActionType.COMPROMISE and action.option_focus:
             runtime.used_compromise_options.add(action.option_focus[0])
             self.state.stats.compromise_proposals += 1
@@ -885,8 +1017,10 @@ class DialogueRunner:
 
     def _apply_issue_before_turn(self, action: UserAction, text: str) -> str | None:
         if action.issue_effect is IssueEffect.OPEN:
-            kind = IssueKind.QUESTION if action.act is ActionType.ASK else IssueKind.CONCERN if action.act is ActionType.CONCERN else IssueKind.COMPARISON
-            return self._open_issue(kind, action, text)
+            if action.act is ActionType.ASK:
+                return self._open_issue(IssueKind.QUESTION, action, text)
+            if action.act is ActionType.CONCERN:
+                return self._open_issue(IssueKind.CONCERN, action, text)
         return None
 
     def _apply_issue_after_turn(self, action: UserAction) -> None:
@@ -897,13 +1031,30 @@ class DialogueRunner:
         issue.follow_up_count += 1
         if action.speaker_id != issue.opened_by:
             issue.response_count += 1
+            issue.responded_by.add(action.speaker_id)
         else:
             issue.owner_reacted = True
+
         if issue.kind is IssueKind.QUESTION and action.act is ActionType.ANSWER:
             self.state.response_obligation = None
+            issue.required_answer_completed = True
             issue.outcome = "answered"
-            self._close_active_issue(IssueStatus.RESOLVED, "direct question answered")
+            if int(cfg.conversation.direct_question_optional_follow_up_cap) <= 0:
+                self._close_active_issue(IssueStatus.RESOLVED, "direct question answered")
             return
+
+        if issue.kind is IssueKind.QUESTION and issue.required_answer_completed:
+            issue.optional_follow_up_count += 1
+            issue.outcome = "answered_with_follow_up"
+            if issue.optional_follow_up_count >= int(
+                cfg.conversation.direct_question_optional_follow_up_cap
+            ):
+                self._close_active_issue(
+                    IssueStatus.RESOLVED,
+                    "direct question answered with voluntary follow-up",
+                )
+            return
+
         if action.issue_effect is IssueEffect.RESOLVE:
             issue.outcome = "resolved"
             self._close_active_issue(IssueStatus.RESOLVED, "owner visibly accepted the response")
@@ -913,7 +1064,7 @@ class DialogueRunner:
             self._close_active_issue(IssueStatus.STALE, "owner completed the concern reaction")
             return
         if self.state.active_issue and issue.follow_up_count >= int(cfg.conversation.issue_follow_up_cap):
-            self._stale_active_issue("issue follow-up cap reached")
+            self._close_or_stale_inactive_issue("issue follow-up cap reached")
 
     def _open_issue(self, kind: IssueKind, action: UserAction, text: str) -> str:
         if self.state.active_issue:
@@ -922,7 +1073,12 @@ class DialogueRunner:
         issue_id = f"i{self._issue_counter:03d}"
         summary = action.reason.strip() or text.strip()
         option_id = action.option_focus[0] if action.option_focus else "group"
-        key = (option_id, self._normalize_issue(summary))
+        semantic_issue = (
+            action.reason_source.public_value
+            if action.reason_source is not None
+            else summary
+        )
+        key = (option_id, self._normalize_issue(semantic_issue))
         issue = ActiveIssue(
             id=issue_id,
             kind=kind,
@@ -939,7 +1095,23 @@ class DialogueRunner:
             question_mode=action.question_mode,
         )
         self.state.active_issue = issue
-        self.state.issue_records[key] = IssueRecord(key=key, status=IssueStatus.OPEN, last_issue_id=issue_id, last_relevant_turn=len(self.state.turns))
+        record = self.state.issue_records.get(key)
+        if record is None:
+            record = IssueRecord(
+                key=key,
+                kind=kind,
+                status=IssueStatus.OPEN,
+                last_issue_id=issue_id,
+                last_relevant_turn=len(self.state.turns),
+            )
+            self.state.issue_records[key] = record
+        else:
+            if kind is IssueKind.CONCERN and record.kind is IssueKind.CONCERN:
+                record.reopen_count += 1
+            record.kind = kind
+            record.status = IssueStatus.OPEN
+            record.last_issue_id = issue_id
+            record.last_relevant_turn = len(self.state.turns)
         if kind is IssueKind.QUESTION and action.addressee_id:
             self.state.response_obligation = action.addressee_id
         runtime = self.state.runtimes[action.speaker_id]
@@ -947,6 +1119,7 @@ class DialogueRunner:
             runtime.opened_issue_keys.add(f"concern:{reason_key(action)}")
         if kind is IssueKind.QUESTION:
             runtime.asked_question_keys.add(reason_key(action))
+            self.state.asked_public_question_keys.add(public_question_key(action))
         return f"opened:{issue_id}"
 
     def _close_active_issue(self, status: IssueStatus, reason: str) -> None:
@@ -958,7 +1131,11 @@ class DialogueRunner:
         issue.last_relevant_turn = len(self.state.turns) - 1
         self.state.issue_history.append(issue)
         if issue.issue_key:
-            record = self.state.issue_records.setdefault(issue.issue_key, IssueRecord(issue.issue_key))
+            record = self.state.issue_records.setdefault(
+                issue.issue_key,
+                IssueRecord(issue.issue_key, kind=issue.kind),
+            )
+            record.kind = issue.kind
             record.status = status
             record.last_issue_id = issue.id
             record.last_relevant_turn = issue.last_relevant_turn
@@ -966,6 +1143,18 @@ class DialogueRunner:
             record.outcome = issue.outcome or status.value
         self.state.active_issue = None
         self.state.response_obligation = None
+
+    def _close_or_stale_inactive_issue(self, reason: str) -> None:
+        """Finish an answered question; otherwise preserve unresolved issues as stale."""
+
+        issue = self.state.active_issue
+        if issue is None:
+            return
+        if issue.kind is IssueKind.QUESTION and issue.required_answer_completed:
+            issue.outcome = issue.outcome or "answered"
+            self._close_active_issue(IssueStatus.RESOLVED, reason)
+            return
+        self._stale_active_issue(reason)
 
     def _stale_active_issue(self, reason: str) -> None:
         self._close_active_issue(IssueStatus.STALE, reason)
@@ -986,6 +1175,45 @@ class DialogueRunner:
     def _publicly_converged(self) -> bool:
         preferences = [runtime.public_preference for runtime in self.state.runtimes.values()]
         return bool(preferences and all(preference == preferences[0] and preference is not None for preference in preferences))
+
+    def _public_unanimity_ready_for_vote(self, voluntary_count: int) -> bool:
+        """Allow genuine public agreement to close before liveness filler.
+
+        Openings alone are not enough. The group must have completed roughly
+        one post-opening contribution round and have no pending local issue.
+        """
+
+        return bool(
+            voluntary_count >= max(1, len(self.state.personas))
+            and self.state.active_issue is None
+            and self.state.response_obligation is None
+            and self._publicly_converged()
+        )
+
+    def _public_compromise_options(self) -> tuple[str, ...]:
+        """Options publicly preferred or accepted by at least one participant."""
+
+        visible: set[str] = set()
+        for runtime in self.state.runtimes.values():
+            if runtime.public_preference in self.state.scenario.option_ids:
+                visible.add(runtime.public_preference)
+            visible.update(
+                option_id
+                for option_id in runtime.public_acceptances
+                if option_id in self.state.scenario.option_ids
+            )
+        return tuple(
+            option_id
+            for option_id in self.state.scenario.option_ids
+            if option_id in visible
+        )
+
+    def _public_position_support_count(self, option_id: str) -> int:
+        return sum(
+            runtime.public_preference == option_id
+            or option_id in runtime.public_acceptances
+            for runtime in self.state.runtimes.values()
+        )
 
     def _shared_acceptable_option(self) -> str | None:
         """Return public common ground without converting supports into a score."""
@@ -1031,10 +1259,8 @@ class DialogueRunner:
     def _print_header(state: DialogueState) -> None:
         print("=" * 72)
         print(f"Topic: {state.scenario.topic}")
-        if state.scenario.shared_context:
-            print("Shared context:")
-            for fact in state.scenario.shared_context:
-                print(f"- {fact}")
+        if state.scenario.context_text:
+            print(f"Scenario context: {state.scenario.context_text}")
         print("Options:")
         for option in state.scenario.options:
             print(option.public_line())

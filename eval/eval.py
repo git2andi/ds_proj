@@ -21,6 +21,7 @@ def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any
         "final_option": outcome.final_option or "",
         "participant_turns": metrics["turns"]["participant"],
         "voluntary_turns": metrics["turns"]["voluntary"],
+        "self_selected_turns": metrics["turns"]["self_selected"],
         "mandatory_turns": metrics["turns"]["mandatory"],
         "moderator_turns": metrics["turns"]["moderator"],
         "repairs": metrics["generation"]["repairs"],

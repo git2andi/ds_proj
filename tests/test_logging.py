@@ -89,3 +89,19 @@ def test_failed_attempts_are_preserved_compactly_without_full_debug(tmp_path, mo
     assert "generation_attempts" not in payload
     assert payload["failed_generation_attempts"]
     assert any(row["final_status"] in {"dropped", "fallback"} for row in payload["failed_generation_attempts"])
+
+
+def test_transcript_renders_shared_context_as_paragraph(tmp_path, monkeypatch):
+    monkeypatch.setattr(cfg.output, "log_dir", str(tmp_path))
+    logger = DialogueLogger("context-paragraph")
+    result = DialogueRunner(
+        "", scenario=make_scenario(), personas=make_personas(("A", "A")),
+        llm=ActionRendererLLM(), logger=logger, seed=44,
+    ).run()
+    transcript = Path(result.log_paths["transcript"]).read_text(encoding="utf-8")
+    assert "## Scenario context" in transcript
+    assert "The group meets on Saturday. The budget is capped at 20 euros per person." in transcript
+    assert "- Shared:" not in transcript
+    payload = json.loads(Path(result.log_paths["json"]).read_text(encoding="utf-8"))
+    assert isinstance(payload["scenario"]["shared_context"], str)
+    assert payload["scenario"]["shared_context"].startswith("The group meets on Saturday")

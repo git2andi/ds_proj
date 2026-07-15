@@ -83,6 +83,8 @@ def validate_realization(
         errors.append(f"mentions unknown option(s): {sorted(unknown_labels)}")
 
     errors.extend(_numeric_grounding_errors(state, action, clean))
+    errors.extend(_qualitative_grounding_errors(state, action, clean))
+    errors.extend(_cross_option_reason_errors(state, action, clean))
 
     if action.act is ActionType.OPENING:
         if not action.option_focus or not option_mentioned(clean, state, action.option_focus[0]):
@@ -90,8 +92,37 @@ def validate_realization(
         if len(clean.split()) < 5:
             errors.append("opening does not visibly include a reason")
 
+    if action.act is ActionType.ASK and action.issue_effect is IssueEffect.OPEN:
+        if not _question_is_visible(clean):
+            errors.append("opened question is not visibly phrased as a question")
+        if action.addressee_id:
+            addressee_name = state.persona(action.addressee_id).name
+            other_names = [
+                other.name for other in state.personas
+                if other.id != action.addressee_id
+            ]
+            if not _direct_addressee_visible(clean, addressee_name, other_names):
+                errors.append("direct question does not clearly address its intended addressee")
+
+    if (
+        action.act is ActionType.CONCERN
+        and action.issue_effect is IssueEffect.OPEN
+        and not _concern_is_visible(clean)
+    ):
+        errors.append("opened concern is not visibly expressed")
+
     if action.act is ActionType.ANSWER and not _answer_is_relevant(state, action, clean):
         errors.append("direct answer is unrelated to the target question")
+
+    if (
+        action.stance_update is None
+        and action.act is not ActionType.VOTE
+        and action.option_focus
+        and _claims_own_strong_preference(clean)
+    ):
+        current = state.runtimes[action.speaker_id].public_preference or state.runtimes[action.speaker_id].preferred_option
+        if action.option_focus[0] != current:
+            errors.append("visible preference claim has no matching structured stance change")
 
     if (
         action.stance_update
@@ -107,11 +138,7 @@ def validate_realization(
     ):
         errors.append("stance change lacks its grounded movement reason")
 
-    if action.issue_effect is IssueEffect.RESOLVE and not re.search(
-        r"\b(?:address(?:es|ed)?|resolv(?:e|ed|es)|works?\s+for\s+me|acceptable|can\s+accept|could\s+accept|fine\s+with|okay\s+with|convinced|could\s+live\s+with|can\s+live\s+with|go\s+along\s+with|can\s+support|could\s+support|willing\s+to\s+(?:try|support|accept)|works?\s+as\s+(?:a\s+)?compromise|settle\s+on|on\s+board\s+with)\b",
-        clean,
-        re.I,
-    ):
+    if action.issue_effect is IssueEffect.RESOLVE and not _acceptance_visible(clean):
         errors.append("issue resolution is not visible")
     if action.issue_effect is IssueEffect.MAINTAIN and not re.search(
         r"\b(?:still|remain(?:s|ing)?|not\s+(?:fully\s+)?(?:solved|addressed|convinced)|doesn['’]?t\s+(?:solve|address)|deal[- ]?breaker|continues?\s+to)\b",
@@ -148,6 +175,71 @@ def validate_realization(
     return errors
 
 
+def _direct_addressee_visible(
+    text: str,
+    addressee_name: str,
+    other_names: list[str],
+) -> bool:
+    """Accept a clear vocative anywhere while rejecting a different addressee.
+
+    Natural forms include ``Mira, ...``, ``... what do you think, Mira?`` and
+    ``Could you say, Mira, whether ...``. Merely mentioning the name inside a
+    statement is not enough, and a different participant may not occupy a
+    vocative position.
+    """
+
+    intended_patterns = (
+        rf"(?:^|[,.!?;:—-]\s*){re.escape(addressee_name)}\b\s*[,—:;-]",
+        rf"[,—:;-]\s*{re.escape(addressee_name)}\b(?=\s*[?.!,;:]|\s*$)",
+        rf"\b(?:you|your)\b[^?!.]{{0,40}}[,—:;-]\s*{re.escape(addressee_name)}\b",
+    )
+    if not any(re.search(pattern, text, re.I) for pattern in intended_patterns):
+        return False
+
+    for name in other_names:
+        other_patterns = (
+            rf"(?:^|[,.!?;:—-]\s*){re.escape(name)}\b\s*[,—:;-]",
+            rf"[,—:;-]\s*{re.escape(name)}\b(?=\s*[?.!,;:]|\s*$)",
+        )
+        if any(re.search(pattern, text, re.I) for pattern in other_patterns):
+            return False
+    return True
+
+def _claims_own_strong_preference(text: str) -> bool:
+    return bool(re.search(
+        r"\b(?:my\s+(?:top|first|preferred)\s+choice|remains?\s+my\s+choice|"
+        r"i\s+(?:still\s+)?(?:prefer|choose|pick)|i['’]?m\s+(?:still\s+)?(?:going\s+with|leaning\s+toward))\b",
+        text,
+        re.I,
+    ))
+
+
+def _question_is_visible(text: str) -> bool:
+    if "?" in text:
+        return True
+    if re.search(
+        r"^(?:[^,?!]{1,40},\s*)?(?:who|what|when|where|why|how|would|could|can|do|does|did|is|are|will|should|have|has)\b",
+        text.strip(),
+        re.I,
+    ):
+        return True
+    return bool(re.search(
+        r"\b(?:i\s+(?:wonder|want\s+to\s+know)\s+whether|can\s+you|could\s+you|would\s+you|tell\s+me|let\s+me\s+know)\b",
+        text,
+        re.I,
+    ))
+
+
+def _concern_is_visible(text: str) -> bool:
+    return bool(re.search(
+        r"\b(?:concern(?:ed)?|worr(?:y|ied|ies)|problem|risk|drawback|downside|issue|"
+        r"difficult|impractical|unworkable|unsafe|too\s+\w+|not\s+(?:work|enough|practical|"
+        r"suitable|acceptable)|can['’]?t|cannot|won['’]?t|keeps?\s+me\s+from|makes?\s+it\s+hard)\b",
+        text,
+        re.I,
+    ))
+
+
 def _stance_update_visible(state: DialogueState, action: UserAction, text: str) -> bool:
     update = action.stance_update
     if update is None or not option_mentioned(text, state, update.option_id):
@@ -159,15 +251,29 @@ def _stance_update_visible(state: DialogueState, action: UserAction, text: str) 
             re.I,
         ))
     if update.kind is StanceUpdateKind.MAKE_ACCEPTABLE:
-        return bool(re.search(
-            r"\b(?:acceptable|reasonable|workable|works?\s+for\s+me|can\s+accept|could\s+accept|fine\s+with|okay\s+with|could\s+live\s+with|can\s+live\s+with|go\s+along\s+with|can\s+support|could\s+support|willing\s+to\s+(?:try|support|accept)|works?\s+as\s+(?:a\s+)?compromise|settle\s+on|on\s+board\s+with)\b",
-            text,
-            re.I,
-        ))
+        return _acceptance_visible(text)
     if update.kind is StanceUpdateKind.REJECT:
         return bool(re.search(r"\b(?:reject|rule\s+out|won['’]?t\s+accept|not\s+acceptable)\b", text, re.I))
     return True
 
+
+
+def _acceptance_visible(text: str) -> bool:
+    """Recognize personal/group acceptance without treating praise as movement."""
+
+    patterns = (
+        r"\b(?:acceptable|reasonable|workable)\s+(?:for\s+(?:me|us)|as\s+(?:a\s+)?(?:compromise|middle\s+ground|common\s+ground))\b",
+        r"\b(?:works?|would\s+work)\s+(?:well\s+)?for\s+(?:me|us)\b",
+        r"\b(?:works?|would\s+work)\s+(?:well\s+)?as\s+(?:a\s+)?(?:reasonable\s+|solid\s+|better\s+)?(?:compromise|middle\s+ground|common\s+ground)\b",
+        r"\b(?:suits?|fits?)\s+(?:my|our)\s+(?:needs?|priorities|group)\b",
+        r"\b(?:good|solid|reasonable|better)\s+(?:choice|fit|option|compromise|middle\s+ground|common\s+ground)\s+for\s+(?:me|us|our\s+group)\b",
+        r"\b(?:can|could|will|would)\s+(?:accept|support|live\s+with|go\s+along\s+with|get\s+behind|work\s+with|settle\s+on)\b",
+        r"\b(?:willing|happy|ready)\s+to\s+(?:accept|support|try|go\s+with|settle\s+on)\b",
+        r"\b(?:fine|okay|good)\s+(?:with|by)\s+(?:me|us)\b",
+        r"\b(?:i|we)(?:['’]m|\s+am|['’]re|\s+are)?\s+(?:on\s+board\s+with|good\s+with|going\s+with|willing\s+to\s+take)\b",
+        r"\b(?:makes?|would\s+make)\s+sense\s+for\s+(?:me|us|our\s+group)\b",
+    )
+    return any(re.search(pattern, text, re.I) for pattern in patterns)
 
 def _movement_reason_visible(state: DialogueState, action: UserAction, text: str) -> bool:
     update = action.stance_update
@@ -210,7 +316,7 @@ def _answer_is_relevant(state: DialogueState, action: UserAction, text: str) -> 
     if any(option_mentioned(text, state, option_id) for option_id in action.option_focus):
         return True
     words = set(re.findall(r"[a-z]{4,}", text.casefold()))
-    reason_blob = " ".join(filter(None, [action.reason, action.decisive_reason, action.condition]))
+    reason_blob = " ".join(filter(None, [action.reason, action.decisive_reason]))
     reason_terms = {term for term in re.findall(r"[a-z]{4,}", reason_blob.casefold())}
     if reason_terms & words:
         return True
@@ -253,6 +359,82 @@ def _numeric_grounding_errors(state: DialogueState, action: UserAction, text: st
             errors.append(f"unsupported concrete value: {number}")
     return errors
 
+
+
+def _cross_option_reason_errors(
+    state: DialogueState,
+    action: UserAction,
+    text: str,
+) -> list[str]:
+    """Reject a reason clearly copied from a different option.
+
+    This narrow check applies only to formal votes and visible stance movement.
+    It compares semantic overlap with individual public option values and fires
+    only when another option has a substantially stronger two-term match than
+    the intended target.
+    """
+    if action.act is not ActionType.VOTE and action.stance_update is None:
+        return []
+    target_id = action.vote_option or (action.stance_update.option_id if action.stance_update else None)
+    if not target_id or target_id not in state.scenario.option_ids:
+        return []
+    text_terms = _semantic_terms(text)
+    if not text_terms:
+        return []
+
+    def best_overlap(option_id: str) -> int:
+        option = state.scenario.option(option_id)
+        return max((len(text_terms & _semantic_terms(value)) for value in option.public_values() if value), default=0)
+
+    target_score = best_overlap(target_id)
+    mismatches = [
+        option_id for option_id in state.scenario.option_ids
+        if option_id != target_id
+        and best_overlap(option_id) >= 2
+        and best_overlap(option_id) > target_score
+    ]
+    if not mismatches:
+        return []
+    return [f"reason appears to belong to another option: {', '.join(mismatches)}"]
+
+
+def _qualitative_grounding_errors(
+    state: DialogueState,
+    action: UserAction,
+    text: str,
+) -> list[str]:
+    """Reject a small set of clear unsupported factual strengthenings.
+
+    The check is intentionally narrow. Personal judgments remain allowed; only
+    high-risk modifiers and relative claims absent from the focused option's
+    public data are rejected.
+    """
+
+    public_parts = list(state.scenario.shared_context)
+    for option_id in action.option_focus:
+        if option_id in state.scenario.option_ids:
+            public_parts.extend(state.scenario.option(option_id).public_values())
+    if action.reason_source is not None:
+        public_parts.append(action.reason_source.public_value)
+    public_blob = " ".join(public_parts).casefold()
+
+    high_risk = (
+        "significantly",
+        "dramatically",
+        "substantially",
+        "cheapest",
+        "lowest price",
+        "fastest",
+        "shortest",
+        "safest",
+        "most reliable",
+        "best value",
+    )
+    lowered = text.casefold()
+    unsupported = [phrase for phrase in high_risk if phrase in lowered and phrase not in public_blob]
+    if not unsupported:
+        return []
+    return [f"unsupported qualitative strengthening: {', '.join(sorted(set(unsupported)))}"]
 
 def _near_duplicate_of_recent_own_turn(state: DialogueState, speaker_id: str, text: str) -> bool:
     normalized = re.sub(r"[^a-z0-9 ]+", " ", text.casefold())

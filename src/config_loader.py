@@ -12,7 +12,7 @@ PROFILE_TRAIT_NAMES = DIRECT_TRAIT_NAMES  # public alias used by setup code
 KNOWN_LLM_PROVIDERS = frozenset({"uni", "groq", "gemini", "gpt"})
 _PROFILE_FIELDS = frozenset({
     "name", "description", "private_goal", "preferred_option", "age",
-    "speech_style", "traits", "hard_blocker", "rejection", "rejection_reason",
+    "speech_style", "style_tendencies", "traits", "hard_blocker", "rejection", "rejection_reason",
 })
 _MANUAL_ENV_FIELDS = frozenset({"topic", "shared_context", "options"})
 _MANUAL_OPTION_FIELDS = frozenset({"id", "name", "short_name", "attrs", "upside", "concern"})
@@ -179,14 +179,22 @@ class Config(Section):
             raise ValueError("absolute voluntary-turn caps must satisfy 1 <= soft cap <= hard cap")
         if int(conv.get("issue_follow_up_cap", 5)) < 1:
             raise ValueError("conversation.issue_follow_up_cap must be positive")
+        if int(conv.get("direct_question_optional_follow_up_cap", 1)) < 0:
+            raise ValueError("conversation.direct_question_optional_follow_up_cap must be non-negative")
+        if int(conv.get("concern_external_response_cap", 2)) < 0:
+            raise ValueError("conversation.concern_external_response_cap must be non-negative")
         if int(conv.get("max_concerns_per_participant", 1)) < 0:
             raise ValueError("conversation.max_concerns_per_participant must be non-negative")
+        if not isinstance(conv.get("diagnostic_allow_reason_reuse", False), bool):
+            raise ValueError("conversation.diagnostic_allow_reason_reuse must be a boolean")
         if int(conv.get("stagnation_no_bid_rounds", 1)) < 1:
             raise ValueError("conversation.stagnation_no_bid_rounds must be positive")
         if int(conv.get("compromise_window_max_turns", 2)) < 1:
             raise ValueError("conversation.compromise_window_max_turns must be positive")
         if int(conv.get("narrowing_reaction_turn_cap", 2)) < 0:
             raise ValueError("conversation.narrowing_reaction_turn_cap must be non-negative")
+        if int(conv.get("large_group_narrowing_final_position_cap", 3)) < 1:
+            raise ValueError("conversation.large_group_narrowing_final_position_cap must be positive")
         if int(conv.get("recent_turns_in_prompt", 5)) < 1:
             raise ValueError("conversation.recent_turns_in_prompt must be positive")
         if int(conv.get("max_consecutive_turns", 2)) < 1:
@@ -206,7 +214,7 @@ class Config(Section):
         if movement[5] != 0.0:
             raise ValueError("stubbornness level 5 must have zero movement probability")
         question_modes = simulator.get("question_modes")
-        allowed_question_modes = {"choice_impact", "tradeoff", "condition"}
+        allowed_question_modes = {"choice_impact", "tradeoff"}
         if not isinstance(question_modes, list) or not question_modes:
             raise ValueError("simulator.question_modes must be a non-empty list")
         normalized_modes = [str(value) for value in question_modes]
@@ -215,6 +223,9 @@ class Config(Section):
         unknown_modes = set(normalized_modes) - allowed_question_modes
         if unknown_modes:
             raise ValueError(f"simulator.question_modes contains unsupported values: {sorted(unknown_modes)}")
+        unknown_probability = float(simulator.get("unknown_information_question_probability", 0.0))
+        if not 0.0 <= unknown_probability <= 1.0:
+            raise ValueError("simulator.unknown_information_question_probability must be in [0, 1]")
 
         language = self._raw.get("language") or {}
         words = self._level_mapping(language, "max_words_by_verbosity", cast=int)

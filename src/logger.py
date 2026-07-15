@@ -41,10 +41,12 @@ class DialogueLogger:
         metrics = metrics_for(state, outcome)
         transcript.write_text("\n".join(self._transcript_lines(state, outcome, seed, metrics)), encoding="utf-8")
 
+        scenario_payload = _jsonable(state.scenario)
+        scenario_payload["shared_context"] = state.scenario.context_text
         payload: dict[str, Any] = {
             "run_id": self.run_id,
             "seed": seed,
-            "scenario": _jsonable(state.scenario),
+            "scenario": scenario_payload,
             "personas": [_jsonable(persona) for persona in state.personas],
             "runtimes": _jsonable(state.runtimes),
             "phase_history": list(state.phase_history),
@@ -131,11 +133,13 @@ class DialogueLogger:
             f"Topic: {state.scenario.topic}",
             f"Random seed: {seed}",
             "",
+            "## Scenario context",
+            "",
+            state.scenario.context_text or "No additional shared context.",
+            "",
             "## Public option board",
             "",
         ]
-        for fact in state.scenario.shared_context:
-            lines.append(f"- Shared: {fact}")
         for option in state.scenario.options:
             lines.append(f"- {option.public_line()}")
 
@@ -163,7 +167,7 @@ class DialogueLogger:
             "## Run summary",
             "",
             f"- Participant turns: {metrics['turns']['participant']}",
-            f"- Voluntary turns: {metrics['turns']['voluntary']}",
+            f"- Self-selected turns: {metrics['turns']['voluntary']}",
             f"- Moderator turns: {metrics['turns']['moderator']}",
             f"- Repairs / dropped turns: {metrics['generation']['repairs']} / {metrics['generation']['dropped']}",
             f"- Vote / movement fallbacks: {metrics['generation']['vote_fallbacks']} / {metrics['generation']['movement_fallbacks']}",
@@ -182,7 +186,7 @@ class DialogueLogger:
             "",
             "### Participant summary",
             "",
-            "| Participant | Total | Voluntary | Avg words | Initial → final |",
+            "| Participant | Total | Self-selected | Avg words | Initial → final |",
             "|---|---:|---:|---:|---|",
         ]
         for pid, row in metrics["participants"].items():
@@ -230,6 +234,7 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         "turns": {
             "participant": len(participant_turns),
             "voluntary": sum(turn.voluntary for turn in participant_turns),
+            "self_selected": sum(turn.voluntary for turn in participant_turns),
             "mandatory": sum(turn.mandatory for turn in participant_turns),
             "moderator": len(moderator_turns),
         },
@@ -248,7 +253,8 @@ def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
         },
         "questions": {
             "opened": len(question_rows),
-            "answered": sum(issue.response_count > 0 for issue in question_rows),
+            "answered": sum(issue.required_answer_completed for issue in question_rows),
+            "optional_follow_ups": sum(issue.optional_follow_up_count for issue in question_rows),
         },
         "issues": {
             "opened": len(issue_rows),

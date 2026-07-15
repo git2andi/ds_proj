@@ -6,7 +6,7 @@ import pytest
 
 from config_loader import cfg
 from dialogue import DialogueRunner
-from models import ActionType, BidPriority, Phase, StanceUpdate, StanceUpdateKind, UserAction
+from models import ActionType, BidPriority, Phase, StanceUpdate, StanceUpdateKind, TurnRecord, UserAction
 from tests.fixtures import ActionRendererLLM, NullLogger, make_persona, make_personas, make_runner, make_scenario
 
 
@@ -96,14 +96,77 @@ def test_floor_does_not_equalize_participation():
     assert voluntary["p1"] >= voluntary["p2"]
 
 
-def test_direct_question_issue_closes_after_required_answer():
-    result = make_runner(("A", "B", "C"), seed=8).run()
-    answered = [
-        issue for issue in result.state.issue_history
-        if issue.kind.value == "question" and issue.outcome == "answered"
-    ]
-    assert answered
-    assert all(issue.status.value == "resolved" for issue in answered)
+def test_direct_question_allows_one_optional_follow_up_then_resolves():
+    from models import IssueEffect, IssueKind, IssueStatus
+
+    runner = make_runner(("A", "B", "C"), seed=8)
+    runner.state.phase = Phase.DISCUSSION
+    question = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.ASK,
+        ("B",), addressee_id="p2", reason="background noise",
+        issue_effect=IssueEffect.OPEN,
+    )
+    runner._commit_action(
+        question,
+        "Ben, does the background noise change your choice of Cafe?",
+        mandatory=False,
+        voluntary=True,
+        liveness_forced=False,
+        repair_count=0,
+    )
+    issue_id = runner.state.active_issue.id
+    answer = UserAction(
+        "p2", True, BidPriority.REQUIRED, ActionType.ANSWER,
+        ("B",), addressee_id="p1", reason="the atmosphere matters more",
+        issue_id=issue_id, issue_effect=IssueEffect.RESPOND,
+    )
+    runner._commit_action(
+        answer,
+        "No, the atmosphere still matters more to me.",
+        mandatory=True,
+        voluntary=False,
+        liveness_forced=False,
+        repair_count=0,
+    )
+    assert runner.state.response_obligation is None
+    assert runner.state.active_issue is not None
+    assert runner.state.active_issue.required_answer_completed
+
+    follow_up = UserAction(
+        "p3", True, BidPriority.ISSUE_RESPONSE, ActionType.COMMENT,
+        ("B",), reason="the noise matters to me too",
+        issue_id=issue_id, issue_effect=IssueEffect.RESPOND,
+    )
+    runner._commit_action(
+        follow_up,
+        "The noise matters to me too.",
+        mandatory=False,
+        voluntary=True,
+        liveness_forced=False,
+        repair_count=0,
+    )
+    assert runner.state.active_issue is None
+    closed = runner.state.issue_history[-1]
+    assert closed.kind is IssueKind.QUESTION
+    assert closed.status is IssueStatus.RESOLVED
+    assert closed.outcome == "answered_with_follow_up"
+
+
+def test_answered_question_resolves_when_nobody_follows_up():
+    from models import ActiveIssue, IssueKind, IssueStatus
+
+    runner = make_runner(("A", "B", "C"), seed=8)
+    runner.state.active_issue = ActiveIssue(
+        id="i1", kind=IssueKind.QUESTION, option_focus=("B",),
+        opened_by="p1", addressed_to="p2", summary="background noise",
+        status=IssueStatus.OPEN, opened_at_turn=0, last_relevant_turn=1,
+        response_count=1, responded_by={"p2"}, required_answer_completed=True,
+        outcome="answered",
+    )
+    runner._close_or_stale_inactive_issue("nobody followed up")
+    assert runner.state.active_issue is None
+    assert runner.state.issue_history[-1].status is IssueStatus.RESOLVED
+    assert runner.state.issue_history[-1].outcome == "answered"
 
 
 def test_narrowing_is_adaptive_instead_of_forcing_everyone_to_restate():
@@ -186,7 +249,7 @@ def test_incomplete_comparison_does_not_create_hidden_comparison_evidence():
     assert not runner.state.public_comparisons
 
 
-def test_tie_narrowing_prompt_is_hidden_when_no_simulator_wants_to_move(monkeypatch, capsys):
+def test_complete_split_gets_one_visible_compromise_prompt_without_untouched_options(monkeypatch, capsys):
     import simulator as simulator_module
 
     monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 0.0)
@@ -195,9 +258,71 @@ def test_tie_narrowing_prompt_is_hidden_when_no_simulator_wants_to_move(monkeypa
         runner.state.runtimes[participant_id].public_preference = option_id
     runner._run_narrowing(revote=False)
     output = capsys.readouterr().out
-    assert "There is no clear leader yet" not in output
-    assert "We seem stuck" not in output
+    assert "still split" in output
+    assert "Library" in output
+    assert "Cafe" in output
+    assert "Lab" in output
+    assert "Online" not in output
     assert runner.state.stats.selected_movement_actions == 0
+
+
+def test_soft_coverage_respects_engagement_and_can_receive_no_response(monkeypatch, capsys):
+    import simulator as simulator_module
+
+    monkeypatch.setattr(simulator_module, "bid_probability", lambda _level: 0.0)
+    runner = make_runner(("A", "B", "C"), seed=33)
+    runner.state.phase = Phase.DISCUSSION
+
+    assert runner._run_coverage_window("D") is False
+    assert "D" in runner.state.coverage_no_interest
+    assert not runner.state.participant_turns
+    assert "We have not really considered" not in capsys.readouterr().out
+
+
+def test_public_unanimity_prevents_liveness_filler_before_minimum(monkeypatch):
+    from simulator import UserSimulator
+
+    runner = make_runner(("A", "A", "A"), seed=34)
+    runner.state.phase = Phase.DISCUSSION
+    runner._moderator_enabled = False
+    for index, participant_id in enumerate(("p1", "p2", "p3")):
+        runner.state.runtimes[participant_id].public_preference = "A"
+        runner.state.turns.append(
+            TurnRecord(
+                index,
+                Phase.DISCUSSION,
+                participant_id,
+                runner.state.persona(participant_id).name,
+                "A remains my choice for a different reason.",
+                action=UserAction(
+                    participant_id,
+                    True,
+                    BidPriority.NORMAL,
+                    ActionType.SUPPORT,
+                    ("A",),
+                    reason=f"reason {index}",
+                ),
+                voluntary=True,
+            )
+        )
+
+    def no_bid_unless_forced(self, _state, *, liveness_forced=False):
+        if liveness_forced:
+            return UserAction(
+                self.id,
+                True,
+                BidPriority.NORMAL,
+                ActionType.SUPPORT,
+                ("A",),
+                reason="forced filler",
+            )
+        return UserAction(self.id, False, BidPriority.NORMAL, ActionType.COMMENT)
+
+    monkeypatch.setattr(UserSimulator, "propose", no_bid_unless_forced)
+    runner._run_discussion()
+
+    assert runner.state.stats.liveness_forced_turns == 0
+    assert len(runner.state.participant_turns) == 3
 
 
 def test_failed_vote_realization_uses_authoritative_visible_fallback():
@@ -260,8 +385,8 @@ def test_failed_compromise_realization_uses_fallback_and_keeps_nudge_answered(mo
         runner.state.runtimes[participant_id].public_preference = option_id
     runner._run_narrowing(revote=False)
     output = capsys.readouterr().out
-    assert "There is no clear leader yet" in output
-    assert "I can accept" in output
+    assert "still split" in output
+    assert "relaxed atmosphere" in output.casefold()
     assert runner.state.stats.movement_fallbacks >= 1
     assert runner.state.stats.movement_realization_failures >= 1
     assert runner.state.stats.dropped_turns == 0
@@ -305,3 +430,129 @@ def test_failed_mandatory_movement_uses_grounded_fallback():
     assert runner.state.stats.movement_fallbacks == 1
     assert "B" in runner.state.runtimes["p1"].public_acceptances
     assert runner.state.runtimes["p1"].acceptance_reasons["B"] == "relaxed atmosphere"
+
+
+def test_clear_leader_narrowing_stops_after_enough_new_support(monkeypatch):
+    import simulator as simulator_module
+    from dialogue import DialogueRunner
+    from tests.fixtures import ActionRendererLLM, NullLogger, make_personas, make_scenario
+
+    monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 1.0)
+    scenario = make_scenario()
+    personas = make_personas(("A", "A", "A", "B", "C", "D", "B"))
+    runner = DialogueRunner(
+        "", scenario=scenario, personas=personas,
+        llm=ActionRendererLLM(), logger=NullLogger(), seed=81,
+    )
+    for persona, preference in zip(personas, ("A", "A", "A", "B", "C", "D", "B")):
+        runtime = runner.state.runtimes[persona.id]
+        runtime.public_preference = preference
+        runtime.preferred_option = preference
+    runner.state.phase = Phase.DISCUSSION
+    runner._run_narrowing(revote=False)
+    accepted_a = sum(
+        runtime.public_preference == "A" or "A" in runtime.public_acceptances
+        for runtime in runner.state.runtimes.values()
+    )
+    assert accepted_a >= 4
+    # Three initial supporters need only one additional acceptance for a strict
+    # seven-person majority; the runtime should not march every dissenter through.
+    movement_turns = [
+        turn for turn in runner.state.participant_turns
+        if turn.phase is Phase.NARROWING and turn.stance_update is not None
+    ]
+    assert len(movement_turns) <= 2
+
+
+def test_reopening_same_concern_increments_global_record_once():
+    from models import IssueEffect, IssueKind, IssueStatus
+
+    runner = make_runner(("A", "B", "C"), seed=44)
+    runner.state.phase = Phase.DISCUSSION
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.CONCERN,
+        option_focus=("B",), reason="background noise",
+        issue_effect=IssueEffect.OPEN,
+    )
+    runner._open_issue(IssueKind.CONCERN, action, "Cafe may have background noise.")
+    key = runner.state.active_issue.issue_key
+    runner._close_active_issue(IssueStatus.STALE, "moved on")
+    runner.state.phase = Phase.NARROWING
+    runner._open_issue(IssueKind.CONCERN, action, "The background noise still matters.")
+    assert runner.state.issue_records[key].reopen_count == 1
+
+
+def test_small_group_shared_acceptance_does_not_close_at_bare_minimum(monkeypatch):
+    runner = make_runner(("A", "B", "B"), seed=52)
+    minimum, target, _maximum = cfg.conversation_turn_budgets(3)
+    threshold = min(target, minimum + 3)
+    assert threshold > minimum
+
+
+def test_large_group_clear_leader_narrowing_caps_required_final_positions(monkeypatch):
+    import simulator as simulator_module
+
+    monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 0.0)
+    runner = make_runner(("A", "B", "C", "D", "B", "C", "D"), seed=91)
+    for persona, preference in zip(runner.state.personas, ("A", "B", "C", "D", "B", "C", "D")):
+        runtime = runner.state.runtimes[persona.id]
+        runtime.public_preference = preference
+        runtime.preferred_option = preference
+    runner.state.phase = Phase.DISCUSSION
+    runner._run_narrowing(revote=False)
+    mandatory = [
+        turn for turn in runner.state.participant_turns
+        if turn.phase is Phase.NARROWING and turn.mandatory
+    ]
+    assert len(mandatory) <= int(cfg.conversation.large_group_narrowing_final_position_cap)
+    narrowing_turns = [
+        turn for turn in runner.state.participant_turns
+        if turn.phase is Phase.NARROWING
+    ]
+    assert len(narrowing_turns) <= 2 * int(
+        cfg.conversation.large_group_narrowing_final_position_cap
+    )
+
+
+def test_complete_split_no_response_bridge_replaces_immediate_vote_prompt(monkeypatch, capsys):
+    import simulator as simulator_module
+
+    monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 0.0)
+    runner = make_runner(("A", "B", "C"), seed=141)
+    for participant_id, option_id in zip(("p1", "p2", "p3"), ("A", "B", "C")):
+        runtime = runner.state.runtimes[participant_id]
+        runtime.public_preference = option_id
+        runtime.preferred_option = option_id
+    runner.state.phase = Phase.DISCUSSION
+
+    accepted, movement = runner._run_narrowing(revote=False)
+    assert accepted == 0
+    assert movement == 0
+    runner._run_voting(revote=False)
+
+    moderator_texts = [turn.text for turn in runner.state.turns if turn.moderator]
+    assert any("No one? All right" in text for text in moderator_texts)
+    assert sum("final vote" in text.casefold() for text in moderator_texts) == 1
+
+
+def test_movement_fallback_has_multiple_natural_shapes():
+    runner = make_runner(("A", "B", "C"), seed=142)
+    actions = [
+        UserAction(
+            participant_id, True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+            ("B",), reason="relaxed atmosphere",
+            stance_update=StanceUpdate(
+                StanceUpdateKind.MAKE_ACCEPTABLE,
+                "B",
+                previous_option_id="A",
+                movement_reason="relaxed atmosphere",
+                movement_basis="common_ground",
+            ),
+        )
+        for participant_id in ("p1", "p2", "p3")
+    ]
+    outputs = {runner._movement_fallback_text(action) for action in actions}
+    assert len(outputs) >= 2
+    assert all("relaxed atmosphere" in output.casefold() for output in outputs)
+    assert not all("I still prefer" in output for output in outputs)
+    assert all("because relaxed atmosphere" not in output.casefold() for output in outputs)

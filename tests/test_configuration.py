@@ -20,13 +20,16 @@ def test_configured_trait_mappings_are_complete_and_monotonic():
 
 
 def test_scaled_conversation_budgets():
-    assert cfg.conversation_turn_budgets(2) == (4, 8, 12)
-    assert cfg.conversation_turn_budgets(3) == (6, 12, 18)
-    assert cfg.conversation_turn_budgets(4) == (8, 16, 24)
+    assert cfg.conversation_turn_budgets(2) == (4, 10, 14)
+    assert cfg.conversation_turn_budgets(3) == (6, 15, 21)
+    assert cfg.conversation_turn_budgets(4) == (8, 20, 28)
     assert cfg.conversation_turn_budgets(6) == (12, 22, 30)
     assert cfg.conversation_turn_budgets(7) == (14, 22, 30)
     assert int(cfg.conversation.compromise_window_max_turns) == 1
     assert int(cfg.conversation.narrowing_reaction_turn_cap) == 2
+    assert int(cfg.conversation.large_group_narrowing_final_position_cap) == 3
+    assert int(cfg.conversation.recent_turns_in_prompt) == 7
+    assert [cfg.level_value("language", "max_words_by_verbosity", level, cast=int) for level in range(1, 6)] == [8, 12, 16, 22, 27]
 
 
 def _write_config(tmp_path: Path, mutate) -> Path:
@@ -63,4 +66,23 @@ def test_config_rejects_invalid_per_participant_pacing(tmp_path):
         data["conversation"]["hard_max_voluntary_turns_per_participant"] = 5
     path = _write_config(tmp_path, mutate)
     with pytest.raises(ValueError, match="per-participant budgets"):
+        Config(path)
+
+
+def test_config_rejects_invalid_unknown_information_probability(tmp_path):
+    path = _write_config(
+        tmp_path,
+        lambda data: data["simulator"].update(
+            {"unknown_information_question_probability": 1.5}
+        ),
+    )
+    with pytest.raises(ValueError, match="unknown_information_question_probability"):
+        Config(path)
+
+
+def test_config_rejects_negative_issue_response_caps(tmp_path):
+    def mutate(data):
+        data["conversation"]["direct_question_optional_follow_up_cap"] = -1
+    path = _write_config(tmp_path, mutate)
+    with pytest.raises(ValueError, match="direct_question_optional_follow_up_cap"):
         Config(path)

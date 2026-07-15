@@ -40,14 +40,12 @@ class BidPriority(IntEnum):
 
     NORMAL = 1
     ISSUE_RESPONSE = 2
-    ISSUE_OWNER_REACTION = 3
-    REQUIRED = 4
+    REQUIRED = 3
 
 
 class IssueKind(str, Enum):
     QUESTION = "question"
     CONCERN = "concern"
-    COMPARISON = "comparison"
 
 
 class IssueStatus(str, Enum):
@@ -69,7 +67,6 @@ class QuestionMode(str, Enum):
 
 
 class ResponseMode(str, Enum):
-    KNOWN_MITIGATION = "known_mitigation"
     ACCEPT_TRADEOFF = "accept_tradeoff"
     MAINTAIN_CONCERN = "maintain_concern"
     UNKNOWN = "unknown"
@@ -150,6 +147,11 @@ class Scenario:
     setup_notes: list[str] = field(default_factory=list)
 
     @property
+    def context_text(self) -> str:
+        """Return the shared scenario description as one readable paragraph."""
+        return " ".join(part.strip() for part in self.shared_context if part.strip())
+
+    @property
     def option_ids(self) -> list[str]:
         return [option.id for option in self.options]
 
@@ -214,6 +216,7 @@ class Persona:
     preferred_options: list[str]
     age: int
     speech_style: str
+    style_tendencies: tuple[str, ...] = ()
     rejection: str | None = None
     rejection_reason: str = ""
     option_stances: dict[str, OptionStance] = field(default_factory=dict)
@@ -262,7 +265,6 @@ class UserAction:
     question_mode: QuestionMode | None = None
     response_mode: ResponseMode | None = None
     decisive_reason: str = ""
-    condition: str = ""
 
     def copy(self) -> "UserAction":
         return UserAction(
@@ -284,18 +286,19 @@ class UserAction:
             question_mode=self.question_mode,
             response_mode=self.response_mode,
             decisive_reason=self.decisive_reason,
-            condition=self.condition,
         )
 
 
 @dataclass(slots=True)
 class IssueRecord:
     key: tuple[str, str]
+    kind: IssueKind | None = None
     status: IssueStatus = IssueStatus.OPEN
     last_issue_id: str | None = None
     last_relevant_turn: int = -1
     last_closed_turn: int = -1
     outcome: str | None = None
+    reopen_count: int = 0
 
 
 @dataclass(slots=True)
@@ -316,7 +319,10 @@ class ActiveIssue:
     reason_source: ReasonSource | None = None
     issue_key: tuple[str, str] | None = None
     response_count: int = 0
+    responded_by: set[str] = field(default_factory=set)
     owner_reacted: bool = False
+    required_answer_completed: bool = False
+    optional_follow_up_count: int = 0
     question_mode: QuestionMode | None = None
 
 
@@ -369,6 +375,7 @@ class ParticipantRuntime:
     asked_question_keys: set[str] = field(default_factory=set)
     responded_stimuli: set[int] = field(default_factory=set)
     responded_issue_ids: set[str] = field(default_factory=set)
+    acknowledged_options: set[str] = field(default_factory=set)
     used_compromise_options: set[str] = field(default_factory=set)
     voluntary_turns: int = 0
     mandatory_answers: int = 0
@@ -458,6 +465,7 @@ class DialogueState:
     active_issue: ActiveIssue | None = None
     issue_history: list[ActiveIssue] = field(default_factory=list)
     issue_records: dict[tuple[str, str], IssueRecord] = field(default_factory=dict)
+    asked_public_question_keys: set[tuple[str, str, str]] = field(default_factory=set)
     response_obligation: str | None = None
     group_stimulus: GroupStimulus | None = None
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)

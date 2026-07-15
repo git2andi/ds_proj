@@ -20,6 +20,7 @@ from models import (
     DialogueState,
     IssueEffect,
     IssueKind,
+    IssueStatus,
     OpeningMode,
     ParticipantRuntime,
     Phase,
@@ -101,6 +102,23 @@ def _reason_identity(action: UserAction) -> str:
     return _normalized_reason(action.reason)
 
 
+
+
+def public_question_key(action: UserAction) -> tuple[str, str, str]:
+    """Return the global identity of a direct question.
+
+    The same participant should not be asked the same option concern again just
+    because another simulator formulates it differently.
+    """
+
+    addressee = action.addressee_id or "group"
+    option_id = action.option_focus[0] if action.option_focus else "group"
+    concern = (
+        action.reason_source.public_value
+        if action.reason_source is not None
+        else action.reason
+    )
+    return addressee, option_id, _normalized_reason(concern)
 def reason_key(action: UserAction) -> str:
     """Semantic reason key independent of act and addressee."""
 
@@ -209,17 +227,6 @@ class UserSimulator:
         if state.response_obligation == self.id:
             return self._answer_action(state, runtime)
 
-        issue = state.active_issue
-        if (
-            issue is not None
-            and issue.kind is IssueKind.CONCERN
-            and issue.opened_by == self.id
-            and issue.response_count > 0
-            and not issue.owner_reacted
-        ):
-            reactions = self._owner_reaction(state, runtime, issue)
-            return reactions[0] if reactions else self._silence()
-
         candidates = self._candidate_actions(state, runtime)
         if not candidates:
             return self._silence()
@@ -283,14 +290,15 @@ class UserSimulator:
             and action.issue_id not in runtime.responded_issue_ids
         ):
             return True
-        if key in runtime.used_reason_keys:
+        allow_reuse = bool(cfg.conversation.get("diagnostic_allow_reason_reuse", False))
+        if key in runtime.used_reason_keys and not allow_reuse:
             return False
         if action.act in {
             ActionType.SUPPORT,
             ActionType.CONCERN,
             ActionType.COMPARE,
             ActionType.COMMENT,
-        } and self._public_reason_already_visible(state, key):
+        } and self._public_reason_already_visible(state, key) and not allow_reuse:
             return False
         return True
 
@@ -328,7 +336,7 @@ class UserSimulator:
             )
         if leader == current:
             unresolved = self._owned_unresolved_concern(state, leader)
-            if unresolved is not None:
+            if unresolved is not None and self._concern_can_reopen(state, unresolved):
                 return UserAction(
                     self.id,
                     True,
@@ -357,7 +365,7 @@ class UserSimulator:
             )
 
         unresolved = self._owned_unresolved_concern(state, leader)
-        if unresolved is not None:
+        if unresolved is not None and self._concern_can_reopen(state, unresolved):
             return UserAction(
                 self.id,
                 True,
@@ -522,26 +530,32 @@ class UserSimulator:
         runtime: ParticipantRuntime,
         issue: ActiveIssue,
     ) -> list[UserAction]:
-        if issue.status.value != "open":
+        if issue.status is not IssueStatus.OPEN:
             return []
 
         if issue.kind is IssueKind.QUESTION:
-            if issue.addressed_to == self.id:
+            if state.response_obligation == self.id:
                 return [self._answer_action(state, runtime)]
-            return []
-
-        if (
-            issue.kind is IssueKind.CONCERN
-            and issue.opened_by == self.id
-            and issue.response_count > 0
-            and not issue.owner_reacted
-        ):
-            return self._owner_reaction(state, runtime, issue)
-
-        if issue.opened_by == self.id:
-            return []
+            if not issue.required_answer_completed:
+                return []
+            if issue.optional_follow_up_count >= int(
+                cfg.conversation.direct_question_optional_follow_up_cap
+            ):
+                return []
+            if self.id in issue.responded_by:
+                return []
+            return self._question_follow_up(state, runtime, issue)
 
         if issue.kind is IssueKind.CONCERN:
+            if issue.opened_by == self.id:
+                if issue.response_count > 0 and not issue.owner_reacted:
+                    return self._owner_reaction(state, runtime, issue)
+                return []
+            if self.id in issue.responded_by:
+                return []
+            if issue.response_count >= int(cfg.conversation.concern_external_response_cap):
+                return []
+
             option_id = issue.option_focus[0] if issue.option_focus else runtime.preferred_option
             if runtime.rank(option_id) >= STANCE_NEUTRAL:
                 basis, source = self._positive_reason(state, option_id)
@@ -566,24 +580,29 @@ class UserSimulator:
                 )
             ]
 
-        if issue.kind is IssueKind.COMPARISON and len(issue.option_focus) >= 2:
-            preferred = max(issue.option_focus, key=runtime.rank)
-            reason, source = self._positive_reason(state, preferred)
-            return [
-                UserAction(
-                    self.id,
-                    True,
-                    BidPriority.ISSUE_RESPONSE,
-                    ActionType.COMPARE,
-                    option_focus=issue.option_focus,
-                    reason=reason,
-                    reason_source=source,
-                    personal_context=self._personal_context(source),
-                    issue_id=issue.id,
-                    issue_effect=IssueEffect.RESPOND,
-                )
-            ]
         return []
+
+    def _question_follow_up(
+        self,
+        state: DialogueState,
+        runtime: ParticipantRuntime,
+        issue: ActiveIssue,
+    ) -> list[UserAction]:
+        """Reuse ordinary reaction logic for one optional post-answer turn.
+
+        An answered question does not manufacture a special response for every
+        remaining simulator. A follow-up exists only when the latest answer
+        naturally triggers a novel reaction that this simulator could already
+        make on the open floor.
+        """
+
+        reaction = self._reaction_action(state, runtime)
+        if reaction is None:
+            return []
+        reaction.priority = BidPriority.NORMAL
+        reaction.issue_id = issue.id
+        reaction.issue_effect = IssueEffect.RESPOND
+        return [reaction]
 
     def _owner_reaction(
         self,
@@ -610,7 +629,7 @@ class UserSimulator:
                 UserAction(
                     self.id,
                     True,
-                    BidPriority.ISSUE_OWNER_REACTION,
+                    BidPriority.ISSUE_RESPONSE,
                     ActionType.COMPROMISE,
                     option_focus=(option_id,),
                     reason=issue.summary,
@@ -634,7 +653,7 @@ class UserSimulator:
                 UserAction(
                     self.id,
                     True,
-                    BidPriority.ISSUE_OWNER_REACTION,
+                    BidPriority.ISSUE_RESPONSE,
                     ActionType.COMMENT,
                     option_focus=(option_id,),
                     reason=issue.summary,
@@ -650,7 +669,7 @@ class UserSimulator:
             UserAction(
                 self.id,
                 True,
-                BidPriority.ISSUE_OWNER_REACTION,
+                BidPriority.ISSUE_RESPONSE,
                 ActionType.CONCERN,
                 option_focus=(option_id,),
                 reason=negative or issue.summary,
@@ -772,10 +791,32 @@ class UserSimulator:
                     reason_source=source,
                     personal_context=self._personal_context(source),
                 )
-                if reason_key(action) not in runtime.used_reason_keys:
+                if (
+                    bool(cfg.conversation.get("diagnostic_allow_reason_reuse", False))
+                    or reason_key(action) not in runtime.used_reason_keys
+                ):
                     return action
+            if (
+                option_id not in runtime.acknowledged_options
+                and latest.action.act in {
+                    ActionType.SUPPORT,
+                    ActionType.COMMENT,
+                    ActionType.ANSWER,
+                    ActionType.COMPARE,
+                }
+            ):
+                return UserAction(
+                    self.id,
+                    True,
+                    BidPriority.NORMAL,
+                    ActionType.ACKNOWLEDGE,
+                    option_focus=(option_id,),
+                    addressee_id=latest.speaker_id,
+                )
         elif runtime.rank(option_id) <= STANCE_DISLIKED:
             for reason, source in self._negative_reason_candidates(state, option_id):
+                if self._concern_was_opened(state, option_id, reason, source):
+                    continue
                 action = UserAction(
                     self.id,
                     True,
@@ -788,7 +829,10 @@ class UserSimulator:
                     personal_context=self._personal_context(source),
                     issue_effect=IssueEffect.OPEN,
                 )
-                if reason_key(action) not in runtime.used_reason_keys:
+                if (
+                    bool(cfg.conversation.get("diagnostic_allow_reason_reuse", False))
+                    or reason_key(action) not in runtime.used_reason_keys
+                ):
                     return action
         return None
 
@@ -800,7 +844,25 @@ class UserSimulator:
         if self.persona.hard_blocker:
             return None
 
-        pool = list(state.narrowing_options) or list(state.scenario.option_ids)
+        if state.narrowing_options:
+            pool = list(state.narrowing_options)
+        elif state.phase is Phase.NARROWING:
+            publicly_considered: set[str] = set()
+            for other in state.runtimes.values():
+                if other.public_preference in state.scenario.option_ids:
+                    publicly_considered.add(other.public_preference)
+                publicly_considered.update(
+                    option_id
+                    for option_id in other.public_acceptances
+                    if option_id in state.scenario.option_ids
+                )
+            pool = [
+                option_id
+                for option_id in state.scenario.option_ids
+                if option_id in publicly_considered
+            ]
+        else:
+            pool = list(state.scenario.option_ids)
         candidates = [
             option_id
             for option_id in sorted(pool)
@@ -904,7 +966,10 @@ class UserSimulator:
                 reason_source=source,
                 personal_context=self._personal_context(source),
             )
-            if reason_key(action) not in runtime.used_reason_keys:
+            if (
+                bool(cfg.conversation.get("diagnostic_allow_reason_reuse", False))
+                or reason_key(action) not in runtime.used_reason_keys
+            ):
                 return action
         return None
 
@@ -942,6 +1007,8 @@ class UserSimulator:
                 )
                 key = f"concern:{option_id}:{semantic}"
                 if key in runtime.opened_issue_keys:
+                    continue
+                if self._concern_was_opened(state, option_id, reason, source):
                     continue
                 return UserAction(
                     self.id,
@@ -981,7 +1048,15 @@ class UserSimulator:
             mode_pool = list(configured_modes)
             if not decisive and QuestionMode.TRADEOFF in mode_pool:
                 mode_pool.remove(QuestionMode.TRADEOFF)
-            question_mode = self.rng.choice(mode_pool or [QuestionMode.CHOICE_IMPACT])
+            mode_pool = [mode for mode in mode_pool if mode is not QuestionMode.CONDITION]
+            unknown_probability = float(
+                cfg.simulator.unknown_information_question_probability
+            )
+            question_mode = (
+                QuestionMode.CONDITION
+                if self.rng.random() < unknown_probability
+                else self.rng.choice(mode_pool or [QuestionMode.CHOICE_IMPACT])
+            )
             action = UserAction(
                 self.id,
                 True,
@@ -996,8 +1071,10 @@ class UserSimulator:
                 question_mode=question_mode,
                 decisive_reason=decisive,
             )
-            public_issue_key = (option_id, _normalized_reason(reason))
-            if reason_key(action) in runtime.asked_question_keys or public_issue_key in state.issue_records:
+            if (
+                reason_key(action) in runtime.asked_question_keys
+                or public_question_key(action) in state.asked_public_question_keys
+            ):
                 continue
             return action
         return None
@@ -1256,6 +1333,28 @@ class UserSimulator:
                 and issue.status.value != "resolved"
             ),
             None,
+        )
+
+    @staticmethod
+    def _concern_was_opened(
+        state: DialogueState,
+        option_id: str,
+        reason: str,
+        source: ReasonSource | None = None,
+    ) -> bool:
+        semantic = source.public_value if source is not None else reason
+        record = state.issue_records.get((option_id, _normalized_reason(semantic)))
+        return record is not None and record.kind is IssueKind.CONCERN
+
+    @staticmethod
+    def _concern_can_reopen(state: DialogueState, issue: ActiveIssue) -> bool:
+        if state.phase is not Phase.NARROWING or issue.issue_key is None:
+            return False
+        record = state.issue_records.get(issue.issue_key)
+        return bool(
+            record is not None
+            and record.kind is IssueKind.CONCERN
+            and record.reopen_count < 1
         )
 
     def _publicly_preferred_by_other(

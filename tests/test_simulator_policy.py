@@ -11,7 +11,7 @@ from models import (
     TurnRecord,
     UserAction,
 )
-from simulator import FloorManager, UserSimulator, bid_probability, reason_key, movement_probability
+from simulator import FloorManager, UserSimulator, bid_probability, public_question_key, reason_key, movement_probability
 from tests.fixtures import make_persona, make_scenario, make_state
 
 
@@ -70,6 +70,25 @@ def test_raw_attributes_do_not_become_ordinary_reason_candidates():
     reasons = " ".join(action.reason for action in actions)
     assert "20:00" not in reasons
     assert "standard desks" not in reasons
+    assert sum(action.act is ActionType.ASK for action in actions) <= 1
+
+
+def test_split_compromise_uses_only_publicly_preferred_or_accepted_options(monkeypatch):
+    state = make_state(("A", "B", "C"))
+    state.phase = Phase.NARROWING
+    state.narrowing_options = ()
+    for participant_id, option_id in zip(("p1", "p2", "p3"), ("A", "B", "C")):
+        state.runtimes[participant_id].public_preference = option_id
+
+    runtime = state.runtimes["p1"]
+    runtime.public_rejections.update({"B", "C"})
+    monkeypatch.setattr("simulator.movement_probability", lambda *_args, **_kwargs: 1.0)
+
+    action = UserSimulator(state.persona("p1"), random.Random(1))._compromise_action(
+        state,
+        runtime,
+    )
+    assert action is None
 
 
 def test_question_is_direct_and_not_reopened_after_use():
@@ -308,3 +327,240 @@ def test_vote_tie_candidates_are_sorted_before_seeded_choice():
 
     action = UserSimulator(state.persona("p1"), RecordingChoice()).decide_vote(state)
     assert action.vote_option == "B"
+
+
+def test_concern_owner_reaction_remains_voluntary(monkeypatch):
+    import simulator as simulator_module
+    from models import ActiveIssue, IssueKind, IssueStatus
+
+    state = make_state(("A", "B", "C"))
+    state.active_issue = ActiveIssue(
+        id="i1",
+        kind=IssueKind.CONCERN,
+        option_focus=("B",),
+        opened_by="p1",
+        addressed_to=None,
+        summary="background noise",
+        status=IssueStatus.OPEN,
+        opened_at_turn=0,
+        last_relevant_turn=1,
+        response_count=1,
+        responded_by={"p2"},
+    )
+    monkeypatch.setattr(simulator_module, "bid_probability", lambda _level: 0.0)
+    action = UserSimulator(state.persona("p1"), random.Random(2)).propose(state)
+    assert not action.wants_to_speak
+
+
+def test_concern_allows_two_distinct_external_responses_only():
+    from models import ActiveIssue, IssueKind, IssueStatus
+
+    state = make_state(("A", "B", "C"))
+    issue = ActiveIssue(
+        id="i1",
+        kind=IssueKind.CONCERN,
+        option_focus=("B",),
+        opened_by="p1",
+        addressed_to=None,
+        summary="background noise",
+        status=IssueStatus.OPEN,
+        opened_at_turn=0,
+        last_relevant_turn=0,
+        response_count=1,
+        responded_by={"p2"},
+    )
+    state.active_issue = issue
+
+    assert UserSimulator(state.persona("p2"), random.Random(1))._issue_actions(
+        state, state.runtimes["p2"], issue
+    ) == []
+    assert UserSimulator(state.persona("p3"), random.Random(1))._issue_actions(
+        state, state.runtimes["p3"], issue
+    )
+
+    issue.response_count = 2
+    issue.responded_by.add("p3")
+    assert UserSimulator(state.persona("p3"), random.Random(1))._issue_actions(
+        state, state.runtimes["p3"], issue
+    ) == []
+
+
+def test_answered_direct_question_allows_only_a_natural_voluntary_reaction():
+    from models import ActiveIssue, IssueEffect, IssueKind, IssueStatus, Phase, TurnRecord, UserAction
+
+    state = make_state(("A", "B", "B"))
+    issue = ActiveIssue(
+        id="i1",
+        kind=IssueKind.QUESTION,
+        option_focus=("B",),
+        opened_by="p1",
+        addressed_to="p2",
+        summary="whether noise changes the choice",
+        status=IssueStatus.OPEN,
+        opened_at_turn=0,
+        last_relevant_turn=1,
+        response_count=1,
+        responded_by={"p2"},
+        required_answer_completed=True,
+    )
+    state.active_issue = issue
+    answer = UserAction(
+        "p2", True, BidPriority.REQUIRED, ActionType.ANSWER,
+        option_focus=("B",), issue_id="i1", issue_effect=IssueEffect.RESPOND,
+        reason="the relaxed atmosphere matters more",
+    )
+    state.turns.append(TurnRecord(
+        index=0, phase=Phase.DISCUSSION, speaker_id="p2", speaker_name="Ben",
+        text="The relaxed atmosphere matters more to me.", action=answer,
+    ))
+
+    assert UserSimulator(state.persona("p2"), random.Random(1))._issue_actions(
+        state, state.runtimes["p2"], issue
+    ) == []
+    follow_up = UserSimulator(state.persona("p3"), random.Random(1))._issue_actions(
+        state, state.runtimes["p3"], issue
+    )
+    assert follow_up
+    assert follow_up[0].priority is BidPriority.NORMAL
+    assert follow_up[0].issue_id == "i1"
+    assert follow_up[0].issue_effect is IssueEffect.RESPOND
+
+    issue.optional_follow_up_count = 1
+    assert UserSimulator(state.persona("p1"), random.Random(1))._issue_actions(
+        state, state.runtimes["p1"], issue
+    ) == []
+
+
+def test_answered_question_has_no_follow_up_without_an_ordinary_reaction():
+    from models import ActiveIssue, IssueKind, IssueStatus
+
+    state = make_state(("A", "B", "C"))
+    issue = ActiveIssue(
+        id="i1", kind=IssueKind.QUESTION, option_focus=("B",),
+        opened_by="p1", addressed_to="p2", summary="noise",
+        status=IssueStatus.OPEN, opened_at_turn=0, last_relevant_turn=1,
+        response_count=1, responded_by={"p2"}, required_answer_completed=True,
+    )
+    state.active_issue = issue
+    assert UserSimulator(state.persona("p3"), random.Random(1))._issue_actions(
+        state, state.runtimes["p3"], issue
+    ) == []
+
+
+def test_condition_question_is_rarely_selectable_and_answers_unknown(monkeypatch):
+    from models import QuestionMode, ResponseMode
+
+    state = make_state(("A", "B", "C"))
+    for participant_id, option_id in zip(("p1", "p2", "p3"), ("A", "B", "C")):
+        state.runtimes[participant_id].public_preference = option_id
+    monkeypatch.setattr(
+        __import__("config_loader").cfg.simulator,
+        "unknown_information_question_probability",
+        1.0,
+    )
+    sim = UserSimulator(state.persona("p1"), random.Random(4))
+    question = sim._question_action(state, state.runtimes["p1"])
+    assert question is not None
+    assert question.question_mode is QuestionMode.CONDITION
+
+    from models import ActiveIssue, IssueKind, IssueStatus
+    state.active_issue = ActiveIssue(
+        id="i1",
+        kind=IssueKind.QUESTION,
+        option_focus=question.option_focus,
+        opened_by="p1",
+        addressed_to=question.addressee_id,
+        summary=question.reason,
+        status=IssueStatus.OPEN,
+        opened_at_turn=0,
+        last_relevant_turn=0,
+        question_mode=QuestionMode.CONDITION,
+    )
+    answerer = question.addressee_id
+    assert answerer is not None
+    answer = UserSimulator(state.persona(answerer), random.Random(1))._answer_action(
+        state, state.runtimes[answerer]
+    )
+    assert answer.response_mode is ResponseMode.UNKNOWN
+
+
+def test_same_concern_cannot_be_opened_again_by_another_simulator():
+    from models import IssueKind, IssueRecord, IssueStatus
+
+    state = make_state(("A", "A", "C"))
+    state.issue_records[("B", "background noise")] = IssueRecord(
+        key=("B", "background noise"),
+        kind=IssueKind.CONCERN,
+        status=IssueStatus.STALE,
+    )
+    sim = UserSimulator(state.persona("p1"), random.Random(1))
+    action = sim._concern_action(state, state.runtimes["p1"])
+    assert action is None or not (
+        action.option_focus == ("B",) and "background noise" in action.reason.casefold()
+    )
+
+
+def test_stale_concern_can_be_reopened_only_once_during_narrowing():
+    from models import ActiveIssue, IssueKind, IssueRecord, IssueStatus, Phase
+
+    state = make_state(("A", "B", "C"))
+    state.phase = Phase.NARROWING
+    key = ("B", "background noise")
+    issue = ActiveIssue(
+        id="i1", kind=IssueKind.CONCERN, option_focus=("B",),
+        opened_by="p1", addressed_to=None, summary="background noise",
+        status=IssueStatus.STALE, opened_at_turn=1, last_relevant_turn=2,
+        issue_key=key,
+    )
+    state.issue_records[key] = IssueRecord(
+        key=key, kind=IssueKind.CONCERN, status=IssueStatus.STALE,
+        last_issue_id="i1", reopen_count=0,
+    )
+    sim = UserSimulator(state.persona("p1"), random.Random(1))
+    assert sim._concern_can_reopen(state, issue)
+    state.issue_records[key].reopen_count = 1
+    assert not sim._concern_can_reopen(state, issue)
+
+
+def test_brief_agreement_is_available_once_after_reasons_are_exhausted():
+    from models import Phase, TurnRecord
+
+    state = make_state(("A", "A", "C"))
+    runtime = state.runtimes["p2"]
+    sim = UserSimulator(state.persona("p2"), random.Random(1))
+    latest_action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        option_focus=("A",), reason="quiet and predictable",
+    )
+    state.turns.append(TurnRecord(
+        index=0, phase=Phase.DISCUSSION, speaker_id="p1", speaker_name="Nora",
+        text="Library is quiet and predictable.", action=latest_action,
+    ))
+    for reason, source in sim._positive_reason_candidates(state, "A"):
+        runtime.used_reason_keys.add(reason_key(UserAction(
+            "p2", True, BidPriority.NORMAL, ActionType.COMMENT,
+            option_focus=("A",), reason=reason, reason_source=source,
+        )))
+
+    action = sim._reaction_action(state, runtime)
+    assert action is not None
+    assert action.act is ActionType.ACKNOWLEDGE
+    runtime.acknowledged_options.add("A")
+    assert sim._reaction_action(state, runtime) is None
+
+
+def test_same_public_question_cannot_be_reasked_by_another_simulator():
+    state = make_state(("A", "B", "A"))
+    for pid, option in zip(("p1", "p2", "p3"), ("A", "B", "A")):
+        state.runtimes[pid].public_preference = option
+
+    first = UserSimulator(state.persona("p1"), random.Random(1))._question_action(
+        state, state.runtimes["p1"]
+    )
+    assert first is not None and first.addressee_id == "p2"
+    state.asked_public_question_keys.add(public_question_key(first))
+
+    repeated = UserSimulator(state.persona("p3"), random.Random(1))._question_action(
+        state, state.runtimes["p3"]
+    )
+    assert repeated is None or public_question_key(repeated) != public_question_key(first)

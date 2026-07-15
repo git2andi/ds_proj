@@ -216,6 +216,9 @@ class ActionRendererLLM:
             option = action.split("around ", 1)[1].split(".", 1)[0].strip()
             return f"That works for me too; {option} is reasonable."
         if lower.startswith("respond to the concern"):
+            if "relevant positive point:" in lower:
+                reason = action.split("relevant positive point:", 1)[1].split(".", 1)[0].strip(" .")
+                return f"That concern is worth considering; {reason} is still a useful point."
             reason = action.rsplit("Decisive reason:", 1)[1].split(".", 1)[0].strip(" .")
             return f"I still support it; {reason} matters more to me."
         if lower.startswith("acknowledge this response"):

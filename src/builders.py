@@ -8,6 +8,7 @@ If it cannot produce a valid world, build() raises rather than fabricating one.
 
 from __future__ import annotations
 
+import hashlib
 import math
 import random
 import re
@@ -15,7 +16,7 @@ from dataclasses import asdict
 from typing import Any
 
 import prompts
-from aliases import validated_short_alias
+from aliases import normalize_option_text, validated_short_alias
 from config_loader import PROFILE_TRAIT_NAMES, cfg, parse_preference_shape
 from llm_client import get_llm_client
 from models import (
@@ -103,6 +104,84 @@ def _speech_style_for_profile(profile: dict, age: int) -> str:
     return manual if manual else _speech_style_for_age(age)
 
 
+def style_tendencies_for(
+    persona_id: str,
+    speech_style: str,
+    params: SimulatorParameters,
+    manual: tuple[str, ...] | list[str] | None = None,
+) -> tuple[str, ...]:
+    """Return two compact, stable realization tendencies for one persona.
+
+    They affect wording only. Selection is deterministic so a persona keeps the
+    same linguistic signature throughout a run and across repeated seeded runs.
+    """
+    supplied = tuple(str(item).strip() for item in (manual or ()) if str(item).strip())[:2]
+    if supplied:
+        return supplied
+
+    if params.directness >= 4:
+        primary = "often leads with the conclusion before explaining it"
+    elif params.directness <= 2:
+        primary = "often acknowledges the other view before disagreeing or moving"
+    else:
+        primary = "often frames the point as a practical trade-off"
+
+    candidates = [
+        "uses conversational contractions when they sound natural",
+        "connects option facts to a practical consequence",
+        "rarely addresses people by name unless clarity requires it",
+        "avoids repeated first-person sentence openings",
+        "states contrasts explicitly without sounding formal",
+    ]
+    style = speech_style.casefold()
+    if params.verbosity <= 2:
+        candidates.insert(0, "prefers one compact sentence")
+    elif params.verbosity >= 4:
+        candidates.insert(0, "may use two short sentences instead of one long sentence")
+    if "measured" in style or "traditional" in style:
+        candidates.insert(0, "uses careful qualification rather than blunt certainty")
+    elif "young" in style or "relaxed" in style or "casual" in style:
+        candidates.insert(0, "uses relaxed conversational wording and contractions")
+    elif "workplace" in style or "direct" in style:
+        candidates.insert(0, "states the main trade-off plainly")
+
+    digest = hashlib.sha256(f"{persona_id}|{speech_style}|{params.directness}|{params.verbosity}".encode()).digest()
+    secondary = candidates[digest[0] % len(candidates)]
+    if secondary == primary:
+        secondary = candidates[(digest[0] + 1) % len(candidates)]
+    return (primary, secondary)
+
+
+def normalize_shared_context(raw: Any) -> list[str]:
+    """Normalize shared context to one 1–2 sentence scenario description.
+
+    The internal model keeps a list for backward compatibility, but generated
+    and manual setup both store exactly one paragraph rather than bullet facts.
+    """
+    if isinstance(raw, str):
+        parts = [raw.strip()] if raw.strip() else []
+    elif isinstance(raw, (list, tuple)):
+        parts = [str(item).strip() for item in raw if str(item).strip()]
+    else:
+        parts = []
+    if not parts:
+        raise ValueError("shared_context must contain a 1–2 sentence scenario description")
+
+    normalized_parts: list[str] = []
+    for part in parts:
+        clean = " ".join(part.split())
+        if clean and clean[-1] not in ".!?":
+            clean += "."
+        normalized_parts.append(clean)
+    text = " ".join(normalized_parts)
+    sentences = [piece for piece in re.split(r"(?<=[.!?])\s+", text) if piece.strip()]
+    max_sentences = int(cfg.scenario.get("shared_context_max_sentences", 2))
+    max_words = int(cfg.scenario.get("shared_context_max_words", 48))
+    if not 1 <= len(sentences) <= max_sentences:
+        raise ValueError(f"shared_context must contain 1..{max_sentences} complete sentences")
+    if len(text.split()) > max_words:
+        raise ValueError(f"shared_context exceeds {max_words} words")
+    return [text]
 
 
 _YOUNG_FAMILY_RE = re.compile(
@@ -302,6 +381,9 @@ def manual_participant_profiles() -> list[dict]:
             "preferred_option": preferred,
             "age": int(row["age"]) if row.get("age") is not None and str(row.get("age")).strip() else None,
             "speech_style": str(row.get("speech_style") or "").strip(),
+            "style_tendencies": tuple(
+                str(item).strip() for item in (row.get("style_tendencies") or []) if str(item).strip()
+            )[:2],
             "hard_blocker": bool(row.get("hard_blocker", False)),
             "rejection": rejection,
             "rejection_reason": str(row.get("rejection_reason") or "").strip(),
@@ -572,7 +654,7 @@ class SetupBuilder:
                 concern=str(row.get("concern") or "").strip(),
             ))
         self._require_unique_short_names(options)
-        shared_context = [str(item).strip() for item in env.get("shared_context") or [] if str(item).strip()]
+        shared_context = normalize_shared_context(env.get("shared_context"))
         scenario = Scenario(
             topic=self.topic,
             options=options,
@@ -623,7 +705,7 @@ class SetupBuilder:
         data = self._llm.generate_json(
             prompts.setup_personas(
                 self.topic, n, trait_rows, required_preferences, options_json,
-                list(scenario.shared_context),
+                scenario.context_text,
                 hard_blocker_id=self._hard_blocker_id,
             ),
             profile="setup",
@@ -819,6 +901,9 @@ class SetupBuilder:
                 preferred_options=preferred_options,
                 age=age,
                 speech_style=_speech_style_for_profile(profile, age),
+                style_tendencies=style_tendencies_for(
+                    pid, _speech_style_for_profile(profile, age), params, profile.get("style_tendencies")
+                ),
                 rejection=profile.get("rejection"),
                 rejection_reason=profile.get("rejection_reason", ""),
                 option_stances=option_stances,
@@ -840,8 +925,8 @@ class SetupBuilder:
         # Alias problems never discard a substantively valid board: they get a
         # small alias-only repair call instead.
         alias_notes = self._ensure_valid_aliases(options, {card.id: prop for card, prop in parsed})
-        ctx_raw = raw.get("shared_context", [])
-        shared_context = [str(s).strip() for s in ctx_raw if str(s).strip()] if isinstance(ctx_raw, list) else []
+        ctx_raw = raw.get("shared_context", "")
+        shared_context = normalize_shared_context(ctx_raw)
         self._validate_participant_references(shared_context, n)
         scenario = Scenario(
             topic=self.topic,
@@ -925,6 +1010,18 @@ class SetupBuilder:
             if not invalid and not duplicates:
                 return notes
         remaining = {**invalid, **duplicates}
+        repaired = self._deterministic_alias_repair(options, set(remaining))
+        if repaired:
+            for oid, alias in repaired.items():
+                by_id[oid].short_name = alias
+                notes.append(
+                    f"alias_repaired_deterministically: option {oid} short_name set to {alias!r}"
+                )
+            invalid, duplicates = self._alias_problems(options, proposed)
+            if not invalid and not duplicates:
+                return notes
+
+        remaining = {**invalid, **duplicates}
         raise ValueError(
             "alias_repair_failed: could not obtain valid unique short aliases for "
             + ", ".join(
@@ -932,6 +1029,120 @@ class SetupBuilder:
                 for oid, alias in sorted(remaining.items())
             )
         )
+
+    @staticmethod
+    def _alias_candidates(option_name: str) -> list[str]:
+        """Return natural short phrases already present in ``option_name``.
+
+        This is a last-resort setup safeguard, not a general name summarizer.
+        It prefers carrier/brand phrases after ``with``, route phrases after
+        ``via``, meaningful suffixes, and finally short contiguous phrases.
+        Every returned candidate still passes the canonical alias validator.
+        """
+
+        max_words = int(cfg.scenario.short_alias_max_words)
+        words = re.findall(r"[\w'-]+", option_name, re.UNICODE)
+        if not words:
+            return []
+        lowered = [word.casefold() for word in words]
+        candidates: list[str] = []
+
+        def add(parts: list[str]) -> None:
+            parts = [part for part in parts if part.casefold() not in {"and", "or", "with", "via"}]
+            if not parts:
+                return
+            candidate = " ".join(parts[:max_words])
+            validated = validated_short_alias(option_name, candidate)
+            if validated and normalize_option_text(validated) not in {
+                normalize_option_text(existing) for existing in candidates
+            }:
+                candidates.append(validated)
+
+        if "with" in lowered:
+            index = lowered.index("with")
+            add(words[index + 1:index + 1 + max_words])
+
+        if "via" in lowered:
+            index = lowered.index("via")
+            end = lowered.index("with", index + 1) if "with" in lowered[index + 1:] else len(words)
+            route = words[index + 1:end]
+            segment: list[str] = []
+            segments: list[list[str]] = []
+            for word in route:
+                if word.casefold() == "and":
+                    if segment:
+                        segments.append(segment)
+                        segment = []
+                else:
+                    segment.append(word)
+            if segment:
+                segments.append(segment)
+            for part in segments:
+                add(part[-max_words:])
+            add([word for word in route if word.casefold() != "and"][-max_words:])
+
+        for size in range(max_words, 0, -1):
+            add(words[-size:])
+
+        generic = {
+            "a", "an", "the", "and", "or", "with", "via", "from", "to",
+            "option", "choice", "plan", "flight", "route", "service",
+        }
+        windows: list[tuple[int, int, list[str]]] = []
+        for size in range(max_words, 0, -1):
+            for start in range(0, len(words) - size + 1):
+                part = words[start:start + size]
+                meaningful = sum(word.casefold() not in generic for word in part)
+                windows.append((meaningful, start, part))
+        windows.sort(key=lambda row: (-row[0], -len(row[2]), -row[1]))
+        for _meaningful, _start, part in windows:
+            add(part)
+        return candidates
+
+    def _deterministic_alias_repair(
+        self,
+        options: list[OptionCard],
+        option_ids: set[str],
+    ) -> dict[str, str]:
+        """Find one unique validated alias for every remaining invalid option."""
+
+        if not option_ids:
+            return {}
+        used = {
+            normalize_option_text(option.short_name)
+            for option in options
+            if option.id not in option_ids and option.short_name
+        }
+        by_id = {option.id: option for option in options}
+        candidate_map = {
+            option_id: [
+                candidate
+                for candidate in self._alias_candidates(by_id[option_id].name)
+                if normalize_option_text(candidate) not in used
+            ]
+            for option_id in sorted(option_ids)
+        }
+        if any(not candidates for candidates in candidate_map.values()):
+            return {}
+
+        ordered = sorted(candidate_map, key=lambda oid: (len(candidate_map[oid]), oid))
+        assignment: dict[str, str] = {}
+
+        def choose(index: int, taken: set[str]) -> bool:
+            if index >= len(ordered):
+                return True
+            option_id = ordered[index]
+            for candidate in candidate_map[option_id]:
+                normalized = normalize_option_text(candidate)
+                if normalized in taken:
+                    continue
+                assignment[option_id] = candidate
+                if choose(index + 1, taken | {normalized}):
+                    return True
+                assignment.pop(option_id, None)
+            return False
+
+        return assignment if choose(0, set(used)) else {}
 
     @staticmethod
     def _validate_topic_participant_count(topic: str, n: int) -> None:
@@ -1068,6 +1279,9 @@ class SetupBuilder:
         # speech_style is builder-derived from age (or a manual profile
         # override); the persona LLM never writes it.
         speech_style = _speech_style_for_profile(profile, age)
+        style_tendencies = style_tendencies_for(
+            pid, speech_style, params, profile.get("style_tendencies")
+        )
         background = profile.get("description") or _require(
             row.get("background"),
             f"participant {pid} background",
@@ -1087,6 +1301,7 @@ class SetupBuilder:
             preferred_options=preferred_options,
             age=age,
             speech_style=speech_style,
+            style_tendencies=style_tendencies,
             rejection=rejection,
             rejection_reason=rejection_reason,
             option_stances=option_stances,
