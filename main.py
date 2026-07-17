@@ -41,15 +41,6 @@ def _explicit_topics(argv: list[str]) -> list[str]:
     return []
 
 
-def _topics_from_args(argv: list[str]) -> list[str]:
-    """Explicit topics, else one interactively prompted topic."""
-    topics = _explicit_topics(argv)
-    if topics:
-        return topics
-    topic = input("Topic: ").strip()
-    return [topic] if topic else []
-
-
 def main() -> int:
     environment = cfg.get("environment", None) or {}
     manual_mode = str(environment.get("mode", "auto")) == "manual"

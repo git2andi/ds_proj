@@ -21,6 +21,14 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
+# Transcripts contain unicode (e.g. the "−" minus sign in option boards). On a
+# Windows console defaulting to cp1252 this would crash on print; force UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+    except (AttributeError, ValueError):
+        pass
+
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 for path in (str(ROOT), str(SRC)):

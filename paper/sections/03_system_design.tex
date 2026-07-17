@@ -1,0 +1,37 @@
+\section{System Design}
+
+The system accepts a short decision topic and a configurable number of two to seven simulated participants. Its setup stage produces two artifacts before the dialogue starts: a public scenario shared by the whole group and one private persona for each simulator. Scenario and persona generation are fixed components of the current implementation; the later dialogue runtime consumes their structured output.
+
+\subsection{Scenario Generation}
+
+The scenario defines the public decision environment. It contains a topic, a short shared context, and four concrete alternatives. Every option has a stable identifier, a natural name, a short name, topic-specific public attributes, and concise advantages and disadvantages. All participants receive the same option board, and objective claims made during the dialogue must be grounded in this public information.
+
+The fixed option identifiers provide an unambiguous internal decision space even when participants use natural names in their messages. They also allow the system to record preferences and votes without open-ended semantic matching. The public board is displayed once before the conversation and remains available to the simulator policies throughout the run.
+
+\subsection{Persona Generation}
+
+Each participant receives a name, age, speech style, short background, private goal, four behavioral parameters, and an option-specific stance table. Engagement controls voluntary participation, verbosity controls the intended message length, directness influences wording, and stubbornness affects whether a participant accepts or switches to another option. The stance table ranks every option from preferred to rejected and provides participant-specific reasons for and against relevant alternatives.
+
+The private persona is available only to its owning simulator. Other participants observe personal information only when it is expressed in the visible dialogue. Objective option facts are never private: private information explains why a participant evaluates a public fact in a particular way, but it does not add new properties to the option board.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Simplified example of generated setup data.}
+\label{tab:setup-example}
+\begin{tabular}{@{}p{0.20\columnwidth}p{0.72\columnwidth}@{}}
+\toprule
+\textbf{Scenario} & Choose a workspace for a student project. \\
+\textbf{Context} & The group needs a location for weekly practical work. \\
+\textbf{Option A} & University Lab: specialist workstations; closes at 19:00; strong equipment, limited evening access. \\
+\textbf{Option B} & Community Center: flexible room; closes at 22:00; accessible, less technical equipment. \\
+\midrule
+\textbf{Simulator} & Nora, 31; relaxed practical speech style. \\
+\textbf{Background} & Works on a hardware-oriented project and often studies after work. \\
+\textbf{Traits} & Engagement 4/5, verbosity 2/5, directness 2/5, stubbornness 3/5. \\
+\textbf{Stance} & Prefers A because of the equipment; accepts B; dislikes A's early closing time. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:setup-example} is illustrative rather than a fixed template. Generated attributes and reasons depend on the input topic, and personas may have uneven information: a participant does not require one positive and one negative argument for every option. The setup only needs enough structure to support coherent individual decisions during the later discussion.

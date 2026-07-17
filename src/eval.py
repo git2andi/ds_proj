@@ -1,17 +1,15 @@
-"""Deterministic structural evaluation helpers."""
+"""Deterministic structural evaluation helpers.
+
+Lives in ``src/`` because it flattens the runtime's own metrics schema; the
+post-hoc evaluation scripts in ``eval/`` are consumers of this module.
+"""
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
 
-_SRC = Path(__file__).resolve().parent.parent / "src"
-if str(_SRC) not in sys.path:
-    sys.path.insert(0, str(_SRC))
-
-from logger import metrics_for  # noqa: E402
-from models import DialogueState, RunOutcome  # noqa: E402
+from logger import metrics_for
+from models import DialogueState, RunOutcome
 
 
 def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:

@@ -85,7 +85,7 @@ No validator LLM is used. Realization prompts require literal option names and t
 
 ## Running
 
-Install dependencies for the configured LLM provider, then run:
+Install dependencies for the configured LLM provider (`.env` supplies the API key), then run:
 
 ```powershell
 py .\main.py "Choose a Saturday study location"
@@ -99,29 +99,61 @@ With no CLI topic, the program uses the manual scenario when `environment.mode: 
 py -m pytest -q
 ```
 
-The deterministic suite currently contains 147 passing tests covering configuration, simulator authority, opening variation, mandatory direct answers, optional question follow-ups, voluntary concern participation, rare unknown-information answers, visible issue wording, rank-2 concern gating, adaptive narrowing, optional compromise, authoritative movement and vote fallback, deterministic tied choices, hard blockers, logging, and bounded pacing from two through seven participants.
+The deterministic suite currently contains 154 passing tests covering configuration, simulator authority, opening variation, mandatory direct answers, optional question follow-ups, voluntary concern participation, rare unknown-information answers, visible issue wording, rank-2 concern gating, adaptive narrowing, optional compromise, authoritative movement and vote fallback, deterministic tied choices, hard blockers, logging, bounded pacing from two through seven participants, and the definitions of the evaluation scripts (scenario file format, sweep-variant validity).
 
-## LLM-backed evaluation
+## Evaluation tooling
 
-List cases without contacting the endpoint:
+All LLM-backed evaluation lives in `eval/`; the shared metrics flattener `src/eval.py` belongs to the runtime because it exposes the runtime's own metrics schema. Every script overrides configuration in memory only — `config.yaml` on disk is never modified — and writes incremental CSV plus Markdown summaries, so interrupted batches keep their partial results.
+
+### 1. Focused case suite — `eval/run_eval_suite.py`
+
+Seventeen hand-built cases across ten topics and every group size from 2–7 with pinned personas, seeds, and expected structural properties (hard-blocker integrity, direct-answer ordering, bounded re-voting, movement commitment). Fifteen use normal pacing; two `long_*` diagnostic cases use isolated stress overrides.
 
 ```powershell
 py .\eval\run_eval_suite.py --list
-```
-
-Run all 17 cases across 10 topics and groups of 2–7 participants. The topics span leisure, research-data storage, presentations, community fundraising, apartment energy upgrades, hiking, documentary selection, prototype shipping, team meetings, and hardware selection. Fifteen use normal pacing; two `long_*` diagnostic cases use isolated larger turn ranges:
-
-```powershell
+py .\eval\run_eval_suite.py --case grounding_sensitive_shipping_n4
 py .\eval\run_eval_suite.py
 ```
 
-Run selected cases:
+Outputs land in `eval/logs_eval_suite/` and are zipped as `eval/logs_eval_suite.zip`.
+
+### 2. Scenario batch — `eval/run_scenarios.py`
+
+Runs each `participant_count | topic` line of `eval/scenarios.txt` (102 deliberately diverse everyday topics, counts 2–7 balanced) as one complete automatic run: scenario generation, persona generation, full dialogue.
 
 ```powershell
-py .\eval\run_eval_suite.py --case grounding_sensitive_shipping_n4 --case engagement_spread_meeting_n5
+py .\eval\run_scenarios.py --list
+py .\eval\run_scenarios.py --limit 5
+py .\eval\run_scenarios.py --counts 5 --seed 500
 ```
 
-Outputs are written to `eval/logs_eval_suite/` and zipped as `eval/logs_eval_suite.zip`.
+Outputs: `eval/logs_scenarios/scenario_runs.csv` and `scenario_summary.md`.
+
+### 3. Config sweep — `eval/run_config_sweep.py`
+
+One-knob-at-a-time sensitivity analysis over every numeric value in the `conversation:`, `simulator:`, and `language:` config sections. Each parameter is run with a smaller value, the shared current-config baseline, and a larger value (default 3 runs per variant, same topic, same seeds), so differences between variants come from the knob. Derived values always satisfy the config-validation constraints; knobs that cannot affect the chosen group size (for example large-group caps in a three-person run) are skipped with a note.
+
+```powershell
+py .\eval\run_config_sweep.py --list
+py .\eval\run_config_sweep.py --params voluntary_turns --runs 1
+py .\eval\run_config_sweep.py --participants 6 --params large_group
+```
+
+Outputs: `eval/logs_config_sweep/sweep_runs.csv` and `sweep_summary.md`.
+
+### 4. Transcript judge — `eval/judge_transcripts.py`
+
+Post-hoc LLM judging in the style of ChatEval (Chan et al., ICLR 2024): up to three judge agents with diverse role personas (conversation analyst, behavioral scientist, fact auditor) assess each run one-by-one — later judges see earlier assessments — and their 1–5 scores for naturalness, coherence, groundedness, persona consistency, and decision quality are averaged.
+
+The judge defaults to the `uni` provider (the local Ollama endpoint from config.yaml) rather than the dialogue provider, so the runtime model is not grading its own writing; `--provider`/`--model` override this.
+
+```powershell
+py .\eval\judge_transcripts.py --logs eval\logs_scenarios
+py .\eval\judge_transcripts.py --judges 1 --limit 3
+py .\eval\judge_transcripts.py --provider gpt   # judge with the runtime provider instead
+```
+
+Outputs: `eval/logs_judge/judge_scores.csv` and `judge_summary.md`. The judge is diagnostic only and never influences the runtime.
 
 ## Logs
 
@@ -142,13 +174,26 @@ output:
 ## Main files
 
 ```text
-src/builders.py       scenario and persona setup
-src/simulator.py      participant-local policy and floor selection
-src/dialogue.py       phase loop and public state updates
-src/prompts.py        compact action-to-language prompts
-src/validation.py     minimal deterministic validation/grounding
-src/consensus.py      public narrowing and vote outcomes
-src/logger.py         compact transcript and structured logging
+main.py                  CLI entry point (topic → one full run)
+config.yaml              all behavioral probabilities and language limits
+src/config_loader.py     validated configuration access
+src/models.py            structured data model (UserAction is authoritative)
+src/builders.py          scenario and persona setup
+src/simulator.py         participant-local policy and floor selection
+src/dialogue.py          phase loop and public state updates
+src/prompts.py           compact action-to-language prompts
+src/validation.py        minimal deterministic validation/grounding
+src/aliases.py           canonical option-alias contract and vote resolution
+src/consensus.py         public narrowing and vote outcomes
+src/logger.py            compact transcript and structured logging
+src/llm_client.py        single provider abstraction (uni/groq/gemini/gpt)
+src/eval.py              flat metrics view consumed by the eval scripts
+eval/run_eval_suite.py   17 pinned LLM-backed evaluation cases
+eval/run_scenarios.py    scenarios.txt batch runner
+eval/run_config_sweep.py one-knob-at-a-time config sensitivity sweep
+eval/judge_transcripts.py ChatEval-style multi-judge transcript scoring
+eval/experiment_common.py shared in-memory config overrides and run helpers
+eval/scenarios.txt       102 diverse `count | topic` batch cases
 ```
 
 See `info/` for the detailed architecture.

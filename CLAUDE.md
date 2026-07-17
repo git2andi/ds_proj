@@ -1,6 +1,6 @@
 # Development instructions
 
-Read `README.md`, `ACTION_PLAN.md`, and `info/00_overview.md` before changing runtime behavior.
+Read `README.md` and `info/00_overview.md` before changing runtime behavior.
 
 ## Architectural invariants
 
@@ -55,7 +55,9 @@ Tests should assert public behavior and ownership boundaries, not exact LLM word
 
 ## Evaluation
 
-The LLM-backed suite is diagnostic. Adapt it when the public runtime contract changes, but do not turn it into a second runtime policy.
+All LLM-backed evaluation is diagnostic. Adapt it when the public runtime contract changes, but do not turn it into a second runtime policy.
+
+Layout: `src/eval.py` flattens the runtime metrics schema; the scripts in `eval/` consume it. `run_eval_suite.py` runs 17 pinned cases, `run_scenarios.py` runs the `eval/scenarios.txt` batch (`count | topic` lines), `run_config_sweep.py` varies one numeric `conversation:`/`simulator:`/`language:` knob at a time against a shared baseline, and `judge_transcripts.py` is a post-hoc ChatEval-style multi-judge scorer. Evaluation scripts override configuration in memory only (`experiment_common.config_overrides`); never patch `config.yaml` from an experiment, and keep sweep-variant values inside the config-validation constraints (the deterministic tests check this).
 
 
 ## Final turn semantics

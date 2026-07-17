@@ -8,7 +8,6 @@ wording is not reconstructed from natural language.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
 from difflib import SequenceMatcher
 
 from aliases import resolve_option_mentions, resolve_visible_vote
@@ -21,15 +20,6 @@ from models import (
     StanceUpdateKind,
     UserAction,
 )
-
-
-@dataclass(slots=True)
-class ValidationResult:
-    errors: list[str]
-
-    @property
-    def valid(self) -> bool:
-        return not self.errors
 
 
 def option_mentioned(text: str, state: DialogueState, option_id: str) -> bool:

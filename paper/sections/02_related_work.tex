@@ -1,0 +1,21 @@
+\section{Related Work}
+
+\subsection{User Simulation and Modular Dialogue Systems}
+
+Agenda-based user simulation represents a user goal together with pending communicative acts and has been used to bootstrap dialogue-policy learning \citep{schatzmann2007agenda}. Corpus-based neural simulators reduce reliance on hand-written transition rules by learning user behavior from dialogue data \citep{kreyssig2018neural}. More recent LLM-based simulators provide flexible natural-language interaction but still face problems such as goal inconsistency and unsupported content \citep{sekulic2024reliable}. These approaches motivate maintaining an explicit user-side state instead of generating each utterance independently.
+
+ConvLab-3 provides a modular framework that combines unified task-oriented dialogue data, policy-learning components, evaluation tools, and several user simulators \citep{zhu2023convlab3}. Its architecture demonstrates the practical value of separating a simulator from the dialogue system that interacts with it \citep{zhu2023convlab3}. The present project adopts this modular principle but replaces the conventional two-party slot-filling setting with several participants who evaluate the same finite set of decision options.
+
+\subsection{Multi-User Coordination}
+
+MUCA identifies content, timing, and addressee selection as separate dimensions of multi-user conversational behavior and introduces both an assistant architecture and an LLM-based multi-user simulator \citep{mao2024muca}. Ouchi and Tsuboi similarly formulate multi-party response generation as a joint problem of selecting an addressee and selecting a response \citep{ouchi2016addressee}. These works support representing participation and addressee decisions explicitly rather than leaving them implicit in generated text.
+
+Conversation analysis distinguishes cases in which the current speaker selects a recipient, another participant self-selects, or the current speaker continues \citep{sacks1974turntaking}. The ``Who Speaks Next?'' framework transfers related ideas to LLM-based multi-agent dialogue by combining adjacency-pair response obligations with autonomous self-selection \citep{nonomura2025whospeaks}. This project uses the same narrow distinction: a direct question creates a response obligation, while ordinary contributions originate from simulator-local decisions.
+
+\subsection{Group Interaction and Position of the Project}
+
+Fisher describes group decisions as developing through recurring interactional tendencies rather than appearing only at the final vote \citep{fisher1970decision}. AgentGroupChat studies a broader form of group simulation in which LLM agents use personas, observations, actions, and strategic adaptation inside scenario-specific environments \citep{gu2024agentgroupchat}. These works motivate gradual stance development and participant-local behavior, but their full sociological or strategic scope is not reproduced here.
+
+The experimental configurations in prior work differ substantially. Classical user-simulation frameworks usually place one simulated user opposite a dialogue system, whereas MUCA studies an assistant participating in multi-user conversations and additionally introduces simulated users for development and optimization \citep{schatzmann2007agenda,zhu2023convlab3,mao2024muca}. Fully synthetic group interaction is instead studied by ``Who Speaks Next?'' and AgentGroupChat, where multiple artificial agents conduct the conversation without a human participant intervening during the generated run \citep{nonomura2025whospeaks,gu2024agentgroupchat}. The present project follows this all-simulator setting: each generated dialogue contains two to seven simulated users and no human participant. Its focus, however, is narrower than general multi-agent role-play because the participants are implemented and evaluated specifically as configurable user simulators for option-grounded decisions.
+
+The resulting design lies between a global dialogue controller and unconstrained multi-agent role-play. Simulators own structured participation, content, and stance decisions; the environment owns only the shared protocol; and the language model owns surface realization. This separation is the central implementation choice of the project.

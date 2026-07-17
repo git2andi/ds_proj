@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections import Counter
-from collections.abc import Iterable
 from typing import Any, TYPE_CHECKING
 
 from config_loader import cfg
@@ -75,24 +74,6 @@ def validated_short_alias(option_name: str, proposed: str) -> str:
     if not all(_inflection_match(word, name_words) for word in lowered):
         return ""
     return alias
-
-
-def short_alias_map(options: Iterable[Any]) -> dict[str, str]:
-    """Return unique display aliases for a complete option set."""
-    option_list = list(options)
-    aliases = {
-        option.id: (getattr(option, "short_name", "") or option.name).strip()
-        for option in option_list
-    }
-    owners: dict[str, list[str]] = {}
-    for option_id, alias in aliases.items():
-        owners.setdefault(normalize_option_text(alias), []).append(option_id)
-    for ids in owners.values():
-        if len(ids) > 1:
-            for option in option_list:
-                if option.id in ids:
-                    aliases[option.id] = option.name.strip()
-    return aliases
 
 
 def _base_aliases(option: Any) -> set[str]:

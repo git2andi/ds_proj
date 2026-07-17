@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from eval.run_eval_suite import CASES, scenario_for
+import sys
+from pathlib import Path
+
+_EVAL_DIR = Path(__file__).resolve().parents[1] / "eval"
+if str(_EVAL_DIR) not in sys.path:
+    sys.path.insert(0, str(_EVAL_DIR))
+
+from run_eval_suite import CASES, scenario_for  # noqa: E402
 
 
 def test_evaluation_suite_has_seventeen_cases_ten_topics_and_all_group_sizes():

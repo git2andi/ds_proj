@@ -349,14 +349,6 @@ class DialogueRunner:
             if not unanimous and len(self.state.narrowing_options) == 1:
                 self._append_moderator(narrowing_prompt)
 
-        unanimous_option = next(
-            (
-                runtime.public_preference
-                for runtime in self.state.runtimes.values()
-                if runtime.public_preference is not None
-            ),
-            None,
-        )
         if unanimous and not self._unresolved_concern_owners(unanimous_option):
             return 0, 0
 

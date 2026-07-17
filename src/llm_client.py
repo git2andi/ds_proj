@@ -9,16 +9,25 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
-from config_loader import cfg
+from config_loader import KNOWN_LLM_PROVIDERS, cfg
 from utils import extract_json_object
 
 load_dotenv()
 
 
 class LLMClient:
-    def __init__(self) -> None:
-        self.provider = str(cfg.llm.dialogue).lower()
-        self.model_id = str(cfg.llm.models[self.provider])
+    def __init__(self, provider: str | None = None, model: str | None = None) -> None:
+        """Default to the configured runtime provider; explicit arguments let
+        diagnostic tools (e.g. the transcript judge) use a different one."""
+        self.provider = str(provider or cfg.llm.dialogue).lower()
+        if self.provider not in KNOWN_LLM_PROVIDERS:
+            raise ValueError(f"Unsupported LLM provider: {self.provider}")
+        configured_model = cfg.llm.models.get(self.provider)
+        self.model_id = str(model or configured_model or "")
+        if not self.model_id:
+            raise ValueError(f"No model configured for provider {self.provider!r}")
+        if self.provider == "uni" and not str(cfg.llm.get("endpoints", {}).get("uni") or "").strip():
+            raise EnvironmentError("Provider 'uni' requires llm.endpoints.uni in config.yaml")
         self._client: Any = self._build_client()
         self.last_tokens_in = 0
         self.last_tokens_out = 0

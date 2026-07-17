@@ -582,11 +582,6 @@ def moderator_coverage_prompt(scenario: Scenario, option_id: str) -> str:
     return f"We have not really considered {name}. Is there a reason to keep it or rule it out?"
 
 
-def moderator_unanimous_narrowing(scenario: Scenario, option_id: str) -> str:
-    name = scenario.option(option_id).short_name or scenario.option(option_id).name
-    return f"{name} already has everyone’s current support. Let’s vote."
-
-
 def moderator_narrowing(scenario: Scenario, options: tuple[str, ...]) -> str:
     if not options:
         return "There is no clear leader yet. Is there another option anyone could accept as common ground?"
