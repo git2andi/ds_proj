@@ -3,19 +3,19 @@
 Each line becomes one complete automatic run: scenario generation, persona
 generation, and the full dialogue with the configured LLM. The participant
 count is taken from the line; every other setting keeps its config.yaml value.
-Results accumulate in ``eval/logs_scenarios/`` with one flat CSV row per run
+Results accumulate in ``eval2/logs_scenarios/`` with one flat CSV row per run
 and a Markdown summary.
 
 Examples
 --------
 List the parsed cases without contacting the LLM:
-    py eval/run_scenarios.py --list
+    py eval2/run_scenarios.py --list
 
 Smoke-test the first three cases:
-    py eval/run_scenarios.py --limit 3
+    py eval2/run_scenarios.py --limit 3
 
 Run only the five-participant cases with reproducible seeds:
-    py eval/run_scenarios.py --counts 5 --seed 500
+    py eval2/run_scenarios.py --counts 5 --seed 500
 """
 
 from __future__ import annotations
@@ -27,15 +27,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from experiment_common import (
-    ROOT,
-    ScenarioCase,
-    read_scenarios,
-    run_dialogue,
-    write_csv,
-)
+from evaluation_metrics import write_csv
+from experiment_common import ROOT, ScenarioCase, read_scenarios, run_dialogue
 
-LOG_DIR = "eval/logs_scenarios"
+LOG_DIR = "eval2/logs_scenarios"
 OUTPUT_ROOT = ROOT / LOG_DIR
 
 

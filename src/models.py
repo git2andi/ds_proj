@@ -10,7 +10,6 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum, IntEnum
-from typing import Any
 
 
 class Phase(str, Enum):
@@ -83,7 +82,6 @@ class IssueEffect(str, Enum):
 class StimulusKind(str, Enum):
     COVERAGE = "coverage"
     STALL = "stall"
-    COMPROMISE = "compromise"
 
 
 class VoteStatus(str, Enum):
@@ -121,19 +119,6 @@ class OptionCard:
         suffix = f" ({'; '.join(extras)})" if extras else ""
         return f"{self.id}) {self.name}" + (f" — {attrs}" if attrs else "") + suffix
 
-    def prompt_card(self, *, include_attrs: set[str] | None = None) -> str:
-        attrs = self.attrs
-        if include_attrs is not None:
-            attrs = {key: value for key, value in attrs.items() if key in include_attrs}
-        pieces = [f"{self.id}) {self.name}"]
-        if attrs:
-            pieces.append(", ".join(f"{key.replace('_', ' ')}: {value}" for key, value in attrs.items()))
-        if self.upside:
-            pieces.append(f"upside: {self.upside}")
-        if self.concern:
-            pieces.append(f"concern: {self.concern}")
-        return "; ".join(pieces)
-
     def public_values(self) -> list[str]:
         return [*self.attrs.values(), self.upside, self.concern]
 
@@ -143,7 +128,6 @@ class Scenario:
     topic: str
     options: list[OptionCard]
     shared_context: list[str] = field(default_factory=list)
-    environment_type: str = "option_grounded_group_decision"
     setup_notes: list[str] = field(default_factory=list)
 
     @property
@@ -331,8 +315,6 @@ class GroupStimulus:
     id: int
     kind: StimulusKind
     option_focus: tuple[str, ...]
-    prompt_text: str
-    created_at_turn: int
 
 
 @dataclass(slots=True)
@@ -364,7 +346,6 @@ class ParticipantRuntime:
     preferred_option: str
     ranks: dict[str, int]
     acceptable_options: set[str] = field(default_factory=set)
-    disliked_options: set[str] = field(default_factory=set)
     hard_rejected_options: set[str] = field(default_factory=set)
     public_preference: str | None = None
     public_acceptances: set[str] = field(default_factory=set)
@@ -378,13 +359,8 @@ class ParticipantRuntime:
     acknowledged_options: set[str] = field(default_factory=set)
     used_compromise_options: set[str] = field(default_factory=set)
     voluntary_turns: int = 0
-    mandatory_answers: int = 0
     openings: int = 0
-    votes_cast: int = 0
-    last_action: ActionType | None = None
-    last_spoken_turn: int = -1
     visible_switches: int = 0
-    last_switch_turn: int = -1
 
     def rank(self, option_id: str) -> int:
         return int(self.ranks.get(option_id, STANCE_NEUTRAL))
@@ -393,13 +369,9 @@ class ParticipantRuntime:
 @dataclass(slots=True)
 class OptionCoverage:
     substantive_count: int = 0
-    participant_ids: set[str] = field(default_factory=set)
-    action_types: Counter[str] = field(default_factory=Counter)
 
-    def add(self, speaker_id: str, act: ActionType) -> None:
+    def add(self) -> None:
         self.substantive_count += 1
-        self.participant_ids.add(speaker_id)
-        self.action_types[act.value] += 1
 
 
 @dataclass(slots=True)
@@ -436,8 +408,6 @@ class RuntimeStats:
     repair_calls: int = 0
     dropped_turns: int = 0
     liveness_forced_turns: int = 0
-    suppressed_repetitions: int = 0
-    suppressed_duplicate_candidates: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
     moderator_turns: int = 0
@@ -449,6 +419,7 @@ class RuntimeStats:
     semantic_reason_reuse: int = 0
     vote_fallbacks: int = 0
     mandatory_movement_failures: int = 0
+    response_failures: int = 0
     movement_fallbacks: int = 0
     selected_movement_actions: int = 0
     committed_movement_actions: int = 0
@@ -469,17 +440,13 @@ class DialogueState:
     response_obligation: str | None = None
     group_stimulus: GroupStimulus | None = None
     coverage: dict[str, OptionCoverage] = field(default_factory=dict)
-    public_supports: Counter[str] = field(default_factory=Counter)
-    public_concerns: Counter[str] = field(default_factory=Counter)
     public_comparisons: Counter[tuple[str, ...]] = field(default_factory=Counter)
-    public_supporters: dict[str, set[str]] = field(default_factory=dict)
-    public_concern_raisers: dict[str, set[str]] = field(default_factory=dict)
     votes: dict[str, str | None] = field(default_factory=dict)
     first_round_votes: dict[str, str | None] = field(default_factory=dict)
     vote_records: dict[int, dict[str, VoteRecord]] = field(default_factory=dict)
     vote_round: int = 0
     vote_protocol_degraded: bool = False
-    vote_protocol_errors: list[str] = field(default_factory=list)
+    protocol_errors: list[str] = field(default_factory=list)
     narrowing_options: tuple[str, ...] = ()
     phase_history: list[str] = field(default_factory=lambda: [Phase.OPENING.value])
     stats: RuntimeStats = field(default_factory=RuntimeStats)
@@ -497,10 +464,6 @@ class DialogueState:
     @property
     def participant_turns(self) -> list[TurnRecord]:
         return [turn for turn in self.turns if not turn.moderator]
-
-    @property
-    def voluntary_turn_count(self) -> int:
-        return sum(1 for turn in self.turns if turn.voluntary)
 
     @property
     def last_participant_id(self) -> str | None:
@@ -524,27 +487,6 @@ class DialogueState:
             if persona.id == participant_id:
                 return persona
         raise KeyError(participant_id)
-
-    def public_snapshot(self) -> dict[str, Any]:
-        return {
-            "phase": self.phase.value,
-            "preferences": {
-                pid: runtime.public_preference
-                for pid, runtime in self.runtimes.items()
-                if runtime.public_preference is not None
-            },
-            "acceptances": {
-                pid: sorted(runtime.public_acceptances)
-                for pid, runtime in self.runtimes.items()
-                if runtime.public_acceptances
-            },
-            "supports": dict(self.public_supports),
-            "concerns": dict(self.public_concerns),
-            "active_issue": self.active_issue,
-            "narrowing_options": self.narrowing_options,
-            "votes": dict(self.votes),
-        }
-
 
 @dataclass(slots=True)
 class RunOutcome:

@@ -39,6 +39,19 @@ def validate_action(state: DialogueState, persona: Persona, action: UserAction) 
         errors.append(f"action references unknown option(s): {unknown}")
     if action.vote_option and action.vote_option not in state.scenario.option_ids:
         errors.append("vote references an unknown option")
+    if action.act is ActionType.VOTE and not action.vote_option:
+        errors.append("formal vote action has no selected option")
+    if action.vote_option and action.option_focus and action.vote_option not in action.option_focus:
+        errors.append("vote option does not match the action focus")
+    if action.stance_update and action.stance_update.option_id not in state.scenario.option_ids:
+        errors.append("stance update references an unknown option")
+    if action.stance_update and action.option_focus and action.stance_update.option_id not in action.option_focus:
+        errors.append("stance update option does not match the action focus")
+    if action.reason_source:
+        if action.reason_source.option_id not in state.scenario.option_ids:
+            errors.append("reason source references an unknown option")
+        elif action.option_focus and action.reason_source.option_id not in action.option_focus:
+            errors.append("reason source belongs to a different option")
     if action.addressee_id and action.addressee_id not in state.runtimes:
         errors.append("action references an unknown addressee")
     if persona.hard_blocker:
@@ -253,6 +266,9 @@ def _acceptance_visible(text: str) -> bool:
 
     patterns = (
         r"\b(?:acceptable|reasonable|workable)\s+(?:for\s+(?:me|us)|as\s+(?:a\s+)?(?:compromise|middle\s+ground|common\s+ground))\b",
+        r"\b(?:a\s+)?(?:workable|reasonable|solid)\s+(?:compromise|middle\s+ground|common\s+ground)\b",
+        r"\b(?:makes?|becomes?)\s+[^.!?]{0,35}\b(?:a\s+)?(?:workable|reasonable|solid)\s+(?:compromise|middle\s+ground|common\s+ground)\b",
+        r"\bmakes?\s+(?:it|this|that|[^.!?]{1,30})\s+(?:acceptable|reasonable|workable)(?:\s+(?:for\s+(?:me|us)|here|as\s+(?:a\s+)?(?:compromise|middle\s+ground|common\s+ground)))?\b",
         r"\b(?:works?|would\s+work)\s+(?:well\s+)?for\s+(?:me|us)\b",
         r"\b(?:works?|would\s+work)\s+(?:well\s+)?as\s+(?:a\s+)?(?:reasonable\s+|solid\s+|better\s+)?(?:compromise|middle\s+ground|common\s+ground)\b",
         r"\b(?:suits?|fits?)\s+(?:my|our)\s+(?:needs?|priorities|group)\b",
@@ -301,7 +317,14 @@ def _semantic_terms(text: str) -> set[str]:
 
 
 def _answer_is_relevant(state: DialogueState, action: UserAction, text: str) -> bool:
-    if re.search(r"\b(?:yes|no|not\s+really|probably|maybe|unsure|not\s+sure|don['’]?t\s+know|for\s+me|my)\b", text, re.I):
+    if re.search(r"\b(?:yes|no|not\s+really|probably|maybe|unsure|not\s+sure|don['’]?t\s+know)\b", text, re.I):
+        return True
+    if re.search(
+        r"\b(?:that|it)\s+(?:still\s+)?(?:works?|would\s+work|matters?|doesn['’]?t\s+matter|"
+        r"changes?\s+my\s+choice|wouldn['’]?t\s+work)\s+for\s+me\b",
+        text,
+        re.I,
+    ):
         return True
     if any(option_mentioned(text, state, option_id) for option_id in action.option_focus):
         return True
@@ -327,9 +350,15 @@ def _numeric_grounding_errors(state: DialogueState, action: UserAction, text: st
     numbers = re.findall(r"(?<!\w)(?:\d+(?:[.,]\d+)?|\d{1,2}:\d{2})(?!\w)", text)
     if not numbers:
         return []
+    focused_values = [
+        value
+        for option_id in action.option_focus
+        if option_id in state.scenario.option_ids
+        for value in state.scenario.option(option_id).public_values()
+    ]
     public_blob = " ".join(
         [*state.scenario.shared_context]
-        + [value for option in state.scenario.options for value in option.public_values()]
+        + focused_values
         + ([action.reason_source.public_value] if action.reason_source else [])
     ).casefold()
     personal_blob = " ".join(
@@ -343,10 +372,30 @@ def _numeric_grounding_errors(state: DialogueState, action: UserAction, text: st
         if number.casefold() in personal_blob or normalized in personal_blob:
             continue
         sentence = next((part for part in re.split(r"(?<=[.!?])\s+", text) if number in part), text)
-        if re.search(r"\b(?:i|me|my|mine|after\s+work|before\s+work|my\s+schedule|for\s+me)\b", sentence, re.I):
-            continue
-        if re.search(r"\b(?:costs?|price|takes?|duration|distance|closes?|opens?|hours?|minutes?|km|miles?|euros?|dollars?|pages?|year)\b", sentence, re.I):
+        objective_predicate = re.search(
+            r"\b(?:costs?|priced?|takes?|lasts?|duration|distance|closes?|opens?|capacity|"
+            r"includes?|provides?|guarantees?)\b",
+            sentence,
+            re.I,
+        )
+        has_unit = re.search(
+            r"\b(?:hours?|minutes?|km|kilometers?|miles?|euros?|dollars?|percent|pages?|years?)\b|%",
+            sentence,
+            re.I,
+        )
+        option_reference = bool(mentioned_options(sentence, state)) or bool(
+            re.search(r"\b(?:it|this\s+option|the\s+option)\b", sentence, re.I)
+        )
+        if objective_predicate or (has_unit and option_reference):
             errors.append(f"unsupported concrete value: {number}")
+            continue
+        if re.search(
+            r"\b(?:i\s+(?:can|could|need|have|work|arrive|leave|start|finish|am)|"
+            r"me|my|mine|after\s+work|before\s+work|my\s+schedule|for\s+me)\b",
+            sentence,
+            re.I,
+        ):
+            continue
     return errors
 
 

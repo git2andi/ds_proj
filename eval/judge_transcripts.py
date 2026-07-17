@@ -7,10 +7,10 @@ avoid assigning the same role permanent first-mover influence.
 
 Default paths are ready for the scenario batch:
 
-    py eval/judge_transcripts.py
+    py eval2/judge_transcripts.py
 
-Input:  ``eval/logs_scenarios``
-Output: ``eval/logs_judge_scenarios``
+Input:  ``eval2/logs_scenarios``
+Output: ``eval2/logs_judge_scenarios``
 
 The five dimensions use the same 1-5 range as the simulator traits:
 ``naturalness``, ``coherence``, ``groundedness``, ``persona_consistency``, and
@@ -84,6 +84,12 @@ def default_output_for(log_root: Path) -> Path:
 
 def run_context(payload: dict[str, Any]) -> str:
     scenario = payload.get("scenario", {})
+    raw_context = scenario.get("shared_context", "")
+    shared_context = (
+        " ".join(str(item).strip() for item in raw_context if str(item).strip())
+        if isinstance(raw_context, list)
+        else str(raw_context).strip()
+    )
     option_lines: list[str] = []
     for option in scenario.get("options", []):
         attributes = "; ".join(f"{key}: {value}" for key, value in option.get("attrs", {}).items())
@@ -103,7 +109,7 @@ def run_context(payload: dict[str, Any]) -> str:
     outcome = payload.get("outcome", {})
     return (
         f"Topic: {scenario.get('topic', '')}\n"
-        f"Shared context: {scenario.get('shared_context', '')}\n"
+        f"Shared context: {shared_context}\n"
         f"Options:\n{chr(10).join(option_lines)}\n\n"
         f"Complete persona cards (ground truth for persona consistency):\n{personas}\n\n"
         f"Visible transcript, including moderator turns:\n{transcript}\n\n"

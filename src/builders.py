@@ -85,18 +85,21 @@ def _speech_style_for_age(age: int) -> str:
     return "measured traditional wording"
 
 
-def _age_for_profile(profile: dict, traits: SimulatorParameters | None = None) -> int:
-    """Use manual age when present, otherwise sample a stable plausible age.
+def _age_for_profile(
+    profile: dict,
+    *,
+    rng: random.Random | None = None,
+) -> int:
+    """Use manual age when present, otherwise sample a plausible age.
 
-    Traits get a weak influence so generated casts are not fully uniform, but age
-    remains a surface-style attribute, not a decision variable.
+    Age is lexical metadata only and is independent of behavioral traits.
     """
     raw = profile.get("age")
     if raw is not None and str(raw).strip():
         return max(16, min(85, int(raw)))
     # Age is lexical metadata only and is deliberately independent of the
     # behavioral traits.
-    return random.randint(20, 65)
+    return (rng or random).randint(20, 65)
 
 
 def _speech_style_for_profile(profile: dict, age: int) -> str:
@@ -337,6 +340,67 @@ def enforce_shared_caps(scenario: Scenario, mutate: bool = True) -> list[str]:
                 )
     return notes
 
+
+_COUNT_WORDS = {
+    "zero": 0,
+    "no": 0,
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+}
+_STOP_CAP = re.compile(
+    r"\b(?:at\s+most|no\s+more\s+than|up\s+to)\s+"
+    r"(?P<count>\d+|zero|one|two|three|four|five)\s+"
+    r"(?:layovers?|stops?)\b",
+    re.I,
+)
+
+
+def _parse_stop_count(value: str) -> int | None:
+    raw = str(value or "").strip().casefold()
+    if raw in {"direct", "nonstop", "non-stop", "none", "no stops", "no layovers"}:
+        return 0
+    match = re.search(r"\b(\d+|zero|one|two|three|four|five)\b", raw)
+    if not match:
+        return None
+    token = match.group(1)
+    return int(token) if token.isdigit() else _COUNT_WORDS[token]
+
+
+def shared_option_constraint_violations(scenario: Scenario) -> list[str]:
+    """Return simple categorical contradictions between context and option cards.
+
+    Numeric cap validation handles prices/durations/distances. This helper covers
+    the common setup failure where the shared context says every itinerary has at
+    most N stops/layovers while an option card visibly exceeds that bound.
+    """
+
+    matches = list(_STOP_CAP.finditer(scenario.context_text))
+    if not matches:
+        return []
+    caps = [
+        int(match.group("count"))
+        if match.group("count").isdigit()
+        else _COUNT_WORDS[match.group("count").casefold()]
+        for match in matches
+    ]
+    cap = min(caps)
+    violations: list[str] = []
+    for option in scenario.options:
+        for key, value in option.attrs.items():
+            normalized_key = key.casefold().replace("_", " ")
+            if not re.search(r"\b(?:stops?|layovers?)\b", normalized_key):
+                continue
+            count = _parse_stop_count(value)
+            if count is not None and count > cap:
+                violations.append(
+                    f"option {option.id} attr '{key}' value {value!r} exceeds "
+                    f"the shared-context maximum of {cap} stop(s)/layover(s)"
+                )
+    return violations
+
 _NAME_POOL = [
     "Amir", "Beatriz", "Callum", "Daria", "Emeka", "Faye", "Goran", "Hana",
     "Ivan", "Juno", "Kenji", "Lila", "Marco", "Nadia", "Oscar", "Priya",
@@ -347,10 +411,15 @@ _NAME_POOL = [
 ]
 
 
-def _sample_names(n: int, exclude: list[str] | None = None) -> list[str]:
+def _sample_names(
+    n: int,
+    exclude: list[str] | None = None,
+    *,
+    rng: random.Random | None = None,
+) -> list[str]:
     excluded = {name.lower() for name in (exclude or [])}
     pool = [name for name in _NAME_POOL if name.lower() not in excluded]
-    return random.sample(pool, min(n, len(pool)))
+    return (rng or random).sample(pool, min(n, len(pool)))
 
 
 def manual_environment() -> dict | None:
@@ -538,11 +607,14 @@ class SetupBuilder:
         *,
         force_auto_scenario: bool = False,
         llm=None,
+        rng: random.Random | None = None,
     ) -> None:
         self.topic = topic.strip()
-        seed = cfg.simulation.get("random_seed", None)
-        if seed is not None:
-            random.seed(int(seed))
+        configured_seed = cfg.simulation.get("random_seed", None)
+        self.rng = rng or random.Random(
+            int(configured_seed) if configured_seed is not None
+            else random.SystemRandom().randint(0, 2**31 - 1)
+        )
         # participants.mode stays independent: manual profiles combine freely
         # with an automatically generated scenario (explicit CLI topic).
         self._profiles = manual_participant_profiles()
@@ -657,10 +729,13 @@ class SetupBuilder:
             options=options,
             shared_context=shared_context,
         )
-        violations = enforce_shared_caps(scenario, mutate=False)
+        violations = [
+            *enforce_shared_caps(scenario, mutate=False),
+            *shared_option_constraint_violations(scenario),
+        ]
         if violations:
             raise ValueError(
-                "environment.manual options violate the manual shared-context caps: "
+                "environment.manual options contradict the manual shared context: "
                 + " | ".join(violations)
             )
         options_json = [
@@ -676,10 +751,12 @@ class SetupBuilder:
         data = self._llm.generate_json(prompts.setup_scenario(self.topic, n), profile="setup")
         raw_scenario = data.get("scenario", data)
         scenario = self._parse_scenario(raw_scenario, n)
-        # Hard numeric caps in shared context must hold for every option: an
-        # invalid option must never be able to win the discussion (I6/I15).
-        # Early attempts retry generation on violation; the final attempt
-        # clamps deterministically.
+        # Shared context must be compatible with every option. Numeric caps may
+        # be clamped only on the final setup attempt; categorical contradictions
+        # such as "at most one layover" versus a two-stop option always retry.
+        categorical = shared_option_constraint_violations(scenario)
+        if categorical:
+            raise ValueError("options contradict shared context: " + " | ".join(categorical))
         if not allow_clamp:
             violations = enforce_shared_caps(scenario, mutate=False)
             if violations:
@@ -718,12 +795,12 @@ class SetupBuilder:
         if len(manual_blockers) > 1:
             raise ValueError("manual profiles may define at most one hard blocker")
         hard_id = manual_blockers[0] if manual_blockers else None
-        if not self._profiles and n > 0 and random.random() < float(cfg.personas.hard_blocker_probability):
-            hard_id = f"p{random.randint(1, n)}"
+        if not self._profiles and n > 0 and self.rng.random() < float(cfg.personas.hard_blocker_probability):
+            hard_id = f"p{self.rng.randint(1, n)}"
         self._hard_blocker_id = hard_id
 
         given_names = [p["name"] for p in self._profiles if p["name"]]
-        fill_names = iter(_sample_names(n, exclude=given_names))
+        fill_names = iter(_sample_names(n, exclude=given_names, rng=self.rng))
         rows: list[dict[str, Any]] = []
         for idx in range(n):
             pid = f"p{idx + 1}"
@@ -755,7 +832,7 @@ class SetupBuilder:
             if not isinstance(raw_weights, dict) or not raw_weights:
                 raise ValueError(f"No preference shape weights configured for group size {n}")
             shape_names = list(raw_weights)
-            shape = parse_preference_shape(random.choices(
+            shape = parse_preference_shape(self.rng.choices(
                 shape_names,
                 weights=[float(raw_weights[name]) for name in shape_names],
                 k=1,
@@ -802,12 +879,12 @@ class SetupBuilder:
                 if pid in assignments:
                     continue
                 rejection = self._profile_for(pid).get("rejection")
-                assignments[pid] = random.choice([o for o in option_ids if o != rejection])
+                assignments[pid] = self.rng.choice([o for o in option_ids if o != rejection])
             return assignments
         shape = shape or self._preference_shape(n, len(option_ids))
         ids = [f"p{i + 1}" for i in range(n)]
-        chosen_options = random.sample(option_ids, len(shape))
-        random.shuffle(ids)
+        chosen_options = self.rng.sample(option_ids, len(shape))
+        self.rng.shuffle(ids)
         assignments: dict[str, str] = {}
         cursor = 0
         for group_size, option_id in zip(shape, chosen_options):
@@ -834,14 +911,14 @@ class SetupBuilder:
                     assignments[pid], assignments[other] = other_option, option
                     break
             else:
-                assignments[pid] = random.choice([o for o in option_ids if o != rejection])
+                assignments[pid] = self.rng.choice([o for o in option_ids if o != rejection])
 
     def _sample_traits(
         self, hard_blocker: bool, fixed: dict[str, int] | None = None
     ) -> SimulatorParameters:
         ranges = cfg.personas.trait_ranges
         values = {
-            name: sample_int_range(ranges[name])
+            name: sample_int_range(ranges[name], rng=self.rng)
             for name in PROFILE_TRAIT_NAMES
         }
         if fixed:
@@ -883,7 +960,7 @@ class SetupBuilder:
                 profile.get("rejection_reason", ""),
                 exclusive_blocker=hard_blocker,
             )
-            age = _age_for_profile(profile, params)
+            age = _age_for_profile(profile, rng=self.rng)
             background = profile["description"]
             private_goal = profile["private_goal"]
             plausibility = _age_plausibility_issues(age, background, private_goal)
@@ -1272,7 +1349,10 @@ class SetupBuilder:
         raw_age = row.get("age")
         profile_age = profile.get("age")
         age_source = profile_age if profile_age is not None else raw_age
-        age = _age_for_profile({"age": age_source} if age_source is not None else profile, params)
+        age = _age_for_profile(
+            {"age": age_source} if age_source is not None else profile,
+            rng=self.rng,
+        )
         # speech_style is builder-derived from age (or a manual profile
         # override); the persona LLM never writes it.
         speech_style = _speech_style_for_profile(profile, age)

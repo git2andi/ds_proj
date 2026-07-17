@@ -358,10 +358,11 @@ def test_failed_vote_realization_uses_authoritative_visible_fallback():
     assert all(result.state.votes[pid] == "A" for pid in ("p1", "p2", "p3"))
     vote_turns = [turn for turn in result.state.participant_turns if turn.action and turn.action.act is ActionType.VOTE]
     assert len(vote_turns) == 3
-    assert all("vote" in turn.text.casefold() or "switching" in turn.text.casefold() for turn in vote_turns)
+    assert all("voting for" in turn.text.casefold() or "switching" in turn.text.casefold() for turn in vote_turns)
+    assert result.state.vote_protocol_degraded
 
 
-def test_failed_compromise_realization_uses_fallback_and_keeps_nudge_answered(monkeypatch, capsys):
+def test_failed_voluntary_compromise_is_dropped_instead_of_scripted(monkeypatch, capsys):
     import simulator as simulator_module
 
     class CompromiseFailingLLM(ActionRendererLLM):
@@ -386,17 +387,14 @@ def test_failed_compromise_realization_uses_fallback_and_keeps_nudge_answered(mo
     runner._run_narrowing(revote=False)
     output = capsys.readouterr().out
     assert "still split" in output
-    assert "relaxed atmosphere" in output.casefold()
-    assert runner.state.stats.movement_fallbacks >= 1
+    assert "relaxed atmosphere" not in output.casefold()
+    assert runner.state.stats.movement_fallbacks == 0
     assert runner.state.stats.movement_realization_failures >= 1
-    assert runner.state.stats.dropped_turns == 0
-    assert (
-        runner.state.stats.selected_movement_actions
-        == runner.state.stats.committed_movement_actions
-    )
+    assert runner.state.stats.dropped_turns >= 1
+    assert runner.state.stats.selected_movement_actions > runner.state.stats.committed_movement_actions
 
 
-def test_failed_mandatory_movement_uses_grounded_fallback():
+def test_failed_mandatory_movement_is_dropped_instead_of_scripted():
     class VagueMovementLLM(ActionRendererLLM):
         def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
             if "visibly acceptable" in prompt or "concrete movement reason" in prompt:
@@ -425,11 +423,10 @@ def test_failed_mandatory_movement_uses_grounded_fallback():
         ),
     )
     record = runner._realize_and_commit(action, mandatory=True, voluntary=False)
-    assert record is not None
-    assert "relaxed atmosphere" in record.text.casefold()
-    assert runner.state.stats.movement_fallbacks == 1
-    assert "B" in runner.state.runtimes["p1"].public_acceptances
-    assert runner.state.runtimes["p1"].acceptance_reasons["B"] == "relaxed atmosphere"
+    assert record is None
+    assert runner.state.stats.movement_fallbacks == 0
+    assert runner.state.stats.movement_realization_failures == 1
+    assert "B" not in runner.state.runtimes["p1"].public_acceptances
 
 
 def test_clear_leader_narrowing_stops_after_enough_new_support(monkeypatch):
@@ -535,24 +532,47 @@ def test_complete_split_no_response_bridge_replaces_immediate_vote_prompt(monkey
     assert sum("final vote" in text.casefold() for text in moderator_texts) == 1
 
 
-def test_movement_fallback_has_multiple_natural_shapes():
-    runner = make_runner(("A", "B", "C"), seed=142)
-    actions = [
-        UserAction(
-            participant_id, True, BidPriority.REQUIRED, ActionType.COMPROMISE,
-            ("B",), reason="relaxed atmosphere",
-            stance_update=StanceUpdate(
-                StanceUpdateKind.MAKE_ACCEPTABLE,
-                "B",
-                previous_option_id="A",
-                movement_reason="relaxed atmosphere",
-                movement_basis="common_ground",
-            ),
-        )
-        for participant_id in ("p1", "p2", "p3")
-    ]
-    outputs = {runner._movement_fallback_text(action) for action in actions}
-    assert len(outputs) >= 2
-    assert all("relaxed atmosphere" in output.casefold() for output in outputs)
-    assert not all("I still prefer" in output for output in outputs)
-    assert all("because relaxed atmosphere" not in output.casefold() for output in outputs)
+def test_repaired_turn_records_total_raw_and_repair_token_usage():
+    llm = ActionRendererLLM(scripted=[
+        "",
+        "Hi everyone. Library seems best because it is quiet and predictable.",
+    ])
+    runner = make_runner(("A", "B", "C"), llm=llm, seed=201)
+    action = runner._simulators["p1"].opening_action(runner.state)
+
+    record = runner._realize_and_commit(action, mandatory=True, voluntary=False)
+
+    assert record is not None
+    assert record.repair_count == 1
+    assert llm.session_calls == 2
+    assert record.prompt_tokens == llm.session_tokens_in
+    assert record.output_tokens == llm.session_tokens_out
+
+
+def test_failed_direct_answer_is_logged_as_response_failure_not_vote_failure():
+    from models import ActiveIssue, IssueKind, IssueStatus, QuestionMode
+
+    llm = ActionRendererLLM(scripted=["Bananas are purple."] * 4)
+    runner = make_runner(("A", "B", "C"), llm=llm, seed=202)
+    runner.state.phase = Phase.DISCUSSION
+    runner.state.active_issue = ActiveIssue(
+        id="q1",
+        kind=IssueKind.QUESTION,
+        option_focus=("B",),
+        opened_by="p1",
+        addressed_to="p2",
+        summary="whether background noise changes the choice",
+        status=IssueStatus.OPEN,
+        opened_at_turn=0,
+        last_relevant_turn=0,
+        question_mode=QuestionMode.CHOICE_IMPACT,
+    )
+    runner.state.response_obligation = "p2"
+
+    runner._drain_response_obligation("direct answer could not be realized")
+
+    assert runner.state.stats.response_failures == 1
+    assert runner.state.protocol_errors == ["direct answer could not be realized"]
+    assert runner.state.vote_protocol_degraded is False
+    assert runner.state.response_obligation is None
+    assert runner.state.active_issue is None

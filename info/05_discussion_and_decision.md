@@ -1,59 +1,65 @@
 # Discussion and decision process
 
-## Opening
+## Structured simulator actions
 
-Each participant must visibly state a current preferred option and one reason. The first speaker receives an `INITIAL` opening mode; later speakers receive `ALIGN` or `CONTRAST` according to already-visible preferences. Greetings are optional. In a two-person chat, the prompt explicitly avoids group greetings such as “everyone” or “all”.
+Each eligible simulator produces either silence or one complete `UserAction`. The action contains the act, option focus, optional addressee, simulator-owned grounded reason, issue relation, optional stance update, and vote when applicable.
 
-Mandatory openings retry and then fail clearly; they never disappear silently.
+The controller never fills in or rewrites an ordinary participant action. Only the selected action is sent to the LLM for language realization.
 
-## Discussion
+## Content sources
 
-Simulators may support, raise concerns, ask concern-based questions, answer directly, compare options, react to another participant’s latest relevant statement, respond to an active issue, or remain silent.
+Simulator reasons come from:
 
-The ordinary reason hierarchy is:
+1. persona-specific reasons for or against an option;
+2. a public option upside or concern;
+3. a concrete public attribute when a question, comparison, or active issue needs it;
+4. optional relevant backstory/private-goal context.
 
-1. persona reason;
-2. option upside/concern fallback;
-3. raw attribute only when explicitly relevant.
+Objective option claims must remain tied to the focused option. Personal preferences and experiences may be expressed as subjective statements.
 
-One active issue may be a direct question or concern. Comparison remains an ordinary voluntary action: if the endpoint visibly expresses only one useful side, the message remains valid but the hidden pair is not recorded as public comparison evidence.
+## Discussion floor
 
-- A direct question clearly names one participant in a natural position and requires that participant to answer next. A global `(addressee, option, concern)` key prevents the same question from being asked repeatedly. The answer clears the obligation. At most one later turn may continue the exchange, but only through the ordinary reaction logic when a simulator has a novel response to the answer. If no such bid is selected, the answered question closes immediately. The structured question carries a small semantic mode instead of a prewritten sentence; the answer distinguishes trade-off acceptance, maintained concern, or rare unknown information.
-- A concern may receive up to two voluntary responses from distinct non-owners. Its owner may voluntarily resolve, partially soften, maintain, or ignore the issue. No owner reaction is mandatory. A semantic concern is opened only once during discussion and may be reopened once during narrowing when it remains blocking.
-- A neutral rank-3 option may be considered directly. A disliked rank-2 option becomes eligible only after that participant's own concrete concern was visibly resolved or softened. Rank-1 and hard-blocked options remain impossible.
-- A visible acceptance must state the concrete reason that made the option workable. That reason is stored with the stance update and reused by later switching or fallback realization.
-- Maintained or abandoned concerns become stale public reservations rather than looping until the turn cap. Answered questions close as resolved even when nobody uses the optional follow-up.
-- Hard blockers never resolve a concern by accepting another option.
-- Ordinary public pro/con reasons are not repeatedly offered by different speakers as new standalone points; direct answers and issue responses remain exempt.
+Bids use categorical priority:
 
-The issue does not prescribe the content of a response; the responding simulator still selects its own structured action.
+1. required direct answer;
+2. active-issue or moderator-stimulus response;
+3. ordinary voluntary contribution.
+
+The floor chooses within the highest available category using the run seed, avoids pathological consecutive turns, and never equalizes participation. Engagement affects whether a voluntary bid exists.
+
+## Questions and concerns
+
+The environment stores at most one active issue.
+
+- A direct question creates one required answer from the named addressee.
+- One optional third-party reaction may continue the question exchange.
+- Concern responses and owner reactions remain voluntary.
+- A concern may be resolved, softened, maintained, or become stale when the group moves on.
+- Semantic duplicate concerns are suppressed and reopening is bounded.
+
+The active issue provides context; it does not prescribe who must defend, concede, or change stance.
 
 ## Pacing
 
-Self-selected voluntary-turn budgets scale with participant count. The current defaults are 2/5/7 voluntary turns per participant for minimum/soft/hard pacing, bounded by absolute soft/hard caps of 22/30 turns. Openings, mandatory answers, narrowing turns, and votes are separate. For groups of two through four, shared acceptability alone does not trigger narrowing at the bare minimum; three additional voluntary turns are allowed when novel bids remain. After the first empty floor before the soft target, the group receives one additional ordinary bidding round, but no contribution is forced. Genuine public unanimity may proceed to voting after roughly one substantive post-opening contribution round, even before the normal minimum, so liveness handling does not manufacture filler.
+Voluntary discussion budgets scale with participant count and are bounded by absolute caps. Openings, mandatory answers, narrowing turns, and votes are tracked separately.
+
+The soft target is not a fixed required length. Public unanimity can close earlier after some substantive discussion. Novel bids can continue past the target until the hard cap. Small- and large-group bounds prevent very short filler loops and excessive scaling.
 
 ## Narrowing
 
-Narrowing is adaptive rather than a mandatory restatement round:
+Narrowing uses public preferences, acceptances, unresolved concerns, and visible movement:
 
-- unanimous public preference with no unresolved concern → skip participant narrowing and request votes; shared public acceptability may shorten, but does not automatically eliminate, narrowing;
-- one clear leader → relevant dissenters and unresolved concern owners receive final-position opportunities. Groups of five through seven schedule at most three such participants, with at most one bounded issue response per scheduled participant. Once at least one additional acceptance or the strict majority threshold has been reached, the runtime stops scheduling generic concessions;
-- exact top pair → participants whose public position does not settle the pair may clarify, accept, or remain firm;
-- complete tie → visibly state the split once and expose one bounded simulator-owned compromise opportunity. Only options that somebody publicly prefers or accepts are included; untouched options are excluded. Participants may accept another option, remain firm, or produce no bid.
+- unanimous public preference can proceed directly to voting;
+- one leader gives relevant dissenters or unresolved concern owners bounded final-position opportunities;
+- a top pair allows clarification or acceptance;
+- a complete split exposes one simulator-owned compromise opportunity.
 
-An unchanged participant normally states only a short position. Explanations are required for new acceptance, switching, or a maintained blocker. Narrowing options are derived from latest public preferences and shared public acceptability, never weighted support/concern scores.
+The environment may schedule a protocol opportunity, but the simulator still chooses the actual position and whether to move. A valid majority is an acceptable outcome; the runtime does not attempt to force unanimity.
 
-## Stagnation and compromise
+## Realization and repair
 
-A no-bid window after the minimum discussion budget is treated as stagnation. The moderator asks whether any non-first-choice option is workable only when a simulator has already produced a selectable compromise proposal. Each non-hard-blocker then independently applies the configured movement probability to its own acceptable alternatives. One proposal may create a short reaction exchange. If nobody proposes movement, the discussion proceeds toward a valid unresolved outcome.
+For one selected action, the runtime performs one normal generation and at most one focused repair. It records both calls and aggregates their token usage.
 
-## Protocol-critical realization
+A voluntary movement that remains invalid after repair is dropped and logged rather than converted into scripted participant language. A formal vote, or a mandatory movement statement required by the current protocol, may use one concise grounded fallback so the run can close. Moderator prompts that introduce a participant response are buffered until the response is successfully accepted.
 
-One normal generation and one focused repair are used for a selected action. Failed attempts and errors are retained compactly in `run.json`. Once a stance-changing action has won the floor, it is authoritative and may not disappear: if both language attempts fail, the runtime commits a minimal grounded movement statement. Formal votes use the same principle. Moderator compromise prompts remain buffered and are appended only together with the successfully realized or fallback participant turn.
-
-
-Two evaluation-only stress cases override these budgets without changing `config.yaml` defaults. Normal pacing uses a soft target of five and a hard maximum of seven voluntary turns per participant, bounded by absolute caps. The stress cases intentionally allow semantic reason reuse so extended-dialogue failure modes remain observable.
-
-## Realization quality
-
-Reaction-like actions include a compact interpersonal realization cue: the previous speaker’s visible point and the current participant’s selected reason or priority. This changes wording only; it does not alter the authoritative action. Movement prompts explicitly allow several natural semantic shapes rather than requiring the fixed `I still prefer X, but I can accept Y` construction.
+Evaluation-only long cases may temporarily allow semantic reason reuse. Normal runs keep reason reuse disabled.

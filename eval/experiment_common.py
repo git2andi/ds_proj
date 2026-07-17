@@ -1,4 +1,4 @@
-"""Shared in-process helpers for the run-producing scripts in ``eval/``.
+"""Shared in-process helpers for the run-producing scripts in ``eval2/``.
 
 Configuration overrides are applied in memory only. ``config.yaml`` is never
 modified, so an interrupted experiment cannot leave the project in a patched
@@ -7,15 +7,18 @@ state.
 
 from __future__ import annotations
 
+import copy
+import hashlib
+import json
 import random
 import sys
 from collections import Counter
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterator
 
-from evaluation_metrics import EVAL_DIR, ROOT, write_csv
+from evaluation_metrics import EVAL_DIR, ROOT
 
 # Transcripts contain Unicode characters that can fail on a Windows console
 # using cp1252. Reconfigure when the stream supports it.
@@ -31,8 +34,11 @@ for _path in (str(ROOT), str(SRC)):
         sys.path.insert(0, _path)
 
 from config_loader import Section, cfg  # noqa: E402
+from builders import SetupBuilder  # noqa: E402
 from dialogue import DialogueRunner  # noqa: E402
 from eval import flat_metrics_for  # noqa: E402
+from llm_client import get_llm_client  # noqa: E402
+from models import Persona, Scenario  # noqa: E402
 
 SCENARIOS_PATH = EVAL_DIR / "scenarios.txt"
 
@@ -101,6 +107,43 @@ def config_overrides(overrides: dict[tuple[str, str], Any]) -> Iterator[None]:
             set_config_value(section_name, key, value)
 
 
+def setup_fingerprint(scenario: Scenario, personas: list[Persona]) -> str:
+    """Return a stable identifier proving that paired runs used one setup."""
+    payload = {
+        "scenario": asdict(scenario),
+        "personas": [asdict(persona) for persona in personas],
+    }
+    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()[:16]
+
+
+def prepare_dialogue_setup(
+    topic: str,
+    *,
+    participants: int,
+    seed: int,
+    llm: Any = None,
+) -> tuple[Scenario, list[Persona], str]:
+    """Generate one scenario/persona setup for a paired experiment replicate.
+
+    Config variants in the sweep affect dialogue behavior only. Reusing this
+    setup prevents stochastic LLM setup differences from being mistaken for a
+    configuration effect and also avoids repeating the two setup calls for
+    every candidate.
+    """
+    client = llm or get_llm_client()
+    with config_overrides({("simulation", "num_participants"): int(participants)}):
+        client.reset_session()
+        builder = SetupBuilder(
+            topic,
+            force_auto_scenario=True,
+            llm=client,
+            rng=random.Random(seed),
+        )
+        scenario, personas = builder.build(participants)
+    return scenario, personas, setup_fingerprint(scenario, personas)
+
+
 def run_dialogue(
     topic: str,
     *,
@@ -108,6 +151,8 @@ def run_dialogue(
     seed: int | None = None,
     llm: Any = None,
     log_dir: str | None = None,
+    scenario: Scenario | None = None,
+    personas: list[Persona] | None = None,
 ) -> dict[str, Any]:
     """Run one automatic-scenario dialogue and return one flat result row.
 
@@ -119,16 +164,23 @@ def run_dialogue(
         overrides[("simulation", "num_participants")] = int(participants)
     if log_dir is not None:
         overrides[("output", "log_dir")] = log_dir
-    if seed is not None:
-        random.seed(int(seed))
     row: dict[str, Any] = {
         "topic": topic,
         "participants": participants if participants is not None else cfg.participant_count(),
         "seed": seed if seed is not None else "",
     }
     try:
+        if (scenario is None) != (personas is None):
+            raise ValueError("scenario and personas must be supplied together")
         with config_overrides(overrides):
-            runner = DialogueRunner(topic, force_auto_scenario=True, llm=llm, seed=seed)
+            runner = DialogueRunner(
+                topic,
+                force_auto_scenario=scenario is None,
+                scenario=copy.deepcopy(scenario),
+                personas=copy.deepcopy(personas),
+                llm=llm,
+                seed=seed,
+            )
             result = runner.run()
         row.update(flat_metrics_for(result.state, result.outcome))
         row["log_dir"] = result.log_paths["dir"]

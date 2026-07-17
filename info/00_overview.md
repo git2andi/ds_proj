@@ -1,31 +1,38 @@
 # System overview
 
-The system simulates a small group (2–7 configurable user simulators) choosing among a fixed set of public options. It is an option-grounded group-decision simulator, not a general social simulation: there are no coalitions, emotions, deception, or hidden hierarchies.
+The project implements configurable user simulators for an option-grounded multi-user decision dialogue.
 
-## Separation of responsibilities
+```text
+topic
+→ scenario and option board
+→ persona cards and private stances
+→ simulator-owned UserAction bids
+→ categorical floor selection
+→ LLM utterance realization
+→ deterministic validation and grounding
+→ public state and issue updates
+→ narrowing and voting
+→ outcome and logs
+```
 
-The implementation separates:
+Main components:
 
-- **setup** (`src/builders.py`): scenario and persona generation;
-- **simulator policy** (`src/simulator.py`): participant-local structured decisions;
-- **floor/environment** (`src/dialogue.py`): conversational obligations and phase control;
-- **realization** (`src/prompts.py`, `src/llm_client.py`): one LLM call for the selected action;
-- **validation** (`src/validation.py`, `src/aliases.py`): deterministic hard-correctness checks;
-- **outcome** (`src/consensus.py`): public narrowing and clear visible votes;
-- **logging/metrics** (`src/logger.py`, `src/eval.py`): transcript, structured state, flat metrics.
+- **setup** (`src/builders.py`): scenario, aliases, personas, traits, and initial stances;
+- **simulators/floor** (`src/simulator.py`): participant-local decisions and intact bid selection;
+- **environment** (`src/dialogue.py`): phase control, direct-answer obligations, one active issue, soft coverage, narrowing, and voting;
+- **language** (`src/prompts.py`, `src/llm_client.py`): one realization call for the selected action and at most one focused repair;
+- **validation** (`src/validation.py`, `src/aliases.py`): structured-action invariants and narrow deterministic grounding;
+- **outcomes** (`src/consensus.py`): public narrowing and vote-derived results;
+- **logging/evaluation** (`src/logger.py`, `src/eval.py`, `eval2/`): transcript, structured run state, compact metrics, batch evaluation, and LLM judging.
 
-The key research object is the user simulator. Each simulator owns whether it wants to participate and what it wants to do. The environment does not assign ordinary support, concern, comparison, compromise, or switching behavior. The structured `UserAction` a simulator produces is authoritative: the LLM only turns it into one natural chat message, and no validator LLM exists.
+The simulator is the behavioral authority. It decides whether to bid, which action to take, what reason to use, whether to move, and how to vote. The environment manages only the shared interaction protocol. The LLM does not choose hidden behavior.
 
-## Runtime phases
+Runtime phases:
 
 ```text
 OPENING → DISCUSSION → NARROWING → VOTING → CLOSED
 ```
 
-One bounded `VOTING → NARROWING → VOTING` return is allowed when the first vote has no majority and the re-narrowing produces visible movement.
+One bounded re-narrowing and re-vote is possible after a first round without a majority, but only when visible movement occurred.
 
-Discussion progression is deliberately simple: direct questions create obligations, one active issue supports short local exchanges, stagnation may expose one optional compromise opportunity, and adaptive narrowing schedules only participants whose position still matters.
-
-## Evaluation stack
-
-Deterministic tests (`tests/`, no LLM) assert ownership boundaries and protocol behavior. Four diagnostic LLM-backed tools live in `eval/`: a pinned 17-case suite, a diverse-topic batch runner over `scenarios.txt`, a one-knob-at-a-time config sensitivity sweep, and a ChatEval-style multi-judge transcript scorer. See `07_evaluation_and_logging.md`.
+Deterministic tests live in `tests/`. Active LLM-backed evaluation lives in `eval2/`. The old `eval/` folder preserves historical results, including the intentionally interrupted earlier scenario batch.

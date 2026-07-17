@@ -1,7 +1,7 @@
 """Deterministic structural evaluation helpers.
 
 Lives in ``src/`` because it flattens the runtime's own metrics schema; the
-post-hoc evaluation scripts in ``eval/`` are consumers of this module.
+post-hoc evaluation scripts in ``eval2/`` are consumers of this module.
 """
 
 from __future__ import annotations
@@ -44,6 +44,7 @@ def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any
         "semantic_reason_reuse": metrics["generation"]["semantic_reason_reuse"],
         "vote_fallbacks": metrics["generation"]["vote_fallbacks"],
         "mandatory_movement_failures": metrics["generation"]["mandatory_movement_failures"],
+        "response_failures": metrics["generation"]["response_failures"],
         "movement_fallbacks": metrics["generation"]["movement_fallbacks"],
         "selected_movement_actions": metrics["generation"]["selected_movement_actions"],
         "committed_movement_actions": metrics["generation"]["committed_movement_actions"],
@@ -52,6 +53,7 @@ def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any
         "valid_final_votes": metrics["votes"]["valid"],
         "unclear_final_votes": metrics["votes"]["unclear"],
         "vote_protocol_degraded": metrics["votes"]["protocol_degraded"],
+        "protocol_error_count": len(metrics["votes"]["protocol_errors"]),
         "llm_calls": metrics["tokens"]["llm_calls"],
         "tokens_in": metrics["tokens"]["input"],
         "tokens_out": metrics["tokens"]["output"],

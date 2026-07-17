@@ -1,56 +1,98 @@
 # Evaluation and logging
 
-## Normal transcript
+## Runtime outputs
 
-`transcript.md` contains:
+Each run writes:
 
-- public option board;
-- compact participant trait table;
-- visible conversation;
-- outcome;
-- compact run summary;
-- compact participant statistics.
+- `transcript.md`: option board, visible dialogue, outcome, and compact metrics;
+- `run.json`: scenario, complete personas, public/private runtime state, structured actions when enabled, issues, votes, failed generation records, and metrics;
+- `metrics.csv`: one flat row for comparison;
+- prompt logs when `output.write_prompts` is enabled.
 
-It does not contain a large nested JSON metric dump.
-
-## Structured output
-
-`run.json` stores scenario, personas, runtime state, turns, issues, votes, outcome, compact metrics, and compact failed-generation records. Deep generation attempts and validation diagnostics are written only when `output.debug_metrics` is enabled; full per-turn structured actions only when `output.write_action_trace` is enabled.
-
-`metrics.csv` contains one flat row per run for comparison. The flattened schema is produced by `src/eval.py` (`flat_metrics_for`), which lives in `src/` because it exposes the runtime's own metrics; all evaluation scripts consume it.
+`src/eval.py` defines the runtime metric schema. `eval2/evaluation_metrics.py` performs deterministic post-hoc analysis over completed `run.json` files.
 
 ## Deterministic tests
 
-The focused pytest suite (154 tests, no LLM endpoint required) verifies configuration validation, simulator authority, floor arbitration, question/concern protocol, movement and vote fallbacks, hard blockers, logging, bounded pacing for 2–7 participants, and the evaluation-script definitions (scenario-file format and sweep-variant validity).
+```powershell
+py -m pytest -q
+```
 
-## LLM-backed evaluation scripts
+The offline suite checks setup validation, seeded sampling, simulator authority, floor arbitration, questions and concerns, stance movement, hard blockers, grounding, repair accounting, voting, logging, and evaluation script definitions.
 
-Everything below is diagnostic; none of it influences the runtime, and every script overrides configuration in memory only (`eval/experiment_common.py`), so `config.yaml` is never modified by an experiment. All batch scripts write incremental CSV plus Markdown summaries, so interrupted batches keep partial results.
+## Active evaluation folder
 
-### Focused case suite — `eval/run_eval_suite.py`
+All active scripts live in `eval2/`; paths are resolved relative to that folder and scripts work from either the repository root or `eval2/`. Experiments modify configuration in memory only and create required output folders automatically.
 
-Seventeen hand-built cases across ten varied domains (technical infrastructure, sustainability, media, community planning, logistics, leisure, teamwork) covering every group size 2–7 with pinned personas, seeds, and expectations. Fifteen use normal pacing; two `long_*` cases use isolated stress overrides that temporarily allow semantic reason reuse so long-range repetition becomes observable. Reported checks include structure (phase closure, opening count, direct-answer ordering, valid votes, hard-blocker integrity, bounded re-voting, movement commitment) and quality expectations (minimum switches, resolved concerns, stale issues, repair rate ≤ 25%, deliberation-turn ranges). Outputs land in `eval/logs_eval_suite/` and are zipped.
+### Focused case suite
 
-### Scenario batch — `eval/run_scenarios.py`
+```powershell
+py .\eval2\run_eval_suite.py
+```
 
-Runs each `participant_count | topic` line of `eval/scenarios.txt` as one complete automatic run (scenario generation → persona generation → dialogue). The file holds 102 deliberately diverse everyday decision topics with balanced counts 2–7; deterministic tests assert the balance, topic uniqueness, and that no topic names a contradicting group size. Supports `--list`, `--limit`, `--start`, `--counts`, and `--seed` for reproducible batches; failed runs are recorded as `outcome=error` rows instead of aborting. Summary tables aggregate outcomes, turns, and token use per group size.
+Runs 17 pinned cases over ten public scenarios and group sizes 2–7. It checks closure, openings, direct-answer ordering, valid votes, hard blockers, bounded re-voting, movement accounting, issues, repairs, and pacing. Two cases are explicit long-dialogue diagnostics rather than normal defaults.
 
-### Config sensitivity sweep — `eval/run_config_sweep.py`
+### Scenario batch
 
-For every numeric value under `conversation:`, `simulator:`, and `language:`, the sweep runs the same topic with a smaller value, the shared current-config baseline, and a larger value — exactly one knob changed per variant, default three runs per variant with identical seed sets, so differences between variants come from the knob rather than policy randomness. Level mappings (bid/movement probabilities, verbosity word budgets, action word caps) are varied as one knob by shifting or scaling all levels while preserving monotonicity and bounds. Derived values always satisfy the config-validation constraints (a deterministic test applies every variant and re-runs full config validation). Knobs that cannot affect the chosen group size (large-group caps in a three-person run, small-group extras in a six-person run) are skipped with a printed note; sweep them with `--participants 6`.
+```powershell
+py .\eval2\run_scenarios.py --limit 40
+```
 
-### Transcript judge — `eval/judge_transcripts.py`
+Runs `eval2/scenarios.txt` (`participant_count | topic`) and preserves partial progress when interrupted. Setup or protocol failures become explicit error rows rather than aborting the batch.
 
-Post-hoc LLM judging modeled on ChatEval (Chan et al., ICLR 2024, arXiv:2308.07201), which found that multi-agent judge panels align better with human judgment when the judges have *diverse role personas* and communicate one-by-one, and that 2–4 judges with few rounds suffice. The script sends each `run.json` to up to three judge personas — conversation analyst (flow, turn-taking), behavioral scientist (persona consistency, believable dynamics), fact auditor (grounding in the option board) — where each later judge sees the earlier assessments. Scores (1–5) for naturalness, coherence, groundedness, persona consistency, and decision quality are averaged per run, following ChatEval's score aggregation. This complements the structural metrics: the batch runner and config sweep measure protocol behavior, the judge measures surface quality of the same logs.
+### Deterministic post-hoc evaluation
 
-The judge deliberately defaults to a different provider than the dialogue runtime — `uni`, the local Ollama endpoint configured in config.yaml — so the runtime model does not grade its own writing (self-preference bias). `--provider` and `--model` select any configured provider/model for judging.
+```powershell
+py .\eval2\evaluate_runs.py
+```
 
-## Compact quality diagnostics
+Produces compact evidence for protocol completion, questions, votes, outcomes, hard blockers, movement, repairs, dropped turns, fallbacks, grounding flags, repetition, issues, option coverage, token use, and aggregate engagement/verbosity/stubbornness realization.
 
-The flat metrics row includes compromise proposals/acceptances, selected versus committed movement actions, movement realization failures and fallbacks, grounded versus unexplained movements, narrowing movements, whether a re-vote was skipped for no movement, semantic reason reuse, and aggregate repair causes. The case suite fails when any selected movement does not commit or when a second vote occurs without preceding movement.
+These metrics are diagnostics, not claims of complete semantic understanding. For example, unsupported-fact counts report validator signals and may miss qualitative hallucinations.
+
+### LLM transcript judge
+
+```powershell
+py .\eval2\judge_transcripts.py
+```
+
+The judge sees the complete scenario, options, persona cards, moderator messages, participant messages, votes, and outcome. Three deterministically rotated specialist roles score:
+
+- naturalness;
+- coherence;
+- groundedness;
+- persona consistency;
+- deliberation quality.
+
+Scores use anchored integers from 1 to 5. Malformed structured responses are retried. Individual judge rows and aggregate run rows are stored separately. Consensus and successful outcomes are not rewarded automatically.
+
+### Judge validation
+
+```powershell
+py .\eval2\validate_judge.py
+```
+
+Creates controlled turn-order, grounding, persona, and outcome corruptions. The target judge dimension should decrease for each corrupted version. This is a lightweight consistency check, not a replacement for human evaluation.
+
+### Configuration sweep and confirmation
+
+```powershell
+py .\eval2\run_config_sweep.py
+py .\eval2\run_config_confirmation.py
+```
+
+The sweep is limited to four observed problem areas:
+
+- duplicate detection;
+- issue follow-up depth;
+- consecutive turns;
+- small-group closure.
+
+For each seed, all candidates reuse the exact same generated scenario and personas and record a setup fingerprint. The confirmation script uses the selected cumulative settings on several matched topics, again reusing one setup per topic across profiles. Setup tokens are therefore not repeatedly charged to every compared runtime.
+
+## Historical results
+
+`eval/` preserves the earlier scenario logs, judge outputs, and intentionally interrupted batch. It contains no active evaluation scripts. Current tools can still analyze those logs by passing an explicit `--logs` path.
 
 ## Turn terminology
 
-A self-selected (legacy metric name: `voluntary`) turn means that the simulator chose to enter the floor. Openings, direct-answer obligations, required narrowing positions, and votes are not self-selected. After a required answer, another participant who independently reacts through the ordinary reaction policy produces a self-selected turn. The question then closes after that one optional continuation or immediately when no reaction is selected.
-
-The long diagnostic cases report deliberation turns separately from openings and voting. Grounding diagnostics distinguish unsupported concrete values from a narrow set of qualitative strengthening errors; the latter catches only high-risk words such as unsupported superlatives or intensifiers and is not a general semantic validator.
+A self-selected or `voluntary` turn means that the simulator chose to enter the ordinary floor. Openings, required answers, required narrowing positions, votes, and liveness-forced contributions are excluded from engagement evaluation.

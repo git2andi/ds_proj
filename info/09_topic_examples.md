@@ -9,7 +9,7 @@ Suitable topics present a bounded group decision with several plausible public o
 - Choose a storage setup for a shared research dataset;
 - Agree on quiet hours for the shared student house.
 
-`eval/scenarios.txt` contains 102 such topics across many domains (travel, food, entertainment, work, community, sports, family, hobbies) with balanced participant counts 2–7, used by the batch runner `eval/run_scenarios.py`.
+`eval2/scenarios.txt` contains 102 such topics across many domains (travel, food, entertainment, work, community, sports, family, hobbies) with balanced participant counts 2–7, used by the batch runner `eval2/run_scenarios.py`.
 
 Two constraints:
 

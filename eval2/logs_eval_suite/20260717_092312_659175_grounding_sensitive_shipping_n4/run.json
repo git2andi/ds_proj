@@ -1,0 +1,1630 @@
+{
+  "run_id": "20260717_092312_659175_grounding_sensitive_shipping_n4",
+  "seed": 308,
+  "scenario": {
+    "topic": "Choose how to ship a fragile prototype from Berlin to Lisbon",
+    "options": [
+      {
+        "id": "A",
+        "name": "Express Air",
+        "attrs": {
+          "transit": "1 day",
+          "tracking": "live",
+          "insurance": "included"
+        },
+        "upside": "lowest delay risk",
+        "concern": "highest price",
+        "short_name": "Express Air"
+      },
+      {
+        "id": "B",
+        "name": "Standard Air",
+        "attrs": {
+          "transit": "3–4 days",
+          "tracking": "milestones",
+          "insurance": "basic"
+        },
+        "upside": "moderate delivery time",
+        "concern": "transfer hub required",
+        "short_name": "Standard Air"
+      },
+      {
+        "id": "C",
+        "name": "Rail Freight",
+        "attrs": {
+          "transit": "5–7 days",
+          "emissions": "lower",
+          "handling": "one terminal"
+        },
+        "upside": "lower emissions",
+        "concern": "longer transit",
+        "short_name": "Rail Freight"
+      },
+      {
+        "id": "D",
+        "name": "Economy Road",
+        "attrs": {
+          "transit": "7–9 days",
+          "tracking": "daily",
+          "insurance": "optional"
+        },
+        "upside": "lowest price",
+        "concern": "longest delivery time",
+        "short_name": "Economy Road"
+      }
+    ],
+    "shared_context": "The shipment is a single fragile working prototype that must arrive complete and undamaged. The Lisbon team needs it for the next project stage, so delays and extra handling matter.",
+    "setup_notes": []
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Nora",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Nora can allow several days for delivery.",
+      "private_goal": "prioritizes moderate delivery time with tracking",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 24,
+      "speech_style": "young casual wording",
+      "style_tendencies": [
+        "often frames the point as a practical trade-off",
+        "connects option facts to a practical consequence"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest delay risk",
+          "reason_against": "highest price"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "moderate delivery time",
+          "reason_against": "transfer hub required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lower emissions",
+          "reason_against": "longer transit"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest price",
+          "reason_against": "longest delivery time"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Ben",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Ben tracks the project’s environmental impact.",
+      "private_goal": "prioritizes lower-emission shipping",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "relaxed practical wording",
+      "style_tendencies": [
+        "often frames the point as a practical trade-off",
+        "uses relaxed conversational wording and contractions"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest delay risk",
+          "reason_against": "highest price"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "moderate delivery time",
+          "reason_against": "transfer hub required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "lower emissions",
+          "reason_against": "longer transit"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest price",
+          "reason_against": "longest delivery time"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Mira",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Mira needs the prototype available for an imminent demonstration.",
+      "private_goal": "prioritizes the lowest delay risk",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 49,
+      "speech_style": "direct workplace wording",
+      "style_tendencies": [
+        "often frames the point as a practical trade-off",
+        "states the main trade-off plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "lowest delay risk",
+          "reason_against": "highest price"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "moderate delivery time",
+          "reason_against": "transfer hub required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lower emissions",
+          "reason_against": "longer transit"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest price",
+          "reason_against": "longest delivery time"
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Omar can allow several days for delivery.",
+      "private_goal": "prioritizes moderate delivery time with tracking",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 65,
+      "speech_style": "measured traditional wording",
+      "style_tendencies": [
+        "often frames the point as a practical trade-off",
+        "connects option facts to a practical consequence"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "lowest delay risk",
+          "reason_against": "highest price"
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "moderate delivery time",
+          "reason_against": "transfer hub required"
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "lower emissions",
+          "reason_against": "longer transit"
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "lowest price",
+          "reason_against": "longest delivery time"
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtimes": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "public_rejections": [],
+      "used_reason_keys": [
+        "B,A:standard air moderate delivery time express air lowest delay risk",
+        "C:C:transit:5 7 days",
+        "B:B:upside:moderate delivery time"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "C:C:transit:5 7 days"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i004"
+      ],
+      "acknowledged_options": [
+        "B"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "moderate delivery time"
+      },
+      "public_rejections": [],
+      "used_reason_keys": [
+        "C:C:emissions:lower",
+        "C,A:rail freight lower emissions express air lowest delay risk",
+        "B:B:upside:moderate delivery time",
+        "B:B:concern:transfer hub required"
+      ],
+      "opened_issue_keys": [
+        "concern:B:B:concern:transfer hub required"
+      ],
+      "asked_question_keys": [
+        "B:B:concern:transfer hub required"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i001"
+      ],
+      "acknowledged_options": [],
+      "used_compromise_options": [
+        "B"
+      ],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "public_rejections": [],
+      "used_reason_keys": [
+        "B:transfer hub required",
+        "B:B:concern:transfer hub required",
+        "A:A:upside:lowest delay risk"
+      ],
+      "opened_issue_keys": [
+        "concern:B:B:concern:transfer hub required"
+      ],
+      "asked_question_keys": [
+        "B:B:concern:transfer hub required"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i003"
+      ],
+      "acknowledged_options": [],
+      "used_compromise_options": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "public_rejections": [],
+      "used_reason_keys": [
+        "A:A:concern:highest price",
+        "B:B:upside:moderate delivery time"
+      ],
+      "opened_issue_keys": [],
+      "asked_question_keys": [
+        "A:A:concern:highest price"
+      ],
+      "responded_stimuli": [],
+      "responded_issue_ids": [
+        "i004",
+        "i006",
+        "i002"
+      ],
+      "acknowledged_options": [
+        "B"
+      ],
+      "used_compromise_options": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "issue_history": [
+    {
+      "id": "i001",
+      "kind": "question",
+      "option_focus": [
+        "C"
+      ],
+      "opened_by": "p1",
+      "addressed_to": "p2",
+      "summary": "longer transit",
+      "status": "resolved",
+      "opened_at_turn": 5,
+      "last_relevant_turn": 6,
+      "follow_up_count": 1,
+      "source_text": "Ben, does the longer 5–7 day transit time change how you feel about Rail Freight?",
+      "outcome": "answered",
+      "close_reason": "the group moved on",
+      "reason_source": {
+        "option_id": "C",
+        "attribute_name": "transit",
+        "public_value": "5–7 days"
+      },
+      "issue_key": [
+        "C",
+        "5 7 days"
+      ],
+      "response_count": 1,
+      "responded_by": [
+        "p2"
+      ],
+      "owner_reacted": false,
+      "required_answer_completed": true,
+      "optional_follow_up_count": 0,
+      "question_mode": "tradeoff"
+    },
+    {
+      "id": "i002",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p3",
+      "addressed_to": "p4",
+      "summary": "transfer hub required",
+      "status": "resolved",
+      "opened_at_turn": 7,
+      "last_relevant_turn": 9,
+      "follow_up_count": 1,
+      "source_text": "Omar, does the transfer hub required for Standard Air change how you weigh its delivery time advantage?",
+      "outcome": "answered",
+      "close_reason": "the group moved on",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "transfer hub required"
+      },
+      "issue_key": [
+        "B",
+        "transfer hub required"
+      ],
+      "response_count": 1,
+      "responded_by": [
+        "p4"
+      ],
+      "owner_reacted": false,
+      "required_answer_completed": true,
+      "optional_follow_up_count": 0,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i003",
+      "kind": "question",
+      "option_focus": [
+        "A"
+      ],
+      "opened_by": "p4",
+      "addressed_to": "p3",
+      "summary": "highest price",
+      "status": "resolved",
+      "opened_at_turn": 10,
+      "last_relevant_turn": 11,
+      "follow_up_count": 1,
+      "source_text": "Mira, does Express Air’s highest price change how strongly you prefer it despite the delay advantage?",
+      "outcome": "answered",
+      "close_reason": "the group moved on",
+      "reason_source": {
+        "option_id": "A",
+        "attribute_name": "concern",
+        "public_value": "highest price"
+      },
+      "issue_key": [
+        "A",
+        "highest price"
+      ],
+      "response_count": 1,
+      "responded_by": [
+        "p3"
+      ],
+      "owner_reacted": false,
+      "required_answer_completed": true,
+      "optional_follow_up_count": 0,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i004",
+      "kind": "question",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p2",
+      "addressed_to": "p1",
+      "summary": "transfer hub required",
+      "status": "resolved",
+      "opened_at_turn": 13,
+      "last_relevant_turn": 15,
+      "follow_up_count": 2,
+      "source_text": "Nora, does the transfer hub needed for Standard Air change how strongly you prefer it?",
+      "outcome": "answered_with_follow_up",
+      "close_reason": "direct question answered with voluntary follow-up",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "transfer hub required"
+      },
+      "issue_key": [
+        "B",
+        "transfer hub required"
+      ],
+      "response_count": 2,
+      "responded_by": [
+        "p4",
+        "p1"
+      ],
+      "owner_reacted": false,
+      "required_answer_completed": true,
+      "optional_follow_up_count": 1,
+      "question_mode": "choice_impact"
+    },
+    {
+      "id": "i005",
+      "kind": "concern",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p2",
+      "addressed_to": null,
+      "summary": "transfer hub required",
+      "status": "stale",
+      "opened_at_turn": 17,
+      "last_relevant_turn": 17,
+      "follow_up_count": 0,
+      "source_text": "The unresolved concern about Standard Air needing a transfer hub still blocks agreement on my end.",
+      "outcome": null,
+      "close_reason": "no participant continued the narrowing issue",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "transfer hub required"
+      },
+      "issue_key": [
+        "B",
+        "transfer hub required"
+      ],
+      "response_count": 0,
+      "responded_by": [],
+      "owner_reacted": false,
+      "required_answer_completed": false,
+      "optional_follow_up_count": 0,
+      "question_mode": null
+    },
+    {
+      "id": "i006",
+      "kind": "concern",
+      "option_focus": [
+        "B"
+      ],
+      "opened_by": "p3",
+      "addressed_to": null,
+      "summary": "transfer hub required",
+      "status": "stale",
+      "opened_at_turn": 24,
+      "last_relevant_turn": 26,
+      "follow_up_count": 2,
+      "source_text": "The unresolved concern about Standard Air needing a transfer hub still blocks my agreement.",
+      "outcome": "partial",
+      "close_reason": "owner completed the concern reaction",
+      "reason_source": {
+        "option_id": "B",
+        "attribute_name": "concern",
+        "public_value": "transfer hub required"
+      },
+      "issue_key": [
+        "B",
+        "transfer hub required"
+      ],
+      "response_count": 1,
+      "responded_by": [
+        "p4"
+      ],
+      "owner_reacted": true,
+      "required_answer_completed": false,
+      "optional_follow_up_count": 0,
+      "question_mode": null
+    }
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s begin with each person’s current preference and main reason.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 10,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "For me, Standard Air’s moderate delivery time fits well with our need for timely tracking.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 381,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Rail Freight seems like a solid pick for me, mostly because it’s got lower emissions.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 409,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Standard Air works for me too since moderate delivery time matches what I need.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 428,
+      "output_tokens": 15,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Express Air makes the most sense for me due to its lowest delay risk.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 450,
+      "output_tokens": 15,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Ben, does the longer 5–7 day transit time change how you feel about Rail Freight?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i001",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 507,
+      "output_tokens": 20,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Longer transit’s a downside, but I lean toward Rail Freight for the lower emissions.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 505,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Omar, does the transfer hub required for Standard Air change how you weigh its delivery time advantage?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i002",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 17,
+      "prompt_tokens": 529,
+      "output_tokens": 20,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "While the transfer hub adds complexity, I still prefer Standard Air for its delivery timing.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 538,
+      "output_tokens": 17,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Express Air’s lowest delay risk is appealing, even if it comes with a higher price tag.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 558,
+      "output_tokens": 19,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Mira, does Express Air’s highest price change how strongly you prefer it despite the delay advantage?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i003",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 543,
+      "output_tokens": 20,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "The higher price is worth it to me for the lowest delay risk.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 13,
+      "prompt_tokens": 545,
+      "output_tokens": 14,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "The transfer hub in Standard Air adds hassle, so I’m leaning toward Express Air’s reliability.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 553,
+      "output_tokens": 19,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Nora, does the transfer hub needed for Standard Air change how strongly you prefer it?",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": "opened:i004",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 547,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Even with the transfer hub, I still prefer Standard Air for its moderate delivery time.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 547,
+      "output_tokens": 17,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "That point aligns with my priority on delivery timing despite added complexity.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 12,
+      "prompt_tokens": 615,
+      "output_tokens": 13,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Standard Air currently leads. Anyone not there yet can say whether they can accept it or what still prevents that.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 20,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 17,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The unresolved concern about Standard Air needing a transfer hub still blocks agreement on my end.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "issue_event": "opened:i005",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 758,
+      "output_tokens": 35,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s take the final vote. Please name the one option you’re choosing.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 12,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Standard Air works for my delivery needs.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 7,
+      "prompt_tokens": 524,
+      "output_tokens": 8,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "Rail Freight is my pick for lower emissions.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "word_count": 8,
+      "prompt_tokens": 511,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Express Air minimizes delay risk for me.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 7,
+      "prompt_tokens": 503,
+      "output_tokens": 8,
+      "intended_word_max": 10
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Standard Air fits my timing and tracking needs.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 8,
+      "prompt_tokens": 497,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The first vote had no majority. Can anyone newly accept Standard Air as common ground?",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "The unresolved concern about Standard Air needing a transfer hub still blocks my agreement.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "issue_event": "opened:i006",
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 717,
+      "output_tokens": 32,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "The transfer hub adds complexity, though moderate delivery time still makes Standard Air a practical choice.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 16,
+      "prompt_tokens": 583,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Moderate delivery time is helpful, but the transfer hub still complicates operations for me.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 14,
+      "prompt_tokens": 575,
+      "output_tokens": 18,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "The transfer hub adds complexity, but moderate delivery time makes Standard Air workable for us.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "moderate delivery time",
+        "movement_basis": "common_ground",
+        "remaining_concern": "",
+        "reason_already_public": false
+      },
+      "vote_option": null,
+      "word_count": 15,
+      "prompt_tokens": 685,
+      "output_tokens": 17,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "That moderate delivery time really matters for keeping things on track.",
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 11,
+      "prompt_tokens": 580,
+      "output_tokens": 12,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s take the final vote again. Please name the one option you’re choosing.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 13,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Nora",
+      "text": "Standard Air seems like the best fit.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 7,
+      "prompt_tokens": 517,
+      "output_tokens": 8,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Ben",
+      "text": "I’m switching to Standard Air as my final choice.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "moderate delivery time",
+        "movement_basis": "previous_acceptance",
+        "remaining_concern": "",
+        "reason_already_public": true
+      },
+      "vote_option": "B",
+      "word_count": 9,
+      "prompt_tokens": 526,
+      "output_tokens": 11,
+      "intended_word_max": 10
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Mira",
+      "text": "Express Air has less delay risk for me.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "word_count": 8,
+      "prompt_tokens": 502,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Standard Air offers the best balance for us.",
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "word_count": 8,
+      "prompt_tokens": 495,
+      "output_tokens": 9,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The result is majority: Standard Air.",
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "issue_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "word_count": 6,
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "first_round_votes": {
+    "p1": "B",
+    "p2": "C",
+    "p3": "A",
+    "p4": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    },
+    "2": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 2,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 2,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 2,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 1,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 2,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 1,
+        "errors": []
+      }
+    }
+  },
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "A",
+    "p4": "B"
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "A",
+      "p4": "B"
+    },
+    "reason": "3 of 4 participants selected the option"
+  },
+  "metrics": {
+    "turns": {
+      "participant": 29,
+      "voluntary": 9,
+      "self_selected": 9,
+      "mandatory": 19,
+      "moderator": 6
+    },
+    "generation": {
+      "repairs": 2,
+      "dropped": 1,
+      "liveness_forced": 1,
+      "semantic_reason_reuse": 5,
+      "vote_fallbacks": 0,
+      "mandatory_movement_failures": 1,
+      "response_failures": 0,
+      "movement_fallbacks": 0,
+      "selected_movement_actions": 3,
+      "committed_movement_actions": 2,
+      "movement_realization_failures": 1,
+      "repair_causes": {
+        "required_stance_change_is_not_visible": 1,
+        "opened_concern_is_not_visibly_expressed": 2
+      }
+    },
+    "questions": {
+      "opened": 4,
+      "answered": 4,
+      "optional_follow_ups": 1
+    },
+    "issues": {
+      "opened": 6,
+      "resolved": 4,
+      "stale": 2,
+      "concerns_opened": 2,
+      "concerns_resolved": 0,
+      "concerns_stale": 2
+    },
+    "stances": {
+      "switches": 1,
+      "acceptances": 1,
+      "narrowing_movements": 1,
+      "grounded_movements": 2,
+      "unexplained_movements": 0
+    },
+    "compromise": {
+      "proposals": 1,
+      "acceptances": 1
+    },
+    "coverage": {
+      "A": 3,
+      "B": 6,
+      "C": 1,
+      "D": 0
+    },
+    "votes": {
+      "round": 2,
+      "valid": 4,
+      "unclear": 0,
+      "protocol_degraded": false,
+      "protocol_errors": [],
+      "revote_skipped": false
+    },
+    "tokens": {
+      "llm_calls": 33,
+      "input": 16682,
+      "output": 501
+    },
+    "participants": {
+      "p1": {
+        "name": "Nora",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 7,
+        "voluntary": 3,
+        "avg_words": 12,
+        "initial_preference": "B",
+        "final_preference": "B"
+      },
+      "p2": {
+        "name": "Ben",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 8,
+        "voluntary": 1,
+        "avg_words": 13.5,
+        "initial_preference": "C",
+        "final_preference": "B"
+      },
+      "p3": {
+        "name": "Mira",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 7,
+        "voluntary": 2,
+        "avg_words": 12.428571428571429,
+        "initial_preference": "A",
+        "final_preference": "A"
+      },
+      "p4": {
+        "name": "Omar",
+        "traits": {
+          "engagement": 3,
+          "verbosity": 3,
+          "directness": 3,
+          "stubbornness": 2
+        },
+        "turns": 7,
+        "voluntary": 3,
+        "avg_words": 12.857142857142858,
+        "initial_preference": "B",
+        "final_preference": "B"
+      }
+    },
+    "outcome": {
+      "status": "majority",
+      "final_option": "B"
+    }
+  },
+  "failed_generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "compromise",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "moderate delivery time",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "moderate delivery time"
+        },
+        "personal_context": null,
+        "issue_id": null,
+        "issue_effect": null,
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "moderate delivery time",
+          "movement_basis": "common_ground",
+          "remaining_concern": "",
+          "reason_already_public": false
+        },
+        "vote_option": null,
+        "stimulus_id": null,
+        "opening_mode": null,
+        "question_mode": null,
+        "response_mode": null,
+        "decisive_reason": "moderate delivery time"
+      },
+      "raw_text": "Moderate delivery time fits our timing needs well enough to accept Standard Air as common ground.",
+      "validation_errors": [
+        "required stance change is not visible"
+      ],
+      "repair_text": "Express Air lowers delay risk, yet Standard Air’s moderate delivery time meets our timing needs well.",
+      "repair_errors": [
+        "required stance change is not visible"
+      ],
+      "final_status": "dropped",
+      "fallback_text": null
+    }
+  ]
+}

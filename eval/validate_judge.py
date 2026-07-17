@@ -8,10 +8,10 @@ The script compares valid runs with four targeted corruptions:
 - vote-inconsistent outcome -> deliberation quality
 
 It never modifies the original run folders. By default, three runs spread
-across ``eval/logs_scenarios`` are tested and results are written to
-``eval/logs_judge_validation``.
+across ``eval2/logs_scenarios`` are tested and results are written to
+``eval2/logs_judge_validation``.
 
-    py eval/validate_judge.py
+    py eval2/validate_judge.py
 """
 
 from __future__ import annotations

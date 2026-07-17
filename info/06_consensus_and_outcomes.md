@@ -1,19 +1,33 @@
 # Consensus and outcomes
 
-Every participant states one clear visible choice. Natural forms such as `Lab gets my vote`, `I’m going with Riverside`, `I’ll stick with Online`, and the contextual `Library for me` are valid; the word `formal` is unnecessary. In the voting phase, exactly one visible intended option with no competitor is sufficient.
+Every participant provides one visible final choice. Natural forms such as `Lab gets my vote`, `I’m going with Riverside`, or `Library for me` are valid when exactly one intended option is visible.
 
-Outcomes:
+Outcomes are derived from the final valid votes:
 
 - `successful`: every participant selects the same option;
-- `majority`: one option reaches the majority threshold;
-- `unresolved`: no option reaches a majority and no further visible movement produces a viable second vote.
+- `majority`: one option receives more than half of the votes;
+- `unresolved`: no option reaches a majority after the bounded protocol.
 
-A valid majority closes immediately. The environment does not pressure holdouts toward unanimity.
+A valid majority closes immediately. Holdouts are not pressured toward unanimity.
 
-A non-blocker may move after a concrete trigger: a concern response made the trade-off acceptable, stagnation exposed an eligible alternative, or narrowing identified viable common ground. Rank 3 may be considered directly; rank 2 requires that participant's own concern to have been resolved or softened first; rank 1 is never eligible. The configured `movement_probability_by_stubbornness` controls whether the simulator takes the opportunity. A hard blocker never moves.
+## Stance movement
 
-Each accepted movement records a grounded reason and, when relevant, the remaining concern. A first acceptance may preserve the participant's previous priority, but the realization is not tied to one contrast template. It may instead state that a concern was addressed, the alternative now works, or the participant would be comfortable supporting it. A later vote can be short because the reason is already public; if the vote is the first visible movement, it must include the rationale. Selected movement is never silently dropped after realization failure.
+A non-hard-blocker may make another option acceptable or switch preference after a concrete public trigger, such as a resolved concern, a newly relevant benefit, or a narrowing compromise opportunity. The simulator's stubbornness controls whether it takes that opportunity.
 
-A clear choice for a new option is itself visible movement. A short bridge is encouraged for readability but validation does not discard an otherwise unambiguous changed vote.
+- rank 3 may be considered directly;
+- rank 2 requires the participant's own concern to be resolved or softened;
+- rank 1 is not eligible;
+- a hard blocker accepts and votes only for its preferred option.
 
-A second vote occurs only when the first vote has no majority and the intervening re-narrowing produces at least one visible acceptance or preference switch. If nobody moves, the system closes unresolved instead of repeating the same votes.
+The simulator action stores the target and grounded movement reason. The visible text must express the required acceptance or switch before public stance state changes. Ordinary voluntary movement is not silently forced through a fallback: after failed generation and repair it is dropped and recorded. Mandatory movement statements and formal votes may use concise protocol fallbacks.
+
+A changed vote is valid when the intended new option is unambiguous. A short explanatory bridge improves readability, but an otherwise clear vote is not rejected solely for lacking one fixed phrase.
+
+## Re-voting
+
+A second vote is allowed only when:
+
+1. the first round has no majority; and
+2. the intervening re-narrowing produces at least one visible acceptance or preference switch.
+
+If nobody moves, the run closes unresolved instead of repeating the same votes.

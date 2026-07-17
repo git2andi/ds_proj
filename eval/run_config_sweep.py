@@ -14,7 +14,7 @@ for each setting. ``run_config_confirmation.py`` reads that file directly.
 
 Normal use requires no arguments:
 
-    py eval/run_config_sweep.py
+    py eval2/run_config_sweep.py
 """
 
 from __future__ import annotations
@@ -27,9 +27,16 @@ from pathlib import Path
 from typing import Any
 
 from evaluation_metrics import extract_run_metrics, load_run, resolve_log_dir, write_csv
-from experiment_common import EVAL_DIR, cfg, config_overrides, run_dialogue
+from experiment_common import (
+    EVAL_DIR,
+    cfg,
+    config_overrides,
+    prepare_dialogue_setup,
+    run_dialogue,
+)
+from llm_client import get_llm_client
 
-LOG_DIR = "eval/logs_config_sweep"
+LOG_DIR = "eval2/logs_config_sweep"
 OUTPUT_ROOT = EVAL_DIR / "logs_config_sweep"
 DEFAULT_TOPIC = "Choose a coffee machine for a shared office kitchen"
 DEFAULT_PARTICIPANTS = 3
@@ -201,6 +208,8 @@ def _enrich(result: dict[str, Any]) -> dict[str, Any]:
             "structural_pass",
             "outcome_consistent",
             "question_answer_rate",
+            "response_failures",
+            "protocol_error_count",
             "option_coverage_ratio",
             "repair_rate",
             "dropped_rate",
@@ -244,6 +253,8 @@ def _score(experiment: Experiment, group: list[dict[str, Any]]) -> tuple[float, 
         (not bool(row.get("outcome_consistent")))
         + int(float(row.get("hard_blocker_violations", 0) or 0) > 0)
         + int(float(row.get("unexplained_movements", 0) or 0) > 0)
+        + int(float(row.get("response_failures", 0) or 0) > 0)
+        + int(float(row.get("protocol_error_count", 0) or 0) > 0)
         for row in completed
     )
     if not completed:
@@ -375,21 +386,58 @@ def main() -> int:
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     csv_path = OUTPUT_ROOT / "sweep_runs.csv"
     rows: list[dict[str, Any]] = []
+    profiles: list[tuple[str, str, str, dict[ConfigKey, Any]]] = [
+        ("baseline", "current", "Current config.yaml values.", {})
+    ]
+    profiles.extend(
+        (experiment.name, variant.label, variant.description, variant.overrides)
+        for experiment in experiments
+        for variant in experiment.variants
+    )
+    llm = get_llm_client()
 
-    def run_profile(experiment: str, variant: str, description: str, overrides: dict[ConfigKey, Any]) -> None:
-        current = _dotted_values(_current_values(tuple(overrides))) if overrides else {}
-        tested = _dotted_values(overrides)
-        for replicate in range(1, args.runs + 1):
-            seed = args.seed + replicate
-            print(f"\n=== {experiment} [{variant}] run {replicate}/{args.runs} (seed {seed})")
-            with config_overrides(overrides):
-                result = run_dialogue(
-                    args.topic,
-                    participants=args.participants,
-                    seed=seed,
-                    log_dir=LOG_DIR,
-                )
-            result = _enrich(result)
+    for replicate in range(1, args.runs + 1):
+        seed = args.seed + replicate
+        print(f"\n=== shared setup {replicate}/{args.runs} (seed {seed})")
+        setup_error = ""
+        setup_fingerprint = ""
+        scenario = None
+        personas = None
+        try:
+            scenario, personas, setup_fingerprint = prepare_dialogue_setup(
+                args.topic,
+                participants=args.participants,
+                seed=seed,
+                llm=llm,
+            )
+        except Exception as exc:
+            setup_error = f"{type(exc).__name__}: {exc}"
+
+        for experiment, variant, description, overrides in profiles:
+            current = _dotted_values(_current_values(tuple(overrides))) if overrides else {}
+            tested = _dotted_values(overrides)
+            print(f"--- {experiment} [{variant}]")
+            if setup_error:
+                result: dict[str, Any] = {
+                    "topic": args.topic,
+                    "participants": args.participants,
+                    "seed": seed,
+                    "outcome": "error",
+                    "log_dir": "",
+                    "error": f"shared setup failed: {setup_error}",
+                }
+            else:
+                with config_overrides(overrides):
+                    result = run_dialogue(
+                        args.topic,
+                        participants=args.participants,
+                        seed=seed,
+                        llm=llm,
+                        log_dir=LOG_DIR,
+                        scenario=scenario,
+                        personas=personas,
+                    )
+                result = _enrich(result)
             metadata = {
                 "experiment": experiment,
                 "variant": variant,
@@ -401,6 +449,8 @@ def main() -> int:
                 "seed": seed,
                 "participants": args.participants,
                 "topic": args.topic,
+                "paired_setup": True,
+                "setup_fingerprint": setup_fingerprint,
             }
             _write_metadata(str(result.get("log_dir", "")), metadata)
             rows.append(
@@ -412,15 +462,12 @@ def main() -> int:
                     "current_values": _json(current),
                     "tested_values": _json(tested),
                     "replicate": replicate,
+                    "paired_setup": True,
+                    "setup_fingerprint": setup_fingerprint,
                     **result,
                 }
             )
             write_csv(csv_path, rows)
-
-    run_profile("baseline", "current", "Current config.yaml values.", {})
-    for experiment in experiments:
-        for variant in experiment.variants:
-            run_profile(experiment.name, variant.label, variant.description, variant.overrides)
 
     selection = choose_settings(
         experiments,

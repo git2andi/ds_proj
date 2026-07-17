@@ -113,6 +113,26 @@ def test_ambiguous_vote_is_rejected():
     assert any("ambiguous" in error for error in errors)
 
 
+def test_natural_workable_phrase_expresses_acceptance():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.COMPROMISE,
+        ("B",), reason="lower price",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.MAKE_ACCEPTABLE,
+            "B",
+            previous_option_id="A",
+            movement_reason="lower price",
+            movement_basis="common_ground",
+        ),
+    )
+    errors = validate_realization(
+        state, state.persona("p1"), action,
+        "Cafe's lower price makes it workable here.",
+    )
+    assert not any("stance change" in error for error in errors)
+
+
 def test_visible_switch_is_required():
     state = make_state(("A", "B", "C"))
     update = StanceUpdate(StanceUpdateKind.SWITCH_PREFERRED, "B", "A")
@@ -829,3 +849,69 @@ def test_recent_opening_hint_does_not_repeat_full_prior_messages():
     assert "Recent openings to avoid repeating" in prompt
     assert "I still prefer the library" in prompt
     assert "because it stays quiet and predictable" not in prompt
+
+
+def test_numeric_fact_from_another_option_is_not_valid_grounding():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="affordable",
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Library costs 8 euros.",
+    )
+    assert any("unsupported concrete value" in error for error in errors)
+
+
+def test_first_person_framing_does_not_legalize_an_invented_option_fact():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="affordable",
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "I think Library costs 200 euros.",
+    )
+    assert any("unsupported concrete value" in error for error in errors)
+
+
+def test_personal_filler_alone_is_not_a_relevant_direct_answer():
+    state = make_state(("A", "B", "C"))
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.ANSWER,
+        ("B",), reason="background noise",
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "My personal view is complicated.",
+    )
+    assert any("unrelated" in error for error in errors)
+
+
+def test_structured_action_rejects_cross_option_reason_source_and_unknown_movement():
+    from validation import validate_action
+
+    state = make_state(("A", "B", "C"))
+    cross_option = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("A",), reason="relaxed atmosphere",
+        reason_source=ReasonSource("B", "upside", "relaxed atmosphere"),
+    )
+    assert "reason source belongs to a different option" in validate_action(
+        state, state.persona("p1"), cross_option
+    )
+
+    unknown_movement = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.COMPROMISE,
+        ("Z",), stance_update=StanceUpdate(StanceUpdateKind.MAKE_ACCEPTABLE, "Z"),
+    )
+    errors = validate_action(state, state.persona("p1"), unknown_movement)
+    assert any("unknown option" in error for error in errors)

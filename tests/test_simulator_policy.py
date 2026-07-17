@@ -254,6 +254,28 @@ def test_final_position_movement_carries_concrete_reason(monkeypatch):
     assert "common-ground option" not in action.reason
 
 
+def test_final_position_prefers_public_persuasion_reason(monkeypatch):
+    import simulator as simulator_module
+
+    monkeypatch.setattr(simulator_module, "movement_probability", lambda *_args, **_kwargs: 1.0)
+    state = make_state(("A", "B", "B"))
+    for pid, option in zip(("p1", "p2", "p3"), ("A", "B", "B")):
+        state.runtimes[pid].public_preference = option
+    state.narrowing_options = ("B",)
+    public_reason = "one layover avoids the much longer route"
+    support = UserAction(
+        "p2", True, BidPriority.NORMAL, ActionType.SUPPORT,
+        ("B",), reason=public_reason, decisive_reason=public_reason,
+    )
+    state.turns.append(TurnRecord(0, Phase.DISCUSSION, "p2", "Ben", public_reason, action=support))
+
+    action = UserSimulator(state.persona("p1"), random.Random(1)).final_position_action(state)
+
+    assert action.stance_update is not None
+    assert action.stance_update.movement_reason == public_reason
+    assert action.reason == public_reason
+
+
 def test_vote_switch_reuses_public_acceptance_reason():
     state = make_state(("A", "B", "B"))
     runtime = state.runtimes["p1"]

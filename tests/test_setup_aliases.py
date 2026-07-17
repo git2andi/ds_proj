@@ -149,3 +149,56 @@ def test_scenario_parser_accepts_string_context_and_stores_one_paragraph():
     scenario = builder._parse_scenario(raw, 3)
     assert len(scenario.shared_context) == 1
     assert scenario.context_text.startswith("The travelers leave from Miami")
+
+
+def test_setup_sampling_is_reproducible_from_the_run_rng():
+    import random
+
+    first = SetupBuilder("Choose a project workspace", llm=InvalidAliasLLM(), rng=random.Random(777))
+    second = SetupBuilder("Choose a project workspace", llm=InvalidAliasLLM(), rng=random.Random(777))
+
+    first_traits = first._trait_rows(4)
+    first_shape = first._preference_shape(4, 4)
+    first_preferences = first._preference_assignments(4, ["A", "B", "C", "D"], first_shape)
+
+    second_traits = second._trait_rows(4)
+    second_shape = second._preference_shape(4, 4)
+    second_preferences = second._preference_assignments(4, ["A", "B", "C", "D"], second_shape)
+
+    assert first_traits == second_traits
+    assert first_shape == second_shape
+    assert first_preferences == second_preferences
+
+
+def test_shared_context_stop_cap_rejects_incompatible_option():
+    builder = SetupBuilder("Book a flight", llm=InvalidAliasLLM())
+    raw = {
+        "shared_context": "All listed flights include at most one layover.",
+        "options": [
+            {
+                "id": option_id,
+                "name": name,
+                "short_name": short_name,
+                "attrs": {
+                    "stops": stops,
+                    "duration": "listed",
+                    "price": "listed",
+                },
+                "upside": "public advantage",
+                "concern": "public drawback",
+            }
+            for option_id, name, short_name, stops in (
+                ("A", "Direct Flight", "Direct", "0"),
+                ("B", "Flight via London", "London", "1"),
+                ("C", "Flight via Reykjavik", "Reykjavik", "1"),
+                ("D", "Flight via New York and Copenhagen", "New York", "2"),
+            )
+        ],
+    }
+    scenario = builder._parse_scenario(raw, 3)
+    from builders import shared_option_constraint_violations
+
+    violations = shared_option_constraint_violations(scenario)
+    assert len(violations) == 1
+    assert "option D" in violations[0]
+    assert "maximum of 1" in violations[0]

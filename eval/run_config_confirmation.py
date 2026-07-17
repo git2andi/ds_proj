@@ -1,6 +1,6 @@
 """Confirm sweep-selected settings across several held-out topics.
 
-The script reads ``eval/logs_config_sweep/sweep_selection.json`` produced by
+The script reads ``eval2/logs_config_sweep/sweep_selection.json`` produced by
 ``run_config_sweep.py`` and builds cumulative profiles in the same order:
 
 1. current baseline
@@ -10,9 +10,10 @@ The script reads ``eval/logs_config_sweep/sweep_selection.json`` produced by
 5. + selected small-group-closure values
 
 Each profile is run on the same five three-participant topics selected from
-``scenarios.txt`` with matching seeds. No manual setting entry is required:
+``scenarios.txt``. For each topic, all profiles reuse the exact same generated
+scenario and personas, so configuration effects are not confounded by setup variation. No manual setting entry is required:
 
-    py eval/run_config_confirmation.py
+    py eval2/run_config_confirmation.py
 """
 
 from __future__ import annotations
@@ -27,9 +28,18 @@ from pathlib import Path
 from typing import Any
 
 from evaluation_metrics import extract_run_metrics, load_run, resolve_log_dir, write_csv
-from experiment_common import EVAL_DIR, ScenarioCase, cfg, config_overrides, read_scenarios, run_dialogue
+from experiment_common import (
+    EVAL_DIR,
+    ScenarioCase,
+    cfg,
+    config_overrides,
+    prepare_dialogue_setup,
+    read_scenarios,
+    run_dialogue,
+)
+from llm_client import get_llm_client
 
-LOG_DIR = "eval/logs_config_confirmation"
+LOG_DIR = "eval2/logs_config_confirmation"
 OUTPUT_ROOT = EVAL_DIR / "logs_config_confirmation"
 DEFAULT_SELECTION = EVAL_DIR / "logs_config_sweep" / "sweep_selection.json"
 DEFAULT_TOPIC_COUNT = 5
@@ -60,7 +70,7 @@ def dotted_to_overrides(values: dict[str, Any]) -> dict[ConfigKey, Any]:
 def load_profiles(path: Path) -> tuple[list[Profile], int]:
     if not path.exists():
         raise FileNotFoundError(
-            f"{path} does not exist. Run 'py eval/run_config_sweep.py' first."
+            f"{path} does not exist. Run 'py eval2/run_config_sweep.py' first."
         )
     data = json.loads(path.read_text(encoding="utf-8"))
     selections = data.get("selections", {})
@@ -131,6 +141,8 @@ def _enrich(result: dict[str, Any]) -> dict[str, Any]:
             "issue_resolution_rate",
             "option_coverage_ratio",
             "question_answer_rate",
+            "response_failures",
+            "protocol_error_count",
             "tokens_per_participant_turn",
         ):
             result[key] = extracted[key]
@@ -221,25 +233,54 @@ def main() -> int:
     total = len(profiles) * len(topics)
     position = 0
 
-    for profile in profiles:
-        current_values = {
-            f"{section}.{key}": cfg._raw[section][key]
-            for section, key in profile.overrides
-        }
-        tested_values = _dotted(profile.overrides)
-        for topic_index, case in enumerate(topics, start=1):
+    llm = get_llm_client()
+    for topic_index, case in enumerate(topics, start=1):
+        seed = args.seed + topic_index
+        print(f"\n=== shared setup topic {topic_index}/{len(topics)} | seed {seed}")
+        print(case.topic)
+        setup_error = ""
+        setup_fingerprint = ""
+        scenario = None
+        personas = None
+        try:
+            scenario, personas, setup_fingerprint = prepare_dialogue_setup(
+                case.topic,
+                participants=participants,
+                seed=seed,
+                llm=llm,
+            )
+        except Exception as exc:
+            setup_error = f"{type(exc).__name__}: {exc}"
+
+        for profile in profiles:
             position += 1
-            seed = args.seed + topic_index
             print(f"\n=== [{position}/{total}] {profile.name} | topic {topic_index}/{len(topics)} | seed {seed}")
-            print(case.topic)
-            with config_overrides(profile.overrides):
-                result = run_dialogue(
-                    case.topic,
-                    participants=participants,
-                    seed=seed,
-                    log_dir=LOG_DIR,
-                )
-            result = _enrich(result)
+            current_values = {
+                f"{section}.{key}": cfg._raw[section][key]
+                for section, key in profile.overrides
+            }
+            tested_values = _dotted(profile.overrides)
+            if setup_error:
+                result: dict[str, Any] = {
+                    "topic": case.topic,
+                    "participants": participants,
+                    "seed": seed,
+                    "outcome": "error",
+                    "log_dir": "",
+                    "error": f"shared setup failed: {setup_error}",
+                }
+            else:
+                with config_overrides(profile.overrides):
+                    result = run_dialogue(
+                        case.topic,
+                        participants=participants,
+                        seed=seed,
+                        llm=llm,
+                        log_dir=LOG_DIR,
+                        scenario=scenario,
+                        personas=personas,
+                    )
+                result = _enrich(result)
             metadata = {
                 "experiment": "combined_confirmation",
                 "variant": profile.name,
@@ -253,6 +294,8 @@ def main() -> int:
                 "topic": case.topic,
                 "seed": seed,
                 "participants": participants,
+                "paired_setup": True,
+                "setup_fingerprint": setup_fingerprint,
             }
             _write_metadata(str(result.get("log_dir", "")), metadata)
             rows.append(
@@ -265,6 +308,8 @@ def main() -> int:
                     "tested_values": json.dumps(tested_values, ensure_ascii=False, sort_keys=True),
                     "topic_index": topic_index,
                     "scenario_index": case.index,
+                    "paired_setup": True,
+                    "setup_fingerprint": setup_fingerprint,
                     **result,
                 }
             )

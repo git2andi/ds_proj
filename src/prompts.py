@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import asdict
-from typing import Iterable
 
 from aliases import validated_short_alias
 from config_loader import cfg
@@ -516,13 +514,10 @@ Recent chat:
 {target}{own}
 Write exactly one natural group-chat message that continues from the local context.
 Express the selected meaning, but do not copy the instruction's sentence structure or rely on one fixed question or contrast formula.
-Use only supplied public option facts; preserve their literal type, scope, and strength.
-Use the supplied option name or short name without adding a subtype.
-Treat each supplied fact as atomic: do not infer a new cost, schedule, facility, use case, consequence, guarantee, absence, or comparison.
-Do not strengthen facts: “lower” must not become “significantly lower”, and “moderate” must not become “reliable”.
-Do not infer cheapest, shortest, fastest, best value, balanced, or middle ground unless that exact relation is supplied.
-Do not invent numbers, values, option subtypes, facilities, solutions, guarantees, or stronger/weaker versions of a fact.
-Personal implications are allowed only as personal judgments such as “for me”. If information is unknown, say so.
+Use the supplied option name or short name without adding a subtype. Treat each supplied fact as atomic and preserve its exact type, scope, and strength.
+Do not invent or infer numbers, schedules, costs, distances, option subtypes, facilities, use cases, consequences, guarantees, absences, comparisons, or stronger/weaker versions of a fact.
+Do not infer cheapest, shortest, fastest, best value, balanced, or middle ground unless that relation is supplied.
+Frame personal implications as personal judgments; if information is unknown, say so.
 Do not add a speaker label or summarize the discussion.
 Vary the sentence opening naturally; do not mechanically begin with a name, “I”, or the option name.
 Short reactions, contractions, and “we”/“us” are valid when natural.
@@ -555,9 +550,8 @@ Problems to fix:
 - """ + "\n- ".join(errors) + f"""
 
 Return one corrected message only.
-Preserve each supplied fact's literal type, scope, and strength. Use the supplied option name or short name without adding a subtype.
-Do not strengthen a fact or add unsupported relative claims such as cheapest, shortest, fastest, safest, most reliable, best value, balanced, or middle ground.
-Do not invent facts, values, subtypes, facilities, use cases, consequences, guarantees, absences, comparisons, or solutions.
+Use the supplied option name or short name without adding a subtype. Treat each supplied fact as atomic and preserve its exact type, scope, and strength.
+Do not invent or infer facts, values, schedules, subtypes, facilities, use cases, consequences, guarantees, absences, comparisons, superlatives, or relative claims.
 Preserve the selected action and any required vote or stance change.
 When the action changes stance, use the concrete movement reason from the selected action; do not replace it with vague wording such as “fair enough”.
 Use natural group-chat wording and preserve the participant's voice. When reacting to someone, connect their point to this participant's priority instead of merely repeating the option fact. The word “formal” is unnecessary.

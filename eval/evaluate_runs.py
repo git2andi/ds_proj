@@ -1,9 +1,9 @@
 """Evaluate completed run logs using deterministic metrics only.
 
-Default input and output are both ``eval/logs_scenarios``. The script can be
-run from the project root or from ``eval/`` without changing paths:
+Default input and output are both ``eval2/logs_scenarios``. The script can be
+run from the project root or from ``eval2/`` without changing paths:
 
-    py eval/evaluate_runs.py
+    py eval2/evaluate_runs.py
 
 It writes:
 
@@ -115,6 +115,8 @@ def write_summary(
         f"| Runs ending in CLOSED | {_fraction(sum(bool(row.get('closed')) for row in completed), len(completed))} |",
         f"| Full structural pass | {_fraction(sum(bool(row.get('structural_pass')) for row in completed), len(completed))} |",
         f"| Questions answered | {_fraction(questions_answered, questions_opened)} |",
+        f"| Failed required responses | {int(_sum(completed, 'response_failures'))} |",
+        f"| Recorded protocol errors | {int(_sum(completed, 'protocol_error_count'))} |",
         f"| Valid final votes | {_fraction(_sum(completed, 'valid_final_votes'), _sum(completed, 'participants'))} |",
         f"| Outcome consistent with final votes | {_fraction(sum(bool(row.get('outcome_consistent')) for row in completed), len(completed))} |",
         f"| Hard-blocker violations | {int(_sum(completed, 'hard_blocker_violations'))} |",

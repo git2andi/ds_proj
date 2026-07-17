@@ -29,7 +29,8 @@ for _stream in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
-ROOT = Path(__file__).resolve().parent.parent
+EVAL_DIR = Path(__file__).resolve().parent
+ROOT = EVAL_DIR.parent
 SRC = ROOT / "src"
 for path in (str(ROOT), str(SRC)):
     if path not in sys.path:
@@ -631,8 +632,10 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
     expected_ok = case.expected_outcome is None or result.outcome.status == case.expected_outcome
     revote_has_movement = state.vote_round < 2 or metrics["narrowing_movements"] > 0
     repair_rate_ok = metrics["repairs"] / max(1, metrics["participant_turns"]) <= 0.25
-    movement_commit_ok = (
-        metrics["selected_movement_actions"] == metrics["committed_movement_actions"]
+    movement_accounting_ok = metrics["committed_movement_actions"] == (
+        metrics["selected_movement_actions"]
+        - metrics["movement_realization_failures"]
+        + metrics["movement_fallbacks"]
     )
     quality_ok = all((
         metrics["visible_switches"] >= case.min_switches,
@@ -641,7 +644,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         narrowing_turns >= case.min_narrowing_turns,
         revote_has_movement,
         metrics["unexplained_movements"] == 0,
-        movement_commit_ok,
+        movement_accounting_ok,
         repair_rate_ok,
         deliberation_range_ok,
     ))
@@ -654,7 +657,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         hard_ok,
         moderator_ok,
         state.vote_round <= 2,
-        movement_commit_ok,
+        movement_accounting_ok,
         metrics["participant_turns"] <= case.max_participant_turns,
         deliberation_range_ok,
     ))
@@ -682,7 +685,7 @@ def evaluate_case(case: EvalCase, llm) -> dict[str, Any]:
         "quality_expectations_ok": quality_ok,
         "revote_has_movement": revote_has_movement,
         "repair_rate_ok": repair_rate_ok,
-        "movement_commit_ok": movement_commit_ok,
+        "movement_accounting_ok": movement_accounting_ok,
         "structural_pass": structural,
         "case_pass": structural and expected_ok and quality_ok,
         "avg_prompt_tokens": round(
@@ -744,7 +747,7 @@ def write_summary(rows: list[dict[str, Any]], root: Path) -> tuple[Path, Path, P
         f"Mean input tokens per case: {round(sum(int(row['tokens_in']) for row in rows) / max(1, len(rows)), 1)}",
         "",
         "A second vote is permitted only when the preceding re-narrowing produced visible acceptance or switching.",
-        "Comp. reports compromise proposals/acceptances; every selected movement must commit and carry a stored grounded reason; repair-rate quality threshold is 25%.",
+        "Comp. reports compromise proposals/acceptances. Voluntary movement actions may be dropped after failed realization; committed movements must still be fully accounted for and visibly grounded. Repair-rate quality threshold is 25%.",
         "Self-selected means the simulator chose to enter the floor. Required answers are mandatory; a later unsolicited comment by another participant is self-selected.",
         "The two long_* cases are diagnostic stress runs. Their per-case overrides allow semantic reason reuse so long-range repetition becomes visible without changing normal defaults.",
         "",
@@ -787,12 +790,12 @@ def main() -> int:
         print("No matching cases.", file=sys.stderr)
         return 2
 
-    log_root = ROOT / "eval" / "logs_eval_suite"
+    log_root = EVAL_DIR / "logs_eval_suite"
     if log_root.exists():
         shutil.rmtree(log_root)
     log_root.mkdir(parents=True)
     old_log_dir = cfg.output.log_dir
-    cfg.output.log_dir = "eval/logs_eval_suite"
+    cfg.output.log_dir = "eval2/logs_eval_suite"
     try:
         llm = get_llm_client()
         print(f"Using dialogue LLM: {llm.provider} / {llm.model_id}")

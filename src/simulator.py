@@ -73,16 +73,14 @@ def initial_runtime(persona, option_ids: Iterable[str]) -> ParticipantRuntime:
     acceptable = {
         option_id for option_id, rank in ranks.items() if rank >= STANCE_ACCEPTABLE
     }
-    disliked = {
+    rejected = {
         option_id for option_id, rank in ranks.items() if rank <= STANCE_DISLIKED
-    }
-    rejected = set(disliked) if persona.hard_blocker else set()
+    } if persona.hard_blocker else set()
     return ParticipantRuntime(
         persona_id=persona.id,
         preferred_option=persona.preferred_option,
         ranks=ranks,
         acceptable_options=acceptable,
-        disliked_options=disliked,
         hard_rejected_options=rejected,
     )
 
@@ -90,6 +88,33 @@ def initial_runtime(persona, option_ids: Iterable[str]) -> ParticipantRuntime:
 def _normalized_reason(text: str) -> str:
     words = re.findall(r"[a-z0-9]+", text.casefold())
     return " ".join(words[:18])
+
+
+def _reason_terms(text: str) -> set[str]:
+    stop = {
+        "about", "after", "also", "because", "compared", "from", "into",
+        "option", "other", "still", "than", "that", "their", "there",
+        "these", "this", "with", "would",
+    }
+    terms: set[str] = set()
+    for token in re.findall(r"[a-z0-9]+", str(text or "").casefold()):
+        if len(token) < 4 or token in stop:
+            continue
+        if token.endswith("est") and len(token) > 6:
+            token = token[:-3]
+        elif token.endswith("er") and len(token) > 5:
+            token = token[:-2]
+        elif token.endswith("s") and len(token) > 5:
+            token = token[:-1]
+        terms.add(token)
+    return terms
+
+
+def _same_public_reason(left: str, right: str) -> bool:
+    a, b = _reason_terms(left), _reason_terms(right)
+    if not a or not b:
+        return False
+    return len(a & b) / min(len(a), len(b)) >= 0.6
 
 
 def _reason_identity(action: UserAction) -> str:
@@ -388,7 +413,7 @@ class UserSimulator:
                 if already_accepted
                 else StanceUpdateKind.MAKE_ACCEPTABLE
             )
-            reason, source = self._positive_reason(state, leader)
+            reason, source = self._movement_reason_for_option(state, leader)
             if already_accepted:
                 reason = runtime.acceptance_reasons.get(leader) or reason
             return UserAction(
@@ -893,7 +918,7 @@ class UserSimulator:
             if already_accepted
             else StanceUpdateKind.MAKE_ACCEPTABLE
         )
-        reason, source = self._positive_reason(state, target)
+        reason, source = self._movement_reason_for_option(state, target)
         return UserAction(
             self.id,
             True,
@@ -1202,9 +1227,15 @@ class UserSimulator:
         for key, value in option.attrs.items():
             if key.replace("_", " ").casefold() in lower or str(value).casefold() in lower:
                 return ReasonSource(option_id, key, str(value))
-        if option.upside and option.upside.casefold() in lower:
+        if option.upside and (
+            option.upside.casefold() in lower
+            or _same_public_reason(reason, option.upside)
+        ):
             return ReasonSource(option_id, "upside", option.upside)
-        if option.concern and option.concern.casefold() in lower:
+        if option.concern and (
+            option.concern.casefold() in lower
+            or _same_public_reason(reason, option.concern)
+        ):
             return ReasonSource(option_id, "concern", option.concern)
         return None
 
@@ -1288,6 +1319,47 @@ class UserSimulator:
         if latest is None:
             return ""
         return latest.decisive_reason or latest.reason
+
+    def _movement_reason_for_option(
+        self,
+        state: DialogueState,
+        option_id: str,
+    ) -> tuple[str, ReasonSource | None]:
+        """Prefer a concrete public argument when a simulator moves toward an option.
+
+        A movement should answer what changed in the discussion. Falling back to
+        the simulator's private positive reason is allowed only when no other
+        participant has publicly supplied a usable positive point.
+        """
+
+        positive_acts = {
+            ActionType.OPENING,
+            ActionType.SUPPORT,
+            ActionType.COMPROMISE,
+        }
+        for turn in reversed(state.participant_turns):
+            action = turn.action
+            if (
+                action is None
+                or turn.speaker_id == self.id
+                or option_id not in action.option_focus
+            ):
+                continue
+            positive = action.act in positive_acts
+            if action.act in {ActionType.COMMENT, ActionType.ANSWER} and (
+                state.runtimes[turn.speaker_id].rank(option_id) >= STANCE_ACCEPTABLE
+            ):
+                positive = True
+            if not positive:
+                continue
+            reason = (action.decisive_reason or action.reason).strip()
+            if not reason:
+                continue
+            source = action.reason_source
+            if source is None or source.option_id != option_id:
+                source = self._source_for_reason(state, option_id, reason)
+            return reason, source
+        return self._positive_reason(state, option_id)
 
     def _latest_public_positive_reason(
         self,

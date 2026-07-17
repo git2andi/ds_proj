@@ -4,36 +4,21 @@ Read `README.md` and `info/00_overview.md` before changing runtime behavior.
 
 ## Architectural invariants
 
-1. `UserAction` is authoritative.
-2. `UserSimulator` chooses participant behavior.
-3. The floor selects an intact bid and never rewrites it.
-4. The LLM realizes wording only.
-5. Public state changes only after accepted visible text. Questions and newly opened concerns must be visibly realized before they change protocol state.
-6. State-changing actions—opening preference, issue resolution, stance change, and vote—must be visibly expressed.
-6a. Every acceptance or switch carries a concrete simulator-owned movement reason. Do not replace it with generic fairness wording. Once that reason is public, a later changed vote may be brief.
-7. There is no validator LLM.
-8. Do not reintroduce urgency scores, floor multipliers, expected-turn-share correction, candidate weights, or public-pressure formulas.
-9. All behavioral probabilities and language limits belong in `config.yaml`.
-10. Raw option attributes do not automatically become conversation topics.
-11. Direct questions must clearly name their intended participant in a natural vocative position and create one required answer. The same addressee/option/concern question may not be reopened. Afterward, at most one ordinary voluntary reaction may continue the exchange; answered questions then close as resolved.
-12. Narrowing is adaptive: unanimous groups skip participant restatements; with one leader only dissenters or unresolved concern owners need a final-position opportunity; complete ties expose optional compromise.
-13. Rank-3 alternatives may be considered directly. A rank-2 disliked alternative becomes compromise-eligible only after that participant's concrete concern was visibly resolved or softened. Rank-1 and hard-blocked alternatives never become acceptable.
-14. Stagnation creates a simulator-owned compromise opportunity, never a controller-ordered concession.
-15. A second vote is allowed only after visible acceptance or switching in re-narrowing.
-16. Ordinary discussion must not systematically open concerns against every alternative. Concern responses and owner reactions are voluntary, responders are bounded, the same semantic concern is opened only once during discussion, and it may be reopened at most once during narrowing.
-17. Do not commit a moderator compromise/stagnation prompt unless a selected simulator response has been successfully realized and will immediately follow it.
-18. Comparison wording is soft: only visibly mentioned option pairs become public comparison evidence.
-19. During voting, one visible intended option with no competitor is a valid natural vote even without a fixed vote phrase. If generation and focused repair both fail, render a minimal deterministic statement for the already-authoritative vote; never lose a vote.
-19a. Once any stance-changing action wins the floor, it must commit visibly. After failed generation and focused repair, use a grounded minimal movement fallback and log the realization failure; never silently select and then discard movement.
-
-20. Opening realization uses `INITIAL`, `ALIGN`, or `CONTRAST` mode to avoid restarting every participant turn with the same greeting/preference skeleton.
-21. Voluntary pacing is participant-scaled but bounded by absolute caps. Groups of two through four receive one additional ordinary no-bid retry before narrowing, without forcing a contribution. Large-group clear-leader narrowing is capped to three required final-position participants.
-22. Realization must preserve the exact meaning and strength of supplied option facts. Do not invent option subtypes, facilities, use cases, guarantees, or unsupported relative claims such as cheapest, shortest, fastest, balanced, or best value. Deterministic grounding is intentionally narrow and does not claim full semantic entailment.
-23. Scenario alias repair may use a deterministic last resort, but only by selecting short validated phrases from words already present in the full option name. Never fabricate abbreviations or external codes.
-
-## Scope
-
-This is an option-grounded group-decision user simulator, not a general human social simulation. Do not add coalitions, emotions, deception, status hierarchies, or unrestricted memory unless explicitly required.
+1. `UserAction` is authoritative and is created by `UserSimulator`.
+2. The floor selects one intact bid and never rewrites its act, focus, reason, target, movement, or vote.
+3. The LLM realizes one selected action as wording only.
+4. Public protocol state changes only after accepted visible text. Questions, newly opened concerns, movement, and votes must be visibly realized.
+5. There is no validator LLM. Deterministic validation is limited to concrete action invariants, grounding risks, direct-answer relevance, vote clarity, required movement visibility, hard-blocker contradictions, and near-duplicate wording.
+6. Do not reintroduce expected-turn-share correction, urgency formulas, controller-selected concessions, candidate pressure scores, or unrestricted semantic parsing.
+7. Engagement controls voluntary bidding; verbosity controls word budget; directness controls wording; stubbornness controls movement probability. Hard blockers never move.
+8. The environment owns only opening order, direct-answer obligations, categorical floor selection, one active issue, broad pacing, narrowing, vote collection, and outcomes.
+9. Direct questions name one addressee and create one required answer. Other issue responses remain voluntary and bounded.
+10. A valid majority closes immediately. A second vote is allowed only after visible movement in one bounded re-narrowing round.
+11. Voluntary movement that fails generation and one repair is dropped and logged. Only formal votes and mandatory movement statements may use concise deterministic fallbacks.
+12. Grounding must be option-specific. A value belonging to another option cannot validate the focused option. Subjective personal judgments remain allowed.
+13. Setup sampling must use the run-local RNG. Evaluation comparisons must reuse the same generated scenario/personas for every candidate in a replicate.
+14. All behavior probabilities and language limits belong in `config.yaml` and must pass `Config._validate()`.
+15. Keep the project proportional to an eight-page implementation report. Do not add coalitions, emotions, deception, status hierarchies, long-term memory, or research-scale evaluation infrastructure.
 
 ## Runtime phases
 
@@ -41,25 +26,28 @@ This is an option-grounded group-decision user simulator, not a general human so
 OPENING → DISCUSSION → NARROWING → VOTING → CLOSED
 ```
 
-One bounded `VOTING → NARROWING → VOTING` return is allowed when no majority exists.
+One bounded `VOTING → NARROWING → VOTING` return is permitted when no majority exists and re-narrowing produces visible movement.
 
 ## Testing
-
-Run after each meaningful change:
 
 ```powershell
 py -m pytest -q
 ```
 
-Tests should assert public behavior and ownership boundaries, not exact LLM wording or removed implementation details.
+Tests should assert public behavior, ownership boundaries, and concrete correctness properties rather than exact LLM prose.
 
 ## Evaluation
 
-All LLM-backed evaluation is diagnostic. Adapt it when the public runtime contract changes, but do not turn it into a second runtime policy.
+Active scripts live in `eval2/`; `eval/` preserves historical outputs only. `src/eval.py` exposes the runtime metric schema consumed by post-hoc evaluation.
 
-Layout: `src/eval.py` flattens the runtime metrics schema; the scripts in `eval/` consume it. `run_eval_suite.py` runs 17 pinned cases, `run_scenarios.py` runs the `eval/scenarios.txt` batch (`count | topic` lines), `run_config_sweep.py` varies one numeric `conversation:`/`simulator:`/`language:` knob at a time against a shared baseline, and `judge_transcripts.py` is a post-hoc ChatEval-style multi-judge scorer. Evaluation scripts override configuration in memory only (`experiment_common.config_overrides`); never patch `config.yaml` from an experiment, and keep sweep-variant values inside the config-validation constraints (the deterministic tests check this).
+- `run_eval_suite.py`: focused pinned cases;
+- `run_scenarios.py`: broader scenario batch;
+- `evaluate_runs.py`: deterministic analysis;
+- `judge_transcripts.py`: three-role LLM judge;
+- `validate_judge.py`: corruption validation;
+- `run_config_sweep.py`: four observed configuration areas;
+- `run_config_confirmation.py`: matched multi-topic confirmation.
 
+Experiments override configuration in memory and resolve paths relative to `eval2/`. Paired configuration runs reuse the same generated setup and record a setup fingerprint.
 
-## Final turn semantics
-
-The `voluntary` metric means self-selected floor entry. Direct answers are required; later unsolicited comments by other simulators are self-selected. The two `long_*` evaluation cases use per-case stress overrides and do not change normal pacing.
+The `voluntary` metric means self-selected floor entry. Openings, required answers, required narrowing turns, votes, and liveness-forced turns are not used to evaluate engagement.

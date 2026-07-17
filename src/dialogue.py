@@ -5,7 +5,6 @@ from __future__ import annotations
 import math
 import random
 import re
-from collections import Counter
 
 import prompts
 from builders import SetupBuilder
@@ -16,7 +15,6 @@ from logger import DialogueLogger
 from models import (
     ActionType,
     ActiveIssue,
-    BidPriority,
     DialogueRunResult,
     DialogueState,
     GenerationAttempt,
@@ -62,7 +60,12 @@ class DialogueRunner:
 
         if scenario is None or personas is None:
             self._llm.reset_session()
-            builder = SetupBuilder(self.topic, force_auto_scenario=force_auto_scenario, llm=self._llm)
+            builder = SetupBuilder(
+                self.topic,
+                force_auto_scenario=force_auto_scenario,
+                llm=self._llm,
+                rng=self.rng,
+            )
             scenario, personas = builder.build(cfg.participant_count())
             setup_in = int(getattr(self._llm, "session_tokens_in", 0))
             setup_out = int(getattr(self._llm, "session_tokens_out", 0))
@@ -254,7 +257,7 @@ class DialogueRunner:
         if not self._moderator_enabled or self.state.coverage_prompt_used:
             return False
         text = prompts.moderator_coverage_prompt(self.state.scenario, option_id)
-        self._set_group_stimulus(StimulusKind.COVERAGE, (option_id,), text)
+        self._set_group_stimulus(StimulusKind.COVERAGE, (option_id,))
         bids = [simulator.propose(self.state) for simulator in self._simulators.values()]
         relevant = [
             bid for bid in bids
@@ -276,7 +279,7 @@ class DialogueRunner:
 
     def _run_stall_window(self) -> bool:
         text = prompts.moderator_stall_prompt()
-        self._set_group_stimulus(StimulusKind.STALL, (), text)
+        self._set_group_stimulus(StimulusKind.STALL, ())
         bids = [simulator.propose(self.state, liveness_forced=True) for simulator in self._simulators.values()]
         relevant = [bid for bid in bids if bid.wants_to_speak and bid.stimulus_id == self.state.group_stimulus.id]
         if not self._floor.has_selectable_bid(self.state, relevant):
@@ -602,123 +605,53 @@ class DialogueRunner:
         for persona in self.state.personas:
             action = self._simulators[persona.id].decide_vote(self.state, revote=revote)
             record = self._realize_and_commit(action, mandatory=True, voluntary=False)
-            errors = list(self._last_failure_errors) if record is None else []
             if record is None:
                 structured_errors = validate_action(self.state, persona, action)
                 if structured_errors:
                     raise RuntimeError(
                         f"invalid authoritative vote for {persona.id}: {structured_errors}"
                     )
-                fallback_text = self._vote_fallback_text(action)
-                fallback_attempt = GenerationAttempt(
-                    persona.id,
-                    self.state.phase,
-                    action.copy(),
-                    "",
-                    list(errors),
-                    final_status="fallback",
-                    fallback_text=fallback_text,
+                raise RuntimeError(
+                    f"formal vote realization failed for {persona.id}: {self._last_failure_errors}"
                 )
-                self.state.generation_attempts.append(fallback_attempt)
-                self.state.stats.vote_fallbacks += 1
-                record = self._commit_action(
-                    action,
-                    fallback_text,
-                    mandatory=True,
-                    voluntary=False,
-                    liveness_forced=False,
-                    repair_count=0,
-                )
+            attempt = next(
+                (
+                    item
+                    for item in reversed(self.state.generation_attempts)
+                    if item.speaker_id == persona.id and item.phase is Phase.VOTING
+                ),
+                None,
+            )
+            attempt_errors = []
+            attempts = 1
+            if attempt is not None:
+                attempt_errors = [*attempt.validation_errors, *attempt.repair_errors]
+                attempts += int(attempt.repair_text is not None)
+                if attempt.final_status == "fallback":
+                    self.state.vote_protocol_degraded = True
             vote_record = VoteRecord(
                 persona.id,
                 self.state.vote_round,
                 VoteStatus.VALID,
                 action.vote_option,
-                1,
-                errors,
+                attempts,
+                attempt_errors,
             )
             self.state.vote_records[self.state.vote_round][persona.id] = vote_record
         return outcome_from_votes(self.state, self.state.votes, allow_unresolved=revote)
 
-    def _fallback_variant(self, action: UserAction, count: int) -> int:
-        token = f"{action.speaker_id}:{action.option_focus}:{action.act.value}"
-        return sum(ord(char) for char in token) % count
+    @staticmethod
+    def _clean_fallback_reason(text: str) -> str:
+        return text.strip().rstrip(" .;:")
 
     def _vote_fallback_text(self, action: UserAction) -> str:
         option_id = action.vote_option or (action.option_focus[0] if action.option_focus else "")
         option = self.state.scenario.option(option_id)
         name = option.short_name or option.name
+        reason = ""
         if action.stance_update is not None:
-            reason = action.stance_update.movement_reason.strip()
-            variant = self._fallback_variant(action, 3)
-            if action.stance_update.reason_already_public:
-                options = (
-                    f"I’m going with {name} now.",
-                    f"{name} is my choice now.",
-                    f"I’m on board with {name} for the final vote.",
-                )
-                return options[variant]
-            if reason:
-                options = (
-                    f"{name} is my choice now. The point that shifted me: {reason}.",
-                    f"I’ve settled on {name}. The deciding consideration: {reason}.",
-                    f"I’m going with {name} now. What mattered most: {reason}.",
-                )
-                return options[variant]
-            return f"I’m going with {name} now."
-        return f"{name} gets my vote."
-
-    def _movement_fallback_text(self, action: UserAction) -> str:
-        update = action.stance_update
-        if update is None:
-            raise ValueError("movement fallback requires a stance update")
-        option = self.state.scenario.option(update.option_id)
-        name = option.short_name or option.name
-        reason = update.movement_reason.strip() or action.decisive_reason.strip() or action.reason.strip()
-        variant = self._fallback_variant(action, 3)
-        if update.kind is StanceUpdateKind.SWITCH_PREFERRED:
-            if update.reason_already_public or not reason:
-                options = (
-                    f"That changes my view. I’m going with {name} now.",
-                    f"I now prefer {name}.",
-                    f"I’m on board with {name} now.",
-                )
-                return options[variant]
-            options = (
-                f"{name} is my choice now. The point that shifted me: {reason}.",
-                f"I’ve settled on {name}. The deciding consideration: {reason}.",
-                f"I’m going with {name} now. What mattered most: {reason}.",
-            )
-            return options[variant]
-        if update.kind is StanceUpdateKind.MAKE_ACCEPTABLE:
-            if update.reason_already_public or not reason:
-                options = (
-                    f"{name} would work for me now.",
-                    f"I could support {name} now.",
-                    f"I’m good with {name} now.",
-                )
-                return options[variant]
-            basis = update.movement_basis
-            if basis == "concern_resolved":
-                options = (
-                    f"That settles my concern, so {name} works for me now. Relevant point: {reason}.",
-                    f"{name} is workable for me now. The response that resolved it: {reason}.",
-                    f"I can support {name} now; my earlier concern is settled. Relevant point: {reason}.",
-                )
-            elif basis in {"common_ground", "common_ground_proposal", "stagnation_compromise"}:
-                options = (
-                    f"I can go along with {name} as common ground. The benefit I’m weighing: {reason}.",
-                    f"{name} works for me as a compromise. What carries the trade-off: {reason}.",
-                    f"I could support {name} for the group. The point that matters here: {reason}.",
-                )
-            else:
-                options = (
-                    f"{name} works for me now. The relevant point: {reason}.",
-                    f"I could support {name} now. What makes it workable: {reason}.",
-                    f"I’m comfortable with {name} now. The deciding consideration: {reason}.",
-                )
-            return options[variant]
-        return f"My position on {name} has changed."
+            reason = self._clean_fallback_reason(action.stance_update.movement_reason)
+        return f"I’m voting for {name} because {reason}." if reason else f"I’m voting for {name}."
 
     def _select_and_realize(
         self,
@@ -773,7 +706,8 @@ class DialogueRunner:
         for _ in range(2):
             if self._realize_and_commit(action, mandatory=True, voluntary=False):
                 return
-        self.state.vote_protocol_errors.append(failure_reason)
+        self.state.stats.response_failures += 1
+        self.state.protocol_errors.append(failure_reason)
         self.state.response_obligation = None
         if self.state.active_issue:
             self._stale_active_issue(failure_reason)
@@ -787,6 +721,16 @@ class DialogueRunner:
         liveness_forced: bool = False,
         moderator_before: str | None = None,
     ) -> TurnRecord | None:
+        start_input = self.state.stats.input_tokens
+        start_output = self.state.stats.output_tokens
+
+        def token_usage() -> tuple[int, int]:
+            usage = (
+                self.state.stats.input_tokens - start_input,
+                self.state.stats.output_tokens - start_output,
+            )
+            return usage
+
         if action.stance_update is not None:
             self.state.stats.selected_movement_actions += 1
         persona = self.state.persona(action.speaker_id)
@@ -796,6 +740,7 @@ class DialogueRunner:
             self.state.stats.dropped_turns += 1
             if action.stance_update is not None:
                 self.state.stats.movement_realization_failures += 1
+            token_usage()
             return None
 
         prompt = prompts.realization_prompt(self.state, persona, action)
@@ -818,24 +763,24 @@ class DialogueRunner:
             attempt.repair_text = fixed
             attempt.repair_errors = list(repair_errors)
             if repair_errors:
-                if action.stance_update is not None:
-                    fallback_text = (
-                        self._vote_fallback_text(action)
-                        if action.act is ActionType.VOTE
-                        else self._movement_fallback_text(action)
-                    )
+                required_fallback = action.act is ActionType.VOTE
+                if required_fallback:
+                    fallback_text = self._vote_fallback_text(action)
                     attempt.final_status = "fallback"
                     attempt.fallback_text = fallback_text
                     self.state.generation_attempts.append(attempt)
-                    self.state.stats.movement_realization_failures += 1
-                    self.state.stats.movement_fallbacks += 1
+                    if action.stance_update is not None:
+                        self.state.stats.movement_realization_failures += 1
+                        self.state.stats.movement_fallbacks += 1
+                        if mandatory:
+                            self.state.stats.mandatory_movement_failures += 1
                     if action.act is ActionType.VOTE:
                         self.state.stats.vote_fallbacks += 1
-                    if mandatory:
-                        self.state.stats.mandatory_movement_failures += 1
+                        self.state.vote_protocol_degraded = True
                     self._last_failure_errors = []
                     if moderator_before and self._moderator_enabled:
                         self._append_moderator(moderator_before)
+                    prompt_tokens, output_tokens = token_usage()
                     return self._commit_action(
                         action,
                         fallback_text,
@@ -843,6 +788,8 @@ class DialogueRunner:
                         voluntary=voluntary,
                         liveness_forced=liveness_forced,
                         repair_count=repair_count,
+                        prompt_tokens=prompt_tokens,
+                        output_tokens=output_tokens,
                     )
                 attempt.final_status = "dropped"
                 self.state.generation_attempts.append(attempt)
@@ -850,6 +797,7 @@ class DialogueRunner:
                 if action.stance_update is not None:
                     self.state.stats.movement_realization_failures += 1
                 self._last_failure_errors = repair_errors
+                token_usage()
                 return None
             final = fixed
 
@@ -858,6 +806,7 @@ class DialogueRunner:
         self._last_failure_errors = []
         if moderator_before and self._moderator_enabled:
             self._append_moderator(moderator_before)
+        prompt_tokens, output_tokens = token_usage()
         return self._commit_action(
             action,
             final.strip(),
@@ -865,6 +814,8 @@ class DialogueRunner:
             voluntary=voluntary,
             liveness_forced=liveness_forced,
             repair_count=repair_count,
+            prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
         )
 
     def _call_llm(self, prompt: str, *, profile: str) -> str:
@@ -883,6 +834,8 @@ class DialogueRunner:
         voluntary: bool,
         liveness_forced: bool,
         repair_count: int,
+        prompt_tokens: int = 0,
+        output_tokens: int = 0,
     ) -> TurnRecord:
         runtime = self.state.runtimes[action.speaker_id]
         issue_event = self._apply_issue_before_turn(action, text)
@@ -908,15 +861,13 @@ class DialogueRunner:
             stance_update=action.stance_update,
             vote_option=action.vote_option,
             narrowing_options=self.state.narrowing_options,
-            prompt_tokens=int(getattr(self._llm, "last_tokens_in", 0)),
-            output_tokens=int(getattr(self._llm, "last_tokens_out", 0)),
+            prompt_tokens=prompt_tokens,
+            output_tokens=output_tokens,
             intended_word_max=max_words,
         )
         self.state.turns.append(record)
         print(f"{record.speaker_name}: {record.text}")
 
-        runtime.last_action = action.act
-        runtime.last_spoken_turn = record.index
         semantic_key = reason_key(action)
         if semantic_key:
             public_seen = any(
@@ -941,10 +892,6 @@ class DialogueRunner:
             self.state.stats.voluntary_turns += 1
         if action.act is ActionType.OPENING:
             runtime.openings += 1
-        if action.act is ActionType.ANSWER:
-            runtime.mandatory_answers += int(mandatory)
-        if action.act is ActionType.VOTE:
-            runtime.votes_cast += 1
         if action.stimulus_id is not None:
             runtime.responded_stimuli.add(action.stimulus_id)
         if action.issue_id is not None and action.issue_effect is IssueEffect.RESPOND:
@@ -983,7 +930,6 @@ class DialogueRunner:
             runtime.ranks[update.option_id] = 5
             if changed:
                 runtime.visible_switches += 1
-                runtime.last_switch_turn = len(self.state.turns)
                 self.state.movement_events += 1
                 if self.state.phase is Phase.NARROWING:
                     self.state.stats.narrowing_movements += 1
@@ -998,26 +944,22 @@ class DialogueRunner:
             runtime.public_preference = action.option_focus[0]
         if action.act in {ActionType.OPENING, ActionType.SUPPORT, ActionType.COMPROMISE}:
             for option_id in action.option_focus:
-                self.state.public_supports[option_id] += 1
-                self.state.public_supporters.setdefault(option_id, set()).add(action.speaker_id)
-                self.state.coverage[option_id].add(action.speaker_id, action.act)
+                self.state.coverage[option_id].add()
         elif action.act is ActionType.CONCERN:
             for option_id in action.option_focus:
-                self.state.public_concerns[option_id] += 1
-                self.state.public_concern_raisers.setdefault(option_id, set()).add(action.speaker_id)
-                self.state.coverage[option_id].add(action.speaker_id, action.act)
+                self.state.coverage[option_id].add()
         elif action.act is ActionType.COMPARE:
             visible = mentioned_options(text, self.state)
             pair = tuple(sorted(option_id for option_id in action.option_focus if option_id in visible))
             if len(pair) >= 2:
                 self.state.public_comparisons[pair] += 1
                 for option_id in pair:
-                    self.state.coverage[option_id].add(action.speaker_id, action.act)
+                    self.state.coverage[option_id].add()
             else:
                 # Accept useful one-sided realization, but never claim that a
                 # comparison became public when both options were not visible.
                 for option_id in pair:
-                    self.state.coverage[option_id].add(action.speaker_id, ActionType.COMMENT)
+                    self.state.coverage[option_id].add()
         if action.act is ActionType.VOTE:
             self.state.votes[action.speaker_id] = action.vote_option
 
@@ -1165,9 +1107,9 @@ class DialogueRunner:
     def _stale_active_issue(self, reason: str) -> None:
         self._close_active_issue(IssueStatus.STALE, reason)
 
-    def _set_group_stimulus(self, kind: StimulusKind, option_focus: tuple[str, ...], text: str) -> None:
+    def _set_group_stimulus(self, kind: StimulusKind, option_focus: tuple[str, ...]) -> None:
         self._stimulus_counter += 1
-        self.state.group_stimulus = GroupStimulus(self._stimulus_counter, kind, option_focus, text, len(self.state.turns))
+        self.state.group_stimulus = GroupStimulus(self._stimulus_counter, kind, option_focus)
 
     def _coverage_prompt_needed(self) -> bool:
         return bool(self._moderator_enabled and not self.state.coverage_prompt_used and self._uncovered_options())
@@ -1287,6 +1229,4 @@ def initialise_state(scenario: Scenario, personas: list[Persona]) -> DialogueSta
         personas=personas,
         runtimes=runtimes,
         coverage={option_id: OptionCoverage() for option_id in scenario.option_ids},
-        public_supporters={option_id: set() for option_id in scenario.option_ids},
-        public_concern_raisers={option_id: set() for option_id in scenario.option_ids},
     )

@@ -236,6 +236,7 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path | None = None) ->
     unclear_votes = _integer(vote_metrics.get("unclear"))
     repairs = _integer(generation.get("repairs"))
     dropped = _integer(generation.get("dropped"))
+    response_failures = _integer(generation.get("response_failures"))
     fallbacks = fallback_turns(payload)
     semantic_reuse = _integer(generation.get("semantic_reason_reuse"))
     selected_movement = _integer(generation.get("selected_movement_actions"))
@@ -253,6 +254,8 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path | None = None) ->
     phase_history = payload.get("phase_history", [])
     closed = bool(phase_history) and str(phase_history[-1]) == "CLOSED"
     vote_protocol_degraded = bool(vote_metrics.get("protocol_degraded", False))
+    protocol_errors = vote_metrics.get("protocol_errors", [])
+    protocol_error_count = len(protocol_errors) if isinstance(protocol_errors, list) else 0
 
     structural_pass = (
         closed
@@ -260,6 +263,8 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path | None = None) ->
         and questions_answered == questions_opened
         and unclear_votes == 0
         and not vote_protocol_degraded
+        and response_failures == 0
+        and protocol_error_count == 0
         and consistent_outcome
         and blocker_violations == 0
         and unexplained_movement == 0
@@ -283,6 +288,8 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path | None = None) ->
         "question_answer_rate": _ratio(questions_answered, questions_opened) if questions_opened else 1.0,
         "questions_opened": questions_opened,
         "questions_answered": questions_answered,
+        "response_failures": response_failures,
+        "protocol_error_count": protocol_error_count,
         "hard_blocker_violations": blocker_violations,
         "unexplained_movements": unexplained_movement,
         "participant_turns": participant_turns,
@@ -308,6 +315,7 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path | None = None) ->
         "selected_movement_actions": selected_movement,
         "directly_realized_movement_actions": direct_movement,
         "movement_fallbacks": movement_fallbacks,
+        "movement_realization_failures": movement_failures,
         "committed_movement_actions": committed_movement,
         "direct_movement_realization_rate": _ratio(direct_movement, selected_movement) if selected_movement else 1.0,
         "movement_commit_rate": _ratio(committed_movement, selected_movement) if selected_movement else 1.0,
