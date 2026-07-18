@@ -14,7 +14,8 @@ Output: ``eval/logs_judge_scenarios``
 
 The output is resumable. Existing complete judge panels are preserved and
 skipped; incomplete, failed, or newly discovered runs are processed on the next
-invocation. Results are persisted after every run.
+invocation. Results are persisted after every run. Different runs may be judged
+in parallel, while each run's referee calls remain sequential.
 
 The five dimensions use the same 1-5 range as the simulator traits:
 ``naturalness``, ``coherence``, ``groundedness``, ``persona_consistency``, and
@@ -29,6 +30,7 @@ import hashlib
 import json
 import statistics
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +39,6 @@ from summarize_runs import (
     ROOT,
     find_run_dirs,
     load_run,
-    write_csv,
 )
 
 SRC = ROOT / "src"
@@ -46,6 +47,8 @@ for _path in (str(ROOT), str(SRC)):
         sys.path.insert(0, _path)
 
 from llm_client import LLMClient  # noqa: E402
+
+JUDGE_PROMPT_VERSION = "strict-naturalness-coherence-v3"
 
 DIMENSIONS = (
     "naturalness",
@@ -56,11 +59,11 @@ DIMENSIONS = (
 )
 
 SCORE_ANCHORS = {
-    1: "fundamentally invalid, contradictory, or highly unnatural",
-    2: "major and repeated defects",
+    1: "fundamentally broken, contradictory, or implausible",
+    2: "major or recurring defects substantially harm the dialogue",
     3: "usable, but with clear and noticeable defects",
-    4: "good, with only minor defects",
-    5: "no meaningful defect found",
+    4: "strong, with no more than one isolated minor defect",
+    5: "fully convincing, with no observable defect; use rarely",
 }
 
 JUDGE_PERSONAS: tuple[tuple[str, str], ...] = (
@@ -136,8 +139,20 @@ def write_csv_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         path.unlink(missing_ok=True)
         return
+
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for key in row:
+            if key not in seen:
+                seen.add(key)
+                fieldnames.append(key)
+
     temporary = path.with_name(f".{path.name}.tmp")
-    write_csv(temporary, rows)
+    with temporary.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
     temporary.replace(path)
 
 
@@ -147,6 +162,7 @@ def panel_is_complete_for(
     judges: int,
     provider: str,
     model: str,
+    prompt_version: str,
 ) -> bool:
     if not row or not _parse_bool(row.get("panel_complete", False)):
         return False
@@ -154,6 +170,7 @@ def panel_is_complete_for(
         int(row.get("judges_requested", 0) or 0) == judges
         and str(row.get("judge_provider", "")) == provider
         and str(row.get("judge_model", "")) == model
+        and str(row.get("judge_prompt_version", "")) == prompt_version
     )
 
 
@@ -206,24 +223,43 @@ def judge_prompt(
     context: str,
     validation_feedback: str = "",
 ) -> str:
-    anchors = "\n".join(f"- {score}: {description}" for score, description in SCORE_ANCHORS.items())
-    correction = f"\n\nYour previous output was invalid: {validation_feedback}\nReturn a corrected object." if validation_feedback else ""
-    score_template = ",\n".join(f'    "{dimension}": 3' for dimension in DIMENSIONS)
+    anchors = "\n".join(
+        f"- {score}: {description}" for score, description in SCORE_ANCHORS.items()
+    )
+    correction = (
+        f"\n\nYour previous output was invalid: {validation_feedback}"
+        "\nReturn a corrected object."
+        if validation_feedback
+        else ""
+    )
+    score_template = ",\n".join(
+        f'    "{dimension}": 3' for dimension in DIMENSIONS
+    )
     return f"""You are {role_name}, one referee evaluating a simulated multi-user decision dialogue.
 {role_description}
 
-You must still score all five dimensions independently. Do not reward consensus merely because it occurred; an unresolved or majority result can be appropriate when the visible preferences justify it. Your assessment must be independent; you receive no other referee scores.
+Score all five dimensions independently. Do not reward consensus merely because it occurred, and do not penalize an unresolved result merely because agreement was not reached. Your assessment is independent; you receive no other referee scores.
 
-The moderator is not a simulated participant and has no persona. Include moderator turns when judging naturalness, coherence, groundedness, and deliberation quality because they affect the visible interaction, but never include the moderator in persona_consistency. Private persona fields are reference information; do not expect every private detail to be stated aloud.
+The moderator has no persona. Include moderator turns in naturalness, coherence, groundedness, and deliberation quality, but exclude the moderator from persona_consistency. Private persona fields are reference information and need not be stated aloud.
 
 {context}
 
 Dimensions:
-- naturalness: Does the complete visible exchange sound like a plausible human group discussion, without excessive templating, repetition, unnatural addressing, or awkward moderator behavior?
-- coherence: Do turns respond to the active discussion, are direct questions answered before moving on, and does the conversation progress logically across turns and phases?
-- groundedness: Are factual claims by participants and moderator supported by the shared context and option cards? Penalize invented numbers, properties, guarantees, or strengthened claims.
-- persona_consistency: Evaluate only simulated participants against their own complete persona cards. Consider preferences, private goals, stances, traits, and lexical style. Do not score the moderator as a persona.
-- deliberation_quality: Does the publicly visible support, concern handling, movement, narrowing, and voting provide a plausible and sufficient basis for the recorded votes and outcome?
+- naturalness: Judge whether the complete exchange reads like an actual group discussion rather than a generated script. Penalize repeated option facts, formulaic sentence openings, serial restatement of preferences, excessive agreement phrases, unnatural use of names, abrupt or overly polished turns, and moderator language that feels mechanical.
+- coherence: Judge whether turns respond to the active point, direct questions are answered or explicitly deferred, the moderator allows responses before changing phase, and public stances, narrowing, votes, and outcome remain consistent. Penalize repeated concerns without progress, irrelevant responses, abrupt phase changes, ignored questions, and unexplained movement or votes.
+- groundedness: Are factual and qualitative claims supported by the shared context and option cards? Penalize invented or altered numbers, unsupported properties, transferred attributes, guarantees, exaggerations, and strengthened claims.
+- persona_consistency: Evaluate only simulated participants against their complete persona cards, including preferences, goals, stances, traits, and speech style.
+- deliberation_quality: Does the visible support, concern handling, movement, narrowing, and voting provide a plausible basis for the final votes and outcome?
+
+Strict calibration:
+- Use the full scale. Start naturalness and coherence at 3, and raise them only when the complete transcript clearly earns a higher anchor.
+- Fluent grammar alone does not imply naturalness. A fluent but scripted, repetitive, or weakly interactive exchange should remain at 3 or below.
+- A 5 is rare and requires no observable defect in that dimension.
+- Naturalness or coherence may receive 4 only when there is at most one isolated minor defect.
+- Recurring templating, repeated factual restatement, or a sequence of largely independent statements should cap naturalness at 3.
+- An ignored direct question, moderator phase change without a response opportunity, or unexplained stance/vote inconsistency should cap coherence at 3.
+- When uncertain between two scores, choose the lower score.
+- The verdict must identify a concrete transcript-specific strength or defect.
 
 Use integer scores with these anchors:
 {anchors}
@@ -362,6 +398,7 @@ def judge_run(
         "run_id": run_id,
         "judge_provider": getattr(llm, "provider", ""),
         "judge_model": getattr(llm, "model_id", ""),
+        "judge_prompt_version": JUDGE_PROMPT_VERSION,
         "seed": (payload.get("provenance") or {}).get("seed", ""),
         "dialogue_provider": (payload.get("provenance") or {}).get("dialogue_provider", ""),
         "dialogue_model": (payload.get("provenance") or {}).get("dialogue_model", ""),
@@ -392,6 +429,25 @@ def judge_run(
     return aggregate, detailed, error_rows
 
 
+def judge_run_with_client(
+    run_dir: Path,
+    *,
+    provider: str,
+    model: str,
+    judges: int,
+    max_retries: int,
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Judge one complete run with a worker-local client."""
+
+    llm = LLMClient(provider=provider, model=model)
+    return judge_run(
+        run_dir,
+        llm,
+        judges=judges,
+        max_retries=max_retries,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--logs", type=Path, default=EVAL_DIR / "logs_scenarios", help="root scanned for run.json")
@@ -407,13 +463,22 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--model", type=str, default=None, help="judge model id")
     parser.add_argument("--limit", type=int, default=0, help="judge at most this many runs")
+    parser.add_argument("--workers", type=int, default=2, help="parallel run-level workers; default: 2")
     parser.add_argument("--output", type=Path, default=None, help="output directory inferred from --logs when omitted")
     return parser.parse_args()
 
 
 def write_summary(rows: list[dict[str, Any]], errors: list[dict[str, Any]], path: Path) -> None:
-    scored = [row for row in rows if row.get("judges_completed", 0)]
+    current = [
+        row for row in rows
+        if str(row.get("judge_prompt_version", "")) == JUDGE_PROMPT_VERSION
+    ]
+    scored = [row for row in current if row.get("judges_completed", 0)]
     complete = [row for row in scored if row.get("panel_complete")]
+    current_errors = [
+        row for row in errors
+        if str(row.get("judge_prompt_version", "")) == JUDGE_PROMPT_VERSION
+    ]
     provider = scored[0].get("judge_provider", "") if scored else ""
     model = scored[0].get("judge_model", "") if scored else ""
     lines = [
@@ -421,8 +486,8 @@ def write_summary(rows: list[dict[str, Any]], errors: list[dict[str, Any]], path
         "",
         f"Judge: {provider}/{model}" if provider or model else "Judge: unavailable",
         f"Runs scored: {len(scored)}",
-        f"Complete judge panels: {len(complete)}/{len(rows)}",
-        f"Judge-call failures after retries: {len(errors)}",
+        f"Complete judge panels: {len(complete)}/{len(current)}",
+        f"Judge-call failures after retries: {len(current_errors)}",
         "",
         "| Dimension | Mean | Mean inter-judge SD |",
         "|---|---:|---:|",
@@ -439,6 +504,8 @@ def write_summary(rows: list[dict[str, Any]], errors: list[dict[str, Any]], path
 
 def main() -> int:
     args = parse_args()
+    if args.workers < 1:
+        raise SystemExit("--workers must be at least 1")
     log_root = args.logs.resolve()
     output = args.output.resolve() if args.output else default_output_for(log_root)
     run_dirs = [path.resolve() for path in args.runs] if args.runs else find_run_dirs(log_root)
@@ -472,6 +539,7 @@ def main() -> int:
             judges=args.judges,
             provider=str(llm.provider),
             model=str(llm.model_id),
+            prompt_version=JUDGE_PROMPT_VERSION,
         ):
             skipped += 1
             continue
@@ -483,7 +551,7 @@ def main() -> int:
     print(
         f"Found {len(run_dirs)} completed run(s); skipping {skipped} already judged "
         f"panel(s). Judging {len(pending)} pending run(s) with {args.judges} "
-        f"referees via {llm.provider}/{llm.model_id}."
+        f"referees via {llm.provider}/{llm.model_id} using {args.workers} worker(s)."
     )
 
     if not pending:
@@ -494,58 +562,77 @@ def main() -> int:
         print(f"Summary: {summary_path}")
         return 0
 
-    for index, (run_dir, known_run_id) in enumerate(pending, start=1):
-        print(f"[{index}/{len(pending)}] {run_dir.name}")
+    provider = str(llm.provider)
+    model = str(llm.model_id)
 
-        # Remove only stale rows for this run. Results from every other finished
-        # run remain untouched, including across interrupted invocations.
-        aggregate_rows = [
-            row for row in aggregate_rows if str(row.get("run_id", "")) != known_run_id
-        ]
-        detailed_rows = [
-            row for row in detailed_rows if str(row.get("run_id", "")) != known_run_id
-        ]
-        error_rows = [
-            row for row in error_rows if str(row.get("run_id", "")) != known_run_id
-        ]
-
-        try:
-            aggregate, detailed, errors = judge_run(
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        futures = {
+            executor.submit(
+                judge_run_with_client,
                 run_dir,
-                llm,
+                provider=provider,
+                model=model,
                 judges=args.judges,
                 max_retries=args.retries,
-            )
-            aggregate_rows.append(aggregate)
-            detailed_rows.extend(detailed)
-            error_rows.extend(errors)
-        except Exception as exc:
-            error_rows.append(
-                {
-                    "run_id": known_run_id,
-                    "judge": "run_loader",
-                    "error": f"{type(exc).__name__}: {exc}",
-                    "log_dir": str(run_dir),
-                }
-            )
-            aggregate_rows.append(
-                {
-                    "run_id": known_run_id,
-                    "judge_provider": str(llm.provider),
-                    "judge_model": str(llm.model_id),
-                    "panel_complete": False,
-                    "judges_requested": args.judges,
-                    "judges_completed": 0,
-                    "log_dir": str(run_dir),
-                }
-            )
+            ): (run_dir, known_run_id)
+            for run_dir, known_run_id in pending
+        }
 
-        write_csv_atomic(aggregate_path, aggregate_rows)
-        write_csv_atomic(detailed_path, detailed_rows)
-        write_csv_atomic(error_path, error_rows)
-        temporary_summary = summary_path.with_name(f".{summary_path.name}.tmp")
-        write_summary(aggregate_rows, error_rows, temporary_summary)
-        temporary_summary.replace(summary_path)
+        for index, future in enumerate(as_completed(futures), start=1):
+            run_dir, known_run_id = futures[future]
+            print(f"[{index}/{len(pending)}] {run_dir.name}")
+
+            # Replace only rows for the completed run. All writes remain in the
+            # parent thread, so concurrent workers cannot corrupt the CSV files.
+            aggregate_rows = [
+                row for row in aggregate_rows
+                if str(row.get("run_id", "")) != known_run_id
+            ]
+            detailed_rows = [
+                row for row in detailed_rows
+                if str(row.get("run_id", "")) != known_run_id
+            ]
+            error_rows = [
+                row for row in error_rows
+                if str(row.get("run_id", "")) != known_run_id
+            ]
+
+            try:
+                aggregate, detailed, errors = future.result()
+                aggregate_rows.append(aggregate)
+                detailed_rows.extend(detailed)
+                error_rows.extend(errors)
+            except Exception as exc:
+                error_rows.append(
+                    {
+                        "run_id": known_run_id,
+                        "judge_provider": provider,
+                        "judge_model": model,
+                        "judge_prompt_version": JUDGE_PROMPT_VERSION,
+                        "judge": "run_loader",
+                        "error": f"{type(exc).__name__}: {exc}",
+                        "log_dir": str(run_dir),
+                    }
+                )
+                aggregate_rows.append(
+                    {
+                        "run_id": known_run_id,
+                        "judge_provider": provider,
+                        "judge_model": model,
+                        "judge_prompt_version": JUDGE_PROMPT_VERSION,
+                        "panel_complete": False,
+                        "judges_requested": args.judges,
+                        "judges_completed": 0,
+                        "log_dir": str(run_dir),
+                    }
+                )
+
+            write_csv_atomic(aggregate_path, aggregate_rows)
+            write_csv_atomic(detailed_path, detailed_rows)
+            write_csv_atomic(error_path, error_rows)
+            temporary_summary = summary_path.with_name(f".{summary_path.name}.tmp")
+            write_summary(aggregate_rows, error_rows, temporary_summary)
+            temporary_summary.replace(summary_path)
 
     print(f"\nAggregate scores: {aggregate_path}")
     print(f"Detailed scores: {detailed_path}")

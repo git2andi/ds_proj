@@ -1,4 +1,4 @@
-# Autonomous Multi-User Decision Simulator
+# User Simulators for Multi-User Conversational AI
 
 University project: **Implementation of User Simulators in Multi-User Conversational AI**.
 
@@ -185,14 +185,12 @@ The moderator remains visible to the judges because it affects interactional nat
 ## Repository layout
 
 ```text
-src/                    runtime, setup, policy, validation, logging
-config.yaml             providers and compact runtime configuration
+src/                    runtime, setup, policy, validation, 
+config.yaml             providers and compact runtime 
 main.py                 interactive entry point
-eval/                   focused suite, scenario batch, summaries, judges
+eval/                   focused suite, scenario batch, 
 tests/                  deterministic development tests
 info/                   implementation documentation
-info/papers/            supplied literature notes and papers
-SIMPLIFICATION_ACTION_PLAN.md
 ```
 
 ## Logged artifacts
