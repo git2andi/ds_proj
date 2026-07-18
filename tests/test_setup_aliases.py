@@ -1,204 +1,158 @@
-from builders import SetupBuilder
-from models import OptionCard
+import random
+
+import pytest
+
+from aliases import (
+    normalize_option_text,
+    resolve_option_mentions,
+    unique_generated_aliases,
+    validate_unique_aliases,
+)
+from builders import SetupBuilder, normalize_shared_context
+from tests.fixtures import make_scenario
 
 
-class InvalidAliasLLM:
-    def generate_json(self, *_args, **_kwargs):
-        return {
-            "short_names": {
-                "B": "BA via LHR",
-                "D": "Delta 2-Stop",
-            }
-        }
+class ScenarioLLM:
+    def __init__(self, rows):
+        self.rows = list(rows)
+        self.calls = 0
+
+    def generate_json(self, prompt, *, profile="setup"):
+        self.calls += 1
+        return self.rows.pop(0)
 
 
-def _card(option_id: str, name: str, short_name: str = "") -> OptionCard:
-    return OptionCard(
-        id=option_id,
-        name=name,
-        short_name=short_name,
-        attrs={"carrier": "listed", "stops": "listed", "route": "listed"},
-        upside="public advantage",
-        concern="public drawback",
+def valid_raw(*, duplicate_names=False):
+    board = make_scenario()
+    options = []
+    for option in board.options:
+        options.append({
+            "id": option.id,
+            "name": board.option("A").name if duplicate_names and option.id == "B" else option.name,
+            "attrs": option.attrs,
+            "upside": option.upside,
+            "concern": option.concern,
+        })
+    return {"scenario": {"shared_context": board.context_text, "options": options}}
+
+
+def alias_raw():
+    return {
+        "aliases": [
+            {"id": "A", "aliases": ["Library"]},
+            {"id": "B", "aliases": ["Cafe", "Riverside Cafe"]},
+            {"id": "C", "aliases": ["Lab"]},
+            {"id": "D", "aliases": ["Online"]},
+        ]
+    }
+
+
+def test_aliases_include_generated_short_references():
+    board = make_scenario()
+    board.option("A").aliases = ("Central",)
+    assert resolve_option_mentions("Library is my pick", board) == {"A"}
+    assert resolve_option_mentions("Central is my pick", board) == {"A"}
+    assert resolve_option_mentions("Central Library is my pick", board) == {"A"}
+    assert resolve_option_mentions("Option A is my pick", board) == {"A"}
+    assert resolve_option_mentions("the quiet place is my pick", board) == set()
+
+
+def test_generated_aliases_must_be_derived_and_unique():
+    names = {"A": "Chicago City Stay", "B": "Chicago Airport Hotel"}
+    accepted = unique_generated_aliases(
+        names,
+        {"A": ["Chicago", "Chicago City"], "B": ["Chicago", "Airport Hotel", "Downtown"]},
     )
+    assert accepted["A"] == ("Chicago City",)
+    assert accepted["B"] == ("Airport Hotel",)
 
 
-def test_alias_repair_has_deterministic_fallback_for_long_flight_names():
-    builder = SetupBuilder("Book a flight from Miami to Stockholm", llm=InvalidAliasLLM())
-    options = [
-        _card("A", "Direct Flight with Scandinavian Airlines", "Direct Flight"),
-        _card("B", "One-Stop Flight via London Heathrow with British Airways"),
-        _card("C", "Overnight Flight with Icelandair", "Overnight Flight"),
-        _card("D", "Two-Stop Flight via Atlanta and Copenhagen with Delta Airlines"),
+def test_alias_normalization_handles_articles_and_accents():
+    assert normalize_option_text("The Café") == normalize_option_text("Cafe")
+
+
+def test_invalid_generated_scenario_is_regenerated_before_alias_call():
+    llm = ScenarioLLM([valid_raw(duplicate_names=True), valid_raw(), alias_raw()])
+    builder = SetupBuilder("Choose a study location", llm=llm, rng=random.Random(1))
+    scenario = builder._generate_scenario(3)
+    assert llm.calls == 3
+    assert scenario.option("B").short_name == "Cafe"
+    assert "scenario_regenerated_after_validation_error" in scenario.setup_notes
+    assert "generated_option_aliases" in scenario.setup_notes
+
+
+def test_invalid_alias_payload_does_not_regenerate_valid_scenario():
+    llm = ScenarioLLM([valid_raw(), {"aliases": "broken"}])
+    builder = SetupBuilder("Choose a study location", llm=llm, rng=random.Random(1))
+    scenario = builder._generate_scenario(3)
+    assert llm.calls == 2
+    assert scenario.option("B").short_name == "Riverside Cafe"
+    assert "alias_generation_fell_back_to_full_names" in scenario.setup_notes
+    validate_unique_aliases(scenario)
+
+
+def test_invalid_scenario_fails_after_two_attempts():
+    llm = ScenarioLLM([valid_raw(duplicate_names=True), valid_raw(duplicate_names=True)])
+    builder = SetupBuilder("Choose a study location", llm=llm, rng=random.Random(1))
+    with pytest.raises(RuntimeError, match="after 2 attempt"):
+        builder._generate_scenario(3)
+
+
+def test_shared_context_accepts_one_or_two_sentences():
+    assert normalize_shared_context("One sentence.") == ["One sentence."]
+    assert normalize_shared_context("First sentence. Second sentence.") == ["First sentence. Second sentence."]
+    with pytest.raises(ValueError):
+        normalize_shared_context("One. Two. Three.")
+
+
+def test_generated_location_alias_is_accepted_in_opening_text():
+    from models import OptionCard, Scenario
+    from validation import validate_realization
+    from dialogue import initialise_state
+    from tests.fixtures import make_personas
+    from models import ActionType, BidPriority, UserAction
+
+    board = Scenario(
+        topic="Choose a trip",
+        shared_context=["The group needs one destination."],
+        options=[
+            OptionCard("A", "Chicago City Stay", {}, "museums", "busy", "Chicago", ("Chicago",)),
+            OptionCard("B", "Vermont Countryside", {}, "quiet", "long trip", "Vermont", ("Vermont",)),
+            OptionCard("C", "Miami Beach Hotel", {}, "beach", "humid", "Miami", ("Miami",)),
+            OptionCard("D", "Aspen Mountain Resort", {}, "hiking", "costly", "Aspen", ("Aspen",)),
+        ],
+    )
+    state = initialise_state(board, make_personas())
+    action = UserAction("p1", True, BidPriority.REQUIRED, ActionType.OPENING, ("A",), reason="museums")
+    assert validate_realization(state, state.persona("p1"), action, "Hi, Chicago is my current choice because of the museums.") == []
+
+
+def test_invalid_generated_person_name_uses_local_unique_fallback():
+    board = make_scenario()
+    builder = SetupBuilder("Choose a study location", llm=ScenarioLLM([]), rng=random.Random(2))
+    traits = [
+        {"id": "p1", "traits": {"engagement": 3, "verbosity": 3, "directness": 3, "stubbornness": 2}, "hard_blocker": False},
+        {"id": "p2", "traits": {"engagement": 3, "verbosity": 3, "directness": 3, "stubbornness": 2}, "hard_blocker": False},
     ]
-    proposed = {
-        "A": "Direct Flight",
-        "B": "BA via LHR",
-        "C": "Overnight Flight",
-        "D": "Delta 2-Stop",
-    }
-
-    notes = builder._ensure_valid_aliases(options, proposed)
-
-    aliases = {option.id: option.short_name for option in options}
-    assert aliases["B"] == "British Airways"
-    assert aliases["D"] == "Delta Airlines"
-    assert len({alias.casefold() for alias in aliases.values()}) == 4
-    assert any("alias_repaired_deterministically" in note for note in notes)
-
-
-def test_alias_candidates_handle_route_without_carrier_phrase():
-    candidates = SetupBuilder._alias_candidates(
-        "Two-Stop Flight via New York and Copenhagen"
-    )
-    assert "New York" in candidates or "Copenhagen" in candidates
-
-
-def test_full_scenario_parse_survives_invalid_flight_abbreviations():
-    builder = SetupBuilder("Book a flight from Miami to Stockholm", llm=InvalidAliasLLM())
-    raw = {
-        "shared_context": ["The group is comparing publicly listed flight options."],
-        "options": [
-            {
-                "id": "A",
-                "name": "Direct Flight with Scandinavian Airlines",
-                "short_name": "Direct Flight",
-                "attrs": {"carrier": "Scandinavian Airlines", "stops": "none", "route": "Miami to Stockholm"},
-                "upside": "no connection",
-                "concern": "highest listed fare",
+    preferences = {"p1": "A", "p2": "B"}
+    rows = []
+    for pid, name in (("p1", ""), ("p2", "Alex")):
+        rows.append({
+            "id": pid,
+            "name": name,
+            "background": "Works on the project.",
+            "private_goal": "Needs a practical choice.",
+            "age": 30,
+            "option_stances": {
+                option.id: {
+                    "rank": 5 if option.id == preferences[pid] else 3,
+                    "reason_for": option.upside,
+                    "reason_against": option.concern,
+                }
+                for option in board.options
             },
-            {
-                "id": "B",
-                "name": "One-Stop Flight via London Heathrow with British Airways",
-                "short_name": "BA via LHR",
-                "attrs": {"carrier": "British Airways", "stops": "one", "route": "via London Heathrow"},
-                "upside": "one connection",
-                "concern": "airport transfer time",
-            },
-            {
-                "id": "C",
-                "name": "Overnight Flight with Icelandair",
-                "short_name": "Overnight Flight",
-                "attrs": {"carrier": "Icelandair", "stops": "one", "route": "overnight itinerary"},
-                "upside": "overnight schedule",
-                "concern": "overnight travel",
-            },
-            {
-                "id": "D",
-                "name": "Two-Stop Flight via Atlanta and Copenhagen with Delta Airlines",
-                "short_name": "Delta 2-Stop",
-                "attrs": {"carrier": "Delta Airlines", "stops": "two", "route": "via Atlanta and Copenhagen"},
-                "upside": "multiple routing options",
-                "concern": "two connections",
-            },
-        ],
-    }
-
-    scenario = builder._parse_scenario(raw, 3)
-
-    assert scenario.option("B").short_name == "British Airways"
-    assert scenario.option("D").short_name == "Delta Airlines"
-    assert any("alias_repaired_deterministically" in note for note in scenario.setup_notes)
-
-
-def test_generated_scenario_context_is_a_single_paragraph_string():
-    from prompts import setup_scenario
-
-    prompt = setup_scenario("Ship a fragile prototype", 3)
-    assert '"shared_context": "One or two complete sentences' in prompt
-    assert "never output it as a list or bullets" in prompt
-    assert "Every context statement must be able to coexist with every option" in prompt
-
-
-def test_shared_context_normalization_accepts_one_or_two_sentences_only():
-    from builders import normalize_shared_context
-    import pytest
-
-    assert normalize_shared_context(
-        "The shipment is fragile. The destination needs the complete prototype."
-    ) == ["The shipment is fragile. The destination needs the complete prototype."]
-    with pytest.raises(ValueError, match="1..2 complete sentences"):
-        normalize_shared_context("First condition. Second condition. Third condition.")
-
-
-def test_scenario_parser_accepts_string_context_and_stores_one_paragraph():
-    builder = SetupBuilder("Book a flight from Miami to Stockholm", llm=InvalidAliasLLM())
-    raw = {
-        "shared_context": (
-            "The travelers leave from Miami and must arrive together in Stockholm. "
-            "They are comparing economy itineraries listed for the same travel date."
-        ),
-        "options": [
-            {
-                "id": option_id,
-                "name": name,
-                "short_name": short_name,
-                "attrs": {"carrier": "listed", "stops": "listed", "route": "listed"},
-                "upside": "public advantage",
-                "concern": "public drawback",
-            }
-            for option_id, name, short_name in (
-                ("A", "Direct Flight with Scandinavian Airlines", "Direct Flight"),
-                ("B", "One-Stop Flight via London with British Airways", "British Airways"),
-                ("C", "Overnight Flight with Icelandair", "Overnight Flight"),
-                ("D", "Two-Stop Flight with Delta Airlines", "Delta Airlines"),
-            )
-        ],
-    }
-
-    scenario = builder._parse_scenario(raw, 3)
-    assert len(scenario.shared_context) == 1
-    assert scenario.context_text.startswith("The travelers leave from Miami")
-
-
-def test_setup_sampling_is_reproducible_from_the_run_rng():
-    import random
-
-    first = SetupBuilder("Choose a project workspace", llm=InvalidAliasLLM(), rng=random.Random(777))
-    second = SetupBuilder("Choose a project workspace", llm=InvalidAliasLLM(), rng=random.Random(777))
-
-    first_traits = first._trait_rows(4)
-    first_shape = first._preference_shape(4, 4)
-    first_preferences = first._preference_assignments(4, ["A", "B", "C", "D"], first_shape)
-
-    second_traits = second._trait_rows(4)
-    second_shape = second._preference_shape(4, 4)
-    second_preferences = second._preference_assignments(4, ["A", "B", "C", "D"], second_shape)
-
-    assert first_traits == second_traits
-    assert first_shape == second_shape
-    assert first_preferences == second_preferences
-
-
-def test_shared_context_stop_cap_rejects_incompatible_option():
-    builder = SetupBuilder("Book a flight", llm=InvalidAliasLLM())
-    raw = {
-        "shared_context": "All listed flights include at most one layover.",
-        "options": [
-            {
-                "id": option_id,
-                "name": name,
-                "short_name": short_name,
-                "attrs": {
-                    "stops": stops,
-                    "duration": "listed",
-                    "price": "listed",
-                },
-                "upside": "public advantage",
-                "concern": "public drawback",
-            }
-            for option_id, name, short_name, stops in (
-                ("A", "Direct Flight", "Direct", "0"),
-                ("B", "Flight via London", "London", "1"),
-                ("C", "Flight via Reykjavik", "Reykjavik", "1"),
-                ("D", "Flight via New York and Copenhagen", "New York", "2"),
-            )
-        ],
-    }
-    scenario = builder._parse_scenario(raw, 3)
-    from builders import shared_option_constraint_violations
-
-    violations = shared_option_constraint_violations(scenario)
-    assert len(violations) == 1
-    assert "option D" in violations[0]
-    assert "maximum of 1" in violations[0]
+        })
+    personas = builder._parse_personas(rows, traits, board, preferences)
+    assert len({persona.name for persona in personas}) == 2
+    assert all(persona.name for persona in personas)
+    assert any(note.startswith("fallback_name_assigned:p1") for note in board.setup_notes)

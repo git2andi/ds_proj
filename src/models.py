@@ -1,13 +1,12 @@
-"""Core data models for the autonomous option-grounded simulator.
+"""Core data models for the option-grounded user-simulator runtime.
 
-Structured :class:`UserAction` objects are authoritative. Natural-language
-utterances render those actions; only state-changing semantics are checked for
-visible realization.
+The simulator owns structured actions. The language model only realizes the
+selected action as text. Public preferences and thread state are updated only
+from accepted, visibly grounded turns.
 """
 
 from __future__ import annotations
 
-from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum, IntEnum
 
@@ -22,66 +21,25 @@ class Phase(str, Enum):
 
 class ActionType(str, Enum):
     OPENING = "opening"
+    REACT = "react"
     SUPPORT = "support"
-    CONCERN = "concern"
+    OBJECT = "object"
+    COMPARE = "compare"
     ASK = "ask"
     ANSWER = "answer"
-    COMPARE = "compare"
-    ACKNOWLEDGE = "acknowledge"
-    COMMENT = "comment"
-    COMPROMISE = "compromise"
-    FINAL_POSITION = "final_position"
+    ACCEPT = "accept"
     VOTE = "vote"
 
 
 class BidPriority(IntEnum):
-    """Categorical floor priority; no arbitrary urgency weights are used."""
-
     NORMAL = 1
-    ISSUE_RESPONSE = 2
+    THREAD = 2
     REQUIRED = 3
 
 
-class IssueKind(str, Enum):
+class ThreadKind(str, Enum):
     QUESTION = "question"
     CONCERN = "concern"
-
-
-class IssueStatus(str, Enum):
-    OPEN = "open"
-    RESOLVED = "resolved"
-    STALE = "stale"
-
-
-class OpeningMode(str, Enum):
-    INITIAL = "initial"
-    ALIGN = "align"
-    CONTRAST = "contrast"
-
-
-class QuestionMode(str, Enum):
-    CHOICE_IMPACT = "choice_impact"
-    TRADEOFF = "tradeoff"
-    CONDITION = "condition"
-
-
-class ResponseMode(str, Enum):
-    ACCEPT_TRADEOFF = "accept_tradeoff"
-    MAINTAIN_CONCERN = "maintain_concern"
-    UNKNOWN = "unknown"
-
-
-class IssueEffect(str, Enum):
-    OPEN = "open"
-    RESPOND = "respond"
-    PARTIAL = "partial"
-    RESOLVE = "resolve"
-    MAINTAIN = "maintain"
-
-
-class StimulusKind(str, Enum):
-    COVERAGE = "coverage"
-    STALL = "stall"
 
 
 class VoteStatus(str, Enum):
@@ -93,9 +51,7 @@ class VoteStatus(str, Enum):
 
 class StanceUpdateKind(str, Enum):
     MAKE_ACCEPTABLE = "make_acceptable"
-    REMOVE_ACCEPTANCE = "remove_acceptance"
     SWITCH_PREFERRED = "switch_preferred"
-    REJECT = "reject"
 
 
 @dataclass(slots=True)
@@ -106,6 +62,7 @@ class OptionCard:
     upside: str = ""
     concern: str = ""
     short_name: str = ""
+    aliases: tuple[str, ...] = ()
 
     def public_line(self) -> str:
         attrs = "; ".join(
@@ -132,7 +89,6 @@ class Scenario:
 
     @property
     def context_text(self) -> str:
-        """Return the shared scenario description as one readable paragraph."""
         return " ".join(part.strip() for part in self.shared_context if part.strip())
 
     @property
@@ -163,7 +119,9 @@ class SimulatorParameters:
         if hard_blocker:
             self.stubbornness = 5
         elif not 1 <= self.stubbornness <= 4:
-            raise ValueError(f"normal stubbornness must be in [1, 4], got {self.stubbornness}")
+            raise ValueError(
+                f"normal stubbornness must be in [1, 4], got {self.stubbornness}"
+            )
         return self
 
 
@@ -217,6 +175,10 @@ class ReasonSource:
     attribute_name: str
     public_value: str
 
+    @property
+    def point_key(self) -> tuple[str, str]:
+        return (self.option_id, self.attribute_name.strip().lower())
+
 
 @dataclass(slots=True, frozen=True)
 class StanceUpdate:
@@ -224,9 +186,6 @@ class StanceUpdate:
     option_id: str
     previous_option_id: str | None = None
     movement_reason: str = ""
-    movement_basis: str = ""
-    remaining_concern: str = ""
-    reason_already_public: bool = False
 
 
 @dataclass(slots=True)
@@ -240,15 +199,12 @@ class UserAction:
     reason: str = ""
     reason_source: ReasonSource | None = None
     personal_context: str | None = None
-    issue_id: str | None = None
-    issue_effect: IssueEffect | None = None
     stance_update: StanceUpdate | None = None
     vote_option: str | None = None
-    stimulus_id: int | None = None
-    opening_mode: OpeningMode | None = None
-    question_mode: QuestionMode | None = None
-    response_mode: ResponseMode | None = None
-    decisive_reason: str = ""
+
+    @property
+    def point_key(self) -> tuple[str, str] | None:
+        return self.reason_source.point_key if self.reason_source else None
 
     def copy(self) -> "UserAction":
         return UserAction(
@@ -261,60 +217,23 @@ class UserAction:
             reason=self.reason,
             reason_source=self.reason_source,
             personal_context=self.personal_context,
-            issue_id=self.issue_id,
-            issue_effect=self.issue_effect,
             stance_update=self.stance_update,
             vote_option=self.vote_option,
-            stimulus_id=self.stimulus_id,
-            opening_mode=self.opening_mode,
-            question_mode=self.question_mode,
-            response_mode=self.response_mode,
-            decisive_reason=self.decisive_reason,
         )
 
 
 @dataclass(slots=True)
-class IssueRecord:
-    key: tuple[str, str]
-    kind: IssueKind | None = None
-    status: IssueStatus = IssueStatus.OPEN
-    last_issue_id: str | None = None
-    last_relevant_turn: int = -1
-    last_closed_turn: int = -1
-    outcome: str | None = None
-    reopen_count: int = 0
-
-
-@dataclass(slots=True)
-class ActiveIssue:
+class DiscussionThread:
     id: str
-    kind: IssueKind
-    option_focus: tuple[str, ...]
+    kind: ThreadKind
     opened_by: str
-    addressed_to: str | None
-    summary: str
-    status: IssueStatus
-    opened_at_turn: int
-    last_relevant_turn: int
-    follow_up_count: int = 0
-    source_text: str = ""
-    outcome: str | None = None
-    close_reason: str = ""
-    reason_source: ReasonSource | None = None
-    issue_key: tuple[str, str] | None = None
-    response_count: int = 0
-    responded_by: set[str] = field(default_factory=set)
-    owner_reacted: bool = False
-    required_answer_completed: bool = False
-    optional_follow_up_count: int = 0
-    question_mode: QuestionMode | None = None
-
-
-@dataclass(slots=True)
-class GroupStimulus:
-    id: int
-    kind: StimulusKind
     option_focus: tuple[str, ...]
+    point_key: tuple[str, str] | None
+    source_text: str
+    addressed_to: str | None = None
+    turn_count: int = 1
+    participants: set[str] = field(default_factory=set)
+    required_answer_pending: bool = False
 
 
 @dataclass(slots=True)
@@ -350,28 +269,14 @@ class ParticipantRuntime:
     public_preference: str | None = None
     public_acceptances: set[str] = field(default_factory=set)
     acceptance_reasons: dict[str, str] = field(default_factory=dict)
-    public_rejections: set[str] = field(default_factory=set)
-    used_reason_keys: set[str] = field(default_factory=set)
-    opened_issue_keys: set[str] = field(default_factory=set)
-    asked_question_keys: set[str] = field(default_factory=set)
-    responded_stimuli: set[int] = field(default_factory=set)
-    responded_issue_ids: set[str] = field(default_factory=set)
-    acknowledged_options: set[str] = field(default_factory=set)
-    used_compromise_options: set[str] = field(default_factory=set)
+    used_point_keys: set[tuple[str, str]] = field(default_factory=set)
+    opened_thread_keys: set[tuple[str, str]] = field(default_factory=set)
     voluntary_turns: int = 0
     openings: int = 0
     visible_switches: int = 0
 
     def rank(self, option_id: str) -> int:
         return int(self.ranks.get(option_id, STANCE_NEUTRAL))
-
-
-@dataclass(slots=True)
-class OptionCoverage:
-    substantive_count: int = 0
-
-    def add(self) -> None:
-        self.substantive_count += 1
 
 
 @dataclass(slots=True)
@@ -388,7 +293,7 @@ class TurnRecord:
     liveness_forced: bool = False
     priority: BidPriority = BidPriority.NORMAL
     repair_count: int = 0
-    issue_event: str | None = None
+    thread_event: str | None = None
     stance_update: StanceUpdate | None = None
     vote_option: str | None = None
     narrowing_options: tuple[str, ...] = ()
@@ -407,23 +312,16 @@ class RuntimeStats:
     setup_llm_calls: int = 0
     repair_calls: int = 0
     dropped_turns: int = 0
+    fallback_turns: int = 0
     liveness_forced_turns: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
     moderator_turns: int = 0
     voluntary_turns: int = 0
-    compromise_proposals: int = 0
-    compromise_acceptances: int = 0
-    narrowing_movements: int = 0
-    revote_skipped_no_movement: int = 0
-    semantic_reason_reuse: int = 0
-    vote_fallbacks: int = 0
-    mandatory_movement_failures: int = 0
+    visible_movements: int = 0
     response_failures: int = 0
-    movement_fallbacks: int = 0
-    selected_movement_actions: int = 0
-    committed_movement_actions: int = 0
-    movement_realization_failures: int = 0
+    compromise_attempts: int = 0
+    compromise_acceptances: int = 0
 
 
 @dataclass(slots=True)
@@ -433,33 +331,22 @@ class DialogueState:
     runtimes: dict[str, ParticipantRuntime]
     phase: Phase = Phase.OPENING
     turns: list[TurnRecord] = field(default_factory=list)
-    active_issue: ActiveIssue | None = None
-    issue_history: list[ActiveIssue] = field(default_factory=list)
-    issue_records: dict[tuple[str, str], IssueRecord] = field(default_factory=dict)
-    asked_public_question_keys: set[tuple[str, str, str]] = field(default_factory=set)
+    active_thread: DiscussionThread | None = None
+    closed_thread_keys: set[tuple[str, str]] = field(default_factory=set)
+    public_point_counts: dict[tuple[str, str], int] = field(default_factory=dict)
+    recent_point_keys: list[tuple[str, str]] = field(default_factory=list)
     response_obligation: str | None = None
-    group_stimulus: GroupStimulus | None = None
-    coverage: dict[str, OptionCoverage] = field(default_factory=dict)
-    public_comparisons: Counter[tuple[str, ...]] = field(default_factory=Counter)
     votes: dict[str, str | None] = field(default_factory=dict)
-    first_round_votes: dict[str, str | None] = field(default_factory=dict)
     vote_records: dict[int, dict[str, VoteRecord]] = field(default_factory=dict)
     vote_round: int = 0
-    vote_protocol_degraded: bool = False
     protocol_errors: list[str] = field(default_factory=list)
     narrowing_options: tuple[str, ...] = ()
     phase_history: list[str] = field(default_factory=lambda: [Phase.OPENING.value])
     stats: RuntimeStats = field(default_factory=RuntimeStats)
-    stall_prompt_used: bool = False
-    coverage_prompt_used: bool = False
-    coverage_no_interest: set[str] = field(default_factory=set)
     no_bid_rounds: int = 0
-    compromise_opportunity: bool = False
-    compromise_prompt_used: bool = False
     movement_events: int = 0
-    revote_skipped_no_movement: bool = False
     generation_attempts: list[GenerationAttempt] = field(default_factory=list)
-    validation_failures: Counter[str] = field(default_factory=Counter)
+    validation_failures: dict[str, int] = field(default_factory=dict)
 
     @property
     def participant_turns(self) -> list[TurnRecord]:
@@ -487,6 +374,7 @@ class DialogueState:
             if persona.id == participant_id:
                 return persona
         raise KeyError(participant_id)
+
 
 @dataclass(slots=True)
 class RunOutcome:

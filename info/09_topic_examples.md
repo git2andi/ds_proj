@@ -1,17 +1,21 @@
 # Topic examples
 
-Suitable topics present a bounded group decision with several plausible public options. Any phrasing works — imperative, question, or noun phrase — as long as one fixed option board can represent the choice:
+The automatic setup accepts a plain decision topic and creates four topic-specific options. Suitable topics have a clear choice and a small set of public trade-offs.
 
-- Book a flight from Miami to Stockholm for a conference trip;
-- Pick a movie for Friday night at home;
-- Which espresso machine should the startup buy for its kitchen;
-- Decide where to celebrate New Year's Eve this year;
-- Choose a storage setup for a shared research dataset;
-- Agree on quiet hours for the shared student house.
+Examples:
 
-`eval2/scenarios.txt` contains 102 such topics across many domains (travel, food, entertainment, work, community, sports, family, hobbies) with balanced participant counts 2–7, used by the batch runner `eval2/run_scenarios.py`.
+```text
+Choose a restaurant for a group dinner
+Choose a weekend activity for four friends
+Choose a shared coffee machine for an office
+Choose a film for a movie night
+Choose a charity project to support
+Choose accommodation for a short group trip
+Choose a board game for six participants
+```
 
-Two constraints:
+The system is not limited to fixed domains. Topic generality comes from structured option cards, not from hard-coded restaurant, travel, or product rules.
 
-- Avoid open-ended prompts without enumerable options ("how should we improve morale"), topics requiring unrestricted web knowledge or hidden factual research, and safety-critical professional decisions. The simulator assumes that objective option facts are fully represented by the public board.
-- Do not name a group size in the topic ("five friends pick …"): setup fails fast when the stated count contradicts the configured participant count, rather than generating a contradicted world.
+For reliable setup, topics should avoid requesting live prices, current schedules, or external facts that the configured LLM cannot verify. The generated option board is treated as the shared world for the discussion.
+
+Manual mode is preferable when exact factual values or a specific experimental setup must be preserved.

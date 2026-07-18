@@ -1,29 +1,19 @@
-# User simulator generation
+# Simulator and persona generation
 
-Each persona contains:
+After the scenario is valid, the builder samples participant parameters and asks the LLM for persona cards consistent with the assigned preferences.
 
-- name;
-- age, `speech_style`, and two stable realization tendencies;
-- short background;
-- private goal;
-- direct traits: engagement, verbosity, directness, stubbornness;
-- one `OptionStance` per option;
-- optional hard-blocker state.
+A persona contains:
 
-## Trait responsibilities
+- ID and unique first name;
+- age and lexical speech style;
+- background and private goal;
+- engagement, verbosity, directness, and stubbornness;
+- preferred option;
+- stance and grounded reason for each option;
+- optional hard-blocker status.
 
-- engagement → probability of a voluntary bid;
-- verbosity → maximum realization length;
-- directness → wording instruction;
-- stubbornness → movement probability after a concrete trigger. Movement may be acceptance or a preference switch.
+The Python runtime owns trait sampling, preference-shape sampling, ages, and hard-blocker selection through the run-local random generator. The persona LLM fills the descriptive card and reasons while respecting those assignments.
 
-Normal stubbornness is 1–4. A hard blocker uses 5, accepts only its preferred option, and never switches.
+Stances use ranks from rejected to preferred. Normal participants may accept or switch when a public trigger and their stubbornness permit it. A hard blocker rejects every nonpreferred option and never moves.
 
-Persona reasons are the primary content source. Option upside/concern is fallback content. Private information becomes public only when the simulator says it visibly.
-
-
-A non-hard-blocker can autonomously propose an acceptable alternative when the group is stagnant. The opportunity is probabilistic and participant-local; no controller target or switch is forced.
-
-## Linguistic signature
-
-Each persona receives two compact, deterministic style tendencies derived from its directness, verbosity, and speech register. Examples include leading with the conclusion, acknowledging another view before disagreeing, using conversational contractions, or preferring one compact sentence. These tendencies affect wording only and never change participation, stance, reasons, or vote choice.
+An already validated scenario is preserved when persona generation retries. Manual persona profiles can supply some or all fields through `participants.mode: manual`.

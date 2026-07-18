@@ -1,16 +1,16 @@
-"""ChatEval-inspired LLM judging of completed decision transcripts.
+"""Independent multi-perspective LLM judging of completed transcripts.
 
-The evaluator uses three diverse referee personas in a one-by-one sequence.
-Each later referee sees the earlier assessments, matching the communication
-strategy used in ChatEval. Judge order is rotated deterministically per run to
-avoid assigning the same role permanent first-mover influence.
+The evaluator uses up to three diverse referee personas. Every referee receives
+the same public scenario, complete persona cards, visible transcript, votes, and
+outcome, but never another referee's assessment. Judge order is rotated
+deterministically per run only to distribute API call ordering.
 
 Default paths are ready for the scenario batch:
 
-    py eval2/judge_transcripts.py
+    py eval/judge_transcripts.py
 
-Input:  ``eval2/logs_scenarios``
-Output: ``eval2/logs_judge_scenarios``
+Input:  ``eval/logs_scenarios``
+Output: ``eval/logs_judge_scenarios``
 
 The five dimensions use the same 1-5 range as the simulator traits:
 ``naturalness``, ``coherence``, ``groundedness``, ``persona_consistency``, and
@@ -27,13 +27,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from evaluation_metrics import (
+from summarize_runs import (
     EVAL_DIR,
     ROOT,
     find_run_dirs,
-    load_experiment_metadata,
     load_run,
-    metadata_columns,
     write_csv,
 )
 
@@ -129,22 +127,15 @@ def judge_prompt(
     role_name: str,
     role_description: str,
     context: str,
-    prior_assessments: list[str],
     validation_feedback: str = "",
 ) -> str:
-    prior = ""
-    if prior_assessments:
-        prior = (
-            "\n\nAssessments from referees who spoke earlier. Treat them as arguments, not ground truth; "
-            "correct them when necessary:\n" + "\n".join(prior_assessments)
-        )
     anchors = "\n".join(f"- {score}: {description}" for score, description in SCORE_ANCHORS.items())
     correction = f"\n\nYour previous output was invalid: {validation_feedback}\nReturn a corrected object." if validation_feedback else ""
     score_template = ",\n".join(f'    "{dimension}": 3' for dimension in DIMENSIONS)
     return f"""You are {role_name}, one referee evaluating a simulated multi-user decision dialogue.
 {role_description}
 
-You must still score all five dimensions independently. Do not reward consensus merely because it occurred; an unresolved or majority result can be appropriate when the visible preferences justify it.{prior}
+You must still score all five dimensions independently. Do not reward consensus merely because it occurred; an unresolved or majority result can be appropriate when the visible preferences justify it. Your assessment must be independent; you receive no other referee scores.
 
 {context}
 
@@ -196,7 +187,6 @@ def call_judge(
     role_name: str,
     role_description: str,
     context: str,
-    prior_assessments: list[str],
     max_retries: int,
 ) -> tuple[dict[str, int], str, int]:
     feedback = ""
@@ -204,7 +194,7 @@ def call_judge(
     for attempt in range(max_retries + 1):
         try:
             data = llm.generate_json(
-                judge_prompt(role_name, role_description, context, prior_assessments, feedback),
+                judge_prompt(role_name, role_description, context, feedback),
                 profile="setup",
             )
             scores, verdict = validate_response(data)
@@ -226,7 +216,6 @@ def judge_payload(
     context = run_context(payload)
     run_id = str(payload.get("run_id", "run"))
     roles = rotated_judges(order_key or run_id, judges)
-    prior_assessments: list[str] = []
     assessments: list[dict[str, Any]] = []
     errors: list[dict[str, Any]] = []
     for order, (role_name, role_description) in enumerate(roles, start=1):
@@ -236,7 +225,6 @@ def judge_payload(
                 role_name=role_name,
                 role_description=role_description,
                 context=context,
-                prior_assessments=prior_assessments,
                 max_retries=max_retries,
             )
             assessment = {
@@ -247,7 +235,6 @@ def judge_payload(
                 "retries": retries,
             }
             assessments.append(assessment)
-            prior_assessments.append(f"{role_name}: scores={scores}; verdict={verdict}")
         except Exception as exc:
             errors.append(
                 {
@@ -292,12 +279,13 @@ def judge_run(
         max_retries=max_retries,
         order_key=run_id,
     )
-    metadata = load_experiment_metadata(run_dir)
     common = {
         "run_id": run_id,
         "judge_provider": getattr(llm, "provider", ""),
         "judge_model": getattr(llm, "model_id", ""),
-        **metadata_columns(metadata),
+        "seed": (payload.get("provenance") or {}).get("seed", ""),
+        "dialogue_provider": (payload.get("provenance") or {}).get("dialogue_provider", ""),
+        "dialogue_model": (payload.get("provenance") or {}).get("dialogue_model", ""),
         "topic": payload.get("scenario", {}).get("topic", ""),
         "participants": len(payload.get("personas", [])),
         "outcome": payload.get("outcome", {}).get("status", ""),
@@ -357,7 +345,7 @@ def write_summary(rows: list[dict[str, Any]], errors: list[dict[str, Any]], path
         f"Complete judge panels: {len(complete)}/{len(rows)}",
         f"Judge-call failures after retries: {len(errors)}",
         "",
-        "| Dimension | Mean | Mean judge SD |",
+        "| Dimension | Mean | Mean inter-judge SD |",
         "|---|---:|---:|",
     ]
     for dimension in (*DIMENSIONS, "overall"):

@@ -1,341 +1,246 @@
-"""Compact human-readable and structured run logging."""
+"""Human-readable and structured run logging."""
 
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
-import re
+import platform
+import subprocess
 from collections import Counter
-from dataclasses import fields, is_dataclass
+from dataclasses import asdict, is_dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from statistics import mean
 from typing import Any
 
 from config_loader import cfg
-from models import DialogueState, IssueKind, IssueStatus, RunOutcome, VoteStatus
+from models import DialogueState, RunOutcome
 
 
 class DialogueLogger:
     def __init__(self, topic: str) -> None:
+        root = cfg.root / str(cfg.output.log_dir)
+        root.mkdir(parents=True, exist_ok=True)
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        slug = re.sub(r"[^a-zA-Z0-9]+", "_", topic.strip()).strip("_")[:45] or "manual"
-        self.run_id = f"{stamp}_{slug}"
-        root = Path(cfg.root) / str(cfg.output.log_dir)
-        self.run_dir = root / self.run_id
-        self.run_dir.mkdir(parents=True, exist_ok=True)
+        slug = "_".join("".join(ch.lower() if ch.isalnum() else " " for ch in topic).split())[:45] or "run"
+        self.directory = root / f"{stamp}_{slug}"
+        self.directory.mkdir(parents=True, exist_ok=False)
 
     def write_prompt(self, prompt: str, kind: str) -> str:
-        if not bool(cfg.output.get("write_prompts", False)):
-            return ""
-        path = self.run_dir / str(cfg.output.prompt_file)
+        path = self.directory / str(cfg.output.prompt_file)
         with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps({"kind": kind, "prompt": prompt}, ensure_ascii=False) + "\n")
         return str(path)
 
-    def write_run(self, state: DialogueState, outcome: RunOutcome, *, seed: int) -> dict[str, str]:
-        transcript = self.run_dir / str(cfg.output.transcript_file)
-        json_path = self.run_dir / str(cfg.output.json_file)
-        metrics_path = Path(cfg.root) / str(cfg.output.log_dir) / str(cfg.output.metrics_csv)
-        metrics = metrics_for(state, outcome)
-        transcript.write_text("\n".join(self._transcript_lines(state, outcome, seed, metrics)), encoding="utf-8")
-
-        scenario_payload = _jsonable(state.scenario)
-        scenario_payload["shared_context"] = state.scenario.context_text
-        payload: dict[str, Any] = {
-            "run_id": self.run_id,
-            "seed": seed,
-            "scenario": scenario_payload,
-            "personas": [_jsonable(persona) for persona in state.personas],
-            "runtimes": _jsonable(state.runtimes),
-            "phase_history": list(state.phase_history),
-            "issue_history": _jsonable(state.issue_history),
-            "turns": [_turn_payload(turn, include_action=bool(cfg.output.get("write_action_trace", False))) for turn in state.turns],
-            "first_round_votes": dict(state.first_round_votes),
-            "vote_records": _jsonable(state.vote_records),
-            "votes": dict(state.votes),
-            "outcome": _jsonable(outcome),
-            "metrics": metrics,
-            "failed_generation_attempts": _jsonable([
-                attempt
-                for attempt in state.generation_attempts
-                if attempt.final_status in {"dropped", "fallback"}
-            ]),
-        }
-        if bool(cfg.output.get("debug_metrics", False)):
-            payload["generation_attempts"] = _jsonable(state.generation_attempts)
-            payload["validation_failures"] = dict(state.validation_failures)
-            payload["issue_records"] = _jsonable(state.issue_records)
-        json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        self._append_metrics(metrics_path, metrics, outcome)
-        return {
-            "dir": str(self.run_dir),
-            "transcript": str(transcript),
-            "json": str(json_path),
-            "metrics_csv": str(metrics_path),
-        }
-
-    def _append_metrics(self, path: Path, metrics: dict[str, Any], outcome: RunOutcome) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        row = {
-            "run_id": self.run_id,
-            "outcome": outcome.status,
-            "final_option": outcome.final_option or "",
-            "participant_turns": metrics["turns"]["participant"],
-            "voluntary_turns": metrics["turns"]["voluntary"],
-            "moderator_turns": metrics["turns"]["moderator"],
-            "repairs": metrics["generation"]["repairs"],
-            "dropped_turns": metrics["generation"]["dropped"],
-            "response_failures": metrics["generation"]["response_failures"],
-            "fallback_turns": metrics["generation"]["vote_fallbacks"] + metrics["generation"]["movement_fallbacks"],
-            "questions_answered": metrics["questions"]["answered"],
-            "questions_opened": metrics["questions"]["opened"],
-            "issues_resolved": metrics["issues"]["resolved"],
-            "issues_stale": metrics["issues"]["stale"],
-            "visible_switches": metrics["stances"]["switches"],
-            "visible_acceptances": metrics["stances"]["acceptances"],
-            "compromise_proposals": metrics["compromise"]["proposals"],
-            "revote_skipped": metrics["votes"]["revote_skipped"],
-            "semantic_reason_reuse": metrics["generation"]["semantic_reason_reuse"],
-            "vote_fallbacks": metrics["generation"]["vote_fallbacks"],
-            "mandatory_movement_failures": metrics["generation"]["mandatory_movement_failures"],
-            "movement_fallbacks": metrics["generation"]["movement_fallbacks"],
-            "selected_movement_actions": metrics["generation"]["selected_movement_actions"],
-            "committed_movement_actions": metrics["generation"]["committed_movement_actions"],
-            "movement_realization_failures": metrics["generation"]["movement_realization_failures"],
-            "protocol_error_count": len(metrics["votes"]["protocol_errors"]),
-            "llm_calls": metrics["tokens"]["llm_calls"],
-            "tokens_in": metrics["tokens"]["input"],
-            "tokens_out": metrics["tokens"]["output"],
-        }
-        fields_ = list(row)
-        write_header = not path.exists()
-        mode = "a"
-        if path.exists():
-            existing = path.read_text(encoding="utf-8").splitlines()[0].split(",") if path.stat().st_size else []
-            if existing != fields_:
-                mode = "w"
-                write_header = True
-        with path.open(mode, encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fields_)
-            if write_header:
-                writer.writeheader()
-            writer.writerow(row)
-
-    def _transcript_lines(
+    def write_run(
         self,
         state: DialogueState,
         outcome: RunOutcome,
+        *,
         seed: int,
+        llm: Any | None = None,
+    ) -> dict[str, str]:
+        metrics = metrics_for(state, outcome)
+        payload = {
+            "provenance": _provenance(seed=seed, llm=llm),
+            "scenario": _jsonable(state.scenario),
+            "personas": [_jsonable(persona) for persona in state.personas],
+            "runtime": {pid: _jsonable(runtime) for pid, runtime in state.runtimes.items()},
+            "phase_history": list(state.phase_history),
+            "turns": [_turn_payload(turn) for turn in state.turns],
+            "active_thread": _jsonable(state.active_thread),
+            "closed_thread_keys": [list(key) for key in sorted(state.closed_thread_keys)],
+            "public_point_counts": {
+                f"{option_id}:{attribute}": count
+                for (option_id, attribute), count in sorted(state.public_point_counts.items())
+            },
+            "recent_point_keys": [list(key) for key in state.recent_point_keys],
+            "votes": dict(state.votes),
+            "vote_records": _jsonable(state.vote_records),
+            "outcome": _jsonable(outcome),
+            "stats": _jsonable(state.stats),
+            "metrics": metrics,
+            "generation_attempts": [_jsonable(attempt) for attempt in state.generation_attempts],
+            "validation_failures": dict(state.validation_failures),
+            "protocol_errors": list(state.protocol_errors),
+            "quality_flags": _quality_flags(state),
+            "needs_review": bool(_quality_flags(state)),
+        }
+
+        json_path = self.directory / str(cfg.output.json_file)
+        json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        transcript_path = self.directory / str(cfg.output.transcript_file)
+        transcript_path.write_text(
+            "\n".join(self._transcript_lines(state, outcome, metrics)),
+            encoding="utf-8",
+        )
+
+        metrics_path = cfg.root / str(cfg.output.log_dir) / str(cfg.output.metrics_csv)
+        self._append_metrics(metrics_path, metrics, outcome)
+        return {
+            "dir": str(self.directory),
+            "json": str(json_path),
+            "transcript": str(transcript_path),
+            "metrics": str(metrics_path),
+        }
+
+    @staticmethod
+    def _append_metrics(path: Path, metrics: dict[str, Any], outcome: RunOutcome) -> None:
+        row = {**metrics, "outcome": outcome.status, "final_option": outcome.final_option or ""}
+        exists = path.exists()
+        with path.open("a", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(row))
+            if not exists:
+                writer.writeheader()
+            writer.writerow(row)
+
+    @staticmethod
+    def _transcript_lines(
+        state: DialogueState,
+        outcome: RunOutcome,
         metrics: dict[str, Any],
     ) -> list[str]:
         lines = [
-            f"# Dialogue run {self.run_id}",
+            f"# {state.scenario.topic}",
             "",
-            f"Topic: {state.scenario.topic}",
-            f"Random seed: {seed}",
+            state.scenario.context_text,
             "",
-            "## Scenario context",
+            "## Options",
             "",
-            state.scenario.context_text or "No additional shared context.",
+            *[f"- {option.public_line()}" for option in state.scenario.options],
             "",
-            "## Public option board",
+            "## Participants",
             "",
         ]
-        for option in state.scenario.options:
-            lines.append(f"- {option.public_line()}")
-
-        lines += ["", "## Participants", "", "| Participant | E/V/D/S | Initial preference | Hard blocker |", "|---|---:|---|---:|"]
         for persona in state.personas:
             traits = persona.sim_params
             lines.append(
-                f"| {persona.name} | {traits.engagement}/{traits.verbosity}/{traits.directness}/{traits.stubbornness} "
-                f"| {persona.preferred_option} | {'yes' if persona.hard_blocker else 'no'} |"
+                f"- **{persona.name}**: preferred {persona.preferred_option}; "
+                f"engagement {traits.engagement}, verbosity {traits.verbosity}, "
+                f"directness {traits.directness}, stubbornness {traits.stubbornness}"
             )
-
-        lines += ["", "## Transcript", ""]
+        lines.extend(["", "## Dialogue", ""])
         for turn in state.turns:
             lines.append(f"**{turn.speaker_name}:** {turn.text}")
-
-        lines += [
-            "",
-            "## Outcome",
-            "",
-            f"- Status: {outcome.status}",
-            f"- Final option: {outcome.final_option or 'none'}",
-            f"- Votes: {outcome.votes}",
-            f"- Reason: {outcome.reason}",
-            "",
-            "## Run summary",
-            "",
-            f"- Participant turns: {metrics['turns']['participant']}",
-            f"- Self-selected turns: {metrics['turns']['voluntary']}",
-            f"- Moderator turns: {metrics['turns']['moderator']}",
-            f"- Repairs / dropped turns: {metrics['generation']['repairs']} / {metrics['generation']['dropped']}",
-            f"- Vote / movement fallbacks: {metrics['generation']['vote_fallbacks']} / {metrics['generation']['movement_fallbacks']}",
-            f"- Selected / committed movement actions: {metrics['generation']['selected_movement_actions']} / {metrics['generation']['committed_movement_actions']}",
-            f"- Failed movement realizations: {metrics['generation']['movement_realization_failures']}",
-            f"- Questions answered: {metrics['questions']['answered']}/{metrics['questions']['opened']}",
-            f"- Response failures / protocol errors: {metrics['generation']['response_failures']} / {len(metrics['votes']['protocol_errors'])}",
-            f"- Issues resolved / stale: {metrics['issues']['resolved']} / {metrics['issues']['stale']}",
-            f"- Visible acceptances / switches: {metrics['stances']['acceptances']} / {metrics['stances']['switches']}",
-            f"- Grounded / unexplained movement turns: {metrics['stances']['grounded_movements']} / {metrics['stances']['unexplained_movements']}",
-            f"- Compromise proposals: {metrics['compromise']['proposals']}",
-            f"- Re-vote skipped for no movement: {'yes' if metrics['votes']['revote_skipped'] else 'no'}",
-            f"- Semantic reason reuse: {metrics['generation']['semantic_reason_reuse']}",
-            f"- Repair causes: {metrics['generation']['repair_causes'] or {}}",
-            f"- LLM calls: {metrics['tokens']['llm_calls']}",
-            f"- Input / output tokens: {metrics['tokens']['input']} / {metrics['tokens']['output']}",
-            "",
-            "### Participant summary",
-            "",
-            "| Participant | Total | Self-selected | Avg words | Initial → final |",
-            "|---|---:|---:|---:|---|",
-        ]
-        for pid, row in metrics["participants"].items():
-            lines.append(
-                f"| {row['name']} | {row['turns']} | {row['voluntary']} | {row['avg_words']:.1f} "
-                f"| {row['initial_preference']} → {row['final_preference']} |"
-            )
+        lines.extend(
+            [
+                "",
+                "## Outcome",
+                "",
+                f"- Status: {outcome.status}",
+                f"- Final option: {outcome.final_option or 'none'}",
+                f"- Votes: {outcome.votes}",
+                f"- Reason: {outcome.reason}",
+                "",
+                "## Core metrics",
+                "",
+            ]
+        )
+        lines.extend(f"- {key}: {value}" for key, value in metrics.items())
         return lines
 
 
 def metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any]:
-    participant_turns = [turn for turn in state.turns if not turn.moderator]
-    moderator_turns = [turn for turn in state.turns if turn.moderator]
-    repairs = sum(turn.repair_count for turn in participant_turns)
-    issue_rows = list(state.issue_history) + ([state.active_issue] if state.active_issue else [])
-    question_rows = [issue for issue in issue_rows if issue and issue.kind is IssueKind.QUESTION]
-    concern_rows = [issue for issue in issue_rows if issue and issue.kind is IssueKind.CONCERN]
-    final_records = state.vote_records.get(state.vote_round, {})
-    movement_turns = [turn for turn in participant_turns if turn.stance_update is not None]
-    grounded_movements = sum(
-        bool(turn.stance_update and turn.stance_update.movement_reason.strip())
-        for turn in movement_turns
-    )
-
-    participants: dict[str, Any] = {}
-    for persona in state.personas:
-        turns = [turn for turn in participant_turns if turn.speaker_id == persona.id]
-        runtime = state.runtimes[persona.id]
-        participants[persona.id] = {
-            "name": persona.name,
-            "traits": {
-                "engagement": persona.sim_params.engagement,
-                "verbosity": persona.sim_params.verbosity,
-                "directness": persona.sim_params.directness,
-                "stubbornness": persona.sim_params.stubbornness,
-            },
-            "turns": len(turns),
-            "voluntary": sum(turn.voluntary for turn in turns),
-            "avg_words": mean([turn.word_count for turn in turns]) if turns else 0.0,
-            "initial_preference": persona.preferred_option,
-            "final_preference": runtime.public_preference or runtime.preferred_option,
-        }
-
+    participants = state.participant_turns
+    moderator_turns = sum(turn.moderator for turn in state.turns)
+    word_counts = [turn.word_count for turn in participants]
+    visible_changes = sum(runtime.visible_switches for runtime in state.runtimes.values())
+    fallbacks = sum(attempt.final_status == "fallback" for attempt in state.generation_attempts)
+    repairs = sum(attempt.repair_text is not None for attempt in state.generation_attempts)
+    dropped = sum(attempt.final_status == "dropped" for attempt in state.generation_attempts)
+    vote_consistent = _vote_outcome_consistent(state, outcome)
+    counts = Counter(turn.speaker_id for turn in participants if turn.voluntary)
     return {
-        "turns": {
-            "participant": len(participant_turns),
-            "voluntary": sum(turn.voluntary for turn in participant_turns),
-            "self_selected": sum(turn.voluntary for turn in participant_turns),
-            "mandatory": sum(turn.mandatory for turn in participant_turns),
-            "moderator": len(moderator_turns),
-        },
-        "generation": {
-            "repairs": repairs,
-            "dropped": state.stats.dropped_turns,
-            "liveness_forced": state.stats.liveness_forced_turns,
-            "semantic_reason_reuse": state.stats.semantic_reason_reuse,
-            "vote_fallbacks": state.stats.vote_fallbacks,
-            "mandatory_movement_failures": state.stats.mandatory_movement_failures,
-            "response_failures": state.stats.response_failures,
-            "movement_fallbacks": state.stats.movement_fallbacks,
-            "selected_movement_actions": state.stats.selected_movement_actions,
-            "committed_movement_actions": state.stats.committed_movement_actions,
-            "movement_realization_failures": state.stats.movement_realization_failures,
-            "repair_causes": dict(state.validation_failures),
-        },
-        "questions": {
-            "opened": len(question_rows),
-            "answered": sum(issue.required_answer_completed for issue in question_rows),
-            "optional_follow_ups": sum(issue.optional_follow_up_count for issue in question_rows),
-        },
-        "issues": {
-            "opened": len(issue_rows),
-            "resolved": sum(issue.status is IssueStatus.RESOLVED for issue in issue_rows if issue),
-            "stale": sum(issue.status is IssueStatus.STALE for issue in issue_rows if issue),
-            "concerns_opened": len(concern_rows),
-            "concerns_resolved": sum(issue.status is IssueStatus.RESOLVED for issue in concern_rows),
-            "concerns_stale": sum(issue.status is IssueStatus.STALE for issue in concern_rows),
-        },
-        "stances": {
-            "switches": sum(runtime.visible_switches for runtime in state.runtimes.values()),
-            "acceptances": sum(len(runtime.public_acceptances) for runtime in state.runtimes.values()),
-            "narrowing_movements": state.stats.narrowing_movements,
-            "grounded_movements": grounded_movements,
-            "unexplained_movements": len(movement_turns) - grounded_movements,
-        },
-        "compromise": {
-            "proposals": state.stats.compromise_proposals,
-            "acceptances": state.stats.compromise_acceptances,
-        },
-        "coverage": {
-            option_id: coverage.substantive_count for option_id, coverage in state.coverage.items()
-        },
-        "votes": {
-            "round": state.vote_round,
-            "valid": sum(record.status is VoteStatus.VALID for record in final_records.values()),
-            "unclear": sum(record.status is not VoteStatus.VALID for record in final_records.values()),
-            "protocol_degraded": state.vote_protocol_degraded,
-            "protocol_errors": list(state.protocol_errors),
-            "revote_skipped": state.revote_skipped_no_movement,
-        },
-        "tokens": {
-            "llm_calls": state.stats.llm_calls + state.stats.setup_llm_calls,
-            "input": state.stats.input_tokens,
-            "output": state.stats.output_tokens,
-        },
-        "participants": participants,
-        "outcome": {"status": outcome.status, "final_option": outcome.final_option},
+        "participant_count": len(state.personas),
+        "participant_turns": len(participants),
+        "voluntary_turns": state.stats.voluntary_turns,
+        "moderator_turns": moderator_turns,
+        "moderator_ratio": round(moderator_turns / max(1, len(state.turns)), 4),
+        "avg_words_per_participant_turn": round(sum(word_counts) / max(1, len(word_counts)), 2),
+        "visible_preference_changes": visible_changes,
+        "repair_turns": repairs,
+        "dropped_turns": dropped,
+        "fallback_turns": fallbacks,
+        "response_failures": state.stats.response_failures,
+        "protocol_errors": len(state.protocol_errors),
+        "vote_outcome_consistent": vote_consistent,
+        "input_tokens": state.stats.input_tokens,
+        "output_tokens": state.stats.output_tokens,
+        "llm_calls": state.stats.llm_calls + state.stats.setup_llm_calls,
+        "voluntary_turns_by_persona": dict(counts),
     }
 
 
-def _turn_payload(turn: Any, *, include_action: bool) -> dict[str, Any]:
-    payload = {
-        "index": turn.index,
-        "phase": turn.phase.value,
-        "speaker_id": turn.speaker_id,
-        "speaker_name": turn.speaker_name,
-        "text": turn.text,
-        "moderator": turn.moderator,
-        "mandatory": turn.mandatory,
-        "voluntary": turn.voluntary,
-        "liveness_forced": turn.liveness_forced,
-        "priority": int(turn.priority),
-        "repair_count": turn.repair_count,
-        "issue_event": turn.issue_event,
-        "stance_update": _jsonable(turn.stance_update),
-        "vote_option": turn.vote_option,
-        "word_count": turn.word_count,
-        "prompt_tokens": turn.prompt_tokens,
-        "output_tokens": turn.output_tokens,
-        "intended_word_max": turn.intended_word_max,
-    }
-    if include_action:
-        payload["action"] = _jsonable(turn.action)
+def _vote_outcome_consistent(state: DialogueState, outcome: RunOutcome) -> bool:
+    counts = Counter(option_id for option_id in state.votes.values() if option_id)
+    if outcome.status == "successful":
+        return bool(counts) and max(counts.values()) == len(state.personas)
+    if outcome.status == "majority":
+        return bool(outcome.final_option) and counts[outcome.final_option] > len(state.personas) / 2
+    return not counts or max(counts.values(), default=0) <= len(state.personas) / 2
+
+
+def _turn_payload(turn: Any) -> dict[str, Any]:
+    payload = _jsonable(turn)
+    if not bool(cfg.output.get("write_action_trace", True)):
+        payload.pop("action", None)
     return payload
+
+
+def _provenance(*, seed: int, llm: Any | None) -> dict[str, Any]:
+    config_bytes = cfg.path.read_bytes()
+    sampling = _jsonable(cfg.llm.sampling._raw)
+    return {
+        "seed": int(seed),
+        "dialogue_provider": getattr(llm, "provider", str(cfg.llm.dialogue)),
+        "dialogue_model": getattr(llm, "model_id", str(cfg.llm.models.get(cfg.llm.dialogue))),
+        "sampling": sampling,
+        "config_sha256": hashlib.sha256(config_bytes).hexdigest(),
+        "git_commit": _git_commit(),
+        "python_version": platform.python_version(),
+        "scenario_mode": str(cfg.environment.mode),
+        "participant_mode": str(cfg.participants.mode),
+        "action_trace_enabled": bool(cfg.output.get("write_action_trace", True)),
+    }
+
+
+def _git_commit() -> str:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=cfg.root,
+            capture_output=True,
+            text=True,
+            timeout=2,
+            check=False,
+        )
+        return result.stdout.strip() if result.returncode == 0 else ""
+    except Exception:
+        return ""
+
+
+def _quality_flags(state: DialogueState) -> list[str]:
+    flags: list[str] = []
+    if state.stats.dropped_turns:
+        flags.append(f"dropped_turns:{state.stats.dropped_turns}")
+    if state.stats.fallback_turns:
+        flags.append(f"fallback_turns:{state.stats.fallback_turns}")
+    if state.stats.response_failures:
+        flags.append(f"response_failures:{state.stats.response_failures}")
+    if state.protocol_errors:
+        flags.append(f"protocol_errors:{len(state.protocol_errors)}")
+    return flags
 
 
 def _jsonable(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value
-    if isinstance(value, Counter):
-        return dict(value)
     if is_dataclass(value):
-        return {field.name: _jsonable(getattr(value, field.name)) for field in fields(value)}
+        return {key: _jsonable(item) for key, item in asdict(value).items()}
     if isinstance(value, dict):
         return {str(key): _jsonable(item) for key, item in value.items()}
-    if isinstance(value, (set, frozenset, tuple, list)):
+    if isinstance(value, (list, tuple, set)):
         return [_jsonable(item) for item in value]
     return value

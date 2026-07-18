@@ -1,50 +1,40 @@
 # Configuration and running
 
-`config.yaml` contains the provider, setup limits, direct trait ranges, simulator probabilities, conversation bounds, language limits, moderator switch, validation thresholds, and output settings. `src/config_loader.py` validates ranges, monotonic mappings, group-size boundaries, preference distributions, and cross-field constraints at startup.
+`config.yaml` controls only the implemented compact runtime.
 
-Important sections:
+Main sections:
 
-- `llm`: dialogue provider, models, endpoints, timeouts, and setup/dialogue/repair sampling;
-- `environment`: automatic or manual option board;
-- `simulation`: participant count, supported range, run seed, and setup attempts;
-- `participants`: automatic or manual persona profiles;
-- `personas`: direct trait ranges, hard-blocker probability, and preference-shape distribution;
-- `conversation`: voluntary pacing, issue bounds, narrowing bounds, prompt history, and consecutive turns;
-- `simulator`: engagement bid probabilities, action probabilities, question modes, and stubbornness movement probabilities;
-- `language`: verbosity budgets, action caps, directness instructions, and duplicate detection;
-- `moderator`: one enabled/disabled switch;
-- `validation`: grounding and repetition thresholds;
-- `output`: log folder and optional debug/action/prompt output;
-- `limits`: input-token warning threshold.
+- `llm`: provider, model, endpoint, timeout, and setup/dialogue/repair sampling profiles;
+- `environment`: automatic or manual scenario;
+- `simulation`: participant count, bounds, seed, and scenario generation attempts;
+- `participants`: automatic or manual profiles;
+- `scenario`: labels, attribute bounds, context bounds, and maximum alias length;
+- `personas`: trait ranges, hard-blocker probability, and preference shapes;
+- `conversation`: voluntary-turn budgets, thread cap, stagnation threshold, compromise cap, prompt context, and consecutive-turn bound;
+- `simulator`: willingness and movement probabilities;
+- `language`: word budgets and directness instructions;
+- `moderator`, `consensus`, `limits`, and `output`.
 
-Normal stubbornness is sampled from 1–4. A hard blocker is a separate rare group-level condition and uses stubbornness 5. Manual profiles can specify direct traits and one explicit hard blocker.
+The separate alias call uses the setup sampling profile. It does not consume an additional scenario-generation attempt and cannot invalidate a structurally valid board.
 
-## Commands
-
-Run one dialogue:
+Install and run:
 
 ```powershell
-py .\main.py "Your topic"
+py -m pip install -r requirements.txt
+py .\main.py
 ```
 
-Run deterministic tests:
+Deterministic tests:
 
 ```powershell
 py -m pytest -q
 ```
 
-Run evaluation:
+Clean scenario batch:
 
 ```powershell
-py .\eval2\run_eval_suite.py
-py .\eval2\run_scenarios.py --limit 5
-py .\eval2\evaluate_runs.py
-py .\eval2\judge_transcripts.py
-py .\eval2\validate_judge.py
-py .\eval2\run_config_sweep.py
-py .\eval2\run_config_confirmation.py
+py .\eval\run_scenarios.py --limit 10 --seed 500 --clean
+py .\eval\summarize_runs.py --logs .\eval\logs_scenarios
 ```
 
-All evaluation paths are relative to `eval2/`. Configuration experiments apply overrides in memory and restore them after every run. Sweep and confirmation comparisons reuse paired scenario/persona setups.
-
-`conversation.diagnostic_allow_reason_reuse` exists only for deliberately long diagnostic cases and should remain disabled for normal simulations.
+The batch runner refuses to mix new results into a nonempty output directory unless `--clean` is explicitly supplied.

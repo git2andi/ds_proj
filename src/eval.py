@@ -1,8 +1,4 @@
-"""Deterministic structural evaluation helpers.
-
-Lives in ``src/`` because it flattens the runtime's own metrics schema; the
-post-hoc evaluation scripts in ``eval2/`` are consumers of this module.
-"""
+"""Small deterministic metric adapter used by batch evaluation scripts."""
 
 from __future__ import annotations
 
@@ -17,46 +13,21 @@ def flat_metrics_for(state: DialogueState, outcome: RunOutcome) -> dict[str, Any
     return {
         "outcome": outcome.status,
         "final_option": outcome.final_option or "",
-        "participant_turns": metrics["turns"]["participant"],
-        "voluntary_turns": metrics["turns"]["voluntary"],
-        "self_selected_turns": metrics["turns"]["self_selected"],
-        "mandatory_turns": metrics["turns"]["mandatory"],
-        "moderator_turns": metrics["turns"]["moderator"],
-        "repairs": metrics["generation"]["repairs"],
-        "dropped_turns": metrics["generation"]["dropped"],
-        "liveness_forced_turns": metrics["generation"]["liveness_forced"],
-        "questions_opened": metrics["questions"]["opened"],
-        "questions_answered": metrics["questions"]["answered"],
-        "issues_opened": metrics["issues"]["opened"],
-        "issues_resolved": metrics["issues"]["resolved"],
-        "issues_stale": metrics["issues"]["stale"],
-        "concerns_opened": metrics["issues"]["concerns_opened"],
-        "concerns_resolved": metrics["issues"]["concerns_resolved"],
-        "concerns_stale": metrics["issues"]["concerns_stale"],
-        "visible_switches": metrics["stances"]["switches"],
-        "public_acceptances": metrics["stances"]["acceptances"],
-        "narrowing_movements": metrics["stances"]["narrowing_movements"],
-        "grounded_movements": metrics["stances"]["grounded_movements"],
-        "unexplained_movements": metrics["stances"]["unexplained_movements"],
-        "compromise_proposals": metrics["compromise"]["proposals"],
-        "compromise_acceptances": metrics["compromise"]["acceptances"],
-        "revote_skipped_no_movement": metrics["votes"]["revote_skipped"],
-        "semantic_reason_reuse": metrics["generation"]["semantic_reason_reuse"],
-        "vote_fallbacks": metrics["generation"]["vote_fallbacks"],
-        "mandatory_movement_failures": metrics["generation"]["mandatory_movement_failures"],
-        "response_failures": metrics["generation"]["response_failures"],
-        "movement_fallbacks": metrics["generation"]["movement_fallbacks"],
-        "selected_movement_actions": metrics["generation"]["selected_movement_actions"],
-        "committed_movement_actions": metrics["generation"]["committed_movement_actions"],
-        "movement_realization_failures": metrics["generation"]["movement_realization_failures"],
-        "repair_causes": metrics["generation"]["repair_causes"],
-        "valid_final_votes": metrics["votes"]["valid"],
-        "unclear_final_votes": metrics["votes"]["unclear"],
-        "vote_protocol_degraded": metrics["votes"]["protocol_degraded"],
-        "protocol_error_count": len(metrics["votes"]["protocol_errors"]),
-        "llm_calls": metrics["tokens"]["llm_calls"],
-        "tokens_in": metrics["tokens"]["input"],
-        "tokens_out": metrics["tokens"]["output"],
+        "participant_turns": metrics["participant_turns"],
+        "voluntary_turns": metrics["voluntary_turns"],
+        "moderator_turns": metrics["moderator_turns"],
+        "moderator_ratio": metrics["moderator_ratio"],
+        "avg_words_per_participant_turn": metrics["avg_words_per_participant_turn"],
+        "visible_preference_changes": metrics["visible_preference_changes"],
+        "repairs": metrics["repair_turns"],
+        "dropped_turns": metrics["dropped_turns"],
+        "fallback_turns": metrics["fallback_turns"],
+        "response_failures": metrics["response_failures"],
+        "protocol_error_count": metrics["protocol_errors"],
+        "vote_outcome_consistent": metrics["vote_outcome_consistent"],
+        "llm_calls": metrics["llm_calls"],
+        "tokens_in": metrics["input_tokens"],
+        "tokens_out": metrics["output_tokens"],
     }
 
 

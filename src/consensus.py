@@ -78,5 +78,5 @@ def outcome_from_votes(
     if count >= majority_threshold(n):
         return RunOutcome("majority", option_id, dict(votes), f"{count} of {n} participants selected the option")
     if allow_unresolved:
-        return RunOutcome("unresolved", None, dict(votes), "No option reached a majority after the bounded re-vote")
+        return RunOutcome("unresolved", None, dict(votes), "No option reached a majority in the final vote")
     return None

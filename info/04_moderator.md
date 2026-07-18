@@ -1,28 +1,15 @@
 # Moderator
 
-The moderator has one configuration switch:
+The moderator is deterministic and does not have a persona or independent agenda. Its role is limited to protocol facilitation.
 
-```yaml
-moderator:
-  enabled: true
-```
+It may:
 
-When enabled, deterministic moderator messages may:
+1. open the decision and present the option board;
+2. provide one neutral liveness prompt when the floor is empty too early;
+3. announce a decisive lead or request one bounded compromise round;
+4. request explicit final votes;
+5. state the computed outcome.
 
-- open the discussion;
-- issue one stall or neutral compromise prompt;
-- issue one soft-coverage prompt;
-- announce narrowing;
-- request votes;
-- report the outcome.
+Consecutive moderator messages are coalesced where possible. A moderator question is emitted only when the runtime will allow a participant response. The moderator uses public protocol state and does not invent participant reasons or hidden preferences.
 
-The moderator never chooses a participant's reason, stance, compromise, or vote.
-
-When disabled, the environment still changes phases and collects votes, but no moderator turns are visible.
-
-
-Moderator prompts create public opportunities only. A clear-leader prompt is directed conceptually at dissenters, while supporters may still react voluntarily to a concrete concern or proposal.
-
-Soft-coverage prompts do not bypass simulator engagement. A complete split is announced once during narrowing so the visible transcript explains why a compromise window occurs, but the moderator still does not assign a mover or require a concession.
-
-When a visible complete-split compromise prompt receives no participant bid, the moderator acknowledges the lack of movement (for example, “No one? All right, let’s record the final votes.”). This is a transition message, not a forced participant response.
+Moderator mode can be disabled. The participant floor and deterministic voting still operate without it.

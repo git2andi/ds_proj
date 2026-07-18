@@ -1,38 +1,36 @@
 # System overview
 
-The project implements configurable user simulators for an option-grounded multi-user decision dialogue.
+The project simulates small option-grounded group discussions. It is intentionally narrower than a general multi-agent dialogue system.
+
+## Data flow
 
 ```text
 topic
-→ scenario and option board
+→ public scenario and four option cards
+→ validated natural aliases
 → persona cards and private stances
-→ simulator-owned UserAction bids
-→ categorical floor selection
-→ LLM utterance realization
-→ deterministic validation and grounding
-→ public state and issue updates
-→ narrowing and voting
-→ outcome and logs
+→ autonomous simulator bids
+→ floor selection
+→ LLM realization
+→ hard validation
+→ public state update
+→ pre-vote narrowing, one final vote, outcome
 ```
 
-Main components:
+The core contribution is the ownership split. Each simulator decides whether to speak and selects a complete action. The floor only schedules intact bids. The LLM supplies language, while deterministic code controls phases, visible movement commitment, voting, and outcomes.
 
-- **setup** (`src/builders.py`): scenario, aliases, personas, traits, and initial stances;
-- **simulators/floor** (`src/simulator.py`): participant-local decisions and intact bid selection;
-- **environment** (`src/dialogue.py`): phase control, direct-answer obligations, one active issue, soft coverage, narrowing, and voting;
-- **language** (`src/prompts.py`, `src/llm_client.py`): one realization call for the selected action and at most one focused repair;
-- **validation** (`src/validation.py`, `src/aliases.py`): structured-action invariants and narrow deterministic grounding;
-- **outcomes** (`src/consensus.py`): public narrowing and vote-derived results;
-- **logging/evaluation** (`src/logger.py`, `src/eval.py`, `eval2/`): transcript, structured run state, compact metrics, batch evaluation, and LLM judging.
+## Runtime state
 
-The simulator is the behavioral authority. It decides whether to bid, which action to take, what reason to use, whether to move, and how to vote. The environment manages only the shared interaction protocol. The LLM does not choose hidden behavior.
+The shared state contains visible turns, public preferences and acceptances, one optional bounded thread, compact public point history, response obligations, final votes, and runtime counters. It does not maintain a general issue graph or infer hidden dialogue semantics from arbitrary text.
 
-Runtime phases:
+## Phases
 
 ```text
 OPENING → DISCUSSION → NARROWING → VOTING → CLOSED
 ```
 
-One bounded re-narrowing and re-vote is possible after a first round without a majority, but only when visible movement occurred.
+Discussion supports direct questions, group questions, concerns, third-party reactions, comparisons, and acceptance. Any compromise occurs before one final formal vote.
 
-Deterministic tests live in `tests/`. Active LLM-backed evaluation lives in `eval2/`. The old `eval/` folder preserves historical results, including the intentionally interrupted earlier scenario batch.
+## Intended claims
+
+The implementation supports claims about simulator authority, configurable behavioral parameters, bounded discussion control, visible preference movement, and deterministic voting. It does not establish human realism, psychological validity, or complete semantic grounding.

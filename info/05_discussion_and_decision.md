@@ -1,65 +1,40 @@
 # Discussion and decision process
 
-## Structured simulator actions
+## Discussion loop
 
-Each eligible simulator produces either silence or one complete `UserAction`. The action contains the act, option focus, optional addressee, simulator-owned grounded reason, issue relation, optional stance update, and vote when applicable.
+The runtime repeatedly performs:
 
-The controller never fills in or rewrites an ordinary participant action. Only the selected action is sent to the LLM for language realization.
+```text
+required direct answer, if any
+otherwise collect simulator bids
+→ select one intact bid
+→ realize one utterance
+→ hard validation
+→ commit visible state and public point history
+→ maintain or close the active thread
+```
 
-## Content sources
+The loop has minimum, soft-target, and hard-maximum voluntary-turn budgets. It may stop after the target when no novel bid remains, or after minimum participation when public preferences have converged. One neutral liveness intervention is available before the target.
 
-Simulator reasons come from:
+## Public state
 
-1. persona-specific reasons for or against an option;
-2. a public option upside or concern;
-3. a concrete public attribute when a question, comparison, or active issue needs it;
-4. optional relevant backstory/private-goal context.
+The structured action determines intended behavior, but preference and acceptance changes are committed only when accepted text visibly realizes them. Explicit aliases are required for context-setting actions. Local reactions and answers may inherit a unique visible focus from the immediately preceding turn or active thread. The runtime does not attempt general semantic parsing.
 
-Objective option claims must remain tied to the focused option. Personal preferences and experiences may be expressed as subjective statements.
+## Repetition control
 
-## Discussion floor
+Grounded reasons carry a point key based on option ID and attribute name. The runtime records group-level point counts and the two most recent points.
 
-Bids use categorical priority:
+- a participant avoids reusing its completed point;
+- a recently used point is suppressed for ordinary contributions;
+- an already public point cannot open another question;
+- a completed thread is not reopened on the same key;
+- after the first thread answer, later contributions must add another point, compare, or move;
+- narrowing may reuse a point when it directly explains a final movement decision.
 
-1. required direct answer;
-2. active-issue or moderator-stimulus response;
-3. ordinary voluntary contribution.
+## Language realization
 
-The floor chooses within the highest available category using the run seed, avoids pathological consecutive turns, and never equalizes participation. Engagement affects whether a voluntary bid exists.
+The prompt includes the selected action, grounded source, relevant board facts, active thread, recent dialogue, and the speaker’s recent sentence openings. It asks the speaker to connect to the previous message, vary the sentence opening, avoid copying recent structure, and place option references naturally.
 
-## Questions and concerns
+## Generation failure
 
-The environment stores at most one active issue.
-
-- A direct question creates one required answer from the named addressee.
-- One optional third-party reaction may continue the question exchange.
-- Concern responses and owner reactions remain voluntary.
-- A concern may be resolved, softened, maintained, or become stale when the group moves on.
-- Semantic duplicate concerns are suppressed and reopening is bounded.
-
-The active issue provides context; it does not prescribe who must defend, concede, or change stance.
-
-## Pacing
-
-Voluntary discussion budgets scale with participant count and are bounded by absolute caps. Openings, mandatory answers, narrowing turns, and votes are tracked separately.
-
-The soft target is not a fixed required length. Public unanimity can close earlier after some substantive discussion. Novel bids can continue past the target until the hard cap. Small- and large-group bounds prevent very short filler loops and excessive scaling.
-
-## Narrowing
-
-Narrowing uses public preferences, acceptances, unresolved concerns, and visible movement:
-
-- unanimous public preference can proceed directly to voting;
-- one leader gives relevant dissenters or unresolved concern owners bounded final-position opportunities;
-- a top pair allows clarification or acceptance;
-- a complete split exposes one simulator-owned compromise opportunity.
-
-The environment may schedule a protocol opportunity, but the simulator still chooses the actual position and whether to move. A valid majority is an acceptable outcome; the runtime does not attempt to force unanimity.
-
-## Realization and repair
-
-For one selected action, the runtime performs one normal generation and at most one focused repair. It records both calls and aggregates their token usage.
-
-A voluntary movement that remains invalid after repair is dropped and logged rather than converted into scripted participant language. A formal vote, or a mandatory movement statement required by the current protocol, may use one concise grounded fallback so the run can close. Moderator prompts that introduce a participant response are buffered until the response is successfully accepted.
-
-Evaluation-only long cases may temporarily allow semantic reason reuse. Normal runs keep reason reuse disabled.
+Voluntary invalid utterances are dropped and flagged. Openings, required answers, and votes receive one repair attempt. A deterministic opening is used only after generation and repair both fail. Required-answer and vote fallbacks use natural text because the protocol cannot safely continue without them.
